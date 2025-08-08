@@ -1,0 +1,95 @@
+// defines the Redux Actions for McpTool
+
+// McpTool
+
+export const FETCH_MCPTOOL_REQUEST = "FETCH_MCPTOOL_REQUEST"
+export const FETCH_MCPTOOL_SUCCESS = "FETCH_MCPTOOL_SUCCESS"
+export const FETCH_MCPTOOL_FAILURE = "FETCH_MCPTOOL_FAILURE"
+
+export const ADD_MCPTOOL_REQUEST = "ADD_MCPTOOL_REQUEST"
+export const ADD_MCPTOOL_SUCCESS = "ADD_MCPTOOL_SUCCESS"
+export const ADD_MCPTOOL_FAILURE = "ADD_MCPTOOL_FAILURE"
+
+export const UPDATE_MCPTOOL_REQUEST = "UPDATE_MCPTOOL_REQUEST"
+export const UPDATE_MCPTOOL_SUCCESS = "UPDATE_MCPTOOL_SUCCESS"
+export const UPDATE_MCPTOOL_FAILURE = "UPDATE_MCPTOOL_FAILURE"
+
+export const DELETE_MCPTOOL_REQUEST = "DELETE_MCPTOOL_REQUEST"
+export const DELETE_MCPTOOL_SUCCESS = "DELETE_MCPTOOL_SUCCESS"
+export const DELETE_MCPTOOL_FAILURE = "DELETE_MCPTOOL_FAILURE"
+
+export const LIST_MCPTOOL_REQUEST = "LIST_MCPTOOL_REQUEST"
+export const LIST_MCPTOOL_SUCCESS = "LIST_MCPTOOL_SUCCESS"
+export const LIST_MCPTOOL_FAILURE = "LIST_MCPTOOL_FAILURE"
+
+export const addMcpToolRequest = () => ({
+	type: ADD_MCPTOOL_REQUEST,
+})
+
+export const addMcpToolSuccess = (McpTools: any) => ({
+	type: ADD_MCPTOOL_SUCCESS,
+	payload: McpTools,
+})
+
+export const addMcpToolFailure = (error: Error) => ({
+	type: ADD_MCPTOOL_FAILURE,
+	payload: error,
+})
+
+export const fetchMcpToolRequest = () => ({
+	type: FETCH_MCPTOOL_REQUEST,
+})
+
+export const fetchMcpToolSuccess = (McpTools: any) => ({
+	type: FETCH_MCPTOOL_SUCCESS,
+	payload: McpTools,
+})
+
+export const fetchMcpToolFailure = (error: Error) => ({
+	type: FETCH_MCPTOOL_FAILURE,
+	payload: error,
+})
+
+export const listMcpToolRequest = () => ({
+	type: LIST_MCPTOOL_REQUEST,
+})
+
+export const listMcpToolSuccess = (McpTools: any) => ({
+	type: LIST_MCPTOOL_SUCCESS,
+	payload: McpTools,
+})
+
+export const listMcpToolFailure = (error: Error) => ({
+	type: LIST_MCPTOOL_FAILURE,
+	payload: error,
+})
+
+export const updateMcpToolRequest = (McpTool: any) => ({
+	type: UPDATE_MCPTOOL_REQUEST,
+	payload: McpTool,
+})
+
+export const updateMcpToolSuccess = (McpTool: any) => ({
+	type: UPDATE_MCPTOOL_SUCCESS,
+	payload: McpTool,
+})
+
+export const updateMcpToolFailure = (error: Error) => ({
+	type: UPDATE_MCPTOOL_FAILURE,
+	payload: error,
+})
+
+export const deleteMcpToolRequest = (McpTool: any) => ({
+	type: DELETE_MCPTOOL_REQUEST,
+	payload: McpTool,
+})
+
+export const deleteMcpToolSuccess = (McpTool: any) => ({
+	type: DELETE_MCPTOOL_SUCCESS,
+	payload: McpTool,
+})
+
+export const deleteMcpToolFailure = (error: Error) => ({
+	type: DELETE_MCPTOOL_FAILURE,
+	payload: error,
+})

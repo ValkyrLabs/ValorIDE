@@ -1,0 +1,23 @@
+{
+	"exclude": ["node_modules"],
+	"compilerOptions": {
+		"target": "ES2022",
+		"useDefineForClassFields": true,
+		"typeRoots": ["node_modules/@types", "./types"],
+
+		"lib": ["DOM", "DOM.Iterable", "ES2022"],
+		"allowJs": false,
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"strict": false,
+		"forceConsistentCasingInFileNames": true,
+		"module": "ESNext",
+		"moduleResolution": "Node",
+		"allowSyntheticDefaultImports": true,
+		"resolveJsonModule": true,
+		"isolatedModules": false,
+		"noEmit": true,
+		"jsx": "react-jsx"
+	},
+	"include": ["src", "types/vite-env.d.ts", "types/index.d.ts", "vite.config.ts"]
+}

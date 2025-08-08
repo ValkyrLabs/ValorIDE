@@ -1,0 +1,65 @@
+html,
+.split-pane-col {
+	padding: 0;
+	margin: 0;
+	overflow: hidden;
+	overflow-y: scroll;
+	display: flex;
+	flex-direction: column;
+}
+
+.split-pane-row {
+	display: flex;
+	flex-direction: row;
+}
+
+.split-pane-left {
+	flex: 1;
+	overflow: hidden;
+	overflow-y: scroll;
+	max-width: 200px;
+	background-color: black;
+}
+
+.split-pane-top,
+.split-pane-bottom,
+.split-pane-right {
+	flex: 1;
+	overflow: hidden;
+	overflow-y: scroll;
+}
+
+.split-pane-right {
+	padding: 0px;
+}
+
+.split-pane-top,
+.split-pane-bottom {
+	padding: 0px;
+}
+
+.separator-col {
+	border: 5px solid #444444;
+	cursor: col-resize;
+}
+
+.separator-row {
+	border: 5px solid #444444;
+	cursor: row-resize;
+}
+
+blockquote {
+	font-size: 0.8em;
+}
+
+blockquote:before {
+	content: open-quote;
+	font-size: 3em;
+	line-height: 0.2em;
+	margin-right: 0.25em;
+	vertical-align: -0.4em;
+}
+
+blockquote p {
+	display: inline;
+}

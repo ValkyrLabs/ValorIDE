@@ -1,0 +1,1176 @@
+/* Base styling for the entire app */
+
+body {
+	font-family: "Orbitron", sans-serif;
+	/*  background: linear-gradient(rgba(0, 0, 0, 1), rgba(255, 255, 255, 0.25));
+  url("./assets/images/heimdallm-toon.png") top center/cover;*/
+}
+
+h1 {
+	color: orange;
+}
+
+h4 {
+	color: orange;
+}
+
+p {
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.bigReveal {
+	padding: 5em;
+	margin-bottom: 15em;
+
+	min-height: 1000px;
+
+	max-height: 65em;
+}
+
+.dropdown-menu {
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.dropdown-toggle {
+	margin-top: -0.5em;
+	margin-right: 1em;
+	font-size: 1.5em;
+}
+
+.dropdown-toggle:hover {
+	color: orange;
+	/*margin-bottom: 1em;*/
+}
+
+.dropdown-item {
+	width: 100%;
+}
+
+.dropdown-item:hover {
+	background-color: rgba(0, 0, 0, 0.75);
+}
+
+ul > li .nav-link {
+	overflow: hidden;
+	min-width: 230px;
+	max-height: 32px;
+}
+
+ul > li .nav-link:hover,
+ul > li .nav-link:hover,
+button > .nav-link:active,
+button > .nav-link:active:hover {
+	color: #ff9900;
+}
+
+.quote {
+	margin: 3em;
+	border-left-style: solid;
+	border-left-color: orange;
+	border-left-width: 20px;
+	padding: 1em;
+	background-color: #222222;
+	border-radius: 10px;
+
+	text-align: right;
+}
+
+.textCard {
+	padding: 5em;
+	font-size: 1.5em;
+	border-radius: 1em;
+	width: 80%;
+	margin-left: 3em;
+	margin-right: 3em;
+	background-color: rgba(0, 0, 0, 0.3);
+}
+
+.container {
+	min-width: 100%;
+}
+
+.nav-tabs {
+	min-width: 100px;
+	text-align: center;
+	padding: 0em;
+	padding-bottom: 0px;
+	flex-wrap: nowrap;
+	overflow-y: scroll;
+}
+
+.tab-content {
+	min-width: 100%;
+}
+
+.nav:focus {
+	background-color: red;
+}
+
+.nav {
+	border-bottom: 0px;
+}
+
+.productHero {
+	padding-top: 3em;
+	padding-left: 3em;
+	margin: 0;
+	margin-top: 1em;
+	color: #fff;
+	height: 50vh;
+	opacity: 0.95;
+}
+
+.footerFade {
+	bottom: 0;
+	position: relative;
+	background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(255, 255, 255, 0.25));
+	/*url("./assets/images/heimdallm-toon.png") top center/cover;*/
+}
+
+.thorApiHero {
+	max-height: 50em;
+	opacity: 0.8;
+}
+
+.valhalla {
+	max-height: 50em;
+	padding: 7em;
+	margin-top: 1em;
+
+	color: #fff;
+	height: 80vh;
+	opacity: 0.95;
+}
+
+.text-accent {
+	color: var(--accent-color);
+}
+
+/* Card Customization */
+.card {
+	border: none;
+}
+
+.card .card-body {
+	color: var(--text-color);
+}
+
+/* Navbar, if present */
+.navbar {
+	background-color: var(--dark-secondary-bg);
+}
+
+/* Links and other elements */
+a,
+.btn-link {
+	color: var(--accent-color);
+}
+
+a:hover,
+.btn-link:hover {
+	/*color: darken(var(--accent-color), 30%);*/
+}
+
+/* Specific overrides or additional customizations */
+.custom-class {
+	background-color: var(--dark-secondary-bg);
+	color: var(--text-color);
+}
+
+/* This is a basic setup, and you might need to expand upon or adjust these styles 
+   depending on the exact components and layout specifics of your application. */
+
+/* Styling for logos */
+.logo {
+	height: 6em;
+	padding: 1.5em;
+	will-change: filter;
+}
+
+.logo:hover {
+	filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+	filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+/* Animation for the logo */
+@keyframes logo-spin {
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	a:nth-of-type(2) .logo {
+		animation: logo-spin infinite 20s linear;
+	}
+}
+
+/* Styling for documentation links */
+.read-the-docs {
+	color: #bbb;
+	/* Light grey for readable contrast */
+}
+
+/* Hero section styling for dark mode */
+.hero {
+	background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(255, 255, 255, 0.15));
+	/*, url("./assets/images/app_diagram_white_1.png") no-repeat center center/cover;*/
+	color: #fff;
+	height: 40vh;
+	opacity: 0.95;
+}
+
+/* Hero section styling for dark mode */
+.footer {
+	color: #fff;
+	height: 50vh;
+}
+
+.btnx {
+	min-width: 100%;
+	min-height: 3em;
+	transition: background-color 1.5s ease;
+}
+
+.a:hover {
+	background-color: #e67e22;
+}
+
+/* Styling for feature sections in dark mode */
+.features div {
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	flex-wrap: wrap;
+	margin: 0px;
+}
+
+/* Testimonials section styling for dark mode */
+
+/* Call to action section styling */
+.cta-final {
+	background-color: #fa8231;
+	color: #fff;
+	padding: 40px 20px;
+}
+
+.cta-final button {
+	background-color: #fff;
+	color: #fa8231;
+	padding: 10px 20px;
+	border: none;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+button {
+	width: 100px;
+	border: 1 solid black;
+	color: #fff;
+}
+
+/* Footer styling for dark mode */
+footer {
+	background-color: #333;
+	color: #fff;
+	padding: 20px;
+	text-align: center;
+}
+
+footer a {
+	color: #fa8231;
+	margin: 0 10px;
+	text-decoration: none;
+}
+
+footer a:hover {
+	text-decoration: underline;
+}
+
+.big-hero-section {
+	height: 0vh;
+
+	text-align: center;
+}
+
+.hero-section {
+	height: 50vh;
+
+	text-align: center;
+}
+
+.social-links a {
+	color: #ffffff;
+	/* Orange color for icons */
+	font-size: 48px;
+	/* Larger icons for better visibility */
+	transition: color 0.3s;
+}
+
+.social-links a:hover {
+	color: #000000;
+	/* Lighter color on hover */
+}
+
+.form-control {
+	background-color: rgba(50, 50, 50, 0.8);
+	margin: 0.5em;
+	padding: 1em;
+	/* Dark input fields for contrast */
+	color: #fff;
+	/* White text for readability */
+}
+
+.form-control:focus {
+	box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.5);
+	/* Glow effect on focus */
+}
+
+::placeholder {
+	/* Chrome, Firefox, Opera, Safari 10.1+ */
+	color: #ddd;
+	/* Lighter placeholder text for better readability */
+	opacity: 1;
+	/* Firefox */
+}
+
+.background-container {
+	position: relative;
+	min-height: 300vh;
+	width: 100%;
+	overflow: hidden;
+	/* Hide any overflow from the background */
+}
+
+.background-container > .RayCastWaves {
+	position: absolute;
+	min-height: 320em;
+	/* Make the container fill the viewport height */
+	left: 0;
+	width: 100%;
+	z-index: -10;
+	/* Ensure it is behind other content */
+	pointer-events: none;
+	/* Prevent the background from capturing pointer events */
+}
+
+.content-container {
+	position: relative;
+
+	margin: 0px;
+	top: 0px;
+
+	z-index: 1;
+	/* Ensure it is on top of the background */
+	pointer-events: auto;
+	/* Ensure this container is interactive */
+}
+
+.carouselCard {
+	overflow-y: scroll;
+	min-height: 350px;
+	margin: 1.5em;
+}
+
+.thumbnailImage {
+	margin-right: 1em;
+	float: left;
+	object-fit: cover;
+	border-radius: 10px;
+	width: 100%;
+	height: 14em;
+}
+
+.coolImage {
+	margin-right: 1em;
+	float: left;
+	object-fit: cover;
+	border-radius: 10px;
+	width: 100%;
+	min-height: 250px;
+	max-height: 250px;
+}
+
+.dropMenuTextContent {
+	margin-left: 5px;
+	margin-right: 5px;
+
+	font-weight: bold;
+	white-space: nowrap;
+}
+
+.dropMenuTextContentSM {
+	background-blend-mode: diffusion;
+	margin-left: 5px;
+	margin-right: 5px;
+
+	white-space: nowrap;
+	font-weight: bold;
+}
+
+.menuItem {
+	overflow: hidden;
+	height: 64px;
+}
+
+.menuTextContent {
+	margin-left: 5px;
+	margin-right: 5px;
+	color: var(--accent-color);
+
+	white-space: nowrap;
+}
+
+.menuTextContentSM {
+	margin-left: 5px;
+	margin-right: 5px;
+	color: var(--text-color);
+
+	white-space: nowrap;
+	font-weight: 500;
+}
+
+.heroText {
+	color: var(--light-text-color);
+	font-size: 1.5em;
+	white-space: nowrap;
+	background-color: rgba(0, 0, 0, 0.5);
+	border-radius: 10px;
+	min-width: 80%;
+	padding: 0.5em;
+}
+
+.menuText .a {
+	text-decoration: none;
+	color: var(--text-color);
+
+	/*  white-space: nowrap; */
+	font-weight: bold;
+	background-color: rgba(0, 0, 0, 0.25);
+	border-radius: 10px;
+	min-width: 100%;
+	padding: 0.5em;
+}
+
+.coolText {
+	background-color: rgba(0, 0, 0, 0.05);
+	overflow-y: scroll;
+	border-radius: 10px;
+	min-width: 500px;
+	padding: 1em;
+	min-height: 260px;
+	max-height: 260px;
+}
+
+.blockquote {
+	barckground-color: rgba(0, 0, 0, 0.2);
+	border-radius: 6px;
+	margin-bottom: 2rem;
+	font-size: 1.25rem;
+}
+
+.blockquote > :last-child {
+	margin-bottom: 0;
+}
+
+.blockquote-footer {
+	margin-top: -2rem;
+	margin-bottom: 2rem;
+	font-size: 0.875em;
+	color: rgba(255, 255, 255, 0.7);
+}
+
+.blockquote-footer::before {
+	content: "— ";
+}
+
+.menuTextContent a:hover {
+	text-decoration: none;
+	display: block;
+	color: black;
+}
+
+.menuTextContentSM a:hover {
+	display: block;
+	text-decoration: none;
+	color: black;
+}
+
+.App {
+	padding: 0px;
+
+	padding-left: 2em;
+	padding-right: 2em;
+	margin: 0em;
+}
+
+.titleImage {
+	max-width: 200%;
+}
+
+.col-md-6 {
+	background-color: "red";
+	border: 0;
+}
+
+.megaIcon {
+	opacity: 0.25;
+	float: left;
+	color: var(--text-color);
+	z-index: -100;
+	word-wrap: break-word;
+	margin-top: -2em;
+	margin-right: -15em;
+	margin-bottom: -15em;
+}
+
+.pricing-container {
+	font-family: "Open Sans", sans-serif;
+}
+
+.pricing-card {
+	border: none;
+	border-radius: 10px;
+	overflow: hidden;
+	margin-bottom: 30px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pricing-header {
+	background-color: #0d1b2a;
+	color: #ffffff;
+	text-align: center;
+	padding: 20px;
+}
+
+.pricing-price {
+	color: --var(--accent-color);
+	font-size: 4em;
+	text-align: center;
+}
+
+.pricing-duration {
+	color: #7b8a99;
+}
+
+.pricing-features {
+	color: rgb(240, 240, 201);
+	list-style: none;
+	padding: 0;
+	font-size: 1.5em;
+	margin-bottom: 3em;
+}
+
+.pricing-features li {
+	padding: 10px 0;
+	border-bottom: 1px solid #e5e5e5;
+	text-align: center;
+}
+
+.pricing-button {
+	background-color: #1b263b;
+	border: none;
+	width: 100%;
+	padding: 15px;
+}
+
+.pricing-button:hover {
+	background-color: #0d1b2a;
+}
+
+.nav-bar-top {
+	margin-top: 1em;
+}
+
+.tiny {
+	font-size: 8pt;
+}
+
+/** FORMIK/FORMS SECTION **/
+
+.form {
+	background-color: rgba(0, 0, 0, 0.5);
+	padding: 0.5em;
+	margin: 0.25em;
+	border-radius: 5px;
+}
+
+/*.okCheck {
+  color: rgb(0, 255, 0);
+  float: right;
+}&*/
+
+.error {
+	margin-top: -5em;
+	margin-left: 7em;
+	padding: 1em;
+	font-weight: bold;
+	color: #bbff00;
+
+	float: right;
+	border-radius: 5px;
+	border-width: 20;
+	border-color: black;
+	background-color: rgba(255, 0, 0, 0.5);
+}
+
+.nice-form-control {
+	min-width: 100%;
+}
+
+.errorMessage {
+	margin: 0.25em;
+	padding: 0.5em;
+	font-size: 1em;
+	font-weight: bold;
+	color: #222222;
+
+	min-width: 100%;
+	border-radius: 5px;
+	border-width: 0;
+	background-color: rgba(255, 0, 0, 0.75);
+}
+
+.scroll-tabs-container {
+	max-height: 80px;
+	overflow: hidden;
+	overflow-y: scroll;
+}
+
+.scroll-tabs {
+	max-height: 80px;
+	min-width: 15000px;
+	flex-direction: row;
+	overflow: visible;
+}
+
+.dialogBgBlur {
+	background-color: red;
+	filter: blur(2px);
+}
+
+/** TABLES **/
+
+.tbody {
+	background-color: white;
+}
+
+.list-container {
+	padding: 1em;
+	margin: 0;
+	overflow: hidden;
+	overflow-y: scroll;
+}
+
+.tableContainer {
+	background-color: "white";
+	min-height: 100vh;
+}
+
+.table {
+	color: rgb(69, 69, 69);
+}
+
+.tableCell {
+	overflow: hidden;
+	border-width: 1px;
+	border-color: rgb(174, 174, 174);
+	max-width: 200px;
+	color: rgb(0, 0, 0);
+}
+
+/* ## SPREADSHEET ## */
+/* Style the table to resemble an Excel-like spreadsheet */
+.spreadsheet-table {
+	background-color: white;
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	font-size: 1em;
+	color: rgb(26, 26, 26);
+	border-collapse: collapse;
+}
+
+.spreadsheet-table thead {
+	position: static;
+
+	margin-bottom: 10em;
+	background-color: #c5c5c5;
+}
+
+.spreadsheet-table th {
+	padding: 4px;
+	position: sticky;
+	z-index: 2;
+}
+
+.spreadsheet-table th,
+.spreadsheet-table td {
+	border: 1px solid #737373;
+	padding: 1px;
+	max-width: 250px;
+	vertical-align: middle;
+	white-space: nowrap;
+	overflow: hidden;
+	margin-right: 10em;
+	text-overflow: ellipsis;
+}
+
+.spreadsheet-table tr:nth-child(even) {
+	background-color: #e7e5e5;
+}
+
+.spreadsheet-table tr:hover {
+	background-color: #afafaf;
+}
+
+.spreadsheet-table td.editing {
+	padding: 0px;
+	margin: 0px;
+}
+
+.spreadsheet-table td:focus-within {
+	border-radius: 0px;
+}
+
+/* Form control adjustments to match Excel appearance */
+.spreadsheet-table input[type="text"],
+.spreadsheet-table select {
+	width: 100%;
+	height: 100%;
+	border: none;
+	padding: 0;
+	font-size: inherit;
+	font-family: inherit;
+	background: none;
+	box-sizing: border-box;
+}
+
+.spreadsheet-rownum {
+	padding-left: 10px;
+}
+
+.spreadsheet-table input[type="text"]:focus,
+.spreadsheet-table select:focus {
+	outline: none;
+	color: black;
+	margin: 0px;
+	border-radius: 0;
+	padding: 0px;
+	border: 1px solid #4285f4;
+	background-color: #f9f9f9;
+}
+
+.spreadsheet-table .form-control {
+	color: #333333;
+}
+
+/* Add a hover effect */
+.spreadsheet-table .form-control:focus {
+	border-radius: 10px;
+	border: 2px solid #4285f4;
+	text-wrap: wrap;
+	position: static;
+	z-index: 100;
+	overflow: hidden;
+	overflow-y: scroll;
+
+	/*width: 350px;*/
+	box-shadow:
+		0 8px 2px rgba(0, 0, 0, 0.2),
+		0 -4px 6px rgba(255, 255, 255, 0.1);
+}
+
+/* Spinner styles for button */
+.cool-button .spinner-grow {
+	margin-right: 8px;
+}
+
+.errorCheck {
+	color: #34a853;
+	font-size: 2em;
+	max-width: 1.5em;
+}
+
+/* Style for OK check mark */
+.okCheck {
+	color: #34a853;
+	max-width: 1.5em;
+}
+
+/* Style for required fields */
+.field-error {
+	border-color: #ff1100 !important;
+}
+
+.tinyButton {
+	height: 30px;
+	width: 60px;
+	padding: 0px;
+}
+
+/* Styling for the cards */
+.displayCard {
+	padding: 0.5em;
+	cursor: pointer;
+	border-radius: 10px;
+	border-width: 1px;
+	border-color: white;
+	width: 250px;
+	min-height: 250px;
+	margin: 0.1em;
+	float: left;
+	flex-direction: row;
+	flex-wrap: wrap;
+	background-color: rgba(255, 255, 255, 0.25);
+	/*backdrop-filter: blur(1px);
+  box-shadow: 3px 6px 3px 3px #888888;
+  transition: transform 1.2s, box-shadow .25s;*/
+}
+
+.displayCard:hover {
+	background-color: rgba(255, 255, 255, 0.15);
+	/* Add a hover effect 
+ transform: scale(1.015);
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.4), 0 -3px 3px rgba(255, 255, 255, 0.2);*/
+}
+
+/* Card header styling */
+.card-header {
+	border-radius: 15px 15px 0 0;
+}
+
+.card-header-fade {
+	border-radius: 10px 10px 0 0;
+}
+
+/* Card body styling */
+.card-body {
+	display: flex;
+	flex-direction: column;
+}
+
+/* Wrapping container styling */
+.card-list {
+	height: 100%;
+	overflow: hidden;
+	overflow-y: scroll;
+	margin: 0px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	justify-content: center;
+	align-items: center;
+	padding: 10px;
+}
+
+/* Ensure badges have professional colors */
+.badge {
+	font-size: 0.75rem;
+	color: #222222;
+	padding: 0.5em 1em;
+	border-radius: 10px;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
+.tabHeader:hover {
+	font-weight: bold;
+	/*transform: scale(1.04);*/
+}
+
+label {
+	width: 100%;
+	background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.5));
+}
+
+/* Responsive styling for smaller devices */
+
+/* Responsive styling for smaller devices */
+@media (max-width: 6640px) {
+	.menuTextContent {
+		display: none;
+	}
+
+	.menuTextContentSM {
+		display: none;
+	}
+
+	.content-container {
+		margin-top: -310em;
+	}
+}
+
+/* Responsive styling for smaller devices */
+@media (max-width: 1240px) {
+	.content-container {
+		margin-top: -310em;
+	}
+}
+
+/* Responsive styling for smaller devices */
+@media (max-width: 933px) {
+	.pricing-price {
+		font-size: 2em;
+	}
+
+	.pricing-features {
+		font-size: 1.5em;
+	}
+
+	.content-container {
+		margin-top: -310em;
+	}
+
+	.features div {
+		width: 100%;
+	}
+}
+
+/* Responsive styling for smaller devices */
+@media (max-width: 768px) {
+	.bigReveal {
+		padding-top: 15em;
+		padding-bottom: 15em;
+		padding: 0em;
+		height: 85em;
+		min-height: 85em;
+		max-height: 85em;
+	}
+
+	.menuTextContent {
+		display: inline;
+	}
+
+	.menuTextContentSM {
+		display: inline;
+	}
+
+	.content-container {
+		margin-top: -310em;
+	}
+
+	.features div {
+		width: 100%;
+	}
+
+	.coolImage {
+		width: 100%;
+		min-height: 240px;
+		max-height: 240px;
+	}
+
+	.coolText {
+		overflow-y: scroll;
+		min-width: 100%;
+		padding: 0em;
+		margin: 0em;
+		min-height: 250px;
+		max-height: 250px;
+	}
+
+	.carousel {
+		padding: 0em;
+	}
+
+	.carouselCard {
+		min-width: 250px;
+	}
+
+	.pricing-price {
+		font-size: 2em;
+	}
+
+	.features div {
+		width: 100%;
+	}
+
+	.spreadsheet-table th,
+	.spreadsheet-table td {
+		min-height: 100vh;
+		padding: 6px;
+	}
+}
+
+@media (max-width: 480px) {
+	.pricing-price {
+		font-size: 2em;
+	}
+
+	.spreadsheet-table th,
+	.spreadsheet-table td {
+		padding: 4px;
+		font-size: 12px;
+	}
+}
+.applications-list {
+	padding: 10px;
+	color: var(--vscode-foreground);
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	max-height: 400px;
+}
+
+.applications-list ul {
+	flex-grow: 1;
+	overflow-y: auto;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	max-height: 300px;
+}
+
+.applications-container {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	margin-top: 16px;
+	flex-grow: 1;
+	overflow-y: auto;
+	max-height: 300px;
+}
+
+.application-card {
+	border: 1px solid var(--vscode-editorWidget-border);
+	border-radius: 8px;
+	padding: 16px;
+	background-color: var(--vscode-editor-background);
+}
+
+.application-card-content {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+}
+
+.application-info {
+	flex-grow: 1;
+}
+
+.application-name {
+	margin: 0 0 8px 0;
+	font-size: 18px;
+	font-weight: 600;
+	color: var(--vscode-foreground);
+}
+
+.application-description {
+	margin: 0 0 8px 0;
+	color: var(--vscode-descriptionForeground);
+	font-size: 14px;
+}
+
+.application-meta {
+	display: flex;
+	gap: 12px;
+	font-size: 12px;
+}
+
+.application-type {
+	background-color: #007bff;
+	color: white;
+	padding: 2px 8px;
+	border-radius: 4px;
+}
+
+.application-status {
+	color: white;
+	padding: 2px 8px;
+	border-radius: 4px;
+}
+
+.application-status.status-ready {
+	background-color: #28a745;
+}
+
+.application-status.status-deployed {
+	background-color: #17a2b8;
+}
+
+.application-status.status-pending {
+	background-color: #ffc107;
+	color: #212529;
+}
+
+.application-status:not(.status-ready):not(.status-deployed):not(.status-pending) {
+	background-color: #6c757d;
+}
+.loading-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 20px 0;
+}
+.error-message {
+	color: var(--vscode-errorForeground);
+	padding: 10px;
+	border: 1px solid var(--vscode-errorBorder);
+	border-radius: 4px;
+	background-color: var(--vscode-inputValidation-errorBackground);
+}
+.application-item {
+	margin-bottom: 12px;
+	padding: 12px;
+	border: 1px solid var(--vscode-editorWidget-border);
+	border-radius: 4px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+}
+.application-info {
+	flex-grow: 1;
+}
+.application-name {
+	font-weight: bold;
+	margin-bottom: 4px;
+}
+.application-description {
+	color: var(--vscode-descriptionForeground);
+	margin-bottom: 6px;
+	font-size: 0.9em;
+}
+.application-meta {
+	display: flex;
+	gap: 12px;
+	font-size: 0.8em;
+	color: var(--vscode-descriptionForeground);
+}
+.application-type,
+.application-status {
+	padding: 2px 6px;
+	border-radius: 3px;
+	background-color: var(--vscode-badge-background);
+	color: var(--vscode-badge-foreground);
+}
+
+.application-buttons {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-width: 120px;
+}
+
+.application-buttons vscode-button {
+	width: 100%;
+}
+
+@media (min-width: 768px) {
+	.application-buttons {
+		flex-direction: row;
+		gap: 8px;
+		min-width: auto;
+	}
+
+	.application-buttons vscode-button {
+		width: auto;
+		min-width: 80px;
+	}
+}
