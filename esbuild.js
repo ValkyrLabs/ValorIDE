@@ -106,7 +106,7 @@ const extensionConfig = {
   sourcesContent: false,
   platform: "node",
   outfile: "dist/extension.js",
-  external: ["vscode"],
+  external: ["vscode", "@anthropic-ai/sdk", "@anthropic-ai/bedrock-sdk", "@anthropic-ai/vertex-sdk"],
 };
 
 async function main() {

@@ -4,7 +4,7 @@
 //   protoc               v3.19.1
 // source: file.proto
 
-/* eslint-disable */
+
 import { Empty, StringRequest } from "./common";
 
 export const protobufPackage = "valoride";
