@@ -11,8 +11,12 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime"
-import { McpMarketplaceItem, McpMarketplaceItemFromJSON, McpMarketplaceItemToJSON } from "./"
+import { exists, mapValues } from "../src/runtime";
+import {
+  McpMarketplaceItem,
+  McpMarketplaceItemFromJSON,
+  McpMarketplaceItemToJSON,
+} from "./";
 
 // thorapi
 
@@ -22,89 +26,112 @@ import { McpMarketplaceItem, McpMarketplaceItemFromJSON, McpMarketplaceItemToJSO
  * @interface McpMarketplaceCatalog
  */
 export type McpMarketplaceCatalog = {
-	/**
-	 *
-	 * @type {Array<McpMarketplaceItem>}
-	 * @memberof McpMarketplaceCatalog
-	 */
-	items: Array<McpMarketplaceItem>
-	/**
-	 * Unique identifier for object in the system
-	 * @type {string}
-	 * @memberof McpMarketplaceCatalog
-	 */
-	id?: string
-	/**
-	 * UUID of owner of the object in the system
-	 * @type {string}
-	 * @memberof McpMarketplaceCatalog
-	 */
-	ownerId?: string
-	/**
-	 * Date of object creation
-	 * @type {Date}
-	 * @memberof McpMarketplaceCatalog
-	 */
-	createdDate?: Date
-	/**
-	 * Data, including hash of the key(s) used to encrypt this record.
-	 * @type {string}
-	 * @memberof McpMarketplaceCatalog
-	 */
-	keyHash?: string
-	/**
-	 * Last user to access object
-	 * @type {string}
-	 * @memberof McpMarketplaceCatalog
-	 */
-	lastAccessedById?: string
-	/**
-	 * Timestamp of last access of object
-	 * @type {Date}
-	 * @memberof McpMarketplaceCatalog
-	 */
-	lastAccessedDate?: Date
-	/**
-	 * Unique identifier for user who last modifed the object in the system
-	 * @type {string}
-	 * @memberof McpMarketplaceCatalog
-	 */
-	lastModifiedById?: string
-	/**
-	 * Date of last object modification
-	 * @type {Date}
-	 * @memberof McpMarketplaceCatalog
-	 */
-	lastModifiedDate?: Date
+  /**
+   *
+   * @type {Array<McpMarketplaceItem>}
+   * @memberof McpMarketplaceCatalog
+   */
+  items: Array<McpMarketplaceItem>;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof McpMarketplaceCatalog
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof McpMarketplaceCatalog
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof McpMarketplaceCatalog
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof McpMarketplaceCatalog
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof McpMarketplaceCatalog
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof McpMarketplaceCatalog
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof McpMarketplaceCatalog
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof McpMarketplaceCatalog
+   */
+  lastModifiedDate?: Date;
+};
+
+export function McpMarketplaceCatalogFromJSON(
+  json: any,
+): McpMarketplaceCatalog {
+  return {
+    items: (json["items"] as Array<any>).map(McpMarketplaceItemFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
-export function McpMarketplaceCatalogFromJSON(json: any): McpMarketplaceCatalog {
-	return {
-		items: (json["items"] as Array<any>).map(McpMarketplaceItemFromJSON),
-		id: !exists(json, "id") ? undefined : json["id"],
-		ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-		createdDate: !exists(json, "createdDate") ? undefined : new Date(json["createdDate"]),
-		keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-		lastAccessedById: !exists(json, "lastAccessedById") ? undefined : json["lastAccessedById"],
-		lastAccessedDate: !exists(json, "lastAccessedDate") ? undefined : new Date(json["lastAccessedDate"]),
-		lastModifiedById: !exists(json, "lastModifiedById") ? undefined : json["lastModifiedById"],
-		lastModifiedDate: !exists(json, "lastModifiedDate") ? undefined : new Date(json["lastModifiedDate"]),
-	}
-}
-
-export function McpMarketplaceCatalogToJSON(value?: McpMarketplaceCatalog): any {
-	if (value === undefined) {
-		return undefined
-	}
-	return {
-		items: (value.items as Array<any>).map(McpMarketplaceItemToJSON),
-		id: value.id,
-		ownerId: value.ownerId,
-		createdDate: value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-		keyHash: value.keyHash,
-		lastAccessedById: value.lastAccessedById,
-		lastAccessedDate: value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-		lastModifiedById: value.lastModifiedById,
-		lastModifiedDate: value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-	}
+export function McpMarketplaceCatalogToJSON(
+  value?: McpMarketplaceCatalog,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    items: (value.items as Array<any>).map(McpMarketplaceItemToJSON),
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }

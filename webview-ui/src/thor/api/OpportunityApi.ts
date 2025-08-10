@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: OpportunityApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { Opportunity, OpportunityFromJSON, OpportunityToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Opportunity, OpportunityFromJSON, OpportunityToJSON } from "../model";
 
 export interface DeleteOpportunityRequest {
-	id: string
+  id: string;
 }
 
 export interface GetOpportunityRequest {
-	id: string
+  id: string;
 }
 
 export interface PostOpportunityRequest {
-	opportunity: Opportunity
+  opportunity: Opportunity;
 }
 
 export interface UpdateOpportunityRequest {
-	id: string
-	opportunity: Opportunity
+  id: string;
+  opportunity: Opportunity;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateOpportunityRequest {
  * Delete a Opportunity.
  */
 function deleteOpportunityRaw<T>(
-	requestParameters: DeleteOpportunityRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteOpportunityRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteOpportunity.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteOpportunity.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Opportunity/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Opportunity/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteOpportunityRaw<T>(
  * Delete a Opportunity.
  */
 export function deleteOpportunity<T>(
-	requestParameters: DeleteOpportunityRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteOpportunityRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteOpportunityRaw(requestParameters, requestConfig)
+  return deleteOpportunityRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteOpportunity<T>(
  * Retrieve a single Opportunity
  */
 function getOpportunityRaw<T>(
-	requestParameters: GetOpportunityRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Opportunity> = {},
+  requestParameters: GetOpportunityRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Opportunity> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getOpportunity.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getOpportunity.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Opportunity/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Opportunity/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OpportunityFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(OpportunityFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getOpportunityRaw<T>(
  * Retrieve a single Opportunity
  */
 export function getOpportunity<T>(
-	requestParameters: GetOpportunityRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Opportunity>,
+  requestParameters: GetOpportunityRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Opportunity>,
 ): QueryConfig<T> {
-	return getOpportunityRaw(requestParameters, requestConfig)
+  return getOpportunityRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Opportunitys.
  * Retrieve a list of Opportunitys
  */
-function getOpportunityListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<Opportunity>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getOpportunityListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<Opportunity>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Opportunity`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Opportunity`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(OpportunityFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(OpportunityFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of Opportunitys.
  * Retrieve a list of Opportunitys
  */
-export function getOpportunityList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<Opportunity>>): QueryConfig<T> {
-	return getOpportunityListRaw(requestConfig)
+export function getOpportunityList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Opportunity>>,
+): QueryConfig<T> {
+  return getOpportunityListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getOpportunityList<T>(requestConfig?: runtime.TypedQueryConfig<T
  * Create a new Opportunity
  */
 function postOpportunityRaw<T>(
-	requestParameters: PostOpportunityRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Opportunity> = {},
+  requestParameters: PostOpportunityRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Opportunity> = {},
 ): QueryConfig<T> {
-	if (requestParameters.opportunity === null || requestParameters.opportunity === undefined) {
-		throw new runtime.RequiredError(
-			"opportunity",
-			"Required parameter requestParameters.opportunity was null or undefined when calling postOpportunity.",
-		)
-	}
+  if (
+    requestParameters.opportunity === null ||
+    requestParameters.opportunity === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "opportunity",
+      "Required parameter requestParameters.opportunity was null or undefined when calling postOpportunity.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Opportunity`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || OpportunityToJSON(requestParameters.opportunity),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Opportunity`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || OpportunityToJSON(requestParameters.opportunity),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OpportunityFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(OpportunityFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postOpportunityRaw<T>(
  * Create a new Opportunity
  */
 export function postOpportunity<T>(
-	requestParameters: PostOpportunityRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Opportunity>,
+  requestParameters: PostOpportunityRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Opportunity>,
 ): QueryConfig<T> {
-	return postOpportunityRaw(requestParameters, requestConfig)
+  return postOpportunityRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postOpportunity<T>(
  * Update an existing Opportunity
  */
 function updateOpportunityRaw<T>(
-	requestParameters: UpdateOpportunityRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Opportunity> = {},
+  requestParameters: UpdateOpportunityRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Opportunity> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateOpportunity.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateOpportunity.",
+    );
+  }
 
-	if (requestParameters.opportunity === null || requestParameters.opportunity === undefined) {
-		throw new runtime.RequiredError(
-			"opportunity",
-			"Required parameter requestParameters.opportunity was null or undefined when calling updateOpportunity.",
-		)
-	}
+  if (
+    requestParameters.opportunity === null ||
+    requestParameters.opportunity === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "opportunity",
+      "Required parameter requestParameters.opportunity was null or undefined when calling updateOpportunity.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Opportunity/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || OpportunityToJSON(requestParameters.opportunity),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Opportunity/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || OpportunityToJSON(requestParameters.opportunity),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OpportunityFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(OpportunityFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateOpportunityRaw<T>(
  * Update an existing Opportunity
  */
 export function updateOpportunity<T>(
-	requestParameters: UpdateOpportunityRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Opportunity>,
+  requestParameters: UpdateOpportunityRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Opportunity>,
 ): QueryConfig<T> {
-	return updateOpportunityRaw(requestParameters, requestConfig)
+  return updateOpportunityRaw(requestParameters, requestConfig);
 }

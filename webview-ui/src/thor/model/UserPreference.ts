@@ -11,7 +11,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime"
+import { exists, mapValues } from "../src/runtime";
 
 // thorapi
 
@@ -21,107 +21,128 @@ import { exists, mapValues } from "../src/runtime"
  * @interface UserPreference
  */
 export type UserPreference = {
-	/**
-	 *
-	 * @type {string}
-	 * @memberof UserPreference
-	 */
-	principalId?: string
-	/**
-	 * The value of the User Preferences
-	 * @type {string}
-	 * @memberof UserPreference
-	 */
-	preference?: string
-	/**
-	 * The type of the preference
-	 * @type {string}
-	 * @memberof UserPreference
-	 */
-	preferenceType?: UserPreferencePreferenceTypeEnum
-	/**
-	 * Unique identifier for object in the system
-	 * @type {string}
-	 * @memberof UserPreference
-	 */
-	id?: string
-	/**
-	 * UUID of owner of the object in the system
-	 * @type {string}
-	 * @memberof UserPreference
-	 */
-	ownerId?: string
-	/**
-	 * Date of object creation
-	 * @type {Date}
-	 * @memberof UserPreference
-	 */
-	createdDate?: Date
-	/**
-	 * Data, including hash of the key(s) used to encrypt this record.
-	 * @type {string}
-	 * @memberof UserPreference
-	 */
-	keyHash?: string
-	/**
-	 * Last user to access object
-	 * @type {string}
-	 * @memberof UserPreference
-	 */
-	lastAccessedById?: string
-	/**
-	 * Timestamp of last access of object
-	 * @type {Date}
-	 * @memberof UserPreference
-	 */
-	lastAccessedDate?: Date
-	/**
-	 * Unique identifier for user who last modifed the object in the system
-	 * @type {string}
-	 * @memberof UserPreference
-	 */
-	lastModifiedById?: string
-	/**
-	 * Date of last object modification
-	 * @type {Date}
-	 * @memberof UserPreference
-	 */
-	lastModifiedDate?: Date
-}
+  /**
+   *
+   * @type {string}
+   * @memberof UserPreference
+   */
+  principalId?: string;
+  /**
+   * The value of the User Preferences
+   * @type {string}
+   * @memberof UserPreference
+   */
+  preference?: string;
+  /**
+   * The type of the preference
+   * @type {string}
+   * @memberof UserPreference
+   */
+  preferenceType?: UserPreferencePreferenceTypeEnum;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof UserPreference
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof UserPreference
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof UserPreference
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof UserPreference
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof UserPreference
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof UserPreference
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof UserPreference
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof UserPreference
+   */
+  lastModifiedDate?: Date;
+};
 
 export function UserPreferenceFromJSON(json: any): UserPreference {
-	return {
-		principalId: !exists(json, "principalId") ? undefined : json["principalId"],
-		preference: !exists(json, "preference") ? undefined : json["preference"],
-		preferenceType: !exists(json, "preferenceType") ? undefined : json["preferenceType"],
-		id: !exists(json, "id") ? undefined : json["id"],
-		ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-		createdDate: !exists(json, "createdDate") ? undefined : new Date(json["createdDate"]),
-		keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-		lastAccessedById: !exists(json, "lastAccessedById") ? undefined : json["lastAccessedById"],
-		lastAccessedDate: !exists(json, "lastAccessedDate") ? undefined : new Date(json["lastAccessedDate"]),
-		lastModifiedById: !exists(json, "lastModifiedById") ? undefined : json["lastModifiedById"],
-		lastModifiedDate: !exists(json, "lastModifiedDate") ? undefined : new Date(json["lastModifiedDate"]),
-	}
+  return {
+    principalId: !exists(json, "principalId") ? undefined : json["principalId"],
+    preference: !exists(json, "preference") ? undefined : json["preference"],
+    preferenceType: !exists(json, "preferenceType")
+      ? undefined
+      : json["preferenceType"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function UserPreferenceToJSON(value?: UserPreference): any {
-	if (value === undefined) {
-		return undefined
-	}
-	return {
-		principalId: value.principalId,
-		preference: value.preference,
-		preferenceType: value.preferenceType,
-		id: value.id,
-		ownerId: value.ownerId,
-		createdDate: value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-		keyHash: value.keyHash,
-		lastAccessedById: value.lastAccessedById,
-		lastAccessedDate: value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-		lastModifiedById: value.lastModifiedById,
-		lastModifiedDate: value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-	}
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    principalId: value.principalId,
+    preference: value.preference,
+    preferenceType: value.preferenceType,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
@@ -129,8 +150,8 @@ export function UserPreferenceToJSON(value?: UserPreference): any {
  * @enum {string}
  */
 export enum UserPreferencePreferenceTypeEnum {
-	UXLAYOUT = "ux-layout",
-	UXMODE = "ux-mode",
-	UXTHEME = "ux-theme",
-	MEASUREMENT = "measurement",
+  UXLAYOUT = "ux-layout",
+  UXMODE = "ux-mode",
+  UXTHEME = "ux-theme",
+  MEASUREMENT = "measurement",
 }

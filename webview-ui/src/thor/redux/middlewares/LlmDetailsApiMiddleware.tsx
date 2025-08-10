@@ -1,22 +1,28 @@
-import { getLlmDetails, postLlmDetails, getLlmDetailsList, deleteLlmDetails, updateLlmDetails } from "../../api"
+import {
+  getLlmDetails,
+  postLlmDetails,
+  getLlmDetailsList,
+  deleteLlmDetails,
+  updateLlmDetails,
+} from "../../api";
 
 import {
-	ADD_LLMDETAILS_REQUEST,
-	FETCH_LLMDETAILS_REQUEST,
-	LIST_LLMDETAILS_REQUEST,
-	UPDATE_LLMDETAILS_REQUEST,
-	DELETE_LLMDETAILS_REQUEST,
-	addLlmDetailsFailure,
-	addLlmDetailsSuccess,
-	fetchLlmDetailsFailure,
-	fetchLlmDetailsSuccess,
-	listLlmDetailsFailure,
-	listLlmDetailsSuccess,
-	updateLlmDetailsFailure,
-	updateLlmDetailsSuccess,
-	deleteLlmDetailsFailure,
-	deleteLlmDetailsSuccess,
-} from "../actions/LlmDetailsApiAction"
+  ADD_LLMDETAILS_REQUEST,
+  FETCH_LLMDETAILS_REQUEST,
+  LIST_LLMDETAILS_REQUEST,
+  UPDATE_LLMDETAILS_REQUEST,
+  DELETE_LLMDETAILS_REQUEST,
+  addLlmDetailsFailure,
+  addLlmDetailsSuccess,
+  fetchLlmDetailsFailure,
+  fetchLlmDetailsSuccess,
+  listLlmDetailsFailure,
+  listLlmDetailsSuccess,
+  updateLlmDetailsFailure,
+  updateLlmDetailsSuccess,
+  deleteLlmDetailsFailure,
+  deleteLlmDetailsSuccess,
+} from "../actions/LlmDetailsApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: LlmDetails
 */
 
 export const LlmDetailsMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("LlmDetails MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("LlmDetails MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_LLMDETAILS_REQUEST:
-				try {
-					const response = postLlmDetails(action.payload)
-					dispatch(addLlmDetailsSuccess(response.body))
-				} catch (error) {
-					dispatch(addLlmDetailsFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_LLMDETAILS_REQUEST:
+        try {
+          const response = postLlmDetails(action.payload);
+          dispatch(addLlmDetailsSuccess(response.body));
+        } catch (error) {
+          dispatch(addLlmDetailsFailure(error.message));
+        }
+        break;
 
-			case LIST_LLMDETAILS_REQUEST:
-				try {
-					const response = getLlmDetailsList()
-					dispatch(listLlmDetailsSuccess(response.body))
-				} catch (error) {
-					dispatch(listLlmDetailsFailure(error.message))
-				}
-				break
+      case LIST_LLMDETAILS_REQUEST:
+        try {
+          const response = getLlmDetailsList();
+          dispatch(listLlmDetailsSuccess(response.body));
+        } catch (error) {
+          dispatch(listLlmDetailsFailure(error.message));
+        }
+        break;
 
-			case FETCH_LLMDETAILS_REQUEST:
-				try {
-					const response = getLlmDetails(action.id)
-					dispatch(fetchLlmDetailsSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchLlmDetailsFailure(error.message))
-				}
-				break
+      case FETCH_LLMDETAILS_REQUEST:
+        try {
+          const response = getLlmDetails(action.id);
+          dispatch(fetchLlmDetailsSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchLlmDetailsFailure(error.message));
+        }
+        break;
 
-			case UPDATE_LLMDETAILS_REQUEST:
-				try {
-					const { id, LlmDetails } = action.payload
-					const response = updateLlmDetails(id)
-					dispatch(updateLlmDetailsSuccess(response.body))
-				} catch (error) {
-					dispatch(updateLlmDetailsFailure(error.message))
-				}
-				break
+      case UPDATE_LLMDETAILS_REQUEST:
+        try {
+          const { id, LlmDetails } = action.payload;
+          const response = updateLlmDetails(id);
+          dispatch(updateLlmDetailsSuccess(response.body));
+        } catch (error) {
+          dispatch(updateLlmDetailsFailure(error.message));
+        }
+        break;
 
-			case DELETE_LLMDETAILS_REQUEST:
-				try {
-					const { id, LlmDetails } = action.payload
-					const response = deleteLlmDetails(id)
-					dispatch(deleteLlmDetailsSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteLlmDetailsFailure(error.message))
-				}
-				break
+      case DELETE_LLMDETAILS_REQUEST:
+        try {
+          const { id, LlmDetails } = action.payload;
+          const response = deleteLlmDetails(id);
+          dispatch(deleteLlmDetailsSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteLlmDetailsFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

@@ -16,25 +16,34 @@ Template file: typescript-redux-query/apis.mustache
 Description: ThorUXComponentApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { ThorUXComponent, ThorUXComponentFromJSON, ThorUXComponentToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  ThorUXComponent,
+  ThorUXComponentFromJSON,
+  ThorUXComponentToJSON,
+} from "../model";
 
 export interface DeleteThorUXComponentRequest {
-	id: string
+  id: string;
 }
 
 export interface GetThorUXComponentRequest {
-	id: string
+  id: string;
 }
 
 export interface PostThorUXComponentRequest {
-	thorUXComponent: ThorUXComponent
+  thorUXComponent: ThorUXComponent;
 }
 
 export interface UpdateThorUXComponentRequest {
-	id: string
-	thorUXComponent: ThorUXComponent
+  id: string;
+  thorUXComponent: ThorUXComponent;
 }
 
 /**
@@ -42,45 +51,45 @@ export interface UpdateThorUXComponentRequest {
  * Delete a ThorUXComponent.
  */
 function deleteThorUXComponentRaw<T>(
-	requestParameters: DeleteThorUXComponentRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteThorUXComponentRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteThorUXComponent.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteThorUXComponent.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ThorUXComponent/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ThorUXComponent/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +97,10 @@ function deleteThorUXComponentRaw<T>(
  * Delete a ThorUXComponent.
  */
 export function deleteThorUXComponent<T>(
-	requestParameters: DeleteThorUXComponentRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteThorUXComponentRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteThorUXComponentRaw(requestParameters, requestConfig)
+  return deleteThorUXComponentRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +108,47 @@ export function deleteThorUXComponent<T>(
  * Retrieve a single ThorUXComponent
  */
 function getThorUXComponentRaw<T>(
-	requestParameters: GetThorUXComponentRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ThorUXComponent> = {},
+  requestParameters: GetThorUXComponentRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ThorUXComponent> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getThorUXComponent.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getThorUXComponent.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ThorUXComponent/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ThorUXComponent/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ThorUXComponentFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ThorUXComponentFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +156,57 @@ function getThorUXComponentRaw<T>(
  * Retrieve a single ThorUXComponent
  */
 export function getThorUXComponent<T>(
-	requestParameters: GetThorUXComponentRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ThorUXComponent>,
+  requestParameters: GetThorUXComponentRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ThorUXComponent>,
 ): QueryConfig<T> {
-	return getThorUXComponentRaw(requestParameters, requestConfig)
+  return getThorUXComponentRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of ThorUXComponents.
  * Retrieve a list of ThorUXComponents
  */
-function getThorUXComponentListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<ThorUXComponent>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getThorUXComponentListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<ThorUXComponent>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ThorUXComponent`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ThorUXComponent`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(ThorUXComponentFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(ThorUXComponentFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of ThorUXComponents.
  * Retrieve a list of ThorUXComponents
  */
-export function getThorUXComponentList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<ThorUXComponent>>): QueryConfig<T> {
-	return getThorUXComponentListRaw(requestConfig)
+export function getThorUXComponentList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<ThorUXComponent>>,
+): QueryConfig<T> {
+  return getThorUXComponentListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +214,51 @@ export function getThorUXComponentList<T>(requestConfig?: runtime.TypedQueryConf
  * Create a new ThorUXComponent
  */
 function postThorUXComponentRaw<T>(
-	requestParameters: PostThorUXComponentRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ThorUXComponent> = {},
+  requestParameters: PostThorUXComponentRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ThorUXComponent> = {},
 ): QueryConfig<T> {
-	if (requestParameters.thorUXComponent === null || requestParameters.thorUXComponent === undefined) {
-		throw new runtime.RequiredError(
-			"thorUXComponent",
-			"Required parameter requestParameters.thorUXComponent was null or undefined when calling postThorUXComponent.",
-		)
-	}
+  if (
+    requestParameters.thorUXComponent === null ||
+    requestParameters.thorUXComponent === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "thorUXComponent",
+      "Required parameter requestParameters.thorUXComponent was null or undefined when calling postThorUXComponent.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ThorUXComponent`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || ThorUXComponentToJSON(requestParameters.thorUXComponent),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ThorUXComponent`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      ThorUXComponentToJSON(requestParameters.thorUXComponent),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ThorUXComponentFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ThorUXComponentFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +266,10 @@ function postThorUXComponentRaw<T>(
  * Create a new ThorUXComponent
  */
 export function postThorUXComponent<T>(
-	requestParameters: PostThorUXComponentRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ThorUXComponent>,
+  requestParameters: PostThorUXComponentRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ThorUXComponent>,
 ): QueryConfig<T> {
-	return postThorUXComponentRaw(requestParameters, requestConfig)
+  return postThorUXComponentRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +277,61 @@ export function postThorUXComponent<T>(
  * Update an existing ThorUXComponent
  */
 function updateThorUXComponentRaw<T>(
-	requestParameters: UpdateThorUXComponentRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ThorUXComponent> = {},
+  requestParameters: UpdateThorUXComponentRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ThorUXComponent> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateThorUXComponent.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateThorUXComponent.",
+    );
+  }
 
-	if (requestParameters.thorUXComponent === null || requestParameters.thorUXComponent === undefined) {
-		throw new runtime.RequiredError(
-			"thorUXComponent",
-			"Required parameter requestParameters.thorUXComponent was null or undefined when calling updateThorUXComponent.",
-		)
-	}
+  if (
+    requestParameters.thorUXComponent === null ||
+    requestParameters.thorUXComponent === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "thorUXComponent",
+      "Required parameter requestParameters.thorUXComponent was null or undefined when calling updateThorUXComponent.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ThorUXComponent/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || ThorUXComponentToJSON(requestParameters.thorUXComponent),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ThorUXComponent/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      ThorUXComponentToJSON(requestParameters.thorUXComponent),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ThorUXComponentFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ThorUXComponentFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +339,8 @@ function updateThorUXComponentRaw<T>(
  * Update an existing ThorUXComponent
  */
 export function updateThorUXComponent<T>(
-	requestParameters: UpdateThorUXComponentRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ThorUXComponent>,
+  requestParameters: UpdateThorUXComponentRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ThorUXComponent>,
 ): QueryConfig<T> {
-	return updateThorUXComponentRaw(requestParameters, requestConfig)
+  return updateThorUXComponentRaw(requestParameters, requestConfig);
 }

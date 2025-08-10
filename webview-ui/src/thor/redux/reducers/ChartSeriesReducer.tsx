@@ -1,34 +1,42 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 
-import { ChartSeries } from "../../model/ChartSeries"
+import { ChartSeries } from "../../model/ChartSeries";
 
 const ChartSeriesSlice = createSlice({
-	name: "ChartSeriess",
-	initialState: [],
+  name: "ChartSeriess",
+  initialState: [],
 
-	reducers: {
-		ChartSeriesAdded(state, action) {
-			state.push(action.payload)
-		},
+  reducers: {
+    ChartSeriesAdded(state, action) {
+      state.push(action.payload);
+    },
 
-		ChartSeriesValueToggled(state, action) {
-			console.log("ChartSeries TOGGLE")
-			console.warn(JSON.stringify(action))
-			const ChartSeries: ChartSeries = state.find((ChartSeries) => ChartSeries.id === action.payload.ChartSeriesId)
-			if (ChartSeries) {
-				if (action.payload.target === "SOMETHING") {
-				}
-			}
-		},
+    ChartSeriesValueToggled(state, action) {
+      console.log("ChartSeries TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ChartSeries: ChartSeries = state.find(
+        (ChartSeries) => ChartSeries.id === action.payload.ChartSeriesId,
+      );
+      if (ChartSeries) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
 
-		ChartSeriespropertySet(state, action) {
-			const ChartSeries = state.find((ChartSeries) => ChartSeries.id === action.payload.ChartSeriesId)
-			if (ChartSeries) {
-				//  ChartSeries[action.property] = action.payload[action.property];
-			}
-		},
-	},
-})
+    ChartSeriespropertySet(state, action) {
+      const ChartSeries = state.find(
+        (ChartSeries) => ChartSeries.id === action.payload.ChartSeriesId,
+      );
+      if (ChartSeries) {
+        //  ChartSeries[action.property] = action.payload[action.property];
+      }
+    },
+  },
+});
 
-export const { ChartSeriesAdded, ChartSeriesValueToggled, ChartSeriespropertySet } = ChartSeriesSlice.actions
-export default ChartSeriesSlice.reducer
+export const {
+  ChartSeriesAdded,
+  ChartSeriesValueToggled,
+  ChartSeriespropertySet,
+} = ChartSeriesSlice.actions;
+export default ChartSeriesSlice.reducer;

@@ -16,25 +16,34 @@ Template file: typescript-redux-query/apis.mustache
 Description: McpMarketplaceCatalogApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { McpMarketplaceCatalog, McpMarketplaceCatalogFromJSON, McpMarketplaceCatalogToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  McpMarketplaceCatalog,
+  McpMarketplaceCatalogFromJSON,
+  McpMarketplaceCatalogToJSON,
+} from "../model";
 
 export interface DeleteMcpMarketplaceCatalogRequest {
-	id: string
+  id: string;
 }
 
 export interface GetMcpMarketplaceCatalogRequest {
-	id: string
+  id: string;
 }
 
 export interface PostMcpMarketplaceCatalogRequest {
-	mcpMarketplaceCatalog: McpMarketplaceCatalog
+  mcpMarketplaceCatalog: McpMarketplaceCatalog;
 }
 
 export interface UpdateMcpMarketplaceCatalogRequest {
-	id: string
-	mcpMarketplaceCatalog: McpMarketplaceCatalog
+  id: string;
+  mcpMarketplaceCatalog: McpMarketplaceCatalog;
 }
 
 /**
@@ -42,45 +51,45 @@ export interface UpdateMcpMarketplaceCatalogRequest {
  * Delete a McpMarketplaceCatalog.
  */
 function deleteMcpMarketplaceCatalogRaw<T>(
-	requestParameters: DeleteMcpMarketplaceCatalogRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteMcpMarketplaceCatalogRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteMcpMarketplaceCatalog.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteMcpMarketplaceCatalog.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/McpMarketplaceCatalog/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpMarketplaceCatalog/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +97,10 @@ function deleteMcpMarketplaceCatalogRaw<T>(
  * Delete a McpMarketplaceCatalog.
  */
 export function deleteMcpMarketplaceCatalog<T>(
-	requestParameters: DeleteMcpMarketplaceCatalogRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteMcpMarketplaceCatalogRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteMcpMarketplaceCatalogRaw(requestParameters, requestConfig)
+  return deleteMcpMarketplaceCatalogRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +108,47 @@ export function deleteMcpMarketplaceCatalog<T>(
  * Retrieve a single McpMarketplaceCatalog
  */
 function getMcpMarketplaceCatalogRaw<T>(
-	requestParameters: GetMcpMarketplaceCatalogRequest,
-	requestConfig: runtime.TypedQueryConfig<T, McpMarketplaceCatalog> = {},
+  requestParameters: GetMcpMarketplaceCatalogRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpMarketplaceCatalog> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getMcpMarketplaceCatalog.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getMcpMarketplaceCatalog.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/McpMarketplaceCatalog/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpMarketplaceCatalog/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpMarketplaceCatalogFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpMarketplaceCatalogFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,10 +156,10 @@ function getMcpMarketplaceCatalogRaw<T>(
  * Retrieve a single McpMarketplaceCatalog
  */
 export function getMcpMarketplaceCatalog<T>(
-	requestParameters: GetMcpMarketplaceCatalogRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, McpMarketplaceCatalog>,
+  requestParameters: GetMcpMarketplaceCatalogRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpMarketplaceCatalog>,
 ): QueryConfig<T> {
-	return getMcpMarketplaceCatalogRaw(requestParameters, requestConfig)
+  return getMcpMarketplaceCatalogRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -157,36 +167,36 @@ export function getMcpMarketplaceCatalog<T>(
  * Retrieve a list of McpMarketplaceCatalogs
  */
 function getMcpMarketplaceCatalogListRaw<T>(
-	requestConfig: runtime.TypedQueryConfig<T, Array<McpMarketplaceCatalog>> = {},
+  requestConfig: runtime.TypedQueryConfig<T, Array<McpMarketplaceCatalog>> = {},
 ): QueryConfig<T> {
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/McpMarketplaceCatalog`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpMarketplaceCatalog`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) =>
-			requestTransform(body.map(McpMarketplaceCatalogFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(McpMarketplaceCatalogFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -194,9 +204,9 @@ function getMcpMarketplaceCatalogListRaw<T>(
  * Retrieve a list of McpMarketplaceCatalogs
  */
 export function getMcpMarketplaceCatalogList<T>(
-	requestConfig?: runtime.TypedQueryConfig<T, Array<McpMarketplaceCatalog>>,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<McpMarketplaceCatalog>>,
 ): QueryConfig<T> {
-	return getMcpMarketplaceCatalogListRaw(requestConfig)
+  return getMcpMarketplaceCatalogListRaw(requestConfig);
 }
 
 /**
@@ -204,45 +214,51 @@ export function getMcpMarketplaceCatalogList<T>(
  * Create a new McpMarketplaceCatalog
  */
 function postMcpMarketplaceCatalogRaw<T>(
-	requestParameters: PostMcpMarketplaceCatalogRequest,
-	requestConfig: runtime.TypedQueryConfig<T, McpMarketplaceCatalog> = {},
+  requestParameters: PostMcpMarketplaceCatalogRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpMarketplaceCatalog> = {},
 ): QueryConfig<T> {
-	if (requestParameters.mcpMarketplaceCatalog === null || requestParameters.mcpMarketplaceCatalog === undefined) {
-		throw new runtime.RequiredError(
-			"mcpMarketplaceCatalog",
-			"Required parameter requestParameters.mcpMarketplaceCatalog was null or undefined when calling postMcpMarketplaceCatalog.",
-		)
-	}
+  if (
+    requestParameters.mcpMarketplaceCatalog === null ||
+    requestParameters.mcpMarketplaceCatalog === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mcpMarketplaceCatalog",
+      "Required parameter requestParameters.mcpMarketplaceCatalog was null or undefined when calling postMcpMarketplaceCatalog.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/McpMarketplaceCatalog`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || McpMarketplaceCatalogToJSON(requestParameters.mcpMarketplaceCatalog),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpMarketplaceCatalog`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      McpMarketplaceCatalogToJSON(requestParameters.mcpMarketplaceCatalog),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpMarketplaceCatalogFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpMarketplaceCatalogFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -250,10 +266,10 @@ function postMcpMarketplaceCatalogRaw<T>(
  * Create a new McpMarketplaceCatalog
  */
 export function postMcpMarketplaceCatalog<T>(
-	requestParameters: PostMcpMarketplaceCatalogRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, McpMarketplaceCatalog>,
+  requestParameters: PostMcpMarketplaceCatalogRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpMarketplaceCatalog>,
 ): QueryConfig<T> {
-	return postMcpMarketplaceCatalogRaw(requestParameters, requestConfig)
+  return postMcpMarketplaceCatalogRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -261,55 +277,61 @@ export function postMcpMarketplaceCatalog<T>(
  * Update an existing McpMarketplaceCatalog
  */
 function updateMcpMarketplaceCatalogRaw<T>(
-	requestParameters: UpdateMcpMarketplaceCatalogRequest,
-	requestConfig: runtime.TypedQueryConfig<T, McpMarketplaceCatalog> = {},
+  requestParameters: UpdateMcpMarketplaceCatalogRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpMarketplaceCatalog> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateMcpMarketplaceCatalog.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateMcpMarketplaceCatalog.",
+    );
+  }
 
-	if (requestParameters.mcpMarketplaceCatalog === null || requestParameters.mcpMarketplaceCatalog === undefined) {
-		throw new runtime.RequiredError(
-			"mcpMarketplaceCatalog",
-			"Required parameter requestParameters.mcpMarketplaceCatalog was null or undefined when calling updateMcpMarketplaceCatalog.",
-		)
-	}
+  if (
+    requestParameters.mcpMarketplaceCatalog === null ||
+    requestParameters.mcpMarketplaceCatalog === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mcpMarketplaceCatalog",
+      "Required parameter requestParameters.mcpMarketplaceCatalog was null or undefined when calling updateMcpMarketplaceCatalog.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/McpMarketplaceCatalog/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || McpMarketplaceCatalogToJSON(requestParameters.mcpMarketplaceCatalog),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpMarketplaceCatalog/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      McpMarketplaceCatalogToJSON(requestParameters.mcpMarketplaceCatalog),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpMarketplaceCatalogFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpMarketplaceCatalogFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -317,8 +339,8 @@ function updateMcpMarketplaceCatalogRaw<T>(
  * Update an existing McpMarketplaceCatalog
  */
 export function updateMcpMarketplaceCatalog<T>(
-	requestParameters: UpdateMcpMarketplaceCatalogRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, McpMarketplaceCatalog>,
+  requestParameters: UpdateMcpMarketplaceCatalogRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpMarketplaceCatalog>,
 ): QueryConfig<T> {
-	return updateMcpMarketplaceCatalogRaw(requestParameters, requestConfig)
+  return updateMcpMarketplaceCatalogRaw(requestParameters, requestConfig);
 }

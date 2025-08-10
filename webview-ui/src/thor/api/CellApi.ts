@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: CellApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { Cell, CellFromJSON, CellToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Cell, CellFromJSON, CellToJSON } from "../model";
 
 export interface DeleteCellRequest {
-	id: string
+  id: string;
 }
 
 export interface GetCellRequest {
-	id: string
+  id: string;
 }
 
 export interface PostCellRequest {
-	cell: Cell
+  cell: Cell;
 }
 
 export interface UpdateCellRequest {
-	id: string
-	cell: Cell
+  id: string;
+  cell: Cell;
 }
 
 /**
@@ -42,42 +47,45 @@ export interface UpdateCellRequest {
  * Delete a Cell.
  */
 function deleteCellRaw<T>(
-	requestParameters: DeleteCellRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteCellRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteCell.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteCell.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Cell/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Cell/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -85,101 +93,116 @@ function deleteCellRaw<T>(
  * Delete a Cell.
  */
 export function deleteCell<T>(
-	requestParameters: DeleteCellRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteCellRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteCellRaw(requestParameters, requestConfig)
+  return deleteCellRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single Cell for a specific uid.
  * Retrieve a single Cell
  */
-function getCellRaw<T>(requestParameters: GetCellRequest, requestConfig: runtime.TypedQueryConfig<T, Cell> = {}): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getCell.",
-		)
-	}
+function getCellRaw<T>(
+  requestParameters: GetCellRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Cell> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getCell.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Cell/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Cell/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(CellFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(CellFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a single Cell for a specific uid.
  * Retrieve a single Cell
  */
-export function getCell<T>(requestParameters: GetCellRequest, requestConfig?: runtime.TypedQueryConfig<T, Cell>): QueryConfig<T> {
-	return getCellRaw(requestParameters, requestConfig)
+export function getCell<T>(
+  requestParameters: GetCellRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Cell>,
+): QueryConfig<T> {
+  return getCellRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Cells.
  * Retrieve a list of Cells
  */
-function getCellListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<Cell>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getCellListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<Cell>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Cell`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Cell`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(CellFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(CellFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of Cells.
  * Retrieve a list of Cells
  */
-export function getCellList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<Cell>>): QueryConfig<T> {
-	return getCellListRaw(requestConfig)
+export function getCellList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Cell>>,
+): QueryConfig<T> {
+  return getCellListRaw(requestConfig);
 }
 
 /**
@@ -187,45 +210,46 @@ export function getCellList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array
  * Create a new Cell
  */
 function postCellRaw<T>(
-	requestParameters: PostCellRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Cell> = {},
+  requestParameters: PostCellRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Cell> = {},
 ): QueryConfig<T> {
-	if (requestParameters.cell === null || requestParameters.cell === undefined) {
-		throw new runtime.RequiredError(
-			"cell",
-			"Required parameter requestParameters.cell was null or undefined when calling postCell.",
-		)
-	}
+  if (requestParameters.cell === null || requestParameters.cell === undefined) {
+    throw new runtime.RequiredError(
+      "cell",
+      "Required parameter requestParameters.cell was null or undefined when calling postCell.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Cell`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || CellToJSON(requestParameters.cell),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Cell`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || CellToJSON(requestParameters.cell),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(CellFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(CellFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -233,10 +257,10 @@ function postCellRaw<T>(
  * Create a new Cell
  */
 export function postCell<T>(
-	requestParameters: PostCellRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Cell>,
+  requestParameters: PostCellRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Cell>,
 ): QueryConfig<T> {
-	return postCellRaw(requestParameters, requestConfig)
+  return postCellRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -244,52 +268,56 @@ export function postCell<T>(
  * Update an existing Cell
  */
 function updateCellRaw<T>(
-	requestParameters: UpdateCellRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Cell> = {},
+  requestParameters: UpdateCellRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Cell> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateCell.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateCell.",
+    );
+  }
 
-	if (requestParameters.cell === null || requestParameters.cell === undefined) {
-		throw new runtime.RequiredError(
-			"cell",
-			"Required parameter requestParameters.cell was null or undefined when calling updateCell.",
-		)
-	}
+  if (requestParameters.cell === null || requestParameters.cell === undefined) {
+    throw new runtime.RequiredError(
+      "cell",
+      "Required parameter requestParameters.cell was null or undefined when calling updateCell.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Cell/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || CellToJSON(requestParameters.cell),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Cell/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || CellToJSON(requestParameters.cell),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(CellFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(CellFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -297,8 +325,8 @@ function updateCellRaw<T>(
  * Update an existing Cell
  */
 export function updateCell<T>(
-	requestParameters: UpdateCellRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Cell>,
+  requestParameters: UpdateCellRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Cell>,
 ): QueryConfig<T> {
-	return updateCellRaw(requestParameters, requestConfig)
+  return updateCellRaw(requestParameters, requestConfig);
 }

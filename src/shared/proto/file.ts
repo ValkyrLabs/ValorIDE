@@ -5,24 +5,24 @@
 // source: file.proto
 
 /* eslint-disable */
-import { Empty, StringRequest } from "./common"
+import { Empty, StringRequest } from "./common";
 
-export const protobufPackage = "valoride"
+export const protobufPackage = "valoride";
 
 /** Service for file-related operations */
-export type FileServiceDefinition = typeof FileServiceDefinition
+export type FileServiceDefinition = typeof FileServiceDefinition;
 export const FileServiceDefinition = {
-	name: "FileService",
-	fullName: "valoride.FileService",
-	methods: {
-		/** Opens a file in the editor */
-		openFile: {
-			name: "openFile",
-			requestType: StringRequest,
-			requestStream: false,
-			responseType: Empty,
-			responseStream: false,
-			options: {},
-		},
-	},
-} as const
+  name: "FileService",
+  fullName: "valoride.FileService",
+  methods: {
+    /** Opens a file in the editor */
+    openFile: {
+      name: "openFile",
+      requestType: StringRequest,
+      requestStream: false,
+      responseType: Empty,
+      responseStream: false,
+      options: {},
+    },
+  },
+} as const;

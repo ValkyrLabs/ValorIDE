@@ -13,20 +13,20 @@ Rasse, Religion oder sexueller Identität und Orientierung.
 
 Beispiele für Verhaltensweisen, die dazu beitragen, eine positive Umgebung zu schaffen, sind:
 
--   Verwendung einer einladenden und inklusiven Sprache
--   Respekt gegenüber unterschiedlichen Standpunkten und Erfahrungen
--   Konstruktive Annahme von Kritik
--   Fokussierung auf das, was das Beste für die Gemeinschaft ist
--   Empathie gegenüber anderen Mitgliedern der Gemeinschaft zeigen
+- Verwendung einer einladenden und inklusiven Sprache
+- Respekt gegenüber unterschiedlichen Standpunkten und Erfahrungen
+- Konstruktive Annahme von Kritik
+- Fokussierung auf das, was das Beste für die Gemeinschaft ist
+- Empathie gegenüber anderen Mitgliedern der Gemeinschaft zeigen
 
 Beispiele für inakzeptables Verhalten von Teilnehmern sind:
 
--   Die Verwendung von sexualisierter Sprache oder Bildern und unerwünschte sexuelle Aufmerksamkeit oder Annäherungen
--   Trollen, beleidigende/abwertende Kommentare und persönliche oder politische Angriffe
--   Öffentliche oder private Belästigung
--   Veröffentlichen von privaten Informationen anderer, wie eine physische oder elektronische Adresse,
-    ohne ausdrückliche Erlaubnis
--   Andere Verhaltensweisen, die in einem professionellen Umfeld als unangemessen angesehen werden könnten
+- Die Verwendung von sexualisierter Sprache oder Bildern und unerwünschte sexuelle Aufmerksamkeit oder Annäherungen
+- Trollen, beleidigende/abwertende Kommentare und persönliche oder politische Angriffe
+- Öffentliche oder private Belästigung
+- Veröffentlichen von privaten Informationen anderer, wie eine physische oder elektronische Adresse,
+  ohne ausdrückliche Erlaubnis
+- Andere Verhaltensweisen, die in einem professionellen Umfeld als unangemessen angesehen werden könnten
 
 ## Unsere Verantwortlichkeiten
 

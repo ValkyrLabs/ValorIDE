@@ -1,22 +1,28 @@
-import { getOasResponse, postOasResponse, getOasResponseList, deleteOasResponse, updateOasResponse } from "../../api"
+import {
+  getOasResponse,
+  postOasResponse,
+  getOasResponseList,
+  deleteOasResponse,
+  updateOasResponse,
+} from "../../api";
 
 import {
-	ADD_OASRESPONSE_REQUEST,
-	FETCH_OASRESPONSE_REQUEST,
-	LIST_OASRESPONSE_REQUEST,
-	UPDATE_OASRESPONSE_REQUEST,
-	DELETE_OASRESPONSE_REQUEST,
-	addOasResponseFailure,
-	addOasResponseSuccess,
-	fetchOasResponseFailure,
-	fetchOasResponseSuccess,
-	listOasResponseFailure,
-	listOasResponseSuccess,
-	updateOasResponseFailure,
-	updateOasResponseSuccess,
-	deleteOasResponseFailure,
-	deleteOasResponseSuccess,
-} from "../actions/OasResponseApiAction"
+  ADD_OASRESPONSE_REQUEST,
+  FETCH_OASRESPONSE_REQUEST,
+  LIST_OASRESPONSE_REQUEST,
+  UPDATE_OASRESPONSE_REQUEST,
+  DELETE_OASRESPONSE_REQUEST,
+  addOasResponseFailure,
+  addOasResponseSuccess,
+  fetchOasResponseFailure,
+  fetchOasResponseSuccess,
+  listOasResponseFailure,
+  listOasResponseSuccess,
+  updateOasResponseFailure,
+  updateOasResponseSuccess,
+  deleteOasResponseFailure,
+  deleteOasResponseSuccess,
+} from "../actions/OasResponseApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: OasResponse
 */
 
 export const OasResponseMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("OasResponse MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("OasResponse MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_OASRESPONSE_REQUEST:
-				try {
-					const response = postOasResponse(action.payload)
-					dispatch(addOasResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(addOasResponseFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_OASRESPONSE_REQUEST:
+        try {
+          const response = postOasResponse(action.payload);
+          dispatch(addOasResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(addOasResponseFailure(error.message));
+        }
+        break;
 
-			case LIST_OASRESPONSE_REQUEST:
-				try {
-					const response = getOasResponseList()
-					dispatch(listOasResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(listOasResponseFailure(error.message))
-				}
-				break
+      case LIST_OASRESPONSE_REQUEST:
+        try {
+          const response = getOasResponseList();
+          dispatch(listOasResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(listOasResponseFailure(error.message));
+        }
+        break;
 
-			case FETCH_OASRESPONSE_REQUEST:
-				try {
-					const response = getOasResponse(action.id)
-					dispatch(fetchOasResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchOasResponseFailure(error.message))
-				}
-				break
+      case FETCH_OASRESPONSE_REQUEST:
+        try {
+          const response = getOasResponse(action.id);
+          dispatch(fetchOasResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchOasResponseFailure(error.message));
+        }
+        break;
 
-			case UPDATE_OASRESPONSE_REQUEST:
-				try {
-					const { id, OasResponse } = action.payload
-					const response = updateOasResponse(id)
-					dispatch(updateOasResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(updateOasResponseFailure(error.message))
-				}
-				break
+      case UPDATE_OASRESPONSE_REQUEST:
+        try {
+          const { id, OasResponse } = action.payload;
+          const response = updateOasResponse(id);
+          dispatch(updateOasResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(updateOasResponseFailure(error.message));
+        }
+        break;
 
-			case DELETE_OASRESPONSE_REQUEST:
-				try {
-					const { id, OasResponse } = action.payload
-					const response = deleteOasResponse(id)
-					dispatch(deleteOasResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteOasResponseFailure(error.message))
-				}
-				break
+      case DELETE_OASRESPONSE_REQUEST:
+        try {
+          const { id, OasResponse } = action.payload;
+          const response = deleteOasResponse(id);
+          dispatch(deleteOasResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteOasResponseFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

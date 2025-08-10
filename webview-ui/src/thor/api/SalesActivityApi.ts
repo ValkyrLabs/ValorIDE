@@ -16,25 +16,34 @@ Template file: typescript-redux-query/apis.mustache
 Description: SalesActivityApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { SalesActivity, SalesActivityFromJSON, SalesActivityToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  SalesActivity,
+  SalesActivityFromJSON,
+  SalesActivityToJSON,
+} from "../model";
 
 export interface DeleteSalesActivityRequest {
-	id: string
+  id: string;
 }
 
 export interface GetSalesActivityRequest {
-	id: string
+  id: string;
 }
 
 export interface PostSalesActivityRequest {
-	salesActivity: SalesActivity
+  salesActivity: SalesActivity;
 }
 
 export interface UpdateSalesActivityRequest {
-	id: string
-	salesActivity: SalesActivity
+  id: string;
+  salesActivity: SalesActivity;
 }
 
 /**
@@ -42,45 +51,45 @@ export interface UpdateSalesActivityRequest {
  * Delete a SalesActivity.
  */
 function deleteSalesActivityRaw<T>(
-	requestParameters: DeleteSalesActivityRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteSalesActivityRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteSalesActivity.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteSalesActivity.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/SalesActivity/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SalesActivity/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +97,10 @@ function deleteSalesActivityRaw<T>(
  * Delete a SalesActivity.
  */
 export function deleteSalesActivity<T>(
-	requestParameters: DeleteSalesActivityRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteSalesActivityRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteSalesActivityRaw(requestParameters, requestConfig)
+  return deleteSalesActivityRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +108,47 @@ export function deleteSalesActivity<T>(
  * Retrieve a single SalesActivity
  */
 function getSalesActivityRaw<T>(
-	requestParameters: GetSalesActivityRequest,
-	requestConfig: runtime.TypedQueryConfig<T, SalesActivity> = {},
+  requestParameters: GetSalesActivityRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SalesActivity> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getSalesActivity.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getSalesActivity.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/SalesActivity/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SalesActivity/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SalesActivityFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SalesActivityFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +156,57 @@ function getSalesActivityRaw<T>(
  * Retrieve a single SalesActivity
  */
 export function getSalesActivity<T>(
-	requestParameters: GetSalesActivityRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, SalesActivity>,
+  requestParameters: GetSalesActivityRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SalesActivity>,
 ): QueryConfig<T> {
-	return getSalesActivityRaw(requestParameters, requestConfig)
+  return getSalesActivityRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of SalesActivitys.
  * Retrieve a list of SalesActivitys
  */
-function getSalesActivityListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<SalesActivity>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getSalesActivityListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<SalesActivity>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/SalesActivity`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SalesActivity`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(SalesActivityFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(SalesActivityFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of SalesActivitys.
  * Retrieve a list of SalesActivitys
  */
-export function getSalesActivityList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<SalesActivity>>): QueryConfig<T> {
-	return getSalesActivityListRaw(requestConfig)
+export function getSalesActivityList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<SalesActivity>>,
+): QueryConfig<T> {
+  return getSalesActivityListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +214,50 @@ export function getSalesActivityList<T>(requestConfig?: runtime.TypedQueryConfig
  * Create a new SalesActivity
  */
 function postSalesActivityRaw<T>(
-	requestParameters: PostSalesActivityRequest,
-	requestConfig: runtime.TypedQueryConfig<T, SalesActivity> = {},
+  requestParameters: PostSalesActivityRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SalesActivity> = {},
 ): QueryConfig<T> {
-	if (requestParameters.salesActivity === null || requestParameters.salesActivity === undefined) {
-		throw new runtime.RequiredError(
-			"salesActivity",
-			"Required parameter requestParameters.salesActivity was null or undefined when calling postSalesActivity.",
-		)
-	}
+  if (
+    requestParameters.salesActivity === null ||
+    requestParameters.salesActivity === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "salesActivity",
+      "Required parameter requestParameters.salesActivity was null or undefined when calling postSalesActivity.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/SalesActivity`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || SalesActivityToJSON(requestParameters.salesActivity),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SalesActivity`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters || SalesActivityToJSON(requestParameters.salesActivity),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SalesActivityFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SalesActivityFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +265,10 @@ function postSalesActivityRaw<T>(
  * Create a new SalesActivity
  */
 export function postSalesActivity<T>(
-	requestParameters: PostSalesActivityRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, SalesActivity>,
+  requestParameters: PostSalesActivityRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SalesActivity>,
 ): QueryConfig<T> {
-	return postSalesActivityRaw(requestParameters, requestConfig)
+  return postSalesActivityRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +276,60 @@ export function postSalesActivity<T>(
  * Update an existing SalesActivity
  */
 function updateSalesActivityRaw<T>(
-	requestParameters: UpdateSalesActivityRequest,
-	requestConfig: runtime.TypedQueryConfig<T, SalesActivity> = {},
+  requestParameters: UpdateSalesActivityRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SalesActivity> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateSalesActivity.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateSalesActivity.",
+    );
+  }
 
-	if (requestParameters.salesActivity === null || requestParameters.salesActivity === undefined) {
-		throw new runtime.RequiredError(
-			"salesActivity",
-			"Required parameter requestParameters.salesActivity was null or undefined when calling updateSalesActivity.",
-		)
-	}
+  if (
+    requestParameters.salesActivity === null ||
+    requestParameters.salesActivity === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "salesActivity",
+      "Required parameter requestParameters.salesActivity was null or undefined when calling updateSalesActivity.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/SalesActivity/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || SalesActivityToJSON(requestParameters.salesActivity),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SalesActivity/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters || SalesActivityToJSON(requestParameters.salesActivity),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SalesActivityFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SalesActivityFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +337,8 @@ function updateSalesActivityRaw<T>(
  * Update an existing SalesActivity
  */
 export function updateSalesActivity<T>(
-	requestParameters: UpdateSalesActivityRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, SalesActivity>,
+  requestParameters: UpdateSalesActivityRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SalesActivity>,
 ): QueryConfig<T> {
-	return updateSalesActivityRaw(requestParameters, requestConfig)
+  return updateSalesActivityRaw(requestParameters, requestConfig);
 }

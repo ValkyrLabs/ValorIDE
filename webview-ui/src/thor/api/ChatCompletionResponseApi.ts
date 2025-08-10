@@ -16,25 +16,34 @@ Template file: typescript-redux-query/apis.mustache
 Description: ChatCompletionResponseApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { ChatCompletionResponse, ChatCompletionResponseFromJSON, ChatCompletionResponseToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  ChatCompletionResponse,
+  ChatCompletionResponseFromJSON,
+  ChatCompletionResponseToJSON,
+} from "../model";
 
 export interface DeleteChatCompletionResponseRequest {
-	id: string
+  id: string;
 }
 
 export interface GetChatCompletionResponseRequest {
-	id: string
+  id: string;
 }
 
 export interface PostChatCompletionResponseRequest {
-	chatCompletionResponse: ChatCompletionResponse
+  chatCompletionResponse: ChatCompletionResponse;
 }
 
 export interface UpdateChatCompletionResponseRequest {
-	id: string
-	chatCompletionResponse: ChatCompletionResponse
+  id: string;
+  chatCompletionResponse: ChatCompletionResponse;
 }
 
 /**
@@ -42,45 +51,45 @@ export interface UpdateChatCompletionResponseRequest {
  * Delete a ChatCompletionResponse.
  */
 function deleteChatCompletionResponseRaw<T>(
-	requestParameters: DeleteChatCompletionResponseRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteChatCompletionResponseRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteChatCompletionResponse.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteChatCompletionResponse.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ChatCompletionResponse/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ChatCompletionResponse/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +97,10 @@ function deleteChatCompletionResponseRaw<T>(
  * Delete a ChatCompletionResponse.
  */
 export function deleteChatCompletionResponse<T>(
-	requestParameters: DeleteChatCompletionResponseRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteChatCompletionResponseRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteChatCompletionResponseRaw(requestParameters, requestConfig)
+  return deleteChatCompletionResponseRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,47 +108,47 @@ export function deleteChatCompletionResponse<T>(
  * Retrieve a single ChatCompletionResponse
  */
 function getChatCompletionResponseRaw<T>(
-	requestParameters: GetChatCompletionResponseRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ChatCompletionResponse> = {},
+  requestParameters: GetChatCompletionResponseRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ChatCompletionResponse> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getChatCompletionResponse.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getChatCompletionResponse.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ChatCompletionResponse/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ChatCompletionResponse/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) =>
-			requestTransform(ChatCompletionResponseFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ChatCompletionResponseFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -147,10 +156,10 @@ function getChatCompletionResponseRaw<T>(
  * Retrieve a single ChatCompletionResponse
  */
 export function getChatCompletionResponse<T>(
-	requestParameters: GetChatCompletionResponseRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ChatCompletionResponse>,
+  requestParameters: GetChatCompletionResponseRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ChatCompletionResponse>,
 ): QueryConfig<T> {
-	return getChatCompletionResponseRaw(requestParameters, requestConfig)
+  return getChatCompletionResponseRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -158,36 +167,39 @@ export function getChatCompletionResponse<T>(
  * Retrieve a list of ChatCompletionResponses
  */
 function getChatCompletionResponseListRaw<T>(
-	requestConfig: runtime.TypedQueryConfig<T, Array<ChatCompletionResponse>> = {},
+  requestConfig: runtime.TypedQueryConfig<
+    T,
+    Array<ChatCompletionResponse>
+  > = {},
 ): QueryConfig<T> {
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ChatCompletionResponse`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ChatCompletionResponse`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) =>
-			requestTransform(body.map(ChatCompletionResponseFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(ChatCompletionResponseFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -195,9 +207,9 @@ function getChatCompletionResponseListRaw<T>(
  * Retrieve a list of ChatCompletionResponses
  */
 export function getChatCompletionResponseList<T>(
-	requestConfig?: runtime.TypedQueryConfig<T, Array<ChatCompletionResponse>>,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<ChatCompletionResponse>>,
 ): QueryConfig<T> {
-	return getChatCompletionResponseListRaw(requestConfig)
+  return getChatCompletionResponseListRaw(requestConfig);
 }
 
 /**
@@ -205,46 +217,51 @@ export function getChatCompletionResponseList<T>(
  * Create a new ChatCompletionResponse
  */
 function postChatCompletionResponseRaw<T>(
-	requestParameters: PostChatCompletionResponseRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ChatCompletionResponse> = {},
+  requestParameters: PostChatCompletionResponseRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ChatCompletionResponse> = {},
 ): QueryConfig<T> {
-	if (requestParameters.chatCompletionResponse === null || requestParameters.chatCompletionResponse === undefined) {
-		throw new runtime.RequiredError(
-			"chatCompletionResponse",
-			"Required parameter requestParameters.chatCompletionResponse was null or undefined when calling postChatCompletionResponse.",
-		)
-	}
+  if (
+    requestParameters.chatCompletionResponse === null ||
+    requestParameters.chatCompletionResponse === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "chatCompletionResponse",
+      "Required parameter requestParameters.chatCompletionResponse was null or undefined when calling postChatCompletionResponse.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ChatCompletionResponse`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || ChatCompletionResponseToJSON(requestParameters.chatCompletionResponse),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ChatCompletionResponse`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      ChatCompletionResponseToJSON(requestParameters.chatCompletionResponse),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) =>
-			requestTransform(ChatCompletionResponseFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ChatCompletionResponseFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -252,10 +269,10 @@ function postChatCompletionResponseRaw<T>(
  * Create a new ChatCompletionResponse
  */
 export function postChatCompletionResponse<T>(
-	requestParameters: PostChatCompletionResponseRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ChatCompletionResponse>,
+  requestParameters: PostChatCompletionResponseRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ChatCompletionResponse>,
 ): QueryConfig<T> {
-	return postChatCompletionResponseRaw(requestParameters, requestConfig)
+  return postChatCompletionResponseRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -263,56 +280,61 @@ export function postChatCompletionResponse<T>(
  * Update an existing ChatCompletionResponse
  */
 function updateChatCompletionResponseRaw<T>(
-	requestParameters: UpdateChatCompletionResponseRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ChatCompletionResponse> = {},
+  requestParameters: UpdateChatCompletionResponseRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ChatCompletionResponse> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateChatCompletionResponse.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateChatCompletionResponse.",
+    );
+  }
 
-	if (requestParameters.chatCompletionResponse === null || requestParameters.chatCompletionResponse === undefined) {
-		throw new runtime.RequiredError(
-			"chatCompletionResponse",
-			"Required parameter requestParameters.chatCompletionResponse was null or undefined when calling updateChatCompletionResponse.",
-		)
-	}
+  if (
+    requestParameters.chatCompletionResponse === null ||
+    requestParameters.chatCompletionResponse === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "chatCompletionResponse",
+      "Required parameter requestParameters.chatCompletionResponse was null or undefined when calling updateChatCompletionResponse.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ChatCompletionResponse/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || ChatCompletionResponseToJSON(requestParameters.chatCompletionResponse),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ChatCompletionResponse/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      ChatCompletionResponseToJSON(requestParameters.chatCompletionResponse),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) =>
-			requestTransform(ChatCompletionResponseFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ChatCompletionResponseFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -320,8 +342,8 @@ function updateChatCompletionResponseRaw<T>(
  * Update an existing ChatCompletionResponse
  */
 export function updateChatCompletionResponse<T>(
-	requestParameters: UpdateChatCompletionResponseRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ChatCompletionResponse>,
+  requestParameters: UpdateChatCompletionResponseRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ChatCompletionResponse>,
 ): QueryConfig<T> {
-	return updateChatCompletionResponseRaw(requestParameters, requestConfig)
+  return updateChatCompletionResponseRaw(requestParameters, requestConfig);
 }

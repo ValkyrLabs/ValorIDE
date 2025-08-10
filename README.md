@@ -37,9 +37,9 @@ Thanks to [Claude 4.x Opus agentic coding capabilities](https://www.anthropic.c
 1. Enter your task and add images to convert mockups into functional apps or fix bugs with screenshots.
 2. ValorIDE starts by analyzing your file structure & source code ASTs, running regex searches, and reading relevant files to get up to speed in existing projects. By carefully managing what information is added to context, ValorIDE can provide valuable assistance even for large, complex projects without overwhelming the context window.
 3. Once ValorIDE has the information he needs, he can:
-    - Create and edit files + monitor linter/compiler errors along the way, letting him proactively fix issues like missing imports and syntax errors on his own.
-    - Execute commands directly in your terminal and monitor their output as he works, letting him e.g., react to dev server issues after editing a file.
-    - For web development tasks, ValorIDE can launch the site in a headless browser, click, type, scroll, and capture screenshots + console logs, allowing him to fix runtime errors and visual bugs.
+   - Create and edit files + monitor linter/compiler errors along the way, letting him proactively fix issues like missing imports and syntax errors on his own.
+   - Execute commands directly in your terminal and monitor their output as he works, letting him e.g., react to dev server issues after editing a file.
+   - For web development tasks, ValorIDE can launch the site in a headless browser, click, type, scroll, and capture screenshots + console logs, allowing him to fix runtime errors and visual bugs.
 4. When a task is completed, ValorIDE will present the result to you with a terminal command like `open -a "Google Chrome" index.html`, which you run with a click of a button.
 
 > [!TIP]
@@ -101,9 +101,9 @@ Try asking ValorIDE to "test the app", and watch as he runs a command like `npm 
 
 Thanks to the [Model Context Protocol](https://github.com/modelcontextprotocol), ValorIDE can extend his capabilities through custom tools. While you can use [community-made servers](https://github.com/modelcontextprotocol/servers), ValorIDE can instead create and install tools tailored to your specific workflow. Just ask ValorIDE to "add a tool" and he will handle everything, from creating a new MCP server to installing it into the extension. These custom tools then become part of ValorIDE's toolkit, ready to use in future tasks.
 
--   "add a tool that fetches Jira tickets": Retrieve ticket ACs and put ValorIDE to work
--   "add a tool that manages AWS EC2s": Check server metrics and scale instances up or down
--   "add a tool that pulls the latest PagerDuty incidents": Fetch details and ask ValorIDE to fix bugs
+- "add a tool that fetches Jira tickets": Retrieve ticket ACs and put ValorIDE to work
+- "add a tool that manages AWS EC2s": Check server metrics and scale instances up or down
+- "add a tool that pulls the latest PagerDuty incidents": Fetch details and ask ValorIDE to fix bugs
 
 <!-- Transparent pixel to create line break after floating image -->
 
@@ -145,17 +145,17 @@ To contribute to the project, start with our [Contributing Guide](CONTRIBUTING.m
 <summary>Local Development Instructions</summary>
 
 1. Clone the repository _(Requires [git-lfs](https://git-lfs.com/))_:
-    ```bash
-    git clone https://github.com/valkyrlabs/valoride.git
-    ```
+   ```bash
+   git clone https://github.com/valkyrlabs/valoride.git
+   ```
 2. Open the project in VSCode:
-    ```bash
-    code valoride
-    ```
+   ```bash
+   code valoride
+   ```
 3. Install the necessary dependencies for the extension and webview-gui:
-    ```bash
-    npm run install:all
-    ```
+   ```bash
+   npm run install:all
+   ```
 4. Launch by pressing `F5` (or `Run`->`Start Debugging`) to open a new VSCode window with the extension loaded. (You may need to install the [esbuild problem matchers extension](https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers) if you run into issues building the project.)
 
 </details>
@@ -164,10 +164,13 @@ To contribute to the project, start with our [Contributing Guide](CONTRIBUTING.m
 <summary>Creating a Pull Request</summary>
 
 1. Before creating a PR, generate a changeset entry:
-    ```bash
-    npm run changeset
-    ```
+
+   ```bash
+   npm run changeset
+   ```
+
    This will prompt you for:
+
    - Type of change (major, minor, patch)
      - `major` → breaking changes (1.0.0 → 2.0.0)
      - `minor` → new features (1.0.0 → 1.1.0)
@@ -183,7 +186,6 @@ To contribute to the project, start with our [Contributing Guide](CONTRIBUTING.m
    - When the Version Packages PR is merged, a new release will be published
 
 </details>
-
 
 ## License
 

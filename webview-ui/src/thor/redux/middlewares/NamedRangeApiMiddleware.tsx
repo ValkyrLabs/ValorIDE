@@ -1,22 +1,28 @@
-import { getNamedRange, postNamedRange, getNamedRangeList, deleteNamedRange, updateNamedRange } from "../../api"
+import {
+  getNamedRange,
+  postNamedRange,
+  getNamedRangeList,
+  deleteNamedRange,
+  updateNamedRange,
+} from "../../api";
 
 import {
-	ADD_NAMEDRANGE_REQUEST,
-	FETCH_NAMEDRANGE_REQUEST,
-	LIST_NAMEDRANGE_REQUEST,
-	UPDATE_NAMEDRANGE_REQUEST,
-	DELETE_NAMEDRANGE_REQUEST,
-	addNamedRangeFailure,
-	addNamedRangeSuccess,
-	fetchNamedRangeFailure,
-	fetchNamedRangeSuccess,
-	listNamedRangeFailure,
-	listNamedRangeSuccess,
-	updateNamedRangeFailure,
-	updateNamedRangeSuccess,
-	deleteNamedRangeFailure,
-	deleteNamedRangeSuccess,
-} from "../actions/NamedRangeApiAction"
+  ADD_NAMEDRANGE_REQUEST,
+  FETCH_NAMEDRANGE_REQUEST,
+  LIST_NAMEDRANGE_REQUEST,
+  UPDATE_NAMEDRANGE_REQUEST,
+  DELETE_NAMEDRANGE_REQUEST,
+  addNamedRangeFailure,
+  addNamedRangeSuccess,
+  fetchNamedRangeFailure,
+  fetchNamedRangeSuccess,
+  listNamedRangeFailure,
+  listNamedRangeSuccess,
+  updateNamedRangeFailure,
+  updateNamedRangeSuccess,
+  deleteNamedRangeFailure,
+  deleteNamedRangeSuccess,
+} from "../actions/NamedRangeApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: NamedRange
 */
 
 export const NamedRangeMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("NamedRange MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("NamedRange MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_NAMEDRANGE_REQUEST:
-				try {
-					const response = postNamedRange(action.payload)
-					dispatch(addNamedRangeSuccess(response.body))
-				} catch (error) {
-					dispatch(addNamedRangeFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_NAMEDRANGE_REQUEST:
+        try {
+          const response = postNamedRange(action.payload);
+          dispatch(addNamedRangeSuccess(response.body));
+        } catch (error) {
+          dispatch(addNamedRangeFailure(error.message));
+        }
+        break;
 
-			case LIST_NAMEDRANGE_REQUEST:
-				try {
-					const response = getNamedRangeList()
-					dispatch(listNamedRangeSuccess(response.body))
-				} catch (error) {
-					dispatch(listNamedRangeFailure(error.message))
-				}
-				break
+      case LIST_NAMEDRANGE_REQUEST:
+        try {
+          const response = getNamedRangeList();
+          dispatch(listNamedRangeSuccess(response.body));
+        } catch (error) {
+          dispatch(listNamedRangeFailure(error.message));
+        }
+        break;
 
-			case FETCH_NAMEDRANGE_REQUEST:
-				try {
-					const response = getNamedRange(action.id)
-					dispatch(fetchNamedRangeSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchNamedRangeFailure(error.message))
-				}
-				break
+      case FETCH_NAMEDRANGE_REQUEST:
+        try {
+          const response = getNamedRange(action.id);
+          dispatch(fetchNamedRangeSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchNamedRangeFailure(error.message));
+        }
+        break;
 
-			case UPDATE_NAMEDRANGE_REQUEST:
-				try {
-					const { id, NamedRange } = action.payload
-					const response = updateNamedRange(id)
-					dispatch(updateNamedRangeSuccess(response.body))
-				} catch (error) {
-					dispatch(updateNamedRangeFailure(error.message))
-				}
-				break
+      case UPDATE_NAMEDRANGE_REQUEST:
+        try {
+          const { id, NamedRange } = action.payload;
+          const response = updateNamedRange(id);
+          dispatch(updateNamedRangeSuccess(response.body));
+        } catch (error) {
+          dispatch(updateNamedRangeFailure(error.message));
+        }
+        break;
 
-			case DELETE_NAMEDRANGE_REQUEST:
-				try {
-					const { id, NamedRange } = action.payload
-					const response = deleteNamedRange(id)
-					dispatch(deleteNamedRangeSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteNamedRangeFailure(error.message))
-				}
-				break
+      case DELETE_NAMEDRANGE_REQUEST:
+        try {
+          const { id, NamedRange } = action.payload;
+          const response = deleteNamedRange(id);
+          dispatch(deleteNamedRangeSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteNamedRangeFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

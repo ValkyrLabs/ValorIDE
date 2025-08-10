@@ -1,39 +1,44 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 
-import { McpDownloadResponse } from "../../model/McpDownloadResponse"
+import { McpDownloadResponse } from "../../model/McpDownloadResponse";
 
 const McpDownloadResponseSlice = createSlice({
-	name: "McpDownloadResponses",
-	initialState: [],
+  name: "McpDownloadResponses",
+  initialState: [],
 
-	reducers: {
-		McpDownloadResponseAdded(state, action) {
-			state.push(action.payload)
-		},
+  reducers: {
+    McpDownloadResponseAdded(state, action) {
+      state.push(action.payload);
+    },
 
-		McpDownloadResponseValueToggled(state, action) {
-			console.log("McpDownloadResponse TOGGLE")
-			console.warn(JSON.stringify(action))
-			const McpDownloadResponse: McpDownloadResponse = state.find(
-				(McpDownloadResponse) => McpDownloadResponse.id === action.payload.McpDownloadResponseId,
-			)
-			if (McpDownloadResponse) {
-				if (action.payload.target === "SOMETHING") {
-				}
-			}
-		},
+    McpDownloadResponseValueToggled(state, action) {
+      console.log("McpDownloadResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpDownloadResponse: McpDownloadResponse = state.find(
+        (McpDownloadResponse) =>
+          McpDownloadResponse.id === action.payload.McpDownloadResponseId,
+      );
+      if (McpDownloadResponse) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
 
-		McpDownloadResponsepropertySet(state, action) {
-			const McpDownloadResponse = state.find(
-				(McpDownloadResponse) => McpDownloadResponse.id === action.payload.McpDownloadResponseId,
-			)
-			if (McpDownloadResponse) {
-				//  McpDownloadResponse[action.property] = action.payload[action.property];
-			}
-		},
-	},
-})
+    McpDownloadResponsepropertySet(state, action) {
+      const McpDownloadResponse = state.find(
+        (McpDownloadResponse) =>
+          McpDownloadResponse.id === action.payload.McpDownloadResponseId,
+      );
+      if (McpDownloadResponse) {
+        //  McpDownloadResponse[action.property] = action.payload[action.property];
+      }
+    },
+  },
+});
 
-export const { McpDownloadResponseAdded, McpDownloadResponseValueToggled, McpDownloadResponsepropertySet } =
-	McpDownloadResponseSlice.actions
-export default McpDownloadResponseSlice.reducer
+export const {
+  McpDownloadResponseAdded,
+  McpDownloadResponseValueToggled,
+  McpDownloadResponsepropertySet,
+} = McpDownloadResponseSlice.actions;
+export default McpDownloadResponseSlice.reducer;

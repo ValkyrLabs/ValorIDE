@@ -1,22 +1,28 @@
-import { getPivotTable, postPivotTable, getPivotTableList, deletePivotTable, updatePivotTable } from "../../api"
+import {
+  getPivotTable,
+  postPivotTable,
+  getPivotTableList,
+  deletePivotTable,
+  updatePivotTable,
+} from "../../api";
 
 import {
-	ADD_PIVOTTABLE_REQUEST,
-	FETCH_PIVOTTABLE_REQUEST,
-	LIST_PIVOTTABLE_REQUEST,
-	UPDATE_PIVOTTABLE_REQUEST,
-	DELETE_PIVOTTABLE_REQUEST,
-	addPivotTableFailure,
-	addPivotTableSuccess,
-	fetchPivotTableFailure,
-	fetchPivotTableSuccess,
-	listPivotTableFailure,
-	listPivotTableSuccess,
-	updatePivotTableFailure,
-	updatePivotTableSuccess,
-	deletePivotTableFailure,
-	deletePivotTableSuccess,
-} from "../actions/PivotTableApiAction"
+  ADD_PIVOTTABLE_REQUEST,
+  FETCH_PIVOTTABLE_REQUEST,
+  LIST_PIVOTTABLE_REQUEST,
+  UPDATE_PIVOTTABLE_REQUEST,
+  DELETE_PIVOTTABLE_REQUEST,
+  addPivotTableFailure,
+  addPivotTableSuccess,
+  fetchPivotTableFailure,
+  fetchPivotTableSuccess,
+  listPivotTableFailure,
+  listPivotTableSuccess,
+  updatePivotTableFailure,
+  updatePivotTableSuccess,
+  deletePivotTableFailure,
+  deletePivotTableSuccess,
+} from "../actions/PivotTableApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: PivotTable
 */
 
 export const PivotTableMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("PivotTable MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("PivotTable MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_PIVOTTABLE_REQUEST:
-				try {
-					const response = postPivotTable(action.payload)
-					dispatch(addPivotTableSuccess(response.body))
-				} catch (error) {
-					dispatch(addPivotTableFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_PIVOTTABLE_REQUEST:
+        try {
+          const response = postPivotTable(action.payload);
+          dispatch(addPivotTableSuccess(response.body));
+        } catch (error) {
+          dispatch(addPivotTableFailure(error.message));
+        }
+        break;
 
-			case LIST_PIVOTTABLE_REQUEST:
-				try {
-					const response = getPivotTableList()
-					dispatch(listPivotTableSuccess(response.body))
-				} catch (error) {
-					dispatch(listPivotTableFailure(error.message))
-				}
-				break
+      case LIST_PIVOTTABLE_REQUEST:
+        try {
+          const response = getPivotTableList();
+          dispatch(listPivotTableSuccess(response.body));
+        } catch (error) {
+          dispatch(listPivotTableFailure(error.message));
+        }
+        break;
 
-			case FETCH_PIVOTTABLE_REQUEST:
-				try {
-					const response = getPivotTable(action.id)
-					dispatch(fetchPivotTableSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchPivotTableFailure(error.message))
-				}
-				break
+      case FETCH_PIVOTTABLE_REQUEST:
+        try {
+          const response = getPivotTable(action.id);
+          dispatch(fetchPivotTableSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchPivotTableFailure(error.message));
+        }
+        break;
 
-			case UPDATE_PIVOTTABLE_REQUEST:
-				try {
-					const { id, PivotTable } = action.payload
-					const response = updatePivotTable(id)
-					dispatch(updatePivotTableSuccess(response.body))
-				} catch (error) {
-					dispatch(updatePivotTableFailure(error.message))
-				}
-				break
+      case UPDATE_PIVOTTABLE_REQUEST:
+        try {
+          const { id, PivotTable } = action.payload;
+          const response = updatePivotTable(id);
+          dispatch(updatePivotTableSuccess(response.body));
+        } catch (error) {
+          dispatch(updatePivotTableFailure(error.message));
+        }
+        break;
 
-			case DELETE_PIVOTTABLE_REQUEST:
-				try {
-					const { id, PivotTable } = action.payload
-					const response = deletePivotTable(id)
-					dispatch(deletePivotTableSuccess(response.body))
-				} catch (error) {
-					dispatch(deletePivotTableFailure(error.message))
-				}
-				break
+      case DELETE_PIVOTTABLE_REQUEST:
+        try {
+          const { id, PivotTable } = action.payload;
+          const response = deletePivotTable(id);
+          dispatch(deletePivotTableSuccess(response.body));
+        } catch (error) {
+          dispatch(deletePivotTableFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

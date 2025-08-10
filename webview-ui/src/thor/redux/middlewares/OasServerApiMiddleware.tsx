@@ -1,22 +1,28 @@
-import { getOasServer, postOasServer, getOasServerList, deleteOasServer, updateOasServer } from "../../api"
+import {
+  getOasServer,
+  postOasServer,
+  getOasServerList,
+  deleteOasServer,
+  updateOasServer,
+} from "../../api";
 
 import {
-	ADD_OASSERVER_REQUEST,
-	FETCH_OASSERVER_REQUEST,
-	LIST_OASSERVER_REQUEST,
-	UPDATE_OASSERVER_REQUEST,
-	DELETE_OASSERVER_REQUEST,
-	addOasServerFailure,
-	addOasServerSuccess,
-	fetchOasServerFailure,
-	fetchOasServerSuccess,
-	listOasServerFailure,
-	listOasServerSuccess,
-	updateOasServerFailure,
-	updateOasServerSuccess,
-	deleteOasServerFailure,
-	deleteOasServerSuccess,
-} from "../actions/OasServerApiAction"
+  ADD_OASSERVER_REQUEST,
+  FETCH_OASSERVER_REQUEST,
+  LIST_OASSERVER_REQUEST,
+  UPDATE_OASSERVER_REQUEST,
+  DELETE_OASSERVER_REQUEST,
+  addOasServerFailure,
+  addOasServerSuccess,
+  fetchOasServerFailure,
+  fetchOasServerSuccess,
+  listOasServerFailure,
+  listOasServerSuccess,
+  updateOasServerFailure,
+  updateOasServerSuccess,
+  deleteOasServerFailure,
+  deleteOasServerSuccess,
+} from "../actions/OasServerApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: OasServer
 */
 
 export const OasServerMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("OasServer MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("OasServer MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_OASSERVER_REQUEST:
-				try {
-					const response = postOasServer(action.payload)
-					dispatch(addOasServerSuccess(response.body))
-				} catch (error) {
-					dispatch(addOasServerFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_OASSERVER_REQUEST:
+        try {
+          const response = postOasServer(action.payload);
+          dispatch(addOasServerSuccess(response.body));
+        } catch (error) {
+          dispatch(addOasServerFailure(error.message));
+        }
+        break;
 
-			case LIST_OASSERVER_REQUEST:
-				try {
-					const response = getOasServerList()
-					dispatch(listOasServerSuccess(response.body))
-				} catch (error) {
-					dispatch(listOasServerFailure(error.message))
-				}
-				break
+      case LIST_OASSERVER_REQUEST:
+        try {
+          const response = getOasServerList();
+          dispatch(listOasServerSuccess(response.body));
+        } catch (error) {
+          dispatch(listOasServerFailure(error.message));
+        }
+        break;
 
-			case FETCH_OASSERVER_REQUEST:
-				try {
-					const response = getOasServer(action.id)
-					dispatch(fetchOasServerSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchOasServerFailure(error.message))
-				}
-				break
+      case FETCH_OASSERVER_REQUEST:
+        try {
+          const response = getOasServer(action.id);
+          dispatch(fetchOasServerSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchOasServerFailure(error.message));
+        }
+        break;
 
-			case UPDATE_OASSERVER_REQUEST:
-				try {
-					const { id, OasServer } = action.payload
-					const response = updateOasServer(id)
-					dispatch(updateOasServerSuccess(response.body))
-				} catch (error) {
-					dispatch(updateOasServerFailure(error.message))
-				}
-				break
+      case UPDATE_OASSERVER_REQUEST:
+        try {
+          const { id, OasServer } = action.payload;
+          const response = updateOasServer(id);
+          dispatch(updateOasServerSuccess(response.body));
+        } catch (error) {
+          dispatch(updateOasServerFailure(error.message));
+        }
+        break;
 
-			case DELETE_OASSERVER_REQUEST:
-				try {
-					const { id, OasServer } = action.payload
-					const response = deleteOasServer(id)
-					dispatch(deleteOasServerSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteOasServerFailure(error.message))
-				}
-				break
+      case DELETE_OASSERVER_REQUEST:
+        try {
+          const { id, OasServer } = action.payload;
+          const response = deleteOasServer(id);
+          dispatch(deleteOasServerSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteOasServerFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

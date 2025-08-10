@@ -1,22 +1,28 @@
-import { getSheetRow, postSheetRow, getSheetRowList, deleteSheetRow, updateSheetRow } from "../../api"
+import {
+  getSheetRow,
+  postSheetRow,
+  getSheetRowList,
+  deleteSheetRow,
+  updateSheetRow,
+} from "../../api";
 
 import {
-	ADD_SHEETROW_REQUEST,
-	FETCH_SHEETROW_REQUEST,
-	LIST_SHEETROW_REQUEST,
-	UPDATE_SHEETROW_REQUEST,
-	DELETE_SHEETROW_REQUEST,
-	addSheetRowFailure,
-	addSheetRowSuccess,
-	fetchSheetRowFailure,
-	fetchSheetRowSuccess,
-	listSheetRowFailure,
-	listSheetRowSuccess,
-	updateSheetRowFailure,
-	updateSheetRowSuccess,
-	deleteSheetRowFailure,
-	deleteSheetRowSuccess,
-} from "../actions/SheetRowApiAction"
+  ADD_SHEETROW_REQUEST,
+  FETCH_SHEETROW_REQUEST,
+  LIST_SHEETROW_REQUEST,
+  UPDATE_SHEETROW_REQUEST,
+  DELETE_SHEETROW_REQUEST,
+  addSheetRowFailure,
+  addSheetRowSuccess,
+  fetchSheetRowFailure,
+  fetchSheetRowSuccess,
+  listSheetRowFailure,
+  listSheetRowSuccess,
+  updateSheetRowFailure,
+  updateSheetRowSuccess,
+  deleteSheetRowFailure,
+  deleteSheetRowSuccess,
+} from "../actions/SheetRowApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: SheetRow
 */
 
 export const SheetRowMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("SheetRow MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("SheetRow MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_SHEETROW_REQUEST:
-				try {
-					const response = postSheetRow(action.payload)
-					dispatch(addSheetRowSuccess(response.body))
-				} catch (error) {
-					dispatch(addSheetRowFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_SHEETROW_REQUEST:
+        try {
+          const response = postSheetRow(action.payload);
+          dispatch(addSheetRowSuccess(response.body));
+        } catch (error) {
+          dispatch(addSheetRowFailure(error.message));
+        }
+        break;
 
-			case LIST_SHEETROW_REQUEST:
-				try {
-					const response = getSheetRowList()
-					dispatch(listSheetRowSuccess(response.body))
-				} catch (error) {
-					dispatch(listSheetRowFailure(error.message))
-				}
-				break
+      case LIST_SHEETROW_REQUEST:
+        try {
+          const response = getSheetRowList();
+          dispatch(listSheetRowSuccess(response.body));
+        } catch (error) {
+          dispatch(listSheetRowFailure(error.message));
+        }
+        break;
 
-			case FETCH_SHEETROW_REQUEST:
-				try {
-					const response = getSheetRow(action.id)
-					dispatch(fetchSheetRowSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchSheetRowFailure(error.message))
-				}
-				break
+      case FETCH_SHEETROW_REQUEST:
+        try {
+          const response = getSheetRow(action.id);
+          dispatch(fetchSheetRowSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchSheetRowFailure(error.message));
+        }
+        break;
 
-			case UPDATE_SHEETROW_REQUEST:
-				try {
-					const { id, SheetRow } = action.payload
-					const response = updateSheetRow(id)
-					dispatch(updateSheetRowSuccess(response.body))
-				} catch (error) {
-					dispatch(updateSheetRowFailure(error.message))
-				}
-				break
+      case UPDATE_SHEETROW_REQUEST:
+        try {
+          const { id, SheetRow } = action.payload;
+          const response = updateSheetRow(id);
+          dispatch(updateSheetRowSuccess(response.body));
+        } catch (error) {
+          dispatch(updateSheetRowFailure(error.message));
+        }
+        break;
 
-			case DELETE_SHEETROW_REQUEST:
-				try {
-					const { id, SheetRow } = action.payload
-					const response = deleteSheetRow(id)
-					dispatch(deleteSheetRowSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteSheetRowFailure(error.message))
-				}
-				break
+      case DELETE_SHEETROW_REQUEST:
+        try {
+          const { id, SheetRow } = action.payload;
+          const response = deleteSheetRow(id);
+          dispatch(deleteSheetRowSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteSheetRowFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

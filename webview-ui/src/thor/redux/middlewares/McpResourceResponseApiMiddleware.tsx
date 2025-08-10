@@ -1,28 +1,28 @@
 import {
-	getMcpResourceResponse,
-	postMcpResourceResponse,
-	getMcpResourceResponseList,
-	deleteMcpResourceResponse,
-	updateMcpResourceResponse,
-} from "../../api"
+  getMcpResourceResponse,
+  postMcpResourceResponse,
+  getMcpResourceResponseList,
+  deleteMcpResourceResponse,
+  updateMcpResourceResponse,
+} from "../../api";
 
 import {
-	ADD_MCPRESOURCERESPONSE_REQUEST,
-	FETCH_MCPRESOURCERESPONSE_REQUEST,
-	LIST_MCPRESOURCERESPONSE_REQUEST,
-	UPDATE_MCPRESOURCERESPONSE_REQUEST,
-	DELETE_MCPRESOURCERESPONSE_REQUEST,
-	addMcpResourceResponseFailure,
-	addMcpResourceResponseSuccess,
-	fetchMcpResourceResponseFailure,
-	fetchMcpResourceResponseSuccess,
-	listMcpResourceResponseFailure,
-	listMcpResourceResponseSuccess,
-	updateMcpResourceResponseFailure,
-	updateMcpResourceResponseSuccess,
-	deleteMcpResourceResponseFailure,
-	deleteMcpResourceResponseSuccess,
-} from "../actions/McpResourceResponseApiAction"
+  ADD_MCPRESOURCERESPONSE_REQUEST,
+  FETCH_MCPRESOURCERESPONSE_REQUEST,
+  LIST_MCPRESOURCERESPONSE_REQUEST,
+  UPDATE_MCPRESOURCERESPONSE_REQUEST,
+  DELETE_MCPRESOURCERESPONSE_REQUEST,
+  addMcpResourceResponseFailure,
+  addMcpResourceResponseSuccess,
+  fetchMcpResourceResponseFailure,
+  fetchMcpResourceResponseSuccess,
+  listMcpResourceResponseFailure,
+  listMcpResourceResponseSuccess,
+  updateMcpResourceResponseFailure,
+  updateMcpResourceResponseSuccess,
+  deleteMcpResourceResponseFailure,
+  deleteMcpResourceResponseSuccess,
+} from "../actions/McpResourceResponseApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -41,61 +41,61 @@ Description: McpResourceResponse
 */
 
 export const McpResourceResponseMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("McpResourceResponse MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("McpResourceResponse MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_MCPRESOURCERESPONSE_REQUEST:
-				try {
-					const response = postMcpResourceResponse(action.payload)
-					dispatch(addMcpResourceResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(addMcpResourceResponseFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_MCPRESOURCERESPONSE_REQUEST:
+        try {
+          const response = postMcpResourceResponse(action.payload);
+          dispatch(addMcpResourceResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(addMcpResourceResponseFailure(error.message));
+        }
+        break;
 
-			case LIST_MCPRESOURCERESPONSE_REQUEST:
-				try {
-					const response = getMcpResourceResponseList()
-					dispatch(listMcpResourceResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(listMcpResourceResponseFailure(error.message))
-				}
-				break
+      case LIST_MCPRESOURCERESPONSE_REQUEST:
+        try {
+          const response = getMcpResourceResponseList();
+          dispatch(listMcpResourceResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(listMcpResourceResponseFailure(error.message));
+        }
+        break;
 
-			case FETCH_MCPRESOURCERESPONSE_REQUEST:
-				try {
-					const response = getMcpResourceResponse(action.id)
-					dispatch(fetchMcpResourceResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchMcpResourceResponseFailure(error.message))
-				}
-				break
+      case FETCH_MCPRESOURCERESPONSE_REQUEST:
+        try {
+          const response = getMcpResourceResponse(action.id);
+          dispatch(fetchMcpResourceResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchMcpResourceResponseFailure(error.message));
+        }
+        break;
 
-			case UPDATE_MCPRESOURCERESPONSE_REQUEST:
-				try {
-					const { id, McpResourceResponse } = action.payload
-					const response = updateMcpResourceResponse(id)
-					dispatch(updateMcpResourceResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(updateMcpResourceResponseFailure(error.message))
-				}
-				break
+      case UPDATE_MCPRESOURCERESPONSE_REQUEST:
+        try {
+          const { id, McpResourceResponse } = action.payload;
+          const response = updateMcpResourceResponse(id);
+          dispatch(updateMcpResourceResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(updateMcpResourceResponseFailure(error.message));
+        }
+        break;
 
-			case DELETE_MCPRESOURCERESPONSE_REQUEST:
-				try {
-					const { id, McpResourceResponse } = action.payload
-					const response = deleteMcpResourceResponse(id)
-					dispatch(deleteMcpResourceResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteMcpResourceResponseFailure(error.message))
-				}
-				break
+      case DELETE_MCPRESOURCERESPONSE_REQUEST:
+        try {
+          const { id, McpResourceResponse } = action.payload;
+          const response = deleteMcpResourceResponse(id);
+          dispatch(deleteMcpResourceResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteMcpResourceResponseFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

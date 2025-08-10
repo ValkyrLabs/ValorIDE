@@ -16,25 +16,34 @@ Template file: typescript-redux-query/apis.mustache
 Description: ReferralLinkApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { ReferralLink, ReferralLinkFromJSON, ReferralLinkToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  ReferralLink,
+  ReferralLinkFromJSON,
+  ReferralLinkToJSON,
+} from "../model";
 
 export interface DeleteReferralLinkRequest {
-	id: string
+  id: string;
 }
 
 export interface GetReferralLinkRequest {
-	id: string
+  id: string;
 }
 
 export interface PostReferralLinkRequest {
-	referralLink: ReferralLink
+  referralLink: ReferralLink;
 }
 
 export interface UpdateReferralLinkRequest {
-	id: string
-	referralLink: ReferralLink
+  id: string;
+  referralLink: ReferralLink;
 }
 
 /**
@@ -42,45 +51,45 @@ export interface UpdateReferralLinkRequest {
  * Delete a ReferralLink.
  */
 function deleteReferralLinkRaw<T>(
-	requestParameters: DeleteReferralLinkRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteReferralLinkRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteReferralLink.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteReferralLink.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ReferralLink/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ReferralLink/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +97,10 @@ function deleteReferralLinkRaw<T>(
  * Delete a ReferralLink.
  */
 export function deleteReferralLink<T>(
-	requestParameters: DeleteReferralLinkRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteReferralLinkRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteReferralLinkRaw(requestParameters, requestConfig)
+  return deleteReferralLinkRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +108,47 @@ export function deleteReferralLink<T>(
  * Retrieve a single ReferralLink
  */
 function getReferralLinkRaw<T>(
-	requestParameters: GetReferralLinkRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ReferralLink> = {},
+  requestParameters: GetReferralLinkRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ReferralLink> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getReferralLink.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getReferralLink.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ReferralLink/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ReferralLink/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ReferralLinkFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ReferralLinkFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +156,57 @@ function getReferralLinkRaw<T>(
  * Retrieve a single ReferralLink
  */
 export function getReferralLink<T>(
-	requestParameters: GetReferralLinkRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ReferralLink>,
+  requestParameters: GetReferralLinkRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ReferralLink>,
 ): QueryConfig<T> {
-	return getReferralLinkRaw(requestParameters, requestConfig)
+  return getReferralLinkRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of ReferralLinks.
  * Retrieve a list of ReferralLinks
  */
-function getReferralLinkListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<ReferralLink>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getReferralLinkListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<ReferralLink>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ReferralLink`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ReferralLink`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(ReferralLinkFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(ReferralLinkFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of ReferralLinks.
  * Retrieve a list of ReferralLinks
  */
-export function getReferralLinkList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<ReferralLink>>): QueryConfig<T> {
-	return getReferralLinkListRaw(requestConfig)
+export function getReferralLinkList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<ReferralLink>>,
+): QueryConfig<T> {
+  return getReferralLinkListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +214,49 @@ export function getReferralLinkList<T>(requestConfig?: runtime.TypedQueryConfig<
  * Create a new ReferralLink
  */
 function postReferralLinkRaw<T>(
-	requestParameters: PostReferralLinkRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ReferralLink> = {},
+  requestParameters: PostReferralLinkRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ReferralLink> = {},
 ): QueryConfig<T> {
-	if (requestParameters.referralLink === null || requestParameters.referralLink === undefined) {
-		throw new runtime.RequiredError(
-			"referralLink",
-			"Required parameter requestParameters.referralLink was null or undefined when calling postReferralLink.",
-		)
-	}
+  if (
+    requestParameters.referralLink === null ||
+    requestParameters.referralLink === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "referralLink",
+      "Required parameter requestParameters.referralLink was null or undefined when calling postReferralLink.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ReferralLink`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || ReferralLinkToJSON(requestParameters.referralLink),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ReferralLink`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || ReferralLinkToJSON(requestParameters.referralLink),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ReferralLinkFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ReferralLinkFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +264,10 @@ function postReferralLinkRaw<T>(
  * Create a new ReferralLink
  */
 export function postReferralLink<T>(
-	requestParameters: PostReferralLinkRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ReferralLink>,
+  requestParameters: PostReferralLinkRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ReferralLink>,
 ): QueryConfig<T> {
-	return postReferralLinkRaw(requestParameters, requestConfig)
+  return postReferralLinkRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +275,59 @@ export function postReferralLink<T>(
  * Update an existing ReferralLink
  */
 function updateReferralLinkRaw<T>(
-	requestParameters: UpdateReferralLinkRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ReferralLink> = {},
+  requestParameters: UpdateReferralLinkRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ReferralLink> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateReferralLink.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateReferralLink.",
+    );
+  }
 
-	if (requestParameters.referralLink === null || requestParameters.referralLink === undefined) {
-		throw new runtime.RequiredError(
-			"referralLink",
-			"Required parameter requestParameters.referralLink was null or undefined when calling updateReferralLink.",
-		)
-	}
+  if (
+    requestParameters.referralLink === null ||
+    requestParameters.referralLink === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "referralLink",
+      "Required parameter requestParameters.referralLink was null or undefined when calling updateReferralLink.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ReferralLink/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || ReferralLinkToJSON(requestParameters.referralLink),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ReferralLink/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || ReferralLinkToJSON(requestParameters.referralLink),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ReferralLinkFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ReferralLinkFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +335,8 @@ function updateReferralLinkRaw<T>(
  * Update an existing ReferralLink
  */
 export function updateReferralLink<T>(
-	requestParameters: UpdateReferralLinkRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ReferralLink>,
+  requestParameters: UpdateReferralLinkRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ReferralLink>,
 ): QueryConfig<T> {
-	return updateReferralLinkRaw(requestParameters, requestConfig)
+  return updateReferralLinkRaw(requestParameters, requestConfig);
 }

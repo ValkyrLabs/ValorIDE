@@ -1,13 +1,26 @@
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from "formik"
-import React from "react"
-import { Form as BSForm, Accordion, Col, Nav, Row, Spinner } from "react-bootstrap"
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa"
-import CoolButton from "../../../../components/CoolButton"
-import * as Yup from "yup"
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React from "react";
+import {
+  Form as BSForm,
+  Accordion,
+  Col,
+  Nav,
+  Row,
+  Spinner,
+} from "react-bootstrap";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "../../../../components/CoolButton";
+import * as Yup from "yup";
 
-import { OasOperation } from "../../../model"
+import { OasOperation } from "../../../model";
 
-import { useAddOasOperationMutation } from "../../services/OasOperationService"
+import { useAddOasOperationMutation } from "../../services/OasOperationService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -37,381 +50,476 @@ an operation in the OAS Spec
    (Skip read-only fields and container types)
 -------------------------------------------------------- */
 const validationSchema = Yup.object().shape({
-	description: Yup.string(),
+  description: Yup.string(),
 
-	oasPathId: Yup.string(),
+  oasPathId: Yup.string(),
 
-	summary: Yup.string(),
+  summary: Yup.string(),
 
-	operationId: Yup.string(),
+  operationId: Yup.string(),
 
-	id: Yup.string(),
+  id: Yup.string(),
 
-	ownerId: Yup.string(),
+  ownerId: Yup.string(),
 
-	createdDate: Yup.date(),
+  createdDate: Yup.date(),
 
-	keyHash: Yup.string(),
+  keyHash: Yup.string(),
 
-	lastAccessedById: Yup.string(),
+  lastAccessedById: Yup.string(),
 
-	lastAccessedDate: Yup.date(),
+  lastAccessedDate: Yup.date(),
 
-	lastModifiedById: Yup.string(),
+  lastModifiedById: Yup.string(),
 
-	lastModifiedDate: Yup.date(),
-})
+  lastModifiedDate: Yup.date(),
+});
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const OasOperationForm: React.FC = () => {
-	const [addOasOperation, addOasOperationResult] = useAddOasOperationMutation()
+  const [addOasOperation, addOasOperationResult] = useAddOasOperationMutation();
 
-	/* INITIAL VALUES - skip read-only fields */
-	const initialValues: Partial<OasOperation> = {
-		description: "null",
+  /* INITIAL VALUES - skip read-only fields */
+  const initialValues: Partial<OasOperation> = {
+    description: "null",
 
-		oasPathId: "null",
+    oasPathId: "null",
 
-		summary: "null",
+    summary: "null",
 
-		operationId: "null",
+    operationId: "null",
 
-		id: "350a46f6-b2f7-4f38-8663-7c8ca65a1516",
+    id: "350a46f6-b2f7-4f38-8663-7c8ca65a1516",
 
-		ownerId: "9aa01fbc-060b-4720-b399-0d56dee2f6f9",
+    ownerId: "9aa01fbc-060b-4720-b399-0d56dee2f6f9",
 
-		keyHash: "null",
+    keyHash: "null",
 
-		lastAccessedById: "3bf8f984-9ac6-45cf-b0bb-2b7323090b22",
+    lastAccessedById: "3bf8f984-9ac6-45cf-b0bb-2b7323090b22",
 
-		lastModifiedById: "d6b45df4-4e45-4fbe-bfb1-d82d56fcb80e",
-	}
+    lastModifiedById: "d6b45df4-4e45-4fbe-bfb1-d82d56fcb80e",
+  };
 
-	/* SUBMIT HANDLER */
-	const handleSubmit = (values: FormikValues, { setSubmitting }: FormikHelpers<OasOperation>) => {
-		// Simulate slow network or do what you need:
-		setTimeout(() => {
-			console.log("OasOperation form values:", values)
-			addOasOperation(values)
-			setSubmitting(false)
-		}, 500)
-	}
+  /* SUBMIT HANDLER */
+  const handleSubmit = (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<OasOperation>,
+  ) => {
+    // Simulate slow network or do what you need:
+    setTimeout(() => {
+      console.log("OasOperation form values:", values);
+      addOasOperation(values);
+      setSubmitting(false);
+    }, 500);
+  };
 
-	return (
-		<div>
-			<Formik
-				validateOnBlur={true}
-				initialValues={initialValues as OasOperation}
-				validationSchema={validationSchema}
-				onSubmit={handleSubmit}>
-				{({ isSubmitting, isValid, errors, setFieldValue, touched, setFieldTouched, handleSubmit }) => (
-					<form onSubmit={handleSubmit} className="form">
-						<Accordion defaultActiveKey="1">
-							{/* Debug/Dev Accordion */}
-							<Accordion.Item eventKey="0">
-								<Accordion.Header>
-									<FaCogs size={36} />
-								</Accordion.Header>
-								<Accordion.Body>
-									errors: {JSON.stringify(errors)}
-									<br />
-									touched: {JSON.stringify(touched)}
-									<br />
-									addOasOperationResult: {JSON.stringify(addOasOperationResult)}
-								</Accordion.Body>
-							</Accordion.Item>
+  return (
+    <div>
+      <Formik
+        validateOnBlur={true}
+        initialValues={initialValues as OasOperation}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({
+          isSubmitting,
+          isValid,
+          errors,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => (
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={36} />
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  touched: {JSON.stringify(touched)}
+                  <br />
+                  addOasOperationResult: {JSON.stringify(addOasOperationResult)}
+                </Accordion.Body>
+              </Accordion.Item>
 
-							{/* Editable Fields (NON-read-only) */}
-							<Accordion.Item eventKey="1">
-								<Accordion.Header>
-									<FaRegPlusSquare size={36} /> Add New OasOperation
-								</Accordion.Header>
-								<Accordion.Body>
-									<label htmlFor="description" className="nice-form-control">
-										<b>
-											Description:
-											{touched.description && !errors.description && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+              {/* Editable Fields (NON-read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={36} /> Add New OasOperation
+                </Accordion.Header>
+                <Accordion.Body>
+                  <label htmlFor="description" className="nice-form-control">
+                    <b>
+                      Description:
+                      {touched.description && !errors.description && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="description"
-											type="text"
-											className={
-												errors.description ? "form-control field-error" : "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="description"
+                      type="text"
+                      className={
+                        errors.description
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="description" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="description"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="oasPathId" className="nice-form-control">
-										<b>
-											Oas Path Id:
-											{touched.oasPathId && !errors.oasPathId && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="oasPathId" className="nice-form-control">
+                    <b>
+                      Oas Path Id:
+                      {touched.oasPathId && !errors.oasPathId && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="oasPathId"
-											type="text"
-											className={
-												errors.oasPathId ? "form-control field-error" : "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="oasPathId"
+                      type="text"
+                      className={
+                        errors.oasPathId
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="oasPathId" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="oasPathId"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="summary" className="nice-form-control">
-										<b>
-											Summary:
-											{touched.summary && !errors.summary && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="summary" className="nice-form-control">
+                    <b>
+                      Summary:
+                      {touched.summary && !errors.summary && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="summary"
-											type="text"
-											className={
-												errors.summary ? "form-control field-error" : "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="summary"
+                      type="text"
+                      className={
+                        errors.summary
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="summary" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="summary"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="operationId" className="nice-form-control">
-										<b>
-											Operation Id:
-											{touched.operationId && !errors.operationId && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="operationId" className="nice-form-control">
+                    <b>
+                      Operation Id:
+                      {touched.operationId && !errors.operationId && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="operationId"
-											type="text"
-											className={
-												errors.operationId ? "form-control field-error" : "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="operationId"
+                      type="text"
+                      className={
+                        errors.operationId
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="operationId" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="operationId"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="id" className="nice-form-control">
-										<b>
-											Id:
-											{touched.id && !errors.id && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="id" className="nice-form-control">
+                    <b>
+                      Id:
+                      {touched.id && !errors.id && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="id"
-											type="text"
-											className={errors.id ? "form-control field-error" : "nice-form-control form-control"}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="id"
+                      type="text"
+                      className={
+                        errors.id
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="id" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="id"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="ownerId" className="nice-form-control">
-										<b>
-											Owner Id:
-											{touched.ownerId && !errors.ownerId && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="ownerId" className="nice-form-control">
+                    <b>
+                      Owner Id:
+                      {touched.ownerId && !errors.ownerId && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="ownerId"
-											type="text"
-											className={
-												errors.ownerId ? "form-control field-error" : "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="ownerId"
+                      type="text"
+                      className={
+                        errors.ownerId
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="ownerId" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="ownerId"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="createdDate" className="nice-form-control">
-										<b>
-											Created Date:
-											{touched.createdDate && !errors.createdDate && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="createdDate" className="nice-form-control">
+                    <b>
+                      Created Date:
+                      {touched.createdDate && !errors.createdDate && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										<ErrorMessage className="error" name="createdDate" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="createdDate"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="keyHash" className="nice-form-control">
-										<b>
-											Key Hash:
-											{touched.keyHash && !errors.keyHash && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="keyHash" className="nice-form-control">
+                    <b>
+                      Key Hash:
+                      {touched.keyHash && !errors.keyHash && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="keyHash"
-											type="text"
-											className={
-												errors.keyHash ? "form-control field-error" : "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="keyHash"
+                      type="text"
+                      className={
+                        errors.keyHash
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="keyHash" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="keyHash"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="lastAccessedById" className="nice-form-control">
-										<b>
-											Last Accessed By Id:
-											{touched.lastAccessedById && !errors.lastAccessedById && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label
+                    htmlFor="lastAccessedById"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Accessed By Id:
+                      {touched.lastAccessedById && !errors.lastAccessedById && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="lastAccessedById"
-											type="text"
-											className={
-												errors.lastAccessedById
-													? "form-control field-error"
-													: "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="lastAccessedById"
+                      type="text"
+                      className={
+                        errors.lastAccessedById
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="lastAccessedById" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="lastAccessedById"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="lastAccessedDate" className="nice-form-control">
-										<b>
-											Last Accessed Date:
-											{touched.lastAccessedDate && !errors.lastAccessedDate && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label
+                    htmlFor="lastAccessedDate"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Accessed Date:
+                      {touched.lastAccessedDate && !errors.lastAccessedDate && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										<ErrorMessage className="error" name="lastAccessedDate" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="lastAccessedDate"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="lastModifiedById" className="nice-form-control">
-										<b>
-											Last Modified By Id:
-											{touched.lastModifiedById && !errors.lastModifiedById && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label
+                    htmlFor="lastModifiedById"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Modified By Id:
+                      {touched.lastModifiedById && !errors.lastModifiedById && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="lastModifiedById"
-											type="text"
-											className={
-												errors.lastModifiedById
-													? "form-control field-error"
-													: "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="lastModifiedById"
+                      type="text"
+                      className={
+                        errors.lastModifiedById
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="lastModifiedById" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="lastModifiedById"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="lastModifiedDate" className="nice-form-control">
-										<b>
-											Last Modified Date:
-											{touched.lastModifiedDate && !errors.lastModifiedDate && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label
+                    htmlFor="lastModifiedDate"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Modified Date:
+                      {touched.lastModifiedDate && !errors.lastModifiedDate && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										<ErrorMessage className="error" name="lastModifiedDate" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="lastModifiedDate"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									{/* SUBMIT BUTTON */}
-									<CoolButton
-										variant={touched && isValid ? (isSubmitting ? "disabled" : "success") : "warning"}
-										type="submit">
-										{isSubmitting && (
-											<Spinner
-												style={{ float: "left" }}
-												as="span"
-												animation="grow"
-												variant="light"
-												aria-hidden="true"
-											/>
-										)}
-										<FaCheckCircle size={30} /> Create New OasOperation
-									</CoolButton>
-								</Accordion.Body>
-							</Accordion.Item>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={
+                      touched && isValid
+                        ? isSubmitting
+                          ? "disabled"
+                          : "success"
+                        : "warning"
+                    }
+                    type="submit"
+                  >
+                    {isSubmitting && (
+                      <Spinner
+                        style={{ float: "left" }}
+                        as="span"
+                        animation="grow"
+                        variant="light"
+                        aria-hidden="true"
+                      />
+                    )}
+                    <FaCheckCircle size={30} /> Create New OasOperation
+                  </CoolButton>
+                </Accordion.Body>
+              </Accordion.Item>
 
-							{/* Read-Only System Fields */}
-							<Accordion.Item eventKey="2">
-								<Accordion.Header>System Fields (Read Only)</Accordion.Header>
-								<Accordion.Body>
-									<Row></Row>
-								</Accordion.Body>
-							</Accordion.Item>
-						</Accordion>
-					</form>
-				)}
-			</Formik>
-		</div>
-	)
-}
+              {/* Read-Only System Fields */}
+              <Accordion.Item eventKey="2">
+                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+                <Accordion.Body>
+                  <Row></Row>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+          </form>
+        )}
+      </Formik>
+    </div>
+  );
+};
 
 /* Export the generated form */
-export default OasOperationForm
+export default OasOperationForm;

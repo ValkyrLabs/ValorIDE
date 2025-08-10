@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: PivotTableApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { PivotTable, PivotTableFromJSON, PivotTableToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { PivotTable, PivotTableFromJSON, PivotTableToJSON } from "../model";
 
 export interface DeletePivotTableRequest {
-	id: string
+  id: string;
 }
 
 export interface GetPivotTableRequest {
-	id: string
+  id: string;
 }
 
 export interface PostPivotTableRequest {
-	pivotTable: PivotTable
+  pivotTable: PivotTable;
 }
 
 export interface UpdatePivotTableRequest {
-	id: string
-	pivotTable: PivotTable
+  id: string;
+  pivotTable: PivotTable;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdatePivotTableRequest {
  * Delete a PivotTable.
  */
 function deletePivotTableRaw<T>(
-	requestParameters: DeletePivotTableRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeletePivotTableRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deletePivotTable.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deletePivotTable.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/PivotTable/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/PivotTable/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deletePivotTableRaw<T>(
  * Delete a PivotTable.
  */
 export function deletePivotTable<T>(
-	requestParameters: DeletePivotTableRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeletePivotTableRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deletePivotTableRaw(requestParameters, requestConfig)
+  return deletePivotTableRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deletePivotTable<T>(
  * Retrieve a single PivotTable
  */
 function getPivotTableRaw<T>(
-	requestParameters: GetPivotTableRequest,
-	requestConfig: runtime.TypedQueryConfig<T, PivotTable> = {},
+  requestParameters: GetPivotTableRequest,
+  requestConfig: runtime.TypedQueryConfig<T, PivotTable> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getPivotTable.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getPivotTable.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/PivotTable/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/PivotTable/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(PivotTableFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(PivotTableFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getPivotTableRaw<T>(
  * Retrieve a single PivotTable
  */
 export function getPivotTable<T>(
-	requestParameters: GetPivotTableRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, PivotTable>,
+  requestParameters: GetPivotTableRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, PivotTable>,
 ): QueryConfig<T> {
-	return getPivotTableRaw(requestParameters, requestConfig)
+  return getPivotTableRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of PivotTables.
  * Retrieve a list of PivotTables
  */
-function getPivotTableListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<PivotTable>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getPivotTableListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<PivotTable>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/PivotTable`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/PivotTable`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(PivotTableFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(PivotTableFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of PivotTables.
  * Retrieve a list of PivotTables
  */
-export function getPivotTableList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<PivotTable>>): QueryConfig<T> {
-	return getPivotTableListRaw(requestConfig)
+export function getPivotTableList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<PivotTable>>,
+): QueryConfig<T> {
+  return getPivotTableListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getPivotTableList<T>(requestConfig?: runtime.TypedQueryConfig<T,
  * Create a new PivotTable
  */
 function postPivotTableRaw<T>(
-	requestParameters: PostPivotTableRequest,
-	requestConfig: runtime.TypedQueryConfig<T, PivotTable> = {},
+  requestParameters: PostPivotTableRequest,
+  requestConfig: runtime.TypedQueryConfig<T, PivotTable> = {},
 ): QueryConfig<T> {
-	if (requestParameters.pivotTable === null || requestParameters.pivotTable === undefined) {
-		throw new runtime.RequiredError(
-			"pivotTable",
-			"Required parameter requestParameters.pivotTable was null or undefined when calling postPivotTable.",
-		)
-	}
+  if (
+    requestParameters.pivotTable === null ||
+    requestParameters.pivotTable === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "pivotTable",
+      "Required parameter requestParameters.pivotTable was null or undefined when calling postPivotTable.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/PivotTable`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || PivotTableToJSON(requestParameters.pivotTable),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/PivotTable`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || PivotTableToJSON(requestParameters.pivotTable),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(PivotTableFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(PivotTableFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postPivotTableRaw<T>(
  * Create a new PivotTable
  */
 export function postPivotTable<T>(
-	requestParameters: PostPivotTableRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, PivotTable>,
+  requestParameters: PostPivotTableRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, PivotTable>,
 ): QueryConfig<T> {
-	return postPivotTableRaw(requestParameters, requestConfig)
+  return postPivotTableRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postPivotTable<T>(
  * Update an existing PivotTable
  */
 function updatePivotTableRaw<T>(
-	requestParameters: UpdatePivotTableRequest,
-	requestConfig: runtime.TypedQueryConfig<T, PivotTable> = {},
+  requestParameters: UpdatePivotTableRequest,
+  requestConfig: runtime.TypedQueryConfig<T, PivotTable> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updatePivotTable.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updatePivotTable.",
+    );
+  }
 
-	if (requestParameters.pivotTable === null || requestParameters.pivotTable === undefined) {
-		throw new runtime.RequiredError(
-			"pivotTable",
-			"Required parameter requestParameters.pivotTable was null or undefined when calling updatePivotTable.",
-		)
-	}
+  if (
+    requestParameters.pivotTable === null ||
+    requestParameters.pivotTable === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "pivotTable",
+      "Required parameter requestParameters.pivotTable was null or undefined when calling updatePivotTable.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/PivotTable/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || PivotTableToJSON(requestParameters.pivotTable),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/PivotTable/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || PivotTableToJSON(requestParameters.pivotTable),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(PivotTableFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(PivotTableFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updatePivotTableRaw<T>(
  * Update an existing PivotTable
  */
 export function updatePivotTable<T>(
-	requestParameters: UpdatePivotTableRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, PivotTable>,
+  requestParameters: UpdatePivotTableRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, PivotTable>,
 ): QueryConfig<T> {
-	return updatePivotTableRaw(requestParameters, requestConfig)
+  return updatePivotTableRaw(requestParameters, requestConfig);
 }

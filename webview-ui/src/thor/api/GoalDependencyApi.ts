@@ -16,25 +16,34 @@ Template file: typescript-redux-query/apis.mustache
 Description: GoalDependencyApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { GoalDependency, GoalDependencyFromJSON, GoalDependencyToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  GoalDependency,
+  GoalDependencyFromJSON,
+  GoalDependencyToJSON,
+} from "../model";
 
 export interface DeleteGoalDependencyRequest {
-	id: string
+  id: string;
 }
 
 export interface GetGoalDependencyRequest {
-	id: string
+  id: string;
 }
 
 export interface PostGoalDependencyRequest {
-	goalDependency: GoalDependency
+  goalDependency: GoalDependency;
 }
 
 export interface UpdateGoalDependencyRequest {
-	id: string
-	goalDependency: GoalDependency
+  id: string;
+  goalDependency: GoalDependency;
 }
 
 /**
@@ -42,45 +51,45 @@ export interface UpdateGoalDependencyRequest {
  * Delete a GoalDependency.
  */
 function deleteGoalDependencyRaw<T>(
-	requestParameters: DeleteGoalDependencyRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteGoalDependencyRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteGoalDependency.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteGoalDependency.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/GoalDependency/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/GoalDependency/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +97,10 @@ function deleteGoalDependencyRaw<T>(
  * Delete a GoalDependency.
  */
 export function deleteGoalDependency<T>(
-	requestParameters: DeleteGoalDependencyRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteGoalDependencyRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteGoalDependencyRaw(requestParameters, requestConfig)
+  return deleteGoalDependencyRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +108,47 @@ export function deleteGoalDependency<T>(
  * Retrieve a single GoalDependency
  */
 function getGoalDependencyRaw<T>(
-	requestParameters: GetGoalDependencyRequest,
-	requestConfig: runtime.TypedQueryConfig<T, GoalDependency> = {},
+  requestParameters: GetGoalDependencyRequest,
+  requestConfig: runtime.TypedQueryConfig<T, GoalDependency> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getGoalDependency.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getGoalDependency.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/GoalDependency/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/GoalDependency/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(GoalDependencyFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(GoalDependencyFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +156,57 @@ function getGoalDependencyRaw<T>(
  * Retrieve a single GoalDependency
  */
 export function getGoalDependency<T>(
-	requestParameters: GetGoalDependencyRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, GoalDependency>,
+  requestParameters: GetGoalDependencyRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, GoalDependency>,
 ): QueryConfig<T> {
-	return getGoalDependencyRaw(requestParameters, requestConfig)
+  return getGoalDependencyRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of GoalDependencys.
  * Retrieve a list of GoalDependencys
  */
-function getGoalDependencyListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<GoalDependency>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getGoalDependencyListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<GoalDependency>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/GoalDependency`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/GoalDependency`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(GoalDependencyFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(GoalDependencyFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of GoalDependencys.
  * Retrieve a list of GoalDependencys
  */
-export function getGoalDependencyList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<GoalDependency>>): QueryConfig<T> {
-	return getGoalDependencyListRaw(requestConfig)
+export function getGoalDependencyList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<GoalDependency>>,
+): QueryConfig<T> {
+  return getGoalDependencyListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +214,50 @@ export function getGoalDependencyList<T>(requestConfig?: runtime.TypedQueryConfi
  * Create a new GoalDependency
  */
 function postGoalDependencyRaw<T>(
-	requestParameters: PostGoalDependencyRequest,
-	requestConfig: runtime.TypedQueryConfig<T, GoalDependency> = {},
+  requestParameters: PostGoalDependencyRequest,
+  requestConfig: runtime.TypedQueryConfig<T, GoalDependency> = {},
 ): QueryConfig<T> {
-	if (requestParameters.goalDependency === null || requestParameters.goalDependency === undefined) {
-		throw new runtime.RequiredError(
-			"goalDependency",
-			"Required parameter requestParameters.goalDependency was null or undefined when calling postGoalDependency.",
-		)
-	}
+  if (
+    requestParameters.goalDependency === null ||
+    requestParameters.goalDependency === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "goalDependency",
+      "Required parameter requestParameters.goalDependency was null or undefined when calling postGoalDependency.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/GoalDependency`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || GoalDependencyToJSON(requestParameters.goalDependency),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/GoalDependency`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters || GoalDependencyToJSON(requestParameters.goalDependency),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(GoalDependencyFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(GoalDependencyFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +265,10 @@ function postGoalDependencyRaw<T>(
  * Create a new GoalDependency
  */
 export function postGoalDependency<T>(
-	requestParameters: PostGoalDependencyRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, GoalDependency>,
+  requestParameters: PostGoalDependencyRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, GoalDependency>,
 ): QueryConfig<T> {
-	return postGoalDependencyRaw(requestParameters, requestConfig)
+  return postGoalDependencyRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +276,60 @@ export function postGoalDependency<T>(
  * Update an existing GoalDependency
  */
 function updateGoalDependencyRaw<T>(
-	requestParameters: UpdateGoalDependencyRequest,
-	requestConfig: runtime.TypedQueryConfig<T, GoalDependency> = {},
+  requestParameters: UpdateGoalDependencyRequest,
+  requestConfig: runtime.TypedQueryConfig<T, GoalDependency> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateGoalDependency.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateGoalDependency.",
+    );
+  }
 
-	if (requestParameters.goalDependency === null || requestParameters.goalDependency === undefined) {
-		throw new runtime.RequiredError(
-			"goalDependency",
-			"Required parameter requestParameters.goalDependency was null or undefined when calling updateGoalDependency.",
-		)
-	}
+  if (
+    requestParameters.goalDependency === null ||
+    requestParameters.goalDependency === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "goalDependency",
+      "Required parameter requestParameters.goalDependency was null or undefined when calling updateGoalDependency.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/GoalDependency/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || GoalDependencyToJSON(requestParameters.goalDependency),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/GoalDependency/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters || GoalDependencyToJSON(requestParameters.goalDependency),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(GoalDependencyFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(GoalDependencyFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +337,8 @@ function updateGoalDependencyRaw<T>(
  * Update an existing GoalDependency
  */
 export function updateGoalDependency<T>(
-	requestParameters: UpdateGoalDependencyRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, GoalDependency>,
+  requestParameters: UpdateGoalDependencyRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, GoalDependency>,
 ): QueryConfig<T> {
-	return updateGoalDependencyRaw(requestParameters, requestConfig)
+  return updateGoalDependencyRaw(requestParameters, requestConfig);
 }

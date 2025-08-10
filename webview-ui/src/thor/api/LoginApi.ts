@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: LoginApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { Login, LoginFromJSON, LoginToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Login, LoginFromJSON, LoginToJSON } from "../model";
 
 export interface DeleteLoginRequest {
-	id: string
+  id: string;
 }
 
 export interface GetLoginRequest {
-	id: string
+  id: string;
 }
 
 export interface PostLoginRequest {
-	login: Login
+  login: Login;
 }
 
 export interface UpdateLoginRequest {
-	id: string
-	login: Login
+  id: string;
+  login: Login;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateLoginRequest {
  * Delete a Login.
  */
 function deleteLoginRaw<T>(
-	requestParameters: DeleteLoginRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteLoginRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteLogin.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteLogin.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Login/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Login/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteLoginRaw<T>(
  * Delete a Login.
  */
 export function deleteLogin<T>(
-	requestParameters: DeleteLoginRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteLoginRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteLoginRaw(requestParameters, requestConfig)
+  return deleteLoginRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteLogin<T>(
  * Retrieve a single Login
  */
 function getLoginRaw<T>(
-	requestParameters: GetLoginRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Login> = {},
+  requestParameters: GetLoginRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Login> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getLogin.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getLogin.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Login/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Login/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LoginFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(LoginFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getLoginRaw<T>(
  * Retrieve a single Login
  */
 export function getLogin<T>(
-	requestParameters: GetLoginRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Login>,
+  requestParameters: GetLoginRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Login>,
 ): QueryConfig<T> {
-	return getLoginRaw(requestParameters, requestConfig)
+  return getLoginRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Logins.
  * Retrieve a list of Logins
  */
-function getLoginListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<Login>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getLoginListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<Login>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Login`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Login`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(LoginFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(LoginFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of Logins.
  * Retrieve a list of Logins
  */
-export function getLoginList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<Login>>): QueryConfig<T> {
-	return getLoginListRaw(requestConfig)
+export function getLoginList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Login>>,
+): QueryConfig<T> {
+  return getLoginListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getLoginList<T>(requestConfig?: runtime.TypedQueryConfig<T, Arra
  * Create a new Login
  */
 function postLoginRaw<T>(
-	requestParameters: PostLoginRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Login> = {},
+  requestParameters: PostLoginRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Login> = {},
 ): QueryConfig<T> {
-	if (requestParameters.login === null || requestParameters.login === undefined) {
-		throw new runtime.RequiredError(
-			"login",
-			"Required parameter requestParameters.login was null or undefined when calling postLogin.",
-		)
-	}
+  if (
+    requestParameters.login === null ||
+    requestParameters.login === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "login",
+      "Required parameter requestParameters.login was null or undefined when calling postLogin.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Login`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || LoginToJSON(requestParameters.login),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Login`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || LoginToJSON(requestParameters.login),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LoginFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(LoginFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postLoginRaw<T>(
  * Create a new Login
  */
 export function postLogin<T>(
-	requestParameters: PostLoginRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Login>,
+  requestParameters: PostLoginRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Login>,
 ): QueryConfig<T> {
-	return postLoginRaw(requestParameters, requestConfig)
+  return postLoginRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postLogin<T>(
  * Update an existing Login
  */
 function updateLoginRaw<T>(
-	requestParameters: UpdateLoginRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Login> = {},
+  requestParameters: UpdateLoginRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Login> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateLogin.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateLogin.",
+    );
+  }
 
-	if (requestParameters.login === null || requestParameters.login === undefined) {
-		throw new runtime.RequiredError(
-			"login",
-			"Required parameter requestParameters.login was null or undefined when calling updateLogin.",
-		)
-	}
+  if (
+    requestParameters.login === null ||
+    requestParameters.login === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "login",
+      "Required parameter requestParameters.login was null or undefined when calling updateLogin.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Login/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || LoginToJSON(requestParameters.login),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Login/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || LoginToJSON(requestParameters.login),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LoginFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(LoginFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateLoginRaw<T>(
  * Update an existing Login
  */
 export function updateLogin<T>(
-	requestParameters: UpdateLoginRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Login>,
+  requestParameters: UpdateLoginRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Login>,
 ): QueryConfig<T> {
-	return updateLoginRaw(requestParameters, requestConfig)
+  return updateLoginRaw(requestParameters, requestConfig);
 }

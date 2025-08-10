@@ -16,25 +16,34 @@ Template file: typescript-redux-query/apis.mustache
 Description: SalesPipelineApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { SalesPipeline, SalesPipelineFromJSON, SalesPipelineToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  SalesPipeline,
+  SalesPipelineFromJSON,
+  SalesPipelineToJSON,
+} from "../model";
 
 export interface DeleteSalesPipelineRequest {
-	id: string
+  id: string;
 }
 
 export interface GetSalesPipelineRequest {
-	id: string
+  id: string;
 }
 
 export interface PostSalesPipelineRequest {
-	salesPipeline: SalesPipeline
+  salesPipeline: SalesPipeline;
 }
 
 export interface UpdateSalesPipelineRequest {
-	id: string
-	salesPipeline: SalesPipeline
+  id: string;
+  salesPipeline: SalesPipeline;
 }
 
 /**
@@ -42,45 +51,45 @@ export interface UpdateSalesPipelineRequest {
  * Delete a SalesPipeline.
  */
 function deleteSalesPipelineRaw<T>(
-	requestParameters: DeleteSalesPipelineRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteSalesPipelineRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteSalesPipeline.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteSalesPipeline.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/SalesPipeline/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SalesPipeline/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +97,10 @@ function deleteSalesPipelineRaw<T>(
  * Delete a SalesPipeline.
  */
 export function deleteSalesPipeline<T>(
-	requestParameters: DeleteSalesPipelineRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteSalesPipelineRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteSalesPipelineRaw(requestParameters, requestConfig)
+  return deleteSalesPipelineRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +108,47 @@ export function deleteSalesPipeline<T>(
  * Retrieve a single SalesPipeline
  */
 function getSalesPipelineRaw<T>(
-	requestParameters: GetSalesPipelineRequest,
-	requestConfig: runtime.TypedQueryConfig<T, SalesPipeline> = {},
+  requestParameters: GetSalesPipelineRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SalesPipeline> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getSalesPipeline.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getSalesPipeline.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/SalesPipeline/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SalesPipeline/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SalesPipelineFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SalesPipelineFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +156,57 @@ function getSalesPipelineRaw<T>(
  * Retrieve a single SalesPipeline
  */
 export function getSalesPipeline<T>(
-	requestParameters: GetSalesPipelineRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, SalesPipeline>,
+  requestParameters: GetSalesPipelineRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SalesPipeline>,
 ): QueryConfig<T> {
-	return getSalesPipelineRaw(requestParameters, requestConfig)
+  return getSalesPipelineRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of SalesPipelines.
  * Retrieve a list of SalesPipelines
  */
-function getSalesPipelineListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<SalesPipeline>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getSalesPipelineListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<SalesPipeline>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/SalesPipeline`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SalesPipeline`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(SalesPipelineFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(SalesPipelineFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of SalesPipelines.
  * Retrieve a list of SalesPipelines
  */
-export function getSalesPipelineList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<SalesPipeline>>): QueryConfig<T> {
-	return getSalesPipelineListRaw(requestConfig)
+export function getSalesPipelineList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<SalesPipeline>>,
+): QueryConfig<T> {
+  return getSalesPipelineListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +214,50 @@ export function getSalesPipelineList<T>(requestConfig?: runtime.TypedQueryConfig
  * Create a new SalesPipeline
  */
 function postSalesPipelineRaw<T>(
-	requestParameters: PostSalesPipelineRequest,
-	requestConfig: runtime.TypedQueryConfig<T, SalesPipeline> = {},
+  requestParameters: PostSalesPipelineRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SalesPipeline> = {},
 ): QueryConfig<T> {
-	if (requestParameters.salesPipeline === null || requestParameters.salesPipeline === undefined) {
-		throw new runtime.RequiredError(
-			"salesPipeline",
-			"Required parameter requestParameters.salesPipeline was null or undefined when calling postSalesPipeline.",
-		)
-	}
+  if (
+    requestParameters.salesPipeline === null ||
+    requestParameters.salesPipeline === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "salesPipeline",
+      "Required parameter requestParameters.salesPipeline was null or undefined when calling postSalesPipeline.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/SalesPipeline`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || SalesPipelineToJSON(requestParameters.salesPipeline),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SalesPipeline`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters || SalesPipelineToJSON(requestParameters.salesPipeline),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SalesPipelineFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SalesPipelineFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +265,10 @@ function postSalesPipelineRaw<T>(
  * Create a new SalesPipeline
  */
 export function postSalesPipeline<T>(
-	requestParameters: PostSalesPipelineRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, SalesPipeline>,
+  requestParameters: PostSalesPipelineRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SalesPipeline>,
 ): QueryConfig<T> {
-	return postSalesPipelineRaw(requestParameters, requestConfig)
+  return postSalesPipelineRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +276,60 @@ export function postSalesPipeline<T>(
  * Update an existing SalesPipeline
  */
 function updateSalesPipelineRaw<T>(
-	requestParameters: UpdateSalesPipelineRequest,
-	requestConfig: runtime.TypedQueryConfig<T, SalesPipeline> = {},
+  requestParameters: UpdateSalesPipelineRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SalesPipeline> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateSalesPipeline.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateSalesPipeline.",
+    );
+  }
 
-	if (requestParameters.salesPipeline === null || requestParameters.salesPipeline === undefined) {
-		throw new runtime.RequiredError(
-			"salesPipeline",
-			"Required parameter requestParameters.salesPipeline was null or undefined when calling updateSalesPipeline.",
-		)
-	}
+  if (
+    requestParameters.salesPipeline === null ||
+    requestParameters.salesPipeline === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "salesPipeline",
+      "Required parameter requestParameters.salesPipeline was null or undefined when calling updateSalesPipeline.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/SalesPipeline/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || SalesPipelineToJSON(requestParameters.salesPipeline),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SalesPipeline/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters || SalesPipelineToJSON(requestParameters.salesPipeline),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SalesPipelineFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SalesPipelineFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +337,8 @@ function updateSalesPipelineRaw<T>(
  * Update an existing SalesPipeline
  */
 export function updateSalesPipeline<T>(
-	requestParameters: UpdateSalesPipelineRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, SalesPipeline>,
+  requestParameters: UpdateSalesPipelineRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SalesPipeline>,
 ): QueryConfig<T> {
-	return updateSalesPipelineRaw(requestParameters, requestConfig)
+  return updateSalesPipelineRaw(requestParameters, requestConfig);
 }

@@ -1,34 +1,42 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 
-import { ChatResponse } from "../../model/ChatResponse"
+import { ChatResponse } from "../../model/ChatResponse";
 
 const ChatResponseSlice = createSlice({
-	name: "ChatResponses",
-	initialState: [],
+  name: "ChatResponses",
+  initialState: [],
 
-	reducers: {
-		ChatResponseAdded(state, action) {
-			state.push(action.payload)
-		},
+  reducers: {
+    ChatResponseAdded(state, action) {
+      state.push(action.payload);
+    },
 
-		ChatResponseValueToggled(state, action) {
-			console.log("ChatResponse TOGGLE")
-			console.warn(JSON.stringify(action))
-			const ChatResponse: ChatResponse = state.find((ChatResponse) => ChatResponse.id === action.payload.ChatResponseId)
-			if (ChatResponse) {
-				if (action.payload.target === "SOMETHING") {
-				}
-			}
-		},
+    ChatResponseValueToggled(state, action) {
+      console.log("ChatResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ChatResponse: ChatResponse = state.find(
+        (ChatResponse) => ChatResponse.id === action.payload.ChatResponseId,
+      );
+      if (ChatResponse) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
 
-		ChatResponsepropertySet(state, action) {
-			const ChatResponse = state.find((ChatResponse) => ChatResponse.id === action.payload.ChatResponseId)
-			if (ChatResponse) {
-				//  ChatResponse[action.property] = action.payload[action.property];
-			}
-		},
-	},
-})
+    ChatResponsepropertySet(state, action) {
+      const ChatResponse = state.find(
+        (ChatResponse) => ChatResponse.id === action.payload.ChatResponseId,
+      );
+      if (ChatResponse) {
+        //  ChatResponse[action.property] = action.payload[action.property];
+      }
+    },
+  },
+});
 
-export const { ChatResponseAdded, ChatResponseValueToggled, ChatResponsepropertySet } = ChatResponseSlice.actions
-export default ChatResponseSlice.reducer
+export const {
+  ChatResponseAdded,
+  ChatResponseValueToggled,
+  ChatResponsepropertySet,
+} = ChatResponseSlice.actions;
+export default ChatResponseSlice.reducer;

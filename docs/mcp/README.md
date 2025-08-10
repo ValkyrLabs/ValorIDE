@@ -2,8 +2,8 @@
 
 **Quick Links:**
 
--   [Building MCP Servers from GitHub](mcp-server-from-github.md)
--   [Building Custom MCP Servers from Scratch](mcp-server-from-scratch.md)
+- [Building MCP Servers from GitHub](mcp-server-from-github.md)
+- [Building Custom MCP Servers from Scratch](mcp-server-from-scratch.md)
 
 This document explains Model Context Protocol (MCP) servers, their capabilities, and how ValorIDE can help build and use them.
 
@@ -17,9 +17,9 @@ MCP servers define a set of "**tools,**" which are functions the LLM can execute
 
 **Here's how MCP works:**
 
--   **MCP hosts** discover the capabilities of connected servers and load their tools, prompts, and resources.
--   **Resources** provide consistent access to read-only data, akin to file paths or database queries.
--   **Security** is ensured as servers isolate credentials and sensitive data. Interactions require explicit user approval.
+- **MCP hosts** discover the capabilities of connected servers and load their tools, prompts, and resources.
+- **Resources** provide consistent access to read-only data, akin to file paths or database queries.
+- **Security** is ensured as servers isolate credentials and sensitive data. Interactions require explicit user approval.
 
 ## Use Cases
 
@@ -27,42 +27,42 @@ The potential of MCP servers is vast. They can be used for a variety of purposes
 
 **Here are some concrete examples of how MCP servers can be used:**
 
--   **Web Services and API Integration:**
+- **Web Services and API Integration:**
 
-    -   Monitor GitHub repositories for new issues
-    -   Post updates to Twitter based on specific triggers
-    -   Retrieve real-time weather data for location-based services
+  - Monitor GitHub repositories for new issues
+  - Post updates to Twitter based on specific triggers
+  - Retrieve real-time weather data for location-based services
 
--   **Browser Automation:**
+- **Browser Automation:**
 
-    -   Automate web application testing
-    -   Scrape e-commerce sites for price comparisons
-    -   Generate screenshots for website monitoring
+  - Automate web application testing
+  - Scrape e-commerce sites for price comparisons
+  - Generate screenshots for website monitoring
 
--   **Database Queries:**
+- **Database Queries:**
 
-    -   Generate weekly sales reports
-    -   Analyze customer behavior patterns
-    -   Create real-time dashboards for business metrics
+  - Generate weekly sales reports
+  - Analyze customer behavior patterns
+  - Create real-time dashboards for business metrics
 
--   **Project and Task Management:**
+- **Project and Task Management:**
 
-    -   Automate Jira ticket creation based on code commits
-    -   Generate weekly progress reports
-    -   Create task dependencies based on project requirements
+  - Automate Jira ticket creation based on code commits
+  - Generate weekly progress reports
+  - Create task dependencies based on project requirements
 
--   **Codebase Documentation:**
-    -   Generate API documentation from code comments
-    -   Create architecture diagrams from code structure
-    -   Maintain up-to-date README files
+- **Codebase Documentation:**
+  - Generate API documentation from code comments
+  - Create architecture diagrams from code structure
+  - Maintain up-to-date README files
 
 ## Getting Started
 
 **Choose the right approach for your needs:**
 
--   **Use Existing Servers:** Start with pre-built MCP servers from GitHub repositories
--   **Customize Existing Servers:** Modify existing servers to fit your specific requirements
--   **Build from Scratch:** Create completely custom servers for unique use cases
+- **Use Existing Servers:** Start with pre-built MCP servers from GitHub repositories
+- **Customize Existing Servers:** Modify existing servers to fit your specific requirements
+- **Build from Scratch:** Create completely custom servers for unique use cases
 
 ## Integration with ValorIDE
 
@@ -70,26 +70,26 @@ ValorIDE simplifies the building and use of MCP servers through its AI capabilit
 
 ### Building MCP Servers
 
--   **Natural language understanding:** Instruct ValorIDE in natural language to build an MCP server by describing its functionalities. ValorIDE will interpret your instructions and generate the necessary code.
--   **Cloning and building servers:** ValorIDE can clone existing MCP server repositories from GitHub and build them automatically.
--   **Configuration and dependency management:** ValorIDE handles configuration files, environment variables, and dependencies.
--   **Troubleshooting and debugging:** ValorIDE helps identify and resolve errors during development.
+- **Natural language understanding:** Instruct ValorIDE in natural language to build an MCP server by describing its functionalities. ValorIDE will interpret your instructions and generate the necessary code.
+- **Cloning and building servers:** ValorIDE can clone existing MCP server repositories from GitHub and build them automatically.
+- **Configuration and dependency management:** ValorIDE handles configuration files, environment variables, and dependencies.
+- **Troubleshooting and debugging:** ValorIDE helps identify and resolve errors during development.
 
 ### Using MCP Servers
 
--   **Tool execution:** ValorIDE seamlessly integrates with MCP servers, allowing you to execute their defined tools.
--   **Context-aware interactions:** ValorIDE can intelligently suggest using relevant tools based on conversation context.
--   **Dynamic integrations:** Combine multiple MCP server capabilities for complex tasks. For example, ValorIDE could use a GitHub server to get data and a Notion server to create a formatted report.
+- **Tool execution:** ValorIDE seamlessly integrates with MCP servers, allowing you to execute their defined tools.
+- **Context-aware interactions:** ValorIDE can intelligently suggest using relevant tools based on conversation context.
+- **Dynamic integrations:** Combine multiple MCP server capabilities for complex tasks. For example, ValorIDE could use a GitHub server to get data and a Notion server to create a formatted report.
 
 ## Security Considerations
 
 When working with MCP servers, it's important to follow security best practices:
 
--   **Authentication:** Always use secure authentication methods for API access
--   **Environment Variables:** Store sensitive information in environment variables
--   **Access Control:** Limit server access to authorized users only
--   **Data Validation:** Validate all inputs to prevent injection attacks
--   **Logging:** Implement secure logging practices without exposing sensitive data
+- **Authentication:** Always use secure authentication methods for API access
+- **Environment Variables:** Store sensitive information in environment variables
+- **Access Control:** Limit server access to authorized users only
+- **Data Validation:** Validate all inputs to prevent injection attacks
+- **Logging:** Implement secure logging practices without exposing sensitive data
 
 ## Resources
 
@@ -97,7 +97,7 @@ There are various resources available for finding and learning about MCP servers
 
 **Here are some links to resources for finding and learning about MCP servers:**
 
--   **GitHub Repositories:** [https://github.com/modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) and [https://github.com/punkpeye/awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers)
--   **Online Directories:** [https://mcpservers.org/](https://mcpservers.org/), [https://mcp.so/](https://mcp.so/), and [https://glama.ai/mcp/servers](https://glama.ai/mcp/servers)
--   **PulseMCP:** [https://www.pulsemcp.com/](https://www.pulsemcp.com/)
--   **YouTube Tutorial (AI-Driven Coder):** A video guide for building and using MCP servers: [https://www.youtube.com/watch?v=b5pqTNiuuJg](https://www.youtube.com/watch?v=b5pqTNiuuJg)
+- **GitHub Repositories:** [https://github.com/modelcontextprotocol/servers](https://github.com/modelcontextprotocol/servers) and [https://github.com/punkpeye/awesome-mcp-servers](https://github.com/punkpeye/awesome-mcp-servers)
+- **Online Directories:** [https://mcpservers.org/](https://mcpservers.org/), [https://mcp.so/](https://mcp.so/), and [https://glama.ai/mcp/servers](https://glama.ai/mcp/servers)
+- **PulseMCP:** [https://www.pulsemcp.com/](https://www.pulsemcp.com/)
+- **YouTube Tutorial (AI-Driven Coder):** A video guide for building and using MCP servers: [https://www.youtube.com/watch?v=b5pqTNiuuJg](https://www.youtube.com/watch?v=b5pqTNiuuJg)

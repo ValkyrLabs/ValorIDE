@@ -1,22 +1,28 @@
-import { getSalesActivity, postSalesActivity, getSalesActivityList, deleteSalesActivity, updateSalesActivity } from "../../api"
+import {
+  getSalesActivity,
+  postSalesActivity,
+  getSalesActivityList,
+  deleteSalesActivity,
+  updateSalesActivity,
+} from "../../api";
 
 import {
-	ADD_SALESACTIVITY_REQUEST,
-	FETCH_SALESACTIVITY_REQUEST,
-	LIST_SALESACTIVITY_REQUEST,
-	UPDATE_SALESACTIVITY_REQUEST,
-	DELETE_SALESACTIVITY_REQUEST,
-	addSalesActivityFailure,
-	addSalesActivitySuccess,
-	fetchSalesActivityFailure,
-	fetchSalesActivitySuccess,
-	listSalesActivityFailure,
-	listSalesActivitySuccess,
-	updateSalesActivityFailure,
-	updateSalesActivitySuccess,
-	deleteSalesActivityFailure,
-	deleteSalesActivitySuccess,
-} from "../actions/SalesActivityApiAction"
+  ADD_SALESACTIVITY_REQUEST,
+  FETCH_SALESACTIVITY_REQUEST,
+  LIST_SALESACTIVITY_REQUEST,
+  UPDATE_SALESACTIVITY_REQUEST,
+  DELETE_SALESACTIVITY_REQUEST,
+  addSalesActivityFailure,
+  addSalesActivitySuccess,
+  fetchSalesActivityFailure,
+  fetchSalesActivitySuccess,
+  listSalesActivityFailure,
+  listSalesActivitySuccess,
+  updateSalesActivityFailure,
+  updateSalesActivitySuccess,
+  deleteSalesActivityFailure,
+  deleteSalesActivitySuccess,
+} from "../actions/SalesActivityApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: SalesActivity
 */
 
 export const SalesActivityMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("SalesActivity MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("SalesActivity MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_SALESACTIVITY_REQUEST:
-				try {
-					const response = postSalesActivity(action.payload)
-					dispatch(addSalesActivitySuccess(response.body))
-				} catch (error) {
-					dispatch(addSalesActivityFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_SALESACTIVITY_REQUEST:
+        try {
+          const response = postSalesActivity(action.payload);
+          dispatch(addSalesActivitySuccess(response.body));
+        } catch (error) {
+          dispatch(addSalesActivityFailure(error.message));
+        }
+        break;
 
-			case LIST_SALESACTIVITY_REQUEST:
-				try {
-					const response = getSalesActivityList()
-					dispatch(listSalesActivitySuccess(response.body))
-				} catch (error) {
-					dispatch(listSalesActivityFailure(error.message))
-				}
-				break
+      case LIST_SALESACTIVITY_REQUEST:
+        try {
+          const response = getSalesActivityList();
+          dispatch(listSalesActivitySuccess(response.body));
+        } catch (error) {
+          dispatch(listSalesActivityFailure(error.message));
+        }
+        break;
 
-			case FETCH_SALESACTIVITY_REQUEST:
-				try {
-					const response = getSalesActivity(action.id)
-					dispatch(fetchSalesActivitySuccess(response.body))
-				} catch (error) {
-					dispatch(fetchSalesActivityFailure(error.message))
-				}
-				break
+      case FETCH_SALESACTIVITY_REQUEST:
+        try {
+          const response = getSalesActivity(action.id);
+          dispatch(fetchSalesActivitySuccess(response.body));
+        } catch (error) {
+          dispatch(fetchSalesActivityFailure(error.message));
+        }
+        break;
 
-			case UPDATE_SALESACTIVITY_REQUEST:
-				try {
-					const { id, SalesActivity } = action.payload
-					const response = updateSalesActivity(id)
-					dispatch(updateSalesActivitySuccess(response.body))
-				} catch (error) {
-					dispatch(updateSalesActivityFailure(error.message))
-				}
-				break
+      case UPDATE_SALESACTIVITY_REQUEST:
+        try {
+          const { id, SalesActivity } = action.payload;
+          const response = updateSalesActivity(id);
+          dispatch(updateSalesActivitySuccess(response.body));
+        } catch (error) {
+          dispatch(updateSalesActivityFailure(error.message));
+        }
+        break;
 
-			case DELETE_SALESACTIVITY_REQUEST:
-				try {
-					const { id, SalesActivity } = action.payload
-					const response = deleteSalesActivity(id)
-					dispatch(deleteSalesActivitySuccess(response.body))
-				} catch (error) {
-					dispatch(deleteSalesActivityFailure(error.message))
-				}
-				break
+      case DELETE_SALESACTIVITY_REQUEST:
+        try {
+          const { id, SalesActivity } = action.payload;
+          const response = deleteSalesActivity(id);
+          dispatch(deleteSalesActivitySuccess(response.body));
+        } catch (error) {
+          dispatch(deleteSalesActivityFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

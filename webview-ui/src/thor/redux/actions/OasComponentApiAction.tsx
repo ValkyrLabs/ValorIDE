@@ -2,94 +2,94 @@
 
 // OasComponent
 
-export const FETCH_OASCOMPONENT_REQUEST = "FETCH_OASCOMPONENT_REQUEST"
-export const FETCH_OASCOMPONENT_SUCCESS = "FETCH_OASCOMPONENT_SUCCESS"
-export const FETCH_OASCOMPONENT_FAILURE = "FETCH_OASCOMPONENT_FAILURE"
+export const FETCH_OASCOMPONENT_REQUEST = "FETCH_OASCOMPONENT_REQUEST";
+export const FETCH_OASCOMPONENT_SUCCESS = "FETCH_OASCOMPONENT_SUCCESS";
+export const FETCH_OASCOMPONENT_FAILURE = "FETCH_OASCOMPONENT_FAILURE";
 
-export const ADD_OASCOMPONENT_REQUEST = "ADD_OASCOMPONENT_REQUEST"
-export const ADD_OASCOMPONENT_SUCCESS = "ADD_OASCOMPONENT_SUCCESS"
-export const ADD_OASCOMPONENT_FAILURE = "ADD_OASCOMPONENT_FAILURE"
+export const ADD_OASCOMPONENT_REQUEST = "ADD_OASCOMPONENT_REQUEST";
+export const ADD_OASCOMPONENT_SUCCESS = "ADD_OASCOMPONENT_SUCCESS";
+export const ADD_OASCOMPONENT_FAILURE = "ADD_OASCOMPONENT_FAILURE";
 
-export const UPDATE_OASCOMPONENT_REQUEST = "UPDATE_OASCOMPONENT_REQUEST"
-export const UPDATE_OASCOMPONENT_SUCCESS = "UPDATE_OASCOMPONENT_SUCCESS"
-export const UPDATE_OASCOMPONENT_FAILURE = "UPDATE_OASCOMPONENT_FAILURE"
+export const UPDATE_OASCOMPONENT_REQUEST = "UPDATE_OASCOMPONENT_REQUEST";
+export const UPDATE_OASCOMPONENT_SUCCESS = "UPDATE_OASCOMPONENT_SUCCESS";
+export const UPDATE_OASCOMPONENT_FAILURE = "UPDATE_OASCOMPONENT_FAILURE";
 
-export const DELETE_OASCOMPONENT_REQUEST = "DELETE_OASCOMPONENT_REQUEST"
-export const DELETE_OASCOMPONENT_SUCCESS = "DELETE_OASCOMPONENT_SUCCESS"
-export const DELETE_OASCOMPONENT_FAILURE = "DELETE_OASCOMPONENT_FAILURE"
+export const DELETE_OASCOMPONENT_REQUEST = "DELETE_OASCOMPONENT_REQUEST";
+export const DELETE_OASCOMPONENT_SUCCESS = "DELETE_OASCOMPONENT_SUCCESS";
+export const DELETE_OASCOMPONENT_FAILURE = "DELETE_OASCOMPONENT_FAILURE";
 
-export const LIST_OASCOMPONENT_REQUEST = "LIST_OASCOMPONENT_REQUEST"
-export const LIST_OASCOMPONENT_SUCCESS = "LIST_OASCOMPONENT_SUCCESS"
-export const LIST_OASCOMPONENT_FAILURE = "LIST_OASCOMPONENT_FAILURE"
+export const LIST_OASCOMPONENT_REQUEST = "LIST_OASCOMPONENT_REQUEST";
+export const LIST_OASCOMPONENT_SUCCESS = "LIST_OASCOMPONENT_SUCCESS";
+export const LIST_OASCOMPONENT_FAILURE = "LIST_OASCOMPONENT_FAILURE";
 
 export const addOasComponentRequest = () => ({
-	type: ADD_OASCOMPONENT_REQUEST,
-})
+  type: ADD_OASCOMPONENT_REQUEST,
+});
 
 export const addOasComponentSuccess = (OasComponents: any) => ({
-	type: ADD_OASCOMPONENT_SUCCESS,
-	payload: OasComponents,
-})
+  type: ADD_OASCOMPONENT_SUCCESS,
+  payload: OasComponents,
+});
 
 export const addOasComponentFailure = (error: Error) => ({
-	type: ADD_OASCOMPONENT_FAILURE,
-	payload: error,
-})
+  type: ADD_OASCOMPONENT_FAILURE,
+  payload: error,
+});
 
 export const fetchOasComponentRequest = () => ({
-	type: FETCH_OASCOMPONENT_REQUEST,
-})
+  type: FETCH_OASCOMPONENT_REQUEST,
+});
 
 export const fetchOasComponentSuccess = (OasComponents: any) => ({
-	type: FETCH_OASCOMPONENT_SUCCESS,
-	payload: OasComponents,
-})
+  type: FETCH_OASCOMPONENT_SUCCESS,
+  payload: OasComponents,
+});
 
 export const fetchOasComponentFailure = (error: Error) => ({
-	type: FETCH_OASCOMPONENT_FAILURE,
-	payload: error,
-})
+  type: FETCH_OASCOMPONENT_FAILURE,
+  payload: error,
+});
 
 export const listOasComponentRequest = () => ({
-	type: LIST_OASCOMPONENT_REQUEST,
-})
+  type: LIST_OASCOMPONENT_REQUEST,
+});
 
 export const listOasComponentSuccess = (OasComponents: any) => ({
-	type: LIST_OASCOMPONENT_SUCCESS,
-	payload: OasComponents,
-})
+  type: LIST_OASCOMPONENT_SUCCESS,
+  payload: OasComponents,
+});
 
 export const listOasComponentFailure = (error: Error) => ({
-	type: LIST_OASCOMPONENT_FAILURE,
-	payload: error,
-})
+  type: LIST_OASCOMPONENT_FAILURE,
+  payload: error,
+});
 
 export const updateOasComponentRequest = (OasComponent: any) => ({
-	type: UPDATE_OASCOMPONENT_REQUEST,
-	payload: OasComponent,
-})
+  type: UPDATE_OASCOMPONENT_REQUEST,
+  payload: OasComponent,
+});
 
 export const updateOasComponentSuccess = (OasComponent: any) => ({
-	type: UPDATE_OASCOMPONENT_SUCCESS,
-	payload: OasComponent,
-})
+  type: UPDATE_OASCOMPONENT_SUCCESS,
+  payload: OasComponent,
+});
 
 export const updateOasComponentFailure = (error: Error) => ({
-	type: UPDATE_OASCOMPONENT_FAILURE,
-	payload: error,
-})
+  type: UPDATE_OASCOMPONENT_FAILURE,
+  payload: error,
+});
 
 export const deleteOasComponentRequest = (OasComponent: any) => ({
-	type: DELETE_OASCOMPONENT_REQUEST,
-	payload: OasComponent,
-})
+  type: DELETE_OASCOMPONENT_REQUEST,
+  payload: OasComponent,
+});
 
 export const deleteOasComponentSuccess = (OasComponent: any) => ({
-	type: DELETE_OASCOMPONENT_SUCCESS,
-	payload: OasComponent,
-})
+  type: DELETE_OASCOMPONENT_SUCCESS,
+  payload: OasComponent,
+});
 
 export const deleteOasComponentFailure = (error: Error) => ({
-	type: DELETE_OASCOMPONENT_FAILURE,
-	payload: error,
-})
+  type: DELETE_OASCOMPONENT_FAILURE,
+  payload: error,
+});

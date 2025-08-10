@@ -1,39 +1,44 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 
-import { McpResourceResponse } from "../../model/McpResourceResponse"
+import { McpResourceResponse } from "../../model/McpResourceResponse";
 
 const McpResourceResponseSlice = createSlice({
-	name: "McpResourceResponses",
-	initialState: [],
+  name: "McpResourceResponses",
+  initialState: [],
 
-	reducers: {
-		McpResourceResponseAdded(state, action) {
-			state.push(action.payload)
-		},
+  reducers: {
+    McpResourceResponseAdded(state, action) {
+      state.push(action.payload);
+    },
 
-		McpResourceResponseValueToggled(state, action) {
-			console.log("McpResourceResponse TOGGLE")
-			console.warn(JSON.stringify(action))
-			const McpResourceResponse: McpResourceResponse = state.find(
-				(McpResourceResponse) => McpResourceResponse.id === action.payload.McpResourceResponseId,
-			)
-			if (McpResourceResponse) {
-				if (action.payload.target === "SOMETHING") {
-				}
-			}
-		},
+    McpResourceResponseValueToggled(state, action) {
+      console.log("McpResourceResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpResourceResponse: McpResourceResponse = state.find(
+        (McpResourceResponse) =>
+          McpResourceResponse.id === action.payload.McpResourceResponseId,
+      );
+      if (McpResourceResponse) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
 
-		McpResourceResponsepropertySet(state, action) {
-			const McpResourceResponse = state.find(
-				(McpResourceResponse) => McpResourceResponse.id === action.payload.McpResourceResponseId,
-			)
-			if (McpResourceResponse) {
-				//  McpResourceResponse[action.property] = action.payload[action.property];
-			}
-		},
-	},
-})
+    McpResourceResponsepropertySet(state, action) {
+      const McpResourceResponse = state.find(
+        (McpResourceResponse) =>
+          McpResourceResponse.id === action.payload.McpResourceResponseId,
+      );
+      if (McpResourceResponse) {
+        //  McpResourceResponse[action.property] = action.payload[action.property];
+      }
+    },
+  },
+});
 
-export const { McpResourceResponseAdded, McpResourceResponseValueToggled, McpResourceResponsepropertySet } =
-	McpResourceResponseSlice.actions
-export default McpResourceResponseSlice.reducer
+export const {
+  McpResourceResponseAdded,
+  McpResourceResponseValueToggled,
+  McpResourceResponsepropertySet,
+} = McpResourceResponseSlice.actions;
+export default McpResourceResponseSlice.reducer;

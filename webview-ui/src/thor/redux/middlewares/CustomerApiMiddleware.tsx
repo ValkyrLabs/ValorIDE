@@ -1,22 +1,28 @@
-import { getCustomer, postCustomer, getCustomerList, deleteCustomer, updateCustomer } from "../../api"
+import {
+  getCustomer,
+  postCustomer,
+  getCustomerList,
+  deleteCustomer,
+  updateCustomer,
+} from "../../api";
 
 import {
-	ADD_CUSTOMER_REQUEST,
-	FETCH_CUSTOMER_REQUEST,
-	LIST_CUSTOMER_REQUEST,
-	UPDATE_CUSTOMER_REQUEST,
-	DELETE_CUSTOMER_REQUEST,
-	addCustomerFailure,
-	addCustomerSuccess,
-	fetchCustomerFailure,
-	fetchCustomerSuccess,
-	listCustomerFailure,
-	listCustomerSuccess,
-	updateCustomerFailure,
-	updateCustomerSuccess,
-	deleteCustomerFailure,
-	deleteCustomerSuccess,
-} from "../actions/CustomerApiAction"
+  ADD_CUSTOMER_REQUEST,
+  FETCH_CUSTOMER_REQUEST,
+  LIST_CUSTOMER_REQUEST,
+  UPDATE_CUSTOMER_REQUEST,
+  DELETE_CUSTOMER_REQUEST,
+  addCustomerFailure,
+  addCustomerSuccess,
+  fetchCustomerFailure,
+  fetchCustomerSuccess,
+  listCustomerFailure,
+  listCustomerSuccess,
+  updateCustomerFailure,
+  updateCustomerSuccess,
+  deleteCustomerFailure,
+  deleteCustomerSuccess,
+} from "../actions/CustomerApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: Customer
 */
 
 export const CustomerMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("Customer MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Customer MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_CUSTOMER_REQUEST:
-				try {
-					const response = postCustomer(action.payload)
-					dispatch(addCustomerSuccess(response.body))
-				} catch (error) {
-					dispatch(addCustomerFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_CUSTOMER_REQUEST:
+        try {
+          const response = postCustomer(action.payload);
+          dispatch(addCustomerSuccess(response.body));
+        } catch (error) {
+          dispatch(addCustomerFailure(error.message));
+        }
+        break;
 
-			case LIST_CUSTOMER_REQUEST:
-				try {
-					const response = getCustomerList()
-					dispatch(listCustomerSuccess(response.body))
-				} catch (error) {
-					dispatch(listCustomerFailure(error.message))
-				}
-				break
+      case LIST_CUSTOMER_REQUEST:
+        try {
+          const response = getCustomerList();
+          dispatch(listCustomerSuccess(response.body));
+        } catch (error) {
+          dispatch(listCustomerFailure(error.message));
+        }
+        break;
 
-			case FETCH_CUSTOMER_REQUEST:
-				try {
-					const response = getCustomer(action.id)
-					dispatch(fetchCustomerSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchCustomerFailure(error.message))
-				}
-				break
+      case FETCH_CUSTOMER_REQUEST:
+        try {
+          const response = getCustomer(action.id);
+          dispatch(fetchCustomerSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchCustomerFailure(error.message));
+        }
+        break;
 
-			case UPDATE_CUSTOMER_REQUEST:
-				try {
-					const { id, Customer } = action.payload
-					const response = updateCustomer(id)
-					dispatch(updateCustomerSuccess(response.body))
-				} catch (error) {
-					dispatch(updateCustomerFailure(error.message))
-				}
-				break
+      case UPDATE_CUSTOMER_REQUEST:
+        try {
+          const { id, Customer } = action.payload;
+          const response = updateCustomer(id);
+          dispatch(updateCustomerSuccess(response.body));
+        } catch (error) {
+          dispatch(updateCustomerFailure(error.message));
+        }
+        break;
 
-			case DELETE_CUSTOMER_REQUEST:
-				try {
-					const { id, Customer } = action.payload
-					const response = deleteCustomer(id)
-					dispatch(deleteCustomerSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteCustomerFailure(error.message))
-				}
-				break
+      case DELETE_CUSTOMER_REQUEST:
+        try {
+          const { id, Customer } = action.payload;
+          const response = deleteCustomer(id);
+          dispatch(deleteCustomerSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteCustomerFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

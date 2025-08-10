@@ -1,13 +1,30 @@
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from "formik"
-import React from "react"
-import { Form as BSForm, Accordion, Col, Nav, Row, Spinner } from "react-bootstrap"
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa"
-import CoolButton from "../../../../components/CoolButton"
-import * as Yup from "yup"
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React from "react";
+import {
+  Form as BSForm,
+  Accordion,
+  Col,
+  Nav,
+  Row,
+  Spinner,
+} from "react-bootstrap";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "../../../../components/CoolButton";
+import * as Yup from "yup";
 
-import { WebsocketSession, WebsocketSessionStateEnum, WebsocketSessionTypeEnum } from "../../../model"
+import {
+  WebsocketSession,
+  WebsocketSessionStateEnum,
+  WebsocketSessionTypeEnum,
+} from "../../../model";
 
-import { useAddWebsocketSessionMutation } from "../../services/WebsocketSessionService"
+import { useAddWebsocketSessionMutation } from "../../services/WebsocketSessionService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -32,416 +49,511 @@ Websocket bidirectional session messages
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StateValidation = () => {
-	return ["broadcast", "room", "private", "agent"]
-}
+  return ["broadcast", "room", "private", "agent"];
+};
 const TypeValidation = () => {
-	return ["broadcast", "room", "private", "agent"]
-}
+  return ["broadcast", "room", "private", "agent"];
+};
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA
    (Skip read-only fields and container types)
 -------------------------------------------------------- */
 const validationSchema = Yup.object().shape({
-	execModuleId: Yup.string(),
+  execModuleId: Yup.string(),
 
-	state: Yup.mixed()
-		.oneOf(StateValidation(), "Invalid value for state")
+  state: Yup.mixed()
+    .oneOf(StateValidation(), "Invalid value for state")
 
-		.notRequired(),
+    .notRequired(),
 
-	type: Yup.mixed()
-		.oneOf(TypeValidation(), "Invalid value for type")
+  type: Yup.mixed()
+    .oneOf(TypeValidation(), "Invalid value for type")
 
-		.notRequired(),
+    .notRequired(),
 
-	connected: Yup.boolean()
+  connected: Yup.boolean()
 
-		.notRequired(),
+    .notRequired(),
 
-	id: Yup.string(),
+  id: Yup.string(),
 
-	ownerId: Yup.string(),
+  ownerId: Yup.string(),
 
-	createdDate: Yup.date(),
+  createdDate: Yup.date(),
 
-	keyHash: Yup.string(),
+  keyHash: Yup.string(),
 
-	lastAccessedById: Yup.string(),
+  lastAccessedById: Yup.string(),
 
-	lastAccessedDate: Yup.date(),
+  lastAccessedDate: Yup.date(),
 
-	lastModifiedById: Yup.string(),
+  lastModifiedById: Yup.string(),
 
-	lastModifiedDate: Yup.date(),
-})
+  lastModifiedDate: Yup.date(),
+});
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const WebsocketSessionForm: React.FC = () => {
-	const [addWebsocketSession, addWebsocketSessionResult] = useAddWebsocketSessionMutation()
+  const [addWebsocketSession, addWebsocketSessionResult] =
+    useAddWebsocketSessionMutation();
 
-	/* INITIAL VALUES - skip read-only fields */
-	const initialValues: Partial<WebsocketSession> = {
-		execModuleId: "null",
+  /* INITIAL VALUES - skip read-only fields */
+  const initialValues: Partial<WebsocketSession> = {
+    execModuleId: "null",
 
-		state: WebsocketSessionStateEnum[Object.keys(WebsocketSessionStateEnum)[0]],
+    state: WebsocketSessionStateEnum[Object.keys(WebsocketSessionStateEnum)[0]],
 
-		type: WebsocketSessionTypeEnum[Object.keys(WebsocketSessionTypeEnum)[0]],
+    type: WebsocketSessionTypeEnum[Object.keys(WebsocketSessionTypeEnum)[0]],
 
-		connected: undefined,
+    connected: undefined,
 
-		id: "4fb2e8ce-6eef-4939-b5ec-cb0504a0987f",
+    id: "4fb2e8ce-6eef-4939-b5ec-cb0504a0987f",
 
-		ownerId: "3c42a150-6569-4912-8f3c-73a6b7ea43ec",
+    ownerId: "3c42a150-6569-4912-8f3c-73a6b7ea43ec",
 
-		keyHash: "null",
+    keyHash: "null",
 
-		lastAccessedById: "4ea25a08-4f3d-4b6a-82df-99e9b7b20be3",
+    lastAccessedById: "4ea25a08-4f3d-4b6a-82df-99e9b7b20be3",
 
-		lastModifiedById: "1f183301-9e6b-4079-bd6c-e21473c5bd1b",
-	}
+    lastModifiedById: "1f183301-9e6b-4079-bd6c-e21473c5bd1b",
+  };
 
-	/* SUBMIT HANDLER */
-	const handleSubmit = (values: FormikValues, { setSubmitting }: FormikHelpers<WebsocketSession>) => {
-		// Simulate slow network or do what you need:
-		setTimeout(() => {
-			console.log("WebsocketSession form values:", values)
-			addWebsocketSession(values)
-			setSubmitting(false)
-		}, 500)
-	}
+  /* SUBMIT HANDLER */
+  const handleSubmit = (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<WebsocketSession>,
+  ) => {
+    // Simulate slow network or do what you need:
+    setTimeout(() => {
+      console.log("WebsocketSession form values:", values);
+      addWebsocketSession(values);
+      setSubmitting(false);
+    }, 500);
+  };
 
-	return (
-		<div>
-			<Formik
-				validateOnBlur={true}
-				initialValues={initialValues as WebsocketSession}
-				validationSchema={validationSchema}
-				onSubmit={handleSubmit}>
-				{({ isSubmitting, isValid, errors, setFieldValue, touched, setFieldTouched, handleSubmit }) => (
-					<form onSubmit={handleSubmit} className="form">
-						<Accordion defaultActiveKey="1">
-							{/* Debug/Dev Accordion */}
-							<Accordion.Item eventKey="0">
-								<Accordion.Header>
-									<FaCogs size={36} />
-								</Accordion.Header>
-								<Accordion.Body>
-									errors: {JSON.stringify(errors)}
-									<br />
-									touched: {JSON.stringify(touched)}
-									<br />
-									addWebsocketSessionResult: {JSON.stringify(addWebsocketSessionResult)}
-								</Accordion.Body>
-							</Accordion.Item>
+  return (
+    <div>
+      <Formik
+        validateOnBlur={true}
+        initialValues={initialValues as WebsocketSession}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({
+          isSubmitting,
+          isValid,
+          errors,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => (
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={36} />
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  touched: {JSON.stringify(touched)}
+                  <br />
+                  addWebsocketSessionResult:{" "}
+                  {JSON.stringify(addWebsocketSessionResult)}
+                </Accordion.Body>
+              </Accordion.Item>
 
-							{/* Editable Fields (NON-read-only) */}
-							<Accordion.Item eventKey="1">
-								<Accordion.Header>
-									<FaRegPlusSquare size={36} /> Add New WebsocketSession
-								</Accordion.Header>
-								<Accordion.Body>
-									<label htmlFor="execModuleId" className="nice-form-control">
-										<b>
-											Exec Module Id:
-											{touched.execModuleId && !errors.execModuleId && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+              {/* Editable Fields (NON-read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={36} /> Add New WebsocketSession
+                </Accordion.Header>
+                <Accordion.Body>
+                  <label htmlFor="execModuleId" className="nice-form-control">
+                    <b>
+                      Exec Module Id:
+                      {touched.execModuleId && !errors.execModuleId && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="execModuleId"
-											type="text"
-											className={
-												errors.execModuleId
-													? "form-control field-error"
-													: "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="execModuleId"
+                      type="text"
+                      className={
+                        errors.execModuleId
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="execModuleId" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="execModuleId"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="state" className="nice-form-control">
-										<b>
-											State:
-											{touched.state && !errors.state && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="state" className="nice-form-control">
+                    <b>
+                      State:
+                      {touched.state && !errors.state && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* ENUM DROPDOWN */}
-										<BSForm.Select
-											name="state"
-											className={
-												errors.state ? "form-control field-error" : "nice-form-control form-control"
-											}
-											onChange={(e) => {
-												setFieldTouched("state", true)
-												setFieldValue("state", e.target.value)
-											}}>
-											<option value="" label="Select State" />
-											<StateLookup />
-										</BSForm.Select>
+                    {/* ENUM DROPDOWN */}
+                    <BSForm.Select
+                      name="state"
+                      className={
+                        errors.state
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                      onChange={(e) => {
+                        setFieldTouched("state", true);
+                        setFieldValue("state", e.target.value);
+                      }}
+                    >
+                      <option value="" label="Select State" />
+                      <StateLookup />
+                    </BSForm.Select>
 
-										<ErrorMessage className="error" name="state" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="state"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="type" className="nice-form-control">
-										<b>
-											Type:
-											{touched.type && !errors.type && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="type" className="nice-form-control">
+                    <b>
+                      Type:
+                      {touched.type && !errors.type && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* ENUM DROPDOWN */}
-										<BSForm.Select
-											name="type"
-											className={
-												errors.type ? "form-control field-error" : "nice-form-control form-control"
-											}
-											onChange={(e) => {
-												setFieldTouched("type", true)
-												setFieldValue("type", e.target.value)
-											}}>
-											<option value="" label="Select Type" />
-											<TypeLookup />
-										</BSForm.Select>
+                    {/* ENUM DROPDOWN */}
+                    <BSForm.Select
+                      name="type"
+                      className={
+                        errors.type
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                      onChange={(e) => {
+                        setFieldTouched("type", true);
+                        setFieldValue("type", e.target.value);
+                      }}
+                    >
+                      <option value="" label="Select Type" />
+                      <TypeLookup />
+                    </BSForm.Select>
 
-										<ErrorMessage className="error" name="type" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="type"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="connected" className="nice-form-control">
-										<b>
-											Connected:
-											{touched.connected && !errors.connected && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="connected" className="nice-form-control">
+                    <b>
+                      Connected:
+                      {touched.connected && !errors.connected && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* CHECKBOX FIELD */}
-										<BSForm.Check
-											required
-											id="connected"
-											name="connected"
-											onChange={(e) => {
-												setFieldTouched("connected", true)
-												setFieldValue("connected", e.target.checked)
-											}}
-											isInvalid={!!errors.connected}
-											className={errors.connected ? "error" : ""}
-										/>
+                    {/* CHECKBOX FIELD */}
+                    <BSForm.Check
+                      required
+                      id="connected"
+                      name="connected"
+                      onChange={(e) => {
+                        setFieldTouched("connected", true);
+                        setFieldValue("connected", e.target.checked);
+                      }}
+                      isInvalid={!!errors.connected}
+                      className={errors.connected ? "error" : ""}
+                    />
 
-										<ErrorMessage className="error" name="connected" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="connected"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="id" className="nice-form-control">
-										<b>
-											Id:
-											{touched.id && !errors.id && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="id" className="nice-form-control">
+                    <b>
+                      Id:
+                      {touched.id && !errors.id && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="id"
-											type="text"
-											className={errors.id ? "form-control field-error" : "nice-form-control form-control"}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="id"
+                      type="text"
+                      className={
+                        errors.id
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="id" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="id"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="ownerId" className="nice-form-control">
-										<b>
-											Owner Id:
-											{touched.ownerId && !errors.ownerId && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="ownerId" className="nice-form-control">
+                    <b>
+                      Owner Id:
+                      {touched.ownerId && !errors.ownerId && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="ownerId"
-											type="text"
-											className={
-												errors.ownerId ? "form-control field-error" : "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="ownerId"
+                      type="text"
+                      className={
+                        errors.ownerId
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="ownerId" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="ownerId"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="createdDate" className="nice-form-control">
-										<b>
-											Created Date:
-											{touched.createdDate && !errors.createdDate && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="createdDate" className="nice-form-control">
+                    <b>
+                      Created Date:
+                      {touched.createdDate && !errors.createdDate && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										<ErrorMessage className="error" name="createdDate" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="createdDate"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="keyHash" className="nice-form-control">
-										<b>
-											Key Hash:
-											{touched.keyHash && !errors.keyHash && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="keyHash" className="nice-form-control">
+                    <b>
+                      Key Hash:
+                      {touched.keyHash && !errors.keyHash && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="keyHash"
-											type="text"
-											className={
-												errors.keyHash ? "form-control field-error" : "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="keyHash"
+                      type="text"
+                      className={
+                        errors.keyHash
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="keyHash" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="keyHash"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="lastAccessedById" className="nice-form-control">
-										<b>
-											Last Accessed By Id:
-											{touched.lastAccessedById && !errors.lastAccessedById && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label
+                    htmlFor="lastAccessedById"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Accessed By Id:
+                      {touched.lastAccessedById && !errors.lastAccessedById && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="lastAccessedById"
-											type="text"
-											className={
-												errors.lastAccessedById
-													? "form-control field-error"
-													: "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="lastAccessedById"
+                      type="text"
+                      className={
+                        errors.lastAccessedById
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="lastAccessedById" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="lastAccessedById"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="lastAccessedDate" className="nice-form-control">
-										<b>
-											Last Accessed Date:
-											{touched.lastAccessedDate && !errors.lastAccessedDate && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label
+                    htmlFor="lastAccessedDate"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Accessed Date:
+                      {touched.lastAccessedDate && !errors.lastAccessedDate && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										<ErrorMessage className="error" name="lastAccessedDate" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="lastAccessedDate"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="lastModifiedById" className="nice-form-control">
-										<b>
-											Last Modified By Id:
-											{touched.lastModifiedById && !errors.lastModifiedById && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label
+                    htmlFor="lastModifiedById"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Modified By Id:
+                      {touched.lastModifiedById && !errors.lastModifiedById && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="lastModifiedById"
-											type="text"
-											className={
-												errors.lastModifiedById
-													? "form-control field-error"
-													: "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="lastModifiedById"
+                      type="text"
+                      className={
+                        errors.lastModifiedById
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="lastModifiedById" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="lastModifiedById"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="lastModifiedDate" className="nice-form-control">
-										<b>
-											Last Modified Date:
-											{touched.lastModifiedDate && !errors.lastModifiedDate && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label
+                    htmlFor="lastModifiedDate"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Modified Date:
+                      {touched.lastModifiedDate && !errors.lastModifiedDate && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										<ErrorMessage className="error" name="lastModifiedDate" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="lastModifiedDate"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									{/* SUBMIT BUTTON */}
-									<CoolButton
-										variant={touched && isValid ? (isSubmitting ? "disabled" : "success") : "warning"}
-										type="submit">
-										{isSubmitting && (
-											<Spinner
-												style={{ float: "left" }}
-												as="span"
-												animation="grow"
-												variant="light"
-												aria-hidden="true"
-											/>
-										)}
-										<FaCheckCircle size={30} /> Create New WebsocketSession
-									</CoolButton>
-								</Accordion.Body>
-							</Accordion.Item>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={
+                      touched && isValid
+                        ? isSubmitting
+                          ? "disabled"
+                          : "success"
+                        : "warning"
+                    }
+                    type="submit"
+                  >
+                    {isSubmitting && (
+                      <Spinner
+                        style={{ float: "left" }}
+                        as="span"
+                        animation="grow"
+                        variant="light"
+                        aria-hidden="true"
+                      />
+                    )}
+                    <FaCheckCircle size={30} /> Create New WebsocketSession
+                  </CoolButton>
+                </Accordion.Body>
+              </Accordion.Item>
 
-							{/* Read-Only System Fields */}
-							<Accordion.Item eventKey="2">
-								<Accordion.Header>System Fields (Read Only)</Accordion.Header>
-								<Accordion.Body>
-									<Row></Row>
-								</Accordion.Body>
-							</Accordion.Item>
-						</Accordion>
-					</form>
-				)}
-			</Formik>
-		</div>
-	)
-}
+              {/* Read-Only System Fields */}
+              <Accordion.Item eventKey="2">
+                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+                <Accordion.Body>
+                  <Row></Row>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+          </form>
+        )}
+      </Formik>
+    </div>
+  );
+};
 
 /*
 lowercase statelookup
@@ -453,15 +565,15 @@ kebabcase state-lookup
 */
 
 const StateLookup = () => {
-	return (
-		<>
-			<option value="broadcast" label="Broadcast" />
-			<option value="room" label="Room" />
-			<option value="private" label="Private" />
-			<option value="agent" label="Agent" />
-		</>
-	)
-}
+  return (
+    <>
+      <option value="broadcast" label="Broadcast" />
+      <option value="room" label="Room" />
+      <option value="private" label="Private" />
+      <option value="agent" label="Agent" />
+    </>
+  );
+};
 
 /*
 lowercase typelookup
@@ -473,15 +585,15 @@ kebabcase type-lookup
 */
 
 const TypeLookup = () => {
-	return (
-		<>
-			<option value="broadcast" label="Broadcast" />
-			<option value="room" label="Room" />
-			<option value="private" label="Private" />
-			<option value="agent" label="Agent" />
-		</>
-	)
-}
+  return (
+    <>
+      <option value="broadcast" label="Broadcast" />
+      <option value="room" label="Room" />
+      <option value="private" label="Private" />
+      <option value="agent" label="Agent" />
+    </>
+  );
+};
 
 /* Export the generated form */
-export default WebsocketSessionForm
+export default WebsocketSessionForm;

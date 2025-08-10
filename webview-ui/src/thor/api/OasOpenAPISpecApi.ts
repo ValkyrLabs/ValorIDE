@@ -16,25 +16,34 @@ Template file: typescript-redux-query/apis.mustache
 Description: OasOpenAPISpecApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { OasOpenAPISpec, OasOpenAPISpecFromJSON, OasOpenAPISpecToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  OasOpenAPISpec,
+  OasOpenAPISpecFromJSON,
+  OasOpenAPISpecToJSON,
+} from "../model";
 
 export interface DeleteOasOpenAPISpecRequest {
-	id: string
+  id: string;
 }
 
 export interface GetOasOpenAPISpecRequest {
-	id: string
+  id: string;
 }
 
 export interface PostOasOpenAPISpecRequest {
-	oasOpenAPISpec: OasOpenAPISpec
+  oasOpenAPISpec: OasOpenAPISpec;
 }
 
 export interface UpdateOasOpenAPISpecRequest {
-	id: string
-	oasOpenAPISpec: OasOpenAPISpec
+  id: string;
+  oasOpenAPISpec: OasOpenAPISpec;
 }
 
 /**
@@ -42,45 +51,45 @@ export interface UpdateOasOpenAPISpecRequest {
  * Delete a OasOpenAPISpec.
  */
 function deleteOasOpenAPISpecRaw<T>(
-	requestParameters: DeleteOasOpenAPISpecRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteOasOpenAPISpecRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteOasOpenAPISpec.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteOasOpenAPISpec.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/OasOpenAPISpec/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasOpenAPISpec/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +97,10 @@ function deleteOasOpenAPISpecRaw<T>(
  * Delete a OasOpenAPISpec.
  */
 export function deleteOasOpenAPISpec<T>(
-	requestParameters: DeleteOasOpenAPISpecRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteOasOpenAPISpecRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteOasOpenAPISpecRaw(requestParameters, requestConfig)
+  return deleteOasOpenAPISpecRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +108,47 @@ export function deleteOasOpenAPISpec<T>(
  * Retrieve a single OasOpenAPISpec
  */
 function getOasOpenAPISpecRaw<T>(
-	requestParameters: GetOasOpenAPISpecRequest,
-	requestConfig: runtime.TypedQueryConfig<T, OasOpenAPISpec> = {},
+  requestParameters: GetOasOpenAPISpecRequest,
+  requestConfig: runtime.TypedQueryConfig<T, OasOpenAPISpec> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getOasOpenAPISpec.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getOasOpenAPISpec.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/OasOpenAPISpec/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasOpenAPISpec/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasOpenAPISpecFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(OasOpenAPISpecFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +156,57 @@ function getOasOpenAPISpecRaw<T>(
  * Retrieve a single OasOpenAPISpec
  */
 export function getOasOpenAPISpec<T>(
-	requestParameters: GetOasOpenAPISpecRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, OasOpenAPISpec>,
+  requestParameters: GetOasOpenAPISpecRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, OasOpenAPISpec>,
 ): QueryConfig<T> {
-	return getOasOpenAPISpecRaw(requestParameters, requestConfig)
+  return getOasOpenAPISpecRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of OasOpenAPISpecs.
  * Retrieve a list of OasOpenAPISpecs
  */
-function getOasOpenAPISpecListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<OasOpenAPISpec>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getOasOpenAPISpecListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<OasOpenAPISpec>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/OasOpenAPISpec`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasOpenAPISpec`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(OasOpenAPISpecFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(OasOpenAPISpecFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of OasOpenAPISpecs.
  * Retrieve a list of OasOpenAPISpecs
  */
-export function getOasOpenAPISpecList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<OasOpenAPISpec>>): QueryConfig<T> {
-	return getOasOpenAPISpecListRaw(requestConfig)
+export function getOasOpenAPISpecList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<OasOpenAPISpec>>,
+): QueryConfig<T> {
+  return getOasOpenAPISpecListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +214,50 @@ export function getOasOpenAPISpecList<T>(requestConfig?: runtime.TypedQueryConfi
  * Create a new OasOpenAPISpec
  */
 function postOasOpenAPISpecRaw<T>(
-	requestParameters: PostOasOpenAPISpecRequest,
-	requestConfig: runtime.TypedQueryConfig<T, OasOpenAPISpec> = {},
+  requestParameters: PostOasOpenAPISpecRequest,
+  requestConfig: runtime.TypedQueryConfig<T, OasOpenAPISpec> = {},
 ): QueryConfig<T> {
-	if (requestParameters.oasOpenAPISpec === null || requestParameters.oasOpenAPISpec === undefined) {
-		throw new runtime.RequiredError(
-			"oasOpenAPISpec",
-			"Required parameter requestParameters.oasOpenAPISpec was null or undefined when calling postOasOpenAPISpec.",
-		)
-	}
+  if (
+    requestParameters.oasOpenAPISpec === null ||
+    requestParameters.oasOpenAPISpec === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "oasOpenAPISpec",
+      "Required parameter requestParameters.oasOpenAPISpec was null or undefined when calling postOasOpenAPISpec.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/OasOpenAPISpec`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || OasOpenAPISpecToJSON(requestParameters.oasOpenAPISpec),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasOpenAPISpec`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters || OasOpenAPISpecToJSON(requestParameters.oasOpenAPISpec),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasOpenAPISpecFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(OasOpenAPISpecFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +265,10 @@ function postOasOpenAPISpecRaw<T>(
  * Create a new OasOpenAPISpec
  */
 export function postOasOpenAPISpec<T>(
-	requestParameters: PostOasOpenAPISpecRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, OasOpenAPISpec>,
+  requestParameters: PostOasOpenAPISpecRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, OasOpenAPISpec>,
 ): QueryConfig<T> {
-	return postOasOpenAPISpecRaw(requestParameters, requestConfig)
+  return postOasOpenAPISpecRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +276,60 @@ export function postOasOpenAPISpec<T>(
  * Update an existing OasOpenAPISpec
  */
 function updateOasOpenAPISpecRaw<T>(
-	requestParameters: UpdateOasOpenAPISpecRequest,
-	requestConfig: runtime.TypedQueryConfig<T, OasOpenAPISpec> = {},
+  requestParameters: UpdateOasOpenAPISpecRequest,
+  requestConfig: runtime.TypedQueryConfig<T, OasOpenAPISpec> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateOasOpenAPISpec.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateOasOpenAPISpec.",
+    );
+  }
 
-	if (requestParameters.oasOpenAPISpec === null || requestParameters.oasOpenAPISpec === undefined) {
-		throw new runtime.RequiredError(
-			"oasOpenAPISpec",
-			"Required parameter requestParameters.oasOpenAPISpec was null or undefined when calling updateOasOpenAPISpec.",
-		)
-	}
+  if (
+    requestParameters.oasOpenAPISpec === null ||
+    requestParameters.oasOpenAPISpec === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "oasOpenAPISpec",
+      "Required parameter requestParameters.oasOpenAPISpec was null or undefined when calling updateOasOpenAPISpec.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/OasOpenAPISpec/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || OasOpenAPISpecToJSON(requestParameters.oasOpenAPISpec),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasOpenAPISpec/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters || OasOpenAPISpecToJSON(requestParameters.oasOpenAPISpec),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasOpenAPISpecFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(OasOpenAPISpecFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +337,8 @@ function updateOasOpenAPISpecRaw<T>(
  * Update an existing OasOpenAPISpec
  */
 export function updateOasOpenAPISpec<T>(
-	requestParameters: UpdateOasOpenAPISpecRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, OasOpenAPISpec>,
+  requestParameters: UpdateOasOpenAPISpecRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, OasOpenAPISpec>,
 ): QueryConfig<T> {
-	return updateOasOpenAPISpecRaw(requestParameters, requestConfig)
+  return updateOasOpenAPISpecRaw(requestParameters, requestConfig);
 }

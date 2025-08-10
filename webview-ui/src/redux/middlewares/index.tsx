@@ -14,21 +14,21 @@ Template file: typescript-redux-query/store.mustache
 Description: 
 */
 
-import { Middleware } from "@reduxjs/toolkit"
+import { Middleware } from "@reduxjs/toolkit";
 
 // IMPORTant
 
-import { LoginService } from "../services/LoginService"
-import { LogoutService } from "../services/LogoutService"
-import { PrincipalService } from "../services/PrincipalService"
-import { ApplicationService } from "../../thor/redux/services/ApplicationService"
+import { LoginService } from "../services/LoginService";
+import { LogoutService } from "../services/LogoutService";
+import { PrincipalService } from "../services/PrincipalService";
+import { ApplicationService } from "../../thor/redux/services/ApplicationService";
 
 // use to populate external store
 export const middlewares: Middleware[] = [
-	LoginService.middleware as Middleware,
-	LogoutService.middleware as Middleware,
-	PrincipalService.middleware as Middleware,
-	ApplicationService.middleware as Middleware,
-]
+  LoginService.middleware as Middleware,
+  LogoutService.middleware as Middleware,
+  PrincipalService.middleware as Middleware,
+  ApplicationService.middleware as Middleware,
+];
 
-export default middlewares
+export default middlewares;

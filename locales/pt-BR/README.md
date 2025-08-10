@@ -33,10 +33,7 @@ Graças às [habilidades avançadas do Claude 3.7 Sonnet](https://www.anthropic.
 1. Insira sua tarefa e adicione imagens para transformar mockups em aplicativos funcionais ou corrigir erros através de capturas de tela.
 
 2. O ValorIDE começará analisando a estrutura do seu arquivo e os ASTs do código-fonte, fazendo pesquisas com Regex e lendo arquivos relevantes para se orientar em projetos existentes. Ao gerenciar cuidadosamente as informações agregadas, o ValorIDE pode fornecer assistência valiosa mesmo em projetos grandes e complexos, sem sobrecarregar a janela de contexto.
-3. Assim que ele tiver as informações necessárias, o ValorIDE poderá:
-                - Criar e editar arquivos + monitorar erros de Linter/Compilador, para que você possa corrigir proativamente problemas como importações ausentes e erros de sintaxe.
-                - Executar comandos diretamente no terminal e monitorar o resultado, para que você possa responder a problemas do servidor de desenvolvimento após editar um arquivo.
-                - Para tarefas de desenvolvimento web, o ValorIDE pode iniciar o site em um navegador headless, clicar, digitar, fazer scroll e capturar capturas de tela + registros de console, para que você possa corrigir erros em tempo de execução e erros visuais.
+3. Assim que ele tiver as informações necessárias, o ValorIDE poderá: - Criar e editar arquivos + monitorar erros de Linter/Compilador, para que você possa corrigir proativamente problemas como importações ausentes e erros de sintaxe. - Executar comandos diretamente no terminal e monitorar o resultado, para que você possa responder a problemas do servidor de desenvolvimento após editar um arquivo. - Para tarefas de desenvolvimento web, o ValorIDE pode iniciar o site em um navegador headless, clicar, digitar, fazer scroll e capturar capturas de tela + registros de console, para que você possa corrigir erros em tempo de execução e erros visuais.
 
 > [!TIP]
 > Use o atalho de teclado `CMD/CTRL + Shift + P` para abrir a lista de comandos possiveis e digite "ValorIDE: Abrir em nova aba" para abrir a extensão como uma aba no seu editor. Dessa forma, você pode usar o ValorIDE junto com seu explorador de arquivos e ver mais claramente como seu espaço de trabalho muda.
@@ -141,17 +138,17 @@ Para contribuir com o projeto, comece com nosso [Guia de Contribuição](CONTRIB
 <summary>Instruções para desenvolvimento local</summary>
 
 1. Clone o repositório _(Necessário [git-lfs](https://git-lfs.com/))_:
-                ```bash
-                git clone https://github.com/valkyrlabs/valoride.git
-                ```
+   `bash
+            git clone https://github.com/valkyrlabs/valoride.git
+            `
 2. Abra o projeto no VSCode:
-                ```bash
-                code valoride
-                ```
+   `bash
+            code valoride
+            `
 3. Instale as dependências necessárias para a extensão e webview-gui:
-                ```bash
-                npm run install:all
-                ```
+   `bash
+            npm run install:all
+            `
 4. Inicie pressionando `F5` (ou `Executar`->`Iniciar Depuração`) para abrir uma nova janela do VSCode com a extensão carregada. (Pode ser necessário instalar a [extensão esbuild problem matchers](https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers) se você encontrar problemas ao compilar seu projeto.)
 
 </details>

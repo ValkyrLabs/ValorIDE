@@ -2,94 +2,94 @@
 
 // SecureKey
 
-export const FETCH_SECUREKEY_REQUEST = "FETCH_SECUREKEY_REQUEST"
-export const FETCH_SECUREKEY_SUCCESS = "FETCH_SECUREKEY_SUCCESS"
-export const FETCH_SECUREKEY_FAILURE = "FETCH_SECUREKEY_FAILURE"
+export const FETCH_SECUREKEY_REQUEST = "FETCH_SECUREKEY_REQUEST";
+export const FETCH_SECUREKEY_SUCCESS = "FETCH_SECUREKEY_SUCCESS";
+export const FETCH_SECUREKEY_FAILURE = "FETCH_SECUREKEY_FAILURE";
 
-export const ADD_SECUREKEY_REQUEST = "ADD_SECUREKEY_REQUEST"
-export const ADD_SECUREKEY_SUCCESS = "ADD_SECUREKEY_SUCCESS"
-export const ADD_SECUREKEY_FAILURE = "ADD_SECUREKEY_FAILURE"
+export const ADD_SECUREKEY_REQUEST = "ADD_SECUREKEY_REQUEST";
+export const ADD_SECUREKEY_SUCCESS = "ADD_SECUREKEY_SUCCESS";
+export const ADD_SECUREKEY_FAILURE = "ADD_SECUREKEY_FAILURE";
 
-export const UPDATE_SECUREKEY_REQUEST = "UPDATE_SECUREKEY_REQUEST"
-export const UPDATE_SECUREKEY_SUCCESS = "UPDATE_SECUREKEY_SUCCESS"
-export const UPDATE_SECUREKEY_FAILURE = "UPDATE_SECUREKEY_FAILURE"
+export const UPDATE_SECUREKEY_REQUEST = "UPDATE_SECUREKEY_REQUEST";
+export const UPDATE_SECUREKEY_SUCCESS = "UPDATE_SECUREKEY_SUCCESS";
+export const UPDATE_SECUREKEY_FAILURE = "UPDATE_SECUREKEY_FAILURE";
 
-export const DELETE_SECUREKEY_REQUEST = "DELETE_SECUREKEY_REQUEST"
-export const DELETE_SECUREKEY_SUCCESS = "DELETE_SECUREKEY_SUCCESS"
-export const DELETE_SECUREKEY_FAILURE = "DELETE_SECUREKEY_FAILURE"
+export const DELETE_SECUREKEY_REQUEST = "DELETE_SECUREKEY_REQUEST";
+export const DELETE_SECUREKEY_SUCCESS = "DELETE_SECUREKEY_SUCCESS";
+export const DELETE_SECUREKEY_FAILURE = "DELETE_SECUREKEY_FAILURE";
 
-export const LIST_SECUREKEY_REQUEST = "LIST_SECUREKEY_REQUEST"
-export const LIST_SECUREKEY_SUCCESS = "LIST_SECUREKEY_SUCCESS"
-export const LIST_SECUREKEY_FAILURE = "LIST_SECUREKEY_FAILURE"
+export const LIST_SECUREKEY_REQUEST = "LIST_SECUREKEY_REQUEST";
+export const LIST_SECUREKEY_SUCCESS = "LIST_SECUREKEY_SUCCESS";
+export const LIST_SECUREKEY_FAILURE = "LIST_SECUREKEY_FAILURE";
 
 export const addSecureKeyRequest = () => ({
-	type: ADD_SECUREKEY_REQUEST,
-})
+  type: ADD_SECUREKEY_REQUEST,
+});
 
 export const addSecureKeySuccess = (SecureKeys: any) => ({
-	type: ADD_SECUREKEY_SUCCESS,
-	payload: SecureKeys,
-})
+  type: ADD_SECUREKEY_SUCCESS,
+  payload: SecureKeys,
+});
 
 export const addSecureKeyFailure = (error: Error) => ({
-	type: ADD_SECUREKEY_FAILURE,
-	payload: error,
-})
+  type: ADD_SECUREKEY_FAILURE,
+  payload: error,
+});
 
 export const fetchSecureKeyRequest = () => ({
-	type: FETCH_SECUREKEY_REQUEST,
-})
+  type: FETCH_SECUREKEY_REQUEST,
+});
 
 export const fetchSecureKeySuccess = (SecureKeys: any) => ({
-	type: FETCH_SECUREKEY_SUCCESS,
-	payload: SecureKeys,
-})
+  type: FETCH_SECUREKEY_SUCCESS,
+  payload: SecureKeys,
+});
 
 export const fetchSecureKeyFailure = (error: Error) => ({
-	type: FETCH_SECUREKEY_FAILURE,
-	payload: error,
-})
+  type: FETCH_SECUREKEY_FAILURE,
+  payload: error,
+});
 
 export const listSecureKeyRequest = () => ({
-	type: LIST_SECUREKEY_REQUEST,
-})
+  type: LIST_SECUREKEY_REQUEST,
+});
 
 export const listSecureKeySuccess = (SecureKeys: any) => ({
-	type: LIST_SECUREKEY_SUCCESS,
-	payload: SecureKeys,
-})
+  type: LIST_SECUREKEY_SUCCESS,
+  payload: SecureKeys,
+});
 
 export const listSecureKeyFailure = (error: Error) => ({
-	type: LIST_SECUREKEY_FAILURE,
-	payload: error,
-})
+  type: LIST_SECUREKEY_FAILURE,
+  payload: error,
+});
 
 export const updateSecureKeyRequest = (SecureKey: any) => ({
-	type: UPDATE_SECUREKEY_REQUEST,
-	payload: SecureKey,
-})
+  type: UPDATE_SECUREKEY_REQUEST,
+  payload: SecureKey,
+});
 
 export const updateSecureKeySuccess = (SecureKey: any) => ({
-	type: UPDATE_SECUREKEY_SUCCESS,
-	payload: SecureKey,
-})
+  type: UPDATE_SECUREKEY_SUCCESS,
+  payload: SecureKey,
+});
 
 export const updateSecureKeyFailure = (error: Error) => ({
-	type: UPDATE_SECUREKEY_FAILURE,
-	payload: error,
-})
+  type: UPDATE_SECUREKEY_FAILURE,
+  payload: error,
+});
 
 export const deleteSecureKeyRequest = (SecureKey: any) => ({
-	type: DELETE_SECUREKEY_REQUEST,
-	payload: SecureKey,
-})
+  type: DELETE_SECUREKEY_REQUEST,
+  payload: SecureKey,
+});
 
 export const deleteSecureKeySuccess = (SecureKey: any) => ({
-	type: DELETE_SECUREKEY_SUCCESS,
-	payload: SecureKey,
-})
+  type: DELETE_SECUREKEY_SUCCESS,
+  payload: SecureKey,
+});
 
 export const deleteSecureKeyFailure = (error: Error) => ({
-	type: DELETE_SECUREKEY_FAILURE,
-	payload: error,
-})
+  type: DELETE_SECUREKEY_FAILURE,
+  payload: error,
+});

@@ -1,34 +1,39 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 
-import { Product } from "../../model/Product"
+import { Product } from "../../model/Product";
 
 const ProductSlice = createSlice({
-	name: "Products",
-	initialState: [],
+  name: "Products",
+  initialState: [],
 
-	reducers: {
-		ProductAdded(state, action) {
-			state.push(action.payload)
-		},
+  reducers: {
+    ProductAdded(state, action) {
+      state.push(action.payload);
+    },
 
-		ProductValueToggled(state, action) {
-			console.log("Product TOGGLE")
-			console.warn(JSON.stringify(action))
-			const Product: Product = state.find((Product) => Product.id === action.payload.ProductId)
-			if (Product) {
-				if (action.payload.target === "SOMETHING") {
-				}
-			}
-		},
+    ProductValueToggled(state, action) {
+      console.log("Product TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Product: Product = state.find(
+        (Product) => Product.id === action.payload.ProductId,
+      );
+      if (Product) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
 
-		ProductpropertySet(state, action) {
-			const Product = state.find((Product) => Product.id === action.payload.ProductId)
-			if (Product) {
-				//  Product[action.property] = action.payload[action.property];
-			}
-		},
-	},
-})
+    ProductpropertySet(state, action) {
+      const Product = state.find(
+        (Product) => Product.id === action.payload.ProductId,
+      );
+      if (Product) {
+        //  Product[action.property] = action.payload[action.property];
+      }
+    },
+  },
+});
 
-export const { ProductAdded, ProductValueToggled, ProductpropertySet } = ProductSlice.actions
-export default ProductSlice.reducer
+export const { ProductAdded, ProductValueToggled, ProductpropertySet } =
+  ProductSlice.actions;
+export default ProductSlice.reducer;

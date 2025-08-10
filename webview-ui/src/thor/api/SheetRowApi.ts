@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: SheetRowApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { SheetRow, SheetRowFromJSON, SheetRowToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { SheetRow, SheetRowFromJSON, SheetRowToJSON } from "../model";
 
 export interface DeleteSheetRowRequest {
-	id: string
+  id: string;
 }
 
 export interface GetSheetRowRequest {
-	id: string
+  id: string;
 }
 
 export interface PostSheetRowRequest {
-	sheetRow: SheetRow
+  sheetRow: SheetRow;
 }
 
 export interface UpdateSheetRowRequest {
-	id: string
-	sheetRow: SheetRow
+  id: string;
+  sheetRow: SheetRow;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateSheetRowRequest {
  * Delete a SheetRow.
  */
 function deleteSheetRowRaw<T>(
-	requestParameters: DeleteSheetRowRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteSheetRowRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteSheetRow.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteSheetRow.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/SheetRow/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SheetRow/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteSheetRowRaw<T>(
  * Delete a SheetRow.
  */
 export function deleteSheetRow<T>(
-	requestParameters: DeleteSheetRowRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteSheetRowRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteSheetRowRaw(requestParameters, requestConfig)
+  return deleteSheetRowRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteSheetRow<T>(
  * Retrieve a single SheetRow
  */
 function getSheetRowRaw<T>(
-	requestParameters: GetSheetRowRequest,
-	requestConfig: runtime.TypedQueryConfig<T, SheetRow> = {},
+  requestParameters: GetSheetRowRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SheetRow> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getSheetRow.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getSheetRow.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/SheetRow/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SheetRow/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SheetRowFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SheetRowFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getSheetRowRaw<T>(
  * Retrieve a single SheetRow
  */
 export function getSheetRow<T>(
-	requestParameters: GetSheetRowRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, SheetRow>,
+  requestParameters: GetSheetRowRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SheetRow>,
 ): QueryConfig<T> {
-	return getSheetRowRaw(requestParameters, requestConfig)
+  return getSheetRowRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of SheetRows.
  * Retrieve a list of SheetRows
  */
-function getSheetRowListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<SheetRow>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getSheetRowListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<SheetRow>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/SheetRow`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SheetRow`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(SheetRowFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(SheetRowFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of SheetRows.
  * Retrieve a list of SheetRows
  */
-export function getSheetRowList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<SheetRow>>): QueryConfig<T> {
-	return getSheetRowListRaw(requestConfig)
+export function getSheetRowList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<SheetRow>>,
+): QueryConfig<T> {
+  return getSheetRowListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getSheetRowList<T>(requestConfig?: runtime.TypedQueryConfig<T, A
  * Create a new SheetRow
  */
 function postSheetRowRaw<T>(
-	requestParameters: PostSheetRowRequest,
-	requestConfig: runtime.TypedQueryConfig<T, SheetRow> = {},
+  requestParameters: PostSheetRowRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SheetRow> = {},
 ): QueryConfig<T> {
-	if (requestParameters.sheetRow === null || requestParameters.sheetRow === undefined) {
-		throw new runtime.RequiredError(
-			"sheetRow",
-			"Required parameter requestParameters.sheetRow was null or undefined when calling postSheetRow.",
-		)
-	}
+  if (
+    requestParameters.sheetRow === null ||
+    requestParameters.sheetRow === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "sheetRow",
+      "Required parameter requestParameters.sheetRow was null or undefined when calling postSheetRow.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/SheetRow`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || SheetRowToJSON(requestParameters.sheetRow),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SheetRow`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || SheetRowToJSON(requestParameters.sheetRow),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SheetRowFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SheetRowFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postSheetRowRaw<T>(
  * Create a new SheetRow
  */
 export function postSheetRow<T>(
-	requestParameters: PostSheetRowRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, SheetRow>,
+  requestParameters: PostSheetRowRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SheetRow>,
 ): QueryConfig<T> {
-	return postSheetRowRaw(requestParameters, requestConfig)
+  return postSheetRowRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postSheetRow<T>(
  * Update an existing SheetRow
  */
 function updateSheetRowRaw<T>(
-	requestParameters: UpdateSheetRowRequest,
-	requestConfig: runtime.TypedQueryConfig<T, SheetRow> = {},
+  requestParameters: UpdateSheetRowRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SheetRow> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateSheetRow.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateSheetRow.",
+    );
+  }
 
-	if (requestParameters.sheetRow === null || requestParameters.sheetRow === undefined) {
-		throw new runtime.RequiredError(
-			"sheetRow",
-			"Required parameter requestParameters.sheetRow was null or undefined when calling updateSheetRow.",
-		)
-	}
+  if (
+    requestParameters.sheetRow === null ||
+    requestParameters.sheetRow === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "sheetRow",
+      "Required parameter requestParameters.sheetRow was null or undefined when calling updateSheetRow.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/SheetRow/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || SheetRowToJSON(requestParameters.sheetRow),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SheetRow/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || SheetRowToJSON(requestParameters.sheetRow),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SheetRowFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SheetRowFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateSheetRowRaw<T>(
  * Update an existing SheetRow
  */
 export function updateSheetRow<T>(
-	requestParameters: UpdateSheetRowRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, SheetRow>,
+  requestParameters: UpdateSheetRowRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SheetRow>,
 ): QueryConfig<T> {
-	return updateSheetRowRaw(requestParameters, requestConfig)
+  return updateSheetRowRaw(requestParameters, requestConfig);
 }

@@ -1,22 +1,28 @@
-import { getMcpResource, postMcpResource, getMcpResourceList, deleteMcpResource, updateMcpResource } from "../../api"
+import {
+  getMcpResource,
+  postMcpResource,
+  getMcpResourceList,
+  deleteMcpResource,
+  updateMcpResource,
+} from "../../api";
 
 import {
-	ADD_MCPRESOURCE_REQUEST,
-	FETCH_MCPRESOURCE_REQUEST,
-	LIST_MCPRESOURCE_REQUEST,
-	UPDATE_MCPRESOURCE_REQUEST,
-	DELETE_MCPRESOURCE_REQUEST,
-	addMcpResourceFailure,
-	addMcpResourceSuccess,
-	fetchMcpResourceFailure,
-	fetchMcpResourceSuccess,
-	listMcpResourceFailure,
-	listMcpResourceSuccess,
-	updateMcpResourceFailure,
-	updateMcpResourceSuccess,
-	deleteMcpResourceFailure,
-	deleteMcpResourceSuccess,
-} from "../actions/McpResourceApiAction"
+  ADD_MCPRESOURCE_REQUEST,
+  FETCH_MCPRESOURCE_REQUEST,
+  LIST_MCPRESOURCE_REQUEST,
+  UPDATE_MCPRESOURCE_REQUEST,
+  DELETE_MCPRESOURCE_REQUEST,
+  addMcpResourceFailure,
+  addMcpResourceSuccess,
+  fetchMcpResourceFailure,
+  fetchMcpResourceSuccess,
+  listMcpResourceFailure,
+  listMcpResourceSuccess,
+  updateMcpResourceFailure,
+  updateMcpResourceSuccess,
+  deleteMcpResourceFailure,
+  deleteMcpResourceSuccess,
+} from "../actions/McpResourceApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: McpResource
 */
 
 export const McpResourceMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("McpResource MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("McpResource MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_MCPRESOURCE_REQUEST:
-				try {
-					const response = postMcpResource(action.payload)
-					dispatch(addMcpResourceSuccess(response.body))
-				} catch (error) {
-					dispatch(addMcpResourceFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_MCPRESOURCE_REQUEST:
+        try {
+          const response = postMcpResource(action.payload);
+          dispatch(addMcpResourceSuccess(response.body));
+        } catch (error) {
+          dispatch(addMcpResourceFailure(error.message));
+        }
+        break;
 
-			case LIST_MCPRESOURCE_REQUEST:
-				try {
-					const response = getMcpResourceList()
-					dispatch(listMcpResourceSuccess(response.body))
-				} catch (error) {
-					dispatch(listMcpResourceFailure(error.message))
-				}
-				break
+      case LIST_MCPRESOURCE_REQUEST:
+        try {
+          const response = getMcpResourceList();
+          dispatch(listMcpResourceSuccess(response.body));
+        } catch (error) {
+          dispatch(listMcpResourceFailure(error.message));
+        }
+        break;
 
-			case FETCH_MCPRESOURCE_REQUEST:
-				try {
-					const response = getMcpResource(action.id)
-					dispatch(fetchMcpResourceSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchMcpResourceFailure(error.message))
-				}
-				break
+      case FETCH_MCPRESOURCE_REQUEST:
+        try {
+          const response = getMcpResource(action.id);
+          dispatch(fetchMcpResourceSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchMcpResourceFailure(error.message));
+        }
+        break;
 
-			case UPDATE_MCPRESOURCE_REQUEST:
-				try {
-					const { id, McpResource } = action.payload
-					const response = updateMcpResource(id)
-					dispatch(updateMcpResourceSuccess(response.body))
-				} catch (error) {
-					dispatch(updateMcpResourceFailure(error.message))
-				}
-				break
+      case UPDATE_MCPRESOURCE_REQUEST:
+        try {
+          const { id, McpResource } = action.payload;
+          const response = updateMcpResource(id);
+          dispatch(updateMcpResourceSuccess(response.body));
+        } catch (error) {
+          dispatch(updateMcpResourceFailure(error.message));
+        }
+        break;
 
-			case DELETE_MCPRESOURCE_REQUEST:
-				try {
-					const { id, McpResource } = action.payload
-					const response = deleteMcpResource(id)
-					dispatch(deleteMcpResourceSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteMcpResourceFailure(error.message))
-				}
-				break
+      case DELETE_MCPRESOURCE_REQUEST:
+        try {
+          const { id, McpResource } = action.payload;
+          const response = deleteMcpResource(id);
+          dispatch(deleteMcpResourceSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteMcpResourceFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

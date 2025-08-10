@@ -1,34 +1,42 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 
-import { McpResource } from "../../model/McpResource"
+import { McpResource } from "../../model/McpResource";
 
 const McpResourceSlice = createSlice({
-	name: "McpResources",
-	initialState: [],
+  name: "McpResources",
+  initialState: [],
 
-	reducers: {
-		McpResourceAdded(state, action) {
-			state.push(action.payload)
-		},
+  reducers: {
+    McpResourceAdded(state, action) {
+      state.push(action.payload);
+    },
 
-		McpResourceValueToggled(state, action) {
-			console.log("McpResource TOGGLE")
-			console.warn(JSON.stringify(action))
-			const McpResource: McpResource = state.find((McpResource) => McpResource.id === action.payload.McpResourceId)
-			if (McpResource) {
-				if (action.payload.target === "SOMETHING") {
-				}
-			}
-		},
+    McpResourceValueToggled(state, action) {
+      console.log("McpResource TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpResource: McpResource = state.find(
+        (McpResource) => McpResource.id === action.payload.McpResourceId,
+      );
+      if (McpResource) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
 
-		McpResourcepropertySet(state, action) {
-			const McpResource = state.find((McpResource) => McpResource.id === action.payload.McpResourceId)
-			if (McpResource) {
-				//  McpResource[action.property] = action.payload[action.property];
-			}
-		},
-	},
-})
+    McpResourcepropertySet(state, action) {
+      const McpResource = state.find(
+        (McpResource) => McpResource.id === action.payload.McpResourceId,
+      );
+      if (McpResource) {
+        //  McpResource[action.property] = action.payload[action.property];
+      }
+    },
+  },
+});
 
-export const { McpResourceAdded, McpResourceValueToggled, McpResourcepropertySet } = McpResourceSlice.actions
-export default McpResourceSlice.reducer
+export const {
+  McpResourceAdded,
+  McpResourceValueToggled,
+  McpResourcepropertySet,
+} = McpResourceSlice.actions;
+export default McpResourceSlice.reducer;

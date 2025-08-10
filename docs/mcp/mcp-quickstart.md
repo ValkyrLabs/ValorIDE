@@ -10,19 +10,19 @@ STOP! Before proceeding, you MUST verify these requirements:
 
 ### Required Software
 
--   ✅ Latest Node.js (v18 or newer)
+- ✅ Latest Node.js (v18 or newer)
 
-    -   Check by running: `node --version`
-    -   Install from: <https://nodejs.org/>
+  - Check by running: `node --version`
+  - Install from: <https://nodejs.org/>
 
--   ✅ Latest Python (v3.8 or newer)
+- ✅ Latest Python (v3.8 or newer)
 
-    -   Check by running: `python --version`
-    -   Install from: <https://python.org/>
+  - Check by running: `python --version`
+  - Install from: <https://python.org/>
 
--   ✅ UV Package Manager
-    -   After installing Python, run: `pip install uv`
-    -   Verify with: `uv --version`
+- ✅ UV Package Manager
+  - After installing Python, run: `pip install uv`
+  - Verify with: `uv --version`
 
 ❗ If any of these commands fail or show older versions, please install/update before continuing!
 
@@ -44,12 +44,12 @@ For Windows:
 
 ```json
 {
-	"mcpServers": {
-		"mcp-installer": {
-			"command": "cmd.exe",
-			"args": ["/c", "npx", "-y", "@anaisbetts/mcp-installer"]
-		}
-	}
+  "mcpServers": {
+    "mcp-installer": {
+      "command": "cmd.exe",
+      "args": ["/c", "npx", "-y", "@anaisbetts/mcp-installer"]
+    }
+  }
 }
 ```
 
@@ -57,12 +57,12 @@ For Mac and Linux:
 
 ```json
 {
-	"mcpServers": {
-		"mcp-installer": {
-			"command": "npx",
-			"args": ["@anaisbetts/mcp-installer"]
-		}
-	}
+  "mcpServers": {
+    "mcp-installer": {
+      "command": "npx",
+      "args": ["@anaisbetts/mcp-installer"]
+    }
+  }
 }
 ```
 
@@ -102,16 +102,16 @@ _For a Windows machine:_
 
 ```json
 {
-	"mcpServers": {
-		"mcp-installer": {
-			"command": "cmd.exe",
-			"args": ["/c", "npx", "-y", "@anaisbetts/mcp-installer"]
-		},
-		"mcp-server-fetch": {
-			"command": "uvx",
-			"args": ["mcp-server-fetch"]
-		}
-	}
+  "mcpServers": {
+    "mcp-installer": {
+      "command": "cmd.exe",
+      "args": ["/c", "npx", "-y", "@anaisbetts/mcp-installer"]
+    },
+    "mcp-server-fetch": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
+    }
+  }
 }
 ```
 
@@ -146,6 +146,6 @@ Now for some good news. While not perfect, you can get ValorIDE to do this for y
 
 If you're getting an error when you run the MCP installer, you can try the following:
 
--   Check the MCP settings file for errors
--   Read the MCP server's documentation to ensure the MCP setting file is using the correct command and arguments. 👈
--   Use a terminal and run the command with its arguments directly. This will allow you to see the same errors that ValorIDE is seeing.
+- Check the MCP settings file for errors
+- Read the MCP server's documentation to ensure the MCP setting file is using the correct command and arguments. 👈
+- Use a terminal and run the command with its arguments directly. This will allow you to see the same errors that ValorIDE is seeing.

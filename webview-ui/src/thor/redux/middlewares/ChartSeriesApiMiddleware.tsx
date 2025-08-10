@@ -1,22 +1,28 @@
-import { getChartSeries, postChartSeries, getChartSeriesList, deleteChartSeries, updateChartSeries } from "../../api"
+import {
+  getChartSeries,
+  postChartSeries,
+  getChartSeriesList,
+  deleteChartSeries,
+  updateChartSeries,
+} from "../../api";
 
 import {
-	ADD_CHARTSERIES_REQUEST,
-	FETCH_CHARTSERIES_REQUEST,
-	LIST_CHARTSERIES_REQUEST,
-	UPDATE_CHARTSERIES_REQUEST,
-	DELETE_CHARTSERIES_REQUEST,
-	addChartSeriesFailure,
-	addChartSeriesSuccess,
-	fetchChartSeriesFailure,
-	fetchChartSeriesSuccess,
-	listChartSeriesFailure,
-	listChartSeriesSuccess,
-	updateChartSeriesFailure,
-	updateChartSeriesSuccess,
-	deleteChartSeriesFailure,
-	deleteChartSeriesSuccess,
-} from "../actions/ChartSeriesApiAction"
+  ADD_CHARTSERIES_REQUEST,
+  FETCH_CHARTSERIES_REQUEST,
+  LIST_CHARTSERIES_REQUEST,
+  UPDATE_CHARTSERIES_REQUEST,
+  DELETE_CHARTSERIES_REQUEST,
+  addChartSeriesFailure,
+  addChartSeriesSuccess,
+  fetchChartSeriesFailure,
+  fetchChartSeriesSuccess,
+  listChartSeriesFailure,
+  listChartSeriesSuccess,
+  updateChartSeriesFailure,
+  updateChartSeriesSuccess,
+  deleteChartSeriesFailure,
+  deleteChartSeriesSuccess,
+} from "../actions/ChartSeriesApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: ChartSeries
 */
 
 export const ChartSeriesMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("ChartSeries MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("ChartSeries MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_CHARTSERIES_REQUEST:
-				try {
-					const response = postChartSeries(action.payload)
-					dispatch(addChartSeriesSuccess(response.body))
-				} catch (error) {
-					dispatch(addChartSeriesFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_CHARTSERIES_REQUEST:
+        try {
+          const response = postChartSeries(action.payload);
+          dispatch(addChartSeriesSuccess(response.body));
+        } catch (error) {
+          dispatch(addChartSeriesFailure(error.message));
+        }
+        break;
 
-			case LIST_CHARTSERIES_REQUEST:
-				try {
-					const response = getChartSeriesList()
-					dispatch(listChartSeriesSuccess(response.body))
-				} catch (error) {
-					dispatch(listChartSeriesFailure(error.message))
-				}
-				break
+      case LIST_CHARTSERIES_REQUEST:
+        try {
+          const response = getChartSeriesList();
+          dispatch(listChartSeriesSuccess(response.body));
+        } catch (error) {
+          dispatch(listChartSeriesFailure(error.message));
+        }
+        break;
 
-			case FETCH_CHARTSERIES_REQUEST:
-				try {
-					const response = getChartSeries(action.id)
-					dispatch(fetchChartSeriesSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchChartSeriesFailure(error.message))
-				}
-				break
+      case FETCH_CHARTSERIES_REQUEST:
+        try {
+          const response = getChartSeries(action.id);
+          dispatch(fetchChartSeriesSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchChartSeriesFailure(error.message));
+        }
+        break;
 
-			case UPDATE_CHARTSERIES_REQUEST:
-				try {
-					const { id, ChartSeries } = action.payload
-					const response = updateChartSeries(id)
-					dispatch(updateChartSeriesSuccess(response.body))
-				} catch (error) {
-					dispatch(updateChartSeriesFailure(error.message))
-				}
-				break
+      case UPDATE_CHARTSERIES_REQUEST:
+        try {
+          const { id, ChartSeries } = action.payload;
+          const response = updateChartSeries(id);
+          dispatch(updateChartSeriesSuccess(response.body));
+        } catch (error) {
+          dispatch(updateChartSeriesFailure(error.message));
+        }
+        break;
 
-			case DELETE_CHARTSERIES_REQUEST:
-				try {
-					const { id, ChartSeries } = action.payload
-					const response = deleteChartSeries(id)
-					dispatch(deleteChartSeriesSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteChartSeriesFailure(error.message))
-				}
-				break
+      case DELETE_CHARTSERIES_REQUEST:
+        try {
+          const { id, ChartSeries } = action.payload;
+          const response = deleteChartSeries(id);
+          dispatch(deleteChartSeriesSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteChartSeriesFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

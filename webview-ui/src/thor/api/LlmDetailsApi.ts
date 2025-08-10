@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: LlmDetailsApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { LlmDetails, LlmDetailsFromJSON, LlmDetailsToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { LlmDetails, LlmDetailsFromJSON, LlmDetailsToJSON } from "../model";
 
 export interface DeleteLlmDetailsRequest {
-	id: string
+  id: string;
 }
 
 export interface GetLlmDetailsRequest {
-	id: string
+  id: string;
 }
 
 export interface PostLlmDetailsRequest {
-	llmDetails: LlmDetails
+  llmDetails: LlmDetails;
 }
 
 export interface UpdateLlmDetailsRequest {
-	id: string
-	llmDetails: LlmDetails
+  id: string;
+  llmDetails: LlmDetails;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateLlmDetailsRequest {
  * Delete a LlmDetails.
  */
 function deleteLlmDetailsRaw<T>(
-	requestParameters: DeleteLlmDetailsRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteLlmDetailsRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteLlmDetails.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteLlmDetails.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/LlmDetails/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/LlmDetails/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteLlmDetailsRaw<T>(
  * Delete a LlmDetails.
  */
 export function deleteLlmDetails<T>(
-	requestParameters: DeleteLlmDetailsRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteLlmDetailsRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteLlmDetailsRaw(requestParameters, requestConfig)
+  return deleteLlmDetailsRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteLlmDetails<T>(
  * Retrieve a single LlmDetails
  */
 function getLlmDetailsRaw<T>(
-	requestParameters: GetLlmDetailsRequest,
-	requestConfig: runtime.TypedQueryConfig<T, LlmDetails> = {},
+  requestParameters: GetLlmDetailsRequest,
+  requestConfig: runtime.TypedQueryConfig<T, LlmDetails> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getLlmDetails.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getLlmDetails.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/LlmDetails/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/LlmDetails/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LlmDetailsFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(LlmDetailsFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getLlmDetailsRaw<T>(
  * Retrieve a single LlmDetails
  */
 export function getLlmDetails<T>(
-	requestParameters: GetLlmDetailsRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, LlmDetails>,
+  requestParameters: GetLlmDetailsRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, LlmDetails>,
 ): QueryConfig<T> {
-	return getLlmDetailsRaw(requestParameters, requestConfig)
+  return getLlmDetailsRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of LlmDetailss.
  * Retrieve a list of LlmDetailss
  */
-function getLlmDetailsListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<LlmDetails>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getLlmDetailsListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<LlmDetails>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/LlmDetails`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/LlmDetails`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(LlmDetailsFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(LlmDetailsFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of LlmDetailss.
  * Retrieve a list of LlmDetailss
  */
-export function getLlmDetailsList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<LlmDetails>>): QueryConfig<T> {
-	return getLlmDetailsListRaw(requestConfig)
+export function getLlmDetailsList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<LlmDetails>>,
+): QueryConfig<T> {
+  return getLlmDetailsListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getLlmDetailsList<T>(requestConfig?: runtime.TypedQueryConfig<T,
  * Create a new LlmDetails
  */
 function postLlmDetailsRaw<T>(
-	requestParameters: PostLlmDetailsRequest,
-	requestConfig: runtime.TypedQueryConfig<T, LlmDetails> = {},
+  requestParameters: PostLlmDetailsRequest,
+  requestConfig: runtime.TypedQueryConfig<T, LlmDetails> = {},
 ): QueryConfig<T> {
-	if (requestParameters.llmDetails === null || requestParameters.llmDetails === undefined) {
-		throw new runtime.RequiredError(
-			"llmDetails",
-			"Required parameter requestParameters.llmDetails was null or undefined when calling postLlmDetails.",
-		)
-	}
+  if (
+    requestParameters.llmDetails === null ||
+    requestParameters.llmDetails === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "llmDetails",
+      "Required parameter requestParameters.llmDetails was null or undefined when calling postLlmDetails.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/LlmDetails`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || LlmDetailsToJSON(requestParameters.llmDetails),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/LlmDetails`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || LlmDetailsToJSON(requestParameters.llmDetails),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LlmDetailsFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(LlmDetailsFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postLlmDetailsRaw<T>(
  * Create a new LlmDetails
  */
 export function postLlmDetails<T>(
-	requestParameters: PostLlmDetailsRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, LlmDetails>,
+  requestParameters: PostLlmDetailsRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, LlmDetails>,
 ): QueryConfig<T> {
-	return postLlmDetailsRaw(requestParameters, requestConfig)
+  return postLlmDetailsRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postLlmDetails<T>(
  * Update an existing LlmDetails
  */
 function updateLlmDetailsRaw<T>(
-	requestParameters: UpdateLlmDetailsRequest,
-	requestConfig: runtime.TypedQueryConfig<T, LlmDetails> = {},
+  requestParameters: UpdateLlmDetailsRequest,
+  requestConfig: runtime.TypedQueryConfig<T, LlmDetails> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateLlmDetails.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateLlmDetails.",
+    );
+  }
 
-	if (requestParameters.llmDetails === null || requestParameters.llmDetails === undefined) {
-		throw new runtime.RequiredError(
-			"llmDetails",
-			"Required parameter requestParameters.llmDetails was null or undefined when calling updateLlmDetails.",
-		)
-	}
+  if (
+    requestParameters.llmDetails === null ||
+    requestParameters.llmDetails === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "llmDetails",
+      "Required parameter requestParameters.llmDetails was null or undefined when calling updateLlmDetails.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/LlmDetails/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || LlmDetailsToJSON(requestParameters.llmDetails),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/LlmDetails/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || LlmDetailsToJSON(requestParameters.llmDetails),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(LlmDetailsFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(LlmDetailsFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateLlmDetailsRaw<T>(
  * Update an existing LlmDetails
  */
 export function updateLlmDetails<T>(
-	requestParameters: UpdateLlmDetailsRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, LlmDetails>,
+  requestParameters: UpdateLlmDetailsRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, LlmDetails>,
 ): QueryConfig<T> {
-	return updateLlmDetailsRaw(requestParameters, requestConfig)
+  return updateLlmDetailsRaw(requestParameters, requestConfig);
 }

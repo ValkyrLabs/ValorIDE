@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: CustomerApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { Customer, CustomerFromJSON, CustomerToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Customer, CustomerFromJSON, CustomerToJSON } from "../model";
 
 export interface DeleteCustomerRequest {
-	id: string
+  id: string;
 }
 
 export interface GetCustomerRequest {
-	id: string
+  id: string;
 }
 
 export interface PostCustomerRequest {
-	customer: Customer
+  customer: Customer;
 }
 
 export interface UpdateCustomerRequest {
-	id: string
-	customer: Customer
+  id: string;
+  customer: Customer;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateCustomerRequest {
  * Delete a Customer.
  */
 function deleteCustomerRaw<T>(
-	requestParameters: DeleteCustomerRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteCustomerRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteCustomer.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteCustomer.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Customer/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Customer/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteCustomerRaw<T>(
  * Delete a Customer.
  */
 export function deleteCustomer<T>(
-	requestParameters: DeleteCustomerRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteCustomerRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteCustomerRaw(requestParameters, requestConfig)
+  return deleteCustomerRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteCustomer<T>(
  * Retrieve a single Customer
  */
 function getCustomerRaw<T>(
-	requestParameters: GetCustomerRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Customer> = {},
+  requestParameters: GetCustomerRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Customer> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getCustomer.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getCustomer.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Customer/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Customer/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(CustomerFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(CustomerFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getCustomerRaw<T>(
  * Retrieve a single Customer
  */
 export function getCustomer<T>(
-	requestParameters: GetCustomerRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Customer>,
+  requestParameters: GetCustomerRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Customer>,
 ): QueryConfig<T> {
-	return getCustomerRaw(requestParameters, requestConfig)
+  return getCustomerRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Customers.
  * Retrieve a list of Customers
  */
-function getCustomerListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<Customer>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getCustomerListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<Customer>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Customer`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Customer`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(CustomerFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(CustomerFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of Customers.
  * Retrieve a list of Customers
  */
-export function getCustomerList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<Customer>>): QueryConfig<T> {
-	return getCustomerListRaw(requestConfig)
+export function getCustomerList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Customer>>,
+): QueryConfig<T> {
+  return getCustomerListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getCustomerList<T>(requestConfig?: runtime.TypedQueryConfig<T, A
  * Create a new Customer
  */
 function postCustomerRaw<T>(
-	requestParameters: PostCustomerRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Customer> = {},
+  requestParameters: PostCustomerRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Customer> = {},
 ): QueryConfig<T> {
-	if (requestParameters.customer === null || requestParameters.customer === undefined) {
-		throw new runtime.RequiredError(
-			"customer",
-			"Required parameter requestParameters.customer was null or undefined when calling postCustomer.",
-		)
-	}
+  if (
+    requestParameters.customer === null ||
+    requestParameters.customer === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "customer",
+      "Required parameter requestParameters.customer was null or undefined when calling postCustomer.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Customer`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || CustomerToJSON(requestParameters.customer),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Customer`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || CustomerToJSON(requestParameters.customer),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(CustomerFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(CustomerFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postCustomerRaw<T>(
  * Create a new Customer
  */
 export function postCustomer<T>(
-	requestParameters: PostCustomerRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Customer>,
+  requestParameters: PostCustomerRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Customer>,
 ): QueryConfig<T> {
-	return postCustomerRaw(requestParameters, requestConfig)
+  return postCustomerRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postCustomer<T>(
  * Update an existing Customer
  */
 function updateCustomerRaw<T>(
-	requestParameters: UpdateCustomerRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Customer> = {},
+  requestParameters: UpdateCustomerRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Customer> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateCustomer.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateCustomer.",
+    );
+  }
 
-	if (requestParameters.customer === null || requestParameters.customer === undefined) {
-		throw new runtime.RequiredError(
-			"customer",
-			"Required parameter requestParameters.customer was null or undefined when calling updateCustomer.",
-		)
-	}
+  if (
+    requestParameters.customer === null ||
+    requestParameters.customer === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "customer",
+      "Required parameter requestParameters.customer was null or undefined when calling updateCustomer.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Customer/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || CustomerToJSON(requestParameters.customer),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Customer/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || CustomerToJSON(requestParameters.customer),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(CustomerFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(CustomerFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateCustomerRaw<T>(
  * Update an existing Customer
  */
 export function updateCustomer<T>(
-	requestParameters: UpdateCustomerRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Customer>,
+  requestParameters: UpdateCustomerRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Customer>,
 ): QueryConfig<T> {
-	return updateCustomerRaw(requestParameters, requestConfig)
+  return updateCustomerRaw(requestParameters, requestConfig);
 }

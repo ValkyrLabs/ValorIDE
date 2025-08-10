@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: OasEnumApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { OasEnum, OasEnumFromJSON, OasEnumToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { OasEnum, OasEnumFromJSON, OasEnumToJSON } from "../model";
 
 export interface DeleteOasEnumRequest {
-	id: string
+  id: string;
 }
 
 export interface GetOasEnumRequest {
-	id: string
+  id: string;
 }
 
 export interface PostOasEnumRequest {
-	oasEnum: OasEnum
+  oasEnum: OasEnum;
 }
 
 export interface UpdateOasEnumRequest {
-	id: string
-	oasEnum: OasEnum
+  id: string;
+  oasEnum: OasEnum;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateOasEnumRequest {
  * Delete a OasEnum.
  */
 function deleteOasEnumRaw<T>(
-	requestParameters: DeleteOasEnumRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteOasEnumRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteOasEnum.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteOasEnum.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/OasEnum/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasEnum/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteOasEnumRaw<T>(
  * Delete a OasEnum.
  */
 export function deleteOasEnum<T>(
-	requestParameters: DeleteOasEnumRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteOasEnumRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteOasEnumRaw(requestParameters, requestConfig)
+  return deleteOasEnumRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteOasEnum<T>(
  * Retrieve a single OasEnum
  */
 function getOasEnumRaw<T>(
-	requestParameters: GetOasEnumRequest,
-	requestConfig: runtime.TypedQueryConfig<T, OasEnum> = {},
+  requestParameters: GetOasEnumRequest,
+  requestConfig: runtime.TypedQueryConfig<T, OasEnum> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getOasEnum.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getOasEnum.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/OasEnum/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasEnum/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasEnumFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(OasEnumFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getOasEnumRaw<T>(
  * Retrieve a single OasEnum
  */
 export function getOasEnum<T>(
-	requestParameters: GetOasEnumRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, OasEnum>,
+  requestParameters: GetOasEnumRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, OasEnum>,
 ): QueryConfig<T> {
-	return getOasEnumRaw(requestParameters, requestConfig)
+  return getOasEnumRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of OasEnums.
  * Retrieve a list of OasEnums
  */
-function getOasEnumListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<OasEnum>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getOasEnumListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<OasEnum>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/OasEnum`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasEnum`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(OasEnumFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(OasEnumFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of OasEnums.
  * Retrieve a list of OasEnums
  */
-export function getOasEnumList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<OasEnum>>): QueryConfig<T> {
-	return getOasEnumListRaw(requestConfig)
+export function getOasEnumList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<OasEnum>>,
+): QueryConfig<T> {
+  return getOasEnumListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getOasEnumList<T>(requestConfig?: runtime.TypedQueryConfig<T, Ar
  * Create a new OasEnum
  */
 function postOasEnumRaw<T>(
-	requestParameters: PostOasEnumRequest,
-	requestConfig: runtime.TypedQueryConfig<T, OasEnum> = {},
+  requestParameters: PostOasEnumRequest,
+  requestConfig: runtime.TypedQueryConfig<T, OasEnum> = {},
 ): QueryConfig<T> {
-	if (requestParameters.oasEnum === null || requestParameters.oasEnum === undefined) {
-		throw new runtime.RequiredError(
-			"oasEnum",
-			"Required parameter requestParameters.oasEnum was null or undefined when calling postOasEnum.",
-		)
-	}
+  if (
+    requestParameters.oasEnum === null ||
+    requestParameters.oasEnum === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "oasEnum",
+      "Required parameter requestParameters.oasEnum was null or undefined when calling postOasEnum.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/OasEnum`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || OasEnumToJSON(requestParameters.oasEnum),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasEnum`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || OasEnumToJSON(requestParameters.oasEnum),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasEnumFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(OasEnumFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postOasEnumRaw<T>(
  * Create a new OasEnum
  */
 export function postOasEnum<T>(
-	requestParameters: PostOasEnumRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, OasEnum>,
+  requestParameters: PostOasEnumRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, OasEnum>,
 ): QueryConfig<T> {
-	return postOasEnumRaw(requestParameters, requestConfig)
+  return postOasEnumRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postOasEnum<T>(
  * Update an existing OasEnum
  */
 function updateOasEnumRaw<T>(
-	requestParameters: UpdateOasEnumRequest,
-	requestConfig: runtime.TypedQueryConfig<T, OasEnum> = {},
+  requestParameters: UpdateOasEnumRequest,
+  requestConfig: runtime.TypedQueryConfig<T, OasEnum> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateOasEnum.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateOasEnum.",
+    );
+  }
 
-	if (requestParameters.oasEnum === null || requestParameters.oasEnum === undefined) {
-		throw new runtime.RequiredError(
-			"oasEnum",
-			"Required parameter requestParameters.oasEnum was null or undefined when calling updateOasEnum.",
-		)
-	}
+  if (
+    requestParameters.oasEnum === null ||
+    requestParameters.oasEnum === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "oasEnum",
+      "Required parameter requestParameters.oasEnum was null or undefined when calling updateOasEnum.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/OasEnum/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || OasEnumToJSON(requestParameters.oasEnum),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasEnum/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || OasEnumToJSON(requestParameters.oasEnum),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasEnumFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(OasEnumFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateOasEnumRaw<T>(
  * Update an existing OasEnum
  */
 export function updateOasEnum<T>(
-	requestParameters: UpdateOasEnumRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, OasEnum>,
+  requestParameters: UpdateOasEnumRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, OasEnum>,
 ): QueryConfig<T> {
-	return updateOasEnumRaw(requestParameters, requestConfig)
+  return updateOasEnumRaw(requestParameters, requestConfig);
 }

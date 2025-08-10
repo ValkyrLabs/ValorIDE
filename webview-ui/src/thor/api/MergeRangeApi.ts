@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: MergeRangeApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { MergeRange, MergeRangeFromJSON, MergeRangeToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { MergeRange, MergeRangeFromJSON, MergeRangeToJSON } from "../model";
 
 export interface DeleteMergeRangeRequest {
-	id: string
+  id: string;
 }
 
 export interface GetMergeRangeRequest {
-	id: string
+  id: string;
 }
 
 export interface PostMergeRangeRequest {
-	mergeRange: MergeRange
+  mergeRange: MergeRange;
 }
 
 export interface UpdateMergeRangeRequest {
-	id: string
-	mergeRange: MergeRange
+  id: string;
+  mergeRange: MergeRange;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateMergeRangeRequest {
  * Delete a MergeRange.
  */
 function deleteMergeRangeRaw<T>(
-	requestParameters: DeleteMergeRangeRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteMergeRangeRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteMergeRange.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteMergeRange.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/MergeRange/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MergeRange/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteMergeRangeRaw<T>(
  * Delete a MergeRange.
  */
 export function deleteMergeRange<T>(
-	requestParameters: DeleteMergeRangeRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteMergeRangeRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteMergeRangeRaw(requestParameters, requestConfig)
+  return deleteMergeRangeRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteMergeRange<T>(
  * Retrieve a single MergeRange
  */
 function getMergeRangeRaw<T>(
-	requestParameters: GetMergeRangeRequest,
-	requestConfig: runtime.TypedQueryConfig<T, MergeRange> = {},
+  requestParameters: GetMergeRangeRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MergeRange> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getMergeRange.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getMergeRange.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/MergeRange/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MergeRange/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MergeRangeFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MergeRangeFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getMergeRangeRaw<T>(
  * Retrieve a single MergeRange
  */
 export function getMergeRange<T>(
-	requestParameters: GetMergeRangeRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, MergeRange>,
+  requestParameters: GetMergeRangeRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MergeRange>,
 ): QueryConfig<T> {
-	return getMergeRangeRaw(requestParameters, requestConfig)
+  return getMergeRangeRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of MergeRanges.
  * Retrieve a list of MergeRanges
  */
-function getMergeRangeListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<MergeRange>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getMergeRangeListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<MergeRange>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/MergeRange`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MergeRange`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(MergeRangeFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(MergeRangeFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of MergeRanges.
  * Retrieve a list of MergeRanges
  */
-export function getMergeRangeList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<MergeRange>>): QueryConfig<T> {
-	return getMergeRangeListRaw(requestConfig)
+export function getMergeRangeList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<MergeRange>>,
+): QueryConfig<T> {
+  return getMergeRangeListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getMergeRangeList<T>(requestConfig?: runtime.TypedQueryConfig<T,
  * Create a new MergeRange
  */
 function postMergeRangeRaw<T>(
-	requestParameters: PostMergeRangeRequest,
-	requestConfig: runtime.TypedQueryConfig<T, MergeRange> = {},
+  requestParameters: PostMergeRangeRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MergeRange> = {},
 ): QueryConfig<T> {
-	if (requestParameters.mergeRange === null || requestParameters.mergeRange === undefined) {
-		throw new runtime.RequiredError(
-			"mergeRange",
-			"Required parameter requestParameters.mergeRange was null or undefined when calling postMergeRange.",
-		)
-	}
+  if (
+    requestParameters.mergeRange === null ||
+    requestParameters.mergeRange === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mergeRange",
+      "Required parameter requestParameters.mergeRange was null or undefined when calling postMergeRange.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/MergeRange`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || MergeRangeToJSON(requestParameters.mergeRange),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MergeRange`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || MergeRangeToJSON(requestParameters.mergeRange),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MergeRangeFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MergeRangeFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postMergeRangeRaw<T>(
  * Create a new MergeRange
  */
 export function postMergeRange<T>(
-	requestParameters: PostMergeRangeRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, MergeRange>,
+  requestParameters: PostMergeRangeRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MergeRange>,
 ): QueryConfig<T> {
-	return postMergeRangeRaw(requestParameters, requestConfig)
+  return postMergeRangeRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postMergeRange<T>(
  * Update an existing MergeRange
  */
 function updateMergeRangeRaw<T>(
-	requestParameters: UpdateMergeRangeRequest,
-	requestConfig: runtime.TypedQueryConfig<T, MergeRange> = {},
+  requestParameters: UpdateMergeRangeRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MergeRange> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateMergeRange.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateMergeRange.",
+    );
+  }
 
-	if (requestParameters.mergeRange === null || requestParameters.mergeRange === undefined) {
-		throw new runtime.RequiredError(
-			"mergeRange",
-			"Required parameter requestParameters.mergeRange was null or undefined when calling updateMergeRange.",
-		)
-	}
+  if (
+    requestParameters.mergeRange === null ||
+    requestParameters.mergeRange === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mergeRange",
+      "Required parameter requestParameters.mergeRange was null or undefined when calling updateMergeRange.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/MergeRange/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || MergeRangeToJSON(requestParameters.mergeRange),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MergeRange/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || MergeRangeToJSON(requestParameters.mergeRange),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MergeRangeFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MergeRangeFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateMergeRangeRaw<T>(
  * Update an existing MergeRange
  */
 export function updateMergeRange<T>(
-	requestParameters: UpdateMergeRangeRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, MergeRange>,
+  requestParameters: UpdateMergeRangeRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MergeRange>,
 ): QueryConfig<T> {
-	return updateMergeRangeRaw(requestParameters, requestConfig)
+  return updateMergeRangeRaw(requestParameters, requestConfig);
 }

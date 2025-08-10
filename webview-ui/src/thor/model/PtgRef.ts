@@ -11,7 +11,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime"
+import { exists, mapValues } from "../src/runtime";
 
 // thorapi
 
@@ -21,115 +21,134 @@ import { exists, mapValues } from "../src/runtime"
  * @interface PtgRef
  */
 export type PtgRef = {
-	/**
-	 *
-	 * @type {string}
-	 * @memberof PtgRef
-	 */
-	sheetId?: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof PtgRef
-	 */
-	formulaId?: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof PtgRef
-	 */
-	reference?: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof PtgRef
-	 */
-	type?: PtgRefTypeEnum
-	/**
-	 * Unique identifier for object in the system
-	 * @type {string}
-	 * @memberof PtgRef
-	 */
-	id?: string
-	/**
-	 * UUID of owner of the object in the system
-	 * @type {string}
-	 * @memberof PtgRef
-	 */
-	ownerId?: string
-	/**
-	 * Date of object creation
-	 * @type {Date}
-	 * @memberof PtgRef
-	 */
-	createdDate?: Date
-	/**
-	 * Data, including hash of the key(s) used to encrypt this record.
-	 * @type {string}
-	 * @memberof PtgRef
-	 */
-	keyHash?: string
-	/**
-	 * Last user to access object
-	 * @type {string}
-	 * @memberof PtgRef
-	 */
-	lastAccessedById?: string
-	/**
-	 * Timestamp of last access of object
-	 * @type {Date}
-	 * @memberof PtgRef
-	 */
-	lastAccessedDate?: Date
-	/**
-	 * Unique identifier for user who last modifed the object in the system
-	 * @type {string}
-	 * @memberof PtgRef
-	 */
-	lastModifiedById?: string
-	/**
-	 * Date of last object modification
-	 * @type {Date}
-	 * @memberof PtgRef
-	 */
-	lastModifiedDate?: Date
-}
+  /**
+   *
+   * @type {string}
+   * @memberof PtgRef
+   */
+  sheetId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof PtgRef
+   */
+  formulaId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof PtgRef
+   */
+  reference?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof PtgRef
+   */
+  type?: PtgRefTypeEnum;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof PtgRef
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof PtgRef
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof PtgRef
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof PtgRef
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof PtgRef
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof PtgRef
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof PtgRef
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof PtgRef
+   */
+  lastModifiedDate?: Date;
+};
 
 export function PtgRefFromJSON(json: any): PtgRef {
-	return {
-		sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
-		formulaId: !exists(json, "formulaId") ? undefined : json["formulaId"],
-		reference: !exists(json, "reference") ? undefined : json["reference"],
-		type: !exists(json, "type") ? undefined : json["type"],
-		id: !exists(json, "id") ? undefined : json["id"],
-		ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-		createdDate: !exists(json, "createdDate") ? undefined : new Date(json["createdDate"]),
-		keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-		lastAccessedById: !exists(json, "lastAccessedById") ? undefined : json["lastAccessedById"],
-		lastAccessedDate: !exists(json, "lastAccessedDate") ? undefined : new Date(json["lastAccessedDate"]),
-		lastModifiedById: !exists(json, "lastModifiedById") ? undefined : json["lastModifiedById"],
-		lastModifiedDate: !exists(json, "lastModifiedDate") ? undefined : new Date(json["lastModifiedDate"]),
-	}
+  return {
+    sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
+    formulaId: !exists(json, "formulaId") ? undefined : json["formulaId"],
+    reference: !exists(json, "reference") ? undefined : json["reference"],
+    type: !exists(json, "type") ? undefined : json["type"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function PtgRefToJSON(value?: PtgRef): any {
-	if (value === undefined) {
-		return undefined
-	}
-	return {
-		sheetId: value.sheetId,
-		formulaId: value.formulaId,
-		reference: value.reference,
-		type: value.type,
-		id: value.id,
-		ownerId: value.ownerId,
-		createdDate: value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-		keyHash: value.keyHash,
-		lastAccessedById: value.lastAccessedById,
-		lastAccessedDate: value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-		lastModifiedById: value.lastModifiedById,
-		lastModifiedDate: value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-	}
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    sheetId: value.sheetId,
+    formulaId: value.formulaId,
+    reference: value.reference,
+    type: value.type,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
@@ -137,8 +156,8 @@ export function PtgRefToJSON(value?: PtgRef): any {
  * @enum {string}
  */
 export enum PtgRefTypeEnum {
-	PTGADD = "ptgadd",
-	PTGSUB = "ptgsub",
-	PTGMUL = "ptgmul",
-	PTGDIV = "ptgdiv",
+  PTGADD = "ptgadd",
+  PTGSUB = "ptgsub",
+  PTGMUL = "ptgmul",
+  PTGDIV = "ptgdiv",
 }

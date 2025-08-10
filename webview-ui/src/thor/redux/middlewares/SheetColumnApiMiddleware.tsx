@@ -1,22 +1,28 @@
-import { getSheetColumn, postSheetColumn, getSheetColumnList, deleteSheetColumn, updateSheetColumn } from "../../api"
+import {
+  getSheetColumn,
+  postSheetColumn,
+  getSheetColumnList,
+  deleteSheetColumn,
+  updateSheetColumn,
+} from "../../api";
 
 import {
-	ADD_SHEETCOLUMN_REQUEST,
-	FETCH_SHEETCOLUMN_REQUEST,
-	LIST_SHEETCOLUMN_REQUEST,
-	UPDATE_SHEETCOLUMN_REQUEST,
-	DELETE_SHEETCOLUMN_REQUEST,
-	addSheetColumnFailure,
-	addSheetColumnSuccess,
-	fetchSheetColumnFailure,
-	fetchSheetColumnSuccess,
-	listSheetColumnFailure,
-	listSheetColumnSuccess,
-	updateSheetColumnFailure,
-	updateSheetColumnSuccess,
-	deleteSheetColumnFailure,
-	deleteSheetColumnSuccess,
-} from "../actions/SheetColumnApiAction"
+  ADD_SHEETCOLUMN_REQUEST,
+  FETCH_SHEETCOLUMN_REQUEST,
+  LIST_SHEETCOLUMN_REQUEST,
+  UPDATE_SHEETCOLUMN_REQUEST,
+  DELETE_SHEETCOLUMN_REQUEST,
+  addSheetColumnFailure,
+  addSheetColumnSuccess,
+  fetchSheetColumnFailure,
+  fetchSheetColumnSuccess,
+  listSheetColumnFailure,
+  listSheetColumnSuccess,
+  updateSheetColumnFailure,
+  updateSheetColumnSuccess,
+  deleteSheetColumnFailure,
+  deleteSheetColumnSuccess,
+} from "../actions/SheetColumnApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: SheetColumn
 */
 
 export const SheetColumnMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("SheetColumn MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("SheetColumn MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_SHEETCOLUMN_REQUEST:
-				try {
-					const response = postSheetColumn(action.payload)
-					dispatch(addSheetColumnSuccess(response.body))
-				} catch (error) {
-					dispatch(addSheetColumnFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_SHEETCOLUMN_REQUEST:
+        try {
+          const response = postSheetColumn(action.payload);
+          dispatch(addSheetColumnSuccess(response.body));
+        } catch (error) {
+          dispatch(addSheetColumnFailure(error.message));
+        }
+        break;
 
-			case LIST_SHEETCOLUMN_REQUEST:
-				try {
-					const response = getSheetColumnList()
-					dispatch(listSheetColumnSuccess(response.body))
-				} catch (error) {
-					dispatch(listSheetColumnFailure(error.message))
-				}
-				break
+      case LIST_SHEETCOLUMN_REQUEST:
+        try {
+          const response = getSheetColumnList();
+          dispatch(listSheetColumnSuccess(response.body));
+        } catch (error) {
+          dispatch(listSheetColumnFailure(error.message));
+        }
+        break;
 
-			case FETCH_SHEETCOLUMN_REQUEST:
-				try {
-					const response = getSheetColumn(action.id)
-					dispatch(fetchSheetColumnSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchSheetColumnFailure(error.message))
-				}
-				break
+      case FETCH_SHEETCOLUMN_REQUEST:
+        try {
+          const response = getSheetColumn(action.id);
+          dispatch(fetchSheetColumnSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchSheetColumnFailure(error.message));
+        }
+        break;
 
-			case UPDATE_SHEETCOLUMN_REQUEST:
-				try {
-					const { id, SheetColumn } = action.payload
-					const response = updateSheetColumn(id)
-					dispatch(updateSheetColumnSuccess(response.body))
-				} catch (error) {
-					dispatch(updateSheetColumnFailure(error.message))
-				}
-				break
+      case UPDATE_SHEETCOLUMN_REQUEST:
+        try {
+          const { id, SheetColumn } = action.payload;
+          const response = updateSheetColumn(id);
+          dispatch(updateSheetColumnSuccess(response.body));
+        } catch (error) {
+          dispatch(updateSheetColumnFailure(error.message));
+        }
+        break;
 
-			case DELETE_SHEETCOLUMN_REQUEST:
-				try {
-					const { id, SheetColumn } = action.payload
-					const response = deleteSheetColumn(id)
-					dispatch(deleteSheetColumnSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteSheetColumnFailure(error.message))
-				}
-				break
+      case DELETE_SHEETCOLUMN_REQUEST:
+        try {
+          const { id, SheetColumn } = action.payload;
+          const response = deleteSheetColumn(id);
+          dispatch(deleteSheetColumnSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteSheetColumnFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

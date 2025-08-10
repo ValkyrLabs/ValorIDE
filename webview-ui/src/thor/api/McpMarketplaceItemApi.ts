@@ -16,25 +16,34 @@ Template file: typescript-redux-query/apis.mustache
 Description: McpMarketplaceItemApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { McpMarketplaceItem, McpMarketplaceItemFromJSON, McpMarketplaceItemToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  McpMarketplaceItem,
+  McpMarketplaceItemFromJSON,
+  McpMarketplaceItemToJSON,
+} from "../model";
 
 export interface DeleteMcpMarketplaceItemRequest {
-	id: string
+  id: string;
 }
 
 export interface GetMcpMarketplaceItemRequest {
-	id: string
+  id: string;
 }
 
 export interface PostMcpMarketplaceItemRequest {
-	mcpMarketplaceItem: McpMarketplaceItem
+  mcpMarketplaceItem: McpMarketplaceItem;
 }
 
 export interface UpdateMcpMarketplaceItemRequest {
-	id: string
-	mcpMarketplaceItem: McpMarketplaceItem
+  id: string;
+  mcpMarketplaceItem: McpMarketplaceItem;
 }
 
 /**
@@ -42,45 +51,45 @@ export interface UpdateMcpMarketplaceItemRequest {
  * Delete a McpMarketplaceItem.
  */
 function deleteMcpMarketplaceItemRaw<T>(
-	requestParameters: DeleteMcpMarketplaceItemRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteMcpMarketplaceItemRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteMcpMarketplaceItem.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteMcpMarketplaceItem.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/McpMarketplaceItem/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpMarketplaceItem/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +97,10 @@ function deleteMcpMarketplaceItemRaw<T>(
  * Delete a McpMarketplaceItem.
  */
 export function deleteMcpMarketplaceItem<T>(
-	requestParameters: DeleteMcpMarketplaceItemRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteMcpMarketplaceItemRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteMcpMarketplaceItemRaw(requestParameters, requestConfig)
+  return deleteMcpMarketplaceItemRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +108,47 @@ export function deleteMcpMarketplaceItem<T>(
  * Retrieve a single McpMarketplaceItem
  */
 function getMcpMarketplaceItemRaw<T>(
-	requestParameters: GetMcpMarketplaceItemRequest,
-	requestConfig: runtime.TypedQueryConfig<T, McpMarketplaceItem> = {},
+  requestParameters: GetMcpMarketplaceItemRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpMarketplaceItem> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getMcpMarketplaceItem.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getMcpMarketplaceItem.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/McpMarketplaceItem/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpMarketplaceItem/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpMarketplaceItemFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpMarketplaceItemFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,10 +156,10 @@ function getMcpMarketplaceItemRaw<T>(
  * Retrieve a single McpMarketplaceItem
  */
 export function getMcpMarketplaceItem<T>(
-	requestParameters: GetMcpMarketplaceItemRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, McpMarketplaceItem>,
+  requestParameters: GetMcpMarketplaceItemRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpMarketplaceItem>,
 ): QueryConfig<T> {
-	return getMcpMarketplaceItemRaw(requestParameters, requestConfig)
+  return getMcpMarketplaceItemRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -157,36 +167,36 @@ export function getMcpMarketplaceItem<T>(
  * Retrieve a list of McpMarketplaceItems
  */
 function getMcpMarketplaceItemListRaw<T>(
-	requestConfig: runtime.TypedQueryConfig<T, Array<McpMarketplaceItem>> = {},
+  requestConfig: runtime.TypedQueryConfig<T, Array<McpMarketplaceItem>> = {},
 ): QueryConfig<T> {
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/McpMarketplaceItem`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpMarketplaceItem`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) =>
-			requestTransform(body.map(McpMarketplaceItemFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(McpMarketplaceItemFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -194,9 +204,9 @@ function getMcpMarketplaceItemListRaw<T>(
  * Retrieve a list of McpMarketplaceItems
  */
 export function getMcpMarketplaceItemList<T>(
-	requestConfig?: runtime.TypedQueryConfig<T, Array<McpMarketplaceItem>>,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<McpMarketplaceItem>>,
 ): QueryConfig<T> {
-	return getMcpMarketplaceItemListRaw(requestConfig)
+  return getMcpMarketplaceItemListRaw(requestConfig);
 }
 
 /**
@@ -204,45 +214,51 @@ export function getMcpMarketplaceItemList<T>(
  * Create a new McpMarketplaceItem
  */
 function postMcpMarketplaceItemRaw<T>(
-	requestParameters: PostMcpMarketplaceItemRequest,
-	requestConfig: runtime.TypedQueryConfig<T, McpMarketplaceItem> = {},
+  requestParameters: PostMcpMarketplaceItemRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpMarketplaceItem> = {},
 ): QueryConfig<T> {
-	if (requestParameters.mcpMarketplaceItem === null || requestParameters.mcpMarketplaceItem === undefined) {
-		throw new runtime.RequiredError(
-			"mcpMarketplaceItem",
-			"Required parameter requestParameters.mcpMarketplaceItem was null or undefined when calling postMcpMarketplaceItem.",
-		)
-	}
+  if (
+    requestParameters.mcpMarketplaceItem === null ||
+    requestParameters.mcpMarketplaceItem === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mcpMarketplaceItem",
+      "Required parameter requestParameters.mcpMarketplaceItem was null or undefined when calling postMcpMarketplaceItem.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/McpMarketplaceItem`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || McpMarketplaceItemToJSON(requestParameters.mcpMarketplaceItem),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpMarketplaceItem`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      McpMarketplaceItemToJSON(requestParameters.mcpMarketplaceItem),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpMarketplaceItemFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpMarketplaceItemFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -250,10 +266,10 @@ function postMcpMarketplaceItemRaw<T>(
  * Create a new McpMarketplaceItem
  */
 export function postMcpMarketplaceItem<T>(
-	requestParameters: PostMcpMarketplaceItemRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, McpMarketplaceItem>,
+  requestParameters: PostMcpMarketplaceItemRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpMarketplaceItem>,
 ): QueryConfig<T> {
-	return postMcpMarketplaceItemRaw(requestParameters, requestConfig)
+  return postMcpMarketplaceItemRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -261,55 +277,61 @@ export function postMcpMarketplaceItem<T>(
  * Update an existing McpMarketplaceItem
  */
 function updateMcpMarketplaceItemRaw<T>(
-	requestParameters: UpdateMcpMarketplaceItemRequest,
-	requestConfig: runtime.TypedQueryConfig<T, McpMarketplaceItem> = {},
+  requestParameters: UpdateMcpMarketplaceItemRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpMarketplaceItem> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateMcpMarketplaceItem.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateMcpMarketplaceItem.",
+    );
+  }
 
-	if (requestParameters.mcpMarketplaceItem === null || requestParameters.mcpMarketplaceItem === undefined) {
-		throw new runtime.RequiredError(
-			"mcpMarketplaceItem",
-			"Required parameter requestParameters.mcpMarketplaceItem was null or undefined when calling updateMcpMarketplaceItem.",
-		)
-	}
+  if (
+    requestParameters.mcpMarketplaceItem === null ||
+    requestParameters.mcpMarketplaceItem === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mcpMarketplaceItem",
+      "Required parameter requestParameters.mcpMarketplaceItem was null or undefined when calling updateMcpMarketplaceItem.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/McpMarketplaceItem/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || McpMarketplaceItemToJSON(requestParameters.mcpMarketplaceItem),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpMarketplaceItem/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      McpMarketplaceItemToJSON(requestParameters.mcpMarketplaceItem),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpMarketplaceItemFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpMarketplaceItemFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -317,8 +339,8 @@ function updateMcpMarketplaceItemRaw<T>(
  * Update an existing McpMarketplaceItem
  */
 export function updateMcpMarketplaceItem<T>(
-	requestParameters: UpdateMcpMarketplaceItemRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, McpMarketplaceItem>,
+  requestParameters: UpdateMcpMarketplaceItemRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpMarketplaceItem>,
 ): QueryConfig<T> {
-	return updateMcpMarketplaceItemRaw(requestParameters, requestConfig)
+  return updateMcpMarketplaceItemRaw(requestParameters, requestConfig);
 }

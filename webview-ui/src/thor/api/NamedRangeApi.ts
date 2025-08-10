@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: NamedRangeApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { NamedRange, NamedRangeFromJSON, NamedRangeToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { NamedRange, NamedRangeFromJSON, NamedRangeToJSON } from "../model";
 
 export interface DeleteNamedRangeRequest {
-	id: string
+  id: string;
 }
 
 export interface GetNamedRangeRequest {
-	id: string
+  id: string;
 }
 
 export interface PostNamedRangeRequest {
-	namedRange: NamedRange
+  namedRange: NamedRange;
 }
 
 export interface UpdateNamedRangeRequest {
-	id: string
-	namedRange: NamedRange
+  id: string;
+  namedRange: NamedRange;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateNamedRangeRequest {
  * Delete a NamedRange.
  */
 function deleteNamedRangeRaw<T>(
-	requestParameters: DeleteNamedRangeRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteNamedRangeRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteNamedRange.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteNamedRange.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/NamedRange/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/NamedRange/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteNamedRangeRaw<T>(
  * Delete a NamedRange.
  */
 export function deleteNamedRange<T>(
-	requestParameters: DeleteNamedRangeRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteNamedRangeRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteNamedRangeRaw(requestParameters, requestConfig)
+  return deleteNamedRangeRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteNamedRange<T>(
  * Retrieve a single NamedRange
  */
 function getNamedRangeRaw<T>(
-	requestParameters: GetNamedRangeRequest,
-	requestConfig: runtime.TypedQueryConfig<T, NamedRange> = {},
+  requestParameters: GetNamedRangeRequest,
+  requestConfig: runtime.TypedQueryConfig<T, NamedRange> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getNamedRange.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getNamedRange.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/NamedRange/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/NamedRange/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(NamedRangeFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(NamedRangeFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getNamedRangeRaw<T>(
  * Retrieve a single NamedRange
  */
 export function getNamedRange<T>(
-	requestParameters: GetNamedRangeRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, NamedRange>,
+  requestParameters: GetNamedRangeRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, NamedRange>,
 ): QueryConfig<T> {
-	return getNamedRangeRaw(requestParameters, requestConfig)
+  return getNamedRangeRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of NamedRanges.
  * Retrieve a list of NamedRanges
  */
-function getNamedRangeListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<NamedRange>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getNamedRangeListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<NamedRange>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/NamedRange`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/NamedRange`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(NamedRangeFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(NamedRangeFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of NamedRanges.
  * Retrieve a list of NamedRanges
  */
-export function getNamedRangeList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<NamedRange>>): QueryConfig<T> {
-	return getNamedRangeListRaw(requestConfig)
+export function getNamedRangeList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<NamedRange>>,
+): QueryConfig<T> {
+  return getNamedRangeListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getNamedRangeList<T>(requestConfig?: runtime.TypedQueryConfig<T,
  * Create a new NamedRange
  */
 function postNamedRangeRaw<T>(
-	requestParameters: PostNamedRangeRequest,
-	requestConfig: runtime.TypedQueryConfig<T, NamedRange> = {},
+  requestParameters: PostNamedRangeRequest,
+  requestConfig: runtime.TypedQueryConfig<T, NamedRange> = {},
 ): QueryConfig<T> {
-	if (requestParameters.namedRange === null || requestParameters.namedRange === undefined) {
-		throw new runtime.RequiredError(
-			"namedRange",
-			"Required parameter requestParameters.namedRange was null or undefined when calling postNamedRange.",
-		)
-	}
+  if (
+    requestParameters.namedRange === null ||
+    requestParameters.namedRange === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "namedRange",
+      "Required parameter requestParameters.namedRange was null or undefined when calling postNamedRange.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/NamedRange`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || NamedRangeToJSON(requestParameters.namedRange),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/NamedRange`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || NamedRangeToJSON(requestParameters.namedRange),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(NamedRangeFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(NamedRangeFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postNamedRangeRaw<T>(
  * Create a new NamedRange
  */
 export function postNamedRange<T>(
-	requestParameters: PostNamedRangeRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, NamedRange>,
+  requestParameters: PostNamedRangeRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, NamedRange>,
 ): QueryConfig<T> {
-	return postNamedRangeRaw(requestParameters, requestConfig)
+  return postNamedRangeRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postNamedRange<T>(
  * Update an existing NamedRange
  */
 function updateNamedRangeRaw<T>(
-	requestParameters: UpdateNamedRangeRequest,
-	requestConfig: runtime.TypedQueryConfig<T, NamedRange> = {},
+  requestParameters: UpdateNamedRangeRequest,
+  requestConfig: runtime.TypedQueryConfig<T, NamedRange> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateNamedRange.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateNamedRange.",
+    );
+  }
 
-	if (requestParameters.namedRange === null || requestParameters.namedRange === undefined) {
-		throw new runtime.RequiredError(
-			"namedRange",
-			"Required parameter requestParameters.namedRange was null or undefined when calling updateNamedRange.",
-		)
-	}
+  if (
+    requestParameters.namedRange === null ||
+    requestParameters.namedRange === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "namedRange",
+      "Required parameter requestParameters.namedRange was null or undefined when calling updateNamedRange.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/NamedRange/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || NamedRangeToJSON(requestParameters.namedRange),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/NamedRange/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || NamedRangeToJSON(requestParameters.namedRange),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(NamedRangeFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(NamedRangeFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateNamedRangeRaw<T>(
  * Update an existing NamedRange
  */
 export function updateNamedRange<T>(
-	requestParameters: UpdateNamedRangeRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, NamedRange>,
+  requestParameters: UpdateNamedRangeRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, NamedRange>,
 ): QueryConfig<T> {
-	return updateNamedRangeRaw(requestParameters, requestConfig)
+  return updateNamedRangeRaw(requestParameters, requestConfig);
 }

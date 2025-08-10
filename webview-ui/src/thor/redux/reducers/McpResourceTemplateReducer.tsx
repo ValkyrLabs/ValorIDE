@@ -1,39 +1,44 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 
-import { McpResourceTemplate } from "../../model/McpResourceTemplate"
+import { McpResourceTemplate } from "../../model/McpResourceTemplate";
 
 const McpResourceTemplateSlice = createSlice({
-	name: "McpResourceTemplates",
-	initialState: [],
+  name: "McpResourceTemplates",
+  initialState: [],
 
-	reducers: {
-		McpResourceTemplateAdded(state, action) {
-			state.push(action.payload)
-		},
+  reducers: {
+    McpResourceTemplateAdded(state, action) {
+      state.push(action.payload);
+    },
 
-		McpResourceTemplateValueToggled(state, action) {
-			console.log("McpResourceTemplate TOGGLE")
-			console.warn(JSON.stringify(action))
-			const McpResourceTemplate: McpResourceTemplate = state.find(
-				(McpResourceTemplate) => McpResourceTemplate.id === action.payload.McpResourceTemplateId,
-			)
-			if (McpResourceTemplate) {
-				if (action.payload.target === "SOMETHING") {
-				}
-			}
-		},
+    McpResourceTemplateValueToggled(state, action) {
+      console.log("McpResourceTemplate TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpResourceTemplate: McpResourceTemplate = state.find(
+        (McpResourceTemplate) =>
+          McpResourceTemplate.id === action.payload.McpResourceTemplateId,
+      );
+      if (McpResourceTemplate) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
 
-		McpResourceTemplatepropertySet(state, action) {
-			const McpResourceTemplate = state.find(
-				(McpResourceTemplate) => McpResourceTemplate.id === action.payload.McpResourceTemplateId,
-			)
-			if (McpResourceTemplate) {
-				//  McpResourceTemplate[action.property] = action.payload[action.property];
-			}
-		},
-	},
-})
+    McpResourceTemplatepropertySet(state, action) {
+      const McpResourceTemplate = state.find(
+        (McpResourceTemplate) =>
+          McpResourceTemplate.id === action.payload.McpResourceTemplateId,
+      );
+      if (McpResourceTemplate) {
+        //  McpResourceTemplate[action.property] = action.payload[action.property];
+      }
+    },
+  },
+});
 
-export const { McpResourceTemplateAdded, McpResourceTemplateValueToggled, McpResourceTemplatepropertySet } =
-	McpResourceTemplateSlice.actions
-export default McpResourceTemplateSlice.reducer
+export const {
+  McpResourceTemplateAdded,
+  McpResourceTemplateValueToggled,
+  McpResourceTemplatepropertySet,
+} = McpResourceTemplateSlice.actions;
+export default McpResourceTemplateSlice.reducer;

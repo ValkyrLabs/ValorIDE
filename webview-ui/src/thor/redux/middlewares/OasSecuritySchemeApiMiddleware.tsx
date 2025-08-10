@@ -1,28 +1,28 @@
 import {
-	getOasSecurityScheme,
-	postOasSecurityScheme,
-	getOasSecuritySchemeList,
-	deleteOasSecurityScheme,
-	updateOasSecurityScheme,
-} from "../../api"
+  getOasSecurityScheme,
+  postOasSecurityScheme,
+  getOasSecuritySchemeList,
+  deleteOasSecurityScheme,
+  updateOasSecurityScheme,
+} from "../../api";
 
 import {
-	ADD_OASSECURITYSCHEME_REQUEST,
-	FETCH_OASSECURITYSCHEME_REQUEST,
-	LIST_OASSECURITYSCHEME_REQUEST,
-	UPDATE_OASSECURITYSCHEME_REQUEST,
-	DELETE_OASSECURITYSCHEME_REQUEST,
-	addOasSecuritySchemeFailure,
-	addOasSecuritySchemeSuccess,
-	fetchOasSecuritySchemeFailure,
-	fetchOasSecuritySchemeSuccess,
-	listOasSecuritySchemeFailure,
-	listOasSecuritySchemeSuccess,
-	updateOasSecuritySchemeFailure,
-	updateOasSecuritySchemeSuccess,
-	deleteOasSecuritySchemeFailure,
-	deleteOasSecuritySchemeSuccess,
-} from "../actions/OasSecuritySchemeApiAction"
+  ADD_OASSECURITYSCHEME_REQUEST,
+  FETCH_OASSECURITYSCHEME_REQUEST,
+  LIST_OASSECURITYSCHEME_REQUEST,
+  UPDATE_OASSECURITYSCHEME_REQUEST,
+  DELETE_OASSECURITYSCHEME_REQUEST,
+  addOasSecuritySchemeFailure,
+  addOasSecuritySchemeSuccess,
+  fetchOasSecuritySchemeFailure,
+  fetchOasSecuritySchemeSuccess,
+  listOasSecuritySchemeFailure,
+  listOasSecuritySchemeSuccess,
+  updateOasSecuritySchemeFailure,
+  updateOasSecuritySchemeSuccess,
+  deleteOasSecuritySchemeFailure,
+  deleteOasSecuritySchemeSuccess,
+} from "../actions/OasSecuritySchemeApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -41,61 +41,61 @@ Description: OasSecurityScheme
 */
 
 export const OasSecuritySchemeMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("OasSecurityScheme MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("OasSecurityScheme MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_OASSECURITYSCHEME_REQUEST:
-				try {
-					const response = postOasSecurityScheme(action.payload)
-					dispatch(addOasSecuritySchemeSuccess(response.body))
-				} catch (error) {
-					dispatch(addOasSecuritySchemeFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_OASSECURITYSCHEME_REQUEST:
+        try {
+          const response = postOasSecurityScheme(action.payload);
+          dispatch(addOasSecuritySchemeSuccess(response.body));
+        } catch (error) {
+          dispatch(addOasSecuritySchemeFailure(error.message));
+        }
+        break;
 
-			case LIST_OASSECURITYSCHEME_REQUEST:
-				try {
-					const response = getOasSecuritySchemeList()
-					dispatch(listOasSecuritySchemeSuccess(response.body))
-				} catch (error) {
-					dispatch(listOasSecuritySchemeFailure(error.message))
-				}
-				break
+      case LIST_OASSECURITYSCHEME_REQUEST:
+        try {
+          const response = getOasSecuritySchemeList();
+          dispatch(listOasSecuritySchemeSuccess(response.body));
+        } catch (error) {
+          dispatch(listOasSecuritySchemeFailure(error.message));
+        }
+        break;
 
-			case FETCH_OASSECURITYSCHEME_REQUEST:
-				try {
-					const response = getOasSecurityScheme(action.id)
-					dispatch(fetchOasSecuritySchemeSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchOasSecuritySchemeFailure(error.message))
-				}
-				break
+      case FETCH_OASSECURITYSCHEME_REQUEST:
+        try {
+          const response = getOasSecurityScheme(action.id);
+          dispatch(fetchOasSecuritySchemeSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchOasSecuritySchemeFailure(error.message));
+        }
+        break;
 
-			case UPDATE_OASSECURITYSCHEME_REQUEST:
-				try {
-					const { id, OasSecurityScheme } = action.payload
-					const response = updateOasSecurityScheme(id)
-					dispatch(updateOasSecuritySchemeSuccess(response.body))
-				} catch (error) {
-					dispatch(updateOasSecuritySchemeFailure(error.message))
-				}
-				break
+      case UPDATE_OASSECURITYSCHEME_REQUEST:
+        try {
+          const { id, OasSecurityScheme } = action.payload;
+          const response = updateOasSecurityScheme(id);
+          dispatch(updateOasSecuritySchemeSuccess(response.body));
+        } catch (error) {
+          dispatch(updateOasSecuritySchemeFailure(error.message));
+        }
+        break;
 
-			case DELETE_OASSECURITYSCHEME_REQUEST:
-				try {
-					const { id, OasSecurityScheme } = action.payload
-					const response = deleteOasSecurityScheme(id)
-					dispatch(deleteOasSecuritySchemeSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteOasSecuritySchemeFailure(error.message))
-				}
-				break
+      case DELETE_OASSECURITYSCHEME_REQUEST:
+        try {
+          const { id, OasSecurityScheme } = action.payload;
+          const response = deleteOasSecurityScheme(id);
+          dispatch(deleteOasSecuritySchemeSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteOasSecuritySchemeFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

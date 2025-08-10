@@ -16,25 +16,34 @@ Template file: typescript-redux-query/apis.mustache
 Description: WebsocketSessionApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { WebsocketSession, WebsocketSessionFromJSON, WebsocketSessionToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  WebsocketSession,
+  WebsocketSessionFromJSON,
+  WebsocketSessionToJSON,
+} from "../model";
 
 export interface DeleteWebsocketSessionRequest {
-	id: string
+  id: string;
 }
 
 export interface GetWebsocketSessionRequest {
-	id: string
+  id: string;
 }
 
 export interface PostWebsocketSessionRequest {
-	websocketSession: WebsocketSession
+  websocketSession: WebsocketSession;
 }
 
 export interface UpdateWebsocketSessionRequest {
-	id: string
-	websocketSession: WebsocketSession
+  id: string;
+  websocketSession: WebsocketSession;
 }
 
 /**
@@ -42,45 +51,45 @@ export interface UpdateWebsocketSessionRequest {
  * Delete a WebsocketSession.
  */
 function deleteWebsocketSessionRaw<T>(
-	requestParameters: DeleteWebsocketSessionRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteWebsocketSessionRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteWebsocketSession.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteWebsocketSession.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/WebsocketSession/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/WebsocketSession/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +97,10 @@ function deleteWebsocketSessionRaw<T>(
  * Delete a WebsocketSession.
  */
 export function deleteWebsocketSession<T>(
-	requestParameters: DeleteWebsocketSessionRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteWebsocketSessionRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteWebsocketSessionRaw(requestParameters, requestConfig)
+  return deleteWebsocketSessionRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +108,47 @@ export function deleteWebsocketSession<T>(
  * Retrieve a single WebsocketSession
  */
 function getWebsocketSessionRaw<T>(
-	requestParameters: GetWebsocketSessionRequest,
-	requestConfig: runtime.TypedQueryConfig<T, WebsocketSession> = {},
+  requestParameters: GetWebsocketSessionRequest,
+  requestConfig: runtime.TypedQueryConfig<T, WebsocketSession> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getWebsocketSession.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getWebsocketSession.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/WebsocketSession/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/WebsocketSession/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WebsocketSessionFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(WebsocketSessionFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +156,57 @@ function getWebsocketSessionRaw<T>(
  * Retrieve a single WebsocketSession
  */
 export function getWebsocketSession<T>(
-	requestParameters: GetWebsocketSessionRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, WebsocketSession>,
+  requestParameters: GetWebsocketSessionRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, WebsocketSession>,
 ): QueryConfig<T> {
-	return getWebsocketSessionRaw(requestParameters, requestConfig)
+  return getWebsocketSessionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of WebsocketSessions.
  * Retrieve a list of WebsocketSessions
  */
-function getWebsocketSessionListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<WebsocketSession>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getWebsocketSessionListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<WebsocketSession>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/WebsocketSession`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/WebsocketSession`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(WebsocketSessionFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(WebsocketSessionFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of WebsocketSessions.
  * Retrieve a list of WebsocketSessions
  */
-export function getWebsocketSessionList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<WebsocketSession>>): QueryConfig<T> {
-	return getWebsocketSessionListRaw(requestConfig)
+export function getWebsocketSessionList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<WebsocketSession>>,
+): QueryConfig<T> {
+  return getWebsocketSessionListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +214,51 @@ export function getWebsocketSessionList<T>(requestConfig?: runtime.TypedQueryCon
  * Create a new WebsocketSession
  */
 function postWebsocketSessionRaw<T>(
-	requestParameters: PostWebsocketSessionRequest,
-	requestConfig: runtime.TypedQueryConfig<T, WebsocketSession> = {},
+  requestParameters: PostWebsocketSessionRequest,
+  requestConfig: runtime.TypedQueryConfig<T, WebsocketSession> = {},
 ): QueryConfig<T> {
-	if (requestParameters.websocketSession === null || requestParameters.websocketSession === undefined) {
-		throw new runtime.RequiredError(
-			"websocketSession",
-			"Required parameter requestParameters.websocketSession was null or undefined when calling postWebsocketSession.",
-		)
-	}
+  if (
+    requestParameters.websocketSession === null ||
+    requestParameters.websocketSession === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "websocketSession",
+      "Required parameter requestParameters.websocketSession was null or undefined when calling postWebsocketSession.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/WebsocketSession`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || WebsocketSessionToJSON(requestParameters.websocketSession),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/WebsocketSession`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      WebsocketSessionToJSON(requestParameters.websocketSession),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WebsocketSessionFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(WebsocketSessionFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +266,10 @@ function postWebsocketSessionRaw<T>(
  * Create a new WebsocketSession
  */
 export function postWebsocketSession<T>(
-	requestParameters: PostWebsocketSessionRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, WebsocketSession>,
+  requestParameters: PostWebsocketSessionRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, WebsocketSession>,
 ): QueryConfig<T> {
-	return postWebsocketSessionRaw(requestParameters, requestConfig)
+  return postWebsocketSessionRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +277,61 @@ export function postWebsocketSession<T>(
  * Update an existing WebsocketSession
  */
 function updateWebsocketSessionRaw<T>(
-	requestParameters: UpdateWebsocketSessionRequest,
-	requestConfig: runtime.TypedQueryConfig<T, WebsocketSession> = {},
+  requestParameters: UpdateWebsocketSessionRequest,
+  requestConfig: runtime.TypedQueryConfig<T, WebsocketSession> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateWebsocketSession.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateWebsocketSession.",
+    );
+  }
 
-	if (requestParameters.websocketSession === null || requestParameters.websocketSession === undefined) {
-		throw new runtime.RequiredError(
-			"websocketSession",
-			"Required parameter requestParameters.websocketSession was null or undefined when calling updateWebsocketSession.",
-		)
-	}
+  if (
+    requestParameters.websocketSession === null ||
+    requestParameters.websocketSession === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "websocketSession",
+      "Required parameter requestParameters.websocketSession was null or undefined when calling updateWebsocketSession.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/WebsocketSession/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || WebsocketSessionToJSON(requestParameters.websocketSession),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/WebsocketSession/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      WebsocketSessionToJSON(requestParameters.websocketSession),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WebsocketSessionFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(WebsocketSessionFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +339,8 @@ function updateWebsocketSessionRaw<T>(
  * Update an existing WebsocketSession
  */
 export function updateWebsocketSession<T>(
-	requestParameters: UpdateWebsocketSessionRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, WebsocketSession>,
+  requestParameters: UpdateWebsocketSessionRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, WebsocketSession>,
 ): QueryConfig<T> {
-	return updateWebsocketSessionRaw(requestParameters, requestConfig)
+  return updateWebsocketSessionRaw(requestParameters, requestConfig);
 }

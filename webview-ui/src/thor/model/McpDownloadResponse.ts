@@ -11,7 +11,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime"
+import { exists, mapValues } from "../src/runtime";
 
 // thorapi
 
@@ -21,145 +21,164 @@ import { exists, mapValues } from "../src/runtime"
  * @interface McpDownloadResponse
  */
 export type McpDownloadResponse = {
-	/**
-	 *
-	 * @type {string}
-	 * @memberof McpDownloadResponse
-	 */
-	mcpId: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof McpDownloadResponse
-	 */
-	githubUrl: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof McpDownloadResponse
-	 */
-	name: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof McpDownloadResponse
-	 */
-	author: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof McpDownloadResponse
-	 */
-	description: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof McpDownloadResponse
-	 */
-	readmeContent: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof McpDownloadResponse
-	 */
-	llmsInstallationContent: string
-	/**
-	 *
-	 * @type {boolean}
-	 * @memberof McpDownloadResponse
-	 */
-	requiresApiKey: boolean
-	/**
-	 * Unique identifier for object in the system
-	 * @type {string}
-	 * @memberof McpDownloadResponse
-	 */
-	id?: string
-	/**
-	 * UUID of owner of the object in the system
-	 * @type {string}
-	 * @memberof McpDownloadResponse
-	 */
-	ownerId?: string
-	/**
-	 * Date of object creation
-	 * @type {Date}
-	 * @memberof McpDownloadResponse
-	 */
-	createdDate?: Date
-	/**
-	 * Data, including hash of the key(s) used to encrypt this record.
-	 * @type {string}
-	 * @memberof McpDownloadResponse
-	 */
-	keyHash?: string
-	/**
-	 * Last user to access object
-	 * @type {string}
-	 * @memberof McpDownloadResponse
-	 */
-	lastAccessedById?: string
-	/**
-	 * Timestamp of last access of object
-	 * @type {Date}
-	 * @memberof McpDownloadResponse
-	 */
-	lastAccessedDate?: Date
-	/**
-	 * Unique identifier for user who last modifed the object in the system
-	 * @type {string}
-	 * @memberof McpDownloadResponse
-	 */
-	lastModifiedById?: string
-	/**
-	 * Date of last object modification
-	 * @type {Date}
-	 * @memberof McpDownloadResponse
-	 */
-	lastModifiedDate?: Date
-}
+  /**
+   *
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  mcpId: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  githubUrl: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  name: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  author: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  description: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  readmeContent: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  llmsInstallationContent: string;
+  /**
+   *
+   * @type {boolean}
+   * @memberof McpDownloadResponse
+   */
+  requiresApiKey: boolean;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof McpDownloadResponse
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof McpDownloadResponse
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof McpDownloadResponse
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof McpDownloadResponse
+   */
+  lastModifiedDate?: Date;
+};
 
 export function McpDownloadResponseFromJSON(json: any): McpDownloadResponse {
-	return {
-		mcpId: json["mcpId"],
-		githubUrl: json["githubUrl"],
-		name: json["name"],
-		author: json["author"],
-		description: json["description"],
-		readmeContent: json["readmeContent"],
-		llmsInstallationContent: json["llmsInstallationContent"],
-		requiresApiKey: json["requiresApiKey"],
-		id: !exists(json, "id") ? undefined : json["id"],
-		ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-		createdDate: !exists(json, "createdDate") ? undefined : new Date(json["createdDate"]),
-		keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-		lastAccessedById: !exists(json, "lastAccessedById") ? undefined : json["lastAccessedById"],
-		lastAccessedDate: !exists(json, "lastAccessedDate") ? undefined : new Date(json["lastAccessedDate"]),
-		lastModifiedById: !exists(json, "lastModifiedById") ? undefined : json["lastModifiedById"],
-		lastModifiedDate: !exists(json, "lastModifiedDate") ? undefined : new Date(json["lastModifiedDate"]),
-	}
+  return {
+    mcpId: json["mcpId"],
+    githubUrl: json["githubUrl"],
+    name: json["name"],
+    author: json["author"],
+    description: json["description"],
+    readmeContent: json["readmeContent"],
+    llmsInstallationContent: json["llmsInstallationContent"],
+    requiresApiKey: json["requiresApiKey"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function McpDownloadResponseToJSON(value?: McpDownloadResponse): any {
-	if (value === undefined) {
-		return undefined
-	}
-	return {
-		mcpId: value.mcpId,
-		githubUrl: value.githubUrl,
-		name: value.name,
-		author: value.author,
-		description: value.description,
-		readmeContent: value.readmeContent,
-		llmsInstallationContent: value.llmsInstallationContent,
-		requiresApiKey: value.requiresApiKey,
-		id: value.id,
-		ownerId: value.ownerId,
-		createdDate: value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-		keyHash: value.keyHash,
-		lastAccessedById: value.lastAccessedById,
-		lastAccessedDate: value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-		lastModifiedById: value.lastModifiedById,
-		lastModifiedDate: value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-	}
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    mcpId: value.mcpId,
+    githubUrl: value.githubUrl,
+    name: value.name,
+    author: value.author,
+    description: value.description,
+    readmeContent: value.readmeContent,
+    llmsInstallationContent: value.llmsInstallationContent,
+    requiresApiKey: value.requiresApiKey,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }

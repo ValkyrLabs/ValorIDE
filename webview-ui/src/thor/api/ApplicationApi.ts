@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: ApplicationApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { Application, ApplicationFromJSON, ApplicationToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Application, ApplicationFromJSON, ApplicationToJSON } from "../model";
 
 export interface DeleteApplicationRequest {
-	id: string
+  id: string;
 }
 
 export interface GetApplicationRequest {
-	id: string
+  id: string;
 }
 
 export interface PostApplicationRequest {
-	application: Application
+  application: Application;
 }
 
 export interface UpdateApplicationRequest {
-	id: string
-	application: Application
+  id: string;
+  application: Application;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateApplicationRequest {
  * Delete a Application.
  */
 function deleteApplicationRaw<T>(
-	requestParameters: DeleteApplicationRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteApplicationRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteApplication.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteApplication.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Application/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Application/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteApplicationRaw<T>(
  * Delete a Application.
  */
 export function deleteApplication<T>(
-	requestParameters: DeleteApplicationRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteApplicationRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteApplicationRaw(requestParameters, requestConfig)
+  return deleteApplicationRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteApplication<T>(
  * Retrieve a single Application
  */
 function getApplicationRaw<T>(
-	requestParameters: GetApplicationRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Application> = {},
+  requestParameters: GetApplicationRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Application> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getApplication.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getApplication.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Application/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Application/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ApplicationFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ApplicationFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getApplicationRaw<T>(
  * Retrieve a single Application
  */
 export function getApplication<T>(
-	requestParameters: GetApplicationRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Application>,
+  requestParameters: GetApplicationRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Application>,
 ): QueryConfig<T> {
-	return getApplicationRaw(requestParameters, requestConfig)
+  return getApplicationRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Applications.
  * Retrieve a list of Applications
  */
-function getApplicationListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<Application>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getApplicationListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<Application>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Application`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Application`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(ApplicationFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(ApplicationFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of Applications.
  * Retrieve a list of Applications
  */
-export function getApplicationList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<Application>>): QueryConfig<T> {
-	return getApplicationListRaw(requestConfig)
+export function getApplicationList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Application>>,
+): QueryConfig<T> {
+  return getApplicationListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getApplicationList<T>(requestConfig?: runtime.TypedQueryConfig<T
  * Create a new Application
  */
 function postApplicationRaw<T>(
-	requestParameters: PostApplicationRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Application> = {},
+  requestParameters: PostApplicationRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Application> = {},
 ): QueryConfig<T> {
-	if (requestParameters.application === null || requestParameters.application === undefined) {
-		throw new runtime.RequiredError(
-			"application",
-			"Required parameter requestParameters.application was null or undefined when calling postApplication.",
-		)
-	}
+  if (
+    requestParameters.application === null ||
+    requestParameters.application === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "application",
+      "Required parameter requestParameters.application was null or undefined when calling postApplication.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Application`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || ApplicationToJSON(requestParameters.application),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Application`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || ApplicationToJSON(requestParameters.application),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ApplicationFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ApplicationFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postApplicationRaw<T>(
  * Create a new Application
  */
 export function postApplication<T>(
-	requestParameters: PostApplicationRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Application>,
+  requestParameters: PostApplicationRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Application>,
 ): QueryConfig<T> {
-	return postApplicationRaw(requestParameters, requestConfig)
+  return postApplicationRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postApplication<T>(
  * Update an existing Application
  */
 function updateApplicationRaw<T>(
-	requestParameters: UpdateApplicationRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Application> = {},
+  requestParameters: UpdateApplicationRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Application> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateApplication.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateApplication.",
+    );
+  }
 
-	if (requestParameters.application === null || requestParameters.application === undefined) {
-		throw new runtime.RequiredError(
-			"application",
-			"Required parameter requestParameters.application was null or undefined when calling updateApplication.",
-		)
-	}
+  if (
+    requestParameters.application === null ||
+    requestParameters.application === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "application",
+      "Required parameter requestParameters.application was null or undefined when calling updateApplication.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Application/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || ApplicationToJSON(requestParameters.application),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Application/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || ApplicationToJSON(requestParameters.application),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ApplicationFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ApplicationFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateApplicationRaw<T>(
  * Update an existing Application
  */
 export function updateApplication<T>(
-	requestParameters: UpdateApplicationRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Application>,
+  requestParameters: UpdateApplicationRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Application>,
 ): QueryConfig<T> {
-	return updateApplicationRaw(requestParameters, requestConfig)
+  return updateApplicationRaw(requestParameters, requestConfig);
 }

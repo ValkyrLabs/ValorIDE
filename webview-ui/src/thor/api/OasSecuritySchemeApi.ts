@@ -16,25 +16,34 @@ Template file: typescript-redux-query/apis.mustache
 Description: OasSecuritySchemeApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { OasSecurityScheme, OasSecuritySchemeFromJSON, OasSecuritySchemeToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  OasSecurityScheme,
+  OasSecuritySchemeFromJSON,
+  OasSecuritySchemeToJSON,
+} from "../model";
 
 export interface DeleteOasSecuritySchemeRequest {
-	id: string
+  id: string;
 }
 
 export interface GetOasSecuritySchemeRequest {
-	id: string
+  id: string;
 }
 
 export interface PostOasSecuritySchemeRequest {
-	oasSecurityScheme: OasSecurityScheme
+  oasSecurityScheme: OasSecurityScheme;
 }
 
 export interface UpdateOasSecuritySchemeRequest {
-	id: string
-	oasSecurityScheme: OasSecurityScheme
+  id: string;
+  oasSecurityScheme: OasSecurityScheme;
 }
 
 /**
@@ -42,45 +51,45 @@ export interface UpdateOasSecuritySchemeRequest {
  * Delete a OasSecurityScheme.
  */
 function deleteOasSecuritySchemeRaw<T>(
-	requestParameters: DeleteOasSecuritySchemeRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteOasSecuritySchemeRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteOasSecurityScheme.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteOasSecurityScheme.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/OasSecurityScheme/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasSecurityScheme/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +97,10 @@ function deleteOasSecuritySchemeRaw<T>(
  * Delete a OasSecurityScheme.
  */
 export function deleteOasSecurityScheme<T>(
-	requestParameters: DeleteOasSecuritySchemeRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteOasSecuritySchemeRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteOasSecuritySchemeRaw(requestParameters, requestConfig)
+  return deleteOasSecuritySchemeRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +108,47 @@ export function deleteOasSecurityScheme<T>(
  * Retrieve a single OasSecurityScheme
  */
 function getOasSecuritySchemeRaw<T>(
-	requestParameters: GetOasSecuritySchemeRequest,
-	requestConfig: runtime.TypedQueryConfig<T, OasSecurityScheme> = {},
+  requestParameters: GetOasSecuritySchemeRequest,
+  requestConfig: runtime.TypedQueryConfig<T, OasSecurityScheme> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getOasSecurityScheme.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getOasSecurityScheme.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/OasSecurityScheme/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasSecurityScheme/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasSecuritySchemeFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(OasSecuritySchemeFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,10 +156,10 @@ function getOasSecuritySchemeRaw<T>(
  * Retrieve a single OasSecurityScheme
  */
 export function getOasSecurityScheme<T>(
-	requestParameters: GetOasSecuritySchemeRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, OasSecurityScheme>,
+  requestParameters: GetOasSecuritySchemeRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, OasSecurityScheme>,
 ): QueryConfig<T> {
-	return getOasSecuritySchemeRaw(requestParameters, requestConfig)
+  return getOasSecuritySchemeRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -157,35 +167,36 @@ export function getOasSecurityScheme<T>(
  * Retrieve a list of OasSecuritySchemes
  */
 function getOasSecuritySchemeListRaw<T>(
-	requestConfig: runtime.TypedQueryConfig<T, Array<OasSecurityScheme>> = {},
+  requestConfig: runtime.TypedQueryConfig<T, Array<OasSecurityScheme>> = {},
 ): QueryConfig<T> {
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/OasSecurityScheme`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasSecurityScheme`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(OasSecuritySchemeFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(OasSecuritySchemeFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -193,9 +204,9 @@ function getOasSecuritySchemeListRaw<T>(
  * Retrieve a list of OasSecuritySchemes
  */
 export function getOasSecuritySchemeList<T>(
-	requestConfig?: runtime.TypedQueryConfig<T, Array<OasSecurityScheme>>,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<OasSecurityScheme>>,
 ): QueryConfig<T> {
-	return getOasSecuritySchemeListRaw(requestConfig)
+  return getOasSecuritySchemeListRaw(requestConfig);
 }
 
 /**
@@ -203,45 +214,51 @@ export function getOasSecuritySchemeList<T>(
  * Create a new OasSecurityScheme
  */
 function postOasSecuritySchemeRaw<T>(
-	requestParameters: PostOasSecuritySchemeRequest,
-	requestConfig: runtime.TypedQueryConfig<T, OasSecurityScheme> = {},
+  requestParameters: PostOasSecuritySchemeRequest,
+  requestConfig: runtime.TypedQueryConfig<T, OasSecurityScheme> = {},
 ): QueryConfig<T> {
-	if (requestParameters.oasSecurityScheme === null || requestParameters.oasSecurityScheme === undefined) {
-		throw new runtime.RequiredError(
-			"oasSecurityScheme",
-			"Required parameter requestParameters.oasSecurityScheme was null or undefined when calling postOasSecurityScheme.",
-		)
-	}
+  if (
+    requestParameters.oasSecurityScheme === null ||
+    requestParameters.oasSecurityScheme === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "oasSecurityScheme",
+      "Required parameter requestParameters.oasSecurityScheme was null or undefined when calling postOasSecurityScheme.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/OasSecurityScheme`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || OasSecuritySchemeToJSON(requestParameters.oasSecurityScheme),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasSecurityScheme`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      OasSecuritySchemeToJSON(requestParameters.oasSecurityScheme),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasSecuritySchemeFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(OasSecuritySchemeFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -249,10 +266,10 @@ function postOasSecuritySchemeRaw<T>(
  * Create a new OasSecurityScheme
  */
 export function postOasSecurityScheme<T>(
-	requestParameters: PostOasSecuritySchemeRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, OasSecurityScheme>,
+  requestParameters: PostOasSecuritySchemeRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, OasSecurityScheme>,
 ): QueryConfig<T> {
-	return postOasSecuritySchemeRaw(requestParameters, requestConfig)
+  return postOasSecuritySchemeRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -260,55 +277,61 @@ export function postOasSecurityScheme<T>(
  * Update an existing OasSecurityScheme
  */
 function updateOasSecuritySchemeRaw<T>(
-	requestParameters: UpdateOasSecuritySchemeRequest,
-	requestConfig: runtime.TypedQueryConfig<T, OasSecurityScheme> = {},
+  requestParameters: UpdateOasSecuritySchemeRequest,
+  requestConfig: runtime.TypedQueryConfig<T, OasSecurityScheme> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateOasSecurityScheme.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateOasSecurityScheme.",
+    );
+  }
 
-	if (requestParameters.oasSecurityScheme === null || requestParameters.oasSecurityScheme === undefined) {
-		throw new runtime.RequiredError(
-			"oasSecurityScheme",
-			"Required parameter requestParameters.oasSecurityScheme was null or undefined when calling updateOasSecurityScheme.",
-		)
-	}
+  if (
+    requestParameters.oasSecurityScheme === null ||
+    requestParameters.oasSecurityScheme === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "oasSecurityScheme",
+      "Required parameter requestParameters.oasSecurityScheme was null or undefined when calling updateOasSecurityScheme.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/OasSecurityScheme/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || OasSecuritySchemeToJSON(requestParameters.oasSecurityScheme),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasSecurityScheme/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      OasSecuritySchemeToJSON(requestParameters.oasSecurityScheme),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasSecuritySchemeFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(OasSecuritySchemeFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -316,8 +339,8 @@ function updateOasSecuritySchemeRaw<T>(
  * Update an existing OasSecurityScheme
  */
 export function updateOasSecurityScheme<T>(
-	requestParameters: UpdateOasSecuritySchemeRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, OasSecurityScheme>,
+  requestParameters: UpdateOasSecuritySchemeRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, OasSecurityScheme>,
 ): QueryConfig<T> {
-	return updateOasSecuritySchemeRaw(requestParameters, requestConfig)
+  return updateOasSecuritySchemeRaw(requestParameters, requestConfig);
 }

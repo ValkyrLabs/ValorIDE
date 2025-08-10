@@ -27,6 +27,7 @@ To reference file contents, use `@/` followed by the relative path within your p
 ```
 
 **Example:**
+
 ```
 Please analyze the implementation in @/src/components/Button.tsx
 ```
@@ -42,6 +43,7 @@ To reference directory contents, use `@/` followed by the relative path of the d
 ```
 
 **Example:**
+
 ```
 What components are available in the @/src/components/ directory?
 ```
@@ -57,6 +59,7 @@ To reference web page contents, use `@` followed by the URL:
 ```
 
 **Example:**
+
 ```
 Please parse the JSON response from @https://api.github.com/users/octocat
 ```
@@ -72,6 +75,7 @@ To reference VSCode diagnostic information (errors and warnings) in the current 
 ```
 
 **Example:**
+
 ```
 Check @problems and tell me which errors I should prioritize fixing
 ```
@@ -87,6 +91,7 @@ To reference the latest terminal output, use `@terminal`:
 ```
 
 **Example:**
+
 ```
 Please identify the cause of the error in the @terminal output
 ```
@@ -102,6 +107,7 @@ To reference the current Git working directory change status, use `@git-changes`
 ```
 
 **Example:**
+
 ```
 Review the @git-changes and summarize the important changes that should be committed
 ```
@@ -117,6 +123,7 @@ To reference information about a specific Git commit, use `@` followed by the co
 ```
 
 **Example:**
+
 ```
 Analyze the commit @abcd123 and explain what changes were made
 ```

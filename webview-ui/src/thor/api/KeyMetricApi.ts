@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: KeyMetricApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { KeyMetric, KeyMetricFromJSON, KeyMetricToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { KeyMetric, KeyMetricFromJSON, KeyMetricToJSON } from "../model";
 
 export interface DeleteKeyMetricRequest {
-	id: string
+  id: string;
 }
 
 export interface GetKeyMetricRequest {
-	id: string
+  id: string;
 }
 
 export interface PostKeyMetricRequest {
-	keyMetric: KeyMetric
+  keyMetric: KeyMetric;
 }
 
 export interface UpdateKeyMetricRequest {
-	id: string
-	keyMetric: KeyMetric
+  id: string;
+  keyMetric: KeyMetric;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateKeyMetricRequest {
  * Delete a KeyMetric.
  */
 function deleteKeyMetricRaw<T>(
-	requestParameters: DeleteKeyMetricRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteKeyMetricRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteKeyMetric.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteKeyMetric.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/KeyMetric/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/KeyMetric/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteKeyMetricRaw<T>(
  * Delete a KeyMetric.
  */
 export function deleteKeyMetric<T>(
-	requestParameters: DeleteKeyMetricRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteKeyMetricRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteKeyMetricRaw(requestParameters, requestConfig)
+  return deleteKeyMetricRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteKeyMetric<T>(
  * Retrieve a single KeyMetric
  */
 function getKeyMetricRaw<T>(
-	requestParameters: GetKeyMetricRequest,
-	requestConfig: runtime.TypedQueryConfig<T, KeyMetric> = {},
+  requestParameters: GetKeyMetricRequest,
+  requestConfig: runtime.TypedQueryConfig<T, KeyMetric> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getKeyMetric.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getKeyMetric.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/KeyMetric/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/KeyMetric/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(KeyMetricFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(KeyMetricFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getKeyMetricRaw<T>(
  * Retrieve a single KeyMetric
  */
 export function getKeyMetric<T>(
-	requestParameters: GetKeyMetricRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, KeyMetric>,
+  requestParameters: GetKeyMetricRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, KeyMetric>,
 ): QueryConfig<T> {
-	return getKeyMetricRaw(requestParameters, requestConfig)
+  return getKeyMetricRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of KeyMetrics.
  * Retrieve a list of KeyMetrics
  */
-function getKeyMetricListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<KeyMetric>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getKeyMetricListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<KeyMetric>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/KeyMetric`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/KeyMetric`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(KeyMetricFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(KeyMetricFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of KeyMetrics.
  * Retrieve a list of KeyMetrics
  */
-export function getKeyMetricList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<KeyMetric>>): QueryConfig<T> {
-	return getKeyMetricListRaw(requestConfig)
+export function getKeyMetricList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<KeyMetric>>,
+): QueryConfig<T> {
+  return getKeyMetricListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getKeyMetricList<T>(requestConfig?: runtime.TypedQueryConfig<T, 
  * Create a new KeyMetric
  */
 function postKeyMetricRaw<T>(
-	requestParameters: PostKeyMetricRequest,
-	requestConfig: runtime.TypedQueryConfig<T, KeyMetric> = {},
+  requestParameters: PostKeyMetricRequest,
+  requestConfig: runtime.TypedQueryConfig<T, KeyMetric> = {},
 ): QueryConfig<T> {
-	if (requestParameters.keyMetric === null || requestParameters.keyMetric === undefined) {
-		throw new runtime.RequiredError(
-			"keyMetric",
-			"Required parameter requestParameters.keyMetric was null or undefined when calling postKeyMetric.",
-		)
-	}
+  if (
+    requestParameters.keyMetric === null ||
+    requestParameters.keyMetric === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "keyMetric",
+      "Required parameter requestParameters.keyMetric was null or undefined when calling postKeyMetric.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/KeyMetric`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || KeyMetricToJSON(requestParameters.keyMetric),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/KeyMetric`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || KeyMetricToJSON(requestParameters.keyMetric),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(KeyMetricFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(KeyMetricFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postKeyMetricRaw<T>(
  * Create a new KeyMetric
  */
 export function postKeyMetric<T>(
-	requestParameters: PostKeyMetricRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, KeyMetric>,
+  requestParameters: PostKeyMetricRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, KeyMetric>,
 ): QueryConfig<T> {
-	return postKeyMetricRaw(requestParameters, requestConfig)
+  return postKeyMetricRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postKeyMetric<T>(
  * Update an existing KeyMetric
  */
 function updateKeyMetricRaw<T>(
-	requestParameters: UpdateKeyMetricRequest,
-	requestConfig: runtime.TypedQueryConfig<T, KeyMetric> = {},
+  requestParameters: UpdateKeyMetricRequest,
+  requestConfig: runtime.TypedQueryConfig<T, KeyMetric> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateKeyMetric.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateKeyMetric.",
+    );
+  }
 
-	if (requestParameters.keyMetric === null || requestParameters.keyMetric === undefined) {
-		throw new runtime.RequiredError(
-			"keyMetric",
-			"Required parameter requestParameters.keyMetric was null or undefined when calling updateKeyMetric.",
-		)
-	}
+  if (
+    requestParameters.keyMetric === null ||
+    requestParameters.keyMetric === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "keyMetric",
+      "Required parameter requestParameters.keyMetric was null or undefined when calling updateKeyMetric.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/KeyMetric/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || KeyMetricToJSON(requestParameters.keyMetric),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/KeyMetric/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || KeyMetricToJSON(requestParameters.keyMetric),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(KeyMetricFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(KeyMetricFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateKeyMetricRaw<T>(
  * Update an existing KeyMetric
  */
 export function updateKeyMetric<T>(
-	requestParameters: UpdateKeyMetricRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, KeyMetric>,
+  requestParameters: UpdateKeyMetricRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, KeyMetric>,
 ): QueryConfig<T> {
-	return updateKeyMetricRaw(requestParameters, requestConfig)
+  return updateKeyMetricRaw(requestParameters, requestConfig);
 }

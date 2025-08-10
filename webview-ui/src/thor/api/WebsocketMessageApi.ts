@@ -16,25 +16,34 @@ Template file: typescript-redux-query/apis.mustache
 Description: WebsocketMessageApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { WebsocketMessage, WebsocketMessageFromJSON, WebsocketMessageToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  WebsocketMessage,
+  WebsocketMessageFromJSON,
+  WebsocketMessageToJSON,
+} from "../model";
 
 export interface DeleteWebsocketMessageRequest {
-	id: string
+  id: string;
 }
 
 export interface GetWebsocketMessageRequest {
-	id: string
+  id: string;
 }
 
 export interface PostWebsocketMessageRequest {
-	websocketMessage: WebsocketMessage
+  websocketMessage: WebsocketMessage;
 }
 
 export interface UpdateWebsocketMessageRequest {
-	id: string
-	websocketMessage: WebsocketMessage
+  id: string;
+  websocketMessage: WebsocketMessage;
 }
 
 /**
@@ -42,45 +51,45 @@ export interface UpdateWebsocketMessageRequest {
  * Delete a WebsocketMessage.
  */
 function deleteWebsocketMessageRaw<T>(
-	requestParameters: DeleteWebsocketMessageRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteWebsocketMessageRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteWebsocketMessage.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteWebsocketMessage.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/WebsocketMessage/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/WebsocketMessage/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +97,10 @@ function deleteWebsocketMessageRaw<T>(
  * Delete a WebsocketMessage.
  */
 export function deleteWebsocketMessage<T>(
-	requestParameters: DeleteWebsocketMessageRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteWebsocketMessageRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteWebsocketMessageRaw(requestParameters, requestConfig)
+  return deleteWebsocketMessageRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +108,47 @@ export function deleteWebsocketMessage<T>(
  * Retrieve a single WebsocketMessage
  */
 function getWebsocketMessageRaw<T>(
-	requestParameters: GetWebsocketMessageRequest,
-	requestConfig: runtime.TypedQueryConfig<T, WebsocketMessage> = {},
+  requestParameters: GetWebsocketMessageRequest,
+  requestConfig: runtime.TypedQueryConfig<T, WebsocketMessage> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getWebsocketMessage.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getWebsocketMessage.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/WebsocketMessage/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/WebsocketMessage/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WebsocketMessageFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(WebsocketMessageFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +156,57 @@ function getWebsocketMessageRaw<T>(
  * Retrieve a single WebsocketMessage
  */
 export function getWebsocketMessage<T>(
-	requestParameters: GetWebsocketMessageRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, WebsocketMessage>,
+  requestParameters: GetWebsocketMessageRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, WebsocketMessage>,
 ): QueryConfig<T> {
-	return getWebsocketMessageRaw(requestParameters, requestConfig)
+  return getWebsocketMessageRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of WebsocketMessages.
  * Retrieve a list of WebsocketMessages
  */
-function getWebsocketMessageListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<WebsocketMessage>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getWebsocketMessageListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<WebsocketMessage>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/WebsocketMessage`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/WebsocketMessage`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(WebsocketMessageFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(WebsocketMessageFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of WebsocketMessages.
  * Retrieve a list of WebsocketMessages
  */
-export function getWebsocketMessageList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<WebsocketMessage>>): QueryConfig<T> {
-	return getWebsocketMessageListRaw(requestConfig)
+export function getWebsocketMessageList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<WebsocketMessage>>,
+): QueryConfig<T> {
+  return getWebsocketMessageListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +214,51 @@ export function getWebsocketMessageList<T>(requestConfig?: runtime.TypedQueryCon
  * Create a new WebsocketMessage
  */
 function postWebsocketMessageRaw<T>(
-	requestParameters: PostWebsocketMessageRequest,
-	requestConfig: runtime.TypedQueryConfig<T, WebsocketMessage> = {},
+  requestParameters: PostWebsocketMessageRequest,
+  requestConfig: runtime.TypedQueryConfig<T, WebsocketMessage> = {},
 ): QueryConfig<T> {
-	if (requestParameters.websocketMessage === null || requestParameters.websocketMessage === undefined) {
-		throw new runtime.RequiredError(
-			"websocketMessage",
-			"Required parameter requestParameters.websocketMessage was null or undefined when calling postWebsocketMessage.",
-		)
-	}
+  if (
+    requestParameters.websocketMessage === null ||
+    requestParameters.websocketMessage === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "websocketMessage",
+      "Required parameter requestParameters.websocketMessage was null or undefined when calling postWebsocketMessage.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/WebsocketMessage`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || WebsocketMessageToJSON(requestParameters.websocketMessage),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/WebsocketMessage`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      WebsocketMessageToJSON(requestParameters.websocketMessage),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WebsocketMessageFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(WebsocketMessageFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +266,10 @@ function postWebsocketMessageRaw<T>(
  * Create a new WebsocketMessage
  */
 export function postWebsocketMessage<T>(
-	requestParameters: PostWebsocketMessageRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, WebsocketMessage>,
+  requestParameters: PostWebsocketMessageRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, WebsocketMessage>,
 ): QueryConfig<T> {
-	return postWebsocketMessageRaw(requestParameters, requestConfig)
+  return postWebsocketMessageRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +277,61 @@ export function postWebsocketMessage<T>(
  * Update an existing WebsocketMessage
  */
 function updateWebsocketMessageRaw<T>(
-	requestParameters: UpdateWebsocketMessageRequest,
-	requestConfig: runtime.TypedQueryConfig<T, WebsocketMessage> = {},
+  requestParameters: UpdateWebsocketMessageRequest,
+  requestConfig: runtime.TypedQueryConfig<T, WebsocketMessage> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateWebsocketMessage.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateWebsocketMessage.",
+    );
+  }
 
-	if (requestParameters.websocketMessage === null || requestParameters.websocketMessage === undefined) {
-		throw new runtime.RequiredError(
-			"websocketMessage",
-			"Required parameter requestParameters.websocketMessage was null or undefined when calling updateWebsocketMessage.",
-		)
-	}
+  if (
+    requestParameters.websocketMessage === null ||
+    requestParameters.websocketMessage === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "websocketMessage",
+      "Required parameter requestParameters.websocketMessage was null or undefined when calling updateWebsocketMessage.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/WebsocketMessage/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || WebsocketMessageToJSON(requestParameters.websocketMessage),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/WebsocketMessage/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      WebsocketMessageToJSON(requestParameters.websocketMessage),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WebsocketMessageFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(WebsocketMessageFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +339,8 @@ function updateWebsocketMessageRaw<T>(
  * Update an existing WebsocketMessage
  */
 export function updateWebsocketMessage<T>(
-	requestParameters: UpdateWebsocketMessageRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, WebsocketMessage>,
+  requestParameters: UpdateWebsocketMessageRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, WebsocketMessage>,
 ): QueryConfig<T> {
-	return updateWebsocketMessageRaw(requestParameters, requestConfig)
+  return updateWebsocketMessageRaw(requestParameters, requestConfig);
 }

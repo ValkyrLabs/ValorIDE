@@ -2,47 +2,47 @@
 
 ### 1. Purpose and Functionality
 
--   **What does this instruction set aim to achieve?**
+- **What does this instruction set aim to achieve?**
 
-    -   This instruction set transforms ValorIDE into a self-documenting development system that maintains context across sessions through a structured "Memory Bank". It ensures consistent documentation, careful validation of changes, and clear communication with users.
+  - This instruction set transforms ValorIDE into a self-documenting development system that maintains context across sessions through a structured "Memory Bank". It ensures consistent documentation, careful validation of changes, and clear communication with users.
 
--   **What types of projects or tasks is this best suited for?**
-    -   Projects requiring extensive context tracking.
-    -   Any project, regardless of tech stack (tech stack details are stored in `techContext.md`).
-    -   Ongoing and new projects.
+- **What types of projects or tasks is this best suited for?**
+  - Projects requiring extensive context tracking.
+  - Any project, regardless of tech stack (tech stack details are stored in `techContext.md`).
+  - Ongoing and new projects.
 
 ### 2. Usage Guide
 
--   **How to Add These Instructions**
-    1. Open VSCode
-    2. Click the ValorIDE extension settings dial ⚙️
-    3. Find the "Custom Instructions" field
-    4. Copy and paste the instructions from the section below
+- **How to Add These Instructions**
+  1. Open VSCode
+  2. Click the ValorIDE extension settings dial ⚙️
+  3. Find the "Custom Instructions" field
+  4. Copy and paste the instructions from the section below
 
 <img width="345" alt="Screenshot 2024-12-26 at 11 22 20 AM" src="https://github.com/user-attachments/assets/8b4ff439-db66-48ec-be13-1ddaa37afa9a" />
 
--   **Project Setup**
+- **Project Setup**
 
-    1. Create an empty `valoride_docs` folder in your project root (i.e. YOUR-PROJECT-FOLDER/valoride_docs)
-    2. For first use, provide a project brief and ask ValorIDE to "initialize memory bank"
+  1. Create an empty `valoride_docs` folder in your project root (i.e. YOUR-PROJECT-FOLDER/valoride_docs)
+  2. For first use, provide a project brief and ask ValorIDE to "initialize memory bank"
 
--   **Best Practices**
-    -   Monitor for `[MEMORY BANK: ACTIVE]` flags during operation.
-    -   Pay attention to confidence checks on critical operations.
-    -   When starting new projects, create a project brief for ValorIDE (paste in chat or include in `valoride_docs` as `projectBrief.md`) to use in creating the initial context files.
-        -   note: productBrief.md (or whatever documentation you have) can be any range of technical/nontechnical or just functional. ValorIDE is instructed to fill in the gaps when creating these context files. For example, if you don't choose a tech stack, ValorIDE will for you.
-    -   Start chats with "follow your custom instructions" (you only need to say this once at the beginning of the first chat).
-    -   When prompting ValorIDE to update context files, say "only update the relevant valoride_docs"
-    -   Verify documentation updates at the end of sessions by telling ValorIDE "update memory bank".
-    -   Update memory bank at ~2 million tokens and end the session.
+- **Best Practices**
+  - Monitor for `[MEMORY BANK: ACTIVE]` flags during operation.
+  - Pay attention to confidence checks on critical operations.
+  - When starting new projects, create a project brief for ValorIDE (paste in chat or include in `valoride_docs` as `projectBrief.md`) to use in creating the initial context files.
+    - note: productBrief.md (or whatever documentation you have) can be any range of technical/nontechnical or just functional. ValorIDE is instructed to fill in the gaps when creating these context files. For example, if you don't choose a tech stack, ValorIDE will for you.
+  - Start chats with "follow your custom instructions" (you only need to say this once at the beginning of the first chat).
+  - When prompting ValorIDE to update context files, say "only update the relevant valoride_docs"
+  - Verify documentation updates at the end of sessions by telling ValorIDE "update memory bank".
+  - Update memory bank at ~2 million tokens and end the session.
 
 ### 3. Author & Contributors
 
--   **Author**
-    -   nickbaumann98
--   **Contributors**
-    -   Contributors (Discord: [ValorIDE's #prompts](https://discord.com/channels/1275535550845292637/1275555786621325382)):
-        -   @SniperMunyShotz
+- **Author**
+  - nickbaumann98
+- **Contributors**
+  - Contributors (Discord: [ValorIDE's #prompts](https://discord.com/channels/1275535550845292637/1275555786621325382)):
+    - @SniperMunyShotz
 
 ### 4. Custom Instructions
 
@@ -64,34 +64,34 @@ Required files:
 
 productContext.md
 
--   Why this project exists
--   What problems it solves
--   How it should work
+- Why this project exists
+- What problems it solves
+- How it should work
 
 activeContext.md
 
--   What you're working on now
--   Recent changes
--   Next steps
-    (This is your source of truth)
+- What you're working on now
+- Recent changes
+- Next steps
+  (This is your source of truth)
 
 systemPatterns.md
 
--   How the system is built
--   Key technical decisions
--   Architecture patterns
+- How the system is built
+- Key technical decisions
+- Architecture patterns
 
 techContext.md
 
--   Technologies used
--   Development setup
--   Technical constraints
+- Technologies used
+- Development setup
+- Technical constraints
 
 progress.md
 
--   What works
--   What's left to build
--   Progress status
+- What works
+- What's left to build
+- Progress status
 
 ## Core Workflows
 
@@ -107,8 +107,8 @@ progress.md
 
 1. For normal development:
 
-    - Follow Memory Bank patterns
-    - Update docs after significant changes
+   - Follow Memory Bank patterns
+   - Update docs after significant changes
 
 2. Say `[MEMORY BANK: ACTIVE]` at the beginning of every tool use.
 

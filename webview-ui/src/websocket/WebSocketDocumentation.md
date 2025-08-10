@@ -8,13 +8,13 @@ This project uses React, Redux, and WebSockets to provide real-time communicatio
 
 ## Components
 
-*   `WebSocketContext.tsx`: Defines the WebSocket context using React's `createContext`.
-*   `useWebSocket.ts`: Manages the WebSocket connection using the `useWebSocket` hook.
-*   `websocket.ts`: Contains the WebSocket URL.
-*   `WebSocketStatus.tsx`: Displays the WebSocket connection status.
-*   `WebSocketExample.tsx`: Provides an example of sending messages through the WebSocket.
-*   `redux/websocketSlice.ts`: Defines the Redux slice for managing WebSocket events.
-*   `redux/store.ts`: Configures the Redux store.
+- `WebSocketContext.tsx`: Defines the WebSocket context using React's `createContext`.
+- `useWebSocket.ts`: Manages the WebSocket connection using the `useWebSocket` hook.
+- `websocket.ts`: Contains the WebSocket URL.
+- `WebSocketStatus.tsx`: Displays the WebSocket connection status.
+- `WebSocketExample.tsx`: Provides an example of sending messages through the WebSocket.
+- `redux/websocketSlice.ts`: Defines the Redux slice for managing WebSocket events.
+- `redux/store.ts`: Configures the Redux store.
 
 ## Usage
 
@@ -28,16 +28,16 @@ This project uses React, Redux, and WebSockets to provide real-time communicatio
 ## Example
 
 ```jsx
-import React, { useState } from 'react';
-import { useWebSocketContext } from '../websocket/WebSocketContext';
+import React, { useState } from "react";
+import { useWebSocketContext } from "../websocket/WebSocketContext";
 
 const WebSocketExample = () => {
   const { sendMessage } = useWebSocketContext();
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   const handleSendMessage = () => {
     sendMessage(message);
-    setMessage('');
+    setMessage("");
   };
 
   return (
@@ -63,10 +63,10 @@ The Redux store is configured in the `redux/store.ts` file. The store contains a
 
 The following WebSocket events are dispatched to the Redux store:
 
-*   `connection`: Dispatched when the WebSocket connection is opened or closed.
-*   `message`: Dispatched when a message is received from the server.
-*   `error`: Dispatched when an error occurs.
-*   `log`: Dispatched when a message is sent or received.
+- `connection`: Dispatched when the WebSocket connection is opened or closed.
+- `message`: Dispatched when a message is received from the server.
+- `error`: Dispatched when an error occurs.
+- `log`: Dispatched when a message is sent or received.
 
 ## Conclusion
 

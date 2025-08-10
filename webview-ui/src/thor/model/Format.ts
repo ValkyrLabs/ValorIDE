@@ -11,8 +11,8 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime"
-import { Border, BorderFromJSON, BorderToJSON } from "./"
+import { exists, mapValues } from "../src/runtime";
+import { Border, BorderFromJSON, BorderToJSON } from "./";
 
 // thorapi
 
@@ -22,187 +22,218 @@ import { Border, BorderFromJSON, BorderToJSON } from "./"
  * @interface Format
  */
 export type Format = {
-	/**
-	 * the workbook containing this format
-	 * @type {string}
-	 * @memberof Format
-	 */
-	workbookId?: string
-	/**
-	 *
-	 * @type {number}
-	 * @memberof Format
-	 */
-	fontWeight?: FormatFontWeightEnum
-	/**
-	 *
-	 * @type {number}
-	 * @memberof Format
-	 */
-	fontSize?: number
-	/**
-	 *
-	 * @type {string}
-	 * @memberof Format
-	 */
-	fontFace?: string
-	/**
-	 *
-	 * @type {number}
-	 * @memberof Format
-	 */
-	underline?: FormatUnderlineEnum
-	/**
-	 *
-	 * @type {string}
-	 * @memberof Format
-	 */
-	color?: FormatColorEnum
-	/**
-	 *
-	 * @type {string}
-	 * @memberof Format
-	 */
-	alignmentHorizontal?: FormatAlignmentHorizontalEnum
-	/**
-	 *
-	 * @type {string}
-	 * @memberof Format
-	 */
-	alignmentVertical?: FormatAlignmentVerticalEnum
-	/**
-	 *
-	 * @type {number}
-	 * @memberof Format
-	 */
-	pattern?: FormatPatternEnum
-	/**
-	 *
-	 * @type {Border}
-	 * @memberof Format
-	 */
-	borderLeft?: Border
-	/**
-	 *
-	 * @type {Border}
-	 * @memberof Format
-	 */
-	borderRight?: Border
-	/**
-	 *
-	 * @type {Border}
-	 * @memberof Format
-	 */
-	borderTop?: Border
-	/**
-	 *
-	 * @type {Border}
-	 * @memberof Format
-	 */
-	borderBottom?: Border
-	/**
-	 * Unique identifier for object in the system
-	 * @type {string}
-	 * @memberof Format
-	 */
-	id?: string
-	/**
-	 * UUID of owner of the object in the system
-	 * @type {string}
-	 * @memberof Format
-	 */
-	ownerId?: string
-	/**
-	 * Date of object creation
-	 * @type {Date}
-	 * @memberof Format
-	 */
-	createdDate?: Date
-	/**
-	 * Data, including hash of the key(s) used to encrypt this record.
-	 * @type {string}
-	 * @memberof Format
-	 */
-	keyHash?: string
-	/**
-	 * Last user to access object
-	 * @type {string}
-	 * @memberof Format
-	 */
-	lastAccessedById?: string
-	/**
-	 * Timestamp of last access of object
-	 * @type {Date}
-	 * @memberof Format
-	 */
-	lastAccessedDate?: Date
-	/**
-	 * Unique identifier for user who last modifed the object in the system
-	 * @type {string}
-	 * @memberof Format
-	 */
-	lastModifiedById?: string
-	/**
-	 * Date of last object modification
-	 * @type {Date}
-	 * @memberof Format
-	 */
-	lastModifiedDate?: Date
-}
+  /**
+   * the workbook containing this format
+   * @type {string}
+   * @memberof Format
+   */
+  workbookId?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof Format
+   */
+  fontWeight?: FormatFontWeightEnum;
+  /**
+   *
+   * @type {number}
+   * @memberof Format
+   */
+  fontSize?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof Format
+   */
+  fontFace?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof Format
+   */
+  underline?: FormatUnderlineEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof Format
+   */
+  color?: FormatColorEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof Format
+   */
+  alignmentHorizontal?: FormatAlignmentHorizontalEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof Format
+   */
+  alignmentVertical?: FormatAlignmentVerticalEnum;
+  /**
+   *
+   * @type {number}
+   * @memberof Format
+   */
+  pattern?: FormatPatternEnum;
+  /**
+   *
+   * @type {Border}
+   * @memberof Format
+   */
+  borderLeft?: Border;
+  /**
+   *
+   * @type {Border}
+   * @memberof Format
+   */
+  borderRight?: Border;
+  /**
+   *
+   * @type {Border}
+   * @memberof Format
+   */
+  borderTop?: Border;
+  /**
+   *
+   * @type {Border}
+   * @memberof Format
+   */
+  borderBottom?: Border;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Format
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Format
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Format
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Format
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Format
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Format
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Format
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Format
+   */
+  lastModifiedDate?: Date;
+};
 
 export function FormatFromJSON(json: any): Format {
-	return {
-		workbookId: !exists(json, "workbookId") ? undefined : json["workbookId"],
-		fontWeight: !exists(json, "fontWeight") ? undefined : json["fontWeight"],
-		fontSize: !exists(json, "fontSize") ? undefined : json["fontSize"],
-		fontFace: !exists(json, "fontFace") ? undefined : json["fontFace"],
-		underline: !exists(json, "underline") ? undefined : json["underline"],
-		color: !exists(json, "color") ? undefined : json["color"],
-		alignmentHorizontal: !exists(json, "alignment-horizontal") ? undefined : json["alignment-horizontal"],
-		alignmentVertical: !exists(json, "alignment-vertical") ? undefined : json["alignment-vertical"],
-		pattern: !exists(json, "pattern") ? undefined : json["pattern"],
-		borderLeft: !exists(json, "border-left") ? undefined : BorderFromJSON(json["border-left"]),
-		borderRight: !exists(json, "border-right") ? undefined : BorderFromJSON(json["border-right"]),
-		borderTop: !exists(json, "border-top") ? undefined : BorderFromJSON(json["border-top"]),
-		borderBottom: !exists(json, "border-bottom") ? undefined : BorderFromJSON(json["border-bottom"]),
-		id: !exists(json, "id") ? undefined : json["id"],
-		ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-		createdDate: !exists(json, "createdDate") ? undefined : new Date(json["createdDate"]),
-		keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-		lastAccessedById: !exists(json, "lastAccessedById") ? undefined : json["lastAccessedById"],
-		lastAccessedDate: !exists(json, "lastAccessedDate") ? undefined : new Date(json["lastAccessedDate"]),
-		lastModifiedById: !exists(json, "lastModifiedById") ? undefined : json["lastModifiedById"],
-		lastModifiedDate: !exists(json, "lastModifiedDate") ? undefined : new Date(json["lastModifiedDate"]),
-	}
+  return {
+    workbookId: !exists(json, "workbookId") ? undefined : json["workbookId"],
+    fontWeight: !exists(json, "fontWeight") ? undefined : json["fontWeight"],
+    fontSize: !exists(json, "fontSize") ? undefined : json["fontSize"],
+    fontFace: !exists(json, "fontFace") ? undefined : json["fontFace"],
+    underline: !exists(json, "underline") ? undefined : json["underline"],
+    color: !exists(json, "color") ? undefined : json["color"],
+    alignmentHorizontal: !exists(json, "alignment-horizontal")
+      ? undefined
+      : json["alignment-horizontal"],
+    alignmentVertical: !exists(json, "alignment-vertical")
+      ? undefined
+      : json["alignment-vertical"],
+    pattern: !exists(json, "pattern") ? undefined : json["pattern"],
+    borderLeft: !exists(json, "border-left")
+      ? undefined
+      : BorderFromJSON(json["border-left"]),
+    borderRight: !exists(json, "border-right")
+      ? undefined
+      : BorderFromJSON(json["border-right"]),
+    borderTop: !exists(json, "border-top")
+      ? undefined
+      : BorderFromJSON(json["border-top"]),
+    borderBottom: !exists(json, "border-bottom")
+      ? undefined
+      : BorderFromJSON(json["border-bottom"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function FormatToJSON(value?: Format): any {
-	if (value === undefined) {
-		return undefined
-	}
-	return {
-		workbookId: value.workbookId,
-		fontWeight: value.fontWeight,
-		fontSize: value.fontSize,
-		fontFace: value.fontFace,
-		underline: value.underline,
-		color: value.color,
-		"alignment-horizontal": value.alignmentHorizontal,
-		"alignment-vertical": value.alignmentVertical,
-		pattern: value.pattern,
-		"border-left": BorderToJSON(value.borderLeft),
-		"border-right": BorderToJSON(value.borderRight),
-		"border-top": BorderToJSON(value.borderTop),
-		"border-bottom": BorderToJSON(value.borderBottom),
-		id: value.id,
-		ownerId: value.ownerId,
-		createdDate: value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-		keyHash: value.keyHash,
-		lastAccessedById: value.lastAccessedById,
-		lastAccessedDate: value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-		lastModifiedById: value.lastModifiedById,
-		lastModifiedDate: value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-	}
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    workbookId: value.workbookId,
+    fontWeight: value.fontWeight,
+    fontSize: value.fontSize,
+    fontFace: value.fontFace,
+    underline: value.underline,
+    color: value.color,
+    "alignment-horizontal": value.alignmentHorizontal,
+    "alignment-vertical": value.alignmentVertical,
+    pattern: value.pattern,
+    "border-left": BorderToJSON(value.borderLeft),
+    "border-right": BorderToJSON(value.borderRight),
+    "border-top": BorderToJSON(value.borderTop),
+    "border-bottom": BorderToJSON(value.borderBottom),
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
@@ -210,78 +241,78 @@ export function FormatToJSON(value?: Format): any {
  * @enum {string}
  */
 export enum FormatFontWeightEnum {
-	FONTWEIGHTLIGHT = 200,
-	FONTWEIGHTREGULAR = 400,
-	FONTWEIGHTBOLD = 700,
+  FONTWEIGHTLIGHT = 200,
+  FONTWEIGHTREGULAR = 400,
+  FONTWEIGHTBOLD = 700,
 }
 /**
  * @export
  * @enum {string}
  */
 export enum FormatUnderlineEnum {
-	UNDERLINENONE = 0,
-	UNDERLINESINGLE = 1,
-	UNDERLINEDOUBLE = 2,
-	UNDERLINESINGLEACCOUNTING = 21,
-	UNDERLINEDOUBLEACCOUNTING = 22,
+  UNDERLINENONE = 0,
+  UNDERLINESINGLE = 1,
+  UNDERLINEDOUBLE = 2,
+  UNDERLINESINGLEACCOUNTING = 21,
+  UNDERLINEDOUBLEACCOUNTING = 22,
 }
 /**
  * @export
  * @enum {string}
  */
 export enum FormatColorEnum {
-	COLORBLACK = "black",
-	COLORWHITE = "white",
-	COLORRED = "red",
-	COLORBRIGHTGREEN = "brightgreen",
-	COLORBLUE = "blue",
-	COLORYELLOW = "yellow",
-	COLORPINK = "pink",
-	COLORTURQUOISE = "turquoise",
-	COLORDARKRED = "darkred",
-	COLORORANGE = "orange",
-	COLORDARKYELLOW = "darkyellow",
-	COLORGREEN = "green",
-	COLORTEAL = "teal",
-	COLORLIGHTBLUE = "lightblue",
-	COLORVIOLET = "violet",
-	COLORGRAY80 = "gray80",
+  COLORBLACK = "black",
+  COLORWHITE = "white",
+  COLORRED = "red",
+  COLORBRIGHTGREEN = "brightgreen",
+  COLORBLUE = "blue",
+  COLORYELLOW = "yellow",
+  COLORPINK = "pink",
+  COLORTURQUOISE = "turquoise",
+  COLORDARKRED = "darkred",
+  COLORORANGE = "orange",
+  COLORDARKYELLOW = "darkyellow",
+  COLORGREEN = "green",
+  COLORTEAL = "teal",
+  COLORLIGHTBLUE = "lightblue",
+  COLORVIOLET = "violet",
+  COLORGRAY80 = "gray80",
 }
 /**
  * @export
  * @enum {string}
  */
 export enum FormatAlignmentHorizontalEnum {
-	ALIGNLEFT = "left",
-	ALIGNCENTER = "center",
-	ALIGNRIGHT = "right",
-	ALIGNFILL = "fill",
-	ALIGNJUSTIFY = "justify",
-	ALIGNCENTERACROSSSELECTION = "centeracrossselection",
+  ALIGNLEFT = "left",
+  ALIGNCENTER = "center",
+  ALIGNRIGHT = "right",
+  ALIGNFILL = "fill",
+  ALIGNJUSTIFY = "justify",
+  ALIGNCENTERACROSSSELECTION = "centeracrossselection",
 }
 /**
  * @export
  * @enum {string}
  */
 export enum FormatAlignmentVerticalEnum {
-	ALIGNTOP = "top",
-	ALIGNMIDDLE = "middle",
-	ALIGNBOTTOM = "bottom",
-	ALIGNJUSTIFY = "justify",
+  ALIGNTOP = "top",
+  ALIGNMIDDLE = "middle",
+  ALIGNBOTTOM = "bottom",
+  ALIGNJUSTIFY = "justify",
 }
 /**
  * @export
  * @enum {string}
  */
 export enum FormatPatternEnum {
-	PATTERNNONE = 0,
-	PATTERNFILLED = 1,
-	PATTERNLIGHTFILL = 2,
-	PATTERNMEDIUMFILL = 3,
-	PATTERNHEAVYFILL = 4,
-	PATTERNHORIZONTALSTRIPES = 5,
-	PATTERNVERTICALSTRIPES = 6,
-	PATTERNDIAGONALSTRIPES = 7,
-	PATTERNDIAGONALSTRIPESALT = 8,
-	PATTERNCHECKERBOARD = 9,
+  PATTERNNONE = 0,
+  PATTERNFILLED = 1,
+  PATTERNLIGHTFILL = 2,
+  PATTERNMEDIUMFILL = 3,
+  PATTERNHEAVYFILL = 4,
+  PATTERNHORIZONTALSTRIPES = 5,
+  PATTERNVERTICALSTRIPES = 6,
+  PATTERNDIAGONALSTRIPES = 7,
+  PATTERNDIAGONALSTRIPESALT = 8,
+  PATTERNCHECKERBOARD = 9,
 }

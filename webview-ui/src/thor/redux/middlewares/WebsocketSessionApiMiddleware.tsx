@@ -1,28 +1,28 @@
 import {
-	getWebsocketSession,
-	postWebsocketSession,
-	getWebsocketSessionList,
-	deleteWebsocketSession,
-	updateWebsocketSession,
-} from "../../api"
+  getWebsocketSession,
+  postWebsocketSession,
+  getWebsocketSessionList,
+  deleteWebsocketSession,
+  updateWebsocketSession,
+} from "../../api";
 
 import {
-	ADD_WEBSOCKETSESSION_REQUEST,
-	FETCH_WEBSOCKETSESSION_REQUEST,
-	LIST_WEBSOCKETSESSION_REQUEST,
-	UPDATE_WEBSOCKETSESSION_REQUEST,
-	DELETE_WEBSOCKETSESSION_REQUEST,
-	addWebsocketSessionFailure,
-	addWebsocketSessionSuccess,
-	fetchWebsocketSessionFailure,
-	fetchWebsocketSessionSuccess,
-	listWebsocketSessionFailure,
-	listWebsocketSessionSuccess,
-	updateWebsocketSessionFailure,
-	updateWebsocketSessionSuccess,
-	deleteWebsocketSessionFailure,
-	deleteWebsocketSessionSuccess,
-} from "../actions/WebsocketSessionApiAction"
+  ADD_WEBSOCKETSESSION_REQUEST,
+  FETCH_WEBSOCKETSESSION_REQUEST,
+  LIST_WEBSOCKETSESSION_REQUEST,
+  UPDATE_WEBSOCKETSESSION_REQUEST,
+  DELETE_WEBSOCKETSESSION_REQUEST,
+  addWebsocketSessionFailure,
+  addWebsocketSessionSuccess,
+  fetchWebsocketSessionFailure,
+  fetchWebsocketSessionSuccess,
+  listWebsocketSessionFailure,
+  listWebsocketSessionSuccess,
+  updateWebsocketSessionFailure,
+  updateWebsocketSessionSuccess,
+  deleteWebsocketSessionFailure,
+  deleteWebsocketSessionSuccess,
+} from "../actions/WebsocketSessionApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -41,61 +41,61 @@ Description: WebsocketSession
 */
 
 export const WebsocketSessionMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("WebsocketSession MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("WebsocketSession MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_WEBSOCKETSESSION_REQUEST:
-				try {
-					const response = postWebsocketSession(action.payload)
-					dispatch(addWebsocketSessionSuccess(response.body))
-				} catch (error) {
-					dispatch(addWebsocketSessionFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_WEBSOCKETSESSION_REQUEST:
+        try {
+          const response = postWebsocketSession(action.payload);
+          dispatch(addWebsocketSessionSuccess(response.body));
+        } catch (error) {
+          dispatch(addWebsocketSessionFailure(error.message));
+        }
+        break;
 
-			case LIST_WEBSOCKETSESSION_REQUEST:
-				try {
-					const response = getWebsocketSessionList()
-					dispatch(listWebsocketSessionSuccess(response.body))
-				} catch (error) {
-					dispatch(listWebsocketSessionFailure(error.message))
-				}
-				break
+      case LIST_WEBSOCKETSESSION_REQUEST:
+        try {
+          const response = getWebsocketSessionList();
+          dispatch(listWebsocketSessionSuccess(response.body));
+        } catch (error) {
+          dispatch(listWebsocketSessionFailure(error.message));
+        }
+        break;
 
-			case FETCH_WEBSOCKETSESSION_REQUEST:
-				try {
-					const response = getWebsocketSession(action.id)
-					dispatch(fetchWebsocketSessionSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchWebsocketSessionFailure(error.message))
-				}
-				break
+      case FETCH_WEBSOCKETSESSION_REQUEST:
+        try {
+          const response = getWebsocketSession(action.id);
+          dispatch(fetchWebsocketSessionSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchWebsocketSessionFailure(error.message));
+        }
+        break;
 
-			case UPDATE_WEBSOCKETSESSION_REQUEST:
-				try {
-					const { id, WebsocketSession } = action.payload
-					const response = updateWebsocketSession(id)
-					dispatch(updateWebsocketSessionSuccess(response.body))
-				} catch (error) {
-					dispatch(updateWebsocketSessionFailure(error.message))
-				}
-				break
+      case UPDATE_WEBSOCKETSESSION_REQUEST:
+        try {
+          const { id, WebsocketSession } = action.payload;
+          const response = updateWebsocketSession(id);
+          dispatch(updateWebsocketSessionSuccess(response.body));
+        } catch (error) {
+          dispatch(updateWebsocketSessionFailure(error.message));
+        }
+        break;
 
-			case DELETE_WEBSOCKETSESSION_REQUEST:
-				try {
-					const { id, WebsocketSession } = action.payload
-					const response = deleteWebsocketSession(id)
-					dispatch(deleteWebsocketSessionSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteWebsocketSessionFailure(error.message))
-				}
-				break
+      case DELETE_WEBSOCKETSESSION_REQUEST:
+        try {
+          const { id, WebsocketSession } = action.payload;
+          const response = deleteWebsocketSession(id);
+          dispatch(deleteWebsocketSessionSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteWebsocketSessionFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

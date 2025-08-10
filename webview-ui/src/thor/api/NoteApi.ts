@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: NoteApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { Note, NoteFromJSON, NoteToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Note, NoteFromJSON, NoteToJSON } from "../model";
 
 export interface DeleteNoteRequest {
-	id: string
+  id: string;
 }
 
 export interface GetNoteRequest {
-	id: string
+  id: string;
 }
 
 export interface PostNoteRequest {
-	note: Note
+  note: Note;
 }
 
 export interface UpdateNoteRequest {
-	id: string
-	note: Note
+  id: string;
+  note: Note;
 }
 
 /**
@@ -42,42 +47,45 @@ export interface UpdateNoteRequest {
  * Delete a Note.
  */
 function deleteNoteRaw<T>(
-	requestParameters: DeleteNoteRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteNoteRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteNote.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteNote.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Note/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Note/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -85,101 +93,116 @@ function deleteNoteRaw<T>(
  * Delete a Note.
  */
 export function deleteNote<T>(
-	requestParameters: DeleteNoteRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteNoteRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteNoteRaw(requestParameters, requestConfig)
+  return deleteNoteRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single Note for a specific uid.
  * Retrieve a single Note
  */
-function getNoteRaw<T>(requestParameters: GetNoteRequest, requestConfig: runtime.TypedQueryConfig<T, Note> = {}): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getNote.",
-		)
-	}
+function getNoteRaw<T>(
+  requestParameters: GetNoteRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Note> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getNote.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Note/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Note/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(NoteFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(NoteFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a single Note for a specific uid.
  * Retrieve a single Note
  */
-export function getNote<T>(requestParameters: GetNoteRequest, requestConfig?: runtime.TypedQueryConfig<T, Note>): QueryConfig<T> {
-	return getNoteRaw(requestParameters, requestConfig)
+export function getNote<T>(
+  requestParameters: GetNoteRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Note>,
+): QueryConfig<T> {
+  return getNoteRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Notes.
  * Retrieve a list of Notes
  */
-function getNoteListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<Note>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getNoteListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<Note>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Note`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Note`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(NoteFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(NoteFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of Notes.
  * Retrieve a list of Notes
  */
-export function getNoteList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<Note>>): QueryConfig<T> {
-	return getNoteListRaw(requestConfig)
+export function getNoteList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Note>>,
+): QueryConfig<T> {
+  return getNoteListRaw(requestConfig);
 }
 
 /**
@@ -187,45 +210,46 @@ export function getNoteList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array
  * Create a new Note
  */
 function postNoteRaw<T>(
-	requestParameters: PostNoteRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Note> = {},
+  requestParameters: PostNoteRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Note> = {},
 ): QueryConfig<T> {
-	if (requestParameters.note === null || requestParameters.note === undefined) {
-		throw new runtime.RequiredError(
-			"note",
-			"Required parameter requestParameters.note was null or undefined when calling postNote.",
-		)
-	}
+  if (requestParameters.note === null || requestParameters.note === undefined) {
+    throw new runtime.RequiredError(
+      "note",
+      "Required parameter requestParameters.note was null or undefined when calling postNote.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Note`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || NoteToJSON(requestParameters.note),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Note`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || NoteToJSON(requestParameters.note),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(NoteFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(NoteFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -233,10 +257,10 @@ function postNoteRaw<T>(
  * Create a new Note
  */
 export function postNote<T>(
-	requestParameters: PostNoteRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Note>,
+  requestParameters: PostNoteRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Note>,
 ): QueryConfig<T> {
-	return postNoteRaw(requestParameters, requestConfig)
+  return postNoteRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -244,52 +268,56 @@ export function postNote<T>(
  * Update an existing Note
  */
 function updateNoteRaw<T>(
-	requestParameters: UpdateNoteRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Note> = {},
+  requestParameters: UpdateNoteRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Note> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateNote.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateNote.",
+    );
+  }
 
-	if (requestParameters.note === null || requestParameters.note === undefined) {
-		throw new runtime.RequiredError(
-			"note",
-			"Required parameter requestParameters.note was null or undefined when calling updateNote.",
-		)
-	}
+  if (requestParameters.note === null || requestParameters.note === undefined) {
+    throw new runtime.RequiredError(
+      "note",
+      "Required parameter requestParameters.note was null or undefined when calling updateNote.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Note/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || NoteToJSON(requestParameters.note),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Note/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || NoteToJSON(requestParameters.note),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(NoteFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(NoteFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -297,8 +325,8 @@ function updateNoteRaw<T>(
  * Update an existing Note
  */
 export function updateNote<T>(
-	requestParameters: UpdateNoteRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Note>,
+  requestParameters: UpdateNoteRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Note>,
 ): QueryConfig<T> {
-	return updateNoteRaw(requestParameters, requestConfig)
+  return updateNoteRaw(requestParameters, requestConfig);
 }
