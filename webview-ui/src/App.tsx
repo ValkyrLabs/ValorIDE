@@ -9,8 +9,8 @@ import AccountView from "./components/account/AccountView";
 import FileExplorer from "./components/FileExplorer/FileExplorer";
 import ApplicationProgress from "./components/ApplicationProgress/ApplicationProgress";
 import SplitPane, {
-  SplitPaneTop,
-  SplitPaneBottom,
+  SplitPaneLeft,
+  SplitPaneRight,
   Divider,
 } from "./components/SplitPane";
 import {
@@ -187,44 +187,22 @@ const AppContent = () => {
             </div>
           )}
 
-          {/* Always show split pane layout with chat view in top and file explorer in bottom when not in other views */}
+          {/* Show chat view when not in other views */}
           {!isMainViewHidden && (
-            <SplitPane
-              style={{ flexDirection: "column", height: "100%", flex: 1 }}
-            >
-              <SplitPaneTop clientHeight={8}>
-                <ChatView
-                  showHistoryView={() => {
-                    setShowSettings(false);
-                    setShowMcp(false);
-                    setShowAccount(false);
-                    setShowApplicationProgress(false);
-                    setShowHistory(true);
-                  }}
-                  isHidden={false}
-                  showAnnouncement={showAnnouncement}
-                  hideAnnouncement={() => {
-                    setShowAnnouncement(false);
-                  }}
-                />
-              </SplitPaneTop>
-              <Divider
-                orientation="horizontal"
-                style={{
-                  height: "4px",
-                  background: "var(--vscode-sideBar-border)",
-                  cursor: "row-resize",
-                }}
-              />
-              <SplitPaneBottom>
-                <FileExplorer
-                  onFileSelect={handleFileSelect}
-                  highlightNewFiles={true}
-                  autoRefresh={true}
-                  refreshInterval={showApplicationProgress ? 1000 : 5000} // Faster refresh during app generation
-                />
-              </SplitPaneBottom>
-            </SplitPane>
+            <ChatView
+              showHistoryView={() => {
+                setShowSettings(false);
+                setShowMcp(false);
+                setShowAccount(false);
+                setShowApplicationProgress(false);
+                setShowHistory(true);
+              }}
+              isHidden={false}
+              showAnnouncement={showAnnouncement}
+              hideAnnouncement={() => {
+                setShowAnnouncement(false);
+              }}
+            />
           )}
         </>
       )}

@@ -870,7 +870,10 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					<div style={{ padding: "0 20px", flexShrink: 0 }}>
 						<div style={{ backgroundColor: "#222222", padding: "0 20px", flexShrink: 0 }}>
 							<a href="https://valkyrlabs.com/valoride">
-								<Image alt="Valkyr Labs" src={bannerImage}/>
+								<img
+									alt="Valkyr Labs"
+									src="https://valkyrlabs.com/assets/valorIde-horizontal-DyPXHpke.png"
+								/>
 							</a>
 						</div>
 						<p>

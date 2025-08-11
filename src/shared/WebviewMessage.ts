@@ -83,7 +83,8 @@ export interface WebviewMessage {
     | "accountLoginSuccess"
     | "streamToThorapi"
     | "openFileExplorerTab"
-    | "getThorapiFolderContents";
+    | "getThorapiFolderContents"
+    | "openFile";
 
   // | "relaunchChromeDebugMode"
   text?: string;
@@ -137,6 +138,7 @@ export interface WebviewMessage {
   // For streamToThorapi
   blobData?: string; // Base64 encoded blob data
   applicationId?: string;
+  applicationName?: string; // User-friendly name for folder creation
 }
 
 export type ValorIDEAskResponse =

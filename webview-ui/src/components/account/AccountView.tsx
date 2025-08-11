@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useState, useCallback } from "react";
 
 import { UsageTransaction, PaymentTransaction } from "@/thor/model";
 import { useGetBalanceResponsesQuery } from "@/thor/redux/services/BalanceResponseService";
@@ -11,6 +11,8 @@ import CreditsHistoryTable from "./CreditsHistoryTable";
 import { useExtensionState } from "@/context/ExtensionStateContext";
 import ApplicationsList from "./ApplicationsList";
 import Form from "../Login/form";
+import FileExplorer from "../FileExplorer/FileExplorer";
+
 import {
   VSCodeButton,
   VSCodeDivider,
@@ -70,8 +72,27 @@ const AccountView = ({ onDone }: AccountViewProps) => {
     vscode.postMessage({ type: "accountLogoutClicked" });
   };
 
-  if (isAuthenticated) {
-    return (
+  const handleFileSelect = useCallback((filePath: string) => {
+    // Open file in VSCode editor using the default handler
+    vscode.postMessage({
+      type: "openMention",
+      text: filePath,
+    });
+  }, []);
+
+
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+
+      <div className="flex flex-col items-center pr-3">
+
+
+        <div className="flex justify-between items-center mb-[17px] pr-[17px]">
+          <Form isLoggedIn={isLoggedIn} />
+        </div>
+      </div>
+
+
       <div className="h-full flex flex-col pr-3 overflow-y-auto">
         <div className="max-h-48 overflow-y-auto mb-4">
           <ApplicationsList showTitle={true} title="Available Applications" />
@@ -145,18 +166,18 @@ const AccountView = ({ onDone }: AccountViewProps) => {
           />
         </div>
       </div>
-    );
-  }
 
-  return (
-    <div className="flex flex-col items-center pr-3">
-      
-      Login to Valor IDE
-      <div className="flex justify-between items-center mb-[17px] pr-[17px]">
-        <Form />
-      </div>
+      <FileExplorer
+        onFileSelect={handleFileSelect}
+        highlightNewFiles={true}
+        autoRefresh={true}
+        refreshInterval={5000}
+      />
+
     </div>
   );
+
+
 };
 
 export default memo(AccountView);

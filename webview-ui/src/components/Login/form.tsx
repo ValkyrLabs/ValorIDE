@@ -27,14 +27,19 @@ const validationSchema = Yup.object().shape({
     .required("User Name is required"),
 });
 
-const Form: React.FC = () => {
+interface FormProps {
+  isLoggedIn?: boolean;
+}
+
+const Form: React.FC<FormProps> = ({ isLoggedIn }) => {
   const [loginUser, loginUserResult] = useLoginUserMutation();
   const loginFailed = loginUserResult.status === "rejected";
   const loginSuccess = loginUserResult.status === "fulfilled";
 
-  if (loginSuccess) {
+  if (loginSuccess ) {
     // If the response contains a token, store it
     if (loginUserResult.data && loginUserResult.data.token) {
+      isLoggedIn = true;
       sessionStorage.setItem("jwtToken", loginUserResult.data.token);
       sessionStorage.setItem(
         "authenticatedPrincipal",
@@ -61,13 +66,13 @@ const Form: React.FC = () => {
 
   return (
     <div>
-      {loginSuccess && (
+      { isLoggedIn && (
         <div className="success">
           <ApplicationsList />
         </div>
       )}
 
-      {!loginSuccess && (
+      {!isLoggedIn && (
         <Formik
           validateOnBlur={true}
           initialValues={initialValues}

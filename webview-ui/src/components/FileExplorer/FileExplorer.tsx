@@ -187,7 +187,14 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
     if (item.type === "directory") {
       toggleDirectory(item.path);
     } else {
+      // Call the optional callback
       onFileSelect?.(item.path);
+      
+      // Send message to VSCode to open the file in editor
+      vscode.postMessage({
+        type: "openFile",
+        text: item.path,
+      });
     }
   };
 
