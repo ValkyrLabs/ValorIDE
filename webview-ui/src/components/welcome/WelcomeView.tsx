@@ -4,7 +4,8 @@ import { useExtensionState } from "@/context/ExtensionStateContext";
 import { validateApiConfiguration } from "@/utils/validate";
 import { vscode } from "@/utils/vscode";
 import ApiOptions from "@/components/settings/ApiOptions";
-import ValorIDELogoWhite from "@/assets/ValorIDELogoWhite";
+import Image from "react-bootstrap/Image";
+import valorIdeHorizontal from "../../assets/valorIde-horizontal.png";
 
 const WelcomeView = memo(() => {
   const { apiConfiguration } = useExtensionState();
@@ -32,7 +33,7 @@ const WelcomeView = memo(() => {
       <div className="h-full px-5 overflow-auto">
         <h2>Hi, I'm ValorIDE</h2>
         <div className="flex justify-center my-5">
-          <ValorIDELogoWhite className="size-16" />
+          <Image src={valorIdeHorizontal} alt="ValorIDE Logo" className="size-16" fluid />
         </div>
         <p>
           I can do all kinds of tasks thanks to breakthroughs in{" "}

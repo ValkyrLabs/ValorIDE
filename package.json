@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.16.7",
+  "version": "3.20.1",
   "icon": "assets/icons/icon.png",
   "galleryBanner": {
     "color": "#617A91",
@@ -197,7 +197,7 @@
     }
   },
   "scripts": {
-    "v": "vsce package",
+    "v": "node increment-version.js && vsce package",
     "vscode:prepublish": "yarn run package",
     "compile": "yarn run check-types && yarn run lint && node esbuild.js",
     "watch": "npm-run-all -p watch:*",

@@ -150,8 +150,8 @@ const AccountView = ({ onDone }: AccountViewProps) => {
 
   return (
     <div className="flex flex-col items-center pr-3">
-      <ValorIDELogoWhite className="size-16 mb-4" />
-
+      
+      Login to Valor IDE
       <div className="flex justify-between items-center mb-[17px] pr-[17px]">
         <Form />
       </div>
