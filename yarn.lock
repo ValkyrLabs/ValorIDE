@@ -33,47 +33,34 @@
   resolved "https://registry.yarnpkg.com/@antfu/utils/-/utils-8.1.1.tgz#95b1947d292a9a2efffba2081796dcaa05ecedfb"
   integrity sha512-Mex9nXf9vR6AhcXmMrlz/HVgYYZpVGJ6YlPgwl7UnaFpnshXs6EK/oa5Gpf3CzENMjkvEx2tQtntGnb7UtSTOQ==
 
-"@anthropic-ai/bedrock-sdk@^0.12.4":
-  version "0.12.6"
-  resolved "https://registry.yarnpkg.com/@anthropic-ai/bedrock-sdk/-/bedrock-sdk-0.12.6.tgz#3729dc6e6d42537a9f9be63a02ea7b7bd5eeb491"
-  integrity sha512-g9tmm6zXf3+2P5Se+c2zi7jmZ6+t+qtfu8NhoNYxetPxn6ez1aeNQ+YfqzSMm/ZWye8hy3hcDhbRhWaHC2Wbwg==
+"@anthropic-ai/bedrock-sdk@^0.24.0":
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/@anthropic-ai/bedrock-sdk/-/bedrock-sdk-0.24.0.tgz#df2812cb32b591508903b23baa19c4356f3ed974"
+  integrity sha512-oPNH0ljXQKs8KG32gOl7xpUG++ouLaHITt1vq2nyiCtTLXMlJBNZXhh0C27F1OPlBvT5Mh8xXwMmHyYERPFdgQ==
   dependencies:
-    "@anthropic-ai/sdk" ">=0.36 <1"
+    "@anthropic-ai/sdk" ">=0.50.3 <1"
     "@aws-crypto/sha256-js" "^4.0.0"
     "@aws-sdk/client-bedrock-runtime" "^3.797.0"
     "@aws-sdk/credential-providers" "^3.796.0"
     "@smithy/eventstream-serde-node" "^2.0.10"
-    "@smithy/fetch-http-handler" "^2.2.1"
+    "@smithy/fetch-http-handler" "^5.0.4"
     "@smithy/protocol-http" "^3.0.6"
     "@smithy/signature-v4" "^3.1.1"
     "@smithy/smithy-client" "^2.1.9"
     "@smithy/types" "^2.3.4"
     "@smithy/util-base64" "^2.0.0"
 
-"@anthropic-ai/sdk@>=0.35 <1", "@anthropic-ai/sdk@>=0.36 <1":
+"@anthropic-ai/sdk@>=0.50.3 <1", "@anthropic-ai/sdk@^0.59.0":
   version "0.59.0"
   resolved "https://registry.yarnpkg.com/@anthropic-ai/sdk/-/sdk-0.59.0.tgz#85f2e5093dfd6fcca575b9ead2a0ab923979ff29"
   integrity sha512-m9w9tC+N+GUNprwEOhU3VKKSYwXA1fIevRCe7kOFonV4xu5vxqmqyoLy+dkdVvc5W1F4WUTVE/7I4criaF9gnw==
 
-"@anthropic-ai/sdk@^0.39.0":
-  version "0.39.0"
-  resolved "https://registry.yarnpkg.com/@anthropic-ai/sdk/-/sdk-0.39.0.tgz#624d5b33413a9cc322febb64e9d48bdcf5a98cdc"
-  integrity sha512-eMyDIPRZbt1CCLErRCi3exlAvNkBtRe+kW5vvJyef93PmNr/clstYgHhtvmkxN82nlKgzyGPCyGxrm0JQ1ZIdg==
+"@anthropic-ai/vertex-sdk@^0.13.0":
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/@anthropic-ai/vertex-sdk/-/vertex-sdk-0.13.0.tgz#5be7f54582cb9554a11221351d3b75dac61433de"
+  integrity sha512-3ddzAzYvdjGpvdJgJz3NrHS+kqsA8bPYnK+Obd4t6g14w3dtpaA1IMT+mCQXBVA7VyE68h6jkS9AaXHpdGjmGA==
   dependencies:
-    "@types/node" "^18.11.18"
-    "@types/node-fetch" "^2.6.4"
-    abort-controller "^3.0.0"
-    agentkeepalive "^4.2.1"
-    form-data-encoder "1.7.2"
-    formdata-node "^4.3.2"
-    node-fetch "^2.6.7"
-
-"@anthropic-ai/vertex-sdk@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@anthropic-ai/vertex-sdk/-/vertex-sdk-0.7.0.tgz#92d6ae344553cc26999991bfad93d4afbc9e8a48"
-  integrity sha512-zNm3hUXgYmYDTyveIxOyxbcnh5VXFkrLo4bSnG6LAfGzW7k3k2iCNDSVKtR9qZrK2BCid7JtVu7jsEKaZ/9dSw==
-  dependencies:
-    "@anthropic-ai/sdk" ">=0.35 <1"
+    "@anthropic-ai/sdk" ">=0.50.3 <1"
     google-auth-library "^9.4.2"
 
 "@apideck/better-ajv-errors@^0.3.1":
@@ -168,7 +155,7 @@
     "@smithy/util-utf8" "^2.0.0"
     tslib "^2.6.2"
 
-"@aws-sdk/client-bedrock-runtime@^3.797.0":
+"@aws-sdk/client-bedrock-runtime@^3.797.0", "@aws-sdk/client-bedrock-runtime@^3.864.0":
   version "3.864.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/client-bedrock-runtime/-/client-bedrock-runtime-3.864.0.tgz#f21e600fbd84421bb28e5ccc1d5882234a46f65d"
   integrity sha512-QLfNx/8ke3cJ6KgzwuTe+Uvh6IGPgs1yLXh7N9bWLQj89Zdbgkw7iYqkZaJNV1HffTdV2Rs0q9nnkKf83eUT2w==
@@ -446,7 +433,7 @@
     "@smithy/types" "^4.3.2"
     tslib "^2.6.2"
 
-"@aws-sdk/credential-providers@^3.796.0":
+"@aws-sdk/credential-providers@^3.796.0", "@aws-sdk/credential-providers@^3.864.0":
   version "3.864.0"
   resolved "https://registry.yarnpkg.com/@aws-sdk/credential-providers/-/credential-providers-3.864.0.tgz#80d43a2c684da92aff4317e2b68c3c6488253728"
   integrity sha512-k4K7PzvHpdHQLczgWT26Yk6t+VBwZ35jkIQ3dKODvBjfzlYHTX0y+VgemmDWrat1ahKfYb/OAw/gdwmnyxsAsw==
@@ -3630,7 +3617,7 @@
     "@smithy/types" "^4.3.2"
     tslib "^2.6.2"
 
-"@smithy/fetch-http-handler@^2.2.1", "@smithy/fetch-http-handler@^2.5.0":
+"@smithy/fetch-http-handler@^2.5.0":
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/@smithy/fetch-http-handler/-/fetch-http-handler-2.5.0.tgz#0b8e1562807fdf91fe7dd5cde620d7a03ddc10ac"
   integrity sha512-BOWEBeppWhLn/no/JxUL/ghTfANTjT7kg3Ww2rPqTUY9R4yHPXxJ9JhMe3Z03LN3aPwiwlpDIUcVw1xDyHqEhw==
@@ -3641,7 +3628,7 @@
     "@smithy/util-base64" "^2.3.0"
     tslib "^2.6.2"
 
-"@smithy/fetch-http-handler@^5.1.1":
+"@smithy/fetch-http-handler@^5.0.4", "@smithy/fetch-http-handler@^5.1.1":
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/@smithy/fetch-http-handler/-/fetch-http-handler-5.1.1.tgz#a444c99bffdf314deb447370429cc3e719f1a866"
   integrity sha512-61WjM0PWmZJR+SnmzaKI7t7G0UkkNFboDpzIdzSoy7TByUzlxo18Qlh9s71qug4AY4hlH/CwXdubMtkcNEb/sQ==

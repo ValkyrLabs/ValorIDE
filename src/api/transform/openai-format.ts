@@ -57,7 +57,10 @@ export function convertToOpenAiMessages(
                     toolResultImages.push(part);
                     return "(see following user message for image)";
                   }
-                  return part.text;
+                  if (part.type === "text") {
+                    return part.text;
+                  }
+                  return "";
                 })
                 .join("\n") ?? "";
           }
@@ -132,7 +135,10 @@ export function convertToOpenAiMessages(
               if (part.type === "image") {
                 return ""; // impossible as the assistant cannot send images
               }
-              return part.text;
+              if (part.type === "text") {
+                return part.text;
+              }
+              return "";
             })
             .join("\n");
         }
@@ -198,6 +204,8 @@ export function convertToAnthropicMessage(
       output_tokens: completion.usage?.completion_tokens || 0,
       cache_creation_input_tokens: null,
       cache_read_input_tokens: null,
+      server_tool_use: null,
+      service_tier: null,
     },
   };
 

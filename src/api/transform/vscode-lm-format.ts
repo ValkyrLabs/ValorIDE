@@ -88,7 +88,10 @@ export function convertToVsCodeLmMessages(
                         } not supported by VSCode LM API]`,
                       );
                     }
-                    return new vscode.LanguageModelTextPart(part.text);
+                    if (part.type === "text") {
+                      return new vscode.LanguageModelTextPart(part.text);
+                    }
+                    return new vscode.LanguageModelTextPart("");
                   }) ?? [new vscode.LanguageModelTextPart("")]);
 
             return new vscode.LanguageModelToolResultPart(
@@ -108,7 +111,10 @@ export function convertToVsCodeLmMessages(
                 } not supported by VSCode LM API]`,
               );
             }
-            return new vscode.LanguageModelTextPart(part.text);
+            if (part.type === "text") {
+              return new vscode.LanguageModelTextPart(part.text);
+            }
+            return new vscode.LanguageModelTextPart("");
           }),
         ];
 
@@ -231,6 +237,8 @@ export function convertToAnthropicMessage(
       output_tokens: 0,
       cache_creation_input_tokens: null,
       cache_read_input_tokens: null,
+      server_tool_use: null,
+      service_tier: null,
     },
   };
 }
