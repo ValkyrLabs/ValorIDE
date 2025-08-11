@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: WorkflowApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { Workflow, WorkflowFromJSON, WorkflowToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Workflow, WorkflowFromJSON, WorkflowToJSON } from "../model";
 
 export interface DeleteWorkflowRequest {
-	id: string
+  id: string;
 }
 
 export interface GetWorkflowRequest {
-	id: string
+  id: string;
 }
 
 export interface PostWorkflowRequest {
-	workflow: Workflow
+  workflow: Workflow;
 }
 
 export interface UpdateWorkflowRequest {
-	id: string
-	workflow: Workflow
+  id: string;
+  workflow: Workflow;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateWorkflowRequest {
  * Delete a Workflow.
  */
 function deleteWorkflowRaw<T>(
-	requestParameters: DeleteWorkflowRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteWorkflowRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteWorkflow.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteWorkflow.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Workflow/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Workflow/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteWorkflowRaw<T>(
  * Delete a Workflow.
  */
 export function deleteWorkflow<T>(
-	requestParameters: DeleteWorkflowRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteWorkflowRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteWorkflowRaw(requestParameters, requestConfig)
+  return deleteWorkflowRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteWorkflow<T>(
  * Retrieve a single Workflow
  */
 function getWorkflowRaw<T>(
-	requestParameters: GetWorkflowRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Workflow> = {},
+  requestParameters: GetWorkflowRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Workflow> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getWorkflow.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getWorkflow.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Workflow/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Workflow/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WorkflowFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(WorkflowFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getWorkflowRaw<T>(
  * Retrieve a single Workflow
  */
 export function getWorkflow<T>(
-	requestParameters: GetWorkflowRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Workflow>,
+  requestParameters: GetWorkflowRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Workflow>,
 ): QueryConfig<T> {
-	return getWorkflowRaw(requestParameters, requestConfig)
+  return getWorkflowRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Workflows.
  * Retrieve a list of Workflows
  */
-function getWorkflowListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<Workflow>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getWorkflowListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<Workflow>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Workflow`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Workflow`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(WorkflowFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(WorkflowFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of Workflows.
  * Retrieve a list of Workflows
  */
-export function getWorkflowList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<Workflow>>): QueryConfig<T> {
-	return getWorkflowListRaw(requestConfig)
+export function getWorkflowList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Workflow>>,
+): QueryConfig<T> {
+  return getWorkflowListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getWorkflowList<T>(requestConfig?: runtime.TypedQueryConfig<T, A
  * Create a new Workflow
  */
 function postWorkflowRaw<T>(
-	requestParameters: PostWorkflowRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Workflow> = {},
+  requestParameters: PostWorkflowRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Workflow> = {},
 ): QueryConfig<T> {
-	if (requestParameters.workflow === null || requestParameters.workflow === undefined) {
-		throw new runtime.RequiredError(
-			"workflow",
-			"Required parameter requestParameters.workflow was null or undefined when calling postWorkflow.",
-		)
-	}
+  if (
+    requestParameters.workflow === null ||
+    requestParameters.workflow === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "workflow",
+      "Required parameter requestParameters.workflow was null or undefined when calling postWorkflow.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Workflow`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || WorkflowToJSON(requestParameters.workflow),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Workflow`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || WorkflowToJSON(requestParameters.workflow),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WorkflowFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(WorkflowFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postWorkflowRaw<T>(
  * Create a new Workflow
  */
 export function postWorkflow<T>(
-	requestParameters: PostWorkflowRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Workflow>,
+  requestParameters: PostWorkflowRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Workflow>,
 ): QueryConfig<T> {
-	return postWorkflowRaw(requestParameters, requestConfig)
+  return postWorkflowRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postWorkflow<T>(
  * Update an existing Workflow
  */
 function updateWorkflowRaw<T>(
-	requestParameters: UpdateWorkflowRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Workflow> = {},
+  requestParameters: UpdateWorkflowRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Workflow> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateWorkflow.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateWorkflow.",
+    );
+  }
 
-	if (requestParameters.workflow === null || requestParameters.workflow === undefined) {
-		throw new runtime.RequiredError(
-			"workflow",
-			"Required parameter requestParameters.workflow was null or undefined when calling updateWorkflow.",
-		)
-	}
+  if (
+    requestParameters.workflow === null ||
+    requestParameters.workflow === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "workflow",
+      "Required parameter requestParameters.workflow was null or undefined when calling updateWorkflow.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Workflow/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || WorkflowToJSON(requestParameters.workflow),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Workflow/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || WorkflowToJSON(requestParameters.workflow),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WorkflowFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(WorkflowFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateWorkflowRaw<T>(
  * Update an existing Workflow
  */
 export function updateWorkflow<T>(
-	requestParameters: UpdateWorkflowRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Workflow>,
+  requestParameters: UpdateWorkflowRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Workflow>,
 ): QueryConfig<T> {
-	return updateWorkflowRaw(requestParameters, requestConfig)
+  return updateWorkflowRaw(requestParameters, requestConfig);
 }

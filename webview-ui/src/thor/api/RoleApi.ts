@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: RoleApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { Role, RoleFromJSON, RoleToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Role, RoleFromJSON, RoleToJSON } from "../model";
 
 export interface DeleteRoleRequest {
-	id: string
+  id: string;
 }
 
 export interface GetRoleRequest {
-	id: string
+  id: string;
 }
 
 export interface PostRoleRequest {
-	role: Role
+  role: Role;
 }
 
 export interface UpdateRoleRequest {
-	id: string
-	role: Role
+  id: string;
+  role: Role;
 }
 
 /**
@@ -42,42 +47,45 @@ export interface UpdateRoleRequest {
  * Delete a Role.
  */
 function deleteRoleRaw<T>(
-	requestParameters: DeleteRoleRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteRoleRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteRole.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteRole.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Role/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Role/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -85,101 +93,116 @@ function deleteRoleRaw<T>(
  * Delete a Role.
  */
 export function deleteRole<T>(
-	requestParameters: DeleteRoleRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteRoleRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteRoleRaw(requestParameters, requestConfig)
+  return deleteRoleRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single Role for a specific uid.
  * Retrieve a single Role
  */
-function getRoleRaw<T>(requestParameters: GetRoleRequest, requestConfig: runtime.TypedQueryConfig<T, Role> = {}): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getRole.",
-		)
-	}
+function getRoleRaw<T>(
+  requestParameters: GetRoleRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Role> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getRole.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Role/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Role/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(RoleFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(RoleFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a single Role for a specific uid.
  * Retrieve a single Role
  */
-export function getRole<T>(requestParameters: GetRoleRequest, requestConfig?: runtime.TypedQueryConfig<T, Role>): QueryConfig<T> {
-	return getRoleRaw(requestParameters, requestConfig)
+export function getRole<T>(
+  requestParameters: GetRoleRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Role>,
+): QueryConfig<T> {
+  return getRoleRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Roles.
  * Retrieve a list of Roles
  */
-function getRoleListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<Role>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getRoleListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<Role>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Role`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Role`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(RoleFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(RoleFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of Roles.
  * Retrieve a list of Roles
  */
-export function getRoleList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<Role>>): QueryConfig<T> {
-	return getRoleListRaw(requestConfig)
+export function getRoleList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Role>>,
+): QueryConfig<T> {
+  return getRoleListRaw(requestConfig);
 }
 
 /**
@@ -187,45 +210,46 @@ export function getRoleList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array
  * Create a new Role
  */
 function postRoleRaw<T>(
-	requestParameters: PostRoleRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Role> = {},
+  requestParameters: PostRoleRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Role> = {},
 ): QueryConfig<T> {
-	if (requestParameters.role === null || requestParameters.role === undefined) {
-		throw new runtime.RequiredError(
-			"role",
-			"Required parameter requestParameters.role was null or undefined when calling postRole.",
-		)
-	}
+  if (requestParameters.role === null || requestParameters.role === undefined) {
+    throw new runtime.RequiredError(
+      "role",
+      "Required parameter requestParameters.role was null or undefined when calling postRole.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Role`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || RoleToJSON(requestParameters.role),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Role`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || RoleToJSON(requestParameters.role),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(RoleFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(RoleFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -233,10 +257,10 @@ function postRoleRaw<T>(
  * Create a new Role
  */
 export function postRole<T>(
-	requestParameters: PostRoleRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Role>,
+  requestParameters: PostRoleRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Role>,
 ): QueryConfig<T> {
-	return postRoleRaw(requestParameters, requestConfig)
+  return postRoleRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -244,52 +268,56 @@ export function postRole<T>(
  * Update an existing Role
  */
 function updateRoleRaw<T>(
-	requestParameters: UpdateRoleRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Role> = {},
+  requestParameters: UpdateRoleRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Role> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateRole.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateRole.",
+    );
+  }
 
-	if (requestParameters.role === null || requestParameters.role === undefined) {
-		throw new runtime.RequiredError(
-			"role",
-			"Required parameter requestParameters.role was null or undefined when calling updateRole.",
-		)
-	}
+  if (requestParameters.role === null || requestParameters.role === undefined) {
+    throw new runtime.RequiredError(
+      "role",
+      "Required parameter requestParameters.role was null or undefined when calling updateRole.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Role/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || RoleToJSON(requestParameters.role),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Role/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || RoleToJSON(requestParameters.role),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(RoleFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(RoleFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -297,8 +325,8 @@ function updateRoleRaw<T>(
  * Update an existing Role
  */
 export function updateRole<T>(
-	requestParameters: UpdateRoleRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Role>,
+  requestParameters: UpdateRoleRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Role>,
 ): QueryConfig<T> {
-	return updateRoleRaw(requestParameters, requestConfig)
+  return updateRoleRaw(requestParameters, requestConfig);
 }

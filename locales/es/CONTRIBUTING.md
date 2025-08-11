@@ -22,14 +22,14 @@ Si planeas trabajar en una función más grande, por favor crea primero una [sol
 
 1. **Extensiones de VS Code**
 
-    - Al abrir el proyecto, VS Code te pedirá que instales las extensiones recomendadas
-    - Estas extensiones son necesarias para el desarrollo, por favor acepta todas las solicitudes de instalación
-    - Si rechazaste las solicitudes, puedes instalarlas manualmente en la sección de extensiones
+   - Al abrir el proyecto, VS Code te pedirá que instales las extensiones recomendadas
+   - Estas extensiones son necesarias para el desarrollo, por favor acepta todas las solicitudes de instalación
+   - Si rechazaste las solicitudes, puedes instalarlas manualmente en la sección de extensiones
 
 2. **Desarrollo local**
-    - Ejecuta `npm run install:all` para instalar las dependencias
-    - Ejecuta `npm run test` para ejecutar las pruebas localmente
-    - Antes de enviar un PR, ejecuta `npm run format:fix` para formatear tu código
+   - Ejecuta `npm run install:all` para instalar las dependencias
+   - Ejecuta `npm run test` para ejecutar las pruebas localmente
+   - Antes de enviar un PR, ejecuta `npm run format:fix` para formatear tu código
 
 ## Escribir y enviar código
 
@@ -37,43 +37,43 @@ Cualquiera puede contribuir código a ValorIDE, pero te pedimos que sigas estas 
 
 1. **Mantén los Pull Requests enfocados**
 
-    - Limita los PRs a una sola función o corrección de errores
-    - Divide los cambios más grandes en PRs más pequeños y coherentes
-    - Divide los cambios en commits lógicos que puedan ser revisados independientemente
+   - Limita los PRs a una sola función o corrección de errores
+   - Divide los cambios más grandes en PRs más pequeños y coherentes
+   - Divide los cambios en commits lógicos que puedan ser revisados independientemente
 
 2. **Calidad del código**
 
-    - Ejecuta `npm run lint` para verificar el estilo del código
-    - Ejecuta `npm run format` para formatear el código automáticamente
-    - Todos los PRs deben pasar las verificaciones de CI, que incluyen linting y formateo
-    - Corrige todas las advertencias o errores de ESLint antes de enviar
-    - Sigue las mejores prácticas para TypeScript y mantén la seguridad de tipos
+   - Ejecuta `npm run lint` para verificar el estilo del código
+   - Ejecuta `npm run format` para formatear el código automáticamente
+   - Todos los PRs deben pasar las verificaciones de CI, que incluyen linting y formateo
+   - Corrige todas las advertencias o errores de ESLint antes de enviar
+   - Sigue las mejores prácticas para TypeScript y mantén la seguridad de tipos
 
 3. **Pruebas**
 
-    - Añade pruebas para nuevas funciones
-    - Ejecuta `npm test` para asegurarte de que todas las pruebas pasen
-    - Actualiza las pruebas existentes si tus cambios las afectan
-    - Añade tanto pruebas unitarias como de integración donde sea apropiado
+   - Añade pruebas para nuevas funciones
+   - Ejecuta `npm test` para asegurarte de que todas las pruebas pasen
+   - Actualiza las pruebas existentes si tus cambios las afectan
+   - Añade tanto pruebas unitarias como de integración donde sea apropiado
 
 4. **Pautas de commits**
 
-    - Escribe mensajes de commit claros y descriptivos
-    - Usa el formato de commit convencional (por ejemplo, "feat:", "fix:", "docs:")
-    - Haz referencia a los issues relevantes en los commits con #número-del-issue
+   - Escribe mensajes de commit claros y descriptivos
+   - Usa el formato de commit convencional (por ejemplo, "feat:", "fix:", "docs:")
+   - Haz referencia a los issues relevantes en los commits con #número-del-issue
 
 5. **Antes de enviar**
 
-    - Rebasea tu rama con el último Main
-    - Asegúrate de que tu rama se construya correctamente
-    - Verifica que todas las pruebas pasen
-    - Revisa tus cambios para eliminar cualquier código de depuración o registros de consola
+   - Rebasea tu rama con el último Main
+   - Asegúrate de que tu rama se construya correctamente
+   - Verifica que todas las pruebas pasen
+   - Revisa tus cambios para eliminar cualquier código de depuración o registros de consola
 
 6. **Descripción del Pull Request**
-    - Describe claramente lo que hacen tus cambios
-    - Añade pasos para probar los cambios
-    - Enumera cualquier cambio importante
-    - Añade capturas de pantalla para cambios en la interfaz de usuario
+   - Describe claramente lo que hacen tus cambios
+   - Añade pasos para probar los cambios
+   - Enumera cualquier cambio importante
+   - Añade capturas de pantalla para cambios en la interfaz de usuario
 
 ## Acuerdo de contribución
 

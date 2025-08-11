@@ -2,27 +2,25 @@
 
 ## Nosso Compromisso
 
-
 Com o objetivo de promover um ambiente aberto e acolhedor, nós, como contribuidores e mantenedores, nos comprometemos a tornar a participação em nosso projeto e comunidade uma experiência livre de assédio para todos, independentemente de idade, tamanho corporal, deficiência, etnia, características sexuais, identidade e expressão de gênero, nível de experiência, educação, status socioeconômico, nacionalidade, aparência pessoal, raça, religião ou orientação sexual.
 
 ## Nossos Padrões
 
 Exemplos de comportamentos que contribuem para criar um ambiente positivo incluem:
 
--   Uso de linguagem acolhedora e inclusiva
--   Respeito por diferentes pontos de vista e experiências
--   Aceitar críticas de maneira construtiva
--   Foco no que é melhor para a comunidade
--   Ser empático com outros membros da comunidade
-
+- Uso de linguagem acolhedora e inclusiva
+- Respeito por diferentes pontos de vista e experiências
+- Aceitar críticas de maneira construtiva
+- Foco no que é melhor para a comunidade
+- Ser empático com outros membros da comunidade
 
 Exemplos de comportamentos inaceitáveis por parte dos participantes incluem:
 
--   Uso de linguagem ou imagens sexualizadas e atenção ou avanços sexuais indesejados
--   Trollar, insultar, fazer comentários depreciativos, ataques pessoais ou políticos
--   Assédio público ou privado
--   Divulgar informações privadas sem autorização, como endereços físicos ou eletrônicos, sem permissão explícita
--   Outras condutas que poderiam ser consideradas inadequadas em um ambiente profissional
+- Uso de linguagem ou imagens sexualizadas e atenção ou avanços sexuais indesejados
+- Trollar, insultar, fazer comentários depreciativos, ataques pessoais ou políticos
+- Assédio público ou privado
+- Divulgar informações privadas sem autorização, como endereços físicos ou eletrônicos, sem permissão explícita
+- Outras condutas que poderiam ser consideradas inadequadas em um ambiente profissional
 
 ## Nossas Responsabilidades
 
@@ -48,4 +46,3 @@ Os mantenedores que não seguirem ou aplicarem este Código de Conduta de boa f�
 ## Atribuição
 
 Este Código de Conduta é adaptado do [Contributor Covenant](https://www.contributor-covenant.org), versão 1.4, disponível em https://www.contributor-covenant.org/version/1/4/code-of-conduct.html.
-

@@ -32,10 +32,7 @@ Gracias a las [habilidades de codificación agencial de Claude 3.7 Sonnet](https
 
 1. Ingrese su tarea y agregue imágenes para convertir maquetas en aplicaciones funcionales o solucionar errores con capturas de pantalla.
 2. ValorIDE comenzará analizando su estructura de archivos y ASTs de código fuente, realizando búsquedas Regex y leyendo archivos relevantes para orientarse en proyectos existentes. Al gestionar cuidadosamente la información agregada, ValorIDE puede proporcionar asistencia valiosa incluso en proyectos grandes y complejos sin sobrecargar la ventana de contexto.
-3. Una vez que ValorIDE tenga la información necesaria, puede:
-                - Crear y editar archivos + monitorear errores de Linter/Compilador, para que pueda solucionar proactivamente problemas como importaciones faltantes y errores de sintaxis.
-                - Ejecutar comandos directamente en su terminal y monitorear su salida, para que pueda responder a problemas del servidor de desarrollo después de editar un archivo.
-                - Para tareas de desarrollo web, ValorIDE puede iniciar el sitio web en un navegador sin cabeza, hacer clic, escribir, desplazarse y capturar capturas de pantalla + registros de consola, para que pueda solucionar errores de tiempo de ejecución y errores visuales.
+3. Una vez que ValorIDE tenga la información necesaria, puede: - Crear y editar archivos + monitorear errores de Linter/Compilador, para que pueda solucionar proactivamente problemas como importaciones faltantes y errores de sintaxis. - Ejecutar comandos directamente en su terminal y monitorear su salida, para que pueda responder a problemas del servidor de desarrollo después de editar un archivo. - Para tareas de desarrollo web, ValorIDE puede iniciar el sitio web en un navegador sin cabeza, hacer clic, escribir, desplazarse y capturar capturas de pantalla + registros de consola, para que pueda solucionar errores de tiempo de ejecución y errores visuales.
 4. Cuando una tarea esté completa, ValorIDE le presentará el resultado con un comando de terminal como `open -a "Google Chrome" index.html`, que puede ejecutar con un clic en un botón.
 
 > [!TIP]
@@ -97,9 +94,9 @@ Intente pedirle a ValorIDE que "pruebe la aplicación" y observe cómo ejecuta u
 
 Gracias al [Model Context Protocol](https://github.com/modelcontextprotocol), ValorIDE puede expandir sus habilidades mediante herramientas personalizadas. Mientras que puede usar [servidores creados por la comunidad](https://github.com/modelcontextprotocol/servers), ValorIDE puede en su lugar crear e instalar herramientas adaptadas a su flujo de trabajo específico. Simplemente pida a ValorIDE que "agregue una herramienta" y él se encargará de todo, desde la creación de un nuevo servidor MCP hasta la instalación en la extensión. Estas herramientas personalizadas se convierten en parte del conjunto de herramientas de ValorIDE y están listas para ser utilizadas en tareas futuras.
 
--   "agregar una herramienta que recupere tickets de Jira": Recuperar ACs de tickets y poner a ValorIDE a trabajar
--   "agregar una herramienta que gestione AWS EC2s": Verificar métricas del servidor y escalar instancias hacia arriba o hacia abajo
--   "agregar una herramienta que recupere los últimos incidentes de PagerDuty": Recuperar detalles y pedir a ValorIDE que solucione errores
+- "agregar una herramienta que recupere tickets de Jira": Recuperar ACs de tickets y poner a ValorIDE a trabajar
+- "agregar una herramienta que gestione AWS EC2s": Verificar métricas del servidor y escalar instancias hacia arriba o hacia abajo
+- "agregar una herramienta que recupere los últimos incidentes de PagerDuty": Recuperar detalles y pedir a ValorIDE que solucione errores
 
 <!-- Pixel transparente para crear un salto de línea después de la imagen flotante -->
 
@@ -141,17 +138,17 @@ Para contribuir al proyecto, comience con nuestra [guía de contribución](CONTR
 <summary>Instrucciones de desarrollo local</summary>
 
 1. Clone el repositorio _(Requiere [git-lfs](https://git-lfs.com/))_:
-                ```bash
-                git clone https://github.com/valkyrlabs/valoride.git
-                ```
+   `bash
+            git clone https://github.com/valkyrlabs/valoride.git
+            `
 2. Abra el proyecto en VSCode:
-                ```bash
-                code valoride
-                ```
+   `bash
+            code valoride
+            `
 3. Instale las dependencias necesarias para la extensión y la GUI de Webview:
-                ```bash
-                npm run install:all
-                ```
+   `bash
+            npm run install:all
+            `
 4. Inicie presionando `F5` (o `Run`->`Start Debugging`) para abrir una nueva ventana de VSCode con la extensión cargada. (Es posible que deba instalar la [extensión de emparejadores de problemas de esbuild](https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers) si encuentra problemas al compilar el proyecto.)
 
 </details>

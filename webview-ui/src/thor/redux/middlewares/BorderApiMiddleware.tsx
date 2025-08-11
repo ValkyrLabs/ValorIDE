@@ -1,22 +1,28 @@
-import { getBorder, postBorder, getBorderList, deleteBorder, updateBorder } from "../../api"
+import {
+  getBorder,
+  postBorder,
+  getBorderList,
+  deleteBorder,
+  updateBorder,
+} from "../../api";
 
 import {
-	ADD_BORDER_REQUEST,
-	FETCH_BORDER_REQUEST,
-	LIST_BORDER_REQUEST,
-	UPDATE_BORDER_REQUEST,
-	DELETE_BORDER_REQUEST,
-	addBorderFailure,
-	addBorderSuccess,
-	fetchBorderFailure,
-	fetchBorderSuccess,
-	listBorderFailure,
-	listBorderSuccess,
-	updateBorderFailure,
-	updateBorderSuccess,
-	deleteBorderFailure,
-	deleteBorderSuccess,
-} from "../actions/BorderApiAction"
+  ADD_BORDER_REQUEST,
+  FETCH_BORDER_REQUEST,
+  LIST_BORDER_REQUEST,
+  UPDATE_BORDER_REQUEST,
+  DELETE_BORDER_REQUEST,
+  addBorderFailure,
+  addBorderSuccess,
+  fetchBorderFailure,
+  fetchBorderSuccess,
+  listBorderFailure,
+  listBorderSuccess,
+  updateBorderFailure,
+  updateBorderSuccess,
+  deleteBorderFailure,
+  deleteBorderSuccess,
+} from "../actions/BorderApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: Border
 */
 
 export const BorderMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("Border MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Border MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_BORDER_REQUEST:
-				try {
-					const response = postBorder(action.payload)
-					dispatch(addBorderSuccess(response.body))
-				} catch (error) {
-					dispatch(addBorderFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_BORDER_REQUEST:
+        try {
+          const response = postBorder(action.payload);
+          dispatch(addBorderSuccess(response.body));
+        } catch (error) {
+          dispatch(addBorderFailure(error.message));
+        }
+        break;
 
-			case LIST_BORDER_REQUEST:
-				try {
-					const response = getBorderList()
-					dispatch(listBorderSuccess(response.body))
-				} catch (error) {
-					dispatch(listBorderFailure(error.message))
-				}
-				break
+      case LIST_BORDER_REQUEST:
+        try {
+          const response = getBorderList();
+          dispatch(listBorderSuccess(response.body));
+        } catch (error) {
+          dispatch(listBorderFailure(error.message));
+        }
+        break;
 
-			case FETCH_BORDER_REQUEST:
-				try {
-					const response = getBorder(action.id)
-					dispatch(fetchBorderSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchBorderFailure(error.message))
-				}
-				break
+      case FETCH_BORDER_REQUEST:
+        try {
+          const response = getBorder(action.id);
+          dispatch(fetchBorderSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchBorderFailure(error.message));
+        }
+        break;
 
-			case UPDATE_BORDER_REQUEST:
-				try {
-					const { id, Border } = action.payload
-					const response = updateBorder(id)
-					dispatch(updateBorderSuccess(response.body))
-				} catch (error) {
-					dispatch(updateBorderFailure(error.message))
-				}
-				break
+      case UPDATE_BORDER_REQUEST:
+        try {
+          const { id, Border } = action.payload;
+          const response = updateBorder(id);
+          dispatch(updateBorderSuccess(response.body));
+        } catch (error) {
+          dispatch(updateBorderFailure(error.message));
+        }
+        break;
 
-			case DELETE_BORDER_REQUEST:
-				try {
-					const { id, Border } = action.payload
-					const response = deleteBorder(id)
-					dispatch(deleteBorderSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteBorderFailure(error.message))
-				}
-				break
+      case DELETE_BORDER_REQUEST:
+        try {
+          const { id, Border } = action.payload;
+          const response = deleteBorder(id);
+          dispatch(deleteBorderSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteBorderFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

@@ -1,34 +1,42 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 
-import { SalesOrder } from "../../model/SalesOrder"
+import { SalesOrder } from "../../model/SalesOrder";
 
 const SalesOrderSlice = createSlice({
-	name: "SalesOrders",
-	initialState: [],
+  name: "SalesOrders",
+  initialState: [],
 
-	reducers: {
-		SalesOrderAdded(state, action) {
-			state.push(action.payload)
-		},
+  reducers: {
+    SalesOrderAdded(state, action) {
+      state.push(action.payload);
+    },
 
-		SalesOrderValueToggled(state, action) {
-			console.log("SalesOrder TOGGLE")
-			console.warn(JSON.stringify(action))
-			const SalesOrder: SalesOrder = state.find((SalesOrder) => SalesOrder.id === action.payload.SalesOrderId)
-			if (SalesOrder) {
-				if (action.payload.target === "SOMETHING") {
-				}
-			}
-		},
+    SalesOrderValueToggled(state, action) {
+      console.log("SalesOrder TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SalesOrder: SalesOrder = state.find(
+        (SalesOrder) => SalesOrder.id === action.payload.SalesOrderId,
+      );
+      if (SalesOrder) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
 
-		SalesOrderpropertySet(state, action) {
-			const SalesOrder = state.find((SalesOrder) => SalesOrder.id === action.payload.SalesOrderId)
-			if (SalesOrder) {
-				//  SalesOrder[action.property] = action.payload[action.property];
-			}
-		},
-	},
-})
+    SalesOrderpropertySet(state, action) {
+      const SalesOrder = state.find(
+        (SalesOrder) => SalesOrder.id === action.payload.SalesOrderId,
+      );
+      if (SalesOrder) {
+        //  SalesOrder[action.property] = action.payload[action.property];
+      }
+    },
+  },
+});
 
-export const { SalesOrderAdded, SalesOrderValueToggled, SalesOrderpropertySet } = SalesOrderSlice.actions
-export default SalesOrderSlice.reducer
+export const {
+  SalesOrderAdded,
+  SalesOrderValueToggled,
+  SalesOrderpropertySet,
+} = SalesOrderSlice.actions;
+export default SalesOrderSlice.reducer;

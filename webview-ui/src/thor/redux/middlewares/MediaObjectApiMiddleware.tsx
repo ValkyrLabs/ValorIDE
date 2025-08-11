@@ -1,22 +1,28 @@
-import { getMediaObject, postMediaObject, getMediaObjectList, deleteMediaObject, updateMediaObject } from "../../api"
+import {
+  getMediaObject,
+  postMediaObject,
+  getMediaObjectList,
+  deleteMediaObject,
+  updateMediaObject,
+} from "../../api";
 
 import {
-	ADD_MEDIAOBJECT_REQUEST,
-	FETCH_MEDIAOBJECT_REQUEST,
-	LIST_MEDIAOBJECT_REQUEST,
-	UPDATE_MEDIAOBJECT_REQUEST,
-	DELETE_MEDIAOBJECT_REQUEST,
-	addMediaObjectFailure,
-	addMediaObjectSuccess,
-	fetchMediaObjectFailure,
-	fetchMediaObjectSuccess,
-	listMediaObjectFailure,
-	listMediaObjectSuccess,
-	updateMediaObjectFailure,
-	updateMediaObjectSuccess,
-	deleteMediaObjectFailure,
-	deleteMediaObjectSuccess,
-} from "../actions/MediaObjectApiAction"
+  ADD_MEDIAOBJECT_REQUEST,
+  FETCH_MEDIAOBJECT_REQUEST,
+  LIST_MEDIAOBJECT_REQUEST,
+  UPDATE_MEDIAOBJECT_REQUEST,
+  DELETE_MEDIAOBJECT_REQUEST,
+  addMediaObjectFailure,
+  addMediaObjectSuccess,
+  fetchMediaObjectFailure,
+  fetchMediaObjectSuccess,
+  listMediaObjectFailure,
+  listMediaObjectSuccess,
+  updateMediaObjectFailure,
+  updateMediaObjectSuccess,
+  deleteMediaObjectFailure,
+  deleteMediaObjectSuccess,
+} from "../actions/MediaObjectApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: MediaObject
 */
 
 export const MediaObjectMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("MediaObject MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("MediaObject MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_MEDIAOBJECT_REQUEST:
-				try {
-					const response = postMediaObject(action.payload)
-					dispatch(addMediaObjectSuccess(response.body))
-				} catch (error) {
-					dispatch(addMediaObjectFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_MEDIAOBJECT_REQUEST:
+        try {
+          const response = postMediaObject(action.payload);
+          dispatch(addMediaObjectSuccess(response.body));
+        } catch (error) {
+          dispatch(addMediaObjectFailure(error.message));
+        }
+        break;
 
-			case LIST_MEDIAOBJECT_REQUEST:
-				try {
-					const response = getMediaObjectList()
-					dispatch(listMediaObjectSuccess(response.body))
-				} catch (error) {
-					dispatch(listMediaObjectFailure(error.message))
-				}
-				break
+      case LIST_MEDIAOBJECT_REQUEST:
+        try {
+          const response = getMediaObjectList();
+          dispatch(listMediaObjectSuccess(response.body));
+        } catch (error) {
+          dispatch(listMediaObjectFailure(error.message));
+        }
+        break;
 
-			case FETCH_MEDIAOBJECT_REQUEST:
-				try {
-					const response = getMediaObject(action.id)
-					dispatch(fetchMediaObjectSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchMediaObjectFailure(error.message))
-				}
-				break
+      case FETCH_MEDIAOBJECT_REQUEST:
+        try {
+          const response = getMediaObject(action.id);
+          dispatch(fetchMediaObjectSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchMediaObjectFailure(error.message));
+        }
+        break;
 
-			case UPDATE_MEDIAOBJECT_REQUEST:
-				try {
-					const { id, MediaObject } = action.payload
-					const response = updateMediaObject(id)
-					dispatch(updateMediaObjectSuccess(response.body))
-				} catch (error) {
-					dispatch(updateMediaObjectFailure(error.message))
-				}
-				break
+      case UPDATE_MEDIAOBJECT_REQUEST:
+        try {
+          const { id, MediaObject } = action.payload;
+          const response = updateMediaObject(id);
+          dispatch(updateMediaObjectSuccess(response.body));
+        } catch (error) {
+          dispatch(updateMediaObjectFailure(error.message));
+        }
+        break;
 
-			case DELETE_MEDIAOBJECT_REQUEST:
-				try {
-					const { id, MediaObject } = action.payload
-					const response = deleteMediaObject(id)
-					dispatch(deleteMediaObjectSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteMediaObjectFailure(error.message))
-				}
-				break
+      case DELETE_MEDIAOBJECT_REQUEST:
+        try {
+          const { id, MediaObject } = action.payload;
+          const response = deleteMediaObject(id);
+          dispatch(deleteMediaObjectSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteMediaObjectFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

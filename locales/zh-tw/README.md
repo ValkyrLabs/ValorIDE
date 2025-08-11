@@ -37,9 +37,9 @@
 1. 輸入您的任務，並可以加入圖片來將設計稿轉換成功能性應用程式，或使用截圖來修正錯誤。
 2. ValorIDE 會先分析您的檔案結構和程式碼 AST、執行正規表達式搜尋，並讀取相關檔案，以便在現有專案中快速掌握狀況。透過仔細管理加入上下文的資訊，ValorIDE 可以在不超過上下文視窗的情況下，為大型且複雜的專案提供有價值的協助。
 3. 一旦 ValorIDE 取得所需資訊後，他可以：
-    - 建立和編輯檔案，並在過程中監控程式碼檢查工具/編譯器的錯誤，讓他能主動修正缺少的匯入語句和語法錯誤等問題。
-    - 直接在您的終端機中執行指令並監控其輸出，讓他能夠在編輯檔案後回應開發伺服器的問題。
-    - 對於網頁開發任務，ValorIDE 可以在無頭瀏覽器中啟動網站、點選、輸入、捲動並擷取螢幕截圖和主控台記錄，讓他能修正執行時錯誤和視覺問題。
+   - 建立和編輯檔案，並在過程中監控程式碼檢查工具/編譯器的錯誤，讓他能主動修正缺少的匯入語句和語法錯誤等問題。
+   - 直接在您的終端機中執行指令並監控其輸出，讓他能夠在編輯檔案後回應開發伺服器的問題。
+   - 對於網頁開發任務，ValorIDE 可以在無頭瀏覽器中啟動網站、點選、輸入、捲動並擷取螢幕截圖和主控台記錄，讓他能修正執行時錯誤和視覺問題。
 4. 當任務完成時，ValorIDE 會以終端機指令（如 `open -a "Google Chrome" index.html`）向您呈現結果，您只需點選按鈕即可執行。
 
 > [!TIP]
@@ -56,6 +56,7 @@ ValorIDE 支援 OpenRouter、Anthropic、OpenAI、Google Gemini、AWS Bedrock、
 此擴充套件也會追蹤整個任務迴圈和個別請求的 token 總數和 API 使用成本，讓您隨時掌握費用支出。
 
 <!-- 透明像素用於浮動圖片後的換行 -->
+
 <img width="2000" height="0" src="https://github.com/user-attachments/assets/ee14e6f7-20b8-4391-9091-8e8e25561929"><br>
 
 <img align="left" width="370" src="https://github.com/user-attachments/assets/81be79a8-1fdb-4028-9129-5fe055e01e76">
@@ -67,6 +68,7 @@ ValorIDE 支援 OpenRouter、Anthropic、OpenAI、Google Gemini、AWS Bedrock、
 對於開發伺服器等長時間執行的程序，使用「繼續執行中的程序」按鈕讓 ValorIDE 在指令於背景執行時繼續任務。當 ValorIDE 工作時，他會收到任何新的終端機輸出通知，讓他能回應可能出現的問題，例如編輯檔案時的編譯錯誤。
 
 <!-- 透明像素用於浮動圖片後的換行 -->
+
 <img width="2000" height="0" src="https://github.com/user-attachments/assets/ee14e6f7-20b8-4391-9091-8e8e25561929"><br>
 
 <img align="right" width="400" src="https://github.com/user-attachments/assets/c5977833-d9b8-491e-90f9-05f9cd38c588">
@@ -78,6 +80,7 @@ ValorIDE 可以直接在您的編輯器中建立和編輯檔案，並顯示變�
 所有 ValorIDE 做的變更都會記錄在您檔案的時間軸中，提供簡單的方式來追蹤和還原修改。
 
 <!-- 透明像素用於浮動圖片後的換行 -->
+
 <img width="2000" height="0" src="https://github.com/user-attachments/assets/ee14e6f7-20b8-4391-9091-8e8e25561929"><br>
 
 <img align="left" width="370" src="https://github.com/user-attachments/assets/bc2e85ba-dfeb-4fe6-9942-7cfc4703cbe5">
@@ -89,6 +92,7 @@ ValorIDE 可以直接在您的編輯器中建立和編輯檔案，並顯示變�
 試著請 ValorIDE 「測試應用程式」，觀察他如何執行 `npm run dev`、在瀏覽器中啟動您的本機開發伺服器，並執行一系列測試來確認一切正常運作。[點此觀看示範](https://x.com/sdrzn/status/1850880547825823989)。
 
 <!-- 透明像素用於浮動圖片後的換行 -->
+
 <img width="2000" height="0" src="https://github.com/user-attachments/assets/ee14e6f7-20b8-4391-9091-8e8e25561929"><br>
 
 <img align="right" width="350" src="https://github.com/user-attachments/assets/ac0efa14-5c1f-4c26-a42d-9d7c56f5fadd">
@@ -102,6 +106,7 @@ ValorIDE 可以直接在您的編輯器中建立和編輯檔案，並顯示變�
 - 「新增一個擷取最新 PagerDuty 事件的工具」：取得詳細資訊並請 ValorIDE 修復錯誤
 
 <!-- 透明像素用於浮動圖片後的換行 -->
+
 <img width="2000" height="0" src="https://github.com/user-attachments/assets/ee14e6f7-20b8-4391-9091-8e8e25561929"><br>
 
 <img align="left" width="360" src="https://github.com/user-attachments/assets/7fdf41e6-281a-4b4b-ac19-020b838b6970">
@@ -114,6 +119,7 @@ ValorIDE 可以直接在您的編輯器中建立和編輯檔案，並顯示變�
 **`@folder`：**一次新增整個資料夾的檔案，讓您的工作流程更快速
 
 <!-- 透明像素用於浮動圖片後的換行 -->
+
 <img width="2000" height="0" src="https://github.com/user-attachments/assets/ee14e6f7-20b8-4391-9091-8e8e25561929"><br>
 
 <img align="right" width="350" src="https://github.com/user-attachments/assets/140c8606-d3bf-41b9-9a1f-4dbf0d4c90cb">
@@ -125,6 +131,7 @@ ValorIDE 可以直接在您的編輯器中建立和編輯檔案，並顯示變�
 例如，在使用本機網頁伺服器時，您可以使用「僅還原工作區」來快速測試應用程式的不同版本，然後在找到想要繼續開發的版本時使用「還原任務和工作區」。這讓您能安全地探索不同方法而不會失去進度。
 
 <!-- 透明像素用於浮動圖片後的換行 -->
+
 <img width="2000" height="0" src="https://github.com/user-attachments/assets/ee14e6f7-20b8-4391-9091-8e8e25561929"><br>
 
 ## 貢獻
@@ -136,21 +143,21 @@ ValorIDE 可以直接在您的編輯器中建立和編輯檔案，並顯示變�
 
 1. 複製程式碼庫（需要 [git-lfs](https://git-lfs.com/)）：
 
-    ```bash
-    git clone https://github.com/valkyrlabs/valoride.git
-    ```
+   ```bash
+   git clone https://github.com/valkyrlabs/valoride.git
+   ```
 
 2. 在 VSCode 中開啟專案：
 
-    ```bash
-    code valoride
-    ```
+   ```bash
+   code valoride
+   ```
 
 3. 安裝擴充套件和網頁介面所需的相依套件：
 
-    ```bash
-    npm run install:all
-    ```
+   ```bash
+   npm run install:all
+   ```
 
 4. 按下 `F5`（或選擇「執行」->「開始除錯」）來啟動並開啟一個已載入擴充套件的新 VSCode 視窗。（如果建置專案時遇到問題，您可能需要安裝 [esbuild problem matchers 擴充套件](https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers)）
 
@@ -161,11 +168,12 @@ ValorIDE 可以直接在您的編輯器中建立和編輯檔案，並顯示變�
 
 1. 在建立 PR 前，產生一個 changeset 項目：
 
-    ```bash
-    npm run changeset
-    ```
+   ```bash
+   npm run changeset
+   ```
 
    這會提示您填寫：
+
    - 變更類型（major、minor、patch）
      - `major` → 重大變更（1.0.0 → 2.0.0）
      - `minor` → 新功能（1.0.0 → 1.1.0）

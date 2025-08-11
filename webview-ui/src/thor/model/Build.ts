@@ -11,8 +11,15 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime"
-import { BuildOutput, BuildOutputFromJSON, BuildOutputToJSON, Depend, DependFromJSON, DependToJSON } from "./"
+import { exists, mapValues } from "../src/runtime";
+import {
+  BuildOutput,
+  BuildOutputFromJSON,
+  BuildOutputToJSON,
+  Depend,
+  DependFromJSON,
+  DependToJSON,
+} from "./";
 
 // thorapi
 
@@ -22,147 +29,180 @@ import { BuildOutput, BuildOutputFromJSON, BuildOutputToJSON, Depend, DependFrom
  * @interface Build
  */
 export type Build = {
-	/**
-	 *
-	 * @type {string}
-	 * @memberof Build
-	 */
-	name: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof Build
-	 */
-	status: BuildStatusEnum
-	/**
-	 *
-	 * @type {string}
-	 * @memberof Build
-	 */
-	projectPath: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof Build
-	 */
-	mavenHome: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof Build
-	 */
-	applicationId?: string
-	/**
-	 *
-	 * @type {number}
-	 * @memberof Build
-	 */
-	testEnumCodegen?: BuildTestEnumCodegenEnum
-	/**
-	 *
-	 * @type {Array<BuildOutput>}
-	 * @memberof Build
-	 */
-	outputs?: Array<BuildOutput>
-	/**
-	 *
-	 * @type {Array<Depend>}
-	 * @memberof Build
-	 */
-	dependencies?: Array<Depend>
-	/**
-	 * Unique identifier for object in the system
-	 * @type {string}
-	 * @memberof Build
-	 */
-	id?: string
-	/**
-	 * UUID of owner of the object in the system
-	 * @type {string}
-	 * @memberof Build
-	 */
-	ownerId?: string
-	/**
-	 * Date of object creation
-	 * @type {Date}
-	 * @memberof Build
-	 */
-	createdDate?: Date
-	/**
-	 * Data, including hash of the key(s) used to encrypt this record.
-	 * @type {string}
-	 * @memberof Build
-	 */
-	keyHash?: string
-	/**
-	 * Last user to access object
-	 * @type {string}
-	 * @memberof Build
-	 */
-	lastAccessedById?: string
-	/**
-	 * Timestamp of last access of object
-	 * @type {Date}
-	 * @memberof Build
-	 */
-	lastAccessedDate?: Date
-	/**
-	 * Unique identifier for user who last modifed the object in the system
-	 * @type {string}
-	 * @memberof Build
-	 */
-	lastModifiedById?: string
-	/**
-	 * Date of last object modification
-	 * @type {Date}
-	 * @memberof Build
-	 */
-	lastModifiedDate?: Date
-}
+  /**
+   *
+   * @type {string}
+   * @memberof Build
+   */
+  name: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Build
+   */
+  status: BuildStatusEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof Build
+   */
+  projectPath: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Build
+   */
+  mavenHome: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Build
+   */
+  applicationId?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof Build
+   */
+  testEnumCodegen?: BuildTestEnumCodegenEnum;
+  /**
+   *
+   * @type {Array<BuildOutput>}
+   * @memberof Build
+   */
+  outputs?: Array<BuildOutput>;
+  /**
+   *
+   * @type {Array<Depend>}
+   * @memberof Build
+   */
+  dependencies?: Array<Depend>;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Build
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Build
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Build
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Build
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Build
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Build
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Build
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Build
+   */
+  lastModifiedDate?: Date;
+};
 
 export function BuildFromJSON(json: any): Build {
-	return {
-		name: json["name"],
-		status: json["status"],
-		projectPath: json["projectPath"],
-		mavenHome: json["mavenHome"],
-		applicationId: !exists(json, "applicationId") ? undefined : json["applicationId"],
-		testEnumCodegen: !exists(json, "testEnumCodegen") ? undefined : json["testEnumCodegen"],
-		outputs: !exists(json, "outputs") ? undefined : (json["outputs"] as Array<any>).map(BuildOutputFromJSON),
-		dependencies: !exists(json, "dependencies") ? undefined : (json["dependencies"] as Array<any>).map(DependFromJSON),
-		id: !exists(json, "id") ? undefined : json["id"],
-		ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-		createdDate: !exists(json, "createdDate") ? undefined : new Date(json["createdDate"]),
-		keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-		lastAccessedById: !exists(json, "lastAccessedById") ? undefined : json["lastAccessedById"],
-		lastAccessedDate: !exists(json, "lastAccessedDate") ? undefined : new Date(json["lastAccessedDate"]),
-		lastModifiedById: !exists(json, "lastModifiedById") ? undefined : json["lastModifiedById"],
-		lastModifiedDate: !exists(json, "lastModifiedDate") ? undefined : new Date(json["lastModifiedDate"]),
-	}
+  return {
+    name: json["name"],
+    status: json["status"],
+    projectPath: json["projectPath"],
+    mavenHome: json["mavenHome"],
+    applicationId: !exists(json, "applicationId")
+      ? undefined
+      : json["applicationId"],
+    testEnumCodegen: !exists(json, "testEnumCodegen")
+      ? undefined
+      : json["testEnumCodegen"],
+    outputs: !exists(json, "outputs")
+      ? undefined
+      : (json["outputs"] as Array<any>).map(BuildOutputFromJSON),
+    dependencies: !exists(json, "dependencies")
+      ? undefined
+      : (json["dependencies"] as Array<any>).map(DependFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function BuildToJSON(value?: Build): any {
-	if (value === undefined) {
-		return undefined
-	}
-	return {
-		name: value.name,
-		status: value.status,
-		projectPath: value.projectPath,
-		mavenHome: value.mavenHome,
-		applicationId: value.applicationId,
-		testEnumCodegen: value.testEnumCodegen,
-		outputs: value.outputs === undefined ? undefined : (value.outputs as Array<any>).map(BuildOutputToJSON),
-		dependencies: value.dependencies === undefined ? undefined : (value.dependencies as Array<any>).map(DependToJSON),
-		id: value.id,
-		ownerId: value.ownerId,
-		createdDate: value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-		keyHash: value.keyHash,
-		lastAccessedById: value.lastAccessedById,
-		lastAccessedDate: value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-		lastModifiedById: value.lastModifiedById,
-		lastModifiedDate: value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-	}
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    name: value.name,
+    status: value.status,
+    projectPath: value.projectPath,
+    mavenHome: value.mavenHome,
+    applicationId: value.applicationId,
+    testEnumCodegen: value.testEnumCodegen,
+    outputs:
+      value.outputs === undefined
+        ? undefined
+        : (value.outputs as Array<any>).map(BuildOutputToJSON),
+    dependencies:
+      value.dependencies === undefined
+        ? undefined
+        : (value.dependencies as Array<any>).map(DependToJSON),
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
@@ -170,17 +210,17 @@ export function BuildToJSON(value?: Build): any {
  * @enum {string}
  */
 export enum BuildStatusEnum {
-	PENDING = "pending",
-	RUNNING = "running",
-	SUCCESS = "success",
-	FAILURE = "failure",
+  PENDING = "pending",
+  RUNNING = "running",
+  SUCCESS = "success",
+  FAILURE = "failure",
 }
 /**
  * @export
  * @enum {string}
  */
 export enum BuildTestEnumCodegenEnum {
-	BROKE = 0,
-	POOR = 10,
-	RICH = 1000,
+  BROKE = 0,
+  POOR = 10,
+  RICH = 1000,
 }

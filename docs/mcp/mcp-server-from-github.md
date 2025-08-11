@@ -6,25 +6,25 @@ This guide provides a step-by-step walkthrough of how to use ValorIDE to build a
 
 There are multiple places online to find MCP servers:
 
--   **ValorIDE can automatically add MCP servers to its list, which you can then edit.** ValorIDE can clone repositories directly from GitHub and build the servers for you.
--   **GitHub:** Two of the most common places to find MCP servers on GitHub include:
-    -   [Official MCP servers repository](https://github.com/modelcontextprotocol/servers)
-    -   [Awesome-MCP servers repository](https://github.com/punkpeye/awesome-mcp-servers)
--   **Online directories:** Several websites list MCP servers including:
+- **ValorIDE can automatically add MCP servers to its list, which you can then edit.** ValorIDE can clone repositories directly from GitHub and build the servers for you.
+- **GitHub:** Two of the most common places to find MCP servers on GitHub include:
+  - [Official MCP servers repository](https://github.com/modelcontextprotocol/servers)
+  - [Awesome-MCP servers repository](https://github.com/punkpeye/awesome-mcp-servers)
+- **Online directories:** Several websites list MCP servers including:
 
-    -   [mcpservers.org](https://mcpservers.org/)
-    -   [mcp.so](https://mcp.so/)
-    -   [glama.ai/mcp/servers](https://glama.ai/mcp/servers)
+  - [mcpservers.org](https://mcpservers.org/)
+  - [mcp.so](https://mcp.so/)
+  - [glama.ai/mcp/servers](https://glama.ai/mcp/servers)
 
-    These directories allow users to sort the servers by various criteria such as downloads, date, stars, and use case. Each entry provides information such as features, tools, and configuration instructions.
+  These directories allow users to sort the servers by various criteria such as downloads, date, stars, and use case. Each entry provides information such as features, tools, and configuration instructions.
 
--   **PulseMCP:** This website has a blog post discussing how AI could use MCP servers to make websites obsolete. PulseMCP also includes an FAQ section about MCP servers: [https://www.pulsemcp.com/](https://www.pulsemcp.com/)
+- **PulseMCP:** This website has a blog post discussing how AI could use MCP servers to make websites obsolete. PulseMCP also includes an FAQ section about MCP servers: [https://www.pulsemcp.com/](https://www.pulsemcp.com/)
 
 ## **Building with ValorIDE**
 
 1.  **Initiate the Process:** Provide ValorIDE with the following information:
-    -   **GitHub Repository URL:** The URL of the server's repository.
-    -   **README.md Contents:** This is optional but helpful for ValorIDE to understand the server's purpose and configuration. You can copy the README.md file from the GitHub repository.
+    - **GitHub Repository URL:** The URL of the server's repository.
+    - **README.md Contents:** This is optional but helpful for ValorIDE to understand the server's purpose and configuration. You can copy the README.md file from the GitHub repository.
 2.  **Example Interaction with ValorIDE:**
 
     ```
@@ -46,12 +46,12 @@ There are multiple places online to find MCP servers:
     ```
 
 3.  **ValorIDE's Actions:** Based on your instructions, ValorIDE will perform the following:
-    -   **Repository Cloning:** ValorIDE will clone the repository to your local machine, usually in the directory specified in your configuration.
-    -   **Tweaking:** You can guide ValorIDE to modify the server’s configuration. For instance:
-        -   **User:** "This server requires an API key. Can you find where it should be added?"
-        -   ValorIDE may automatically update the `valoride_mcp_settings.json` file or other relevant files based on your instructions.
-    -   **Building the Server:** ValorIDE will run the appropriate build command for the server, which is commonly `npm run build`.
-    -   **Adding Server to Settings:** ValorIDE will add the server’s configuration to the `valoride_mcp_settings.json` file.
+    - **Repository Cloning:** ValorIDE will clone the repository to your local machine, usually in the directory specified in your configuration.
+    - **Tweaking:** You can guide ValorIDE to modify the server’s configuration. For instance:
+      - **User:** "This server requires an API key. Can you find where it should be added?"
+      - ValorIDE may automatically update the `valoride_mcp_settings.json` file or other relevant files based on your instructions.
+    - **Building the Server:** ValorIDE will run the appropriate build command for the server, which is commonly `npm run build`.
+    - **Adding Server to Settings:** ValorIDE will add the server’s configuration to the `valoride_mcp_settings.json` file.
 
 ## **Testing and Troubleshooting**
 
@@ -60,8 +60,8 @@ There are multiple places online to find MCP servers:
 
 ## **Best Practices**
 
--   **Understand the Basics:** While ValorIDE simplifies the process, it’s beneficial to have a basic understanding of the server’s code, the MCP protocol (), and how to configure the server. This allows for more effective troubleshooting and customization.
--   **Clear Instructions:** Provide clear and specific instructions to ValorIDE throughout the process.
--   **Testing:** Thoroughly test the server after installation and configuration to ensure it functions correctly.
--   **Version Control:** Use a version control system (like Git) to track changes to the server’s code.
--   **Stay Updated:** Keep your MCP servers updated to benefit from the latest features and security patches.
+- **Understand the Basics:** While ValorIDE simplifies the process, it’s beneficial to have a basic understanding of the server’s code, the MCP protocol (), and how to configure the server. This allows for more effective troubleshooting and customization.
+- **Clear Instructions:** Provide clear and specific instructions to ValorIDE throughout the process.
+- **Testing:** Thoroughly test the server after installation and configuration to ensure it functions correctly.
+- **Version Control:** Use a version control system (like Git) to track changes to the server’s code.
+- **Stay Updated:** Keep your MCP servers updated to benefit from the latest features and security patches.

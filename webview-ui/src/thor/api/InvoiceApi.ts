@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: InvoiceApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { Invoice, InvoiceFromJSON, InvoiceToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Invoice, InvoiceFromJSON, InvoiceToJSON } from "../model";
 
 export interface DeleteInvoiceRequest {
-	id: string
+  id: string;
 }
 
 export interface GetInvoiceRequest {
-	id: string
+  id: string;
 }
 
 export interface PostInvoiceRequest {
-	invoice: Invoice
+  invoice: Invoice;
 }
 
 export interface UpdateInvoiceRequest {
-	id: string
-	invoice: Invoice
+  id: string;
+  invoice: Invoice;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateInvoiceRequest {
  * Delete a Invoice.
  */
 function deleteInvoiceRaw<T>(
-	requestParameters: DeleteInvoiceRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteInvoiceRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteInvoice.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteInvoice.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Invoice/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Invoice/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteInvoiceRaw<T>(
  * Delete a Invoice.
  */
 export function deleteInvoice<T>(
-	requestParameters: DeleteInvoiceRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteInvoiceRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteInvoiceRaw(requestParameters, requestConfig)
+  return deleteInvoiceRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteInvoice<T>(
  * Retrieve a single Invoice
  */
 function getInvoiceRaw<T>(
-	requestParameters: GetInvoiceRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Invoice> = {},
+  requestParameters: GetInvoiceRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Invoice> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getInvoice.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getInvoice.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Invoice/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Invoice/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(InvoiceFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(InvoiceFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getInvoiceRaw<T>(
  * Retrieve a single Invoice
  */
 export function getInvoice<T>(
-	requestParameters: GetInvoiceRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Invoice>,
+  requestParameters: GetInvoiceRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Invoice>,
 ): QueryConfig<T> {
-	return getInvoiceRaw(requestParameters, requestConfig)
+  return getInvoiceRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Invoices.
  * Retrieve a list of Invoices
  */
-function getInvoiceListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<Invoice>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getInvoiceListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<Invoice>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Invoice`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Invoice`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(InvoiceFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(InvoiceFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of Invoices.
  * Retrieve a list of Invoices
  */
-export function getInvoiceList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<Invoice>>): QueryConfig<T> {
-	return getInvoiceListRaw(requestConfig)
+export function getInvoiceList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Invoice>>,
+): QueryConfig<T> {
+  return getInvoiceListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getInvoiceList<T>(requestConfig?: runtime.TypedQueryConfig<T, Ar
  * Create a new Invoice
  */
 function postInvoiceRaw<T>(
-	requestParameters: PostInvoiceRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Invoice> = {},
+  requestParameters: PostInvoiceRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Invoice> = {},
 ): QueryConfig<T> {
-	if (requestParameters.invoice === null || requestParameters.invoice === undefined) {
-		throw new runtime.RequiredError(
-			"invoice",
-			"Required parameter requestParameters.invoice was null or undefined when calling postInvoice.",
-		)
-	}
+  if (
+    requestParameters.invoice === null ||
+    requestParameters.invoice === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "invoice",
+      "Required parameter requestParameters.invoice was null or undefined when calling postInvoice.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Invoice`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || InvoiceToJSON(requestParameters.invoice),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Invoice`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || InvoiceToJSON(requestParameters.invoice),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(InvoiceFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(InvoiceFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postInvoiceRaw<T>(
  * Create a new Invoice
  */
 export function postInvoice<T>(
-	requestParameters: PostInvoiceRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Invoice>,
+  requestParameters: PostInvoiceRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Invoice>,
 ): QueryConfig<T> {
-	return postInvoiceRaw(requestParameters, requestConfig)
+  return postInvoiceRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postInvoice<T>(
  * Update an existing Invoice
  */
 function updateInvoiceRaw<T>(
-	requestParameters: UpdateInvoiceRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Invoice> = {},
+  requestParameters: UpdateInvoiceRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Invoice> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateInvoice.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateInvoice.",
+    );
+  }
 
-	if (requestParameters.invoice === null || requestParameters.invoice === undefined) {
-		throw new runtime.RequiredError(
-			"invoice",
-			"Required parameter requestParameters.invoice was null or undefined when calling updateInvoice.",
-		)
-	}
+  if (
+    requestParameters.invoice === null ||
+    requestParameters.invoice === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "invoice",
+      "Required parameter requestParameters.invoice was null or undefined when calling updateInvoice.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Invoice/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || InvoiceToJSON(requestParameters.invoice),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Invoice/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || InvoiceToJSON(requestParameters.invoice),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(InvoiceFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(InvoiceFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateInvoiceRaw<T>(
  * Update an existing Invoice
  */
 export function updateInvoice<T>(
-	requestParameters: UpdateInvoiceRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Invoice>,
+  requestParameters: UpdateInvoiceRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Invoice>,
 ): QueryConfig<T> {
-	return updateInvoiceRaw(requestParameters, requestConfig)
+  return updateInvoiceRaw(requestParameters, requestConfig);
 }

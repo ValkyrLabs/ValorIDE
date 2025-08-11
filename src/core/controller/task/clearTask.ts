@@ -1,5 +1,5 @@
-import { Controller } from ".."
-import { Empty, EmptyRequest } from "../../../shared/proto/common"
+import { Controller } from "..";
+import { Empty, EmptyRequest } from "../../../shared/proto/common";
 
 /**
  * Clears the current task
@@ -7,8 +7,11 @@ import { Empty, EmptyRequest } from "../../../shared/proto/common"
  * @param _request The empty request
  * @returns Empty response
  */
-export async function clearTask(controller: Controller, _request: EmptyRequest): Promise<Empty> {
-	await controller.clearTask()
-	await controller.postStateToWebview()
-	return Empty.create()
+export async function clearTask(
+  controller: Controller,
+  _request: EmptyRequest,
+): Promise<Empty> {
+  await controller.clearTask();
+  await controller.postStateToWebview();
+  return Empty.create();
 }

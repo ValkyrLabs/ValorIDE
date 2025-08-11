@@ -1,28 +1,28 @@
 import {
-	getWebsocketMessage,
-	postWebsocketMessage,
-	getWebsocketMessageList,
-	deleteWebsocketMessage,
-	updateWebsocketMessage,
-} from "../../api"
+  getWebsocketMessage,
+  postWebsocketMessage,
+  getWebsocketMessageList,
+  deleteWebsocketMessage,
+  updateWebsocketMessage,
+} from "../../api";
 
 import {
-	ADD_WEBSOCKETMESSAGE_REQUEST,
-	FETCH_WEBSOCKETMESSAGE_REQUEST,
-	LIST_WEBSOCKETMESSAGE_REQUEST,
-	UPDATE_WEBSOCKETMESSAGE_REQUEST,
-	DELETE_WEBSOCKETMESSAGE_REQUEST,
-	addWebsocketMessageFailure,
-	addWebsocketMessageSuccess,
-	fetchWebsocketMessageFailure,
-	fetchWebsocketMessageSuccess,
-	listWebsocketMessageFailure,
-	listWebsocketMessageSuccess,
-	updateWebsocketMessageFailure,
-	updateWebsocketMessageSuccess,
-	deleteWebsocketMessageFailure,
-	deleteWebsocketMessageSuccess,
-} from "../actions/WebsocketMessageApiAction"
+  ADD_WEBSOCKETMESSAGE_REQUEST,
+  FETCH_WEBSOCKETMESSAGE_REQUEST,
+  LIST_WEBSOCKETMESSAGE_REQUEST,
+  UPDATE_WEBSOCKETMESSAGE_REQUEST,
+  DELETE_WEBSOCKETMESSAGE_REQUEST,
+  addWebsocketMessageFailure,
+  addWebsocketMessageSuccess,
+  fetchWebsocketMessageFailure,
+  fetchWebsocketMessageSuccess,
+  listWebsocketMessageFailure,
+  listWebsocketMessageSuccess,
+  updateWebsocketMessageFailure,
+  updateWebsocketMessageSuccess,
+  deleteWebsocketMessageFailure,
+  deleteWebsocketMessageSuccess,
+} from "../actions/WebsocketMessageApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -41,61 +41,61 @@ Description: WebsocketMessage
 */
 
 export const WebsocketMessageMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("WebsocketMessage MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("WebsocketMessage MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_WEBSOCKETMESSAGE_REQUEST:
-				try {
-					const response = postWebsocketMessage(action.payload)
-					dispatch(addWebsocketMessageSuccess(response.body))
-				} catch (error) {
-					dispatch(addWebsocketMessageFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_WEBSOCKETMESSAGE_REQUEST:
+        try {
+          const response = postWebsocketMessage(action.payload);
+          dispatch(addWebsocketMessageSuccess(response.body));
+        } catch (error) {
+          dispatch(addWebsocketMessageFailure(error.message));
+        }
+        break;
 
-			case LIST_WEBSOCKETMESSAGE_REQUEST:
-				try {
-					const response = getWebsocketMessageList()
-					dispatch(listWebsocketMessageSuccess(response.body))
-				} catch (error) {
-					dispatch(listWebsocketMessageFailure(error.message))
-				}
-				break
+      case LIST_WEBSOCKETMESSAGE_REQUEST:
+        try {
+          const response = getWebsocketMessageList();
+          dispatch(listWebsocketMessageSuccess(response.body));
+        } catch (error) {
+          dispatch(listWebsocketMessageFailure(error.message));
+        }
+        break;
 
-			case FETCH_WEBSOCKETMESSAGE_REQUEST:
-				try {
-					const response = getWebsocketMessage(action.id)
-					dispatch(fetchWebsocketMessageSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchWebsocketMessageFailure(error.message))
-				}
-				break
+      case FETCH_WEBSOCKETMESSAGE_REQUEST:
+        try {
+          const response = getWebsocketMessage(action.id);
+          dispatch(fetchWebsocketMessageSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchWebsocketMessageFailure(error.message));
+        }
+        break;
 
-			case UPDATE_WEBSOCKETMESSAGE_REQUEST:
-				try {
-					const { id, WebsocketMessage } = action.payload
-					const response = updateWebsocketMessage(id)
-					dispatch(updateWebsocketMessageSuccess(response.body))
-				} catch (error) {
-					dispatch(updateWebsocketMessageFailure(error.message))
-				}
-				break
+      case UPDATE_WEBSOCKETMESSAGE_REQUEST:
+        try {
+          const { id, WebsocketMessage } = action.payload;
+          const response = updateWebsocketMessage(id);
+          dispatch(updateWebsocketMessageSuccess(response.body));
+        } catch (error) {
+          dispatch(updateWebsocketMessageFailure(error.message));
+        }
+        break;
 
-			case DELETE_WEBSOCKETMESSAGE_REQUEST:
-				try {
-					const { id, WebsocketMessage } = action.payload
-					const response = deleteWebsocketMessage(id)
-					dispatch(deleteWebsocketMessageSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteWebsocketMessageFailure(error.message))
-				}
-				break
+      case DELETE_WEBSOCKETMESSAGE_REQUEST:
+        try {
+          const { id, WebsocketMessage } = action.payload;
+          const response = deleteWebsocketMessage(id);
+          dispatch(deleteWebsocketMessageSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteWebsocketMessageFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

@@ -1,28 +1,28 @@
 import {
-	getMcpDownloadResponse,
-	postMcpDownloadResponse,
-	getMcpDownloadResponseList,
-	deleteMcpDownloadResponse,
-	updateMcpDownloadResponse,
-} from "../../api"
+  getMcpDownloadResponse,
+  postMcpDownloadResponse,
+  getMcpDownloadResponseList,
+  deleteMcpDownloadResponse,
+  updateMcpDownloadResponse,
+} from "../../api";
 
 import {
-	ADD_MCPDOWNLOADRESPONSE_REQUEST,
-	FETCH_MCPDOWNLOADRESPONSE_REQUEST,
-	LIST_MCPDOWNLOADRESPONSE_REQUEST,
-	UPDATE_MCPDOWNLOADRESPONSE_REQUEST,
-	DELETE_MCPDOWNLOADRESPONSE_REQUEST,
-	addMcpDownloadResponseFailure,
-	addMcpDownloadResponseSuccess,
-	fetchMcpDownloadResponseFailure,
-	fetchMcpDownloadResponseSuccess,
-	listMcpDownloadResponseFailure,
-	listMcpDownloadResponseSuccess,
-	updateMcpDownloadResponseFailure,
-	updateMcpDownloadResponseSuccess,
-	deleteMcpDownloadResponseFailure,
-	deleteMcpDownloadResponseSuccess,
-} from "../actions/McpDownloadResponseApiAction"
+  ADD_MCPDOWNLOADRESPONSE_REQUEST,
+  FETCH_MCPDOWNLOADRESPONSE_REQUEST,
+  LIST_MCPDOWNLOADRESPONSE_REQUEST,
+  UPDATE_MCPDOWNLOADRESPONSE_REQUEST,
+  DELETE_MCPDOWNLOADRESPONSE_REQUEST,
+  addMcpDownloadResponseFailure,
+  addMcpDownloadResponseSuccess,
+  fetchMcpDownloadResponseFailure,
+  fetchMcpDownloadResponseSuccess,
+  listMcpDownloadResponseFailure,
+  listMcpDownloadResponseSuccess,
+  updateMcpDownloadResponseFailure,
+  updateMcpDownloadResponseSuccess,
+  deleteMcpDownloadResponseFailure,
+  deleteMcpDownloadResponseSuccess,
+} from "../actions/McpDownloadResponseApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -41,61 +41,61 @@ Description: McpDownloadResponse
 */
 
 export const McpDownloadResponseMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("McpDownloadResponse MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("McpDownloadResponse MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_MCPDOWNLOADRESPONSE_REQUEST:
-				try {
-					const response = postMcpDownloadResponse(action.payload)
-					dispatch(addMcpDownloadResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(addMcpDownloadResponseFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_MCPDOWNLOADRESPONSE_REQUEST:
+        try {
+          const response = postMcpDownloadResponse(action.payload);
+          dispatch(addMcpDownloadResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(addMcpDownloadResponseFailure(error.message));
+        }
+        break;
 
-			case LIST_MCPDOWNLOADRESPONSE_REQUEST:
-				try {
-					const response = getMcpDownloadResponseList()
-					dispatch(listMcpDownloadResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(listMcpDownloadResponseFailure(error.message))
-				}
-				break
+      case LIST_MCPDOWNLOADRESPONSE_REQUEST:
+        try {
+          const response = getMcpDownloadResponseList();
+          dispatch(listMcpDownloadResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(listMcpDownloadResponseFailure(error.message));
+        }
+        break;
 
-			case FETCH_MCPDOWNLOADRESPONSE_REQUEST:
-				try {
-					const response = getMcpDownloadResponse(action.id)
-					dispatch(fetchMcpDownloadResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchMcpDownloadResponseFailure(error.message))
-				}
-				break
+      case FETCH_MCPDOWNLOADRESPONSE_REQUEST:
+        try {
+          const response = getMcpDownloadResponse(action.id);
+          dispatch(fetchMcpDownloadResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchMcpDownloadResponseFailure(error.message));
+        }
+        break;
 
-			case UPDATE_MCPDOWNLOADRESPONSE_REQUEST:
-				try {
-					const { id, McpDownloadResponse } = action.payload
-					const response = updateMcpDownloadResponse(id)
-					dispatch(updateMcpDownloadResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(updateMcpDownloadResponseFailure(error.message))
-				}
-				break
+      case UPDATE_MCPDOWNLOADRESPONSE_REQUEST:
+        try {
+          const { id, McpDownloadResponse } = action.payload;
+          const response = updateMcpDownloadResponse(id);
+          dispatch(updateMcpDownloadResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(updateMcpDownloadResponseFailure(error.message));
+        }
+        break;
 
-			case DELETE_MCPDOWNLOADRESPONSE_REQUEST:
-				try {
-					const { id, McpDownloadResponse } = action.payload
-					const response = deleteMcpDownloadResponse(id)
-					dispatch(deleteMcpDownloadResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteMcpDownloadResponseFailure(error.message))
-				}
-				break
+      case DELETE_MCPDOWNLOADRESPONSE_REQUEST:
+        try {
+          const { id, McpDownloadResponse } = action.payload;
+          const response = deleteMcpDownloadResponse(id);
+          dispatch(deleteMcpDownloadResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteMcpDownloadResponseFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

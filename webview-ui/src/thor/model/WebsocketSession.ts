@@ -11,8 +11,12 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime"
-import { WebsocketMessage, WebsocketMessageFromJSON, WebsocketMessageToJSON } from "./"
+import { exists, mapValues } from "../src/runtime";
+import {
+  WebsocketMessage,
+  WebsocketMessageFromJSON,
+  WebsocketMessageToJSON,
+} from "./";
 
 // thorapi
 
@@ -22,131 +26,162 @@ import { WebsocketMessage, WebsocketMessageFromJSON, WebsocketMessageToJSON } fr
  * @interface WebsocketSession
  */
 export type WebsocketSession = {
-	/**
-	 *
-	 * @type {string}
-	 * @memberof WebsocketSession
-	 */
-	execModuleId?: string
-	/**
-	 * state of websocket session
-	 * @type {string}
-	 * @memberof WebsocketSession
-	 */
-	state?: WebsocketSessionStateEnum
-	/**
-	 * type of websocket session
-	 * @type {string}
-	 * @memberof WebsocketSession
-	 */
-	type?: WebsocketSessionTypeEnum
-	/**
-	 * the connected status of the socket
-	 * @type {boolean}
-	 * @memberof WebsocketSession
-	 */
-	connected?: boolean
-	/**
-	 * Array of websocket status messages
-	 * @type {Array<WebsocketMessage>}
-	 * @memberof WebsocketSession
-	 */
-	statuses?: Array<WebsocketMessage>
-	/**
-	 * Array of websocket messages
-	 * @type {Array<WebsocketMessage>}
-	 * @memberof WebsocketSession
-	 */
-	messages?: Array<WebsocketMessage>
-	/**
-	 * Unique identifier for object in the system
-	 * @type {string}
-	 * @memberof WebsocketSession
-	 */
-	id?: string
-	/**
-	 * UUID of owner of the object in the system
-	 * @type {string}
-	 * @memberof WebsocketSession
-	 */
-	ownerId?: string
-	/**
-	 * Date of object creation
-	 * @type {Date}
-	 * @memberof WebsocketSession
-	 */
-	createdDate?: Date
-	/**
-	 * Data, including hash of the key(s) used to encrypt this record.
-	 * @type {string}
-	 * @memberof WebsocketSession
-	 */
-	keyHash?: string
-	/**
-	 * Last user to access object
-	 * @type {string}
-	 * @memberof WebsocketSession
-	 */
-	lastAccessedById?: string
-	/**
-	 * Timestamp of last access of object
-	 * @type {Date}
-	 * @memberof WebsocketSession
-	 */
-	lastAccessedDate?: Date
-	/**
-	 * Unique identifier for user who last modifed the object in the system
-	 * @type {string}
-	 * @memberof WebsocketSession
-	 */
-	lastModifiedById?: string
-	/**
-	 * Date of last object modification
-	 * @type {Date}
-	 * @memberof WebsocketSession
-	 */
-	lastModifiedDate?: Date
-}
+  /**
+   *
+   * @type {string}
+   * @memberof WebsocketSession
+   */
+  execModuleId?: string;
+  /**
+   * state of websocket session
+   * @type {string}
+   * @memberof WebsocketSession
+   */
+  state?: WebsocketSessionStateEnum;
+  /**
+   * type of websocket session
+   * @type {string}
+   * @memberof WebsocketSession
+   */
+  type?: WebsocketSessionTypeEnum;
+  /**
+   * the connected status of the socket
+   * @type {boolean}
+   * @memberof WebsocketSession
+   */
+  connected?: boolean;
+  /**
+   * Array of websocket status messages
+   * @type {Array<WebsocketMessage>}
+   * @memberof WebsocketSession
+   */
+  statuses?: Array<WebsocketMessage>;
+  /**
+   * Array of websocket messages
+   * @type {Array<WebsocketMessage>}
+   * @memberof WebsocketSession
+   */
+  messages?: Array<WebsocketMessage>;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof WebsocketSession
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof WebsocketSession
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof WebsocketSession
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof WebsocketSession
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof WebsocketSession
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof WebsocketSession
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof WebsocketSession
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof WebsocketSession
+   */
+  lastModifiedDate?: Date;
+};
 
 export function WebsocketSessionFromJSON(json: any): WebsocketSession {
-	return {
-		execModuleId: !exists(json, "execModuleId") ? undefined : json["execModuleId"],
-		state: !exists(json, "state") ? undefined : json["state"],
-		type: !exists(json, "type") ? undefined : json["type"],
-		connected: !exists(json, "connected") ? undefined : json["connected"],
-		statuses: !exists(json, "statuses") ? undefined : (json["statuses"] as Array<any>).map(WebsocketMessageFromJSON),
-		messages: !exists(json, "messages") ? undefined : (json["messages"] as Array<any>).map(WebsocketMessageFromJSON),
-		id: !exists(json, "id") ? undefined : json["id"],
-		ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-		createdDate: !exists(json, "createdDate") ? undefined : new Date(json["createdDate"]),
-		keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-		lastAccessedById: !exists(json, "lastAccessedById") ? undefined : json["lastAccessedById"],
-		lastAccessedDate: !exists(json, "lastAccessedDate") ? undefined : new Date(json["lastAccessedDate"]),
-		lastModifiedById: !exists(json, "lastModifiedById") ? undefined : json["lastModifiedById"],
-		lastModifiedDate: !exists(json, "lastModifiedDate") ? undefined : new Date(json["lastModifiedDate"]),
-	}
+  return {
+    execModuleId: !exists(json, "execModuleId")
+      ? undefined
+      : json["execModuleId"],
+    state: !exists(json, "state") ? undefined : json["state"],
+    type: !exists(json, "type") ? undefined : json["type"],
+    connected: !exists(json, "connected") ? undefined : json["connected"],
+    statuses: !exists(json, "statuses")
+      ? undefined
+      : (json["statuses"] as Array<any>).map(WebsocketMessageFromJSON),
+    messages: !exists(json, "messages")
+      ? undefined
+      : (json["messages"] as Array<any>).map(WebsocketMessageFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function WebsocketSessionToJSON(value?: WebsocketSession): any {
-	if (value === undefined) {
-		return undefined
-	}
-	return {
-		execModuleId: value.execModuleId,
-		state: value.state,
-		type: value.type,
-		connected: value.connected,
-		statuses: value.statuses === undefined ? undefined : (value.statuses as Array<any>).map(WebsocketMessageToJSON),
-		messages: value.messages === undefined ? undefined : (value.messages as Array<any>).map(WebsocketMessageToJSON),
-		id: value.id,
-		ownerId: value.ownerId,
-		createdDate: value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-		keyHash: value.keyHash,
-		lastAccessedById: value.lastAccessedById,
-		lastAccessedDate: value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-		lastModifiedById: value.lastModifiedById,
-		lastModifiedDate: value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-	}
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    execModuleId: value.execModuleId,
+    state: value.state,
+    type: value.type,
+    connected: value.connected,
+    statuses:
+      value.statuses === undefined
+        ? undefined
+        : (value.statuses as Array<any>).map(WebsocketMessageToJSON),
+    messages:
+      value.messages === undefined
+        ? undefined
+        : (value.messages as Array<any>).map(WebsocketMessageToJSON),
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
@@ -154,18 +189,18 @@ export function WebsocketSessionToJSON(value?: WebsocketSession): any {
  * @enum {string}
  */
 export enum WebsocketSessionStateEnum {
-	BROADCAST = "broadcast",
-	ROOM = "room",
-	PRIVATE = "private",
-	AGENT = "agent",
+  BROADCAST = "broadcast",
+  ROOM = "room",
+  PRIVATE = "private",
+  AGENT = "agent",
 }
 /**
  * @export
  * @enum {string}
  */
 export enum WebsocketSessionTypeEnum {
-	BROADCAST = "broadcast",
-	ROOM = "room",
-	PRIVATE = "private",
-	AGENT = "agent",
+  BROADCAST = "broadcast",
+  ROOM = "room",
+  PRIVATE = "private",
+  AGENT = "agent",
 }

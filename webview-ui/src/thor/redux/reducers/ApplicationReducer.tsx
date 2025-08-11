@@ -1,34 +1,42 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 
-import { Application } from "../../model/Application"
+import { Application } from "../../model/Application";
 
 const ApplicationSlice = createSlice({
-	name: "Applications",
-	initialState: [],
+  name: "Applications",
+  initialState: [],
 
-	reducers: {
-		ApplicationAdded(state, action) {
-			state.push(action.payload)
-		},
+  reducers: {
+    ApplicationAdded(state, action) {
+      state.push(action.payload);
+    },
 
-		ApplicationValueToggled(state, action) {
-			console.log("Application TOGGLE")
-			console.warn(JSON.stringify(action))
-			const Application: Application = state.find((Application) => Application.id === action.payload.ApplicationId)
-			if (Application) {
-				if (action.payload.target === "SOMETHING") {
-				}
-			}
-		},
+    ApplicationValueToggled(state, action) {
+      console.log("Application TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Application: Application = state.find(
+        (Application) => Application.id === action.payload.ApplicationId,
+      );
+      if (Application) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
 
-		ApplicationpropertySet(state, action) {
-			const Application = state.find((Application) => Application.id === action.payload.ApplicationId)
-			if (Application) {
-				//  Application[action.property] = action.payload[action.property];
-			}
-		},
-	},
-})
+    ApplicationpropertySet(state, action) {
+      const Application = state.find(
+        (Application) => Application.id === action.payload.ApplicationId,
+      );
+      if (Application) {
+        //  Application[action.property] = action.payload[action.property];
+      }
+    },
+  },
+});
 
-export const { ApplicationAdded, ApplicationValueToggled, ApplicationpropertySet } = ApplicationSlice.actions
-export default ApplicationSlice.reducer
+export const {
+  ApplicationAdded,
+  ApplicationValueToggled,
+  ApplicationpropertySet,
+} = ApplicationSlice.actions;
+export default ApplicationSlice.reducer;

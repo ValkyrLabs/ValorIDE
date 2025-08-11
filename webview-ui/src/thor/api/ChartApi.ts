@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: ChartApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { Chart, ChartFromJSON, ChartToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Chart, ChartFromJSON, ChartToJSON } from "../model";
 
 export interface DeleteChartRequest {
-	id: string
+  id: string;
 }
 
 export interface GetChartRequest {
-	id: string
+  id: string;
 }
 
 export interface PostChartRequest {
-	chart: Chart
+  chart: Chart;
 }
 
 export interface UpdateChartRequest {
-	id: string
-	chart: Chart
+  id: string;
+  chart: Chart;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateChartRequest {
  * Delete a Chart.
  */
 function deleteChartRaw<T>(
-	requestParameters: DeleteChartRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteChartRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteChart.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteChart.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Chart/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Chart/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteChartRaw<T>(
  * Delete a Chart.
  */
 export function deleteChart<T>(
-	requestParameters: DeleteChartRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteChartRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteChartRaw(requestParameters, requestConfig)
+  return deleteChartRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteChart<T>(
  * Retrieve a single Chart
  */
 function getChartRaw<T>(
-	requestParameters: GetChartRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Chart> = {},
+  requestParameters: GetChartRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Chart> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getChart.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getChart.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Chart/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Chart/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ChartFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ChartFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getChartRaw<T>(
  * Retrieve a single Chart
  */
 export function getChart<T>(
-	requestParameters: GetChartRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Chart>,
+  requestParameters: GetChartRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Chart>,
 ): QueryConfig<T> {
-	return getChartRaw(requestParameters, requestConfig)
+  return getChartRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Charts.
  * Retrieve a list of Charts
  */
-function getChartListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<Chart>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getChartListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<Chart>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Chart`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Chart`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(ChartFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(ChartFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of Charts.
  * Retrieve a list of Charts
  */
-export function getChartList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<Chart>>): QueryConfig<T> {
-	return getChartListRaw(requestConfig)
+export function getChartList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Chart>>,
+): QueryConfig<T> {
+  return getChartListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getChartList<T>(requestConfig?: runtime.TypedQueryConfig<T, Arra
  * Create a new Chart
  */
 function postChartRaw<T>(
-	requestParameters: PostChartRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Chart> = {},
+  requestParameters: PostChartRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Chart> = {},
 ): QueryConfig<T> {
-	if (requestParameters.chart === null || requestParameters.chart === undefined) {
-		throw new runtime.RequiredError(
-			"chart",
-			"Required parameter requestParameters.chart was null or undefined when calling postChart.",
-		)
-	}
+  if (
+    requestParameters.chart === null ||
+    requestParameters.chart === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "chart",
+      "Required parameter requestParameters.chart was null or undefined when calling postChart.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Chart`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || ChartToJSON(requestParameters.chart),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Chart`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || ChartToJSON(requestParameters.chart),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ChartFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ChartFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postChartRaw<T>(
  * Create a new Chart
  */
 export function postChart<T>(
-	requestParameters: PostChartRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Chart>,
+  requestParameters: PostChartRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Chart>,
 ): QueryConfig<T> {
-	return postChartRaw(requestParameters, requestConfig)
+  return postChartRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postChart<T>(
  * Update an existing Chart
  */
 function updateChartRaw<T>(
-	requestParameters: UpdateChartRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Chart> = {},
+  requestParameters: UpdateChartRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Chart> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateChart.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateChart.",
+    );
+  }
 
-	if (requestParameters.chart === null || requestParameters.chart === undefined) {
-		throw new runtime.RequiredError(
-			"chart",
-			"Required parameter requestParameters.chart was null or undefined when calling updateChart.",
-		)
-	}
+  if (
+    requestParameters.chart === null ||
+    requestParameters.chart === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "chart",
+      "Required parameter requestParameters.chart was null or undefined when calling updateChart.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Chart/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || ChartToJSON(requestParameters.chart),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Chart/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || ChartToJSON(requestParameters.chart),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ChartFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ChartFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateChartRaw<T>(
  * Update an existing Chart
  */
 export function updateChart<T>(
-	requestParameters: UpdateChartRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Chart>,
+  requestParameters: UpdateChartRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Chart>,
 ): QueryConfig<T> {
-	return updateChartRaw(requestParameters, requestConfig)
+  return updateChartRaw(requestParameters, requestConfig);
 }

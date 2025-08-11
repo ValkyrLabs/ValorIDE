@@ -11,7 +11,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime"
+import { exists, mapValues } from "../src/runtime";
 
 // thorapi
 
@@ -21,123 +21,142 @@ import { exists, mapValues } from "../src/runtime"
  * @interface Rating
  */
 export type Rating = {
-	/**
-	 * The unique identifier for the content item
-	 * @type {string}
-	 * @memberof Rating
-	 */
-	contentId: string
-	/**
-	 * target object for the rating and comments
-	 * @type {string}
-	 * @memberof Rating
-	 */
-	targetType?: RatingTargetTypeEnum
-	/**
-	 *
-	 * @type {string}
-	 * @memberof Rating
-	 */
-	comments?: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof Rating
-	 */
-	url?: string
-	/**
-	 *
-	 * @type {number}
-	 * @memberof Rating
-	 */
-	rating?: number
-	/**
-	 * Unique identifier for object in the system
-	 * @type {string}
-	 * @memberof Rating
-	 */
-	id?: string
-	/**
-	 * UUID of owner of the object in the system
-	 * @type {string}
-	 * @memberof Rating
-	 */
-	ownerId?: string
-	/**
-	 * Date of object creation
-	 * @type {Date}
-	 * @memberof Rating
-	 */
-	createdDate?: Date
-	/**
-	 * Data, including hash of the key(s) used to encrypt this record.
-	 * @type {string}
-	 * @memberof Rating
-	 */
-	keyHash?: string
-	/**
-	 * Last user to access object
-	 * @type {string}
-	 * @memberof Rating
-	 */
-	lastAccessedById?: string
-	/**
-	 * Timestamp of last access of object
-	 * @type {Date}
-	 * @memberof Rating
-	 */
-	lastAccessedDate?: Date
-	/**
-	 * Unique identifier for user who last modifed the object in the system
-	 * @type {string}
-	 * @memberof Rating
-	 */
-	lastModifiedById?: string
-	/**
-	 * Date of last object modification
-	 * @type {Date}
-	 * @memberof Rating
-	 */
-	lastModifiedDate?: Date
-}
+  /**
+   * The unique identifier for the content item
+   * @type {string}
+   * @memberof Rating
+   */
+  contentId: string;
+  /**
+   * target object for the rating and comments
+   * @type {string}
+   * @memberof Rating
+   */
+  targetType?: RatingTargetTypeEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof Rating
+   */
+  comments?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Rating
+   */
+  url?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof Rating
+   */
+  rating?: number;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Rating
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Rating
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Rating
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Rating
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Rating
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Rating
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Rating
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Rating
+   */
+  lastModifiedDate?: Date;
+};
 
 export function RatingFromJSON(json: any): Rating {
-	return {
-		contentId: json["contentId"],
-		targetType: !exists(json, "targetType") ? undefined : json["targetType"],
-		comments: !exists(json, "comments") ? undefined : json["comments"],
-		url: !exists(json, "url") ? undefined : json["url"],
-		rating: !exists(json, "rating") ? undefined : json["rating"],
-		id: !exists(json, "id") ? undefined : json["id"],
-		ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-		createdDate: !exists(json, "createdDate") ? undefined : new Date(json["createdDate"]),
-		keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-		lastAccessedById: !exists(json, "lastAccessedById") ? undefined : json["lastAccessedById"],
-		lastAccessedDate: !exists(json, "lastAccessedDate") ? undefined : new Date(json["lastAccessedDate"]),
-		lastModifiedById: !exists(json, "lastModifiedById") ? undefined : json["lastModifiedById"],
-		lastModifiedDate: !exists(json, "lastModifiedDate") ? undefined : new Date(json["lastModifiedDate"]),
-	}
+  return {
+    contentId: json["contentId"],
+    targetType: !exists(json, "targetType") ? undefined : json["targetType"],
+    comments: !exists(json, "comments") ? undefined : json["comments"],
+    url: !exists(json, "url") ? undefined : json["url"],
+    rating: !exists(json, "rating") ? undefined : json["rating"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function RatingToJSON(value?: Rating): any {
-	if (value === undefined) {
-		return undefined
-	}
-	return {
-		contentId: value.contentId,
-		targetType: value.targetType,
-		comments: value.comments,
-		url: value.url,
-		rating: value.rating,
-		id: value.id,
-		ownerId: value.ownerId,
-		createdDate: value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-		keyHash: value.keyHash,
-		lastAccessedById: value.lastAccessedById,
-		lastAccessedDate: value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-		lastModifiedById: value.lastModifiedById,
-		lastModifiedDate: value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-	}
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    contentId: value.contentId,
+    targetType: value.targetType,
+    comments: value.comments,
+    url: value.url,
+    rating: value.rating,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
@@ -145,8 +164,8 @@ export function RatingToJSON(value?: Rating): any {
  * @enum {string}
  */
 export enum RatingTargetTypeEnum {
-	HOMEPAGE = "homepage",
-	BLOG = "blog",
-	PRODUCT = "product",
-	NONE = "none",
+  HOMEPAGE = "homepage",
+  BLOG = "blog",
+  PRODUCT = "product",
+  NONE = "none",
 }

@@ -13,20 +13,20 @@ raza, religión o identidad y orientación sexual.
 
 Ejemplos de comportamientos que contribuyen a crear un entorno positivo incluyen:
 
--   Uso de un lenguaje acogedor e inclusivo
--   Respeto a diferentes puntos de vista y experiencias
--   Aceptar de manera constructiva las críticas
--   Centrarse en lo que es mejor para la comunidad
--   Mostrar empatía hacia otros miembros de la comunidad
+- Uso de un lenguaje acogedor e inclusivo
+- Respeto a diferentes puntos de vista y experiencias
+- Aceptar de manera constructiva las críticas
+- Centrarse en lo que es mejor para la comunidad
+- Mostrar empatía hacia otros miembros de la comunidad
 
 Ejemplos de comportamientos inaceptables por parte de los participantes incluyen:
 
--   El uso de lenguaje o imágenes sexualizadas y la atención o avances sexuales no deseados
--   Trollear, comentarios insultantes/despectivos y ataques personales o políticos
--   Acoso público o privado
--   Publicar información privada de otros, como una dirección física o electrónica,
-    sin permiso explícito
--   Otras conductas que podrían considerarse inapropiadas en un entorno profesional
+- El uso de lenguaje o imágenes sexualizadas y la atención o avances sexuales no deseados
+- Trollear, comentarios insultantes/despectivos y ataques personales o políticos
+- Acoso público o privado
+- Publicar información privada de otros, como una dirección física o electrónica,
+  sin permiso explícito
+- Otras conductas que podrían considerarse inapropiadas en un entorno profesional
 
 ## Nuestras Responsabilidades
 

@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: PtgApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { Ptg, PtgFromJSON, PtgToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Ptg, PtgFromJSON, PtgToJSON } from "../model";
 
 export interface DeletePtgRequest {
-	id: string
+  id: string;
 }
 
 export interface GetPtgRequest {
-	id: string
+  id: string;
 }
 
 export interface PostPtgRequest {
-	ptg: Ptg
+  ptg: Ptg;
 }
 
 export interface UpdatePtgRequest {
-	id: string
-	ptg: Ptg
+  id: string;
+  ptg: Ptg;
 }
 
 /**
@@ -42,42 +47,45 @@ export interface UpdatePtgRequest {
  * Delete a Ptg.
  */
 function deletePtgRaw<T>(
-	requestParameters: DeletePtgRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeletePtgRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deletePtg.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deletePtg.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Ptg/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Ptg/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -85,152 +93,174 @@ function deletePtgRaw<T>(
  * Delete a Ptg.
  */
 export function deletePtg<T>(
-	requestParameters: DeletePtgRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeletePtgRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deletePtgRaw(requestParameters, requestConfig)
+  return deletePtgRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single Ptg for a specific uid.
  * Retrieve a single Ptg
  */
-function getPtgRaw<T>(requestParameters: GetPtgRequest, requestConfig: runtime.TypedQueryConfig<T, Ptg> = {}): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getPtg.",
-		)
-	}
+function getPtgRaw<T>(
+  requestParameters: GetPtgRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Ptg> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getPtg.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Ptg/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Ptg/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(PtgFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(PtgFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a single Ptg for a specific uid.
  * Retrieve a single Ptg
  */
-export function getPtg<T>(requestParameters: GetPtgRequest, requestConfig?: runtime.TypedQueryConfig<T, Ptg>): QueryConfig<T> {
-	return getPtgRaw(requestParameters, requestConfig)
+export function getPtg<T>(
+  requestParameters: GetPtgRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Ptg>,
+): QueryConfig<T> {
+  return getPtgRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Ptgs.
  * Retrieve a list of Ptgs
  */
-function getPtgListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<Ptg>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getPtgListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<Ptg>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Ptg`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Ptg`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(PtgFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(PtgFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of Ptgs.
  * Retrieve a list of Ptgs
  */
-export function getPtgList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<Ptg>>): QueryConfig<T> {
-	return getPtgListRaw(requestConfig)
+export function getPtgList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Ptg>>,
+): QueryConfig<T> {
+  return getPtgListRaw(requestConfig);
 }
 
 /**
  * Creates a new Ptg.
  * Create a new Ptg
  */
-function postPtgRaw<T>(requestParameters: PostPtgRequest, requestConfig: runtime.TypedQueryConfig<T, Ptg> = {}): QueryConfig<T> {
-	if (requestParameters.ptg === null || requestParameters.ptg === undefined) {
-		throw new runtime.RequiredError(
-			"ptg",
-			"Required parameter requestParameters.ptg was null or undefined when calling postPtg.",
-		)
-	}
+function postPtgRaw<T>(
+  requestParameters: PostPtgRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Ptg> = {},
+): QueryConfig<T> {
+  if (requestParameters.ptg === null || requestParameters.ptg === undefined) {
+    throw new runtime.RequiredError(
+      "ptg",
+      "Required parameter requestParameters.ptg was null or undefined when calling postPtg.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Ptg`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || PtgToJSON(requestParameters.ptg),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Ptg`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || PtgToJSON(requestParameters.ptg),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(PtgFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(PtgFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Creates a new Ptg.
  * Create a new Ptg
  */
-export function postPtg<T>(requestParameters: PostPtgRequest, requestConfig?: runtime.TypedQueryConfig<T, Ptg>): QueryConfig<T> {
-	return postPtgRaw(requestParameters, requestConfig)
+export function postPtg<T>(
+  requestParameters: PostPtgRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Ptg>,
+): QueryConfig<T> {
+  return postPtgRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -238,52 +268,56 @@ export function postPtg<T>(requestParameters: PostPtgRequest, requestConfig?: ru
  * Update an existing Ptg
  */
 function updatePtgRaw<T>(
-	requestParameters: UpdatePtgRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Ptg> = {},
+  requestParameters: UpdatePtgRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Ptg> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updatePtg.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updatePtg.",
+    );
+  }
 
-	if (requestParameters.ptg === null || requestParameters.ptg === undefined) {
-		throw new runtime.RequiredError(
-			"ptg",
-			"Required parameter requestParameters.ptg was null or undefined when calling updatePtg.",
-		)
-	}
+  if (requestParameters.ptg === null || requestParameters.ptg === undefined) {
+    throw new runtime.RequiredError(
+      "ptg",
+      "Required parameter requestParameters.ptg was null or undefined when calling updatePtg.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Ptg/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || PtgToJSON(requestParameters.ptg),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Ptg/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || PtgToJSON(requestParameters.ptg),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(PtgFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(PtgFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -291,8 +325,8 @@ function updatePtgRaw<T>(
  * Update an existing Ptg
  */
 export function updatePtg<T>(
-	requestParameters: UpdatePtgRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Ptg>,
+  requestParameters: UpdatePtgRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Ptg>,
 ): QueryConfig<T> {
-	return updatePtgRaw(requestParameters, requestConfig)
+  return updatePtgRaw(requestParameters, requestConfig);
 }

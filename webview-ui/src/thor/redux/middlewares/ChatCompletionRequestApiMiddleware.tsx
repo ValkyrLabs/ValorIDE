@@ -1,28 +1,28 @@
 import {
-	getChatCompletionRequest,
-	postChatCompletionRequest,
-	getChatCompletionRequestList,
-	deleteChatCompletionRequest,
-	updateChatCompletionRequest,
-} from "../../api"
+  getChatCompletionRequest,
+  postChatCompletionRequest,
+  getChatCompletionRequestList,
+  deleteChatCompletionRequest,
+  updateChatCompletionRequest,
+} from "../../api";
 
 import {
-	ADD_CHATCOMPLETIONREQUEST_REQUEST,
-	FETCH_CHATCOMPLETIONREQUEST_REQUEST,
-	LIST_CHATCOMPLETIONREQUEST_REQUEST,
-	UPDATE_CHATCOMPLETIONREQUEST_REQUEST,
-	DELETE_CHATCOMPLETIONREQUEST_REQUEST,
-	addChatCompletionRequestFailure,
-	addChatCompletionRequestSuccess,
-	fetchChatCompletionRequestFailure,
-	fetchChatCompletionRequestSuccess,
-	listChatCompletionRequestFailure,
-	listChatCompletionRequestSuccess,
-	updateChatCompletionRequestFailure,
-	updateChatCompletionRequestSuccess,
-	deleteChatCompletionRequestFailure,
-	deleteChatCompletionRequestSuccess,
-} from "../actions/ChatCompletionRequestApiAction"
+  ADD_CHATCOMPLETIONREQUEST_REQUEST,
+  FETCH_CHATCOMPLETIONREQUEST_REQUEST,
+  LIST_CHATCOMPLETIONREQUEST_REQUEST,
+  UPDATE_CHATCOMPLETIONREQUEST_REQUEST,
+  DELETE_CHATCOMPLETIONREQUEST_REQUEST,
+  addChatCompletionRequestFailure,
+  addChatCompletionRequestSuccess,
+  fetchChatCompletionRequestFailure,
+  fetchChatCompletionRequestSuccess,
+  listChatCompletionRequestFailure,
+  listChatCompletionRequestSuccess,
+  updateChatCompletionRequestFailure,
+  updateChatCompletionRequestSuccess,
+  deleteChatCompletionRequestFailure,
+  deleteChatCompletionRequestSuccess,
+} from "../actions/ChatCompletionRequestApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -41,61 +41,61 @@ Description: ChatCompletionRequest
 */
 
 export const ChatCompletionRequestMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("ChatCompletionRequest MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("ChatCompletionRequest MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_CHATCOMPLETIONREQUEST_REQUEST:
-				try {
-					const response = postChatCompletionRequest(action.payload)
-					dispatch(addChatCompletionRequestSuccess(response.body))
-				} catch (error) {
-					dispatch(addChatCompletionRequestFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_CHATCOMPLETIONREQUEST_REQUEST:
+        try {
+          const response = postChatCompletionRequest(action.payload);
+          dispatch(addChatCompletionRequestSuccess(response.body));
+        } catch (error) {
+          dispatch(addChatCompletionRequestFailure(error.message));
+        }
+        break;
 
-			case LIST_CHATCOMPLETIONREQUEST_REQUEST:
-				try {
-					const response = getChatCompletionRequestList()
-					dispatch(listChatCompletionRequestSuccess(response.body))
-				} catch (error) {
-					dispatch(listChatCompletionRequestFailure(error.message))
-				}
-				break
+      case LIST_CHATCOMPLETIONREQUEST_REQUEST:
+        try {
+          const response = getChatCompletionRequestList();
+          dispatch(listChatCompletionRequestSuccess(response.body));
+        } catch (error) {
+          dispatch(listChatCompletionRequestFailure(error.message));
+        }
+        break;
 
-			case FETCH_CHATCOMPLETIONREQUEST_REQUEST:
-				try {
-					const response = getChatCompletionRequest(action.id)
-					dispatch(fetchChatCompletionRequestSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchChatCompletionRequestFailure(error.message))
-				}
-				break
+      case FETCH_CHATCOMPLETIONREQUEST_REQUEST:
+        try {
+          const response = getChatCompletionRequest(action.id);
+          dispatch(fetchChatCompletionRequestSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchChatCompletionRequestFailure(error.message));
+        }
+        break;
 
-			case UPDATE_CHATCOMPLETIONREQUEST_REQUEST:
-				try {
-					const { id, ChatCompletionRequest } = action.payload
-					const response = updateChatCompletionRequest(id)
-					dispatch(updateChatCompletionRequestSuccess(response.body))
-				} catch (error) {
-					dispatch(updateChatCompletionRequestFailure(error.message))
-				}
-				break
+      case UPDATE_CHATCOMPLETIONREQUEST_REQUEST:
+        try {
+          const { id, ChatCompletionRequest } = action.payload;
+          const response = updateChatCompletionRequest(id);
+          dispatch(updateChatCompletionRequestSuccess(response.body));
+        } catch (error) {
+          dispatch(updateChatCompletionRequestFailure(error.message));
+        }
+        break;
 
-			case DELETE_CHATCOMPLETIONREQUEST_REQUEST:
-				try {
-					const { id, ChatCompletionRequest } = action.payload
-					const response = deleteChatCompletionRequest(id)
-					dispatch(deleteChatCompletionRequestSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteChatCompletionRequestFailure(error.message))
-				}
-				break
+      case DELETE_CHATCOMPLETIONREQUEST_REQUEST:
+        try {
+          const { id, ChatCompletionRequest } = action.payload;
+          const response = deleteChatCompletionRequest(id);
+          dispatch(deleteChatCompletionRequestSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteChatCompletionRequestFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

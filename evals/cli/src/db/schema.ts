@@ -45,4 +45,4 @@ CREATE TABLE IF NOT EXISTS files (
   status TEXT NOT NULL,
   FOREIGN KEY (task_id) REFERENCES tasks(id)
 );
-`
+`;

@@ -1,22 +1,28 @@
-import { getBuild, postBuild, getBuildList, deleteBuild, updateBuild } from "../../api"
+import {
+  getBuild,
+  postBuild,
+  getBuildList,
+  deleteBuild,
+  updateBuild,
+} from "../../api";
 
 import {
-	ADD_BUILD_REQUEST,
-	FETCH_BUILD_REQUEST,
-	LIST_BUILD_REQUEST,
-	UPDATE_BUILD_REQUEST,
-	DELETE_BUILD_REQUEST,
-	addBuildFailure,
-	addBuildSuccess,
-	fetchBuildFailure,
-	fetchBuildSuccess,
-	listBuildFailure,
-	listBuildSuccess,
-	updateBuildFailure,
-	updateBuildSuccess,
-	deleteBuildFailure,
-	deleteBuildSuccess,
-} from "../actions/BuildApiAction"
+  ADD_BUILD_REQUEST,
+  FETCH_BUILD_REQUEST,
+  LIST_BUILD_REQUEST,
+  UPDATE_BUILD_REQUEST,
+  DELETE_BUILD_REQUEST,
+  addBuildFailure,
+  addBuildSuccess,
+  fetchBuildFailure,
+  fetchBuildSuccess,
+  listBuildFailure,
+  listBuildSuccess,
+  updateBuildFailure,
+  updateBuildSuccess,
+  deleteBuildFailure,
+  deleteBuildSuccess,
+} from "../actions/BuildApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: Build
 */
 
 export const BuildMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("Build MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Build MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_BUILD_REQUEST:
-				try {
-					const response = postBuild(action.payload)
-					dispatch(addBuildSuccess(response.body))
-				} catch (error) {
-					dispatch(addBuildFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_BUILD_REQUEST:
+        try {
+          const response = postBuild(action.payload);
+          dispatch(addBuildSuccess(response.body));
+        } catch (error) {
+          dispatch(addBuildFailure(error.message));
+        }
+        break;
 
-			case LIST_BUILD_REQUEST:
-				try {
-					const response = getBuildList()
-					dispatch(listBuildSuccess(response.body))
-				} catch (error) {
-					dispatch(listBuildFailure(error.message))
-				}
-				break
+      case LIST_BUILD_REQUEST:
+        try {
+          const response = getBuildList();
+          dispatch(listBuildSuccess(response.body));
+        } catch (error) {
+          dispatch(listBuildFailure(error.message));
+        }
+        break;
 
-			case FETCH_BUILD_REQUEST:
-				try {
-					const response = getBuild(action.id)
-					dispatch(fetchBuildSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchBuildFailure(error.message))
-				}
-				break
+      case FETCH_BUILD_REQUEST:
+        try {
+          const response = getBuild(action.id);
+          dispatch(fetchBuildSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchBuildFailure(error.message));
+        }
+        break;
 
-			case UPDATE_BUILD_REQUEST:
-				try {
-					const { id, Build } = action.payload
-					const response = updateBuild(id)
-					dispatch(updateBuildSuccess(response.body))
-				} catch (error) {
-					dispatch(updateBuildFailure(error.message))
-				}
-				break
+      case UPDATE_BUILD_REQUEST:
+        try {
+          const { id, Build } = action.payload;
+          const response = updateBuild(id);
+          dispatch(updateBuildSuccess(response.body));
+        } catch (error) {
+          dispatch(updateBuildFailure(error.message));
+        }
+        break;
 
-			case DELETE_BUILD_REQUEST:
-				try {
-					const { id, Build } = action.payload
-					const response = deleteBuild(id)
-					dispatch(deleteBuildSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteBuildFailure(error.message))
-				}
-				break
+      case DELETE_BUILD_REQUEST:
+        try {
+          const { id, Build } = action.payload;
+          const response = deleteBuild(id);
+          dispatch(deleteBuildSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteBuildFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

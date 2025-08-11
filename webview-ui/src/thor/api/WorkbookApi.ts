@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: WorkbookApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { Workbook, WorkbookFromJSON, WorkbookToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Workbook, WorkbookFromJSON, WorkbookToJSON } from "../model";
 
 export interface DeleteWorkbookRequest {
-	id: string
+  id: string;
 }
 
 export interface GetWorkbookRequest {
-	id: string
+  id: string;
 }
 
 export interface PostWorkbookRequest {
-	workbook: Workbook
+  workbook: Workbook;
 }
 
 export interface UpdateWorkbookRequest {
-	id: string
-	workbook: Workbook
+  id: string;
+  workbook: Workbook;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateWorkbookRequest {
  * Delete a Workbook.
  */
 function deleteWorkbookRaw<T>(
-	requestParameters: DeleteWorkbookRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteWorkbookRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteWorkbook.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteWorkbook.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Workbook/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Workbook/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteWorkbookRaw<T>(
  * Delete a Workbook.
  */
 export function deleteWorkbook<T>(
-	requestParameters: DeleteWorkbookRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteWorkbookRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteWorkbookRaw(requestParameters, requestConfig)
+  return deleteWorkbookRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteWorkbook<T>(
  * Retrieve a single Workbook
  */
 function getWorkbookRaw<T>(
-	requestParameters: GetWorkbookRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Workbook> = {},
+  requestParameters: GetWorkbookRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Workbook> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getWorkbook.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getWorkbook.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Workbook/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Workbook/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WorkbookFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(WorkbookFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getWorkbookRaw<T>(
  * Retrieve a single Workbook
  */
 export function getWorkbook<T>(
-	requestParameters: GetWorkbookRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Workbook>,
+  requestParameters: GetWorkbookRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Workbook>,
 ): QueryConfig<T> {
-	return getWorkbookRaw(requestParameters, requestConfig)
+  return getWorkbookRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Workbooks.
  * Retrieve a list of Workbooks
  */
-function getWorkbookListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<Workbook>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getWorkbookListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<Workbook>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Workbook`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Workbook`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(WorkbookFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(WorkbookFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of Workbooks.
  * Retrieve a list of Workbooks
  */
-export function getWorkbookList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<Workbook>>): QueryConfig<T> {
-	return getWorkbookListRaw(requestConfig)
+export function getWorkbookList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Workbook>>,
+): QueryConfig<T> {
+  return getWorkbookListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getWorkbookList<T>(requestConfig?: runtime.TypedQueryConfig<T, A
  * Create a new Workbook
  */
 function postWorkbookRaw<T>(
-	requestParameters: PostWorkbookRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Workbook> = {},
+  requestParameters: PostWorkbookRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Workbook> = {},
 ): QueryConfig<T> {
-	if (requestParameters.workbook === null || requestParameters.workbook === undefined) {
-		throw new runtime.RequiredError(
-			"workbook",
-			"Required parameter requestParameters.workbook was null or undefined when calling postWorkbook.",
-		)
-	}
+  if (
+    requestParameters.workbook === null ||
+    requestParameters.workbook === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "workbook",
+      "Required parameter requestParameters.workbook was null or undefined when calling postWorkbook.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Workbook`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || WorkbookToJSON(requestParameters.workbook),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Workbook`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || WorkbookToJSON(requestParameters.workbook),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WorkbookFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(WorkbookFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postWorkbookRaw<T>(
  * Create a new Workbook
  */
 export function postWorkbook<T>(
-	requestParameters: PostWorkbookRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Workbook>,
+  requestParameters: PostWorkbookRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Workbook>,
 ): QueryConfig<T> {
-	return postWorkbookRaw(requestParameters, requestConfig)
+  return postWorkbookRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postWorkbook<T>(
  * Update an existing Workbook
  */
 function updateWorkbookRaw<T>(
-	requestParameters: UpdateWorkbookRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Workbook> = {},
+  requestParameters: UpdateWorkbookRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Workbook> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateWorkbook.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateWorkbook.",
+    );
+  }
 
-	if (requestParameters.workbook === null || requestParameters.workbook === undefined) {
-		throw new runtime.RequiredError(
-			"workbook",
-			"Required parameter requestParameters.workbook was null or undefined when calling updateWorkbook.",
-		)
-	}
+  if (
+    requestParameters.workbook === null ||
+    requestParameters.workbook === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "workbook",
+      "Required parameter requestParameters.workbook was null or undefined when calling updateWorkbook.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Workbook/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || WorkbookToJSON(requestParameters.workbook),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Workbook/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || WorkbookToJSON(requestParameters.workbook),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WorkbookFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(WorkbookFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateWorkbookRaw<T>(
  * Update an existing Workbook
  */
 export function updateWorkbook<T>(
-	requestParameters: UpdateWorkbookRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Workbook>,
+  requestParameters: UpdateWorkbookRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Workbook>,
 ): QueryConfig<T> {
-	return updateWorkbookRaw(requestParameters, requestConfig)
+  return updateWorkbookRaw(requestParameters, requestConfig);
 }

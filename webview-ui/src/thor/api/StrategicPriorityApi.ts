@@ -16,25 +16,34 @@ Template file: typescript-redux-query/apis.mustache
 Description: StrategicPriorityApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { StrategicPriority, StrategicPriorityFromJSON, StrategicPriorityToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  StrategicPriority,
+  StrategicPriorityFromJSON,
+  StrategicPriorityToJSON,
+} from "../model";
 
 export interface DeleteStrategicPriorityRequest {
-	id: string
+  id: string;
 }
 
 export interface GetStrategicPriorityRequest {
-	id: string
+  id: string;
 }
 
 export interface PostStrategicPriorityRequest {
-	strategicPriority: StrategicPriority
+  strategicPriority: StrategicPriority;
 }
 
 export interface UpdateStrategicPriorityRequest {
-	id: string
-	strategicPriority: StrategicPriority
+  id: string;
+  strategicPriority: StrategicPriority;
 }
 
 /**
@@ -42,45 +51,45 @@ export interface UpdateStrategicPriorityRequest {
  * Delete a StrategicPriority.
  */
 function deleteStrategicPriorityRaw<T>(
-	requestParameters: DeleteStrategicPriorityRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteStrategicPriorityRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteStrategicPriority.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteStrategicPriority.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/StrategicPriority/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/StrategicPriority/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +97,10 @@ function deleteStrategicPriorityRaw<T>(
  * Delete a StrategicPriority.
  */
 export function deleteStrategicPriority<T>(
-	requestParameters: DeleteStrategicPriorityRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteStrategicPriorityRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteStrategicPriorityRaw(requestParameters, requestConfig)
+  return deleteStrategicPriorityRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +108,47 @@ export function deleteStrategicPriority<T>(
  * Retrieve a single StrategicPriority
  */
 function getStrategicPriorityRaw<T>(
-	requestParameters: GetStrategicPriorityRequest,
-	requestConfig: runtime.TypedQueryConfig<T, StrategicPriority> = {},
+  requestParameters: GetStrategicPriorityRequest,
+  requestConfig: runtime.TypedQueryConfig<T, StrategicPriority> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getStrategicPriority.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getStrategicPriority.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/StrategicPriority/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/StrategicPriority/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(StrategicPriorityFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(StrategicPriorityFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,10 +156,10 @@ function getStrategicPriorityRaw<T>(
  * Retrieve a single StrategicPriority
  */
 export function getStrategicPriority<T>(
-	requestParameters: GetStrategicPriorityRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, StrategicPriority>,
+  requestParameters: GetStrategicPriorityRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, StrategicPriority>,
 ): QueryConfig<T> {
-	return getStrategicPriorityRaw(requestParameters, requestConfig)
+  return getStrategicPriorityRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -157,35 +167,36 @@ export function getStrategicPriority<T>(
  * Retrieve a list of StrategicPrioritys
  */
 function getStrategicPriorityListRaw<T>(
-	requestConfig: runtime.TypedQueryConfig<T, Array<StrategicPriority>> = {},
+  requestConfig: runtime.TypedQueryConfig<T, Array<StrategicPriority>> = {},
 ): QueryConfig<T> {
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/StrategicPriority`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/StrategicPriority`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(StrategicPriorityFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(StrategicPriorityFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -193,9 +204,9 @@ function getStrategicPriorityListRaw<T>(
  * Retrieve a list of StrategicPrioritys
  */
 export function getStrategicPriorityList<T>(
-	requestConfig?: runtime.TypedQueryConfig<T, Array<StrategicPriority>>,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<StrategicPriority>>,
 ): QueryConfig<T> {
-	return getStrategicPriorityListRaw(requestConfig)
+  return getStrategicPriorityListRaw(requestConfig);
 }
 
 /**
@@ -203,45 +214,51 @@ export function getStrategicPriorityList<T>(
  * Create a new StrategicPriority
  */
 function postStrategicPriorityRaw<T>(
-	requestParameters: PostStrategicPriorityRequest,
-	requestConfig: runtime.TypedQueryConfig<T, StrategicPriority> = {},
+  requestParameters: PostStrategicPriorityRequest,
+  requestConfig: runtime.TypedQueryConfig<T, StrategicPriority> = {},
 ): QueryConfig<T> {
-	if (requestParameters.strategicPriority === null || requestParameters.strategicPriority === undefined) {
-		throw new runtime.RequiredError(
-			"strategicPriority",
-			"Required parameter requestParameters.strategicPriority was null or undefined when calling postStrategicPriority.",
-		)
-	}
+  if (
+    requestParameters.strategicPriority === null ||
+    requestParameters.strategicPriority === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "strategicPriority",
+      "Required parameter requestParameters.strategicPriority was null or undefined when calling postStrategicPriority.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/StrategicPriority`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || StrategicPriorityToJSON(requestParameters.strategicPriority),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/StrategicPriority`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      StrategicPriorityToJSON(requestParameters.strategicPriority),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(StrategicPriorityFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(StrategicPriorityFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -249,10 +266,10 @@ function postStrategicPriorityRaw<T>(
  * Create a new StrategicPriority
  */
 export function postStrategicPriority<T>(
-	requestParameters: PostStrategicPriorityRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, StrategicPriority>,
+  requestParameters: PostStrategicPriorityRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, StrategicPriority>,
 ): QueryConfig<T> {
-	return postStrategicPriorityRaw(requestParameters, requestConfig)
+  return postStrategicPriorityRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -260,55 +277,61 @@ export function postStrategicPriority<T>(
  * Update an existing StrategicPriority
  */
 function updateStrategicPriorityRaw<T>(
-	requestParameters: UpdateStrategicPriorityRequest,
-	requestConfig: runtime.TypedQueryConfig<T, StrategicPriority> = {},
+  requestParameters: UpdateStrategicPriorityRequest,
+  requestConfig: runtime.TypedQueryConfig<T, StrategicPriority> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateStrategicPriority.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateStrategicPriority.",
+    );
+  }
 
-	if (requestParameters.strategicPriority === null || requestParameters.strategicPriority === undefined) {
-		throw new runtime.RequiredError(
-			"strategicPriority",
-			"Required parameter requestParameters.strategicPriority was null or undefined when calling updateStrategicPriority.",
-		)
-	}
+  if (
+    requestParameters.strategicPriority === null ||
+    requestParameters.strategicPriority === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "strategicPriority",
+      "Required parameter requestParameters.strategicPriority was null or undefined when calling updateStrategicPriority.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/StrategicPriority/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || StrategicPriorityToJSON(requestParameters.strategicPriority),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/StrategicPriority/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      StrategicPriorityToJSON(requestParameters.strategicPriority),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(StrategicPriorityFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(StrategicPriorityFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -316,8 +339,8 @@ function updateStrategicPriorityRaw<T>(
  * Update an existing StrategicPriority
  */
 export function updateStrategicPriority<T>(
-	requestParameters: UpdateStrategicPriorityRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, StrategicPriority>,
+  requestParameters: UpdateStrategicPriorityRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, StrategicPriority>,
 ): QueryConfig<T> {
-	return updateStrategicPriorityRaw(requestParameters, requestConfig)
+  return updateStrategicPriorityRaw(requestParameters, requestConfig);
 }

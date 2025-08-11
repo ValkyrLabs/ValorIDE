@@ -22,14 +22,14 @@ Wenn du planst, an einer größeren Funktion zu arbeiten, erstelle bitte zuerst 
 
 1. **VS Code Erweiterungen**
 
-    - Beim Öffnen des Projekts wird VS Code dich auffordern, die empfohlenen Erweiterungen zu installieren
-    - Diese Erweiterungen sind für die Entwicklung erforderlich, bitte akzeptiere alle Installationsanfragen
-    - Wenn du die Anfragen abgelehnt hast, kannst du sie manuell im Erweiterungsbereich installieren
+   - Beim Öffnen des Projekts wird VS Code dich auffordern, die empfohlenen Erweiterungen zu installieren
+   - Diese Erweiterungen sind für die Entwicklung erforderlich, bitte akzeptiere alle Installationsanfragen
+   - Wenn du die Anfragen abgelehnt hast, kannst du sie manuell im Erweiterungsbereich installieren
 
 2. **Lokale Entwicklung**
-    - Führe `npm run install:all` aus, um die Abhängigkeiten zu installieren
-    - Führe `npm run test` aus, um die Tests lokal auszuführen
-    - Bevor du einen PR einreichst, führe `npm run format:fix` aus, um deinen Code zu formatieren
+   - Führe `npm run install:all` aus, um die Abhängigkeiten zu installieren
+   - Führe `npm run test` aus, um die Tests lokal auszuführen
+   - Bevor du einen PR einreichst, führe `npm run format:fix` aus, um deinen Code zu formatieren
 
 ## Code schreiben und einreichen
 
@@ -37,43 +37,43 @@ Jeder kann Code zu ValorIDE beitragen, aber wir bitten dich, diese Richtlinien z
 
 1. **Pull Requests fokussiert halten**
 
-    - Begrenze PRs auf eine einzelne Funktion oder Fehlerbehebung
-    - Teile größere Änderungen in kleinere, kohärente PRs auf
-    - Teile Änderungen in logische Commits auf, die unabhängig überprüft werden können
+   - Begrenze PRs auf eine einzelne Funktion oder Fehlerbehebung
+   - Teile größere Änderungen in kleinere, kohärente PRs auf
+   - Teile Änderungen in logische Commits auf, die unabhängig überprüft werden können
 
 2. **Codequalität**
 
-    - Führe `npm run lint` aus, um den Code-Stil zu überprüfen
-    - Führe `npm run format` aus, um den Code automatisch zu formatieren
-    - Alle PRs müssen die CI-Prüfungen bestehen, die Linting und Formatierung umfassen
-    - Behebe alle ESLint-Warnungen oder -Fehler, bevor du einreichst
-    - Befolge die Best Practices für TypeScript und halte die Typensicherheit ein
+   - Führe `npm run lint` aus, um den Code-Stil zu überprüfen
+   - Führe `npm run format` aus, um den Code automatisch zu formatieren
+   - Alle PRs müssen die CI-Prüfungen bestehen, die Linting und Formatierung umfassen
+   - Behebe alle ESLint-Warnungen oder -Fehler, bevor du einreichst
+   - Befolge die Best Practices für TypeScript und halte die Typensicherheit ein
 
 3. **Tests**
 
-    - Füge Tests für neue Funktionen hinzu
-    - Führe `npm test` aus, um sicherzustellen, dass alle Tests bestehen
-    - Aktualisiere bestehende Tests, wenn deine Änderungen sie beeinflussen
-    - Füge sowohl Unit- als auch Integrationstests hinzu, wo es angebracht ist
+   - Füge Tests für neue Funktionen hinzu
+   - Führe `npm test` aus, um sicherzustellen, dass alle Tests bestehen
+   - Aktualisiere bestehende Tests, wenn deine Änderungen sie beeinflussen
+   - Füge sowohl Unit- als auch Integrationstests hinzu, wo es angebracht ist
 
 4. **Commit-Richtlinien**
 
-    - Schreibe klare und beschreibende Commit-Nachrichten
-    - Verwende das konventionelle Commit-Format (z.B. "feat:", "fix:", "docs:")
-    - Verweise auf relevante Issues in den Commits mit #Issue-Nummer
+   - Schreibe klare und beschreibende Commit-Nachrichten
+   - Verwende das konventionelle Commit-Format (z.B. "feat:", "fix:", "docs:")
+   - Verweise auf relevante Issues in den Commits mit #Issue-Nummer
 
 5. **Vor dem Einreichen**
 
-    - Rebase deinen Branch mit dem neuesten Main
-    - Stelle sicher, dass dein Branch korrekt gebaut wird
-    - Überprüfe, dass alle Tests bestehen
-    - Überprüfe deine Änderungen, um jeglichen Debug-Code oder Konsolenprotokolle zu entfernen
+   - Rebase deinen Branch mit dem neuesten Main
+   - Stelle sicher, dass dein Branch korrekt gebaut wird
+   - Überprüfe, dass alle Tests bestehen
+   - Überprüfe deine Änderungen, um jeglichen Debug-Code oder Konsolenprotokolle zu entfernen
 
 6. **Beschreibung des Pull Requests**
-    - Beschreibe klar, was deine Änderungen bewirken
-    - Füge Schritte hinzu, um die Änderungen zu testen
-    - Liste alle wichtigen Änderungen auf
-    - Füge Screenshots für Änderungen an der Benutzeroberfläche hinzu
+   - Beschreibe klar, was deine Änderungen bewirken
+   - Füge Schritte hinzu, um die Änderungen zu testen
+   - Liste alle wichtigen Änderungen auf
+   - Füge Screenshots für Änderungen an der Benutzeroberfläche hinzu
 
 ## Beitragsvereinbarung
 

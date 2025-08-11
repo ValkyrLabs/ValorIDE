@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: RatingApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { Rating, RatingFromJSON, RatingToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Rating, RatingFromJSON, RatingToJSON } from "../model";
 
 export interface DeleteRatingRequest {
-	id: string
+  id: string;
 }
 
 export interface GetRatingRequest {
-	id: string
+  id: string;
 }
 
 export interface PostRatingRequest {
-	rating: Rating
+  rating: Rating;
 }
 
 export interface UpdateRatingRequest {
-	id: string
-	rating: Rating
+  id: string;
+  rating: Rating;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateRatingRequest {
  * Delete a Rating.
  */
 function deleteRatingRaw<T>(
-	requestParameters: DeleteRatingRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteRatingRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteRating.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteRating.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Rating/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Rating/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteRatingRaw<T>(
  * Delete a Rating.
  */
 export function deleteRating<T>(
-	requestParameters: DeleteRatingRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteRatingRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteRatingRaw(requestParameters, requestConfig)
+  return deleteRatingRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteRating<T>(
  * Retrieve a single Rating
  */
 function getRatingRaw<T>(
-	requestParameters: GetRatingRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Rating> = {},
+  requestParameters: GetRatingRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Rating> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getRating.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getRating.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Rating/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Rating/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(RatingFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(RatingFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getRatingRaw<T>(
  * Retrieve a single Rating
  */
 export function getRating<T>(
-	requestParameters: GetRatingRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Rating>,
+  requestParameters: GetRatingRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Rating>,
 ): QueryConfig<T> {
-	return getRatingRaw(requestParameters, requestConfig)
+  return getRatingRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Ratings.
  * Retrieve a list of Ratings
  */
-function getRatingListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<Rating>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getRatingListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<Rating>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Rating`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Rating`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(RatingFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(RatingFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of Ratings.
  * Retrieve a list of Ratings
  */
-export function getRatingList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<Rating>>): QueryConfig<T> {
-	return getRatingListRaw(requestConfig)
+export function getRatingList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Rating>>,
+): QueryConfig<T> {
+  return getRatingListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getRatingList<T>(requestConfig?: runtime.TypedQueryConfig<T, Arr
  * Create a new Rating
  */
 function postRatingRaw<T>(
-	requestParameters: PostRatingRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Rating> = {},
+  requestParameters: PostRatingRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Rating> = {},
 ): QueryConfig<T> {
-	if (requestParameters.rating === null || requestParameters.rating === undefined) {
-		throw new runtime.RequiredError(
-			"rating",
-			"Required parameter requestParameters.rating was null or undefined when calling postRating.",
-		)
-	}
+  if (
+    requestParameters.rating === null ||
+    requestParameters.rating === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "rating",
+      "Required parameter requestParameters.rating was null or undefined when calling postRating.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Rating`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || RatingToJSON(requestParameters.rating),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Rating`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || RatingToJSON(requestParameters.rating),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(RatingFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(RatingFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postRatingRaw<T>(
  * Create a new Rating
  */
 export function postRating<T>(
-	requestParameters: PostRatingRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Rating>,
+  requestParameters: PostRatingRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Rating>,
 ): QueryConfig<T> {
-	return postRatingRaw(requestParameters, requestConfig)
+  return postRatingRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postRating<T>(
  * Update an existing Rating
  */
 function updateRatingRaw<T>(
-	requestParameters: UpdateRatingRequest,
-	requestConfig: runtime.TypedQueryConfig<T, Rating> = {},
+  requestParameters: UpdateRatingRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Rating> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateRating.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateRating.",
+    );
+  }
 
-	if (requestParameters.rating === null || requestParameters.rating === undefined) {
-		throw new runtime.RequiredError(
-			"rating",
-			"Required parameter requestParameters.rating was null or undefined when calling updateRating.",
-		)
-	}
+  if (
+    requestParameters.rating === null ||
+    requestParameters.rating === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "rating",
+      "Required parameter requestParameters.rating was null or undefined when calling updateRating.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/Rating/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || RatingToJSON(requestParameters.rating),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Rating/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || RatingToJSON(requestParameters.rating),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(RatingFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(RatingFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateRatingRaw<T>(
  * Update an existing Rating
  */
 export function updateRating<T>(
-	requestParameters: UpdateRatingRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, Rating>,
+  requestParameters: UpdateRatingRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Rating>,
 ): QueryConfig<T> {
-	return updateRatingRaw(requestParameters, requestConfig)
+  return updateRatingRaw(requestParameters, requestConfig);
 }

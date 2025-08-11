@@ -1,5 +1,5 @@
 export const newTaskToolResponse = () =>
-	`<explicit_instructions type="new_task">
+  `<explicit_instructions type="new_task">
 The user has explicitly asked you to help them create a new task with preloaded context, which you will generate. The user may have provided instructions or additional information for you to consider when summarizing existing work and creating the context for the new task.
 Irrespective of whether additional information or instructions are given, you are ONLY allowed to respond to this message by calling the new_task tool.
 
@@ -24,10 +24,10 @@ Usage:
 
 Below is the the user's input when they indicated that they wanted to create a new task.
 </explicit_instructions>\n
-`
+`;
 
 export const condenseToolResponse = () =>
-	`<explicit_instructions type="condense">
+  `<explicit_instructions type="condense">
 The user has explicitly asked you to create a detailed summary of the conversation so far, which will be used to compact the current context window while retaining key information. The user may have provided instructions or additional information for you to consider when summarizing the conversation.
 Irrespective of whether additional information or instructions are given, you are only allowed to respond to this message by calling the condense tool.
 
@@ -86,4 +86,4 @@ Example:
 </condense>
 
 </explicit_instructions>\n
-`
+`;

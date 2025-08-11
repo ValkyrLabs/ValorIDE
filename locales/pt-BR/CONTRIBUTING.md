@@ -22,14 +22,14 @@ Se planeja trabalhar em uma funcionalidade maior, crie primeiro uma [solicitaç�
 
 1. **Extensões do VS Code**
 
-    - Ao abrir o projeto, o VS Code solicitará que você instale as extensões recomendadas.
-    - Essas extensões são necessárias para o desenvolvimento – aceite todas as solicitações de instalação.
-    - Caso tenha rejeitado as solicitações, você pode instalá-las manualmente na seção de extensões.
+   - Ao abrir o projeto, o VS Code solicitará que você instale as extensões recomendadas.
+   - Essas extensões são necessárias para o desenvolvimento – aceite todas as solicitações de instalação.
+   - Caso tenha rejeitado as solicitações, você pode instalá-las manualmente na seção de extensões.
 
 2. **Desenvolvimento local**
-    - Execute `npm run install:all` para instalar as dependências.
-    - Execute `npm run test` para rodar os testes localmente.
-    - Antes de enviar um PR, execute `npm run format:fix` para formatar seu código.
+   - Execute `npm run install:all` para instalar as dependências.
+   - Execute `npm run test` para rodar os testes localmente.
+   - Antes de enviar um PR, execute `npm run format:fix` para formatar seu código.
 
 ## Escrever e enviar código
 
@@ -37,47 +37,46 @@ Qualquer pessoa pode contribuir com código para o ValorIDE, mas pedimos que sig
 
 1. **Mantenha os Pull Requests focados**
 
-    - Limite os PRs a uma única funcionalidade ou correção de erro.
-    - Divida alterações maiores em PRs menores e coerentes.
-    - Divida as alterações em commits lógicos que possam ser revisados independentemente.
+   - Limite os PRs a uma única funcionalidade ou correção de erro.
+   - Divida alterações maiores em PRs menores e coerentes.
+   - Divida as alterações em commits lógicos que possam ser revisados independentemente.
 
 2. **Qualidade do código**
 
-    - Execute `npm run lint` para verificar o estilo do código.
-    - Execute `npm run format` para formatar automaticamente o código.
-    - Todos os PRs devem passar nas verificações do CI, que incluem linting e formatação.
-    - Resolva todos os avisos ou erros do ESLint antes de enviar.
-    - Siga as melhores práticas para TypeScript e mantenha a segurança dos tipos.
+   - Execute `npm run lint` para verificar o estilo do código.
+   - Execute `npm run format` para formatar automaticamente o código.
+   - Todos os PRs devem passar nas verificações do CI, que incluem linting e formatação.
+   - Resolva todos os avisos ou erros do ESLint antes de enviar.
+   - Siga as melhores práticas para TypeScript e mantenha a segurança dos tipos.
 
 3. **Testes**
 
-    - Adicione testes para novas funcionalidades.
-    - Execute `npm test` para garantir que todos os testes passem.
-    - Atualize testes existentes caso suas alterações os afetem.
-    - Inclua tanto testes unitários quanto de integração onde for apropriado.
+   - Adicione testes para novas funcionalidades.
+   - Execute `npm test` para garantir que todos os testes passem.
+   - Atualize testes existentes caso suas alterações os afetem.
+   - Inclua tanto testes unitários quanto de integração onde for apropriado.
 
 4. **Diretrizes de commits**
 
-    - Escreva mensagens de commit claras e descritivas.
-    - Use o formato convencional (por exemplo, "feat:", "fix:", "docs:").
-    - Faça referência aos issues relevantes nos commits usando #número-do-issue.
+   - Escreva mensagens de commit claras e descritivas.
+   - Use o formato convencional (por exemplo, "feat:", "fix:", "docs:").
+   - Faça referência aos issues relevantes nos commits usando #número-do-issue.
 
 5. **Antes de enviar**
 
-    - Faça rebase com sua branch com a última versão da branch principal (main).
-    - Certifique-se de que sua branch seja construída corretamente.
-    - Verifique se todos os testes passam.
-    - Revise suas alterações para remover qualquer código de depuração ou logs desnecessários.
+   - Faça rebase com sua branch com a última versão da branch principal (main).
+   - Certifique-se de que sua branch seja construída corretamente.
+   - Verifique se todos os testes passam.
+   - Revise suas alterações para remover qualquer código de depuração ou logs desnecessários.
 
 6. **Descrição do Pull Request**
-    - Descreva claramente o que suas alterações fazem.
-    - Inclua passos para testar as alterações.
-    - Liste quaisquer mudanças importantes.
-    - Adicione capturas de tela para mudanças na interface do usuário.
+   - Descreva claramente o que suas alterações fazem.
+   - Inclua passos para testar as alterações.
+   - Liste quaisquer mudanças importantes.
+   - Adicione capturas de tela para mudanças na interface do usuário.
 
 ## Acordo de contribuição
 
 Ao enviar um Pull Request, você concorda que suas contribuições serão licenciadas sob a mesma licença do projeto ([Apache 2.0](LICENSE)).
 
 Lembre-se: Contribuir com o ValorIDE não é apenas escrever código – é fazer parte de uma comunidade que está moldando o futuro do desenvolvimento assistido por IA. Vamos criar algo incrível juntos! 🚀
-

@@ -7,16 +7,19 @@ This directory contains architectural documentation for the ValorIDE VSCode exte
 The [extension-architecture.mmd](./extension-architecture.mmd) file contains a Mermaid diagram showing the high-level architecture of the ValorIDE extension. The diagram illustrates:
 
 1. **Core Extension**
+
    - Extension entry point and main classes
    - State management through VSCode's global state and secrets storage
    - Core business logic in the ValorIDE class
 
 2. **Webview UI**
+
    - React-based user interface
    - State management through ExtensionStateContext
    - Component hierarchy
 
 3. **Storage**
+
    - Task-specific storage for history and state
    - Git-based checkpoint system for file changes
 
@@ -28,6 +31,7 @@ The [extension-architecture.mmd](./extension-architecture.mmd) file contains a M
 ## Viewing the Diagram
 
 To view the diagram:
+
 1. Install a Mermaid diagram viewer extension in VSCode
 2. Open extension-architecture.mmd
 3. Use the extension's preview feature to render the diagram
@@ -37,6 +41,7 @@ You can also view the diagram on GitHub, which has built-in Mermaid rendering su
 ## Color Scheme
 
 The diagram uses a high-contrast color scheme for better visibility:
+
 - Pink (#ff0066): Global state and secrets storage components
 - Blue (#0066ff): Extension state context
 - Green (#00cc66): ValorIDE provider

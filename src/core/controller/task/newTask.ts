@@ -1,6 +1,6 @@
-import { Controller } from ".."
-import { Empty } from "../../../shared/proto/common"
-import { NewTaskRequest } from "../../../shared/proto/task"
+import { Controller } from "..";
+import { Empty } from "../../../shared/proto/common";
+import { NewTaskRequest } from "../../../shared/proto/task";
 
 /**
  * Creates a new task with the given text and optional images
@@ -8,7 +8,10 @@ import { NewTaskRequest } from "../../../shared/proto/task"
  * @param request The new task request containing text and optional images
  * @returns Empty response
  */
-export async function newTask(controller: Controller, request: NewTaskRequest): Promise<Empty> {
-	await controller.initTask(request.text, request.images)
-	return Empty.create()
+export async function newTask(
+  controller: Controller,
+  request: NewTaskRequest,
+): Promise<Empty> {
+  await controller.initTask(request.text, request.images);
+  return Empty.create();
 }

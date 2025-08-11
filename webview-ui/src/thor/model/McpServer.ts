@@ -11,18 +11,18 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime"
+import { exists, mapValues } from "../src/runtime";
 import {
-	McpResource,
-	McpResourceFromJSON,
-	McpResourceToJSON,
-	McpResourceTemplate,
-	McpResourceTemplateFromJSON,
-	McpResourceTemplateToJSON,
-	McpTool,
-	McpToolFromJSON,
-	McpToolToJSON,
-} from "./"
+  McpResource,
+  McpResourceFromJSON,
+  McpResourceToJSON,
+  McpResourceTemplate,
+  McpResourceTemplateFromJSON,
+  McpResourceTemplateToJSON,
+  McpTool,
+  McpToolFromJSON,
+  McpToolToJSON,
+} from "./";
 
 // thorapi
 
@@ -32,152 +32,185 @@ import {
  * @interface McpServer
  */
 export type McpServer = {
-	/**
-	 *
-	 * @type {string}
-	 * @memberof McpServer
-	 */
-	name: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof McpServer
-	 */
-	config: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof McpServer
-	 */
-	status: McpServerStatusEnum
-	/**
-	 *
-	 * @type {string}
-	 * @memberof McpServer
-	 */
-	error?: string
-	/**
-	 *
-	 * @type {Array<McpTool>}
-	 * @memberof McpServer
-	 */
-	tools?: Array<McpTool>
-	/**
-	 *
-	 * @type {Array<McpResource>}
-	 * @memberof McpServer
-	 */
-	resources?: Array<McpResource>
-	/**
-	 *
-	 * @type {Array<McpResourceTemplate>}
-	 * @memberof McpServer
-	 */
-	resourceTemplates?: Array<McpResourceTemplate>
-	/**
-	 *
-	 * @type {boolean}
-	 * @memberof McpServer
-	 */
-	disabled?: boolean
-	/**
-	 * Unique identifier for object in the system
-	 * @type {string}
-	 * @memberof McpServer
-	 */
-	id?: string
-	/**
-	 * UUID of owner of the object in the system
-	 * @type {string}
-	 * @memberof McpServer
-	 */
-	ownerId?: string
-	/**
-	 * Date of object creation
-	 * @type {Date}
-	 * @memberof McpServer
-	 */
-	createdDate?: Date
-	/**
-	 * Data, including hash of the key(s) used to encrypt this record.
-	 * @type {string}
-	 * @memberof McpServer
-	 */
-	keyHash?: string
-	/**
-	 * Last user to access object
-	 * @type {string}
-	 * @memberof McpServer
-	 */
-	lastAccessedById?: string
-	/**
-	 * Timestamp of last access of object
-	 * @type {Date}
-	 * @memberof McpServer
-	 */
-	lastAccessedDate?: Date
-	/**
-	 * Unique identifier for user who last modifed the object in the system
-	 * @type {string}
-	 * @memberof McpServer
-	 */
-	lastModifiedById?: string
-	/**
-	 * Date of last object modification
-	 * @type {Date}
-	 * @memberof McpServer
-	 */
-	lastModifiedDate?: Date
-}
+  /**
+   *
+   * @type {string}
+   * @memberof McpServer
+   */
+  name: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpServer
+   */
+  config: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpServer
+   */
+  status: McpServerStatusEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof McpServer
+   */
+  error?: string;
+  /**
+   *
+   * @type {Array<McpTool>}
+   * @memberof McpServer
+   */
+  tools?: Array<McpTool>;
+  /**
+   *
+   * @type {Array<McpResource>}
+   * @memberof McpServer
+   */
+  resources?: Array<McpResource>;
+  /**
+   *
+   * @type {Array<McpResourceTemplate>}
+   * @memberof McpServer
+   */
+  resourceTemplates?: Array<McpResourceTemplate>;
+  /**
+   *
+   * @type {boolean}
+   * @memberof McpServer
+   */
+  disabled?: boolean;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof McpServer
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof McpServer
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof McpServer
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof McpServer
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof McpServer
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof McpServer
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof McpServer
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof McpServer
+   */
+  lastModifiedDate?: Date;
+};
 
 export function McpServerFromJSON(json: any): McpServer {
-	return {
-		name: json["name"],
-		config: json["config"],
-		status: json["status"],
-		error: !exists(json, "error") ? undefined : json["error"],
-		tools: !exists(json, "tools") ? undefined : (json["tools"] as Array<any>).map(McpToolFromJSON),
-		resources: !exists(json, "resources") ? undefined : (json["resources"] as Array<any>).map(McpResourceFromJSON),
-		resourceTemplates: !exists(json, "resourceTemplates")
-			? undefined
-			: (json["resourceTemplates"] as Array<any>).map(McpResourceTemplateFromJSON),
-		disabled: !exists(json, "disabled") ? undefined : json["disabled"],
-		id: !exists(json, "id") ? undefined : json["id"],
-		ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-		createdDate: !exists(json, "createdDate") ? undefined : new Date(json["createdDate"]),
-		keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-		lastAccessedById: !exists(json, "lastAccessedById") ? undefined : json["lastAccessedById"],
-		lastAccessedDate: !exists(json, "lastAccessedDate") ? undefined : new Date(json["lastAccessedDate"]),
-		lastModifiedById: !exists(json, "lastModifiedById") ? undefined : json["lastModifiedById"],
-		lastModifiedDate: !exists(json, "lastModifiedDate") ? undefined : new Date(json["lastModifiedDate"]),
-	}
+  return {
+    name: json["name"],
+    config: json["config"],
+    status: json["status"],
+    error: !exists(json, "error") ? undefined : json["error"],
+    tools: !exists(json, "tools")
+      ? undefined
+      : (json["tools"] as Array<any>).map(McpToolFromJSON),
+    resources: !exists(json, "resources")
+      ? undefined
+      : (json["resources"] as Array<any>).map(McpResourceFromJSON),
+    resourceTemplates: !exists(json, "resourceTemplates")
+      ? undefined
+      : (json["resourceTemplates"] as Array<any>).map(
+          McpResourceTemplateFromJSON,
+        ),
+    disabled: !exists(json, "disabled") ? undefined : json["disabled"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function McpServerToJSON(value?: McpServer): any {
-	if (value === undefined) {
-		return undefined
-	}
-	return {
-		name: value.name,
-		config: value.config,
-		status: value.status,
-		error: value.error,
-		tools: value.tools === undefined ? undefined : (value.tools as Array<any>).map(McpToolToJSON),
-		resources: value.resources === undefined ? undefined : (value.resources as Array<any>).map(McpResourceToJSON),
-		resourceTemplates:
-			value.resourceTemplates === undefined
-				? undefined
-				: (value.resourceTemplates as Array<any>).map(McpResourceTemplateToJSON),
-		disabled: value.disabled,
-		id: value.id,
-		ownerId: value.ownerId,
-		createdDate: value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-		keyHash: value.keyHash,
-		lastAccessedById: value.lastAccessedById,
-		lastAccessedDate: value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-		lastModifiedById: value.lastModifiedById,
-		lastModifiedDate: value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-	}
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    name: value.name,
+    config: value.config,
+    status: value.status,
+    error: value.error,
+    tools:
+      value.tools === undefined
+        ? undefined
+        : (value.tools as Array<any>).map(McpToolToJSON),
+    resources:
+      value.resources === undefined
+        ? undefined
+        : (value.resources as Array<any>).map(McpResourceToJSON),
+    resourceTemplates:
+      value.resourceTemplates === undefined
+        ? undefined
+        : (value.resourceTemplates as Array<any>).map(
+            McpResourceTemplateToJSON,
+          ),
+    disabled: value.disabled,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
@@ -185,7 +218,7 @@ export function McpServerToJSON(value?: McpServer): any {
  * @enum {string}
  */
 export enum McpServerStatusEnum {
-	CONNECTED = "connected",
-	CONNECTING = "connecting",
-	DISCONNECTED = "disconnected",
+  CONNECTED = "connected",
+  CONNECTING = "connecting",
+  DISCONNECTED = "disconnected",
 }

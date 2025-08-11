@@ -1,22 +1,28 @@
-import { getInvoice, postInvoice, getInvoiceList, deleteInvoice, updateInvoice } from "../../api"
+import {
+  getInvoice,
+  postInvoice,
+  getInvoiceList,
+  deleteInvoice,
+  updateInvoice,
+} from "../../api";
 
 import {
-	ADD_INVOICE_REQUEST,
-	FETCH_INVOICE_REQUEST,
-	LIST_INVOICE_REQUEST,
-	UPDATE_INVOICE_REQUEST,
-	DELETE_INVOICE_REQUEST,
-	addInvoiceFailure,
-	addInvoiceSuccess,
-	fetchInvoiceFailure,
-	fetchInvoiceSuccess,
-	listInvoiceFailure,
-	listInvoiceSuccess,
-	updateInvoiceFailure,
-	updateInvoiceSuccess,
-	deleteInvoiceFailure,
-	deleteInvoiceSuccess,
-} from "../actions/InvoiceApiAction"
+  ADD_INVOICE_REQUEST,
+  FETCH_INVOICE_REQUEST,
+  LIST_INVOICE_REQUEST,
+  UPDATE_INVOICE_REQUEST,
+  DELETE_INVOICE_REQUEST,
+  addInvoiceFailure,
+  addInvoiceSuccess,
+  fetchInvoiceFailure,
+  fetchInvoiceSuccess,
+  listInvoiceFailure,
+  listInvoiceSuccess,
+  updateInvoiceFailure,
+  updateInvoiceSuccess,
+  deleteInvoiceFailure,
+  deleteInvoiceSuccess,
+} from "../actions/InvoiceApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: Invoice
 */
 
 export const InvoiceMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("Invoice MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Invoice MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_INVOICE_REQUEST:
-				try {
-					const response = postInvoice(action.payload)
-					dispatch(addInvoiceSuccess(response.body))
-				} catch (error) {
-					dispatch(addInvoiceFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_INVOICE_REQUEST:
+        try {
+          const response = postInvoice(action.payload);
+          dispatch(addInvoiceSuccess(response.body));
+        } catch (error) {
+          dispatch(addInvoiceFailure(error.message));
+        }
+        break;
 
-			case LIST_INVOICE_REQUEST:
-				try {
-					const response = getInvoiceList()
-					dispatch(listInvoiceSuccess(response.body))
-				} catch (error) {
-					dispatch(listInvoiceFailure(error.message))
-				}
-				break
+      case LIST_INVOICE_REQUEST:
+        try {
+          const response = getInvoiceList();
+          dispatch(listInvoiceSuccess(response.body));
+        } catch (error) {
+          dispatch(listInvoiceFailure(error.message));
+        }
+        break;
 
-			case FETCH_INVOICE_REQUEST:
-				try {
-					const response = getInvoice(action.id)
-					dispatch(fetchInvoiceSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchInvoiceFailure(error.message))
-				}
-				break
+      case FETCH_INVOICE_REQUEST:
+        try {
+          const response = getInvoice(action.id);
+          dispatch(fetchInvoiceSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchInvoiceFailure(error.message));
+        }
+        break;
 
-			case UPDATE_INVOICE_REQUEST:
-				try {
-					const { id, Invoice } = action.payload
-					const response = updateInvoice(id)
-					dispatch(updateInvoiceSuccess(response.body))
-				} catch (error) {
-					dispatch(updateInvoiceFailure(error.message))
-				}
-				break
+      case UPDATE_INVOICE_REQUEST:
+        try {
+          const { id, Invoice } = action.payload;
+          const response = updateInvoice(id);
+          dispatch(updateInvoiceSuccess(response.body));
+        } catch (error) {
+          dispatch(updateInvoiceFailure(error.message));
+        }
+        break;
 
-			case DELETE_INVOICE_REQUEST:
-				try {
-					const { id, Invoice } = action.payload
-					const response = deleteInvoice(id)
-					dispatch(deleteInvoiceSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteInvoiceFailure(error.message))
-				}
-				break
+      case DELETE_INVOICE_REQUEST:
+        try {
+          const { id, Invoice } = action.payload;
+          const response = deleteInvoice(id);
+          dispatch(deleteInvoiceSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteInvoiceFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

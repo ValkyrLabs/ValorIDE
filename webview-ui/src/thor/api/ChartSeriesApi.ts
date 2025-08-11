@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: ChartSeriesApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { ChartSeries, ChartSeriesFromJSON, ChartSeriesToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { ChartSeries, ChartSeriesFromJSON, ChartSeriesToJSON } from "../model";
 
 export interface DeleteChartSeriesRequest {
-	id: string
+  id: string;
 }
 
 export interface GetChartSeriesRequest {
-	id: string
+  id: string;
 }
 
 export interface PostChartSeriesRequest {
-	chartSeries: ChartSeries
+  chartSeries: ChartSeries;
 }
 
 export interface UpdateChartSeriesRequest {
-	id: string
-	chartSeries: ChartSeries
+  id: string;
+  chartSeries: ChartSeries;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateChartSeriesRequest {
  * Delete a ChartSeries.
  */
 function deleteChartSeriesRaw<T>(
-	requestParameters: DeleteChartSeriesRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteChartSeriesRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteChartSeries.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteChartSeries.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ChartSeries/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ChartSeries/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteChartSeriesRaw<T>(
  * Delete a ChartSeries.
  */
 export function deleteChartSeries<T>(
-	requestParameters: DeleteChartSeriesRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteChartSeriesRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteChartSeriesRaw(requestParameters, requestConfig)
+  return deleteChartSeriesRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteChartSeries<T>(
  * Retrieve a single ChartSeries
  */
 function getChartSeriesRaw<T>(
-	requestParameters: GetChartSeriesRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ChartSeries> = {},
+  requestParameters: GetChartSeriesRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ChartSeries> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getChartSeries.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getChartSeries.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ChartSeries/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ChartSeries/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ChartSeriesFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ChartSeriesFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getChartSeriesRaw<T>(
  * Retrieve a single ChartSeries
  */
 export function getChartSeries<T>(
-	requestParameters: GetChartSeriesRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ChartSeries>,
+  requestParameters: GetChartSeriesRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ChartSeries>,
 ): QueryConfig<T> {
-	return getChartSeriesRaw(requestParameters, requestConfig)
+  return getChartSeriesRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of ChartSeriess.
  * Retrieve a list of ChartSeriess
  */
-function getChartSeriesListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<ChartSeries>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getChartSeriesListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<ChartSeries>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ChartSeries`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ChartSeries`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(ChartSeriesFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(ChartSeriesFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of ChartSeriess.
  * Retrieve a list of ChartSeriess
  */
-export function getChartSeriesList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<ChartSeries>>): QueryConfig<T> {
-	return getChartSeriesListRaw(requestConfig)
+export function getChartSeriesList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<ChartSeries>>,
+): QueryConfig<T> {
+  return getChartSeriesListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getChartSeriesList<T>(requestConfig?: runtime.TypedQueryConfig<T
  * Create a new ChartSeries
  */
 function postChartSeriesRaw<T>(
-	requestParameters: PostChartSeriesRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ChartSeries> = {},
+  requestParameters: PostChartSeriesRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ChartSeries> = {},
 ): QueryConfig<T> {
-	if (requestParameters.chartSeries === null || requestParameters.chartSeries === undefined) {
-		throw new runtime.RequiredError(
-			"chartSeries",
-			"Required parameter requestParameters.chartSeries was null or undefined when calling postChartSeries.",
-		)
-	}
+  if (
+    requestParameters.chartSeries === null ||
+    requestParameters.chartSeries === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "chartSeries",
+      "Required parameter requestParameters.chartSeries was null or undefined when calling postChartSeries.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ChartSeries`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || ChartSeriesToJSON(requestParameters.chartSeries),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ChartSeries`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || ChartSeriesToJSON(requestParameters.chartSeries),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ChartSeriesFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ChartSeriesFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postChartSeriesRaw<T>(
  * Create a new ChartSeries
  */
 export function postChartSeries<T>(
-	requestParameters: PostChartSeriesRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ChartSeries>,
+  requestParameters: PostChartSeriesRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ChartSeries>,
 ): QueryConfig<T> {
-	return postChartSeriesRaw(requestParameters, requestConfig)
+  return postChartSeriesRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postChartSeries<T>(
  * Update an existing ChartSeries
  */
 function updateChartSeriesRaw<T>(
-	requestParameters: UpdateChartSeriesRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ChartSeries> = {},
+  requestParameters: UpdateChartSeriesRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ChartSeries> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateChartSeries.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateChartSeries.",
+    );
+  }
 
-	if (requestParameters.chartSeries === null || requestParameters.chartSeries === undefined) {
-		throw new runtime.RequiredError(
-			"chartSeries",
-			"Required parameter requestParameters.chartSeries was null or undefined when calling updateChartSeries.",
-		)
-	}
+  if (
+    requestParameters.chartSeries === null ||
+    requestParameters.chartSeries === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "chartSeries",
+      "Required parameter requestParameters.chartSeries was null or undefined when calling updateChartSeries.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ChartSeries/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || ChartSeriesToJSON(requestParameters.chartSeries),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ChartSeries/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || ChartSeriesToJSON(requestParameters.chartSeries),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ChartSeriesFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ChartSeriesFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateChartSeriesRaw<T>(
  * Update an existing ChartSeries
  */
 export function updateChartSeries<T>(
-	requestParameters: UpdateChartSeriesRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ChartSeries>,
+  requestParameters: UpdateChartSeriesRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ChartSeries>,
 ): QueryConfig<T> {
-	return updateChartSeriesRaw(requestParameters, requestConfig)
+  return updateChartSeriesRaw(requestParameters, requestConfig);
 }

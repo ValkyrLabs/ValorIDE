@@ -1,28 +1,28 @@
 import {
-	getMcpToolCallResponse,
-	postMcpToolCallResponse,
-	getMcpToolCallResponseList,
-	deleteMcpToolCallResponse,
-	updateMcpToolCallResponse,
-} from "../../api"
+  getMcpToolCallResponse,
+  postMcpToolCallResponse,
+  getMcpToolCallResponseList,
+  deleteMcpToolCallResponse,
+  updateMcpToolCallResponse,
+} from "../../api";
 
 import {
-	ADD_MCPTOOLCALLRESPONSE_REQUEST,
-	FETCH_MCPTOOLCALLRESPONSE_REQUEST,
-	LIST_MCPTOOLCALLRESPONSE_REQUEST,
-	UPDATE_MCPTOOLCALLRESPONSE_REQUEST,
-	DELETE_MCPTOOLCALLRESPONSE_REQUEST,
-	addMcpToolCallResponseFailure,
-	addMcpToolCallResponseSuccess,
-	fetchMcpToolCallResponseFailure,
-	fetchMcpToolCallResponseSuccess,
-	listMcpToolCallResponseFailure,
-	listMcpToolCallResponseSuccess,
-	updateMcpToolCallResponseFailure,
-	updateMcpToolCallResponseSuccess,
-	deleteMcpToolCallResponseFailure,
-	deleteMcpToolCallResponseSuccess,
-} from "../actions/McpToolCallResponseApiAction"
+  ADD_MCPTOOLCALLRESPONSE_REQUEST,
+  FETCH_MCPTOOLCALLRESPONSE_REQUEST,
+  LIST_MCPTOOLCALLRESPONSE_REQUEST,
+  UPDATE_MCPTOOLCALLRESPONSE_REQUEST,
+  DELETE_MCPTOOLCALLRESPONSE_REQUEST,
+  addMcpToolCallResponseFailure,
+  addMcpToolCallResponseSuccess,
+  fetchMcpToolCallResponseFailure,
+  fetchMcpToolCallResponseSuccess,
+  listMcpToolCallResponseFailure,
+  listMcpToolCallResponseSuccess,
+  updateMcpToolCallResponseFailure,
+  updateMcpToolCallResponseSuccess,
+  deleteMcpToolCallResponseFailure,
+  deleteMcpToolCallResponseSuccess,
+} from "../actions/McpToolCallResponseApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -41,61 +41,61 @@ Description: McpToolCallResponse
 */
 
 export const McpToolCallResponseMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("McpToolCallResponse MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("McpToolCallResponse MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_MCPTOOLCALLRESPONSE_REQUEST:
-				try {
-					const response = postMcpToolCallResponse(action.payload)
-					dispatch(addMcpToolCallResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(addMcpToolCallResponseFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_MCPTOOLCALLRESPONSE_REQUEST:
+        try {
+          const response = postMcpToolCallResponse(action.payload);
+          dispatch(addMcpToolCallResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(addMcpToolCallResponseFailure(error.message));
+        }
+        break;
 
-			case LIST_MCPTOOLCALLRESPONSE_REQUEST:
-				try {
-					const response = getMcpToolCallResponseList()
-					dispatch(listMcpToolCallResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(listMcpToolCallResponseFailure(error.message))
-				}
-				break
+      case LIST_MCPTOOLCALLRESPONSE_REQUEST:
+        try {
+          const response = getMcpToolCallResponseList();
+          dispatch(listMcpToolCallResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(listMcpToolCallResponseFailure(error.message));
+        }
+        break;
 
-			case FETCH_MCPTOOLCALLRESPONSE_REQUEST:
-				try {
-					const response = getMcpToolCallResponse(action.id)
-					dispatch(fetchMcpToolCallResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchMcpToolCallResponseFailure(error.message))
-				}
-				break
+      case FETCH_MCPTOOLCALLRESPONSE_REQUEST:
+        try {
+          const response = getMcpToolCallResponse(action.id);
+          dispatch(fetchMcpToolCallResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchMcpToolCallResponseFailure(error.message));
+        }
+        break;
 
-			case UPDATE_MCPTOOLCALLRESPONSE_REQUEST:
-				try {
-					const { id, McpToolCallResponse } = action.payload
-					const response = updateMcpToolCallResponse(id)
-					dispatch(updateMcpToolCallResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(updateMcpToolCallResponseFailure(error.message))
-				}
-				break
+      case UPDATE_MCPTOOLCALLRESPONSE_REQUEST:
+        try {
+          const { id, McpToolCallResponse } = action.payload;
+          const response = updateMcpToolCallResponse(id);
+          dispatch(updateMcpToolCallResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(updateMcpToolCallResponseFailure(error.message));
+        }
+        break;
 
-			case DELETE_MCPTOOLCALLRESPONSE_REQUEST:
-				try {
-					const { id, McpToolCallResponse } = action.payload
-					const response = deleteMcpToolCallResponse(id)
-					dispatch(deleteMcpToolCallResponseSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteMcpToolCallResponseFailure(error.message))
-				}
-				break
+      case DELETE_MCPTOOLCALLRESPONSE_REQUEST:
+        try {
+          const { id, McpToolCallResponse } = action.payload;
+          const response = deleteMcpToolCallResponse(id);
+          dispatch(deleteMcpToolCallResponseSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteMcpToolCallResponseFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

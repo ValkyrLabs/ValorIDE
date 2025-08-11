@@ -11,7 +11,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime"
+import { exists, mapValues } from "../src/runtime";
 
 // thorapi
 
@@ -21,121 +21,140 @@ import { exists, mapValues } from "../src/runtime"
  * @interface McpTool
  */
 export type McpTool = {
-	/**
-	 *
-	 * @type {string}
-	 * @memberof McpTool
-	 */
-	name: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof McpTool
-	 */
-	mcpServerId?: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof McpTool
-	 */
-	description?: string
-	/**
-	 *
-	 * @type {string}
-	 * @memberof McpTool
-	 */
-	inputSchema?: string
-	/**
-	 *
-	 * @type {boolean}
-	 * @memberof McpTool
-	 */
-	autoApprove?: boolean
-	/**
-	 * Unique identifier for object in the system
-	 * @type {string}
-	 * @memberof McpTool
-	 */
-	id?: string
-	/**
-	 * UUID of owner of the object in the system
-	 * @type {string}
-	 * @memberof McpTool
-	 */
-	ownerId?: string
-	/**
-	 * Date of object creation
-	 * @type {Date}
-	 * @memberof McpTool
-	 */
-	createdDate?: Date
-	/**
-	 * Data, including hash of the key(s) used to encrypt this record.
-	 * @type {string}
-	 * @memberof McpTool
-	 */
-	keyHash?: string
-	/**
-	 * Last user to access object
-	 * @type {string}
-	 * @memberof McpTool
-	 */
-	lastAccessedById?: string
-	/**
-	 * Timestamp of last access of object
-	 * @type {Date}
-	 * @memberof McpTool
-	 */
-	lastAccessedDate?: Date
-	/**
-	 * Unique identifier for user who last modifed the object in the system
-	 * @type {string}
-	 * @memberof McpTool
-	 */
-	lastModifiedById?: string
-	/**
-	 * Date of last object modification
-	 * @type {Date}
-	 * @memberof McpTool
-	 */
-	lastModifiedDate?: Date
-}
+  /**
+   *
+   * @type {string}
+   * @memberof McpTool
+   */
+  name: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpTool
+   */
+  mcpServerId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpTool
+   */
+  description?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpTool
+   */
+  inputSchema?: string;
+  /**
+   *
+   * @type {boolean}
+   * @memberof McpTool
+   */
+  autoApprove?: boolean;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof McpTool
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof McpTool
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof McpTool
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof McpTool
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof McpTool
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof McpTool
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof McpTool
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof McpTool
+   */
+  lastModifiedDate?: Date;
+};
 
 export function McpToolFromJSON(json: any): McpTool {
-	return {
-		name: json["name"],
-		mcpServerId: !exists(json, "mcpServerId") ? undefined : json["mcpServerId"],
-		description: !exists(json, "description") ? undefined : json["description"],
-		inputSchema: !exists(json, "inputSchema") ? undefined : json["inputSchema"],
-		autoApprove: !exists(json, "autoApprove") ? undefined : json["autoApprove"],
-		id: !exists(json, "id") ? undefined : json["id"],
-		ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-		createdDate: !exists(json, "createdDate") ? undefined : new Date(json["createdDate"]),
-		keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-		lastAccessedById: !exists(json, "lastAccessedById") ? undefined : json["lastAccessedById"],
-		lastAccessedDate: !exists(json, "lastAccessedDate") ? undefined : new Date(json["lastAccessedDate"]),
-		lastModifiedById: !exists(json, "lastModifiedById") ? undefined : json["lastModifiedById"],
-		lastModifiedDate: !exists(json, "lastModifiedDate") ? undefined : new Date(json["lastModifiedDate"]),
-	}
+  return {
+    name: json["name"],
+    mcpServerId: !exists(json, "mcpServerId") ? undefined : json["mcpServerId"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    inputSchema: !exists(json, "inputSchema") ? undefined : json["inputSchema"],
+    autoApprove: !exists(json, "autoApprove") ? undefined : json["autoApprove"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function McpToolToJSON(value?: McpTool): any {
-	if (value === undefined) {
-		return undefined
-	}
-	return {
-		name: value.name,
-		mcpServerId: value.mcpServerId,
-		description: value.description,
-		inputSchema: value.inputSchema,
-		autoApprove: value.autoApprove,
-		id: value.id,
-		ownerId: value.ownerId,
-		createdDate: value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-		keyHash: value.keyHash,
-		lastAccessedById: value.lastAccessedById,
-		lastAccessedDate: value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-		lastModifiedById: value.lastModifiedById,
-		lastModifiedDate: value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-	}
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    name: value.name,
+    mcpServerId: value.mcpServerId,
+    description: value.description,
+    inputSchema: value.inputSchema,
+    autoApprove: value.autoApprove,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }

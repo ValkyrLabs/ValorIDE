@@ -103,6 +103,7 @@ node dist/index.js run --model claude-3-opus-20240229 --benchmark exercism
 ```
 
 Options:
+
 - `--model`: The model to evaluate (default: claude-3-opus-20240229)
 - `--benchmark`: Specific benchmark to run (default: all)
 - `--count`: Number of tasks to run (default: all)
@@ -114,6 +115,7 @@ node dist/index.js report
 ```
 
 Options:
+
 - `--format`: Report format (json, markdown) (default: markdown)
 - `--output`: Output path for the report
 
@@ -128,6 +130,7 @@ node dist/index.js evals-env check   # Check if evals.env file exists in current
 ```
 
 Options:
+
 - `--directory`: Specify a directory other than the current one
 
 ## Benchmarks

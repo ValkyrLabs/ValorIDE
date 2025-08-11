@@ -1,22 +1,28 @@
-import { getFormula, postFormula, getFormulaList, deleteFormula, updateFormula } from "../../api"
+import {
+  getFormula,
+  postFormula,
+  getFormulaList,
+  deleteFormula,
+  updateFormula,
+} from "../../api";
 
 import {
-	ADD_FORMULA_REQUEST,
-	FETCH_FORMULA_REQUEST,
-	LIST_FORMULA_REQUEST,
-	UPDATE_FORMULA_REQUEST,
-	DELETE_FORMULA_REQUEST,
-	addFormulaFailure,
-	addFormulaSuccess,
-	fetchFormulaFailure,
-	fetchFormulaSuccess,
-	listFormulaFailure,
-	listFormulaSuccess,
-	updateFormulaFailure,
-	updateFormulaSuccess,
-	deleteFormulaFailure,
-	deleteFormulaSuccess,
-} from "../actions/FormulaApiAction"
+  ADD_FORMULA_REQUEST,
+  FETCH_FORMULA_REQUEST,
+  LIST_FORMULA_REQUEST,
+  UPDATE_FORMULA_REQUEST,
+  DELETE_FORMULA_REQUEST,
+  addFormulaFailure,
+  addFormulaSuccess,
+  fetchFormulaFailure,
+  fetchFormulaSuccess,
+  listFormulaFailure,
+  listFormulaSuccess,
+  updateFormulaFailure,
+  updateFormulaSuccess,
+  deleteFormulaFailure,
+  deleteFormulaSuccess,
+} from "../actions/FormulaApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -35,61 +41,61 @@ Description: Formula
 */
 
 export const FormulaMiddleware =
-	({ dispatch }) =>
-	(next) =>
-	async (action) => {
-		console.log("Formula MIDDLEWARE: " + JSON.stringify(action))
-		next(action)
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Formula MIDDLEWARE: " + JSON.stringify(action));
+    next(action);
 
-		switch (action.type) {
-			case ADD_FORMULA_REQUEST:
-				try {
-					const response = postFormula(action.payload)
-					dispatch(addFormulaSuccess(response.body))
-				} catch (error) {
-					dispatch(addFormulaFailure(error.message))
-				}
-				break
+    switch (action.type) {
+      case ADD_FORMULA_REQUEST:
+        try {
+          const response = postFormula(action.payload);
+          dispatch(addFormulaSuccess(response.body));
+        } catch (error) {
+          dispatch(addFormulaFailure(error.message));
+        }
+        break;
 
-			case LIST_FORMULA_REQUEST:
-				try {
-					const response = getFormulaList()
-					dispatch(listFormulaSuccess(response.body))
-				} catch (error) {
-					dispatch(listFormulaFailure(error.message))
-				}
-				break
+      case LIST_FORMULA_REQUEST:
+        try {
+          const response = getFormulaList();
+          dispatch(listFormulaSuccess(response.body));
+        } catch (error) {
+          dispatch(listFormulaFailure(error.message));
+        }
+        break;
 
-			case FETCH_FORMULA_REQUEST:
-				try {
-					const response = getFormula(action.id)
-					dispatch(fetchFormulaSuccess(response.body))
-				} catch (error) {
-					dispatch(fetchFormulaFailure(error.message))
-				}
-				break
+      case FETCH_FORMULA_REQUEST:
+        try {
+          const response = getFormula(action.id);
+          dispatch(fetchFormulaSuccess(response.body));
+        } catch (error) {
+          dispatch(fetchFormulaFailure(error.message));
+        }
+        break;
 
-			case UPDATE_FORMULA_REQUEST:
-				try {
-					const { id, Formula } = action.payload
-					const response = updateFormula(id)
-					dispatch(updateFormulaSuccess(response.body))
-				} catch (error) {
-					dispatch(updateFormulaFailure(error.message))
-				}
-				break
+      case UPDATE_FORMULA_REQUEST:
+        try {
+          const { id, Formula } = action.payload;
+          const response = updateFormula(id);
+          dispatch(updateFormulaSuccess(response.body));
+        } catch (error) {
+          dispatch(updateFormulaFailure(error.message));
+        }
+        break;
 
-			case DELETE_FORMULA_REQUEST:
-				try {
-					const { id, Formula } = action.payload
-					const response = deleteFormula(id)
-					dispatch(deleteFormulaSuccess(response.body))
-				} catch (error) {
-					dispatch(deleteFormulaFailure(error.message))
-				}
-				break
+      case DELETE_FORMULA_REQUEST:
+        try {
+          const { id, Formula } = action.payload;
+          const response = deleteFormula(id);
+          dispatch(deleteFormulaSuccess(response.body));
+        } catch (error) {
+          dispatch(deleteFormulaFailure(error.message));
+        }
+        break;
 
-			default:
-				break
-		}
-	}
+      default:
+        break;
+    }
+  };

@@ -1,4 +1,4 @@
-import { ValorIDEMessage } from "./ExtensionMessage"
+import { ValorIDEMessage } from "./ExtensionMessage";
 
 /**
  * Combines sequences of command and command_output messages in an array of ValorIDEMessages.
@@ -20,55 +20,64 @@ import { ValorIDEMessage } from "./ExtensionMessage"
  * const result = simpleCombineCommandSequences(messages);
  * // Result: [{ type: 'ask', ask: 'command', text: 'ls\nfile1.txt\nfile2.txt', ts: 1625097600000 }]
  */
-export function combineCommandSequences(messages: ValorIDEMessage[]): ValorIDEMessage[] {
-	const combinedCommands: ValorIDEMessage[] = []
+export function combineCommandSequences(
+  messages: ValorIDEMessage[],
+): ValorIDEMessage[] {
+  const combinedCommands: ValorIDEMessage[] = [];
 
-	// First pass: combine commands with their outputs
-	for (let i = 0; i < messages.length; i++) {
-		if (messages[i].ask === "command" || messages[i].say === "command") {
-			let combinedText = messages[i].text || ""
-			let didAddOutput = false
-			let j = i + 1
+  // First pass: combine commands with their outputs
+  for (let i = 0; i < messages.length; i++) {
+    if (messages[i].ask === "command" || messages[i].say === "command") {
+      let combinedText = messages[i].text || "";
+      let didAddOutput = false;
+      let j = i + 1;
 
-			while (j < messages.length) {
-				if (messages[j].ask === "command" || messages[j].say === "command") {
-					// Stop if we encounter the next command
-					break
-				}
-				if (messages[j].ask === "command_output" || messages[j].say === "command_output") {
-					if (!didAddOutput) {
-						// Add a newline before the first output
-						combinedText += `\n${COMMAND_OUTPUT_STRING}`
-						didAddOutput = true
-					}
-					// handle cases where we receive empty command_output (ie when extension is relinquishing control over exit command button)
-					const output = messages[j].text || ""
-					if (output.length > 0) {
-						combinedText += "\n" + output
-					}
-				}
-				j++
-			}
+      while (j < messages.length) {
+        if (messages[j].ask === "command" || messages[j].say === "command") {
+          // Stop if we encounter the next command
+          break;
+        }
+        if (
+          messages[j].ask === "command_output" ||
+          messages[j].say === "command_output"
+        ) {
+          if (!didAddOutput) {
+            // Add a newline before the first output
+            combinedText += `\n${COMMAND_OUTPUT_STRING}`;
+            didAddOutput = true;
+          }
+          // handle cases where we receive empty command_output (ie when extension is relinquishing control over exit command button)
+          const output = messages[j].text || "";
+          if (output.length > 0) {
+            combinedText += "\n" + output;
+          }
+        }
+        j++;
+      }
 
-			combinedCommands.push({
-				...messages[i],
-				text: combinedText,
-			})
+      combinedCommands.push({
+        ...messages[i],
+        text: combinedText,
+      });
 
-			i = j - 1 // Move to the index just before the next command or end of array
-		}
-	}
+      i = j - 1; // Move to the index just before the next command or end of array
+    }
+  }
 
-	// Second pass: remove command_outputs and replace original commands with combined ones
-	return messages
-		.filter((msg) => !(msg.ask === "command_output" || msg.say === "command_output"))
-		.map((msg) => {
-			if (msg.ask === "command" || msg.say === "command") {
-				const combinedCommand = combinedCommands.find((cmd) => cmd.ts === msg.ts)
-				return combinedCommand || msg
-			}
-			return msg
-		})
+  // Second pass: remove command_outputs and replace original commands with combined ones
+  return messages
+    .filter(
+      (msg) => !(msg.ask === "command_output" || msg.say === "command_output"),
+    )
+    .map((msg) => {
+      if (msg.ask === "command" || msg.say === "command") {
+        const combinedCommand = combinedCommands.find(
+          (cmd) => cmd.ts === msg.ts,
+        );
+        return combinedCommand || msg;
+      }
+      return msg;
+    });
 }
-export const COMMAND_OUTPUT_STRING = "Output:"
-export const COMMAND_REQ_APP_STRING = "REQ_APP"
+export const COMMAND_OUTPUT_STRING = "Output:";
+export const COMMAND_REQ_APP_STRING = "REQ_APP";

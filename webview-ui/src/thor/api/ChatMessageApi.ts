@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: ChatMessageApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { ChatMessage, ChatMessageFromJSON, ChatMessageToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { ChatMessage, ChatMessageFromJSON, ChatMessageToJSON } from "../model";
 
 export interface DeleteChatMessageRequest {
-	id: string
+  id: string;
 }
 
 export interface GetChatMessageRequest {
-	id: string
+  id: string;
 }
 
 export interface PostChatMessageRequest {
-	chatMessage: ChatMessage
+  chatMessage: ChatMessage;
 }
 
 export interface UpdateChatMessageRequest {
-	id: string
-	chatMessage: ChatMessage
+  id: string;
+  chatMessage: ChatMessage;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateChatMessageRequest {
  * Delete a ChatMessage.
  */
 function deleteChatMessageRaw<T>(
-	requestParameters: DeleteChatMessageRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteChatMessageRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteChatMessage.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteChatMessage.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ChatMessage/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ChatMessage/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteChatMessageRaw<T>(
  * Delete a ChatMessage.
  */
 export function deleteChatMessage<T>(
-	requestParameters: DeleteChatMessageRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteChatMessageRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteChatMessageRaw(requestParameters, requestConfig)
+  return deleteChatMessageRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteChatMessage<T>(
  * Retrieve a single ChatMessage
  */
 function getChatMessageRaw<T>(
-	requestParameters: GetChatMessageRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ChatMessage> = {},
+  requestParameters: GetChatMessageRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ChatMessage> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getChatMessage.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getChatMessage.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ChatMessage/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ChatMessage/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ChatMessageFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ChatMessageFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getChatMessageRaw<T>(
  * Retrieve a single ChatMessage
  */
 export function getChatMessage<T>(
-	requestParameters: GetChatMessageRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ChatMessage>,
+  requestParameters: GetChatMessageRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ChatMessage>,
 ): QueryConfig<T> {
-	return getChatMessageRaw(requestParameters, requestConfig)
+  return getChatMessageRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of ChatMessages.
  * Retrieve a list of ChatMessages
  */
-function getChatMessageListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<ChatMessage>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getChatMessageListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<ChatMessage>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ChatMessage`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ChatMessage`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(ChatMessageFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(ChatMessageFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of ChatMessages.
  * Retrieve a list of ChatMessages
  */
-export function getChatMessageList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<ChatMessage>>): QueryConfig<T> {
-	return getChatMessageListRaw(requestConfig)
+export function getChatMessageList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<ChatMessage>>,
+): QueryConfig<T> {
+  return getChatMessageListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getChatMessageList<T>(requestConfig?: runtime.TypedQueryConfig<T
  * Create a new ChatMessage
  */
 function postChatMessageRaw<T>(
-	requestParameters: PostChatMessageRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ChatMessage> = {},
+  requestParameters: PostChatMessageRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ChatMessage> = {},
 ): QueryConfig<T> {
-	if (requestParameters.chatMessage === null || requestParameters.chatMessage === undefined) {
-		throw new runtime.RequiredError(
-			"chatMessage",
-			"Required parameter requestParameters.chatMessage was null or undefined when calling postChatMessage.",
-		)
-	}
+  if (
+    requestParameters.chatMessage === null ||
+    requestParameters.chatMessage === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "chatMessage",
+      "Required parameter requestParameters.chatMessage was null or undefined when calling postChatMessage.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ChatMessage`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || ChatMessageToJSON(requestParameters.chatMessage),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ChatMessage`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || ChatMessageToJSON(requestParameters.chatMessage),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ChatMessageFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ChatMessageFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postChatMessageRaw<T>(
  * Create a new ChatMessage
  */
 export function postChatMessage<T>(
-	requestParameters: PostChatMessageRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ChatMessage>,
+  requestParameters: PostChatMessageRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ChatMessage>,
 ): QueryConfig<T> {
-	return postChatMessageRaw(requestParameters, requestConfig)
+  return postChatMessageRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postChatMessage<T>(
  * Update an existing ChatMessage
  */
 function updateChatMessageRaw<T>(
-	requestParameters: UpdateChatMessageRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ChatMessage> = {},
+  requestParameters: UpdateChatMessageRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ChatMessage> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateChatMessage.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateChatMessage.",
+    );
+  }
 
-	if (requestParameters.chatMessage === null || requestParameters.chatMessage === undefined) {
-		throw new runtime.RequiredError(
-			"chatMessage",
-			"Required parameter requestParameters.chatMessage was null or undefined when calling updateChatMessage.",
-		)
-	}
+  if (
+    requestParameters.chatMessage === null ||
+    requestParameters.chatMessage === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "chatMessage",
+      "Required parameter requestParameters.chatMessage was null or undefined when calling updateChatMessage.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ChatMessage/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || ChatMessageToJSON(requestParameters.chatMessage),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ChatMessage/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || ChatMessageToJSON(requestParameters.chatMessage),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ChatMessageFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ChatMessageFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateChatMessageRaw<T>(
  * Update an existing ChatMessage
  */
 export function updateChatMessage<T>(
-	requestParameters: UpdateChatMessageRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ChatMessage>,
+  requestParameters: UpdateChatMessageRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ChatMessage>,
 ): QueryConfig<T> {
-	return updateChatMessageRaw(requestParameters, requestConfig)
+  return updateChatMessageRaw(requestParameters, requestConfig);
 }

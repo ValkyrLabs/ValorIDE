@@ -11,8 +11,8 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime"
-import { SalesOrder, SalesOrderFromJSON, SalesOrderToJSON } from "./"
+import { exists, mapValues } from "../src/runtime";
+import { SalesOrder, SalesOrderFromJSON, SalesOrderToJSON } from "./";
 
 // thorapi
 
@@ -22,139 +22,162 @@ import { SalesOrder, SalesOrderFromJSON, SalesOrderToJSON } from "./"
  * @interface Invoice
  */
 export type Invoice = {
-	/**
-	 *
-	 * @type {string}
-	 * @memberof Invoice
-	 */
-	invoiceId: string
-	/**
-	 *
-	 * @type {Date}
-	 * @memberof Invoice
-	 */
-	invoiceDate: Date
-	/**
-	 *
-	 * @type {Date}
-	 * @memberof Invoice
-	 */
-	dueDate: Date
-	/**
-	 *
-	 * @type {number}
-	 * @memberof Invoice
-	 */
-	amount: number
-	/**
-	 *
-	 * @type {string}
-	 * @memberof Invoice
-	 */
-	status: InvoiceStatusEnum
-	/**
-	 *
-	 * @type {SalesOrder}
-	 * @memberof Invoice
-	 */
-	salesOrder?: SalesOrder
-	/**
-	 *
-	 * @type {string}
-	 * @memberof Invoice
-	 */
-	salesOrderId?: string
-	/**
-	 * Unique identifier for object in the system
-	 * @type {string}
-	 * @memberof Invoice
-	 */
-	id?: string
-	/**
-	 * UUID of owner of the object in the system
-	 * @type {string}
-	 * @memberof Invoice
-	 */
-	ownerId?: string
-	/**
-	 * Date of object creation
-	 * @type {Date}
-	 * @memberof Invoice
-	 */
-	createdDate?: Date
-	/**
-	 * Data, including hash of the key(s) used to encrypt this record.
-	 * @type {string}
-	 * @memberof Invoice
-	 */
-	keyHash?: string
-	/**
-	 * Last user to access object
-	 * @type {string}
-	 * @memberof Invoice
-	 */
-	lastAccessedById?: string
-	/**
-	 * Timestamp of last access of object
-	 * @type {Date}
-	 * @memberof Invoice
-	 */
-	lastAccessedDate?: Date
-	/**
-	 * Unique identifier for user who last modifed the object in the system
-	 * @type {string}
-	 * @memberof Invoice
-	 */
-	lastModifiedById?: string
-	/**
-	 * Date of last object modification
-	 * @type {Date}
-	 * @memberof Invoice
-	 */
-	lastModifiedDate?: Date
-}
+  /**
+   *
+   * @type {string}
+   * @memberof Invoice
+   */
+  invoiceId: string;
+  /**
+   *
+   * @type {Date}
+   * @memberof Invoice
+   */
+  invoiceDate: Date;
+  /**
+   *
+   * @type {Date}
+   * @memberof Invoice
+   */
+  dueDate: Date;
+  /**
+   *
+   * @type {number}
+   * @memberof Invoice
+   */
+  amount: number;
+  /**
+   *
+   * @type {string}
+   * @memberof Invoice
+   */
+  status: InvoiceStatusEnum;
+  /**
+   *
+   * @type {SalesOrder}
+   * @memberof Invoice
+   */
+  salesOrder?: SalesOrder;
+  /**
+   *
+   * @type {string}
+   * @memberof Invoice
+   */
+  salesOrderId?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Invoice
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Invoice
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Invoice
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Invoice
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Invoice
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Invoice
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Invoice
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Invoice
+   */
+  lastModifiedDate?: Date;
+};
 
 export function InvoiceFromJSON(json: any): Invoice {
-	return {
-		invoiceId: json["invoiceId"],
-		invoiceDate: new Date(json["invoiceDate"]),
-		dueDate: new Date(json["dueDate"]),
-		amount: json["amount"],
-		status: json["status"],
-		salesOrder: !exists(json, "salesOrder") ? undefined : SalesOrderFromJSON(json["salesOrder"]),
-		salesOrderId: !exists(json, "salesOrderId") ? undefined : json["salesOrderId"],
-		id: !exists(json, "id") ? undefined : json["id"],
-		ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-		createdDate: !exists(json, "createdDate") ? undefined : new Date(json["createdDate"]),
-		keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-		lastAccessedById: !exists(json, "lastAccessedById") ? undefined : json["lastAccessedById"],
-		lastAccessedDate: !exists(json, "lastAccessedDate") ? undefined : new Date(json["lastAccessedDate"]),
-		lastModifiedById: !exists(json, "lastModifiedById") ? undefined : json["lastModifiedById"],
-		lastModifiedDate: !exists(json, "lastModifiedDate") ? undefined : new Date(json["lastModifiedDate"]),
-	}
+  return {
+    invoiceId: json["invoiceId"],
+    invoiceDate: new Date(json["invoiceDate"]),
+    dueDate: new Date(json["dueDate"]),
+    amount: json["amount"],
+    status: json["status"],
+    salesOrder: !exists(json, "salesOrder")
+      ? undefined
+      : SalesOrderFromJSON(json["salesOrder"]),
+    salesOrderId: !exists(json, "salesOrderId")
+      ? undefined
+      : json["salesOrderId"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function InvoiceToJSON(value?: Invoice): any {
-	if (value === undefined) {
-		return undefined
-	}
-	return {
-		invoiceId: value.invoiceId,
-		invoiceDate: value.invoiceDate.toISOString(),
-		dueDate: value.dueDate.toISOString(),
-		amount: value.amount,
-		status: value.status,
-		salesOrder: SalesOrderToJSON(value.salesOrder),
-		salesOrderId: value.salesOrderId,
-		id: value.id,
-		ownerId: value.ownerId,
-		createdDate: value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-		keyHash: value.keyHash,
-		lastAccessedById: value.lastAccessedById,
-		lastAccessedDate: value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-		lastModifiedById: value.lastModifiedById,
-		lastModifiedDate: value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-	}
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    invoiceId: value.invoiceId,
+    invoiceDate: value.invoiceDate.toISOString(),
+    dueDate: value.dueDate.toISOString(),
+    amount: value.amount,
+    status: value.status,
+    salesOrder: SalesOrderToJSON(value.salesOrder),
+    salesOrderId: value.salesOrderId,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
@@ -162,9 +185,9 @@ export function InvoiceToJSON(value?: Invoice): any {
  * @enum {string}
  */
 export enum InvoiceStatusEnum {
-	DRAFT = "draft",
-	SENT = "sent",
-	PAID = "paid",
-	OVERDUE = "overdue",
-	CANCELED = "canceled",
+  DRAFT = "draft",
+  SENT = "sent",
+  PAID = "paid",
+  OVERDUE = "overdue",
+  CANCELED = "canceled",
 }

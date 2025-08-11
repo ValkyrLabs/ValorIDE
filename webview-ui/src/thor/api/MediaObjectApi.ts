@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: MediaObjectApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { MediaObject, MediaObjectFromJSON, MediaObjectToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { MediaObject, MediaObjectFromJSON, MediaObjectToJSON } from "../model";
 
 export interface DeleteMediaObjectRequest {
-	id: string
+  id: string;
 }
 
 export interface GetMediaObjectRequest {
-	id: string
+  id: string;
 }
 
 export interface PostMediaObjectRequest {
-	mediaObject: MediaObject
+  mediaObject: MediaObject;
 }
 
 export interface UpdateMediaObjectRequest {
-	id: string
-	mediaObject: MediaObject
+  id: string;
+  mediaObject: MediaObject;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateMediaObjectRequest {
  * Delete a MediaObject.
  */
 function deleteMediaObjectRaw<T>(
-	requestParameters: DeleteMediaObjectRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteMediaObjectRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteMediaObject.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteMediaObject.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/MediaObject/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MediaObject/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteMediaObjectRaw<T>(
  * Delete a MediaObject.
  */
 export function deleteMediaObject<T>(
-	requestParameters: DeleteMediaObjectRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteMediaObjectRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteMediaObjectRaw(requestParameters, requestConfig)
+  return deleteMediaObjectRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteMediaObject<T>(
  * Retrieve a single MediaObject
  */
 function getMediaObjectRaw<T>(
-	requestParameters: GetMediaObjectRequest,
-	requestConfig: runtime.TypedQueryConfig<T, MediaObject> = {},
+  requestParameters: GetMediaObjectRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MediaObject> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getMediaObject.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getMediaObject.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/MediaObject/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MediaObject/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MediaObjectFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MediaObjectFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getMediaObjectRaw<T>(
  * Retrieve a single MediaObject
  */
 export function getMediaObject<T>(
-	requestParameters: GetMediaObjectRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, MediaObject>,
+  requestParameters: GetMediaObjectRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MediaObject>,
 ): QueryConfig<T> {
-	return getMediaObjectRaw(requestParameters, requestConfig)
+  return getMediaObjectRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of MediaObjects.
  * Retrieve a list of MediaObjects
  */
-function getMediaObjectListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<MediaObject>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getMediaObjectListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<MediaObject>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/MediaObject`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MediaObject`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(MediaObjectFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(MediaObjectFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of MediaObjects.
  * Retrieve a list of MediaObjects
  */
-export function getMediaObjectList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<MediaObject>>): QueryConfig<T> {
-	return getMediaObjectListRaw(requestConfig)
+export function getMediaObjectList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<MediaObject>>,
+): QueryConfig<T> {
+  return getMediaObjectListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getMediaObjectList<T>(requestConfig?: runtime.TypedQueryConfig<T
  * Create a new MediaObject
  */
 function postMediaObjectRaw<T>(
-	requestParameters: PostMediaObjectRequest,
-	requestConfig: runtime.TypedQueryConfig<T, MediaObject> = {},
+  requestParameters: PostMediaObjectRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MediaObject> = {},
 ): QueryConfig<T> {
-	if (requestParameters.mediaObject === null || requestParameters.mediaObject === undefined) {
-		throw new runtime.RequiredError(
-			"mediaObject",
-			"Required parameter requestParameters.mediaObject was null or undefined when calling postMediaObject.",
-		)
-	}
+  if (
+    requestParameters.mediaObject === null ||
+    requestParameters.mediaObject === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mediaObject",
+      "Required parameter requestParameters.mediaObject was null or undefined when calling postMediaObject.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/MediaObject`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || MediaObjectToJSON(requestParameters.mediaObject),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MediaObject`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || MediaObjectToJSON(requestParameters.mediaObject),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MediaObjectFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MediaObjectFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postMediaObjectRaw<T>(
  * Create a new MediaObject
  */
 export function postMediaObject<T>(
-	requestParameters: PostMediaObjectRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, MediaObject>,
+  requestParameters: PostMediaObjectRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MediaObject>,
 ): QueryConfig<T> {
-	return postMediaObjectRaw(requestParameters, requestConfig)
+  return postMediaObjectRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postMediaObject<T>(
  * Update an existing MediaObject
  */
 function updateMediaObjectRaw<T>(
-	requestParameters: UpdateMediaObjectRequest,
-	requestConfig: runtime.TypedQueryConfig<T, MediaObject> = {},
+  requestParameters: UpdateMediaObjectRequest,
+  requestConfig: runtime.TypedQueryConfig<T, MediaObject> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateMediaObject.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateMediaObject.",
+    );
+  }
 
-	if (requestParameters.mediaObject === null || requestParameters.mediaObject === undefined) {
-		throw new runtime.RequiredError(
-			"mediaObject",
-			"Required parameter requestParameters.mediaObject was null or undefined when calling updateMediaObject.",
-		)
-	}
+  if (
+    requestParameters.mediaObject === null ||
+    requestParameters.mediaObject === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mediaObject",
+      "Required parameter requestParameters.mediaObject was null or undefined when calling updateMediaObject.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/MediaObject/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || MediaObjectToJSON(requestParameters.mediaObject),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/MediaObject/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || MediaObjectToJSON(requestParameters.mediaObject),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(MediaObjectFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(MediaObjectFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateMediaObjectRaw<T>(
  * Update an existing MediaObject
  */
 export function updateMediaObject<T>(
-	requestParameters: UpdateMediaObjectRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, MediaObject>,
+  requestParameters: UpdateMediaObjectRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, MediaObject>,
 ): QueryConfig<T> {
-	return updateMediaObjectRaw(requestParameters, requestConfig)
+  return updateMediaObjectRaw(requestParameters, requestConfig);
 }

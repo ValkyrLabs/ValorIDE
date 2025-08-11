@@ -1,13 +1,30 @@
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from "formik"
-import React from "react"
-import { Form as BSForm, Accordion, Col, Nav, Row, Spinner } from "react-bootstrap"
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa"
-import CoolButton from "../../../../components/CoolButton"
-import * as Yup from "yup"
+import {
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React from "react";
+import {
+  Form as BSForm,
+  Accordion,
+  Col,
+  Nav,
+  Row,
+  Spinner,
+} from "react-bootstrap";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "../../../../components/CoolButton";
+import * as Yup from "yup";
 
-import { OasOpenAPISpec, OasOpenAPISpecSourceTypeEnum, OasOpenAPISpecOpenapiEnum } from "../../../model"
+import {
+  OasOpenAPISpec,
+  OasOpenAPISpecSourceTypeEnum,
+  OasOpenAPISpecOpenapiEnum,
+} from "../../../model";
 
-import { useAddOasOpenAPISpecMutation } from "../../services/OasOpenAPISpecService"
+import { useAddOasOpenAPISpecMutation } from "../../services/OasOpenAPISpecService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -32,436 +49,551 @@ An OAS Specification Object (OAS3)
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const SourceTypeValidation = () => {
-	return ["valkyrlabs", "github", "self", "gitlab", "bitbucket", "vendor", "notfound"]
-}
+  return [
+    "valkyrlabs",
+    "github",
+    "self",
+    "gitlab",
+    "bitbucket",
+    "vendor",
+    "notfound",
+  ];
+};
 const OpenapiValidation = () => {
-	return ["3.0.0", "3.0.1", "3.0.2", "3.1.0"]
-}
+  return ["3.0.0", "3.0.1", "3.0.2", "3.1.0"];
+};
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA
    (Skip read-only fields and container types)
 -------------------------------------------------------- */
 const validationSchema = Yup.object().shape({
-	sourcePath: Yup.string()
+  sourcePath: Yup.string()
 
-		.required("sourcePath is required."),
-	sourceType: Yup.mixed().oneOf(SourceTypeValidation(), "Invalid value for sourceType").required("sourceType is required."),
-	execModuleId: Yup.string(),
+    .required("sourcePath is required."),
+  sourceType: Yup.mixed()
+    .oneOf(SourceTypeValidation(), "Invalid value for sourceType")
+    .required("sourceType is required."),
+  execModuleId: Yup.string(),
 
-	sourceDetails: Yup.string(),
+  sourceDetails: Yup.string(),
 
-	openapi: Yup.mixed()
-		.oneOf(OpenapiValidation(), "Invalid value for openapi")
+  openapi: Yup.mixed()
+    .oneOf(OpenapiValidation(), "Invalid value for openapi")
 
-		.notRequired(),
+    .notRequired(),
 
-	id: Yup.string(),
+  id: Yup.string(),
 
-	ownerId: Yup.string(),
+  ownerId: Yup.string(),
 
-	createdDate: Yup.date(),
+  createdDate: Yup.date(),
 
-	keyHash: Yup.string(),
+  keyHash: Yup.string(),
 
-	lastAccessedById: Yup.string(),
+  lastAccessedById: Yup.string(),
 
-	lastAccessedDate: Yup.date(),
+  lastAccessedDate: Yup.date(),
 
-	lastModifiedById: Yup.string(),
+  lastModifiedById: Yup.string(),
 
-	lastModifiedDate: Yup.date(),
-})
+  lastModifiedDate: Yup.date(),
+});
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const OasOpenAPISpecForm: React.FC = () => {
-	const [addOasOpenAPISpec, addOasOpenAPISpecResult] = useAddOasOpenAPISpecMutation()
+  const [addOasOpenAPISpec, addOasOpenAPISpecResult] =
+    useAddOasOpenAPISpecMutation();
 
-	/* INITIAL VALUES - skip read-only fields */
-	const initialValues: Partial<OasOpenAPISpec> = {
-		sourcePath: "null",
+  /* INITIAL VALUES - skip read-only fields */
+  const initialValues: Partial<OasOpenAPISpec> = {
+    sourcePath: "null",
 
-		sourceType: OasOpenAPISpecSourceTypeEnum[Object.keys(OasOpenAPISpecSourceTypeEnum)[0]],
+    sourceType:
+      OasOpenAPISpecSourceTypeEnum[
+        Object.keys(OasOpenAPISpecSourceTypeEnum)[0]
+      ],
 
-		execModuleId: "null",
+    execModuleId: "null",
 
-		sourceDetails: "null",
+    sourceDetails: "null",
 
-		openapi: OasOpenAPISpecOpenapiEnum[Object.keys(OasOpenAPISpecOpenapiEnum)[0]],
+    openapi:
+      OasOpenAPISpecOpenapiEnum[Object.keys(OasOpenAPISpecOpenapiEnum)[0]],
 
-		id: "4629f415-e4e7-4ac8-b673-cb45c8082ad6",
+    id: "4629f415-e4e7-4ac8-b673-cb45c8082ad6",
 
-		ownerId: "6ed1b175-5ea6-4374-99e1-511460f54f6c",
+    ownerId: "6ed1b175-5ea6-4374-99e1-511460f54f6c",
 
-		keyHash: "null",
+    keyHash: "null",
 
-		lastAccessedById: "e4b81498-bf38-4831-be31-f3d491a68e93",
+    lastAccessedById: "e4b81498-bf38-4831-be31-f3d491a68e93",
 
-		lastModifiedById: "360240fe-536d-4da2-a9e3-59d97024d833",
-	}
+    lastModifiedById: "360240fe-536d-4da2-a9e3-59d97024d833",
+  };
 
-	/* SUBMIT HANDLER */
-	const handleSubmit = (values: FormikValues, { setSubmitting }: FormikHelpers<OasOpenAPISpec>) => {
-		// Simulate slow network or do what you need:
-		setTimeout(() => {
-			console.log("OasOpenAPISpec form values:", values)
-			addOasOpenAPISpec(values)
-			setSubmitting(false)
-		}, 500)
-	}
+  /* SUBMIT HANDLER */
+  const handleSubmit = (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<OasOpenAPISpec>,
+  ) => {
+    // Simulate slow network or do what you need:
+    setTimeout(() => {
+      console.log("OasOpenAPISpec form values:", values);
+      addOasOpenAPISpec(values);
+      setSubmitting(false);
+    }, 500);
+  };
 
-	return (
-		<div>
-			<Formik
-				validateOnBlur={true}
-				initialValues={initialValues as OasOpenAPISpec}
-				validationSchema={validationSchema}
-				onSubmit={handleSubmit}>
-				{({ isSubmitting, isValid, errors, setFieldValue, touched, setFieldTouched, handleSubmit }) => (
-					<form onSubmit={handleSubmit} className="form">
-						<Accordion defaultActiveKey="1">
-							{/* Debug/Dev Accordion */}
-							<Accordion.Item eventKey="0">
-								<Accordion.Header>
-									<FaCogs size={36} />
-								</Accordion.Header>
-								<Accordion.Body>
-									errors: {JSON.stringify(errors)}
-									<br />
-									touched: {JSON.stringify(touched)}
-									<br />
-									addOasOpenAPISpecResult: {JSON.stringify(addOasOpenAPISpecResult)}
-								</Accordion.Body>
-							</Accordion.Item>
+  return (
+    <div>
+      <Formik
+        validateOnBlur={true}
+        initialValues={initialValues as OasOpenAPISpec}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({
+          isSubmitting,
+          isValid,
+          errors,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => (
+          <form onSubmit={handleSubmit} className="form">
+            <Accordion defaultActiveKey="1">
+              {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={36} />
+                </Accordion.Header>
+                <Accordion.Body>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  touched: {JSON.stringify(touched)}
+                  <br />
+                  addOasOpenAPISpecResult:{" "}
+                  {JSON.stringify(addOasOpenAPISpecResult)}
+                </Accordion.Body>
+              </Accordion.Item>
 
-							{/* Editable Fields (NON-read-only) */}
-							<Accordion.Item eventKey="1">
-								<Accordion.Header>
-									<FaRegPlusSquare size={36} /> Add New OasOpenAPISpec
-								</Accordion.Header>
-								<Accordion.Body>
-									<label htmlFor="sourcePath" className="nice-form-control">
-										<b>
-											Source Path:
-											{touched.sourcePath && !errors.sourcePath && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+              {/* Editable Fields (NON-read-only) */}
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <FaRegPlusSquare size={36} /> Add New OasOpenAPISpec
+                </Accordion.Header>
+                <Accordion.Body>
+                  <label htmlFor="sourcePath" className="nice-form-control">
+                    <b>
+                      Source Path:
+                      {touched.sourcePath && !errors.sourcePath && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="sourcePath"
-											type="text"
-											className={
-												errors.sourcePath ? "form-control field-error" : "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="sourcePath"
+                      type="text"
+                      className={
+                        errors.sourcePath
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="sourcePath" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="sourcePath"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="sourceType" className="nice-form-control">
-										<b>
-											Source Type:
-											{touched.sourceType && !errors.sourceType && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="sourceType" className="nice-form-control">
+                    <b>
+                      Source Type:
+                      {touched.sourceType && !errors.sourceType && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* ENUM DROPDOWN */}
-										<BSForm.Select
-											name="sourceType"
-											className={
-												errors.sourceType ? "form-control field-error" : "nice-form-control form-control"
-											}
-											onChange={(e) => {
-												setFieldTouched("sourceType", true)
-												setFieldValue("sourceType", e.target.value)
-											}}>
-											<option value="" label="Select Source Type" />
-											<SourceTypeLookup />
-										</BSForm.Select>
+                    {/* ENUM DROPDOWN */}
+                    <BSForm.Select
+                      name="sourceType"
+                      className={
+                        errors.sourceType
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                      onChange={(e) => {
+                        setFieldTouched("sourceType", true);
+                        setFieldValue("sourceType", e.target.value);
+                      }}
+                    >
+                      <option value="" label="Select Source Type" />
+                      <SourceTypeLookup />
+                    </BSForm.Select>
 
-										<ErrorMessage className="error" name="sourceType" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="sourceType"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="execModuleId" className="nice-form-control">
-										<b>
-											Exec Module Id:
-											{touched.execModuleId && !errors.execModuleId && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="execModuleId" className="nice-form-control">
+                    <b>
+                      Exec Module Id:
+                      {touched.execModuleId && !errors.execModuleId && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="execModuleId"
-											type="text"
-											className={
-												errors.execModuleId
-													? "form-control field-error"
-													: "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="execModuleId"
+                      type="text"
+                      className={
+                        errors.execModuleId
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="execModuleId" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="execModuleId"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="sourceDetails" className="nice-form-control">
-										<b>
-											Source Details:
-											{touched.sourceDetails && !errors.sourceDetails && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="sourceDetails" className="nice-form-control">
+                    <b>
+                      Source Details:
+                      {touched.sourceDetails && !errors.sourceDetails && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="sourceDetails"
-											type="text"
-											className={
-												errors.sourceDetails
-													? "form-control field-error"
-													: "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="sourceDetails"
+                      type="text"
+                      className={
+                        errors.sourceDetails
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="sourceDetails" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="sourceDetails"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="openapi" className="nice-form-control">
-										<b>
-											Openapi:
-											{touched.openapi && !errors.openapi && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="openapi" className="nice-form-control">
+                    <b>
+                      Openapi:
+                      {touched.openapi && !errors.openapi && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* ENUM DROPDOWN */}
-										<BSForm.Select
-											name="openapi"
-											className={
-												errors.openapi ? "form-control field-error" : "nice-form-control form-control"
-											}
-											onChange={(e) => {
-												setFieldTouched("openapi", true)
-												setFieldValue("openapi", e.target.value)
-											}}>
-											<option value="" label="Select Openapi" />
-											<OpenapiLookup />
-										</BSForm.Select>
+                    {/* ENUM DROPDOWN */}
+                    <BSForm.Select
+                      name="openapi"
+                      className={
+                        errors.openapi
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                      onChange={(e) => {
+                        setFieldTouched("openapi", true);
+                        setFieldValue("openapi", e.target.value);
+                      }}
+                    >
+                      <option value="" label="Select Openapi" />
+                      <OpenapiLookup />
+                    </BSForm.Select>
 
-										<ErrorMessage className="error" name="openapi" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="openapi"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="id" className="nice-form-control">
-										<b>
-											Id:
-											{touched.id && !errors.id && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="id" className="nice-form-control">
+                    <b>
+                      Id:
+                      {touched.id && !errors.id && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="id"
-											type="text"
-											className={errors.id ? "form-control field-error" : "nice-form-control form-control"}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="id"
+                      type="text"
+                      className={
+                        errors.id
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="id" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="id"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="ownerId" className="nice-form-control">
-										<b>
-											Owner Id:
-											{touched.ownerId && !errors.ownerId && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="ownerId" className="nice-form-control">
+                    <b>
+                      Owner Id:
+                      {touched.ownerId && !errors.ownerId && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="ownerId"
-											type="text"
-											className={
-												errors.ownerId ? "form-control field-error" : "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="ownerId"
+                      type="text"
+                      className={
+                        errors.ownerId
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="ownerId" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="ownerId"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="createdDate" className="nice-form-control">
-										<b>
-											Created Date:
-											{touched.createdDate && !errors.createdDate && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="createdDate" className="nice-form-control">
+                    <b>
+                      Created Date:
+                      {touched.createdDate && !errors.createdDate && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										<ErrorMessage className="error" name="createdDate" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="createdDate"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="keyHash" className="nice-form-control">
-										<b>
-											Key Hash:
-											{touched.keyHash && !errors.keyHash && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label htmlFor="keyHash" className="nice-form-control">
+                    <b>
+                      Key Hash:
+                      {touched.keyHash && !errors.keyHash && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="keyHash"
-											type="text"
-											className={
-												errors.keyHash ? "form-control field-error" : "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="keyHash"
+                      type="text"
+                      className={
+                        errors.keyHash
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="keyHash" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="keyHash"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="lastAccessedById" className="nice-form-control">
-										<b>
-											Last Accessed By Id:
-											{touched.lastAccessedById && !errors.lastAccessedById && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label
+                    htmlFor="lastAccessedById"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Accessed By Id:
+                      {touched.lastAccessedById && !errors.lastAccessedById && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="lastAccessedById"
-											type="text"
-											className={
-												errors.lastAccessedById
-													? "form-control field-error"
-													: "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="lastAccessedById"
+                      type="text"
+                      className={
+                        errors.lastAccessedById
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="lastAccessedById" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="lastAccessedById"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="lastAccessedDate" className="nice-form-control">
-										<b>
-											Last Accessed Date:
-											{touched.lastAccessedDate && !errors.lastAccessedDate && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label
+                    htmlFor="lastAccessedDate"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Accessed Date:
+                      {touched.lastAccessedDate && !errors.lastAccessedDate && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										<ErrorMessage className="error" name="lastAccessedDate" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="lastAccessedDate"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="lastModifiedById" className="nice-form-control">
-										<b>
-											Last Modified By Id:
-											{touched.lastModifiedById && !errors.lastModifiedById && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label
+                    htmlFor="lastModifiedById"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Modified By Id:
+                      {touched.lastModifiedById && !errors.lastModifiedById && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										{/* TEXT FIELD */}
-										<Field
-											name="lastModifiedById"
-											type="text"
-											className={
-												errors.lastModifiedById
-													? "form-control field-error"
-													: "nice-form-control form-control"
-											}
-										/>
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="lastModifiedById"
+                      type="text"
+                      className={
+                        errors.lastModifiedById
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
 
-										<ErrorMessage className="error" name="lastModifiedById" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="lastModifiedById"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									<label htmlFor="lastModifiedDate" className="nice-form-control">
-										<b>
-											Last Modified Date:
-											{touched.lastModifiedDate && !errors.lastModifiedDate && (
-												<span className="okCheck">
-													<FaCheckCircle /> looks good!
-												</span>
-											)}
-										</b>
+                  <label
+                    htmlFor="lastModifiedDate"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Modified Date:
+                      {touched.lastModifiedDate && !errors.lastModifiedDate && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
 
-										<ErrorMessage className="error" name="lastModifiedDate" component="span" />
-									</label>
-									<br />
+                    <ErrorMessage
+                      className="error"
+                      name="lastModifiedDate"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
-									{/* SUBMIT BUTTON */}
-									<CoolButton
-										variant={touched && isValid ? (isSubmitting ? "disabled" : "success") : "warning"}
-										type="submit">
-										{isSubmitting && (
-											<Spinner
-												style={{ float: "left" }}
-												as="span"
-												animation="grow"
-												variant="light"
-												aria-hidden="true"
-											/>
-										)}
-										<FaCheckCircle size={30} /> Create New OasOpenAPISpec
-									</CoolButton>
-								</Accordion.Body>
-							</Accordion.Item>
+                  {/* SUBMIT BUTTON */}
+                  <CoolButton
+                    variant={
+                      touched && isValid
+                        ? isSubmitting
+                          ? "disabled"
+                          : "success"
+                        : "warning"
+                    }
+                    type="submit"
+                  >
+                    {isSubmitting && (
+                      <Spinner
+                        style={{ float: "left" }}
+                        as="span"
+                        animation="grow"
+                        variant="light"
+                        aria-hidden="true"
+                      />
+                    )}
+                    <FaCheckCircle size={30} /> Create New OasOpenAPISpec
+                  </CoolButton>
+                </Accordion.Body>
+              </Accordion.Item>
 
-							{/* Read-Only System Fields */}
-							<Accordion.Item eventKey="2">
-								<Accordion.Header>System Fields (Read Only)</Accordion.Header>
-								<Accordion.Body>
-									<Row></Row>
-								</Accordion.Body>
-							</Accordion.Item>
-						</Accordion>
-					</form>
-				)}
-			</Formik>
-		</div>
-	)
-}
+              {/* Read-Only System Fields */}
+              <Accordion.Item eventKey="2">
+                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+                <Accordion.Body>
+                  <Row></Row>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+          </form>
+        )}
+      </Formik>
+    </div>
+  );
+};
 
 /*
 lowercase sourcetypelookup
@@ -473,18 +605,18 @@ kebabcase source-type-lookup
 */
 
 const SourceTypeLookup = () => {
-	return (
-		<>
-			<option value="valkyrlabs" label="Valkyrlabs" />
-			<option value="github" label="Github" />
-			<option value="self" label="Self" />
-			<option value="gitlab" label="Gitlab" />
-			<option value="bitbucket" label="Bitbucket" />
-			<option value="vendor" label="Vendor" />
-			<option value="notfound" label="Notfound" />
-		</>
-	)
-}
+  return (
+    <>
+      <option value="valkyrlabs" label="Valkyrlabs" />
+      <option value="github" label="Github" />
+      <option value="self" label="Self" />
+      <option value="gitlab" label="Gitlab" />
+      <option value="bitbucket" label="Bitbucket" />
+      <option value="vendor" label="Vendor" />
+      <option value="notfound" label="Notfound" />
+    </>
+  );
+};
 
 /*
 lowercase openapilookup
@@ -496,15 +628,15 @@ kebabcase openapi-lookup
 */
 
 const OpenapiLookup = () => {
-	return (
-		<>
-			<option value="3.0.0" label="_ 00" />
-			<option value="3.0.1" label="_ 01" />
-			<option value="3.0.2" label="_ 02" />
-			<option value="3.1.0" label="_ 10" />
-		</>
-	)
-}
+  return (
+    <>
+      <option value="3.0.0" label="_ 00" />
+      <option value="3.0.1" label="_ 01" />
+      <option value="3.0.2" label="_ 02" />
+      <option value="3.1.0" label="_ 10" />
+    </>
+  );
+};
 
 /* Export the generated form */
-export default OasOpenAPISpecForm
+export default OasOpenAPISpecForm;

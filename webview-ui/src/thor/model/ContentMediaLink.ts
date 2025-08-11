@@ -11,7 +11,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime"
+import { exists, mapValues } from "../src/runtime";
 
 // thorapi
 
@@ -21,131 +21,154 @@ import { exists, mapValues } from "../src/runtime"
  * @interface ContentMediaLink
  */
 export type ContentMediaLink = {
-	/**
-	 * used when linked to an Application
-	 * @type {string}
-	 * @memberof ContentMediaLink
-	 */
-	applicationId?: string
-	/**
-	 * used when linked to ContentData
-	 * @type {string}
-	 * @memberof ContentMediaLink
-	 */
-	contentDataId?: string
-	/**
-	 * specialized usage for the media object if any
-	 * @type {string}
-	 * @memberof ContentMediaLink
-	 */
-	contentUse?: ContentMediaLinkContentUseEnum
-	/**
-	 * content type of the media object
-	 * @type {string}
-	 * @memberof ContentMediaLink
-	 */
-	contentType?: ContentMediaLinkContentTypeEnum
-	/**
-	 * url to the media object
-	 * @type {string}
-	 * @memberof ContentMediaLink
-	 */
-	mediaUrl?: string
-	/**
-	 * path to a file
-	 * @type {string}
-	 * @memberof ContentMediaLink
-	 */
-	fileName?: string
-	/**
-	 * Unique identifier for object in the system
-	 * @type {string}
-	 * @memberof ContentMediaLink
-	 */
-	id?: string
-	/**
-	 * UUID of owner of the object in the system
-	 * @type {string}
-	 * @memberof ContentMediaLink
-	 */
-	ownerId?: string
-	/**
-	 * Date of object creation
-	 * @type {Date}
-	 * @memberof ContentMediaLink
-	 */
-	createdDate?: Date
-	/**
-	 * Data, including hash of the key(s) used to encrypt this record.
-	 * @type {string}
-	 * @memberof ContentMediaLink
-	 */
-	keyHash?: string
-	/**
-	 * Last user to access object
-	 * @type {string}
-	 * @memberof ContentMediaLink
-	 */
-	lastAccessedById?: string
-	/**
-	 * Timestamp of last access of object
-	 * @type {Date}
-	 * @memberof ContentMediaLink
-	 */
-	lastAccessedDate?: Date
-	/**
-	 * Unique identifier for user who last modifed the object in the system
-	 * @type {string}
-	 * @memberof ContentMediaLink
-	 */
-	lastModifiedById?: string
-	/**
-	 * Date of last object modification
-	 * @type {Date}
-	 * @memberof ContentMediaLink
-	 */
-	lastModifiedDate?: Date
-}
+  /**
+   * used when linked to an Application
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  applicationId?: string;
+  /**
+   * used when linked to ContentData
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  contentDataId?: string;
+  /**
+   * specialized usage for the media object if any
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  contentUse?: ContentMediaLinkContentUseEnum;
+  /**
+   * content type of the media object
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  contentType?: ContentMediaLinkContentTypeEnum;
+  /**
+   * url to the media object
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  mediaUrl?: string;
+  /**
+   * path to a file
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  fileName?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof ContentMediaLink
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof ContentMediaLink
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof ContentMediaLink
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof ContentMediaLink
+   */
+  lastModifiedDate?: Date;
+};
 
 export function ContentMediaLinkFromJSON(json: any): ContentMediaLink {
-	return {
-		applicationId: !exists(json, "applicationId") ? undefined : json["applicationId"],
-		contentDataId: !exists(json, "contentDataId") ? undefined : json["contentDataId"],
-		contentUse: !exists(json, "contentUse") ? undefined : json["contentUse"],
-		contentType: !exists(json, "contentType") ? undefined : json["contentType"],
-		mediaUrl: !exists(json, "mediaUrl") ? undefined : json["mediaUrl"],
-		fileName: !exists(json, "fileName") ? undefined : json["fileName"],
-		id: !exists(json, "id") ? undefined : json["id"],
-		ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-		createdDate: !exists(json, "createdDate") ? undefined : new Date(json["createdDate"]),
-		keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-		lastAccessedById: !exists(json, "lastAccessedById") ? undefined : json["lastAccessedById"],
-		lastAccessedDate: !exists(json, "lastAccessedDate") ? undefined : new Date(json["lastAccessedDate"]),
-		lastModifiedById: !exists(json, "lastModifiedById") ? undefined : json["lastModifiedById"],
-		lastModifiedDate: !exists(json, "lastModifiedDate") ? undefined : new Date(json["lastModifiedDate"]),
-	}
+  return {
+    applicationId: !exists(json, "applicationId")
+      ? undefined
+      : json["applicationId"],
+    contentDataId: !exists(json, "contentDataId")
+      ? undefined
+      : json["contentDataId"],
+    contentUse: !exists(json, "contentUse") ? undefined : json["contentUse"],
+    contentType: !exists(json, "contentType") ? undefined : json["contentType"],
+    mediaUrl: !exists(json, "mediaUrl") ? undefined : json["mediaUrl"],
+    fileName: !exists(json, "fileName") ? undefined : json["fileName"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function ContentMediaLinkToJSON(value?: ContentMediaLink): any {
-	if (value === undefined) {
-		return undefined
-	}
-	return {
-		applicationId: value.applicationId,
-		contentDataId: value.contentDataId,
-		contentUse: value.contentUse,
-		contentType: value.contentType,
-		mediaUrl: value.mediaUrl,
-		fileName: value.fileName,
-		id: value.id,
-		ownerId: value.ownerId,
-		createdDate: value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-		keyHash: value.keyHash,
-		lastAccessedById: value.lastAccessedById,
-		lastAccessedDate: value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-		lastModifiedById: value.lastModifiedById,
-		lastModifiedDate: value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-	}
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    applicationId: value.applicationId,
+    contentDataId: value.contentDataId,
+    contentUse: value.contentUse,
+    contentType: value.contentType,
+    mediaUrl: value.mediaUrl,
+    fileName: value.fileName,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
@@ -153,31 +176,31 @@ export function ContentMediaLinkToJSON(value?: ContentMediaLink): any {
  * @enum {string}
  */
 export enum ContentMediaLinkContentUseEnum {
-	NONE = "none",
-	SCREENSHOT = "screenshot",
-	SELFIE = "selfie",
-	PORTRAIT = "portrait",
-	PROMOTIONAL = "promotional",
-	INFORMATIONAL = "informational",
-	ENTERTAINMENT = "entertainment",
-	PRODUCT = "product",
-	SUPPORT = "support",
-	TRAINING = "training",
+  NONE = "none",
+  SCREENSHOT = "screenshot",
+  SELFIE = "selfie",
+  PORTRAIT = "portrait",
+  PROMOTIONAL = "promotional",
+  INFORMATIONAL = "informational",
+  ENTERTAINMENT = "entertainment",
+  PRODUCT = "product",
+  SUPPORT = "support",
+  TRAINING = "training",
 }
 /**
  * @export
  * @enum {string}
  */
 export enum ContentMediaLinkContentTypeEnum {
-	IMAGE = "image",
-	ICON = "icon",
-	VIDEO = "video",
-	AUDIO = "audio",
-	TEXT = "text",
-	JSON = "json",
-	YAML = "yaml",
-	XML = "xml",
-	MARKDOWN = "markdown",
-	SPREADSHEET = "spreadsheet",
-	PDF = "pdf",
+  IMAGE = "image",
+  ICON = "icon",
+  VIDEO = "video",
+  AUDIO = "audio",
+  TEXT = "text",
+  JSON = "json",
+  YAML = "yaml",
+  XML = "xml",
+  MARKDOWN = "markdown",
+  SPREADSHEET = "spreadsheet",
+  PDF = "pdf",
 }

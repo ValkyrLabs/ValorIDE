@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: ContentDataApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { ContentData, ContentDataFromJSON, ContentDataToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { ContentData, ContentDataFromJSON, ContentDataToJSON } from "../model";
 
 export interface DeleteContentDataRequest {
-	id: string
+  id: string;
 }
 
 export interface GetContentDataRequest {
-	id: string
+  id: string;
 }
 
 export interface PostContentDataRequest {
-	contentData: ContentData
+  contentData: ContentData;
 }
 
 export interface UpdateContentDataRequest {
-	id: string
-	contentData: ContentData
+  id: string;
+  contentData: ContentData;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateContentDataRequest {
  * Delete a ContentData.
  */
 function deleteContentDataRaw<T>(
-	requestParameters: DeleteContentDataRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteContentDataRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteContentData.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteContentData.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ContentData/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ContentData/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteContentDataRaw<T>(
  * Delete a ContentData.
  */
 export function deleteContentData<T>(
-	requestParameters: DeleteContentDataRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteContentDataRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteContentDataRaw(requestParameters, requestConfig)
+  return deleteContentDataRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteContentData<T>(
  * Retrieve a single ContentData
  */
 function getContentDataRaw<T>(
-	requestParameters: GetContentDataRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ContentData> = {},
+  requestParameters: GetContentDataRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ContentData> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getContentData.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getContentData.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ContentData/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ContentData/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ContentDataFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ContentDataFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getContentDataRaw<T>(
  * Retrieve a single ContentData
  */
 export function getContentData<T>(
-	requestParameters: GetContentDataRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ContentData>,
+  requestParameters: GetContentDataRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ContentData>,
 ): QueryConfig<T> {
-	return getContentDataRaw(requestParameters, requestConfig)
+  return getContentDataRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of ContentDatas.
  * Retrieve a list of ContentDatas
  */
-function getContentDataListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<ContentData>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getContentDataListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<ContentData>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ContentData`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ContentData`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(ContentDataFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(ContentDataFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of ContentDatas.
  * Retrieve a list of ContentDatas
  */
-export function getContentDataList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<ContentData>>): QueryConfig<T> {
-	return getContentDataListRaw(requestConfig)
+export function getContentDataList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<ContentData>>,
+): QueryConfig<T> {
+  return getContentDataListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getContentDataList<T>(requestConfig?: runtime.TypedQueryConfig<T
  * Create a new ContentData
  */
 function postContentDataRaw<T>(
-	requestParameters: PostContentDataRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ContentData> = {},
+  requestParameters: PostContentDataRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ContentData> = {},
 ): QueryConfig<T> {
-	if (requestParameters.contentData === null || requestParameters.contentData === undefined) {
-		throw new runtime.RequiredError(
-			"contentData",
-			"Required parameter requestParameters.contentData was null or undefined when calling postContentData.",
-		)
-	}
+  if (
+    requestParameters.contentData === null ||
+    requestParameters.contentData === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "contentData",
+      "Required parameter requestParameters.contentData was null or undefined when calling postContentData.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ContentData`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || ContentDataToJSON(requestParameters.contentData),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ContentData`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || ContentDataToJSON(requestParameters.contentData),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ContentDataFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ContentDataFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postContentDataRaw<T>(
  * Create a new ContentData
  */
 export function postContentData<T>(
-	requestParameters: PostContentDataRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ContentData>,
+  requestParameters: PostContentDataRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ContentData>,
 ): QueryConfig<T> {
-	return postContentDataRaw(requestParameters, requestConfig)
+  return postContentDataRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postContentData<T>(
  * Update an existing ContentData
  */
 function updateContentDataRaw<T>(
-	requestParameters: UpdateContentDataRequest,
-	requestConfig: runtime.TypedQueryConfig<T, ContentData> = {},
+  requestParameters: UpdateContentDataRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ContentData> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateContentData.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateContentData.",
+    );
+  }
 
-	if (requestParameters.contentData === null || requestParameters.contentData === undefined) {
-		throw new runtime.RequiredError(
-			"contentData",
-			"Required parameter requestParameters.contentData was null or undefined when calling updateContentData.",
-		)
-	}
+  if (
+    requestParameters.contentData === null ||
+    requestParameters.contentData === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "contentData",
+      "Required parameter requestParameters.contentData was null or undefined when calling updateContentData.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/ContentData/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || ContentDataToJSON(requestParameters.contentData),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/ContentData/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || ContentDataToJSON(requestParameters.contentData),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ContentDataFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ContentDataFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateContentDataRaw<T>(
  * Update an existing ContentData
  */
 export function updateContentData<T>(
-	requestParameters: UpdateContentDataRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, ContentData>,
+  requestParameters: UpdateContentDataRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ContentData>,
 ): QueryConfig<T> {
-	return updateContentDataRaw(requestParameters, requestConfig)
+  return updateContentDataRaw(requestParameters, requestConfig);
 }

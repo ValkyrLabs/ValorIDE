@@ -33,13 +33,12 @@ ValorIDE을 만나보세요, **CLI** 및 **에디터**를 활용할 수 있는 A
 1. 작업을 입력하고, 목업을 기능하는 앱으로 변환하거나 스크린샷으로 버그를 수정합니다.
 2. ValorIDE은 파일 구조와 소스코드 AST의 분석, 정규식 검색 실행, 관련 파일 읽기부터 시작하여 기존 프로젝트를 파악합니다. 또한, 어떤 정보를 컨텍스트에 추가할지를 신중하게 관리하여, 대규모 복잡한 프로젝트에서도 컨텍스트 윈도우를 과부하시키지 않으면서도 효과적인 지원을 제공합니다.
 3. ValorIDE이 필요한 정보를 얻은 후 다음과 같은 작업을 할 수 있습니다:
-    - 파일 생성과 편집 + 린터/컴파일러 오류 모니터링을 수행하여 누락된 임포트나 구문 오류 등의 문제를 자동으로 수정합니다.
-    - 터미널에서 명령을 직접 실행하고 작업 중에 출력을 모니터링합니다. 이를 통해 파일 편집 후 개발 서버의 문제에 대응할 수 있습니다.
-    - 웹 개발 작업에서는 헤드리스 브라우저로 사이트를 실행하고, 클릭, 입력, 스크롤, 스크린샷과 콘솔 로그 캡처를 수행하여 런타임 오류나 시각적 버그를 수정합니다.
+   - 파일 생성과 편집 + 린터/컴파일러 오류 모니터링을 수행하여 누락된 임포트나 구문 오류 등의 문제를 자동으로 수정합니다.
+   - 터미널에서 명령을 직접 실행하고 작업 중에 출력을 모니터링합니다. 이를 통해 파일 편집 후 개발 서버의 문제에 대응할 수 있습니다.
+   - 웹 개발 작업에서는 헤드리스 브라우저로 사이트를 실행하고, 클릭, 입력, 스크롤, 스크린샷과 콘솔 로그 캡처를 수행하여 런타임 오류나 시각적 버그를 수정합니다.
 4. 작업이 완료되면 ValorIDE은 `open -a "Google Chrome" index.html`과 같은 터미널 명령을 제공하여 버튼 클릭 한 번으로 결과를 확인할 수 있도록 합니다.
 
-> [!TIP]
-> `CMD/CTRL + Shift + P` 단축키를 사용하여 명령 팔레트를 열고 "ValorIDE: Open In New Tab"을 입력하여 에디터의 탭으로 확장 프로그램을 엽니다. 이를 통해 파일 탐색기와 병행하여 ValorIDE을 사용하고 워크스페이스의 변경을 더 명확하게 확인할 수 있습니다.
+> [!TIP] > `CMD/CTRL + Shift + P` 단축키를 사용하여 명령 팔레트를 열고 "ValorIDE: Open In New Tab"을 입력하여 에디터의 탭으로 확장 프로그램을 엽니다. 이를 통해 파일 탐색기와 병행하여 ValorIDE을 사용하고 워크스페이스의 변경을 더 명확하게 확인할 수 있습니다.
 
 ---
 
@@ -70,7 +69,6 @@ VSCode v1.93의 새로운 [셸 통합 업데이트](https://code.visualstudio.co
 ValorIDE은 에디터 내에서 파일을 생성 및 편집하고 변경의 Diff 뷰로 표시합니다. Diff 뷰 에디터에서 ValorIDE의 변경을 직접 편집하거나 되돌릴 수 있으며, 채팅에서 피드백을 제공하여 만족할 때까지 개선 요청할 수 있습니다. ValorIDE은 린터/컴파일러 오류(누락된 임포트, 구문 오류 등)도 모니터링하고 발생한 문제를 자동으로 수정합니다.
 
 ValorIDE에 의한 모든 변경은 파일의 타임라인에 기록되어 필요할 때 변경을 추적하고 되돌릴 수 있는 간단한 방법을 제공합니다.
-
 
 <img width="2000" height="0" src="https://github.com/user-attachments/assets/ee14e6f7-20b8-4391-9091-8e8e25561929"><br>
 
@@ -128,17 +126,17 @@ ValorIDE이 작업을 진행하는 동안 확장 프로그램은 각 단계에�
 <summary>로컬 개발 방법</summary>
 
 1. 리포지토리를 클론합니다 _(Requires [git-lfs](https://git-lfs.com/))_：
-        ```bash
-        git clone https://github.com/valkyrlabs/valoride.git
-        ```
+   `bash
+    git clone https://github.com/valkyrlabs/valoride.git
+    `
 2. 프로젝트를 VSCode에서 엽니다：
-        ```bash
-        code valoride
-        ```
+   `bash
+    code valoride
+    `
 3. 확장 프로그램과 webview-gui의 필요한 의존성을 설치합니다：
-        ```bash
-        npm run install:all
-        ```
+   `bash
+    npm run install:all
+    `
 4. `F5`를 눌러(또는 `Run`->`Start Debugging`), 확장 프로그램이 로드된 새로운 VSCode 창을 엽니다. (프로젝트 빌드에 문제가 있는 경우, [esbuild problem matchers extension](https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers)을 설치해야 할 수도 있습니다.)
 
 </details>
@@ -147,10 +145,13 @@ ValorIDE이 작업을 진행하는 동안 확장 프로그램은 각 단계에�
 <summary>Pull Request 생성 방법</summary>
 
 1. PR을 만들기 전, 변경 사항을 기록하는 changeset 항목을 생성:
-    ```bash
-    npm run changeset
-    ```
+
+   ```bash
+   npm run changeset
+   ```
+
    이후 프롬프트에서 다음 정보를 입력하세요:
+
    - 변경 유형 (major, minor, patch)
      - `major` → 호환되지 않는 변경 (1.0.0 → 2.0.0)
      - `minor` → 새로운 기능 추가 (1.0.0 → 1.1.0)

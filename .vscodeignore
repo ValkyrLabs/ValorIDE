@@ -1,0 +1,48 @@
+# Exclude version control and config
+.git/
+.gitignore
+.husky/
+.vscode/
+.DS_Store
+
+# Exclude source, tests, docs, configs, and build scripts
+src/
+test/
+tests/
+__tests__/
+docs/
+evals/
+*.ts
+*.tsx
+*.js
+*.jsx
+*.map
+*.test.*
+*.spec.*
+tsconfig.json
+tsconfig.*.json
+esbuild.js
+vite.config.*
+eslint.config.*
+*.log
+*.lock
+*.md
+*.markdown
+
+# Exclude node_modules except production dependencies (if not bundled)
+node_modules/
+
+# Exclude other common unnecessary files
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# Include only the built output and essential files
+!out/
+!dist/
+!extension.js
+!package.json
+!README.md
+!LICENSE
+!assets/

@@ -22,44 +22,46 @@ If you're planning to work on a bigger feature, please create a [feature request
 
 1. **VS Code Extensions**
 
-    - When opening the project, VS Code will prompt you to install recommended extensions
-    - These extensions are required for development - please accept all installation prompts
-    - If you dismissed the prompts, you can install them manually from the Extensions panel
+   - When opening the project, VS Code will prompt you to install recommended extensions
+   - These extensions are required for development - please accept all installation prompts
+   - If you dismissed the prompts, you can install them manually from the Extensions panel
 
 2. **Local Development**
-    - Run `npm run install:all` to install dependencies
-    - Run `npm run test` to run tests locally
-    - Before submitting PR, run `npm run format:fix` to format your code
+
+   - Run `npm run install:all` to install dependencies
+   - Run `npm run test` to run tests locally
+   - Before submitting PR, run `npm run format:fix` to format your code
 
 3. **Linux-specific Setup**
-    VS Code extension tests on Linux require the following system libraries:
+   VS Code extension tests on Linux require the following system libraries:
 
-    - `libatk1.0-0`
-    - `libatk-bridge2.0-0`
-    - `libxkbfile1`
-    - `libx11-xcb1`
-    - `libxcomposite1`
-    - `libxdamage1`
-    - `libxfixes3`
-    - `libxrandr2`
-    - `libgbm1`
-    - `libdrm2`
-    - `libgtk-3-0`
-    - `dbus`
-    - `xvfb`
+   - `libatk1.0-0`
+   - `libatk-bridge2.0-0`
+   - `libxkbfile1`
+   - `libx11-xcb1`
+   - `libxcomposite1`
+   - `libxdamage1`
+   - `libxfixes3`
+   - `libxrandr2`
+   - `libgbm1`
+   - `libdrm2`
+   - `libgtk-3-0`
+   - `dbus`
+   - `xvfb`
 
-    These libraries provide necessary GUI components and system services for the test environment.
+   These libraries provide necessary GUI components and system services for the test environment.
 
-    For example, on Debian-based distributions (e.g., Ubuntu), you can install these libraries using apt:
-    ```bash
-    sudo apt update
-    sudo apt install -y \
-      libatk1.0-0 libatk-bridge2.0-0 libxkbfile1 libx11-xcb1 \
-      libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 \
-      libdrm2 libgtk-3-0 dbus xvfb
-    ```
+   For example, on Debian-based distributions (e.g., Ubuntu), you can install these libraries using apt:
 
-    - Run `npm run test:ci` to run tests locally
+   ```bash
+   sudo apt update
+   sudo apt install -y \
+     libatk1.0-0 libatk-bridge2.0-0 libxkbfile1 libx11-xcb1 \
+     libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 \
+     libdrm2 libgtk-3-0 dbus xvfb
+   ```
+
+   - Run `npm run test:ci` to run tests locally
 
 ## Writing and Submitting Code
 
@@ -67,53 +69,53 @@ Anyone can contribute code to ValorIDE, but we ask that you follow these guideli
 
 1. **Keep Pull Requests Focused**
 
-    - Limit PRs to a single feature or bug fix
-    - Split larger changes into smaller, related PRs
-    - Break changes into logical commits that can be reviewed independently
+   - Limit PRs to a single feature or bug fix
+   - Split larger changes into smaller, related PRs
+   - Break changes into logical commits that can be reviewed independently
 
 2. **Code Quality**
 
-    - Run `npm run lint` to check code style
-    - Run `npm run format` to automatically format code
-    - All PRs must pass CI checks which include both linting and formatting
-    - Address any ESLint warnings or errors before submitting
-    - Follow TypeScript best practices and maintain type safety
+   - Run `npm run lint` to check code style
+   - Run `npm run format` to automatically format code
+   - All PRs must pass CI checks which include both linting and formatting
+   - Address any ESLint warnings or errors before submitting
+   - Follow TypeScript best practices and maintain type safety
 
 3. **Testing**
 
-    - Add tests for new features
-    - Run `npm test` to ensure all tests pass
-    - Update existing tests if your changes affect them
-    - Include both unit tests and integration tests where appropriate
+   - Add tests for new features
+   - Run `npm test` to ensure all tests pass
+   - Update existing tests if your changes affect them
+   - Include both unit tests and integration tests where appropriate
 
 4. **Version Management with Changesets**
 
-    - Create a changeset for any user-facing changes using `npm run changeset`
-    - Choose the appropriate version bump:
-        - `major` for breaking changes (1.0.0 → 2.0.0)
-        - `minor` for new features (1.0.0 → 1.1.0)
-        - `patch` for bug fixes (1.0.0 → 1.0.1)
-    - Write clear, descriptive changeset messages that explain the impact
-    - Documentation-only changes don't require changesets
+   - Create a changeset for any user-facing changes using `npm run changeset`
+   - Choose the appropriate version bump:
+     - `major` for breaking changes (1.0.0 → 2.0.0)
+     - `minor` for new features (1.0.0 → 1.1.0)
+     - `patch` for bug fixes (1.0.0 → 1.0.1)
+   - Write clear, descriptive changeset messages that explain the impact
+   - Documentation-only changes don't require changesets
 
 5. **Commit Guidelines**
 
-    - Write clear, descriptive commit messages
-    - Use conventional commit format (e.g., "feat:", "fix:", "docs:")
-    - Reference relevant issues in commits using #issue-number
+   - Write clear, descriptive commit messages
+   - Use conventional commit format (e.g., "feat:", "fix:", "docs:")
+   - Reference relevant issues in commits using #issue-number
 
 6. **Before Submitting**
 
-    - Rebase your branch on the latest main
-    - Ensure your branch builds successfully
-    - Double-check all tests are passing
-    - Review your changes for any debugging code or console logs
+   - Rebase your branch on the latest main
+   - Ensure your branch builds successfully
+   - Double-check all tests are passing
+   - Review your changes for any debugging code or console logs
 
 7. **Pull Request Description**
-    - Clearly describe what your changes do
-    - Include steps to test the changes
-    - List any breaking changes
-    - Add screenshots for UI changes
+   - Clearly describe what your changes do
+   - Include steps to test the changes
+   - List any breaking changes
+   - Add screenshots for UI changes
 
 ## Contribution Agreement
 

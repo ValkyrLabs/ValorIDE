@@ -16,25 +16,30 @@ Template file: typescript-redux-query/apis.mustache
 Description: McpContentApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from "redux-query"
-import * as runtime from "../src/runtime"
-import { McpContent, McpContentFromJSON, McpContentToJSON } from "../model"
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { McpContent, McpContentFromJSON, McpContentToJSON } from "../model";
 
 export interface DeleteMcpContentRequest {
-	id: string
+  id: string;
 }
 
 export interface GetMcpContentRequest {
-	id: string
+  id: string;
 }
 
 export interface PostMcpContentRequest {
-	mcpContent: McpContent
+  mcpContent: McpContent;
 }
 
 export interface UpdateMcpContentRequest {
-	id: string
-	mcpContent: McpContent
+  id: string;
+  mcpContent: McpContent;
 }
 
 /**
@@ -42,45 +47,45 @@ export interface UpdateMcpContentRequest {
  * Delete a McpContent.
  */
 function deleteMcpContentRaw<T>(
-	requestParameters: DeleteMcpContentRequest,
-	requestConfig: runtime.TypedQueryConfig<T, void> = {},
+  requestParameters: DeleteMcpContentRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling deleteMcpContent.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteMcpContent.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/McpContent/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "DELETE",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpContent/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -88,10 +93,10 @@ function deleteMcpContentRaw<T>(
  * Delete a McpContent.
  */
 export function deleteMcpContent<T>(
-	requestParameters: DeleteMcpContentRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, void>,
+  requestParameters: DeleteMcpContentRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
 ): QueryConfig<T> {
-	return deleteMcpContentRaw(requestParameters, requestConfig)
+  return deleteMcpContentRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -99,46 +104,47 @@ export function deleteMcpContent<T>(
  * Retrieve a single McpContent
  */
 function getMcpContentRaw<T>(
-	requestParameters: GetMcpContentRequest,
-	requestConfig: runtime.TypedQueryConfig<T, McpContent> = {},
+  requestParameters: GetMcpContentRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpContent> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling getMcpContent.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getMcpContent.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/McpContent/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpContent/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpContentFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpContentFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -146,52 +152,57 @@ function getMcpContentRaw<T>(
  * Retrieve a single McpContent
  */
 export function getMcpContent<T>(
-	requestParameters: GetMcpContentRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, McpContent>,
+  requestParameters: GetMcpContentRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpContent>,
 ): QueryConfig<T> {
-	return getMcpContentRaw(requestParameters, requestConfig)
+  return getMcpContentRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of McpContents.
  * Retrieve a list of McpContents
  */
-function getMcpContentListRaw<T>(requestConfig: runtime.TypedQueryConfig<T, Array<McpContent>> = {}): QueryConfig<T> {
-	let queryParameters = null
+function getMcpContentListRaw<T>(
+  requestConfig: runtime.TypedQueryConfig<T, Array<McpContent>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/McpContent`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "GET",
-			headers: headerParameters,
-		},
-		body: queryParameters,
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpContent`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(McpContentFromJSON), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(McpContentFromJSON), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
  * Retrieves a list of McpContents.
  * Retrieve a list of McpContents
  */
-export function getMcpContentList<T>(requestConfig?: runtime.TypedQueryConfig<T, Array<McpContent>>): QueryConfig<T> {
-	return getMcpContentListRaw(requestConfig)
+export function getMcpContentList<T>(
+  requestConfig?: runtime.TypedQueryConfig<T, Array<McpContent>>,
+): QueryConfig<T> {
+  return getMcpContentListRaw(requestConfig);
 }
 
 /**
@@ -199,45 +210,49 @@ export function getMcpContentList<T>(requestConfig?: runtime.TypedQueryConfig<T,
  * Create a new McpContent
  */
 function postMcpContentRaw<T>(
-	requestParameters: PostMcpContentRequest,
-	requestConfig: runtime.TypedQueryConfig<T, McpContent> = {},
+  requestParameters: PostMcpContentRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpContent> = {},
 ): QueryConfig<T> {
-	if (requestParameters.mcpContent === null || requestParameters.mcpContent === undefined) {
-		throw new runtime.RequiredError(
-			"mcpContent",
-			"Required parameter requestParameters.mcpContent was null or undefined when calling postMcpContent.",
-		)
-	}
+  if (
+    requestParameters.mcpContent === null ||
+    requestParameters.mcpContent === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mcpContent",
+      "Required parameter requestParameters.mcpContent was null or undefined when calling postMcpContent.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/McpContent`,
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "POST",
-			headers: headerParameters,
-		},
-		body: queryParameters || McpContentToJSON(requestParameters.mcpContent),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpContent`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || McpContentToJSON(requestParameters.mcpContent),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpContentFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpContentFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -245,10 +260,10 @@ function postMcpContentRaw<T>(
  * Create a new McpContent
  */
 export function postMcpContent<T>(
-	requestParameters: PostMcpContentRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, McpContent>,
+  requestParameters: PostMcpContentRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpContent>,
 ): QueryConfig<T> {
-	return postMcpContentRaw(requestParameters, requestConfig)
+  return postMcpContentRaw(requestParameters, requestConfig);
 }
 
 /**
@@ -256,55 +271,59 @@ export function postMcpContent<T>(
  * Update an existing McpContent
  */
 function updateMcpContentRaw<T>(
-	requestParameters: UpdateMcpContentRequest,
-	requestConfig: runtime.TypedQueryConfig<T, McpContent> = {},
+  requestParameters: UpdateMcpContentRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpContent> = {},
 ): QueryConfig<T> {
-	if (requestParameters.id === null || requestParameters.id === undefined) {
-		throw new runtime.RequiredError(
-			"id",
-			"Required parameter requestParameters.id was null or undefined when calling updateMcpContent.",
-		)
-	}
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateMcpContent.",
+    );
+  }
 
-	if (requestParameters.mcpContent === null || requestParameters.mcpContent === undefined) {
-		throw new runtime.RequiredError(
-			"mcpContent",
-			"Required parameter requestParameters.mcpContent was null or undefined when calling updateMcpContent.",
-		)
-	}
+  if (
+    requestParameters.mcpContent === null ||
+    requestParameters.mcpContent === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mcpContent",
+      "Required parameter requestParameters.mcpContent was null or undefined when calling updateMcpContent.",
+    );
+  }
 
-	let queryParameters = null
+  let queryParameters = null;
 
-	const headerParameters: runtime.HttpHeaders = {}
+  const headerParameters: runtime.HttpHeaders = {};
 
-	headerParameters["Content-Type"] = "application/json"
+  headerParameters["Content-Type"] = "application/json";
 
-	const { meta = {} } = requestConfig
+  const { meta = {} } = requestConfig;
 
-	const config: QueryConfig<T> = {
-		url: `${runtime.Configuration.basePath}/McpContent/{id}`.replace(
-			`{${"id"}}`,
-			encodeURIComponent(String(requestParameters.id)),
-		),
-		meta,
-		update: requestConfig.update,
-		queryKey: requestConfig.queryKey,
-		optimisticUpdate: requestConfig.optimisticUpdate,
-		force: requestConfig.force,
-		rollback: requestConfig.rollback,
-		options: {
-			method: "PUT",
-			headers: headerParameters,
-		},
-		body: queryParameters || McpContentToJSON(requestParameters.mcpContent),
-	}
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpContent/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || McpContentToJSON(requestParameters.mcpContent),
+  };
 
-	const { transform: requestTransform } = requestConfig
-	if (requestTransform) {
-		config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpContentFromJSON(body), text)
-	}
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpContentFromJSON(body), text);
+  }
 
-	return config
+  return config;
 }
 
 /**
@@ -312,8 +331,8 @@ function updateMcpContentRaw<T>(
  * Update an existing McpContent
  */
 export function updateMcpContent<T>(
-	requestParameters: UpdateMcpContentRequest,
-	requestConfig?: runtime.TypedQueryConfig<T, McpContent>,
+  requestParameters: UpdateMcpContentRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpContent>,
 ): QueryConfig<T> {
-	return updateMcpContentRaw(requestParameters, requestConfig)
+  return updateMcpContentRaw(requestParameters, requestConfig);
 }
