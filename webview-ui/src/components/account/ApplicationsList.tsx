@@ -20,7 +20,7 @@ interface ApplicationsListProps {
 
 const ApplicationsList: React.FC<ApplicationsListProps> = ({
   showTitle = true,
-  title = "Available ThorAPI Applications",
+  title = "Available Applications",
 }) => {
   const { userInfo, jwtToken, authenticatedPrincipal } = useExtensionState();
 
@@ -195,6 +195,10 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
   const handleGenerate = async (applicationId: string) => {
     if (!applicationId) return;
 
+    // Find the application to get its name
+    const application = applications?.find((app) => app.id === applicationId);
+    const applicationName = application?.name || applicationId;
+
     // Initialize loading state with all steps
     setLoadingStates((prev) => ({
       ...prev,
@@ -270,12 +274,15 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
       console.log(
         "ApplicationsList: Sending to extension with filename:",
         extractedFilename,
+        "and application name:",
+        applicationName,
       );
-      // Send to extension to stream to thorapi folder
+      // Send to extension to stream to thorapi folder with application name for user-friendly folder naming
       vscode.postMessage({
         type: "streamToThorapi",
         blobData: base64String,
         applicationId: applicationId,
+        applicationName: applicationName,
         filename: extractedFilename,
       });
 

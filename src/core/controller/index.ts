@@ -245,6 +245,14 @@ export class Controller {
    */
   async handleWebviewMessage(message: WebviewMessage) {
     switch (message.type) {
+      case "openFile": {
+        const relPath = (message as any).text;
+        if (relPath) {
+          const absPath = path.join(cwd, relPath);
+          await handleFileServiceRequest(this, "openFile", { value: absPath });
+        }
+        break;
+      }
       case "addRemoteServer": {
         try {
           await this.mcpHub?.addRemoteServer(
@@ -1071,7 +1079,7 @@ export class Controller {
       }
       case "streamToThorapi": {
         try {
-          const { blobData, applicationId, filename } = message;
+          const { blobData, applicationId, applicationName, filename } = message;
           if (!blobData || !applicationId) {
             throw new Error("Missing required data for streamToThorapi");
           }
@@ -1092,9 +1100,11 @@ export class Controller {
           // Extract if it's a zip file
           let extractedPath: string | undefined;
           if (finalFilename.endsWith(".zip")) {
+            // Use applicationName for folder name, fallback to applicationId if not provided
+            const folderName = applicationName || applicationId;
             // Extract the zip file using the proper zip library with application name as subfolder
-            await extractLocalZip(filePath, thorapiFolderPath, applicationId);
-            extractedPath = path.join(thorapiFolderPath, applicationId);
+            await extractLocalZip(filePath, thorapiFolderPath, folderName);
+            extractedPath = path.join(thorapiFolderPath, folderName);
 
             // Delete the zip file after successful extraction
             await fs.unlink(filePath);

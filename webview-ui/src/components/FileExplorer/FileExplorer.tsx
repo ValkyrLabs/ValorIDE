@@ -187,7 +187,14 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
     if (item.type === "directory") {
       toggleDirectory(item.path);
     } else {
+      // Call the optional callback
       onFileSelect?.(item.path);
+      
+      // Send message to VSCode to open the file in editor
+      vscode.postMessage({
+        type: "openFile",
+        text: item.path,
+      });
     }
   };
 
@@ -242,7 +249,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   return (
     <div className="file-explorer">
       <div className="file-explorer-header">
-        <h3>ThorAPI Files</h3>
+        <h3>ThorAPI Generated Files</h3>
         <VSCodeButton appearance="icon" onClick={fetchFiles} title="Refresh">
           🔄
         </VSCodeButton>
