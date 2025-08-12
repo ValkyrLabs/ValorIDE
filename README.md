@@ -2,7 +2,7 @@
 English | <a href="https://github.com/valkyrlabs/valoride/blob/main/locales/es/README.md" target="_blank">Español</a> | <a href="https://github.com/valkyrlabs/valoride/blob/main/locales/de/README.md" target="_blank">Deutsch</a> | <a href="https://github.com/valkyrlabs/valoride/blob/main/locales/ja/README.md" target="_blank">日本語</a> | <a href="https://github.com/valkyrlabs/valoride/blob/main/locales/zh-cn/README.md" target="_blank">简体中文</a> | <a href="https://github.com/valkyrlabs/valoride/blob/main/locales/zh-tw/README.md" target="_blank">繁體中文</a> | <a href="https://github.com/valkyrlabs/valoride/blob/main/locales/ko/README.md" target="_blank">한국어</a>
 </sub></div>
 
-# ValorIDE – \#1 on OpenRouter
+# Valor IDE – Agentic Coder powered by ThorAPI
 
 <p align="center">
   <img src="https://media.githubusercontent.com/media/valoride/valoride/main/assets/docs/demo.gif" width="100%" />
