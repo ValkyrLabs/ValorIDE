@@ -20,7 +20,7 @@ interface ApplicationsListProps {
 
 const ApplicationsList: React.FC<ApplicationsListProps> = ({
   showTitle = true,
-  title = "Available ThorAPI Applications",
+  title = "Available Applications",
 }) => {
   const { userInfo, jwtToken, authenticatedPrincipal } = useExtensionState();
 

@@ -1,7 +1,7 @@
 .file-explorer {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  minHeight: 200px;
   background: var(--vscode-sideBar-background);
   border-right: 1px solid var(--vscode-sideBar-border);
 }
@@ -72,12 +72,12 @@
 .file-item {
   display: flex;
   align-items: center;
-  padding: 4px 8px;
+  padding: 4px 6px;
   cursor: pointer;
   user-select: none;
   transition: background-color 0.1s ease;
-  font-size: 13px;
-  line-height: 22px;
+  font-size: 12px;
+  line-height: 20px;
   color: var(--vscode-sideBar-foreground);
 }
 

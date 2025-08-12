@@ -245,6 +245,14 @@ export class Controller {
    */
   async handleWebviewMessage(message: WebviewMessage) {
     switch (message.type) {
+      case "openFile": {
+        const relPath = (message as any).text;
+        if (relPath) {
+          const absPath = path.join(cwd, relPath);
+          await handleFileServiceRequest(this, "openFile", { value: absPath });
+        }
+        break;
+      }
       case "addRemoteServer": {
         try {
           await this.mcpHub?.addRemoteServer(

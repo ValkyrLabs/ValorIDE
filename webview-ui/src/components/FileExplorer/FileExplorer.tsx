@@ -249,7 +249,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   return (
     <div className="file-explorer">
       <div className="file-explorer-header">
-        <h3>ThorAPI Files</h3>
+        <h3>ThorAPI Generated Files</h3>
         <VSCodeButton appearance="icon" onClick={fetchFiles} title="Refresh">
           🔄
         </VSCodeButton>
