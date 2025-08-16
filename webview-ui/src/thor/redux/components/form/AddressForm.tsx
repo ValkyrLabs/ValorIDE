@@ -1,26 +1,26 @@
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Nav,
   Row,
-  Spinner,
-} from "react-bootstrap";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "../../../../components/CoolButton";
-import * as Yup from "yup";
+  Spinner
+} from 'react-bootstrap';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
+import CoolButton from '../../../../components/CoolButton';
+import * as Yup from 'yup';
+import PermissionDialog from '../../../../components/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
 
-import { Address, AddressAddressTypeEnum } from "../../../model";
 
-import { useAddAddressMutation } from "../../services/AddressService";
+import {
+  Address,
+  AddressAddressTypeEnum,
+} from '../../../model';
+
+import { useAddAddressMutation } from '../../services/AddressService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -30,7 +30,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-05-08T17:49:28.351161-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -45,7 +45,13 @@ Address represents a physically and legally addressable location
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const AddressTypeValidation = () => {
-  return ["home", "mail", "work", "school", "other"];
+  return [
+    'home',
+    'mail',
+    'work',
+    'school',
+    'other',
+  ];
 };
 
 /* -----------------------------------------------------
@@ -53,56 +59,105 @@ const AddressTypeValidation = () => {
    (Skip read-only fields and container types)
 -------------------------------------------------------- */
 const validationSchema = Yup.object().shape({
-  name: Yup.string()
-
-    .required("name is required."),
-  street1: Yup.string()
-
-    .required("street1 is required."),
-  city: Yup.string()
-
-    .required("city is required."),
-  state: Yup.string()
-
-    .required("state is required."),
-  postalCode: Yup.string()
-
-    .required("postalCode is required.")
-    .matches(
-      /^\\d{5}-\\d{4}$/,
-      "postalCode must match pattern 5+4 digit zip code",
-    ),
-
-  hasWifi: Yup.boolean()
-
-    .notRequired(),
-
-  principalId: Yup.string(),
-
-  addressType: Yup.mixed()
-    .oneOf(AddressTypeValidation(), "Invalid value for addressType")
-
-    .notRequired(),
-
-  street2: Yup.string(),
-
-  country: Yup.string(),
-
-  id: Yup.string(),
-
-  ownerId: Yup.string(),
-
-  createdDate: Yup.date(),
-
-  keyHash: Yup.string(),
-
-  lastAccessedById: Yup.string(),
-
-  lastAccessedDate: Yup.date(),
-
-  lastModifiedById: Yup.string(),
-
-  lastModifiedDate: Yup.date(),
+    
+        name: Yup.string()
+          
+          .required("name is required.")
+          ,
+    
+        street1: Yup.string()
+          
+          .required("street1 is required.")
+          ,
+    
+        city: Yup.string()
+          
+          .required("city is required.")
+          ,
+    
+        state: Yup.string()
+          
+          .required("state is required.")
+          ,
+    
+        postalCode: Yup.string()
+          
+          .required("postalCode is required.")
+          ,
+    
+        hasWifi: Yup.boolean()
+          
+          .notRequired(),
+    
+        principalId: Yup.string()
+          
+          
+          ,
+    
+      addressType: Yup.mixed()
+        .oneOf(AddressTypeValidation(), "Invalid value for addressType")
+        
+        .notRequired(),
+    
+        gpsCoordinateLat: Yup.number()
+          
+          
+          ,
+    
+        gpsCoordinateLong: Yup.number()
+          
+          
+          ,
+    
+        street2: Yup.string()
+          
+          
+          ,
+    
+        country: Yup.string()
+          
+          
+          ,
+    
+        id: Yup.string()
+          
+          
+          ,
+    
+        ownerId: Yup.string()
+          
+          
+          ,
+    
+        createdDate: Yup.date()
+          
+          
+          ,
+    
+        keyHash: Yup.string()
+          
+          
+          ,
+    
+        lastAccessedById: Yup.string()
+          
+          
+          ,
+    
+        lastAccessedDate: Yup.date()
+          
+          
+          ,
+    
+        lastModifiedById: Yup.string()
+          
+          
+          ,
+    
+        lastModifiedDate: Yup.date()
+          
+          
+          ,
 });
 
 /* -----------------------------------------------------
@@ -110,51 +165,215 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const AddressForm: React.FC = () => {
   const [addAddress, addAddressResult] = useAddAddressMutation();
+  
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
+
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: 'current_user', // This should come from authentication context
+    permissions: {
+      isOwner: true, // This should be determined by checking object ownership
+      isAdmin: true, // This should come from user roles
+      canGrantPermissions: true,
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+    },
+  };
 
   /* INITIAL VALUES - skip read-only fields */
   const initialValues: Partial<Address> = {
-    name: "Bing Roo",
+          
 
-    street1: "123 Daydream Blvd.",
+            name: 'Bing Roo',
 
-    city: "San Francisco",
 
-    state: "CA",
 
-    postalCode: "94210-0000",
 
-    hasWifi: undefined,
 
-    principalId: "null",
+          
 
-    addressType: AddressAddressTypeEnum[Object.keys(AddressAddressTypeEnum)[0]],
+            street1: '123 Daydream Blvd.',
 
-    street2: "Apt. 73",
 
-    country: "USA",
 
-    id: "11dd01d2-0bb1-4247-b9fa-106f2bd71100",
 
-    ownerId: "0cd50889-eb78-4fa2-92f2-8f916e878091",
 
-    keyHash: "null",
+          
 
-    lastAccessedById: "2e879348-b38a-4dc4-ab1b-51caa2e45d3a",
+            city: 'San Francisco',
 
-    lastModifiedById: "aab53d8a-6283-41c5-a6fb-6152c62ecb95",
+
+
+
+
+          
+
+            state: 'CA',
+
+
+
+
+
+          
+
+            postalCode: '94210-0000',
+
+
+
+
+
+          
+            hasWifi: undefined, 
+
+
+
+
+
+
+          
+
+            principalId: 'null',
+
+
+
+
+
+          
+          addressType:
+            AddressAddressTypeEnum[
+              Object.keys(AddressAddressTypeEnum)[0]
+            ],
+          
+
+
+
+
+
+
+          
+
+
+
+
+
+
+          
+
+            street2: 'Apt. 73',
+
+
+
+
+
+          
+
+            country: 'USA',
+
+
+
+
+
+          
+
+            id: '6a514606-616d-4ab1-acbe-6391213f6216',
+
+
+
+
+
+          
+
+            ownerId: '09deaecd-ba18-40c0-9e1d-92b61f61663e',
+
+
+
+
+
+          
+
+
+
+
+
+
+          
+
+            keyHash: 'null',
+
+
+
+
+
+          
+
+            lastAccessedById: '46728c5d-80c1-4208-97d3-f6ddea65a8e3',
+
+
+
+
+
+          
+
+
+
+
+
+
+          
+
+            lastModifiedById: '61f2aa12-3255-4a97-8343-1b9ae95b5081',
+
+
+
+
+
+          
+
+
+
+
+
+
+  };
+
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId: string) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+
+  const handlePermissionsSave = (grants: AclGrantRequest[]) => {
+    console.log('Permissions saved for new Address:', grants);
+    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<Address>,
-  ) => {
-    // Simulate slow network or do what you need:
-    setTimeout(() => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Address>) => {
+    try {
       console.log("Address form values:", values);
-      addAddress(values);
+      const result = await addAddress(values).unwrap();
+      
+      // If object was created successfully and has an ID, offer to set permissions
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `Address created successfully! Would you like to set permissions for this object?`
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
+        }
+      }
+      
       setSubmitting(false);
-    }, 500);
+    } catch (error) {
+      console.error('Failed to create Address:', error);
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -172,7 +391,7 @@ const AddressForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
@@ -196,529 +415,669 @@ const AddressForm: React.FC = () => {
                   <FaRegPlusSquare size={36} /> Add New Address
                 </Accordion.Header>
                 <Accordion.Body>
-                  <label htmlFor="name" className="nice-form-control">
-                    <b>
-                      Name:
-                      {touched.name && !errors.name && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                    
+                    <label htmlFor="name" className="nice-form-control">
+                      <b>
+                        Name:
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="name"
-                      type="text"
-                      className={
-                        errors.name
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="name"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="street1" className="nice-form-control">
-                    <b>
-                      Street 1:
-                      {touched.street1 && !errors.street1 && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="name"
+                            type="text"
+                            className={
+                              errors.name
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="street1"
-                      type="text"
-                      className={
-                        errors.street1
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="street1"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="city" className="nice-form-control">
-                    <b>
-                      City:
-                      {touched.city && !errors.city && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="city"
-                      type="text"
-                      className={
-                        errors.city
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="city"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="state" className="nice-form-control">
-                    <b>
-                      State:
-                      {touched.state && !errors.state && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                      <ErrorMessage
+                        className="error"
+                        name="name"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="street1" className="nice-form-control">
+                      <b>
+                        Street 1:
+                        {touched.street1 &&
+                         !errors.street1 && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="state"
-                      type="text"
-                      className={
-                        errors.state
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="state"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="postal_code" className="nice-form-control">
-                    <b>
-                      Postal _ code:
-                      {touched.postalCode && !errors.postalCode && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="street1"
+                            type="text"
+                            className={
+                              errors.street1
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="postalCode"
-                      type="text"
-                      className={
-                        errors.postalCode
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="postalCode"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="hasWifi" className="nice-form-control">
-                    <b>
-                      Has Wifi:
-                      {touched.hasWifi && !errors.hasWifi && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* CHECKBOX FIELD */}
-                    <BSForm.Check
-                      required
-                      id="hasWifi"
-                      name="hasWifi"
-                      onChange={(e) => {
-                        setFieldTouched("hasWifi", true);
-                        setFieldValue("hasWifi", e.target.checked);
-                      }}
-                      isInvalid={!!errors.hasWifi}
-                      className={errors.hasWifi ? "error" : ""}
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="hasWifi"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="principalId" className="nice-form-control">
-                    <b>
-                      Principal Id:
-                      {touched.principalId && !errors.principalId && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                      <ErrorMessage
+                        className="error"
+                        name="street1"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="city" className="nice-form-control">
+                      <b>
+                        City:
+                        {touched.city &&
+                         !errors.city && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="principalId"
-                      type="text"
-                      className={
-                        errors.principalId
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="principalId"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="addressType" className="nice-form-control">
-                    <b>
-                      Address Type:
-                      {touched.addressType && !errors.addressType && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="city"
+                            type="text"
+                            className={
+                              errors.city
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    {/* ENUM DROPDOWN */}
-                    <BSForm.Select
-                      name="addressType"
-                      className={
-                        errors.addressType
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                      onChange={(e) => {
-                        setFieldTouched("addressType", true);
-                        setFieldValue("addressType", e.target.value);
-                      }}
-                    >
-                      <option value="" label="Select Address Type" />
-                      <AddressTypeLookup />
-                    </BSForm.Select>
 
-                    <ErrorMessage
-                      className="error"
-                      name="addressType"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="street2" className="nice-form-control">
-                    <b>
-                      Street 2:
-                      {touched.street2 && !errors.street2 && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="street2"
-                      type="text"
-                      className={
-                        errors.street2
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="street2"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="country" className="nice-form-control">
-                    <b>
-                      Country:
-                      {touched.country && !errors.country && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                      <ErrorMessage
+                        className="error"
+                        name="city"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="state" className="nice-form-control">
+                      <b>
+                        State:
+                        {touched.state &&
+                         !errors.state && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="country"
-                      type="text"
-                      className={
-                        errors.country
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="country"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="id" className="nice-form-control">
-                    <b>
-                      Id:
-                      {touched.id && !errors.id && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="state"
+                            type="text"
+                            className={
+                              errors.state
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="id"
-                      type="text"
-                      className={
-                        errors.id
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="id"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="ownerId" className="nice-form-control">
-                    <b>
-                      Owner Id:
-                      {touched.ownerId && !errors.ownerId && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="ownerId"
-                      type="text"
-                      className={
-                        errors.ownerId
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="ownerId"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="createdDate" className="nice-form-control">
-                    <b>
-                      Created Date:
-                      {touched.createdDate && !errors.createdDate && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                      <ErrorMessage
+                        className="error"
+                        name="state"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="postal_code" className="nice-form-control">
+                      <b>
+                        Postal _ code:
+                        {touched.postalCode &&
+                         !errors.postalCode && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="createdDate"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="keyHash" className="nice-form-control">
-                    <b>
-                      Key Hash:
-                      {touched.keyHash && !errors.keyHash && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="keyHash"
-                      type="text"
-                      className={
-                        errors.keyHash
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="postalCode"
+                            type="text"
+                            className={
+                              errors.postalCode
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    <ErrorMessage
-                      className="error"
-                      name="keyHash"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label
-                    htmlFor="lastAccessedById"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Accessed By Id:
-                      {touched.lastAccessedById && !errors.lastAccessedById && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="lastAccessedById"
-                      type="text"
-                      className={
-                        errors.lastAccessedById
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastAccessedById"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label
-                    htmlFor="lastAccessedDate"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Accessed Date:
-                      {touched.lastAccessedDate && !errors.lastAccessedDate && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastAccessedDate"
-                      component="span"
-                    />
-                  </label>
-                  <br />
+                      <ErrorMessage
+                        className="error"
+                        name="postalCode"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="hasWifi" className="nice-form-control">
+                      <b>
+                        Has Wifi:
+                        {touched.hasWifi &&
+                         !errors.hasWifi && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                  <label
-                    htmlFor="lastModifiedById"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Modified By Id:
-                      {touched.lastModifiedById && !errors.lastModifiedById && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="lastModifiedById"
-                      type="text"
-                      className={
-                        errors.lastModifiedById
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            required
+                            id="hasWifi"
+                            name="hasWifi"
+                            onChange={(e) => {
+                              setFieldTouched('hasWifi', true);
+                              setFieldValue('hasWifi', e.target.checked);
+                            }}
+                            isInvalid={!!errors.hasWifi}
+                            className={
+                              errors.hasWifi ? 'error' : ''
+                            }
+                          />
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastModifiedById"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label
-                    htmlFor="lastModifiedDate"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Modified Date:
-                      {touched.lastModifiedDate && !errors.lastModifiedDate && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastModifiedDate"
-                      component="span"
-                    />
-                  </label>
-                  <br />
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="hasWifi"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="principalId" className="nice-form-control">
+                      <b>
+                        Principal Id:
+                        {touched.principalId &&
+                         !errors.principalId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="principalId"
+                            type="text"
+                            className={
+                              errors.principalId
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="principalId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="addressType" className="nice-form-control">
+                      <b>
+                        Address Type:
+                        {touched.addressType &&
+                         !errors.addressType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="addressType"
+                          className={
+                            errors.addressType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('addressType', true);
+                            setFieldValue('addressType', e.target.value);
+                          }}
+                        >
+                          <option value="" label="Select Address Type" />
+                          <AddressTypeLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="addressType"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="gps_coordinate_lat" className="nice-form-control">
+                      <b>
+                        Gps _ coordinate _ lat:
+                        {touched.gpsCoordinateLat &&
+                         !errors.gpsCoordinateLat && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="gpsCoordinateLat"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="gps_coordinate_long" className="nice-form-control">
+                      <b>
+                        Gps _ coordinate _ long:
+                        {touched.gpsCoordinateLong &&
+                         !errors.gpsCoordinateLong && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="gpsCoordinateLong"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="street2" className="nice-form-control">
+                      <b>
+                        Street 2:
+                        {touched.street2 &&
+                         !errors.street2 && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="street2"
+                            type="text"
+                            className={
+                              errors.street2
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="street2"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="country" className="nice-form-control">
+                      <b>
+                        Country:
+                        {touched.country &&
+                         !errors.country && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="country"
+                            type="text"
+                            className={
+                              errors.country
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="country"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="id" className="nice-form-control">
+                      <b>
+                        Id:
+                        {touched.id &&
+                         !errors.id && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="id"
+                            type="text"
+                            className={
+                              errors.id
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="id"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="ownerId" className="nice-form-control">
+                      <b>
+                        Owner Id:
+                        {touched.ownerId &&
+                         !errors.ownerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="ownerId"
+                            type="text"
+                            className={
+                              errors.ownerId
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="ownerId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="createdDate" className="nice-form-control">
+                      <b>
+                        Created Date:
+                        {touched.createdDate &&
+                         !errors.createdDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="createdDate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="keyHash" className="nice-form-control">
+                      <b>
+                        Key Hash:
+                        {touched.keyHash &&
+                         !errors.keyHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="keyHash"
+                            type="text"
+                            className={
+                              errors.keyHash
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="keyHash"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastAccessedById" className="nice-form-control">
+                      <b>
+                        Last Accessed By Id:
+                        {touched.lastAccessedById &&
+                         !errors.lastAccessedById && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="lastAccessedById"
+                            type="text"
+                            className={
+                              errors.lastAccessedById
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastAccessedById"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastAccessedDate" className="nice-form-control">
+                      <b>
+                        Last Accessed Date:
+                        {touched.lastAccessedDate &&
+                         !errors.lastAccessedDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastAccessedDate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastModifiedById" className="nice-form-control">
+                      <b>
+                        Last Modified By Id:
+                        {touched.lastModifiedById &&
+                         !errors.lastModifiedById && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="lastModifiedById"
+                            type="text"
+                            className={
+                              errors.lastModifiedById
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastModifiedById"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastModifiedDate" className="nice-form-control">
+                      <b>
+                        Last Modified Date:
+                        {touched.lastModifiedDate &&
+                         !errors.lastModifiedDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastModifiedDate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={
-                      touched && isValid
-                        ? isSubmitting
-                          ? "disabled"
-                          : "success"
-                        : "warning"
-                    }
+                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
                   >
                     {isSubmitting && (
                       <Spinner
-                        style={{ float: "left" }}
+                        style={ { float: 'left' } }
                         as="span"
                         animation="grow"
                         variant="light"
@@ -734,13 +1093,26 @@ const AddressForm: React.FC = () => {
               <Accordion.Item eventKey="2">
                 <Accordion.Header>System Fields (Read Only)</Accordion.Header>
                 <Accordion.Body>
-                  <Row></Row>
+                  <Row>
+                  </Row>
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
           </form>
         )}
       </Formik>
+
+      {/* Permission Management Dialog */}
+      {createdObjectId && (
+        <PermissionDialog
+          objectType="com.valkyrlabs.model.Address"
+          objectId={createdObjectId}
+          isVisible={showPermissionDialog}
+          onClose={handlePermissionDialogClose}
+          onSave={handlePermissionsSave}
+          currentUser={currentUser}
+        />
+      )}
     </div>
   );
 };
@@ -757,14 +1129,17 @@ kebabcase address-type-lookup
 const AddressTypeLookup = () => {
   return (
     <>
-      <option value="home" label="Home" />
-      <option value="mail" label="Mail" />
-      <option value="work" label="Work" />
-      <option value="school" label="School" />
-      <option value="other" label="Other" />
+      <option value='home' label="Home" />
+      <option value='mail' label="Mail" />
+      <option value='work' label="Work" />
+      <option value='school' label="School" />
+      <option value='other' label="Other" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default AddressForm;
+

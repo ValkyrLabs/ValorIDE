@@ -1,26 +1,25 @@
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Nav,
   Row,
-  Spinner,
-} from "react-bootstrap";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "../../../../components/CoolButton";
-import * as Yup from "yup";
+  Spinner
+} from 'react-bootstrap';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
+import CoolButton from '../../../../components/CoolButton';
+import * as Yup from 'yup';
+import PermissionDialog from '../../../../components/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
 
-import { GoalDependency } from "../../../model";
 
-import { useAddGoalDependencyMutation } from "../../services/GoalDependencyService";
+import {
+  GoalDependency,
+} from '../../../model';
+
+import { useAddGoalDependencyMutation } from '../../services/GoalDependencyService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -30,7 +29,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-05-08T17:49:28.351161-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -50,66 +49,210 @@ A dependency that a goal depends upon
    (Skip read-only fields and container types)
 -------------------------------------------------------- */
 const validationSchema = Yup.object().shape({
-  goalId: Yup.string(),
-
-  dependencyOrder: Yup.number(),
-
-  dependencyName: Yup.string(),
-
-  id: Yup.string(),
-
-  ownerId: Yup.string(),
-
-  createdDate: Yup.date(),
-
-  keyHash: Yup.string(),
-
-  lastAccessedById: Yup.string(),
-
-  lastAccessedDate: Yup.date(),
-
-  lastModifiedById: Yup.string(),
-
-  lastModifiedDate: Yup.date(),
+    
+        goalId: Yup.string()
+          
+          
+          ,
+    
+        dependencyOrder: Yup.number()
+          
+          
+          ,
+    
+        dependencyName: Yup.string()
+          
+          
+          ,
+    
+        id: Yup.string()
+          
+          
+          ,
+    
+        ownerId: Yup.string()
+          
+          
+          ,
+    
+        createdDate: Yup.date()
+          
+          
+          ,
+    
+        keyHash: Yup.string()
+          
+          
+          ,
+    
+        lastAccessedById: Yup.string()
+          
+          
+          ,
+    
+        lastAccessedDate: Yup.date()
+          
+          
+          ,
+    
+        lastModifiedById: Yup.string()
+          
+          
+          ,
+    
+        lastModifiedDate: Yup.date()
+          
+          
+          ,
 });
 
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const GoalDependencyForm: React.FC = () => {
-  const [addGoalDependency, addGoalDependencyResult] =
-    useAddGoalDependencyMutation();
+  const [addGoalDependency, addGoalDependencyResult] = useAddGoalDependencyMutation();
+  
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
+
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: 'current_user', // This should come from authentication context
+    permissions: {
+      isOwner: true, // This should be determined by checking object ownership
+      isAdmin: true, // This should come from user roles
+      canGrantPermissions: true,
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+    },
+  };
 
   /* INITIAL VALUES - skip read-only fields */
   const initialValues: Partial<GoalDependency> = {
-    goalId: "null",
+          
 
-    dependencyOrder: 0,
+            goalId: 'null',
 
-    dependencyName: "null",
 
-    id: "aad31f1e-7c67-4c27-ad8e-3b4c455c7852",
 
-    ownerId: "c37c63ff-7f76-4102-8f6c-45ad178b2c25",
 
-    keyHash: "null",
 
-    lastAccessedById: "24e087c8-a26b-4453-9cf1-3553697e46d3",
+          
 
-    lastModifiedById: "b614faeb-4f62-4106-a83d-1d71f80e4c5b",
+
+
+            dependencyOrder: 0,
+
+
+
+          
+
+            dependencyName: 'null',
+
+
+
+
+
+          
+
+            id: '2c5bec08-3f3b-4a05-8936-4fed18bb22cc',
+
+
+
+
+
+          
+
+            ownerId: '07aa3ea0-aff6-4916-afe1-6d85b25a8feb',
+
+
+
+
+
+          
+
+
+
+
+
+
+          
+
+            keyHash: 'null',
+
+
+
+
+
+          
+
+            lastAccessedById: '0835c114-6ceb-4105-9637-cf937788ac0e',
+
+
+
+
+
+          
+
+
+
+
+
+
+          
+
+            lastModifiedById: '927eccee-9f75-4097-b215-c1fb5d501f16',
+
+
+
+
+
+          
+
+
+
+
+
+
+  };
+
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId: string) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+
+  const handlePermissionsSave = (grants: AclGrantRequest[]) => {
+    console.log('Permissions saved for new GoalDependency:', grants);
+    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<GoalDependency>,
-  ) => {
-    // Simulate slow network or do what you need:
-    setTimeout(() => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<GoalDependency>) => {
+    try {
       console.log("GoalDependency form values:", values);
-      addGoalDependency(values);
+      const result = await addGoalDependency(values).unwrap();
+      
+      // If object was created successfully and has an ID, offer to set permissions
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `GoalDependency created successfully! Would you like to set permissions for this object?`
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
+        }
+      }
+      
       setSubmitting(false);
-    }, 500);
+    } catch (error) {
+      console.error('Failed to create GoalDependency:', error);
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -127,7 +270,7 @@ const GoalDependencyForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
@@ -141,8 +284,7 @@ const GoalDependencyForm: React.FC = () => {
                   <br />
                   touched: {JSON.stringify(touched)}
                   <br />
-                  addGoalDependencyResult:{" "}
-                  {JSON.stringify(addGoalDependencyResult)}
+                  addGoalDependencyResult: {JSON.stringify(addGoalDependencyResult)}
                 </Accordion.Body>
               </Accordion.Item>
 
@@ -152,321 +294,370 @@ const GoalDependencyForm: React.FC = () => {
                   <FaRegPlusSquare size={36} /> Add New GoalDependency
                 </Accordion.Header>
                 <Accordion.Body>
-                  <label htmlFor="goalId" className="nice-form-control">
-                    <b>
-                      Goal Id:
-                      {touched.goalId && !errors.goalId && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                    
+                    <label htmlFor="goalId" className="nice-form-control">
+                      <b>
+                        Goal Id:
+                        {touched.goalId &&
+                         !errors.goalId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="goalId"
-                      type="text"
-                      className={
-                        errors.goalId
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="goalId"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label
-                    htmlFor="dependencyOrder"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Dependency Order:
-                      {touched.dependencyOrder && !errors.dependencyOrder && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="goalId"
+                            type="text"
+                            className={
+                              errors.goalId
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    {/* INTEGER FIELD */}
-                    <Field
-                      name="dependencyOrder"
-                      type="text"
-                      className={
-                        errors.dependencyOrder
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="dependencyOrder"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="dependencyName" className="nice-form-control">
-                    <b>
-                      Dependency Name:
-                      {touched.dependencyName && !errors.dependencyName && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="dependencyName"
-                      type="text"
-                      className={
-                        errors.dependencyName
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="dependencyName"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="id" className="nice-form-control">
-                    <b>
-                      Id:
-                      {touched.id && !errors.id && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                      <ErrorMessage
+                        className="error"
+                        name="goalId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="dependencyOrder" className="nice-form-control">
+                      <b>
+                        Dependency Order:
+                        {touched.dependencyOrder &&
+                         !errors.dependencyOrder && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="id"
-                      type="text"
-                      className={
-                        errors.id
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="id"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="ownerId" className="nice-form-control">
-                    <b>
-                      Owner Id:
-                      {touched.ownerId && !errors.ownerId && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="ownerId"
-                      type="text"
-                      className={
-                        errors.ownerId
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="dependencyOrder"
+                            type="text"
+                            className={
+                              errors.dependencyOrder
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    <ErrorMessage
-                      className="error"
-                      name="ownerId"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="createdDate" className="nice-form-control">
-                    <b>
-                      Created Date:
-                      {touched.createdDate && !errors.createdDate && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="createdDate"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="keyHash" className="nice-form-control">
-                    <b>
-                      Key Hash:
-                      {touched.keyHash && !errors.keyHash && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="keyHash"
-                      type="text"
-                      className={
-                        errors.keyHash
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
+                      <ErrorMessage
+                        className="error"
+                        name="dependencyOrder"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="dependencyName" className="nice-form-control">
+                      <b>
+                        Dependency Name:
+                        {touched.dependencyName &&
+                         !errors.dependencyName && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="keyHash"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label
-                    htmlFor="lastAccessedById"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Accessed By Id:
-                      {touched.lastAccessedById && !errors.lastAccessedById && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="lastAccessedById"
-                      type="text"
-                      className={
-                        errors.lastAccessedById
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="dependencyName"
+                            type="text"
+                            className={
+                              errors.dependencyName
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastAccessedById"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label
-                    htmlFor="lastAccessedDate"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Accessed Date:
-                      {touched.lastAccessedDate && !errors.lastAccessedDate && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastAccessedDate"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label
-                    htmlFor="lastModifiedById"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Modified By Id:
-                      {touched.lastModifiedById && !errors.lastModifiedById && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="lastModifiedById"
-                      type="text"
-                      className={
-                        errors.lastModifiedById
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastModifiedById"
-                      component="span"
-                    />
-                  </label>
-                  <br />
+                      <ErrorMessage
+                        className="error"
+                        name="dependencyName"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="id" className="nice-form-control">
+                      <b>
+                        Id:
+                        {touched.id &&
+                         !errors.id && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                  <label
-                    htmlFor="lastModifiedDate"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Modified Date:
-                      {touched.lastModifiedDate && !errors.lastModifiedDate && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastModifiedDate"
-                      component="span"
-                    />
-                  </label>
-                  <br />
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="id"
+                            type="text"
+                            className={
+                              errors.id
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="id"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="ownerId" className="nice-form-control">
+                      <b>
+                        Owner Id:
+                        {touched.ownerId &&
+                         !errors.ownerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="ownerId"
+                            type="text"
+                            className={
+                              errors.ownerId
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="ownerId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="createdDate" className="nice-form-control">
+                      <b>
+                        Created Date:
+                        {touched.createdDate &&
+                         !errors.createdDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="createdDate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="keyHash" className="nice-form-control">
+                      <b>
+                        Key Hash:
+                        {touched.keyHash &&
+                         !errors.keyHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="keyHash"
+                            type="text"
+                            className={
+                              errors.keyHash
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="keyHash"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastAccessedById" className="nice-form-control">
+                      <b>
+                        Last Accessed By Id:
+                        {touched.lastAccessedById &&
+                         !errors.lastAccessedById && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="lastAccessedById"
+                            type="text"
+                            className={
+                              errors.lastAccessedById
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastAccessedById"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastAccessedDate" className="nice-form-control">
+                      <b>
+                        Last Accessed Date:
+                        {touched.lastAccessedDate &&
+                         !errors.lastAccessedDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastAccessedDate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastModifiedById" className="nice-form-control">
+                      <b>
+                        Last Modified By Id:
+                        {touched.lastModifiedById &&
+                         !errors.lastModifiedById && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="lastModifiedById"
+                            type="text"
+                            className={
+                              errors.lastModifiedById
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastModifiedById"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastModifiedDate" className="nice-form-control">
+                      <b>
+                        Last Modified Date:
+                        {touched.lastModifiedDate &&
+                         !errors.lastModifiedDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastModifiedDate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={
-                      touched && isValid
-                        ? isSubmitting
-                          ? "disabled"
-                          : "success"
-                        : "warning"
-                    }
+                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
                   >
                     {isSubmitting && (
                       <Spinner
-                        style={{ float: "left" }}
+                        style={ { float: 'left' } }
                         as="span"
                         animation="grow"
                         variant="light"
@@ -482,16 +673,32 @@ const GoalDependencyForm: React.FC = () => {
               <Accordion.Item eventKey="2">
                 <Accordion.Header>System Fields (Read Only)</Accordion.Header>
                 <Accordion.Body>
-                  <Row></Row>
+                  <Row>
+                  </Row>
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
           </form>
         )}
       </Formik>
+
+      {/* Permission Management Dialog */}
+      {createdObjectId && (
+        <PermissionDialog
+          objectType="com.valkyrlabs.model.GoalDependency"
+          objectId={createdObjectId}
+          isVisible={showPermissionDialog}
+          onClose={handlePermissionDialogClose}
+          onSave={handlePermissionsSave}
+          currentUser={currentUser}
+        />
+      )}
     </div>
   );
 };
 
+
+
 /* Export the generated form */
 export default GoalDependencyForm;
+

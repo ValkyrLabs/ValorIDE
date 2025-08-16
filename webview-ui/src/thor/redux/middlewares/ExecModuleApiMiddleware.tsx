@@ -1,28 +1,36 @@
-import {
-  getExecModule,
-  postExecModule,
-  getExecModuleList,
-  deleteExecModule,
-  updateExecModule,
-} from "../../api";
+
+import { 
+    getExecModule, 
+    postExecModule,
+    getExecModuleList , 
+    deleteExecModule , 
+    updateExecModule 
+} from '../../api';
 
 import {
-  ADD_EXECMODULE_REQUEST,
-  FETCH_EXECMODULE_REQUEST,
-  LIST_EXECMODULE_REQUEST,
-  UPDATE_EXECMODULE_REQUEST,
-  DELETE_EXECMODULE_REQUEST,
-  addExecModuleFailure,
-  addExecModuleSuccess,
-  fetchExecModuleFailure,
-  fetchExecModuleSuccess,
-  listExecModuleFailure,
-  listExecModuleSuccess,
-  updateExecModuleFailure,
-  updateExecModuleSuccess,
-  deleteExecModuleFailure,
-  deleteExecModuleSuccess,
-} from "../actions/ExecModuleApiAction";
+
+    ADD_EXECMODULE_REQUEST,
+    FETCH_EXECMODULE_REQUEST,
+    LIST_EXECMODULE_REQUEST,
+    UPDATE_EXECMODULE_REQUEST,
+    DELETE_EXECMODULE_REQUEST,
+
+    addExecModuleFailure,
+    addExecModuleSuccess,
+
+    fetchExecModuleFailure,
+    fetchExecModuleSuccess,
+    
+    listExecModuleFailure,
+    listExecModuleSuccess,
+
+    updateExecModuleFailure,
+    updateExecModuleSuccess,
+    
+    deleteExecModuleFailure,
+    deleteExecModuleSuccess,
+    
+} from '../actions/ExecModuleApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ExecModule
 */
 
-export const ExecModuleMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("ExecModule MIDDLEWARE: " + JSON.stringify(action));
+export const ExecModuleMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("ExecModule MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_EXECMODULE_REQUEST:
-        try {
-          const response = postExecModule(action.payload);
-          dispatch(addExecModuleSuccess(response.body));
-        } catch (error) {
-          dispatch(addExecModuleFailure(error.message));
-        }
-        break;
 
-      case LIST_EXECMODULE_REQUEST:
-        try {
-          const response = getExecModuleList();
-          dispatch(listExecModuleSuccess(response.body));
-        } catch (error) {
-          dispatch(listExecModuleFailure(error.message));
-        }
-        break;
+        case ADD_EXECMODULE_REQUEST:
+            try {
+                const response = postExecModule(action.payload);
+                dispatch(addExecModuleSuccess(response.body));
+            } catch (error) {
+                dispatch(addExecModuleFailure(error.message));
+            }
+            break;
 
-      case FETCH_EXECMODULE_REQUEST:
-        try {
-          const response = getExecModule(action.id);
-          dispatch(fetchExecModuleSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchExecModuleFailure(error.message));
-        }
-        break;
+        case LIST_EXECMODULE_REQUEST:
+            try {
+                const response = getExecModuleList();
+                dispatch(listExecModuleSuccess(response.body));
+            } catch (error) {
+                dispatch(listExecModuleFailure(error.message));
+            }
+            break;
 
-      case UPDATE_EXECMODULE_REQUEST:
-        try {
-          const { id, ExecModule } = action.payload;
-          const response = updateExecModule(id);
-          dispatch(updateExecModuleSuccess(response.body));
-        } catch (error) {
-          dispatch(updateExecModuleFailure(error.message));
-        }
-        break;
 
-      case DELETE_EXECMODULE_REQUEST:
-        try {
-          const { id, ExecModule } = action.payload;
-          const response = deleteExecModule(id);
-          dispatch(deleteExecModuleSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteExecModuleFailure(error.message));
-        }
-        break;
+        case FETCH_EXECMODULE_REQUEST:
+            try {
+                const response = getExecModule(action.id);
+                dispatch(fetchExecModuleSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchExecModuleFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_EXECMODULE_REQUEST:
+            try {
+                const { id, ExecModule } = action.payload;
+                const response = updateExecModule(id);
+                dispatch(updateExecModuleSuccess(response.body));
+            } catch (error) {
+                dispatch(updateExecModuleFailure(error.message));
+            }
+            break;
+
+        case DELETE_EXECMODULE_REQUEST:
+            try {
+                const { id, ExecModule } = action.payload;
+                const response = deleteExecModule(id);
+                dispatch(deleteExecModuleSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteExecModuleFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

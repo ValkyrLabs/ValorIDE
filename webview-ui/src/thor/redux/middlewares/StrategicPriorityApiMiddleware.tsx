@@ -1,28 +1,36 @@
-import {
-  getStrategicPriority,
-  postStrategicPriority,
-  getStrategicPriorityList,
-  deleteStrategicPriority,
-  updateStrategicPriority,
-} from "../../api";
+
+import { 
+    getStrategicPriority, 
+    postStrategicPriority,
+    getStrategicPriorityList , 
+    deleteStrategicPriority , 
+    updateStrategicPriority 
+} from '../../api';
 
 import {
-  ADD_STRATEGICPRIORITY_REQUEST,
-  FETCH_STRATEGICPRIORITY_REQUEST,
-  LIST_STRATEGICPRIORITY_REQUEST,
-  UPDATE_STRATEGICPRIORITY_REQUEST,
-  DELETE_STRATEGICPRIORITY_REQUEST,
-  addStrategicPriorityFailure,
-  addStrategicPrioritySuccess,
-  fetchStrategicPriorityFailure,
-  fetchStrategicPrioritySuccess,
-  listStrategicPriorityFailure,
-  listStrategicPrioritySuccess,
-  updateStrategicPriorityFailure,
-  updateStrategicPrioritySuccess,
-  deleteStrategicPriorityFailure,
-  deleteStrategicPrioritySuccess,
-} from "../actions/StrategicPriorityApiAction";
+
+    ADD_STRATEGICPRIORITY_REQUEST,
+    FETCH_STRATEGICPRIORITY_REQUEST,
+    LIST_STRATEGICPRIORITY_REQUEST,
+    UPDATE_STRATEGICPRIORITY_REQUEST,
+    DELETE_STRATEGICPRIORITY_REQUEST,
+
+    addStrategicPriorityFailure,
+    addStrategicPrioritySuccess,
+
+    fetchStrategicPriorityFailure,
+    fetchStrategicPrioritySuccess,
+    
+    listStrategicPriorityFailure,
+    listStrategicPrioritySuccess,
+
+    updateStrategicPriorityFailure,
+    updateStrategicPrioritySuccess,
+    
+    deleteStrategicPriorityFailure,
+    deleteStrategicPrioritySuccess,
+    
+} from '../actions/StrategicPriorityApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: StrategicPriority
 */
 
-export const StrategicPriorityMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("StrategicPriority MIDDLEWARE: " + JSON.stringify(action));
+export const StrategicPriorityMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("StrategicPriority MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_STRATEGICPRIORITY_REQUEST:
-        try {
-          const response = postStrategicPriority(action.payload);
-          dispatch(addStrategicPrioritySuccess(response.body));
-        } catch (error) {
-          dispatch(addStrategicPriorityFailure(error.message));
-        }
-        break;
 
-      case LIST_STRATEGICPRIORITY_REQUEST:
-        try {
-          const response = getStrategicPriorityList();
-          dispatch(listStrategicPrioritySuccess(response.body));
-        } catch (error) {
-          dispatch(listStrategicPriorityFailure(error.message));
-        }
-        break;
+        case ADD_STRATEGICPRIORITY_REQUEST:
+            try {
+                const response = postStrategicPriority(action.payload);
+                dispatch(addStrategicPrioritySuccess(response.body));
+            } catch (error) {
+                dispatch(addStrategicPriorityFailure(error.message));
+            }
+            break;
 
-      case FETCH_STRATEGICPRIORITY_REQUEST:
-        try {
-          const response = getStrategicPriority(action.id);
-          dispatch(fetchStrategicPrioritySuccess(response.body));
-        } catch (error) {
-          dispatch(fetchStrategicPriorityFailure(error.message));
-        }
-        break;
+        case LIST_STRATEGICPRIORITY_REQUEST:
+            try {
+                const response = getStrategicPriorityList();
+                dispatch(listStrategicPrioritySuccess(response.body));
+            } catch (error) {
+                dispatch(listStrategicPriorityFailure(error.message));
+            }
+            break;
 
-      case UPDATE_STRATEGICPRIORITY_REQUEST:
-        try {
-          const { id, StrategicPriority } = action.payload;
-          const response = updateStrategicPriority(id);
-          dispatch(updateStrategicPrioritySuccess(response.body));
-        } catch (error) {
-          dispatch(updateStrategicPriorityFailure(error.message));
-        }
-        break;
 
-      case DELETE_STRATEGICPRIORITY_REQUEST:
-        try {
-          const { id, StrategicPriority } = action.payload;
-          const response = deleteStrategicPriority(id);
-          dispatch(deleteStrategicPrioritySuccess(response.body));
-        } catch (error) {
-          dispatch(deleteStrategicPriorityFailure(error.message));
-        }
-        break;
+        case FETCH_STRATEGICPRIORITY_REQUEST:
+            try {
+                const response = getStrategicPriority(action.id);
+                dispatch(fetchStrategicPrioritySuccess(response.body));
+            } catch (error) {
+                dispatch(fetchStrategicPriorityFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_STRATEGICPRIORITY_REQUEST:
+            try {
+                const { id, StrategicPriority } = action.payload;
+                const response = updateStrategicPriority(id);
+                dispatch(updateStrategicPrioritySuccess(response.body));
+            } catch (error) {
+                dispatch(updateStrategicPriorityFailure(error.message));
+            }
+            break;
+
+        case DELETE_STRATEGICPRIORITY_REQUEST:
+            try {
+                const { id, StrategicPriority } = action.payload;
+                const response = deleteStrategicPriority(id);
+                dispatch(deleteStrategicPrioritySuccess(response.body));
+            } catch (error) {
+                dispatch(deleteStrategicPriorityFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

@@ -1,30 +1,27 @@
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Nav,
   Row,
-  Spinner,
-} from "react-bootstrap";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "../../../../components/CoolButton";
-import * as Yup from "yup";
+  Spinner
+} from 'react-bootstrap';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
+import CoolButton from '../../../../components/CoolButton';
+import * as Yup from 'yup';
+import PermissionDialog from '../../../../components/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+
 
 import {
   Application,
   ApplicationTypeEnum,
   ApplicationStatusEnum,
-} from "../../../model";
+} from '../../../model';
 
-import { useAddApplicationMutation } from "../../services/ApplicationService";
+import { useAddApplicationMutation } from '../../services/ApplicationService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -34,7 +31,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-05-08T17:49:28.351161-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -50,18 +47,24 @@ Application represents a logical system
 -------------------------------------------------------- */
 const TypeValidation = () => {
   return [
-    "full-stack",
-    "automation",
-    "agent",
-    "service",
-    "front-end",
-    "mobile",
-    "ci-cd",
-    "lambda",
+    'full-stack',
+    'automation',
+    'agent',
+    'service',
+    'front-end',
+    'mobile',
+    'ci-cd',
+    'lambda',
   ];
 };
 const StatusValidation = () => {
-  return ["ready", "deployed", "staging", "error", "disabled"];
+  return [
+    'ready',
+    'deployed',
+    'staging',
+    'error',
+    'disabled',
+  ];
 };
 
 /* -----------------------------------------------------
@@ -69,43 +72,80 @@ const StatusValidation = () => {
    (Skip read-only fields and container types)
 -------------------------------------------------------- */
 const validationSchema = Yup.object().shape({
-  name: Yup.string(),
-
-  description: Yup.string(),
-
-  isTemplate: Yup.boolean()
-
-    .notRequired(),
-
-  type: Yup.mixed()
-    .oneOf(TypeValidation(), "Invalid value for type")
-
-    .notRequired(),
-
-  status: Yup.mixed()
-    .oneOf(StatusValidation(), "Invalid value for status")
-
-    .notRequired(),
-
-  entrypointUrl: Yup.string(),
-
-  openAPISpecId: Yup.string(),
-
-  id: Yup.string(),
-
-  ownerId: Yup.string(),
-
-  createdDate: Yup.date(),
-
-  keyHash: Yup.string(),
-
-  lastAccessedById: Yup.string(),
-
-  lastAccessedDate: Yup.date(),
-
-  lastModifiedById: Yup.string(),
-
-  lastModifiedDate: Yup.date(),
+    
+        name: Yup.string()
+          
+          
+          ,
+    
+        description: Yup.string()
+          
+          
+          ,
+    
+        isTemplate: Yup.boolean()
+          
+          .notRequired(),
+    
+      type: Yup.mixed()
+        .oneOf(TypeValidation(), "Invalid value for type")
+        
+        .notRequired(),
+    
+      status: Yup.mixed()
+        .oneOf(StatusValidation(), "Invalid value for status")
+        
+        .notRequired(),
+    
+        entrypointUrl: Yup.string()
+          
+          
+          ,
+    
+        openAPISpecId: Yup.string()
+          
+          
+          ,
+    
+        id: Yup.string()
+          
+          
+          ,
+    
+        ownerId: Yup.string()
+          
+          
+          ,
+    
+        createdDate: Yup.date()
+          
+          
+          ,
+    
+        keyHash: Yup.string()
+          
+          
+          ,
+    
+        lastAccessedById: Yup.string()
+          
+          
+          ,
+    
+        lastAccessedDate: Yup.date()
+          
+          
+          ,
+    
+        lastModifiedById: Yup.string()
+          
+          
+          ,
+    
+        lastModifiedDate: Yup.date()
+          
+          
+          ,
 });
 
 /* -----------------------------------------------------
@@ -113,45 +153,174 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const ApplicationForm: React.FC = () => {
   const [addApplication, addApplicationResult] = useAddApplicationMutation();
+  
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
+
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: 'current_user', // This should come from authentication context
+    permissions: {
+      isOwner: true, // This should be determined by checking object ownership
+      isAdmin: true, // This should come from user roles
+      canGrantPermissions: true,
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+    },
+  };
 
   /* INITIAL VALUES - skip read-only fields */
   const initialValues: Partial<Application> = {
-    name: "null",
+          
 
-    description: "null",
+            name: 'null',
 
-    isTemplate: undefined,
 
-    type: ApplicationTypeEnum[Object.keys(ApplicationTypeEnum)[0]],
 
-    status: ApplicationStatusEnum[Object.keys(ApplicationStatusEnum)[0]],
 
-    entrypointUrl: "null",
 
-    openAPISpecId: "null",
+          
 
-    id: "fab68df1-e3ff-4c28-b33e-a5b534cd2aec",
+            description: 'null',
 
-    ownerId: "81dabac3-064c-4127-a1e8-46fdb4a2f631",
 
-    keyHash: "null",
 
-    lastAccessedById: "9956981e-9591-4e0c-9e79-d7395dacf672",
 
-    lastModifiedById: "7cea779a-360e-4852-b57d-deb738660b9c",
+
+          
+            isTemplate: undefined, 
+
+
+
+
+
+
+          
+          type:
+            ApplicationTypeEnum[
+              Object.keys(ApplicationTypeEnum)[0]
+            ],
+          
+          status:
+            ApplicationStatusEnum[
+              Object.keys(ApplicationStatusEnum)[0]
+            ],
+          
+
+            entrypointUrl: 'null',
+
+
+
+
+
+          
+
+            openAPISpecId: 'null',
+
+
+
+
+
+          
+
+            id: '50f21b1a-b5f7-4379-ab63-32a41b4ac49c',
+
+
+
+
+
+          
+
+            ownerId: '1bd943bb-f8f1-4f79-b074-07d2acf88b77',
+
+
+
+
+
+          
+
+
+
+
+
+
+          
+
+            keyHash: 'null',
+
+
+
+
+
+          
+
+            lastAccessedById: '281d90b4-332e-4483-b860-34aa22e4277e',
+
+
+
+
+
+          
+
+
+
+
+
+
+          
+
+            lastModifiedById: '454fb87a-4c85-4321-a929-1d8108420153',
+
+
+
+
+
+          
+
+
+
+
+
+
+  };
+
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId: string) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+
+  const handlePermissionsSave = (grants: AclGrantRequest[]) => {
+    console.log('Permissions saved for new Application:', grants);
+    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<Application>,
-  ) => {
-    // Simulate slow network or do what you need:
-    setTimeout(() => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Application>) => {
+    try {
       console.log("Application form values:", values);
-      addApplication(values);
+      const result = await addApplication(values).unwrap();
+      
+      // If object was created successfully and has an ID, offer to set permissions
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `Application created successfully! Would you like to set permissions for this object?`
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
+        }
+      }
+      
       setSubmitting(false);
-    }, 500);
+    } catch (error) {
+      console.error('Failed to create Application:', error);
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -169,7 +338,7 @@ const ApplicationForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
@@ -193,448 +362,514 @@ const ApplicationForm: React.FC = () => {
                   <FaRegPlusSquare size={36} /> Add New Application
                 </Accordion.Header>
                 <Accordion.Body>
-                  <label htmlFor="name" className="nice-form-control">
-                    <b>
-                      Name:
-                      {touched.name && !errors.name && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                    
+                    <label htmlFor="name" className="nice-form-control">
+                      <b>
+                        Name:
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="name"
-                      type="text"
-                      className={
-                        errors.name
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="name"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="description" className="nice-form-control">
-                    <b>
-                      Description:
-                      {touched.description && !errors.description && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="name"
+                            type="text"
+                            className={
+                              errors.name
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="description"
-                      type="text"
-                      className={
-                        errors.description
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="description"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="isTemplate" className="nice-form-control">
-                    <b>
-                      Is Template:
-                      {touched.isTemplate && !errors.isTemplate && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* CHECKBOX FIELD */}
-                    <BSForm.Check
-                      required
-                      id="isTemplate"
-                      name="isTemplate"
-                      onChange={(e) => {
-                        setFieldTouched("isTemplate", true);
-                        setFieldValue("isTemplate", e.target.checked);
-                      }}
-                      isInvalid={!!errors.isTemplate}
-                      className={errors.isTemplate ? "error" : ""}
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="isTemplate"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="type" className="nice-form-control">
-                    <b>
-                      Type:
-                      {touched.type && !errors.type && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                      <ErrorMessage
+                        className="error"
+                        name="name"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="description" className="nice-form-control">
+                      <b>
+                        Description:
+                        {touched.description &&
+                         !errors.description && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    {/* ENUM DROPDOWN */}
-                    <BSForm.Select
-                      name="type"
-                      className={
-                        errors.type
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                      onChange={(e) => {
-                        setFieldTouched("type", true);
-                        setFieldValue("type", e.target.value);
-                      }}
-                    >
-                      <option value="" label="Select Type" />
-                      <TypeLookup />
-                    </BSForm.Select>
 
-                    <ErrorMessage
-                      className="error"
-                      name="type"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="status" className="nice-form-control">
-                    <b>
-                      Status:
-                      {touched.status && !errors.status && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="description"
+                            type="text"
+                            className={
+                              errors.description
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    {/* ENUM DROPDOWN */}
-                    <BSForm.Select
-                      name="status"
-                      className={
-                        errors.status
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                      onChange={(e) => {
-                        setFieldTouched("status", true);
-                        setFieldValue("status", e.target.value);
-                      }}
-                    >
-                      <option value="" label="Select Status" />
-                      <StatusLookup />
-                    </BSForm.Select>
 
-                    <ErrorMessage
-                      className="error"
-                      name="status"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="entrypointUrl" className="nice-form-control">
-                    <b>
-                      Entrypoint Url:
-                      {touched.entrypointUrl && !errors.entrypointUrl && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="entrypointUrl"
-                      type="text"
-                      className={
-                        errors.entrypointUrl
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="entrypointUrl"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="openAPISpecId" className="nice-form-control">
-                    <b>
-                      Open API Spec Id:
-                      {touched.openAPISpecId && !errors.openAPISpecId && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                      <ErrorMessage
+                        className="error"
+                        name="description"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="isTemplate" className="nice-form-control">
+                      <b>
+                        Is Template:
+                        {touched.isTemplate &&
+                         !errors.isTemplate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="openAPISpecId"
-                      type="text"
-                      className={
-                        errors.openAPISpecId
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="openAPISpecId"
-                      component="span"
-                    />
-                  </label>
-                  <br />
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            required
+                            id="isTemplate"
+                            name="isTemplate"
+                            onChange={(e) => {
+                              setFieldTouched('isTemplate', true);
+                              setFieldValue('isTemplate', e.target.checked);
+                            }}
+                            isInvalid={!!errors.isTemplate}
+                            className={
+                              errors.isTemplate ? 'error' : ''
+                            }
+                          />
 
-                  <label htmlFor="id" className="nice-form-control">
-                    <b>
-                      Id:
-                      {touched.id && !errors.id && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="id"
-                      type="text"
-                      className={
-                        errors.id
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="id"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="ownerId" className="nice-form-control">
-                    <b>
-                      Owner Id:
-                      {touched.ownerId && !errors.ownerId && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="ownerId"
-                      type="text"
-                      className={
-                        errors.ownerId
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="ownerId"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="createdDate" className="nice-form-control">
-                    <b>
-                      Created Date:
-                      {touched.createdDate && !errors.createdDate && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                      <ErrorMessage
+                        className="error"
+                        name="isTemplate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="type" className="nice-form-control">
+                      <b>
+                        Type:
+                        {touched.type &&
+                         !errors.type && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="createdDate"
-                      component="span"
-                    />
-                  </label>
-                  <br />
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="type"
+                          className={
+                            errors.type
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('type', true);
+                            setFieldValue('type', e.target.value);
+                          }}
+                        >
+                          <option value="" label="Select Type" />
+                          <TypeLookup />
+                        </BSForm.Select>
 
-                  <label htmlFor="keyHash" className="nice-form-control">
-                    <b>
-                      Key Hash:
-                      {touched.keyHash && !errors.keyHash && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="keyHash"
-                      type="text"
-                      className={
-                        errors.keyHash
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
+                      <ErrorMessage
+                        className="error"
+                        name="type"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="status" className="nice-form-control">
+                      <b>
+                        Status:
+                        {touched.status &&
+                         !errors.status && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="keyHash"
-                      component="span"
-                    />
-                  </label>
-                  <br />
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="status"
+                          className={
+                            errors.status
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('status', true);
+                            setFieldValue('status', e.target.value);
+                          }}
+                        >
+                          <option value="" label="Select Status" />
+                          <StatusLookup />
+                        </BSForm.Select>
 
-                  <label
-                    htmlFor="lastAccessedById"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Accessed By Id:
-                      {touched.lastAccessedById && !errors.lastAccessedById && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="lastAccessedById"
-                      type="text"
-                      className={
-                        errors.lastAccessedById
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
+                      <ErrorMessage
+                        className="error"
+                        name="status"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="entrypointUrl" className="nice-form-control">
+                      <b>
+                        Entrypoint Url:
+                        {touched.entrypointUrl &&
+                         !errors.entrypointUrl && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastAccessedById"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label
-                    htmlFor="lastAccessedDate"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Accessed Date:
-                      {touched.lastAccessedDate && !errors.lastAccessedDate && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastAccessedDate"
-                      component="span"
-                    />
-                  </label>
-                  <br />
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="entrypointUrl"
+                            type="text"
+                            className={
+                              errors.entrypointUrl
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                  <label
-                    htmlFor="lastModifiedById"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Modified By Id:
-                      {touched.lastModifiedById && !errors.lastModifiedById && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="lastModifiedById"
-                      type="text"
-                      className={
-                        errors.lastModifiedById
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastModifiedById"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label
-                    htmlFor="lastModifiedDate"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Modified Date:
-                      {touched.lastModifiedDate && !errors.lastModifiedDate && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastModifiedDate"
-                      component="span"
-                    />
-                  </label>
-                  <br />
+
+                      <ErrorMessage
+                        className="error"
+                        name="entrypointUrl"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="openAPISpecId" className="nice-form-control">
+                      <b>
+                        Open API Spec Id:
+                        {touched.openAPISpecId &&
+                         !errors.openAPISpecId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="openAPISpecId"
+                            type="text"
+                            className={
+                              errors.openAPISpecId
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="openAPISpecId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="id" className="nice-form-control">
+                      <b>
+                        Id:
+                        {touched.id &&
+                         !errors.id && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="id"
+                            type="text"
+                            className={
+                              errors.id
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="id"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="ownerId" className="nice-form-control">
+                      <b>
+                        Owner Id:
+                        {touched.ownerId &&
+                         !errors.ownerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="ownerId"
+                            type="text"
+                            className={
+                              errors.ownerId
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="ownerId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="createdDate" className="nice-form-control">
+                      <b>
+                        Created Date:
+                        {touched.createdDate &&
+                         !errors.createdDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="createdDate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="keyHash" className="nice-form-control">
+                      <b>
+                        Key Hash:
+                        {touched.keyHash &&
+                         !errors.keyHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="keyHash"
+                            type="text"
+                            className={
+                              errors.keyHash
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="keyHash"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastAccessedById" className="nice-form-control">
+                      <b>
+                        Last Accessed By Id:
+                        {touched.lastAccessedById &&
+                         !errors.lastAccessedById && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="lastAccessedById"
+                            type="text"
+                            className={
+                              errors.lastAccessedById
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastAccessedById"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastAccessedDate" className="nice-form-control">
+                      <b>
+                        Last Accessed Date:
+                        {touched.lastAccessedDate &&
+                         !errors.lastAccessedDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastAccessedDate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastModifiedById" className="nice-form-control">
+                      <b>
+                        Last Modified By Id:
+                        {touched.lastModifiedById &&
+                         !errors.lastModifiedById && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="lastModifiedById"
+                            type="text"
+                            className={
+                              errors.lastModifiedById
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastModifiedById"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastModifiedDate" className="nice-form-control">
+                      <b>
+                        Last Modified Date:
+                        {touched.lastModifiedDate &&
+                         !errors.lastModifiedDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastModifiedDate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={
-                      touched && isValid
-                        ? isSubmitting
-                          ? "disabled"
-                          : "success"
-                        : "warning"
-                    }
+                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
                   >
                     {isSubmitting && (
                       <Spinner
-                        style={{ float: "left" }}
+                        style={ { float: 'left' } }
                         as="span"
                         animation="grow"
                         variant="light"
@@ -650,13 +885,26 @@ const ApplicationForm: React.FC = () => {
               <Accordion.Item eventKey="2">
                 <Accordion.Header>System Fields (Read Only)</Accordion.Header>
                 <Accordion.Body>
-                  <Row></Row>
+                  <Row>
+                  </Row>
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
           </form>
         )}
       </Formik>
+
+      {/* Permission Management Dialog */}
+      {createdObjectId && (
+        <PermissionDialog
+          objectType="com.valkyrlabs.model.Application"
+          objectId={createdObjectId}
+          isVisible={showPermissionDialog}
+          onClose={handlePermissionDialogClose}
+          onSave={handlePermissionsSave}
+          currentUser={currentUser}
+        />
+      )}
     </div>
   );
 };
@@ -673,14 +921,14 @@ kebabcase type-lookup
 const TypeLookup = () => {
   return (
     <>
-      <option value="full-stack" label="Full Stack" />
-      <option value="automation" label="Automation" />
-      <option value="agent" label="Agent" />
-      <option value="service" label="Service" />
-      <option value="front-end" label="Front End" />
-      <option value="mobile" label="Mobile" />
-      <option value="ci-cd" label="Ci Cd" />
-      <option value="lambda" label="Lambda" />
+      <option value='full-stack' label="Full Stack" />
+      <option value='automation' label="Automation" />
+      <option value='agent' label="Agent" />
+      <option value='service' label="Service" />
+      <option value='front-end' label="Front End" />
+      <option value='mobile' label="Mobile" />
+      <option value='ci-cd' label="Ci Cd" />
+      <option value='lambda' label="Lambda" />
     </>
   );
 };
@@ -697,14 +945,17 @@ kebabcase status-lookup
 const StatusLookup = () => {
   return (
     <>
-      <option value="ready" label="Ready" />
-      <option value="deployed" label="Deployed" />
-      <option value="staging" label="Staging" />
-      <option value="error" label="Error" />
-      <option value="disabled" label="Disabled" />
+      <option value='ready' label="Ready" />
+      <option value='deployed' label="Deployed" />
+      <option value='staging' label="Staging" />
+      <option value='error' label="Error" />
+      <option value='disabled' label="Disabled" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default ApplicationForm;
+

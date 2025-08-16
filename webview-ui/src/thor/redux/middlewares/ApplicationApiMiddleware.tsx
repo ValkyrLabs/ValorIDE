@@ -1,28 +1,36 @@
-import {
-  getApplication,
-  postApplication,
-  getApplicationList,
-  deleteApplication,
-  updateApplication,
-} from "../../api";
+
+import { 
+    getApplication, 
+    postApplication,
+    getApplicationList , 
+    deleteApplication , 
+    updateApplication 
+} from '../../api';
 
 import {
-  ADD_APPLICATION_REQUEST,
-  FETCH_APPLICATION_REQUEST,
-  LIST_APPLICATION_REQUEST,
-  UPDATE_APPLICATION_REQUEST,
-  DELETE_APPLICATION_REQUEST,
-  addApplicationFailure,
-  addApplicationSuccess,
-  fetchApplicationFailure,
-  fetchApplicationSuccess,
-  listApplicationFailure,
-  listApplicationSuccess,
-  updateApplicationFailure,
-  updateApplicationSuccess,
-  deleteApplicationFailure,
-  deleteApplicationSuccess,
-} from "../actions/ApplicationApiAction";
+
+    ADD_APPLICATION_REQUEST,
+    FETCH_APPLICATION_REQUEST,
+    LIST_APPLICATION_REQUEST,
+    UPDATE_APPLICATION_REQUEST,
+    DELETE_APPLICATION_REQUEST,
+
+    addApplicationFailure,
+    addApplicationSuccess,
+
+    fetchApplicationFailure,
+    fetchApplicationSuccess,
+    
+    listApplicationFailure,
+    listApplicationSuccess,
+
+    updateApplicationFailure,
+    updateApplicationSuccess,
+    
+    deleteApplicationFailure,
+    deleteApplicationSuccess,
+    
+} from '../actions/ApplicationApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Application
 */
 
-export const ApplicationMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Application MIDDLEWARE: " + JSON.stringify(action));
+export const ApplicationMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Application MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_APPLICATION_REQUEST:
-        try {
-          const response = postApplication(action.payload);
-          dispatch(addApplicationSuccess(response.body));
-        } catch (error) {
-          dispatch(addApplicationFailure(error.message));
-        }
-        break;
 
-      case LIST_APPLICATION_REQUEST:
-        try {
-          const response = getApplicationList();
-          dispatch(listApplicationSuccess(response.body));
-        } catch (error) {
-          dispatch(listApplicationFailure(error.message));
-        }
-        break;
+        case ADD_APPLICATION_REQUEST:
+            try {
+                const response = postApplication(action.payload);
+                dispatch(addApplicationSuccess(response.body));
+            } catch (error) {
+                dispatch(addApplicationFailure(error.message));
+            }
+            break;
 
-      case FETCH_APPLICATION_REQUEST:
-        try {
-          const response = getApplication(action.id);
-          dispatch(fetchApplicationSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchApplicationFailure(error.message));
-        }
-        break;
+        case LIST_APPLICATION_REQUEST:
+            try {
+                const response = getApplicationList();
+                dispatch(listApplicationSuccess(response.body));
+            } catch (error) {
+                dispatch(listApplicationFailure(error.message));
+            }
+            break;
 
-      case UPDATE_APPLICATION_REQUEST:
-        try {
-          const { id, Application } = action.payload;
-          const response = updateApplication(id);
-          dispatch(updateApplicationSuccess(response.body));
-        } catch (error) {
-          dispatch(updateApplicationFailure(error.message));
-        }
-        break;
 
-      case DELETE_APPLICATION_REQUEST:
-        try {
-          const { id, Application } = action.payload;
-          const response = deleteApplication(id);
-          dispatch(deleteApplicationSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteApplicationFailure(error.message));
-        }
-        break;
+        case FETCH_APPLICATION_REQUEST:
+            try {
+                const response = getApplication(action.id);
+                dispatch(fetchApplicationSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchApplicationFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_APPLICATION_REQUEST:
+            try {
+                const { id, Application } = action.payload;
+                const response = updateApplication(id);
+                dispatch(updateApplicationSuccess(response.body));
+            } catch (error) {
+                dispatch(updateApplicationFailure(error.message));
+            }
+            break;
+
+        case DELETE_APPLICATION_REQUEST:
+            try {
+                const { id, Application } = action.payload;
+                const response = deleteApplication(id);
+                dispatch(deleteApplicationSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteApplicationFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

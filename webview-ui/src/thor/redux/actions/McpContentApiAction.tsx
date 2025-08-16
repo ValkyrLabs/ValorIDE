@@ -2,94 +2,95 @@
 
 // McpContent
 
-export const FETCH_MCPCONTENT_REQUEST = "FETCH_MCPCONTENT_REQUEST";
-export const FETCH_MCPCONTENT_SUCCESS = "FETCH_MCPCONTENT_SUCCESS";
-export const FETCH_MCPCONTENT_FAILURE = "FETCH_MCPCONTENT_FAILURE";
+export const FETCH_MCPCONTENT_REQUEST = 'FETCH_MCPCONTENT_REQUEST';
+export const FETCH_MCPCONTENT_SUCCESS = 'FETCH_MCPCONTENT_SUCCESS';
+export const FETCH_MCPCONTENT_FAILURE = 'FETCH_MCPCONTENT_FAILURE';
 
-export const ADD_MCPCONTENT_REQUEST = "ADD_MCPCONTENT_REQUEST";
-export const ADD_MCPCONTENT_SUCCESS = "ADD_MCPCONTENT_SUCCESS";
-export const ADD_MCPCONTENT_FAILURE = "ADD_MCPCONTENT_FAILURE";
+export const ADD_MCPCONTENT_REQUEST = 'ADD_MCPCONTENT_REQUEST';
+export const ADD_MCPCONTENT_SUCCESS = 'ADD_MCPCONTENT_SUCCESS';
+export const ADD_MCPCONTENT_FAILURE = 'ADD_MCPCONTENT_FAILURE';
 
-export const UPDATE_MCPCONTENT_REQUEST = "UPDATE_MCPCONTENT_REQUEST";
-export const UPDATE_MCPCONTENT_SUCCESS = "UPDATE_MCPCONTENT_SUCCESS";
-export const UPDATE_MCPCONTENT_FAILURE = "UPDATE_MCPCONTENT_FAILURE";
+export const UPDATE_MCPCONTENT_REQUEST = 'UPDATE_MCPCONTENT_REQUEST';
+export const UPDATE_MCPCONTENT_SUCCESS = 'UPDATE_MCPCONTENT_SUCCESS';
+export const UPDATE_MCPCONTENT_FAILURE = 'UPDATE_MCPCONTENT_FAILURE';
 
-export const DELETE_MCPCONTENT_REQUEST = "DELETE_MCPCONTENT_REQUEST";
-export const DELETE_MCPCONTENT_SUCCESS = "DELETE_MCPCONTENT_SUCCESS";
-export const DELETE_MCPCONTENT_FAILURE = "DELETE_MCPCONTENT_FAILURE";
+export const DELETE_MCPCONTENT_REQUEST = 'DELETE_MCPCONTENT_REQUEST';
+export const DELETE_MCPCONTENT_SUCCESS = 'DELETE_MCPCONTENT_SUCCESS';
+export const DELETE_MCPCONTENT_FAILURE = 'DELETE_MCPCONTENT_FAILURE';
 
-export const LIST_MCPCONTENT_REQUEST = "LIST_MCPCONTENT_REQUEST";
-export const LIST_MCPCONTENT_SUCCESS = "LIST_MCPCONTENT_SUCCESS";
-export const LIST_MCPCONTENT_FAILURE = "LIST_MCPCONTENT_FAILURE";
+export const LIST_MCPCONTENT_REQUEST = 'LIST_MCPCONTENT_REQUEST';
+export const LIST_MCPCONTENT_SUCCESS = 'LIST_MCPCONTENT_SUCCESS';
+export const LIST_MCPCONTENT_FAILURE = 'LIST_MCPCONTENT_FAILURE';
 
 export const addMcpContentRequest = () => ({
-  type: ADD_MCPCONTENT_REQUEST,
+    type: ADD_MCPCONTENT_REQUEST,
 });
 
 export const addMcpContentSuccess = (McpContents: any) => ({
-  type: ADD_MCPCONTENT_SUCCESS,
-  payload: McpContents,
+    type: ADD_MCPCONTENT_SUCCESS,
+    payload: McpContents,
 });
 
 export const addMcpContentFailure = (error: Error) => ({
-  type: ADD_MCPCONTENT_FAILURE,
-  payload: error,
+    type: ADD_MCPCONTENT_FAILURE,
+    payload: error,
 });
 
+
 export const fetchMcpContentRequest = () => ({
-  type: FETCH_MCPCONTENT_REQUEST,
+    type: FETCH_MCPCONTENT_REQUEST,
 });
 
 export const fetchMcpContentSuccess = (McpContents: any) => ({
-  type: FETCH_MCPCONTENT_SUCCESS,
-  payload: McpContents,
+    type: FETCH_MCPCONTENT_SUCCESS,
+    payload: McpContents,
 });
 
 export const fetchMcpContentFailure = (error: Error) => ({
-  type: FETCH_MCPCONTENT_FAILURE,
-  payload: error,
+    type: FETCH_MCPCONTENT_FAILURE,
+    payload: error,
 });
 
 export const listMcpContentRequest = () => ({
-  type: LIST_MCPCONTENT_REQUEST,
+    type: LIST_MCPCONTENT_REQUEST,
 });
 
 export const listMcpContentSuccess = (McpContents: any) => ({
-  type: LIST_MCPCONTENT_SUCCESS,
-  payload: McpContents,
+    type: LIST_MCPCONTENT_SUCCESS,
+    payload: McpContents,
 });
 
 export const listMcpContentFailure = (error: Error) => ({
-  type: LIST_MCPCONTENT_FAILURE,
-  payload: error,
+    type: LIST_MCPCONTENT_FAILURE,
+    payload: error,
 });
 
 export const updateMcpContentRequest = (McpContent: any) => ({
-  type: UPDATE_MCPCONTENT_REQUEST,
-  payload: McpContent,
+    type: UPDATE_MCPCONTENT_REQUEST,
+    payload: McpContent,
 });
 
 export const updateMcpContentSuccess = (McpContent: any) => ({
-  type: UPDATE_MCPCONTENT_SUCCESS,
-  payload: McpContent,
+    type: UPDATE_MCPCONTENT_SUCCESS,
+    payload: McpContent,
 });
 
 export const updateMcpContentFailure = (error: Error) => ({
-  type: UPDATE_MCPCONTENT_FAILURE,
-  payload: error,
+    type: UPDATE_MCPCONTENT_FAILURE,
+    payload: error,
 });
 
 export const deleteMcpContentRequest = (McpContent: any) => ({
-  type: DELETE_MCPCONTENT_REQUEST,
-  payload: McpContent,
+    type: DELETE_MCPCONTENT_REQUEST,
+    payload: McpContent,
 });
 
 export const deleteMcpContentSuccess = (McpContent: any) => ({
-  type: DELETE_MCPCONTENT_SUCCESS,
-  payload: McpContent,
+    type: DELETE_MCPCONTENT_SUCCESS,
+    payload: McpContent,
 });
 
 export const deleteMcpContentFailure = (error: Error) => ({
-  type: DELETE_MCPCONTENT_FAILURE,
-  payload: error,
+    type: DELETE_MCPCONTENT_FAILURE,
+    payload: error,
 });

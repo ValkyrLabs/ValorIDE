@@ -1,28 +1,36 @@
-import {
-  getOasComponent,
-  postOasComponent,
-  getOasComponentList,
-  deleteOasComponent,
-  updateOasComponent,
-} from "../../api";
+
+import { 
+    getOasComponent, 
+    postOasComponent,
+    getOasComponentList , 
+    deleteOasComponent , 
+    updateOasComponent 
+} from '../../api';
 
 import {
-  ADD_OASCOMPONENT_REQUEST,
-  FETCH_OASCOMPONENT_REQUEST,
-  LIST_OASCOMPONENT_REQUEST,
-  UPDATE_OASCOMPONENT_REQUEST,
-  DELETE_OASCOMPONENT_REQUEST,
-  addOasComponentFailure,
-  addOasComponentSuccess,
-  fetchOasComponentFailure,
-  fetchOasComponentSuccess,
-  listOasComponentFailure,
-  listOasComponentSuccess,
-  updateOasComponentFailure,
-  updateOasComponentSuccess,
-  deleteOasComponentFailure,
-  deleteOasComponentSuccess,
-} from "../actions/OasComponentApiAction";
+
+    ADD_OASCOMPONENT_REQUEST,
+    FETCH_OASCOMPONENT_REQUEST,
+    LIST_OASCOMPONENT_REQUEST,
+    UPDATE_OASCOMPONENT_REQUEST,
+    DELETE_OASCOMPONENT_REQUEST,
+
+    addOasComponentFailure,
+    addOasComponentSuccess,
+
+    fetchOasComponentFailure,
+    fetchOasComponentSuccess,
+    
+    listOasComponentFailure,
+    listOasComponentSuccess,
+
+    updateOasComponentFailure,
+    updateOasComponentSuccess,
+    
+    deleteOasComponentFailure,
+    deleteOasComponentSuccess,
+    
+} from '../actions/OasComponentApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: OasComponent
 */
 
-export const OasComponentMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("OasComponent MIDDLEWARE: " + JSON.stringify(action));
+export const OasComponentMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("OasComponent MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_OASCOMPONENT_REQUEST:
-        try {
-          const response = postOasComponent(action.payload);
-          dispatch(addOasComponentSuccess(response.body));
-        } catch (error) {
-          dispatch(addOasComponentFailure(error.message));
-        }
-        break;
 
-      case LIST_OASCOMPONENT_REQUEST:
-        try {
-          const response = getOasComponentList();
-          dispatch(listOasComponentSuccess(response.body));
-        } catch (error) {
-          dispatch(listOasComponentFailure(error.message));
-        }
-        break;
+        case ADD_OASCOMPONENT_REQUEST:
+            try {
+                const response = postOasComponent(action.payload);
+                dispatch(addOasComponentSuccess(response.body));
+            } catch (error) {
+                dispatch(addOasComponentFailure(error.message));
+            }
+            break;
 
-      case FETCH_OASCOMPONENT_REQUEST:
-        try {
-          const response = getOasComponent(action.id);
-          dispatch(fetchOasComponentSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchOasComponentFailure(error.message));
-        }
-        break;
+        case LIST_OASCOMPONENT_REQUEST:
+            try {
+                const response = getOasComponentList();
+                dispatch(listOasComponentSuccess(response.body));
+            } catch (error) {
+                dispatch(listOasComponentFailure(error.message));
+            }
+            break;
 
-      case UPDATE_OASCOMPONENT_REQUEST:
-        try {
-          const { id, OasComponent } = action.payload;
-          const response = updateOasComponent(id);
-          dispatch(updateOasComponentSuccess(response.body));
-        } catch (error) {
-          dispatch(updateOasComponentFailure(error.message));
-        }
-        break;
 
-      case DELETE_OASCOMPONENT_REQUEST:
-        try {
-          const { id, OasComponent } = action.payload;
-          const response = deleteOasComponent(id);
-          dispatch(deleteOasComponentSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteOasComponentFailure(error.message));
-        }
-        break;
+        case FETCH_OASCOMPONENT_REQUEST:
+            try {
+                const response = getOasComponent(action.id);
+                dispatch(fetchOasComponentSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchOasComponentFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_OASCOMPONENT_REQUEST:
+            try {
+                const { id, OasComponent } = action.payload;
+                const response = updateOasComponent(id);
+                dispatch(updateOasComponentSuccess(response.body));
+            } catch (error) {
+                dispatch(updateOasComponentFailure(error.message));
+            }
+            break;
+
+        case DELETE_OASCOMPONENT_REQUEST:
+            try {
+                const { id, OasComponent } = action.payload;
+                const response = deleteOasComponent(id);
+                dispatch(deleteOasComponentSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteOasComponentFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

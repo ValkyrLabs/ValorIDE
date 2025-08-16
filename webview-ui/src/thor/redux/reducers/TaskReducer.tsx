@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Task } from "../../model/Task";
+import { Task } from '../../model/Task';
 
 const TaskSlice = createSlice({
   name: "Tasks",
@@ -12,26 +12,28 @@ const TaskSlice = createSlice({
     },
 
     TaskValueToggled(state, action) {
-      console.log("Task TOGGLE");
-      console.warn(JSON.stringify(action));
-      const Task: Task = state.find(
-        (Task) => Task.id === action.payload.TaskId,
-      );
+      console.log("Task TOGGLE")
+      console.warn(JSON.stringify(action))
+      const Task:Task = state.find((Task) => Task.id === action.payload.TaskId);
       if (Task) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     TaskpropertySet(state, action) {
       const Task = state.find((Task) => Task.id === action.payload.TaskId);
       if (Task) {
-        //  Task[action.property] = action.payload[action.property];
+      //  Task[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const { TaskAdded, TaskValueToggled, TaskpropertySet } =
-  TaskSlice.actions;
+export const {
+  TaskAdded,
+  TaskValueToggled,
+  TaskpropertySet
+} = TaskSlice.actions;
 export default TaskSlice.reducer;

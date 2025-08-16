@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Formula } from "../../model/Formula";
+import { Formula } from '../../model/Formula';
 
 const FormulaSlice = createSlice({
   name: "Formulas",
@@ -12,28 +12,28 @@ const FormulaSlice = createSlice({
     },
 
     FormulaValueToggled(state, action) {
-      console.log("Formula TOGGLE");
-      console.warn(JSON.stringify(action));
-      const Formula: Formula = state.find(
-        (Formula) => Formula.id === action.payload.FormulaId,
-      );
+      console.log("Formula TOGGLE")
+      console.warn(JSON.stringify(action))
+      const Formula:Formula = state.find((Formula) => Formula.id === action.payload.FormulaId);
       if (Formula) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     FormulapropertySet(state, action) {
-      const Formula = state.find(
-        (Formula) => Formula.id === action.payload.FormulaId,
-      );
+      const Formula = state.find((Formula) => Formula.id === action.payload.FormulaId);
       if (Formula) {
-        //  Formula[action.property] = action.payload[action.property];
+      //  Formula[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const { FormulaAdded, FormulaValueToggled, FormulapropertySet } =
-  FormulaSlice.actions;
+export const {
+  FormulaAdded,
+  FormulaValueToggled,
+  FormulapropertySet
+} = FormulaSlice.actions;
 export default FormulaSlice.reducer;

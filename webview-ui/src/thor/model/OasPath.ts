@@ -11,8 +11,15 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime";
-import { OasOperation, OasOperationFromJSON, OasOperationToJSON } from "./";
+import { exists, mapValues } from '../src/runtime';
+import {
+
+
+    OasOperation,
+    OasOperationFromJSON,
+    OasOperationToJSON,
+} from './';
+
 
 // thorapi
 
@@ -21,171 +28,148 @@ import { OasOperation, OasOperationFromJSON, OasOperationToJSON } from "./";
  * @export
  * @interface OasPath
  */
-export type OasPath = {
-  /**
-   * the URI of the path (e.g., /some/path/to/object)
-   * @type {string}
-   * @memberof OasPath
-   */
-  path?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof OasPath
-   */
-  oasOpenAPISpecId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof OasPath
-   */
-  summary?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof OasPath
-   */
-  description?: string;
-  /**
-   *
-   * @type {OasOperation}
-   * @memberof OasPath
-   */
-  get?: OasOperation;
-  /**
-   *
-   * @type {OasOperation}
-   * @memberof OasPath
-   */
-  put?: OasOperation;
-  /**
-   *
-   * @type {OasOperation}
-   * @memberof OasPath
-   */
-  post?: OasOperation;
-  /**
-   *
-   * @type {OasOperation}
-   * @memberof OasPath
-   */
-  _delete?: OasOperation;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof OasPath
-   */
-  id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof OasPath
-   */
-  ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof OasPath
-   */
-  createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof OasPath
-   */
-  keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof OasPath
-   */
-  lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof OasPath
-   */
-  lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof OasPath
-   */
-  lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof OasPath
-   */
-  lastModifiedDate?: Date;
-};
+export type OasPath  = {
+    /**
+     * the URI of the path (e.g., /some/path/to/object)
+     * @type {string}
+     * @memberof OasPath
+     */
+    path?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof OasPath
+     */
+    oasOpenAPISpecId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof OasPath
+     */
+    summary?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof OasPath
+     */
+    description?: string;
+    /**
+     * 
+     * @type {OasOperation}
+     * @memberof OasPath
+     */
+    get?: OasOperation;
+    /**
+     * 
+     * @type {OasOperation}
+     * @memberof OasPath
+     */
+    put?: OasOperation;
+    /**
+     * 
+     * @type {OasOperation}
+     * @memberof OasPath
+     */
+    post?: OasOperation;
+    /**
+     * 
+     * @type {OasOperation}
+     * @memberof OasPath
+     */
+    _delete?: OasOperation;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof OasPath
+     */
+    id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof OasPath
+     */
+    ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof OasPath
+     */
+    createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof OasPath
+     */
+    keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof OasPath
+     */
+    lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof OasPath
+     */
+    lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof OasPath
+     */
+    lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof OasPath
+     */
+    lastModifiedDate?: Date;
+}
 
 export function OasPathFromJSON(json: any): OasPath {
-  return {
-    path: !exists(json, "path") ? undefined : json["path"],
-    oasOpenAPISpecId: !exists(json, "oasOpenAPISpecId")
-      ? undefined
-      : json["oasOpenAPISpecId"],
-    summary: !exists(json, "summary") ? undefined : json["summary"],
-    description: !exists(json, "description") ? undefined : json["description"],
-    get: !exists(json, "get") ? undefined : OasOperationFromJSON(json["get"]),
-    put: !exists(json, "put") ? undefined : OasOperationFromJSON(json["put"]),
-    post: !exists(json, "post")
-      ? undefined
-      : OasOperationFromJSON(json["post"]),
-    _delete: !exists(json, "delete")
-      ? undefined
-      : OasOperationFromJSON(json["delete"]),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-  };
+    return {
+        'path': !exists(json, 'path') ? undefined : json['path'],
+        'oasOpenAPISpecId': !exists(json, 'oasOpenAPISpecId') ? undefined : json['oasOpenAPISpecId'],
+        'summary': !exists(json, 'summary') ? undefined : json['summary'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'get': !exists(json, 'get') ? undefined : OasOperationFromJSON(json['get']),
+        'put': !exists(json, 'put') ? undefined : OasOperationFromJSON(json['put']),
+        'post': !exists(json, 'post') ? undefined : OasOperationFromJSON(json['post']),
+        '_delete': !exists(json, 'delete') ? undefined : OasOperationFromJSON(json['delete']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+    };
 }
 
 export function OasPathToJSON(value?: OasPath): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    path: value.path,
-    oasOpenAPISpecId: value.oasOpenAPISpecId,
-    summary: value.summary,
-    description: value.description,
-    get: OasOperationToJSON(value.get),
-    put: OasOperationToJSON(value.put),
-    post: OasOperationToJSON(value.post),
-    delete: OasOperationToJSON(value._delete),
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        'path': value.path,
+        'oasOpenAPISpecId': value.oasOpenAPISpecId,
+        'summary': value.summary,
+        'description': value.description,
+        'get': OasOperationToJSON(value.get),
+        'put': OasOperationToJSON(value.put),
+        'post': OasOperationToJSON(value.post),
+        'delete': OasOperationToJSON(value._delete),
+        'id': value.id,
+        'ownerId': value.ownerId,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'keyHash': value.keyHash,
+        'lastAccessedById': value.lastAccessedById,
+        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
+        'lastModifiedById': value.lastModifiedById,
+        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
+    };
 }
+
+

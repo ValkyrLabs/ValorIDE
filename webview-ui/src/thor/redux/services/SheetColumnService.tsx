@@ -1,26 +1,22 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { SheetColumn } from "../../model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { SheetColumn } from '../../model'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SheetColumnResponse = SheetColumn[];
+type SheetColumnResponse = SheetColumn[]
 
 export const SheetColumnService = createApi({
-  reducerPath: "SheetColumn", // This should remain unique
+  reducerPath: 'SheetColumn', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["SheetColumn"],
+  tagTypes: ['SheetColumn'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getSheetColumnsPaged: build.query<
-      SheetColumnResponse,
-      { page: number; limit?: number }
-    >({
-      query: ({ page, limit = 20 }) =>
-        `SheetColumn?page=${page}&limit=${limit}`,
+    getSheetColumnsPaged: build.query<SheetColumnResponse, { page: number; limit?: number }>({
+      query: ({ page, limit = 20 }) => `SheetColumn?page=${page}&limit=${limit}`,
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "SheetColumn" as const, id })),
-              { type: "SheetColumn", id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: 'SheetColumn' as const, id })),
+              { type: 'SheetColumn', id: `PAGE_${page}` },
             ]
           : [],
     }),
@@ -31,81 +27,72 @@ export const SheetColumnService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "SheetColumn" as const, id })),
-              { type: "SheetColumn", id: "LIST" },
+              ...result.map(({ id }) => ({ type: 'SheetColumn' as const, id })),
+              { type: 'SheetColumn', id: 'LIST' },
             ]
-          : [{ type: "SheetColumn", id: "LIST" }],
+          : [{ type: 'SheetColumn', id: 'LIST' }],
     }),
 
     // 3) Create
     addSheetColumn: build.mutation<SheetColumn, Partial<SheetColumn>>({
       query: (body) => ({
         url: `SheetColumn`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "SheetColumn", id: "LIST" }],
+      invalidatesTags: [{ type: 'SheetColumn', id: 'LIST' }],
     }),
 
     // 4) Get single by ID
     getSheetColumn: build.query<SheetColumn, string>({
       query: (id) => `SheetColumn/${id}`,
-      providesTags: (result, error, id) => [{ type: "SheetColumn", id }],
+      providesTags: (result, error, id) => [{ type: 'SheetColumn', id }],
     }),
 
     // 5) Update
-    updateSheetColumn: build.mutation<
-      void,
-      Pick<SheetColumn, "id"> & Partial<SheetColumn>
-    >({
+    updateSheetColumn: build.mutation<void, Pick<SheetColumn, 'id'> & Partial<SheetColumn>>({
       query: ({ id, ...patch }) => ({
         url: `SheetColumn/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SheetColumnService.util.updateQueryData(
-              "getSheetColumn",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
+            SheetColumnService.util.updateQueryData('getSheetColumn', id, (draft) => {
+              Object.assign(draft, patch)
+            })
+          )
           try {
-            await queryFulfilled;
+            await queryFulfilled
           } catch {
-            patchResult.undo();
+            patchResult.undo()
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: "SheetColumn", id }],
+      invalidatesTags: (result, error, { id }) => [{ type: 'SheetColumn', id }],
     }),
 
     // 6) Delete
-    deleteSheetColumn: build.mutation<{ success: boolean; id: string }, number>(
-      {
-        query(id) {
-          return {
-            url: `SheetColumn/${id}`,
-            method: "DELETE",
-          };
-        },
-        invalidatesTags: (result, error, id) => [{ type: "SheetColumn", id }],
+    deleteSheetColumn: build.mutation<{ success: boolean; id: string }, number>({
+      query(id) {
+        return {
+          url: `SheetColumn/${id}`,
+          method: 'DELETE',
+        }
       },
-    ),
+      invalidatesTags: (result, error, id) => [{ type: 'SheetColumn', id }],
+    }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSheetColumnsPagedQuery`
 export const {
-  useGetSheetColumnsPagedQuery, // immediate fetch
+  useGetSheetColumnsPagedQuery,     // immediate fetch
   useLazyGetSheetColumnsPagedQuery, // lazy fetch
   useGetSheetColumnQuery,
   useGetSheetColumnsQuery,
   useAddSheetColumnMutation,
   useUpdateSheetColumnMutation,
   useDeleteSheetColumnMutation,
-} = SheetColumnService;
+} = SheetColumnService

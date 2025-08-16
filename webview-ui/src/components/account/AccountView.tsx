@@ -10,6 +10,7 @@ import CountUp from "react-countup";
 import CreditsHistoryTable from "./CreditsHistoryTable";
 import { useExtensionState } from "@/context/ExtensionStateContext";
 import ApplicationsList from "./ApplicationsList";
+import OpenAPIFilePicker from "./OpenAPIFilePicker";
 import Form from "../Login/form";
 import FileExplorer from "../FileExplorer/FileExplorer";
 
@@ -34,7 +35,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
   );
 
   // Default to login tab when unauthenticated, otherwise account
-  const [activeTab, setActiveTab] = useState<"login" | "account">(
+  const [activeTab, setActiveTab] = useState<"login" | "account" | "applications">(
     isAuthenticated ? "account" : "login",
   );
 
@@ -72,6 +73,10 @@ const AccountView = ({ onDone }: AccountViewProps) => {
     });
   }, []);
 
+  const handleOpenAPIFileSelected = useCallback((file: File) => {
+    console.log("OpenAPI file selected:", file.name);
+  }, []);
+
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
       {/* Tab navigation */}
@@ -89,12 +94,46 @@ const AccountView = ({ onDone }: AccountViewProps) => {
         >
           Account
         </VSCodeButton>
+        <VSCodeButton
+          appearance={activeTab === "applications" ? "primary" : "secondary"}
+          onClick={() => setActiveTab("applications")}
+          disabled={false}
+        >
+          Applications
+        </VSCodeButton>
       </div>
 
       {/* Tab content */}
       {activeTab === "login" ? (
         <div className="flex justify-center items-center flex-grow pr-3">
           <Form isLoggedIn={isLoggedIn} />
+        </div>
+      ) : activeTab === "applications" ? (
+        <div className="h-full flex flex-col pr-3 overflow-y-auto">
+          {/* Applications List */}
+          <div style={{ marginBottom: "32px" }}>
+            <ApplicationsList showTitle={true} title="Available Applications" />
+          </div>
+
+          <VSCodeDivider className="my-6 w-full" />
+
+          {/* OpenAPI File Picker */}
+          <div style={{ marginBottom: "32px" }}>
+            <OpenAPIFilePicker onFileSelected={handleOpenAPIFileSelected} />
+          </div>
+
+          <VSCodeDivider className="my-6 w-full" />
+
+          {/* File Explorer for Applications */}
+          <div className="flex-grow flex flex-col min-h-0">
+            <h3 style={{ marginBottom: "16px" }}>Generated Files</h3>
+            <FileExplorer
+              onFileSelect={handleFileSelect}
+              highlightNewFiles={true}
+              autoRefresh={true}
+              refreshInterval={5000}
+            />
+          </div>
         </div>
       ) : (
         <>
@@ -167,13 +206,6 @@ const AccountView = ({ onDone }: AccountViewProps) => {
               />
             </div>
           </div>
-
-          <FileExplorer
-            onFileSelect={handleFileSelect}
-            highlightNewFiles={true}
-            autoRefresh={true}
-            refreshInterval={5000}
-          />
         </>
       )}
     </div>

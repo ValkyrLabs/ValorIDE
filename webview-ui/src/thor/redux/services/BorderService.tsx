@@ -1,25 +1,22 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { Border } from "../../model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Border } from '../../model'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type BorderResponse = Border[];
+type BorderResponse = Border[]
 
 export const BorderService = createApi({
-  reducerPath: "Border", // This should remain unique
+  reducerPath: 'Border', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["Border"],
+  tagTypes: ['Border'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getBordersPaged: build.query<
-      BorderResponse,
-      { page: number; limit?: number }
-    >({
+    getBordersPaged: build.query<BorderResponse, { page: number; limit?: number }>({
       query: ({ page, limit = 20 }) => `Border?page=${page}&limit=${limit}`,
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Border" as const, id })),
-              { type: "Border", id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: 'Border' as const, id })),
+              { type: 'Border', id: `PAGE_${page}` },
             ]
           : [],
     }),
@@ -30,50 +27,50 @@ export const BorderService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Border" as const, id })),
-              { type: "Border", id: "LIST" },
+              ...result.map(({ id }) => ({ type: 'Border' as const, id })),
+              { type: 'Border', id: 'LIST' },
             ]
-          : [{ type: "Border", id: "LIST" }],
+          : [{ type: 'Border', id: 'LIST' }],
     }),
 
     // 3) Create
     addBorder: build.mutation<Border, Partial<Border>>({
       query: (body) => ({
         url: `Border`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "Border", id: "LIST" }],
+      invalidatesTags: [{ type: 'Border', id: 'LIST' }],
     }),
 
     // 4) Get single by ID
     getBorder: build.query<Border, string>({
       query: (id) => `Border/${id}`,
-      providesTags: (result, error, id) => [{ type: "Border", id }],
+      providesTags: (result, error, id) => [{ type: 'Border', id }],
     }),
 
     // 5) Update
-    updateBorder: build.mutation<void, Pick<Border, "id"> & Partial<Border>>({
+    updateBorder: build.mutation<void, Pick<Border, 'id'> & Partial<Border>>({
       query: ({ id, ...patch }) => ({
         url: `Border/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            BorderService.util.updateQueryData("getBorder", id, (draft) => {
-              Object.assign(draft, patch);
-            }),
-          );
+            BorderService.util.updateQueryData('getBorder', id, (draft) => {
+              Object.assign(draft, patch)
+            })
+          )
           try {
-            await queryFulfilled;
+            await queryFulfilled
           } catch {
-            patchResult.undo();
+            patchResult.undo()
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: "Border", id }],
+      invalidatesTags: (result, error, { id }) => [{ type: 'Border', id }],
     }),
 
     // 6) Delete
@@ -81,21 +78,21 @@ export const BorderService = createApi({
       query(id) {
         return {
           url: `Border/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "Border", id }],
+      invalidatesTags: (result, error, id) => [{ type: 'Border', id }],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetBordersPagedQuery`
 export const {
-  useGetBordersPagedQuery, // immediate fetch
+  useGetBordersPagedQuery,     // immediate fetch
   useLazyGetBordersPagedQuery, // lazy fetch
   useGetBorderQuery,
   useGetBordersQuery,
   useAddBorderMutation,
   useUpdateBorderMutation,
   useDeleteBorderMutation,
-} = BorderService;
+} = BorderService

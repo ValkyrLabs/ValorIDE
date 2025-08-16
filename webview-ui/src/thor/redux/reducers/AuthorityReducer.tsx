@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Authority } from "../../model/Authority";
+import { Authority } from '../../model/Authority';
 
 const AuthoritySlice = createSlice({
   name: "Authoritys",
@@ -12,28 +12,28 @@ const AuthoritySlice = createSlice({
     },
 
     AuthorityValueToggled(state, action) {
-      console.log("Authority TOGGLE");
-      console.warn(JSON.stringify(action));
-      const Authority: Authority = state.find(
-        (Authority) => Authority.id === action.payload.AuthorityId,
-      );
+      console.log("Authority TOGGLE")
+      console.warn(JSON.stringify(action))
+      const Authority:Authority = state.find((Authority) => Authority.id === action.payload.AuthorityId);
       if (Authority) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     AuthoritypropertySet(state, action) {
-      const Authority = state.find(
-        (Authority) => Authority.id === action.payload.AuthorityId,
-      );
+      const Authority = state.find((Authority) => Authority.id === action.payload.AuthorityId);
       if (Authority) {
-        //  Authority[action.property] = action.payload[action.property];
+      //  Authority[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const { AuthorityAdded, AuthorityValueToggled, AuthoritypropertySet } =
-  AuthoritySlice.actions;
+export const {
+  AuthorityAdded,
+  AuthorityValueToggled,
+  AuthoritypropertySet
+} = AuthoritySlice.actions;
 export default AuthoritySlice.reducer;

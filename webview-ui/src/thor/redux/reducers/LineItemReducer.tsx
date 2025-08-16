@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { LineItem } from "../../model/LineItem";
+import { LineItem } from '../../model/LineItem';
 
 const LineItemSlice = createSlice({
   name: "LineItems",
@@ -12,28 +12,28 @@ const LineItemSlice = createSlice({
     },
 
     LineItemValueToggled(state, action) {
-      console.log("LineItem TOGGLE");
-      console.warn(JSON.stringify(action));
-      const LineItem: LineItem = state.find(
-        (LineItem) => LineItem.id === action.payload.LineItemId,
-      );
+      console.log("LineItem TOGGLE")
+      console.warn(JSON.stringify(action))
+      const LineItem:LineItem = state.find((LineItem) => LineItem.id === action.payload.LineItemId);
       if (LineItem) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     LineItempropertySet(state, action) {
-      const LineItem = state.find(
-        (LineItem) => LineItem.id === action.payload.LineItemId,
-      );
+      const LineItem = state.find((LineItem) => LineItem.id === action.payload.LineItemId);
       if (LineItem) {
-        //  LineItem[action.property] = action.payload[action.property];
+      //  LineItem[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const { LineItemAdded, LineItemValueToggled, LineItempropertySet } =
-  LineItemSlice.actions;
+export const {
+  LineItemAdded,
+  LineItemValueToggled,
+  LineItempropertySet
+} = LineItemSlice.actions;
 export default LineItemSlice.reducer;

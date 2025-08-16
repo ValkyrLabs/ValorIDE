@@ -1,28 +1,36 @@
-import {
-  getSalesOrder,
-  postSalesOrder,
-  getSalesOrderList,
-  deleteSalesOrder,
-  updateSalesOrder,
-} from "../../api";
+
+import { 
+    getSalesOrder, 
+    postSalesOrder,
+    getSalesOrderList , 
+    deleteSalesOrder , 
+    updateSalesOrder 
+} from '../../api';
 
 import {
-  ADD_SALESORDER_REQUEST,
-  FETCH_SALESORDER_REQUEST,
-  LIST_SALESORDER_REQUEST,
-  UPDATE_SALESORDER_REQUEST,
-  DELETE_SALESORDER_REQUEST,
-  addSalesOrderFailure,
-  addSalesOrderSuccess,
-  fetchSalesOrderFailure,
-  fetchSalesOrderSuccess,
-  listSalesOrderFailure,
-  listSalesOrderSuccess,
-  updateSalesOrderFailure,
-  updateSalesOrderSuccess,
-  deleteSalesOrderFailure,
-  deleteSalesOrderSuccess,
-} from "../actions/SalesOrderApiAction";
+
+    ADD_SALESORDER_REQUEST,
+    FETCH_SALESORDER_REQUEST,
+    LIST_SALESORDER_REQUEST,
+    UPDATE_SALESORDER_REQUEST,
+    DELETE_SALESORDER_REQUEST,
+
+    addSalesOrderFailure,
+    addSalesOrderSuccess,
+
+    fetchSalesOrderFailure,
+    fetchSalesOrderSuccess,
+    
+    listSalesOrderFailure,
+    listSalesOrderSuccess,
+
+    updateSalesOrderFailure,
+    updateSalesOrderSuccess,
+    
+    deleteSalesOrderFailure,
+    deleteSalesOrderSuccess,
+    
+} from '../actions/SalesOrderApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: SalesOrder
 */
 
-export const SalesOrderMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("SalesOrder MIDDLEWARE: " + JSON.stringify(action));
+export const SalesOrderMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("SalesOrder MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_SALESORDER_REQUEST:
-        try {
-          const response = postSalesOrder(action.payload);
-          dispatch(addSalesOrderSuccess(response.body));
-        } catch (error) {
-          dispatch(addSalesOrderFailure(error.message));
-        }
-        break;
 
-      case LIST_SALESORDER_REQUEST:
-        try {
-          const response = getSalesOrderList();
-          dispatch(listSalesOrderSuccess(response.body));
-        } catch (error) {
-          dispatch(listSalesOrderFailure(error.message));
-        }
-        break;
+        case ADD_SALESORDER_REQUEST:
+            try {
+                const response = postSalesOrder(action.payload);
+                dispatch(addSalesOrderSuccess(response.body));
+            } catch (error) {
+                dispatch(addSalesOrderFailure(error.message));
+            }
+            break;
 
-      case FETCH_SALESORDER_REQUEST:
-        try {
-          const response = getSalesOrder(action.id);
-          dispatch(fetchSalesOrderSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchSalesOrderFailure(error.message));
-        }
-        break;
+        case LIST_SALESORDER_REQUEST:
+            try {
+                const response = getSalesOrderList();
+                dispatch(listSalesOrderSuccess(response.body));
+            } catch (error) {
+                dispatch(listSalesOrderFailure(error.message));
+            }
+            break;
 
-      case UPDATE_SALESORDER_REQUEST:
-        try {
-          const { id, SalesOrder } = action.payload;
-          const response = updateSalesOrder(id);
-          dispatch(updateSalesOrderSuccess(response.body));
-        } catch (error) {
-          dispatch(updateSalesOrderFailure(error.message));
-        }
-        break;
 
-      case DELETE_SALESORDER_REQUEST:
-        try {
-          const { id, SalesOrder } = action.payload;
-          const response = deleteSalesOrder(id);
-          dispatch(deleteSalesOrderSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteSalesOrderFailure(error.message));
-        }
-        break;
+        case FETCH_SALESORDER_REQUEST:
+            try {
+                const response = getSalesOrder(action.id);
+                dispatch(fetchSalesOrderSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchSalesOrderFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_SALESORDER_REQUEST:
+            try {
+                const { id, SalesOrder } = action.payload;
+                const response = updateSalesOrder(id);
+                dispatch(updateSalesOrderSuccess(response.body));
+            } catch (error) {
+                dispatch(updateSalesOrderFailure(error.message));
+            }
+            break;
+
+        case DELETE_SALESORDER_REQUEST:
+            try {
+                const { id, SalesOrder } = action.payload;
+                const response = deleteSalesOrder(id);
+                dispatch(deleteSalesOrderSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteSalesOrderFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

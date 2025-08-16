@@ -1,25 +1,22 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { Build } from "../../model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Build } from '../../model'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type BuildResponse = Build[];
+type BuildResponse = Build[]
 
 export const BuildService = createApi({
-  reducerPath: "Build", // This should remain unique
+  reducerPath: 'Build', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["Build"],
+  tagTypes: ['Build'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getBuildsPaged: build.query<
-      BuildResponse,
-      { page: number; limit?: number }
-    >({
+    getBuildsPaged: build.query<BuildResponse, { page: number; limit?: number }>({
       query: ({ page, limit = 20 }) => `Build?page=${page}&limit=${limit}`,
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Build" as const, id })),
-              { type: "Build", id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: 'Build' as const, id })),
+              { type: 'Build', id: `PAGE_${page}` },
             ]
           : [],
     }),
@@ -30,50 +27,50 @@ export const BuildService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Build" as const, id })),
-              { type: "Build", id: "LIST" },
+              ...result.map(({ id }) => ({ type: 'Build' as const, id })),
+              { type: 'Build', id: 'LIST' },
             ]
-          : [{ type: "Build", id: "LIST" }],
+          : [{ type: 'Build', id: 'LIST' }],
     }),
 
     // 3) Create
     addBuild: build.mutation<Build, Partial<Build>>({
       query: (body) => ({
         url: `Build`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "Build", id: "LIST" }],
+      invalidatesTags: [{ type: 'Build', id: 'LIST' }],
     }),
 
     // 4) Get single by ID
     getBuild: build.query<Build, string>({
       query: (id) => `Build/${id}`,
-      providesTags: (result, error, id) => [{ type: "Build", id }],
+      providesTags: (result, error, id) => [{ type: 'Build', id }],
     }),
 
     // 5) Update
-    updateBuild: build.mutation<void, Pick<Build, "id"> & Partial<Build>>({
+    updateBuild: build.mutation<void, Pick<Build, 'id'> & Partial<Build>>({
       query: ({ id, ...patch }) => ({
         url: `Build/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            BuildService.util.updateQueryData("getBuild", id, (draft) => {
-              Object.assign(draft, patch);
-            }),
-          );
+            BuildService.util.updateQueryData('getBuild', id, (draft) => {
+              Object.assign(draft, patch)
+            })
+          )
           try {
-            await queryFulfilled;
+            await queryFulfilled
           } catch {
-            patchResult.undo();
+            patchResult.undo()
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: "Build", id }],
+      invalidatesTags: (result, error, { id }) => [{ type: 'Build', id }],
     }),
 
     // 6) Delete
@@ -81,21 +78,21 @@ export const BuildService = createApi({
       query(id) {
         return {
           url: `Build/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "Build", id }],
+      invalidatesTags: (result, error, id) => [{ type: 'Build', id }],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetBuildsPagedQuery`
 export const {
-  useGetBuildsPagedQuery, // immediate fetch
+  useGetBuildsPagedQuery,     // immediate fetch
   useLazyGetBuildsPagedQuery, // lazy fetch
   useGetBuildQuery,
   useGetBuildsQuery,
   useAddBuildMutation,
   useUpdateBuildMutation,
   useDeleteBuildMutation,
-} = BuildService;
+} = BuildService

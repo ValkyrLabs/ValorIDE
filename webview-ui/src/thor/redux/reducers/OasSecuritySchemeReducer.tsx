@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasSecurityScheme } from "../../model/OasSecurityScheme";
+import { OasSecurityScheme } from '../../model/OasSecurityScheme';
 
 const OasSecuritySchemeSlice = createSlice({
   name: "OasSecuritySchemes",
@@ -12,25 +12,20 @@ const OasSecuritySchemeSlice = createSlice({
     },
 
     OasSecuritySchemeValueToggled(state, action) {
-      console.log("OasSecurityScheme TOGGLE");
-      console.warn(JSON.stringify(action));
-      const OasSecurityScheme: OasSecurityScheme = state.find(
-        (OasSecurityScheme) =>
-          OasSecurityScheme.id === action.payload.OasSecuritySchemeId,
-      );
+      console.log("OasSecurityScheme TOGGLE")
+      console.warn(JSON.stringify(action))
+      const OasSecurityScheme:OasSecurityScheme = state.find((OasSecurityScheme) => OasSecurityScheme.id === action.payload.OasSecuritySchemeId);
       if (OasSecurityScheme) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     OasSecuritySchemepropertySet(state, action) {
-      const OasSecurityScheme = state.find(
-        (OasSecurityScheme) =>
-          OasSecurityScheme.id === action.payload.OasSecuritySchemeId,
-      );
+      const OasSecurityScheme = state.find((OasSecurityScheme) => OasSecurityScheme.id === action.payload.OasSecuritySchemeId);
       if (OasSecurityScheme) {
-        //  OasSecurityScheme[action.property] = action.payload[action.property];
+      //  OasSecurityScheme[action.property] = action.payload[action.property];
       }
     },
   },
@@ -39,6 +34,6 @@ const OasSecuritySchemeSlice = createSlice({
 export const {
   OasSecuritySchemeAdded,
   OasSecuritySchemeValueToggled,
-  OasSecuritySchemepropertySet,
+  OasSecuritySchemepropertySet
 } = OasSecuritySchemeSlice.actions;
 export default OasSecuritySchemeSlice.reducer;

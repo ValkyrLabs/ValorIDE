@@ -11,7 +11,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime";
+import { exists, mapValues } from '../src/runtime';
 
 // thorapi
 
@@ -20,119 +20,100 @@ import { exists, mapValues } from "../src/runtime";
  * @export
  * @interface OasSecurityScheme
  */
-export type OasSecurityScheme = {
-  /**
-   *
-   * @type {string}
-   * @memberof OasSecurityScheme
-   */
-  oasComponentId?: string;
-  /**
-   * the name of the security scheme
-   * @type {string}
-   * @memberof OasSecurityScheme
-   */
-  name?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof OasSecurityScheme
-   */
-  id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof OasSecurityScheme
-   */
-  ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof OasSecurityScheme
-   */
-  createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof OasSecurityScheme
-   */
-  keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof OasSecurityScheme
-   */
-  lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof OasSecurityScheme
-   */
-  lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof OasSecurityScheme
-   */
-  lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof OasSecurityScheme
-   */
-  lastModifiedDate?: Date;
-};
+export type OasSecurityScheme  = {
+    /**
+     * 
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    oasComponentId?: string;
+    /**
+     * the name of the security scheme
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    name?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof OasSecurityScheme
+     */
+    createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof OasSecurityScheme
+     */
+    lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof OasSecurityScheme
+     */
+    lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof OasSecurityScheme
+     */
+    lastModifiedDate?: Date;
+}
 
 export function OasSecuritySchemeFromJSON(json: any): OasSecurityScheme {
-  return {
-    oasComponentId: !exists(json, "oasComponentId")
-      ? undefined
-      : json["oasComponentId"],
-    name: !exists(json, "name") ? undefined : json["name"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-  };
+    return {
+        'oasComponentId': !exists(json, 'oasComponentId') ? undefined : json['oasComponentId'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+    };
 }
 
 export function OasSecuritySchemeToJSON(value?: OasSecurityScheme): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    oasComponentId: value.oasComponentId,
-    name: value.name,
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        'oasComponentId': value.oasComponentId,
+        'name': value.name,
+        'id': value.id,
+        'ownerId': value.ownerId,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'keyHash': value.keyHash,
+        'lastAccessedById': value.lastAccessedById,
+        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
+        'lastModifiedById': value.lastModifiedById,
+        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
+    };
 }
+
+

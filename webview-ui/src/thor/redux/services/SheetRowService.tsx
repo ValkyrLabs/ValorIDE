@@ -1,25 +1,22 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { SheetRow } from "../../model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { SheetRow } from '../../model'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SheetRowResponse = SheetRow[];
+type SheetRowResponse = SheetRow[]
 
 export const SheetRowService = createApi({
-  reducerPath: "SheetRow", // This should remain unique
+  reducerPath: 'SheetRow', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["SheetRow"],
+  tagTypes: ['SheetRow'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getSheetRowsPaged: build.query<
-      SheetRowResponse,
-      { page: number; limit?: number }
-    >({
+    getSheetRowsPaged: build.query<SheetRowResponse, { page: number; limit?: number }>({
       query: ({ page, limit = 20 }) => `SheetRow?page=${page}&limit=${limit}`,
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "SheetRow" as const, id })),
-              { type: "SheetRow", id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: 'SheetRow' as const, id })),
+              { type: 'SheetRow', id: `PAGE_${page}` },
             ]
           : [],
     }),
@@ -30,53 +27,50 @@ export const SheetRowService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "SheetRow" as const, id })),
-              { type: "SheetRow", id: "LIST" },
+              ...result.map(({ id }) => ({ type: 'SheetRow' as const, id })),
+              { type: 'SheetRow', id: 'LIST' },
             ]
-          : [{ type: "SheetRow", id: "LIST" }],
+          : [{ type: 'SheetRow', id: 'LIST' }],
     }),
 
     // 3) Create
     addSheetRow: build.mutation<SheetRow, Partial<SheetRow>>({
       query: (body) => ({
         url: `SheetRow`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "SheetRow", id: "LIST" }],
+      invalidatesTags: [{ type: 'SheetRow', id: 'LIST' }],
     }),
 
     // 4) Get single by ID
     getSheetRow: build.query<SheetRow, string>({
       query: (id) => `SheetRow/${id}`,
-      providesTags: (result, error, id) => [{ type: "SheetRow", id }],
+      providesTags: (result, error, id) => [{ type: 'SheetRow', id }],
     }),
 
     // 5) Update
-    updateSheetRow: build.mutation<
-      void,
-      Pick<SheetRow, "id"> & Partial<SheetRow>
-    >({
+    updateSheetRow: build.mutation<void, Pick<SheetRow, 'id'> & Partial<SheetRow>>({
       query: ({ id, ...patch }) => ({
         url: `SheetRow/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SheetRowService.util.updateQueryData("getSheetRow", id, (draft) => {
-              Object.assign(draft, patch);
-            }),
-          );
+            SheetRowService.util.updateQueryData('getSheetRow', id, (draft) => {
+              Object.assign(draft, patch)
+            })
+          )
           try {
-            await queryFulfilled;
+            await queryFulfilled
           } catch {
-            patchResult.undo();
+            patchResult.undo()
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: "SheetRow", id }],
+      invalidatesTags: (result, error, { id }) => [{ type: 'SheetRow', id }],
     }),
 
     // 6) Delete
@@ -84,21 +78,21 @@ export const SheetRowService = createApi({
       query(id) {
         return {
           url: `SheetRow/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "SheetRow", id }],
+      invalidatesTags: (result, error, id) => [{ type: 'SheetRow', id }],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSheetRowsPagedQuery`
 export const {
-  useGetSheetRowsPagedQuery, // immediate fetch
+  useGetSheetRowsPagedQuery,     // immediate fetch
   useLazyGetSheetRowsPagedQuery, // lazy fetch
   useGetSheetRowQuery,
   useGetSheetRowsQuery,
   useAddSheetRowMutation,
   useUpdateSheetRowMutation,
   useDeleteSheetRowMutation,
-} = SheetRowService;
+} = SheetRowService

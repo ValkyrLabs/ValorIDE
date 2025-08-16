@@ -11,7 +11,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime";
+import { exists, mapValues } from '../src/runtime';
 
 // thorapi
 
@@ -20,136 +20,116 @@ import { exists, mapValues } from "../src/runtime";
  * @export
  * @interface PersistentLogin
  */
-export type PersistentLogin = {
-  /**
-   *
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  username: string;
-  /**
-   *
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  series: string;
-  /**
-   *
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  token: string;
-  /**
-   *
-   * @type {Date}
-   * @memberof PersistentLogin
-   */
-  lastUsed?: Date;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof PersistentLogin
-   */
-  createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof PersistentLogin
-   */
-  lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof PersistentLogin
-   */
-  lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof PersistentLogin
-   */
-  lastModifiedDate?: Date;
-};
+export type PersistentLogin  = {
+    /**
+     * 
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    username: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    series: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    token: string;
+    /**
+     * 
+     * @type {Date}
+     * @memberof PersistentLogin
+     */
+    lastUsed?: Date;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof PersistentLogin
+     */
+    createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof PersistentLogin
+     */
+    lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof PersistentLogin
+     */
+    lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof PersistentLogin
+     */
+    lastModifiedDate?: Date;
+}
 
 export function PersistentLoginFromJSON(json: any): PersistentLogin {
-  return {
-    username: json["username"],
-    series: json["series"],
-    token: json["token"],
-    lastUsed: !exists(json, "lastUsed")
-      ? undefined
-      : new Date(json["lastUsed"]),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-  };
+    return {
+        'username': json['username'],
+        'series': json['series'],
+        'token': json['token'],
+        'lastUsed': !exists(json, 'lastUsed') ? undefined : new Date(json['lastUsed']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+    };
 }
 
 export function PersistentLoginToJSON(value?: PersistentLogin): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    username: value.username,
-    series: value.series,
-    token: value.token,
-    lastUsed:
-      value.lastUsed === undefined ? undefined : value.lastUsed.toISOString(),
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        'username': value.username,
+        'series': value.series,
+        'token': value.token,
+        'lastUsed': value.lastUsed === undefined ? undefined : value.lastUsed.toISOString(),
+        'id': value.id,
+        'ownerId': value.ownerId,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'keyHash': value.keyHash,
+        'lastAccessedById': value.lastAccessedById,
+        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
+        'lastModifiedById': value.lastModifiedById,
+        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
+    };
 }
+
+

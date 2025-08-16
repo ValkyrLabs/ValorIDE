@@ -1,29 +1,22 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { UsageTransaction } from "../../model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { UsageTransaction } from '../../model'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type UsageTransactionResponse = UsageTransaction[];
+type UsageTransactionResponse = UsageTransaction[]
 
 export const UsageTransactionService = createApi({
-  reducerPath: "UsageTransaction", // This should remain unique
+  reducerPath: 'UsageTransaction', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["UsageTransaction"],
+  tagTypes: ['UsageTransaction'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getUsageTransactionsPaged: build.query<
-      UsageTransactionResponse,
-      { page: number; limit?: number }
-    >({
-      query: ({ page, limit = 20 }) =>
-        `UsageTransaction?page=${page}&limit=${limit}`,
+    getUsageTransactionsPaged: build.query<UsageTransactionResponse, { page: number; limit?: number }>({
+      query: ({ page, limit = 20 }) => `UsageTransaction?page=${page}&limit=${limit}`,
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({
-                type: "UsageTransaction" as const,
-                id,
-              })),
-              { type: "UsageTransaction", id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: 'UsageTransaction' as const, id })),
+              { type: 'UsageTransaction', id: `PAGE_${page}` },
             ]
           : [],
     }),
@@ -34,92 +27,72 @@ export const UsageTransactionService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({
-                type: "UsageTransaction" as const,
-                id,
-              })),
-              { type: "UsageTransaction", id: "LIST" },
+              ...result.map(({ id }) => ({ type: 'UsageTransaction' as const, id })),
+              { type: 'UsageTransaction', id: 'LIST' },
             ]
-          : [{ type: "UsageTransaction", id: "LIST" }],
+          : [{ type: 'UsageTransaction', id: 'LIST' }],
     }),
 
     // 3) Create
-    addUsageTransaction: build.mutation<
-      UsageTransaction,
-      Partial<UsageTransaction>
-    >({
+    addUsageTransaction: build.mutation<UsageTransaction, Partial<UsageTransaction>>({
       query: (body) => ({
         url: `UsageTransaction`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "UsageTransaction", id: "LIST" }],
+      invalidatesTags: [{ type: 'UsageTransaction', id: 'LIST' }],
     }),
 
     // 4) Get single by ID
     getUsageTransaction: build.query<UsageTransaction, string>({
       query: (id) => `UsageTransaction/${id}`,
-      providesTags: (result, error, id) => [{ type: "UsageTransaction", id }],
+      providesTags: (result, error, id) => [{ type: 'UsageTransaction', id }],
     }),
 
     // 5) Update
-    updateUsageTransaction: build.mutation<
-      void,
-      Pick<UsageTransaction, "id"> & Partial<UsageTransaction>
-    >({
+    updateUsageTransaction: build.mutation<void, Pick<UsageTransaction, 'id'> & Partial<UsageTransaction>>({
       query: ({ id, ...patch }) => ({
         url: `UsageTransaction/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            UsageTransactionService.util.updateQueryData(
-              "getUsageTransaction",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
+            UsageTransactionService.util.updateQueryData('getUsageTransaction', id, (draft) => {
+              Object.assign(draft, patch)
+            })
+          )
           try {
-            await queryFulfilled;
+            await queryFulfilled
           } catch {
-            patchResult.undo();
+            patchResult.undo()
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [
-        { type: "UsageTransaction", id },
-      ],
+      invalidatesTags: (result, error, { id }) => [{ type: 'UsageTransaction', id }],
     }),
 
     // 6) Delete
-    deleteUsageTransaction: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteUsageTransaction: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `UsageTransaction/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [
-        { type: "UsageTransaction", id },
-      ],
+      invalidatesTags: (result, error, id) => [{ type: 'UsageTransaction', id }],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetUsageTransactionsPagedQuery`
 export const {
-  useGetUsageTransactionsPagedQuery, // immediate fetch
+  useGetUsageTransactionsPagedQuery,     // immediate fetch
   useLazyGetUsageTransactionsPagedQuery, // lazy fetch
   useGetUsageTransactionQuery,
   useGetUsageTransactionsQuery,
   useAddUsageTransactionMutation,
   useUpdateUsageTransactionMutation,
   useDeleteUsageTransactionMutation,
-} = UsageTransactionService;
+} = UsageTransactionService

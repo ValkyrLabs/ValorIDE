@@ -1,29 +1,22 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { ThorUXComponent } from "../../model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { ThorUXComponent } from '../../model'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type ThorUXComponentResponse = ThorUXComponent[];
+type ThorUXComponentResponse = ThorUXComponent[]
 
 export const ThorUXComponentService = createApi({
-  reducerPath: "ThorUXComponent", // This should remain unique
+  reducerPath: 'ThorUXComponent', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["ThorUXComponent"],
+  tagTypes: ['ThorUXComponent'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getThorUXComponentsPaged: build.query<
-      ThorUXComponentResponse,
-      { page: number; limit?: number }
-    >({
-      query: ({ page, limit = 20 }) =>
-        `ThorUXComponent?page=${page}&limit=${limit}`,
+    getThorUXComponentsPaged: build.query<ThorUXComponentResponse, { page: number; limit?: number }>({
+      query: ({ page, limit = 20 }) => `ThorUXComponent?page=${page}&limit=${limit}`,
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({
-                type: "ThorUXComponent" as const,
-                id,
-              })),
-              { type: "ThorUXComponent", id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: 'ThorUXComponent' as const, id })),
+              { type: 'ThorUXComponent', id: `PAGE_${page}` },
             ]
           : [],
     }),
@@ -34,90 +27,72 @@ export const ThorUXComponentService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({
-                type: "ThorUXComponent" as const,
-                id,
-              })),
-              { type: "ThorUXComponent", id: "LIST" },
+              ...result.map(({ id }) => ({ type: 'ThorUXComponent' as const, id })),
+              { type: 'ThorUXComponent', id: 'LIST' },
             ]
-          : [{ type: "ThorUXComponent", id: "LIST" }],
+          : [{ type: 'ThorUXComponent', id: 'LIST' }],
     }),
 
     // 3) Create
-    addThorUXComponent: build.mutation<
-      ThorUXComponent,
-      Partial<ThorUXComponent>
-    >({
+    addThorUXComponent: build.mutation<ThorUXComponent, Partial<ThorUXComponent>>({
       query: (body) => ({
         url: `ThorUXComponent`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "ThorUXComponent", id: "LIST" }],
+      invalidatesTags: [{ type: 'ThorUXComponent', id: 'LIST' }],
     }),
 
     // 4) Get single by ID
     getThorUXComponent: build.query<ThorUXComponent, string>({
       query: (id) => `ThorUXComponent/${id}`,
-      providesTags: (result, error, id) => [{ type: "ThorUXComponent", id }],
+      providesTags: (result, error, id) => [{ type: 'ThorUXComponent', id }],
     }),
 
     // 5) Update
-    updateThorUXComponent: build.mutation<
-      void,
-      Pick<ThorUXComponent, "id"> & Partial<ThorUXComponent>
-    >({
+    updateThorUXComponent: build.mutation<void, Pick<ThorUXComponent, 'id'> & Partial<ThorUXComponent>>({
       query: ({ id, ...patch }) => ({
         url: `ThorUXComponent/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ThorUXComponentService.util.updateQueryData(
-              "getThorUXComponent",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
+            ThorUXComponentService.util.updateQueryData('getThorUXComponent', id, (draft) => {
+              Object.assign(draft, patch)
+            })
+          )
           try {
-            await queryFulfilled;
+            await queryFulfilled
           } catch {
-            patchResult.undo();
+            patchResult.undo()
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [
-        { type: "ThorUXComponent", id },
-      ],
+      invalidatesTags: (result, error, { id }) => [{ type: 'ThorUXComponent', id }],
     }),
 
     // 6) Delete
-    deleteThorUXComponent: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteThorUXComponent: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `ThorUXComponent/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "ThorUXComponent", id }],
+      invalidatesTags: (result, error, id) => [{ type: 'ThorUXComponent', id }],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetThorUXComponentsPagedQuery`
 export const {
-  useGetThorUXComponentsPagedQuery, // immediate fetch
+  useGetThorUXComponentsPagedQuery,     // immediate fetch
   useLazyGetThorUXComponentsPagedQuery, // lazy fetch
   useGetThorUXComponentQuery,
   useGetThorUXComponentsQuery,
   useAddThorUXComponentMutation,
   useUpdateThorUXComponentMutation,
   useDeleteThorUXComponentMutation,
-} = ThorUXComponentService;
+} = ThorUXComponentService

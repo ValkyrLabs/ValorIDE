@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ChatCompletionResponse } from "../../model/ChatCompletionResponse";
+import { ChatCompletionResponse } from '../../model/ChatCompletionResponse';
 
 const ChatCompletionResponseSlice = createSlice({
   name: "ChatCompletionResponses",
@@ -12,25 +12,20 @@ const ChatCompletionResponseSlice = createSlice({
     },
 
     ChatCompletionResponseValueToggled(state, action) {
-      console.log("ChatCompletionResponse TOGGLE");
-      console.warn(JSON.stringify(action));
-      const ChatCompletionResponse: ChatCompletionResponse = state.find(
-        (ChatCompletionResponse) =>
-          ChatCompletionResponse.id === action.payload.ChatCompletionResponseId,
-      );
+      console.log("ChatCompletionResponse TOGGLE")
+      console.warn(JSON.stringify(action))
+      const ChatCompletionResponse:ChatCompletionResponse = state.find((ChatCompletionResponse) => ChatCompletionResponse.id === action.payload.ChatCompletionResponseId);
       if (ChatCompletionResponse) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     ChatCompletionResponsepropertySet(state, action) {
-      const ChatCompletionResponse = state.find(
-        (ChatCompletionResponse) =>
-          ChatCompletionResponse.id === action.payload.ChatCompletionResponseId,
-      );
+      const ChatCompletionResponse = state.find((ChatCompletionResponse) => ChatCompletionResponse.id === action.payload.ChatCompletionResponseId);
       if (ChatCompletionResponse) {
-        //  ChatCompletionResponse[action.property] = action.payload[action.property];
+      //  ChatCompletionResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -39,6 +34,6 @@ const ChatCompletionResponseSlice = createSlice({
 export const {
   ChatCompletionResponseAdded,
   ChatCompletionResponseValueToggled,
-  ChatCompletionResponsepropertySet,
+  ChatCompletionResponsepropertySet
 } = ChatCompletionResponseSlice.actions;
 export default ChatCompletionResponseSlice.reducer;

@@ -1,29 +1,22 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { WorkflowState } from "../../model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { WorkflowState } from '../../model'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type WorkflowStateResponse = WorkflowState[];
+type WorkflowStateResponse = WorkflowState[]
 
 export const WorkflowStateService = createApi({
-  reducerPath: "WorkflowState", // This should remain unique
+  reducerPath: 'WorkflowState', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["WorkflowState"],
+  tagTypes: ['WorkflowState'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getWorkflowStatesPaged: build.query<
-      WorkflowStateResponse,
-      { page: number; limit?: number }
-    >({
-      query: ({ page, limit = 20 }) =>
-        `WorkflowState?page=${page}&limit=${limit}`,
+    getWorkflowStatesPaged: build.query<WorkflowStateResponse, { page: number; limit?: number }>({
+      query: ({ page, limit = 20 }) => `WorkflowState?page=${page}&limit=${limit}`,
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({
-                type: "WorkflowState" as const,
-                id,
-              })),
-              { type: "WorkflowState", id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: 'WorkflowState' as const, id })),
+              { type: 'WorkflowState', id: `PAGE_${page}` },
             ]
           : [],
     }),
@@ -34,87 +27,72 @@ export const WorkflowStateService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({
-                type: "WorkflowState" as const,
-                id,
-              })),
-              { type: "WorkflowState", id: "LIST" },
+              ...result.map(({ id }) => ({ type: 'WorkflowState' as const, id })),
+              { type: 'WorkflowState', id: 'LIST' },
             ]
-          : [{ type: "WorkflowState", id: "LIST" }],
+          : [{ type: 'WorkflowState', id: 'LIST' }],
     }),
 
     // 3) Create
     addWorkflowState: build.mutation<WorkflowState, Partial<WorkflowState>>({
       query: (body) => ({
         url: `WorkflowState`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "WorkflowState", id: "LIST" }],
+      invalidatesTags: [{ type: 'WorkflowState', id: 'LIST' }],
     }),
 
     // 4) Get single by ID
     getWorkflowState: build.query<WorkflowState, string>({
       query: (id) => `WorkflowState/${id}`,
-      providesTags: (result, error, id) => [{ type: "WorkflowState", id }],
+      providesTags: (result, error, id) => [{ type: 'WorkflowState', id }],
     }),
 
     // 5) Update
-    updateWorkflowState: build.mutation<
-      void,
-      Pick<WorkflowState, "id"> & Partial<WorkflowState>
-    >({
+    updateWorkflowState: build.mutation<void, Pick<WorkflowState, 'id'> & Partial<WorkflowState>>({
       query: ({ id, ...patch }) => ({
         url: `WorkflowState/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            WorkflowStateService.util.updateQueryData(
-              "getWorkflowState",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
+            WorkflowStateService.util.updateQueryData('getWorkflowState', id, (draft) => {
+              Object.assign(draft, patch)
+            })
+          )
           try {
-            await queryFulfilled;
+            await queryFulfilled
           } catch {
-            patchResult.undo();
+            patchResult.undo()
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [
-        { type: "WorkflowState", id },
-      ],
+      invalidatesTags: (result, error, { id }) => [{ type: 'WorkflowState', id }],
     }),
 
     // 6) Delete
-    deleteWorkflowState: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteWorkflowState: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `WorkflowState/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "WorkflowState", id }],
+      invalidatesTags: (result, error, id) => [{ type: 'WorkflowState', id }],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetWorkflowStatesPagedQuery`
 export const {
-  useGetWorkflowStatesPagedQuery, // immediate fetch
+  useGetWorkflowStatesPagedQuery,     // immediate fetch
   useLazyGetWorkflowStatesPagedQuery, // lazy fetch
   useGetWorkflowStateQuery,
   useGetWorkflowStatesQuery,
   useAddWorkflowStateMutation,
   useUpdateWorkflowStateMutation,
   useDeleteWorkflowStateMutation,
-} = WorkflowStateService;
+} = WorkflowStateService

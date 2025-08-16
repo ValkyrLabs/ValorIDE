@@ -11,7 +11,15 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime";
+import { exists, mapValues } from '../src/runtime';
+import {
+
+
+    AclObjectIdentity,
+    AclObjectIdentityFromJSON,
+    AclObjectIdentityToJSON,
+} from './';
+
 
 // thorapi
 
@@ -20,163 +28,148 @@ import { exists, mapValues } from "../src/runtime";
  * @export
  * @interface AclEntry
  */
-export type AclEntry = {
-  /**
-   *
-   * @type {string}
-   * @memberof AclEntry
-   */
-  aclObjectIdentity?: string;
-  /**
-   *
-   * @type {number}
-   * @memberof AclEntry
-   */
-  aceOrder?: number;
-  /**
-   *
-   * @type {string}
-   * @memberof AclEntry
-   */
-  sid?: string;
-  /**
-   *
-   * @type {number}
-   * @memberof AclEntry
-   */
-  mask?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof AclEntry
-   */
-  granting?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof AclEntry
-   */
-  auditSuccess?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof AclEntry
-   */
-  auditFailure?: number;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof AclEntry
-   */
-  id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof AclEntry
-   */
-  ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof AclEntry
-   */
-  createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof AclEntry
-   */
-  keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof AclEntry
-   */
-  lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof AclEntry
-   */
-  lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof AclEntry
-   */
-  lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof AclEntry
-   */
-  lastModifiedDate?: Date;
-};
+export type AclEntry  = {
+    /**
+     * 
+     * @type {string}
+     * @memberof AclEntry
+     */
+    aclObjectIdentityId?: string;
+    /**
+     * 
+     * @type {AclObjectIdentity}
+     * @memberof AclEntry
+     */
+    aclObjectIdentity?: AclObjectIdentity;
+    /**
+     * 
+     * @type {number}
+     * @memberof AclEntry
+     */
+    aceOrder?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof AclEntry
+     */
+    sid?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof AclEntry
+     */
+    mask?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof AclEntry
+     */
+    granting?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof AclEntry
+     */
+    auditSuccess?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof AclEntry
+     */
+    auditFailure?: number;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof AclEntry
+     */
+    id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof AclEntry
+     */
+    ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof AclEntry
+     */
+    createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof AclEntry
+     */
+    keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof AclEntry
+     */
+    lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof AclEntry
+     */
+    lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof AclEntry
+     */
+    lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof AclEntry
+     */
+    lastModifiedDate?: Date;
+}
 
 export function AclEntryFromJSON(json: any): AclEntry {
-  return {
-    aclObjectIdentity: !exists(json, "aclObjectIdentity")
-      ? undefined
-      : json["aclObjectIdentity"],
-    aceOrder: !exists(json, "aceOrder") ? undefined : json["aceOrder"],
-    sid: !exists(json, "sid") ? undefined : json["sid"],
-    mask: !exists(json, "mask") ? undefined : json["mask"],
-    granting: !exists(json, "granting") ? undefined : json["granting"],
-    auditSuccess: !exists(json, "auditSuccess")
-      ? undefined
-      : json["auditSuccess"],
-    auditFailure: !exists(json, "auditFailure")
-      ? undefined
-      : json["auditFailure"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-  };
+    return {
+        'aclObjectIdentityId': !exists(json, 'aclObjectIdentityId') ? undefined : json['aclObjectIdentityId'],
+        'aclObjectIdentity': !exists(json, 'aclObjectIdentity') ? undefined : AclObjectIdentityFromJSON(json['aclObjectIdentity']),
+        'aceOrder': !exists(json, 'aceOrder') ? undefined : json['aceOrder'],
+        'sid': !exists(json, 'sid') ? undefined : json['sid'],
+        'mask': !exists(json, 'mask') ? undefined : json['mask'],
+        'granting': !exists(json, 'granting') ? undefined : json['granting'],
+        'auditSuccess': !exists(json, 'auditSuccess') ? undefined : json['auditSuccess'],
+        'auditFailure': !exists(json, 'auditFailure') ? undefined : json['auditFailure'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+    };
 }
 
 export function AclEntryToJSON(value?: AclEntry): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    aclObjectIdentity: value.aclObjectIdentity,
-    aceOrder: value.aceOrder,
-    sid: value.sid,
-    mask: value.mask,
-    granting: value.granting,
-    auditSuccess: value.auditSuccess,
-    auditFailure: value.auditFailure,
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        'aclObjectIdentityId': value.aclObjectIdentityId,
+        'aclObjectIdentity': AclObjectIdentityToJSON(value.aclObjectIdentity),
+        'aceOrder': value.aceOrder,
+        'sid': value.sid,
+        'mask': value.mask,
+        'granting': value.granting,
+        'auditSuccess': value.auditSuccess,
+        'auditFailure': value.auditFailure,
+        'id': value.id,
+        'ownerId': value.ownerId,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'keyHash': value.keyHash,
+        'lastAccessedById': value.lastAccessedById,
+        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
+        'lastModifiedById': value.lastModifiedById,
+        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
+    };
 }
+
+

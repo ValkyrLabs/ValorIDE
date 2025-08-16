@@ -11,8 +11,15 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime";
-import { Principal, PrincipalFromJSON, PrincipalToJSON } from "./";
+import { exists, mapValues } from '../src/runtime';
+import {
+
+
+    Principal,
+    PrincipalFromJSON,
+    PrincipalToJSON,
+} from './';
+
 
 // thorapi
 
@@ -21,175 +28,156 @@ import { Principal, PrincipalFromJSON, PrincipalToJSON } from "./";
  * @export
  * @interface Customer
  */
-export type Customer = {
-  /**
-   * Associated user
-   * @type {string}
-   * @memberof Customer
-   */
-  principalId: string;
-  /**
-   *
-   * @type {Principal}
-   * @memberof Customer
-   */
-  principal?: Principal;
-  /**
-   * Status of the customer.
-   * @type {string}
-   * @memberof Customer
-   */
-  status?: CustomerStatusEnum;
-  /**
-   * Best fit descriptive role of the contact person within the customer account (e.g., CEO, Procurement, Technical Lead).
-   * @type {string}
-   * @memberof Customer
-   */
-  role?: CustomerRoleEnum;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof Customer
-   */
-  id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof Customer
-   */
-  ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof Customer
-   */
-  createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof Customer
-   */
-  keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof Customer
-   */
-  lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof Customer
-   */
-  lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof Customer
-   */
-  lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof Customer
-   */
-  lastModifiedDate?: Date;
-};
+export type Customer  = {
+    /**
+     * Associated user
+     * @type {string}
+     * @memberof Customer
+     */
+    principalId: string;
+    /**
+     * 
+     * @type {Principal}
+     * @memberof Customer
+     */
+    principal?: Principal;
+    /**
+     * Status of the customer.
+     * @type {string}
+     * @memberof Customer
+     */
+    status?: CustomerStatusEnum;
+    /**
+     * Best fit descriptive role of the contact person within the customer account (e.g., CEO, Procurement, Technical Lead).
+     * @type {string}
+     * @memberof Customer
+     */
+    role?: CustomerRoleEnum;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof Customer
+     */
+    id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof Customer
+     */
+    ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof Customer
+     */
+    createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof Customer
+     */
+    keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof Customer
+     */
+    lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof Customer
+     */
+    lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof Customer
+     */
+    lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof Customer
+     */
+    lastModifiedDate?: Date;
+}
 
 export function CustomerFromJSON(json: any): Customer {
-  return {
-    principalId: json["principalId"],
-    principal: !exists(json, "principal")
-      ? undefined
-      : PrincipalFromJSON(json["principal"]),
-    status: !exists(json, "status") ? undefined : json["status"],
-    role: !exists(json, "role") ? undefined : json["role"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-  };
+    return {
+        'principalId': json['principalId'],
+        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'role': !exists(json, 'role') ? undefined : json['role'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+    };
 }
 
 export function CustomerToJSON(value?: Customer): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    principalId: value.principalId,
-    principal: PrincipalToJSON(value.principal),
-    status: value.status,
-    role: value.role,
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        'principalId': value.principalId,
+        'principal': PrincipalToJSON(value.principal),
+        'status': value.status,
+        'role': value.role,
+        'id': value.id,
+        'ownerId': value.ownerId,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'keyHash': value.keyHash,
+        'lastAccessedById': value.lastAccessedById,
+        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
+        'lastModifiedById': value.lastModifiedById,
+        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum CustomerStatusEnum {
-  ACTIVE = "active",
-  INACTIVE = "inactive",
-  PROSPECT = "prospect",
+    ACTIVE = 'active',
+    INACTIVE = 'inactive',
+    PROSPECT = 'prospect'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum CustomerRoleEnum {
-  CXO = "cxo",
-  ENGINEERING = "engineering",
-  PROJECTMANAGEMENT = "project management",
-  MANAGEMENT = "management",
-  SUPPORTSTAFF = "support staff",
-  QA = "qa",
-  SELFEMPLOYED = "self-employed",
-  CONSULTANTFIRM = "consultant - firm",
-  CONSULTANTINDEPENDENT = "consultant - independent",
-  CONTRACTOR = "contractor",
-  PARTNER = "partner",
-  ASSOCIATE = "associate",
-  RESELLER = "reseller",
-  HOBBYIST = "hobbyist",
-  STUDENT = "student",
-  LEGAL = "legal",
-  ASSESSMENT = "assessment",
-  REGULATORY = "regulatory",
-  FINANCIAL = "financial",
-  MANAGEMENT2 = "management",
-  MARKETING = "marketing",
-  SALES = "sales",
-  PROCUREMENT = "procurement",
-  TECHNICAL = "technical",
+    CXO = 'cxo',
+    ENGINEERING = 'engineering',
+    PROJECTMANAGEMENT = 'project management',
+    MANAGEMENT = 'management',
+    SUPPORTSTAFF = 'support staff',
+    QA = 'qa',
+    SELFEMPLOYED = 'self-employed',
+    CONSULTANTFIRM = 'consultant - firm',
+    CONSULTANTINDEPENDENT = 'consultant - independent',
+    CONTRACTOR = 'contractor',
+    PARTNER = 'partner',
+    ASSOCIATE = 'associate',
+    RESELLER = 'reseller',
+    HOBBYIST = 'hobbyist',
+    STUDENT = 'student',
+    LEGAL = 'legal',
+    ASSESSMENT = 'assessment',
+    REGULATORY = 'regulatory',
+    FINANCIAL = 'financial',
+    MANAGEMENT2 = 'management',
+    MARKETING = 'marketing',
+    SALES = 'sales',
+    PROCUREMENT = 'procurement',
+    TECHNICAL = 'technical'
 }
+
+

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Opportunity } from "../../model/Opportunity";
+import { Opportunity } from '../../model/Opportunity';
 
 const OpportunitySlice = createSlice({
   name: "Opportunitys",
@@ -12,23 +12,20 @@ const OpportunitySlice = createSlice({
     },
 
     OpportunityValueToggled(state, action) {
-      console.log("Opportunity TOGGLE");
-      console.warn(JSON.stringify(action));
-      const Opportunity: Opportunity = state.find(
-        (Opportunity) => Opportunity.id === action.payload.OpportunityId,
-      );
+      console.log("Opportunity TOGGLE")
+      console.warn(JSON.stringify(action))
+      const Opportunity:Opportunity = state.find((Opportunity) => Opportunity.id === action.payload.OpportunityId);
       if (Opportunity) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     OpportunitypropertySet(state, action) {
-      const Opportunity = state.find(
-        (Opportunity) => Opportunity.id === action.payload.OpportunityId,
-      );
+      const Opportunity = state.find((Opportunity) => Opportunity.id === action.payload.OpportunityId);
       if (Opportunity) {
-        //  Opportunity[action.property] = action.payload[action.property];
+      //  Opportunity[action.property] = action.payload[action.property];
       }
     },
   },
@@ -37,6 +34,6 @@ const OpportunitySlice = createSlice({
 export const {
   OpportunityAdded,
   OpportunityValueToggled,
-  OpportunitypropertySet,
+  OpportunitypropertySet
 } = OpportunitySlice.actions;
 export default OpportunitySlice.reducer;

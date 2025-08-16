@@ -1,28 +1,36 @@
-import {
-  getChatResponse,
-  postChatResponse,
-  getChatResponseList,
-  deleteChatResponse,
-  updateChatResponse,
-} from "../../api";
+
+import { 
+    getChatResponse, 
+    postChatResponse,
+    getChatResponseList , 
+    deleteChatResponse , 
+    updateChatResponse 
+} from '../../api';
 
 import {
-  ADD_CHATRESPONSE_REQUEST,
-  FETCH_CHATRESPONSE_REQUEST,
-  LIST_CHATRESPONSE_REQUEST,
-  UPDATE_CHATRESPONSE_REQUEST,
-  DELETE_CHATRESPONSE_REQUEST,
-  addChatResponseFailure,
-  addChatResponseSuccess,
-  fetchChatResponseFailure,
-  fetchChatResponseSuccess,
-  listChatResponseFailure,
-  listChatResponseSuccess,
-  updateChatResponseFailure,
-  updateChatResponseSuccess,
-  deleteChatResponseFailure,
-  deleteChatResponseSuccess,
-} from "../actions/ChatResponseApiAction";
+
+    ADD_CHATRESPONSE_REQUEST,
+    FETCH_CHATRESPONSE_REQUEST,
+    LIST_CHATRESPONSE_REQUEST,
+    UPDATE_CHATRESPONSE_REQUEST,
+    DELETE_CHATRESPONSE_REQUEST,
+
+    addChatResponseFailure,
+    addChatResponseSuccess,
+
+    fetchChatResponseFailure,
+    fetchChatResponseSuccess,
+    
+    listChatResponseFailure,
+    listChatResponseSuccess,
+
+    updateChatResponseFailure,
+    updateChatResponseSuccess,
+    
+    deleteChatResponseFailure,
+    deleteChatResponseSuccess,
+    
+} from '../actions/ChatResponseApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ChatResponse
 */
 
-export const ChatResponseMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("ChatResponse MIDDLEWARE: " + JSON.stringify(action));
+export const ChatResponseMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("ChatResponse MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_CHATRESPONSE_REQUEST:
-        try {
-          const response = postChatResponse(action.payload);
-          dispatch(addChatResponseSuccess(response.body));
-        } catch (error) {
-          dispatch(addChatResponseFailure(error.message));
-        }
-        break;
 
-      case LIST_CHATRESPONSE_REQUEST:
-        try {
-          const response = getChatResponseList();
-          dispatch(listChatResponseSuccess(response.body));
-        } catch (error) {
-          dispatch(listChatResponseFailure(error.message));
-        }
-        break;
+        case ADD_CHATRESPONSE_REQUEST:
+            try {
+                const response = postChatResponse(action.payload);
+                dispatch(addChatResponseSuccess(response.body));
+            } catch (error) {
+                dispatch(addChatResponseFailure(error.message));
+            }
+            break;
 
-      case FETCH_CHATRESPONSE_REQUEST:
-        try {
-          const response = getChatResponse(action.id);
-          dispatch(fetchChatResponseSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchChatResponseFailure(error.message));
-        }
-        break;
+        case LIST_CHATRESPONSE_REQUEST:
+            try {
+                const response = getChatResponseList();
+                dispatch(listChatResponseSuccess(response.body));
+            } catch (error) {
+                dispatch(listChatResponseFailure(error.message));
+            }
+            break;
 
-      case UPDATE_CHATRESPONSE_REQUEST:
-        try {
-          const { id, ChatResponse } = action.payload;
-          const response = updateChatResponse(id);
-          dispatch(updateChatResponseSuccess(response.body));
-        } catch (error) {
-          dispatch(updateChatResponseFailure(error.message));
-        }
-        break;
 
-      case DELETE_CHATRESPONSE_REQUEST:
-        try {
-          const { id, ChatResponse } = action.payload;
-          const response = deleteChatResponse(id);
-          dispatch(deleteChatResponseSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteChatResponseFailure(error.message));
-        }
-        break;
+        case FETCH_CHATRESPONSE_REQUEST:
+            try {
+                const response = getChatResponse(action.id);
+                dispatch(fetchChatResponseSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchChatResponseFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_CHATRESPONSE_REQUEST:
+            try {
+                const { id, ChatResponse } = action.payload;
+                const response = updateChatResponse(id);
+                dispatch(updateChatResponseSuccess(response.body));
+            } catch (error) {
+                dispatch(updateChatResponseFailure(error.message));
+            }
+            break;
+
+        case DELETE_CHATRESPONSE_REQUEST:
+            try {
+                const { id, ChatResponse } = action.payload;
+                const response = deleteChatResponse(id);
+                dispatch(deleteChatResponseSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteChatResponseFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

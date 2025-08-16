@@ -11,150 +11,133 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime";
+import { exists, mapValues } from '../src/runtime';
 
 // thorapi
 
 /**
- *
+ * 
  * @export
  * @interface McpResource
  */
-export type McpResource = {
-  /**
-   *
-   * @type {string}
-   * @memberof McpResource
-   */
-  uri: string;
-  /**
-   *
-   * @type {string}
-   * @memberof McpResource
-   */
-  name: string;
-  /**
-   *
-   * @type {string}
-   * @memberof McpResource
-   */
-  mcpServerId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof McpResource
-   */
-  mimeType?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof McpResource
-   */
-  description?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof McpResource
-   */
-  id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof McpResource
-   */
-  ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof McpResource
-   */
-  createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof McpResource
-   */
-  keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof McpResource
-   */
-  lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof McpResource
-   */
-  lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof McpResource
-   */
-  lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof McpResource
-   */
-  lastModifiedDate?: Date;
-};
+export type McpResource  = {
+    /**
+     * 
+     * @type {string}
+     * @memberof McpResource
+     */
+    uri: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpResource
+     */
+    name: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpResource
+     */
+    mcpServerId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpResource
+     */
+    mimeType?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpResource
+     */
+    description?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof McpResource
+     */
+    id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof McpResource
+     */
+    ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof McpResource
+     */
+    createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof McpResource
+     */
+    keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof McpResource
+     */
+    lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof McpResource
+     */
+    lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof McpResource
+     */
+    lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof McpResource
+     */
+    lastModifiedDate?: Date;
+}
 
 export function McpResourceFromJSON(json: any): McpResource {
-  return {
-    uri: json["uri"],
-    name: json["name"],
-    mcpServerId: !exists(json, "mcpServerId") ? undefined : json["mcpServerId"],
-    mimeType: !exists(json, "mimeType") ? undefined : json["mimeType"],
-    description: !exists(json, "description") ? undefined : json["description"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-  };
+    return {
+        'uri': json['uri'],
+        'name': json['name'],
+        'mcpServerId': !exists(json, 'mcpServerId') ? undefined : json['mcpServerId'],
+        'mimeType': !exists(json, 'mimeType') ? undefined : json['mimeType'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+    };
 }
 
 export function McpResourceToJSON(value?: McpResource): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    uri: value.uri,
-    name: value.name,
-    mcpServerId: value.mcpServerId,
-    mimeType: value.mimeType,
-    description: value.description,
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        'uri': value.uri,
+        'name': value.name,
+        'mcpServerId': value.mcpServerId,
+        'mimeType': value.mimeType,
+        'description': value.description,
+        'id': value.id,
+        'ownerId': value.ownerId,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'keyHash': value.keyHash,
+        'lastAccessedById': value.lastAccessedById,
+        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
+        'lastModifiedById': value.lastModifiedById,
+        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
+    };
 }
+
+

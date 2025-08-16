@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Principal } from "../../model/Principal";
+import { Principal } from '../../model/Principal';
 
 const PrincipalSlice = createSlice({
   name: "Principals",
@@ -12,28 +12,28 @@ const PrincipalSlice = createSlice({
     },
 
     PrincipalValueToggled(state, action) {
-      console.log("Principal TOGGLE");
-      console.warn(JSON.stringify(action));
-      const Principal: Principal = state.find(
-        (Principal) => Principal.id === action.payload.PrincipalId,
-      );
+      console.log("Principal TOGGLE")
+      console.warn(JSON.stringify(action))
+      const Principal:Principal = state.find((Principal) => Principal.id === action.payload.PrincipalId);
       if (Principal) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     PrincipalpropertySet(state, action) {
-      const Principal = state.find(
-        (Principal) => Principal.id === action.payload.PrincipalId,
-      );
+      const Principal = state.find((Principal) => Principal.id === action.payload.PrincipalId);
       if (Principal) {
-        //  Principal[action.property] = action.payload[action.property];
+      //  Principal[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const { PrincipalAdded, PrincipalValueToggled, PrincipalpropertySet } =
-  PrincipalSlice.actions;
+export const {
+  PrincipalAdded,
+  PrincipalValueToggled,
+  PrincipalpropertySet
+} = PrincipalSlice.actions;
 export default PrincipalSlice.reducer;

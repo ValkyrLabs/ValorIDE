@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 // tslint:disable
 /**
  * ValkyrAI API
@@ -22,10 +23,10 @@ import {
 } from "redux-query";
 
 // un-comment for Vite apps
-//export const BASE_PATH = import.meta.env.VITE_basePath.replace(/\/+$/, "");
+export const BASE_PATH = "http://localhost:8080/v1" ; // import.meta.env.BASE_URL.replace(/\/+$/, "");
 
 // un-comment for Create REact APp apps
-export const BASE_PATH = process.env.REACT_APP_BASE_PATH;
+//export const BASE_PATH = process.env.REACT_APP_BASE_PATH;
 
 export const Configuration = {
   basePath: BASE_PATH, // This is the value that will be prepended to all endpoints.  For compatibility with

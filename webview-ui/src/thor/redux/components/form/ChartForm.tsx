@@ -1,26 +1,26 @@
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-  FormikValues,
-} from "formik";
-import React from "react";
+import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
+import React, { useState } from 'react';
 import {
   Form as BSForm,
   Accordion,
   Col,
   Nav,
   Row,
-  Spinner,
-} from "react-bootstrap";
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
-import CoolButton from "../../../../components/CoolButton";
-import * as Yup from "yup";
+  Spinner
+} from 'react-bootstrap';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
+import CoolButton from '../../../../components/CoolButton';
+import * as Yup from 'yup';
+import PermissionDialog from '../../../../components/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
 
-import { Chart, ChartChartTypeEnum } from "../../../model";
 
-import { useAddChartMutation } from "../../services/ChartService";
+import {
+  Chart,
+  ChartChartTypeEnum,
+} from '../../../model';
+
+import { useAddChartMutation } from '../../services/ChartService';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -30,7 +30,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-05-08T17:49:28.351161-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -46,15 +46,15 @@ A spreadsheet chart that can be mapped to/from an OpenXLS ChartHandle.
 -------------------------------------------------------- */
 const ChartTypeValidation = () => {
   return [
-    "Area",
-    "Bar",
-    "Column",
-    "Line",
-    "Pie",
-    "Scatter",
-    "Radar",
-    "Doughnut",
-    "Stock",
+    'Area',
+    'Bar',
+    'Column',
+    'Line',
+    'Pie',
+    'Scatter',
+    'Radar',
+    'Doughnut',
+    'Stock',
   ];
 };
 
@@ -63,52 +63,110 @@ const ChartTypeValidation = () => {
    (Skip read-only fields and container types)
 -------------------------------------------------------- */
 const validationSchema = Yup.object().shape({
-  sheetId: Yup.string(),
-
-  name: Yup.string(),
-
-  chartType: Yup.mixed()
-    .oneOf(ChartTypeValidation(), "Invalid value for chartType")
-
-    .notRequired(),
-
-  title: Yup.string(),
-
-  axisLabelX: Yup.string(),
-
-  axisLabelY: Yup.string(),
-
-  categoryRange: Yup.string(),
-
-  embedded: Yup.boolean()
-
-    .notRequired(),
-
-  anchorCell: Yup.string(),
-
-  anchorOffsetX: Yup.number(),
-
-  anchorOffsetY: Yup.number(),
-
-  width: Yup.number(),
-
-  height: Yup.number(),
-
-  id: Yup.string(),
-
-  ownerId: Yup.string(),
-
-  createdDate: Yup.date(),
-
-  keyHash: Yup.string(),
-
-  lastAccessedById: Yup.string(),
-
-  lastAccessedDate: Yup.date(),
-
-  lastModifiedById: Yup.string(),
-
-  lastModifiedDate: Yup.date(),
+    
+        sheetId: Yup.string()
+          
+          
+          ,
+    
+        name: Yup.string()
+          
+          
+          ,
+    
+      chartType: Yup.mixed()
+        .oneOf(ChartTypeValidation(), "Invalid value for chartType")
+        
+        .notRequired(),
+    
+        title: Yup.string()
+          
+          
+          ,
+    
+        axisLabelX: Yup.string()
+          
+          
+          ,
+    
+        axisLabelY: Yup.string()
+          
+          
+          ,
+    
+        categoryRange: Yup.string()
+          
+          
+          ,
+    
+        embedded: Yup.boolean()
+          
+          .notRequired(),
+    
+        anchorCell: Yup.string()
+          
+          
+          ,
+    
+        anchorOffsetX: Yup.number()
+          
+          
+          ,
+    
+        anchorOffsetY: Yup.number()
+          
+          
+          ,
+    
+        width: Yup.number()
+          
+          
+          ,
+    
+        height: Yup.number()
+          
+          
+          ,
+    
+        id: Yup.string()
+          
+          
+          ,
+    
+        ownerId: Yup.string()
+          
+          
+          ,
+    
+        createdDate: Yup.date()
+          
+          
+          ,
+    
+        keyHash: Yup.string()
+          
+          
+          ,
+    
+        lastAccessedById: Yup.string()
+          
+          
+          ,
+    
+        lastAccessedDate: Yup.date()
+          
+          
+          ,
+    
+        lastModifiedById: Yup.string()
+          
+          
+          ,
+    
+        lastModifiedDate: Yup.date()
+          
+          
+          ,
 });
 
 /* -----------------------------------------------------
@@ -116,57 +174,225 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const ChartForm: React.FC = () => {
   const [addChart, addChartResult] = useAddChartMutation();
+  
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
+
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: 'current_user', // This should come from authentication context
+    permissions: {
+      isOwner: true, // This should be determined by checking object ownership
+      isAdmin: true, // This should come from user roles
+      canGrantPermissions: true,
+      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+    },
+  };
 
   /* INITIAL VALUES - skip read-only fields */
   const initialValues: Partial<Chart> = {
-    sheetId: "null",
+          
 
-    name: "SalesPerformanceChart",
+            sheetId: 'null',
 
-    chartType: ChartChartTypeEnum[Object.keys(ChartChartTypeEnum)[0]],
 
-    title: "Monthly Sales Performance",
 
-    axisLabelX: "Months",
 
-    axisLabelY: "Revenue (USD)",
 
-    categoryRange: "Sheet1!A2:A12",
+          
 
-    embedded: true,
+            name: 'SalesPerformanceChart',
 
-    anchorCell: "B2",
 
-    anchorOffsetX: 0,
 
-    anchorOffsetY: 0,
 
-    width: 0,
 
-    height: 0,
+          
+          chartType:
+            ChartChartTypeEnum[
+              Object.keys(ChartChartTypeEnum)[0]
+            ],
+          
 
-    id: "74748f5d-6d34-4848-b7bf-1dde54471cf7",
+            title: 'Monthly Sales Performance',
 
-    ownerId: "f805256a-45b6-438e-b784-c8d1bf1527a8",
 
-    keyHash: "null",
 
-    lastAccessedById: "c7f78b40-25c3-4f6c-aa53-5b86d7ec6ec3",
 
-    lastModifiedById: "dd919b1b-8e22-49e0-b670-ad3d15bee685",
+
+          
+
+            axisLabelX: 'Months',
+
+
+
+
+
+          
+
+            axisLabelY: 'Revenue (USD)',
+
+
+
+
+
+          
+
+            categoryRange: 'Sheet1!A2:A12',
+
+
+
+
+
+          
+            embedded: true, 
+
+
+
+
+
+
+          
+
+            anchorCell: 'B2',
+
+
+
+
+
+          
+
+
+
+            anchorOffsetX: 0,
+
+
+
+          
+
+
+
+            anchorOffsetY: 0,
+
+
+
+          
+
+
+
+            width: 0,
+
+
+
+          
+
+
+
+            height: 0,
+
+
+
+          
+
+            id: '007ab2b4-2b4c-44fd-a615-39ebe7639d3a',
+
+
+
+
+
+          
+
+            ownerId: 'cead3672-1910-4ce6-94bc-0a7ae3e36d28',
+
+
+
+
+
+          
+
+
+
+
+
+
+          
+
+            keyHash: 'null',
+
+
+
+
+
+          
+
+            lastAccessedById: 'a1e69611-895f-4490-9a69-b01ae30f4bb2',
+
+
+
+
+
+          
+
+
+
+
+
+
+          
+
+            lastModifiedById: 'c3cc781d-a775-4109-98a8-4a220c023879',
+
+
+
+
+
+          
+
+
+
+
+
+
+  };
+
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId: string) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+
+  const handlePermissionsSave = (grants: AclGrantRequest[]) => {
+    console.log('Permissions saved for new Chart:', grants);
+    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = (
-    values: FormikValues,
-    { setSubmitting }: FormikHelpers<Chart>,
-  ) => {
-    // Simulate slow network or do what you need:
-    setTimeout(() => {
+  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Chart>) => {
+    try {
       console.log("Chart form values:", values);
-      addChart(values);
+      const result = await addChart(values).unwrap();
+      
+      // If object was created successfully and has an ID, offer to set permissions
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `Chart created successfully! Would you like to set permissions for this object?`
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
+        }
+      }
+      
       setSubmitting(false);
-    }, 500);
+    } catch (error) {
+      console.error('Failed to create Chart:', error);
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -184,7 +410,7 @@ const ChartForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit,
+          handleSubmit
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
@@ -208,616 +434,724 @@ const ChartForm: React.FC = () => {
                   <FaRegPlusSquare size={36} /> Add New Chart
                 </Accordion.Header>
                 <Accordion.Body>
-                  <label htmlFor="sheetId" className="nice-form-control">
-                    <b>
-                      Sheet Id:
-                      {touched.sheetId && !errors.sheetId && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                    
+                    <label htmlFor="sheetId" className="nice-form-control">
+                      <b>
+                        Sheet Id:
+                        {touched.sheetId &&
+                         !errors.sheetId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="sheetId"
-                      type="text"
-                      className={
-                        errors.sheetId
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="sheetId"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="name" className="nice-form-control">
-                    <b>
-                      Name:
-                      {touched.name && !errors.name && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="sheetId"
+                            type="text"
+                            className={
+                              errors.sheetId
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="name"
-                      type="text"
-                      className={
-                        errors.name
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="name"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="chartType" className="nice-form-control">
-                    <b>
-                      Chart Type:
-                      {touched.chartType && !errors.chartType && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* ENUM DROPDOWN */}
-                    <BSForm.Select
-                      name="chartType"
-                      className={
-                        errors.chartType
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                      onChange={(e) => {
-                        setFieldTouched("chartType", true);
-                        setFieldValue("chartType", e.target.value);
-                      }}
-                    >
-                      <option value="" label="Select Chart Type" />
-                      <ChartTypeLookup />
-                    </BSForm.Select>
 
-                    <ErrorMessage
-                      className="error"
-                      name="chartType"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="title" className="nice-form-control">
-                    <b>
-                      Title:
-                      {touched.title && !errors.title && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                      <ErrorMessage
+                        className="error"
+                        name="sheetId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="name" className="nice-form-control">
+                      <b>
+                        Name:
+                        {touched.name &&
+                         !errors.name && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="title"
-                      type="text"
-                      className={
-                        errors.title
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="title"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="axisLabelX" className="nice-form-control">
-                    <b>
-                      Axis Label X:
-                      {touched.axisLabelX && !errors.axisLabelX && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="name"
+                            type="text"
+                            className={
+                              errors.name
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="axisLabelX"
-                      type="text"
-                      className={
-                        errors.axisLabelX
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="axisLabelX"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="axisLabelY" className="nice-form-control">
-                    <b>
-                      Axis Label Y:
-                      {touched.axisLabelY && !errors.axisLabelY && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="axisLabelY"
-                      type="text"
-                      className={
-                        errors.axisLabelY
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="axisLabelY"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="categoryRange" className="nice-form-control">
-                    <b>
-                      Category Range:
-                      {touched.categoryRange && !errors.categoryRange && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                      <ErrorMessage
+                        className="error"
+                        name="name"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="chartType" className="nice-form-control">
+                      <b>
+                        Chart Type:
+                        {touched.chartType &&
+                         !errors.chartType && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="categoryRange"
-                      type="text"
-                      className={
-                        errors.categoryRange
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="chartType"
+                          className={
+                            errors.chartType
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('chartType', true);
+                            setFieldValue('chartType', e.target.value);
+                          }}
+                        >
+                          <option value="" label="Select Chart Type" />
+                          <ChartTypeLookup />
+                        </BSForm.Select>
 
-                    <ErrorMessage
-                      className="error"
-                      name="categoryRange"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="embedded" className="nice-form-control">
-                    <b>
-                      Embedded:
-                      {touched.embedded && !errors.embedded && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                      <ErrorMessage
+                        className="error"
+                        name="chartType"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="title" className="nice-form-control">
+                      <b>
+                        Title:
+                        {touched.title &&
+                         !errors.title && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    {/* CHECKBOX FIELD */}
-                    <BSForm.Check
-                      required
-                      id="embedded"
-                      name="embedded"
-                      onChange={(e) => {
-                        setFieldTouched("embedded", true);
-                        setFieldValue("embedded", e.target.checked);
-                      }}
-                      isInvalid={!!errors.embedded}
-                      className={errors.embedded ? "error" : ""}
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="embedded"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="anchorCell" className="nice-form-control">
-                    <b>
-                      Anchor Cell:
-                      {touched.anchorCell && !errors.anchorCell && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="title"
+                            type="text"
+                            className={
+                              errors.title
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="anchorCell"
-                      type="text"
-                      className={
-                        errors.anchorCell
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="anchorCell"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="anchorOffsetX" className="nice-form-control">
-                    <b>
-                      Anchor Offset X:
-                      {touched.anchorOffsetX && !errors.anchorOffsetX && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* INTEGER FIELD */}
-                    <Field
-                      name="anchorOffsetX"
-                      type="text"
-                      className={
-                        errors.anchorOffsetX
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="anchorOffsetX"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="anchorOffsetY" className="nice-form-control">
-                    <b>
-                      Anchor Offset Y:
-                      {touched.anchorOffsetY && !errors.anchorOffsetY && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                      <ErrorMessage
+                        className="error"
+                        name="title"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="axisLabelX" className="nice-form-control">
+                      <b>
+                        Axis Label X:
+                        {touched.axisLabelX &&
+                         !errors.axisLabelX && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    {/* INTEGER FIELD */}
-                    <Field
-                      name="anchorOffsetY"
-                      type="text"
-                      className={
-                        errors.anchorOffsetY
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="anchorOffsetY"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="width" className="nice-form-control">
-                    <b>
-                      Width:
-                      {touched.width && !errors.width && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="axisLabelX"
+                            type="text"
+                            className={
+                              errors.axisLabelX
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    {/* INTEGER FIELD */}
-                    <Field
-                      name="width"
-                      type="text"
-                      className={
-                        errors.width
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="width"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="height" className="nice-form-control">
-                    <b>
-                      Height:
-                      {touched.height && !errors.height && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* INTEGER FIELD */}
-                    <Field
-                      name="height"
-                      type="text"
-                      className={
-                        errors.height
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="height"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="id" className="nice-form-control">
-                    <b>
-                      Id:
-                      {touched.id && !errors.id && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                      <ErrorMessage
+                        className="error"
+                        name="axisLabelX"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="axisLabelY" className="nice-form-control">
+                      <b>
+                        Axis Label Y:
+                        {touched.axisLabelY &&
+                         !errors.axisLabelY && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="id"
-                      type="text"
-                      className={
-                        errors.id
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="id"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="ownerId" className="nice-form-control">
-                    <b>
-                      Owner Id:
-                      {touched.ownerId && !errors.ownerId && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="axisLabelY"
+                            type="text"
+                            className={
+                              errors.axisLabelY
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="ownerId"
-                      type="text"
-                      className={
-                        errors.ownerId
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="ownerId"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="createdDate" className="nice-form-control">
-                    <b>
-                      Created Date:
-                      {touched.createdDate && !errors.createdDate && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="createdDate"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label htmlFor="keyHash" className="nice-form-control">
-                    <b>
-                      Key Hash:
-                      {touched.keyHash && !errors.keyHash && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="keyHash"
-                      type="text"
-                      className={
-                        errors.keyHash
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
+                      <ErrorMessage
+                        className="error"
+                        name="axisLabelY"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="categoryRange" className="nice-form-control">
+                      <b>
+                        Category Range:
+                        {touched.categoryRange &&
+                         !errors.categoryRange && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="keyHash"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label
-                    htmlFor="lastAccessedById"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Accessed By Id:
-                      {touched.lastAccessedById && !errors.lastAccessedById && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="lastAccessedById"
-                      type="text"
-                      className={
-                        errors.lastAccessedById
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="categoryRange"
+                            type="text"
+                            className={
+                              errors.categoryRange
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastAccessedById"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label
-                    htmlFor="lastAccessedDate"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Accessed Date:
-                      {touched.lastAccessedDate && !errors.lastAccessedDate && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastAccessedDate"
-                      component="span"
-                    />
-                  </label>
-                  <br />
 
-                  <label
-                    htmlFor="lastModifiedById"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Modified By Id:
-                      {touched.lastModifiedById && !errors.lastModifiedById && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    {/* TEXT FIELD */}
-                    <Field
-                      name="lastModifiedById"
-                      type="text"
-                      className={
-                        errors.lastModifiedById
-                          ? "form-control field-error"
-                          : "nice-form-control form-control"
-                      }
-                    />
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastModifiedById"
-                      component="span"
-                    />
-                  </label>
-                  <br />
+                      <ErrorMessage
+                        className="error"
+                        name="categoryRange"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="embedded" className="nice-form-control">
+                      <b>
+                        Embedded:
+                        {touched.embedded &&
+                         !errors.embedded && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
 
-                  <label
-                    htmlFor="lastModifiedDate"
-                    className="nice-form-control"
-                  >
-                    <b>
-                      Last Modified Date:
-                      {touched.lastModifiedDate && !errors.lastModifiedDate && (
-                        <span className="okCheck">
-                          <FaCheckCircle /> looks good!
-                        </span>
-                      )}
-                    </b>
 
-                    <ErrorMessage
-                      className="error"
-                      name="lastModifiedDate"
-                      component="span"
-                    />
-                  </label>
-                  <br />
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            required
+                            id="embedded"
+                            name="embedded"
+                            onChange={(e) => {
+                              setFieldTouched('embedded', true);
+                              setFieldValue('embedded', e.target.checked);
+                            }}
+                            isInvalid={!!errors.embedded}
+                            className={
+                              errors.embedded ? 'error' : ''
+                            }
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="embedded"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="anchorCell" className="nice-form-control">
+                      <b>
+                        Anchor Cell:
+                        {touched.anchorCell &&
+                         !errors.anchorCell && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="anchorCell"
+                            type="text"
+                            className={
+                              errors.anchorCell
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="anchorCell"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="anchorOffsetX" className="nice-form-control">
+                      <b>
+                        Anchor Offset X:
+                        {touched.anchorOffsetX &&
+                         !errors.anchorOffsetX && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="anchorOffsetX"
+                            type="text"
+                            className={
+                              errors.anchorOffsetX
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="anchorOffsetX"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="anchorOffsetY" className="nice-form-control">
+                      <b>
+                        Anchor Offset Y:
+                        {touched.anchorOffsetY &&
+                         !errors.anchorOffsetY && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="anchorOffsetY"
+                            type="text"
+                            className={
+                              errors.anchorOffsetY
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="anchorOffsetY"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="width" className="nice-form-control">
+                      <b>
+                        Width:
+                        {touched.width &&
+                         !errors.width && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="width"
+                            type="text"
+                            className={
+                              errors.width
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="width"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="height" className="nice-form-control">
+                      <b>
+                        Height:
+                        {touched.height &&
+                         !errors.height && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="height"
+                            type="text"
+                            className={
+                              errors.height
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="height"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="id" className="nice-form-control">
+                      <b>
+                        Id:
+                        {touched.id &&
+                         !errors.id && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="id"
+                            type="text"
+                            className={
+                              errors.id
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="id"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="ownerId" className="nice-form-control">
+                      <b>
+                        Owner Id:
+                        {touched.ownerId &&
+                         !errors.ownerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="ownerId"
+                            type="text"
+                            className={
+                              errors.ownerId
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="ownerId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="createdDate" className="nice-form-control">
+                      <b>
+                        Created Date:
+                        {touched.createdDate &&
+                         !errors.createdDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="createdDate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="keyHash" className="nice-form-control">
+                      <b>
+                        Key Hash:
+                        {touched.keyHash &&
+                         !errors.keyHash && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="keyHash"
+                            type="text"
+                            className={
+                              errors.keyHash
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="keyHash"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastAccessedById" className="nice-form-control">
+                      <b>
+                        Last Accessed By Id:
+                        {touched.lastAccessedById &&
+                         !errors.lastAccessedById && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="lastAccessedById"
+                            type="text"
+                            className={
+                              errors.lastAccessedById
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastAccessedById"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastAccessedDate" className="nice-form-control">
+                      <b>
+                        Last Accessed Date:
+                        {touched.lastAccessedDate &&
+                         !errors.lastAccessedDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastAccessedDate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastModifiedById" className="nice-form-control">
+                      <b>
+                        Last Modified By Id:
+                        {touched.lastModifiedById &&
+                         !errors.lastModifiedById && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* TEXT FIELD */}
+                          <Field
+                            name="lastModifiedById"
+                            type="text"
+                            className={
+                              errors.lastModifiedById
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastModifiedById"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    
+                    <label htmlFor="lastModifiedDate" className="nice-form-control">
+                      <b>
+                        Last Modified Date:
+                        {touched.lastModifiedDate &&
+                         !errors.lastModifiedDate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="lastModifiedDate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={
-                      touched && isValid
-                        ? isSubmitting
-                          ? "disabled"
-                          : "success"
-                        : "warning"
-                    }
+                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
                   >
                     {isSubmitting && (
                       <Spinner
-                        style={{ float: "left" }}
+                        style={ { float: 'left' } }
                         as="span"
                         animation="grow"
                         variant="light"
@@ -833,13 +1167,26 @@ const ChartForm: React.FC = () => {
               <Accordion.Item eventKey="2">
                 <Accordion.Header>System Fields (Read Only)</Accordion.Header>
                 <Accordion.Body>
-                  <Row></Row>
+                  <Row>
+                  </Row>
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
           </form>
         )}
       </Formik>
+
+      {/* Permission Management Dialog */}
+      {createdObjectId && (
+        <PermissionDialog
+          objectType="com.valkyrlabs.model.Chart"
+          objectId={createdObjectId}
+          isVisible={showPermissionDialog}
+          onClose={handlePermissionDialogClose}
+          onSave={handlePermissionsSave}
+          currentUser={currentUser}
+        />
+      )}
     </div>
   );
 };
@@ -856,18 +1203,21 @@ kebabcase chart-type-lookup
 const ChartTypeLookup = () => {
   return (
     <>
-      <option value="Area" label="Area" />
-      <option value="Bar" label="Bar" />
-      <option value="Column" label="Column" />
-      <option value="Line" label="Line" />
-      <option value="Pie" label="Pie" />
-      <option value="Scatter" label="Scatter" />
-      <option value="Radar" label="Radar" />
-      <option value="Doughnut" label="Doughnut" />
-      <option value="Stock" label="Stock" />
+      <option value='Area' label="Area" />
+      <option value='Bar' label="Bar" />
+      <option value='Column' label="Column" />
+      <option value='Line' label="Line" />
+      <option value='Pie' label="Pie" />
+      <option value='Scatter' label="Scatter" />
+      <option value='Radar' label="Radar" />
+      <option value='Doughnut' label="Doughnut" />
+      <option value='Stock' label="Stock" />
     </>
   );
 };
 
+
+
 /* Export the generated form */
 export default ChartForm;
+

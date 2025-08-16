@@ -1,25 +1,22 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { Sheet } from "../../model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Sheet } from '../../model'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SheetResponse = Sheet[];
+type SheetResponse = Sheet[]
 
 export const SheetService = createApi({
-  reducerPath: "Sheet", // This should remain unique
+  reducerPath: 'Sheet', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["Sheet"],
+  tagTypes: ['Sheet'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getSheetsPaged: build.query<
-      SheetResponse,
-      { page: number; limit?: number }
-    >({
+    getSheetsPaged: build.query<SheetResponse, { page: number; limit?: number }>({
       query: ({ page, limit = 20 }) => `Sheet?page=${page}&limit=${limit}`,
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Sheet" as const, id })),
-              { type: "Sheet", id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: 'Sheet' as const, id })),
+              { type: 'Sheet', id: `PAGE_${page}` },
             ]
           : [],
     }),
@@ -30,50 +27,50 @@ export const SheetService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Sheet" as const, id })),
-              { type: "Sheet", id: "LIST" },
+              ...result.map(({ id }) => ({ type: 'Sheet' as const, id })),
+              { type: 'Sheet', id: 'LIST' },
             ]
-          : [{ type: "Sheet", id: "LIST" }],
+          : [{ type: 'Sheet', id: 'LIST' }],
     }),
 
     // 3) Create
     addSheet: build.mutation<Sheet, Partial<Sheet>>({
       query: (body) => ({
         url: `Sheet`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "Sheet", id: "LIST" }],
+      invalidatesTags: [{ type: 'Sheet', id: 'LIST' }],
     }),
 
     // 4) Get single by ID
     getSheet: build.query<Sheet, string>({
       query: (id) => `Sheet/${id}`,
-      providesTags: (result, error, id) => [{ type: "Sheet", id }],
+      providesTags: (result, error, id) => [{ type: 'Sheet', id }],
     }),
 
     // 5) Update
-    updateSheet: build.mutation<void, Pick<Sheet, "id"> & Partial<Sheet>>({
+    updateSheet: build.mutation<void, Pick<Sheet, 'id'> & Partial<Sheet>>({
       query: ({ id, ...patch }) => ({
         url: `Sheet/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SheetService.util.updateQueryData("getSheet", id, (draft) => {
-              Object.assign(draft, patch);
-            }),
-          );
+            SheetService.util.updateQueryData('getSheet', id, (draft) => {
+              Object.assign(draft, patch)
+            })
+          )
           try {
-            await queryFulfilled;
+            await queryFulfilled
           } catch {
-            patchResult.undo();
+            patchResult.undo()
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: "Sheet", id }],
+      invalidatesTags: (result, error, { id }) => [{ type: 'Sheet', id }],
     }),
 
     // 6) Delete
@@ -81,21 +78,21 @@ export const SheetService = createApi({
       query(id) {
         return {
           url: `Sheet/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "Sheet", id }],
+      invalidatesTags: (result, error, id) => [{ type: 'Sheet', id }],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSheetsPagedQuery`
 export const {
-  useGetSheetsPagedQuery, // immediate fetch
+  useGetSheetsPagedQuery,     // immediate fetch
   useLazyGetSheetsPagedQuery, // lazy fetch
   useGetSheetQuery,
   useGetSheetsQuery,
   useAddSheetMutation,
   useUpdateSheetMutation,
   useDeleteSheetMutation,
-} = SheetService;
+} = SheetService

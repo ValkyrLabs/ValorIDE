@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpMarketplaceItem } from "../../model/McpMarketplaceItem";
+import { McpMarketplaceItem } from '../../model/McpMarketplaceItem';
 
 const McpMarketplaceItemSlice = createSlice({
   name: "McpMarketplaceItems",
@@ -12,25 +12,20 @@ const McpMarketplaceItemSlice = createSlice({
     },
 
     McpMarketplaceItemValueToggled(state, action) {
-      console.log("McpMarketplaceItem TOGGLE");
-      console.warn(JSON.stringify(action));
-      const McpMarketplaceItem: McpMarketplaceItem = state.find(
-        (McpMarketplaceItem) =>
-          McpMarketplaceItem.id === action.payload.McpMarketplaceItemId,
-      );
+      console.log("McpMarketplaceItem TOGGLE")
+      console.warn(JSON.stringify(action))
+      const McpMarketplaceItem:McpMarketplaceItem = state.find((McpMarketplaceItem) => McpMarketplaceItem.id === action.payload.McpMarketplaceItemId);
       if (McpMarketplaceItem) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     McpMarketplaceItempropertySet(state, action) {
-      const McpMarketplaceItem = state.find(
-        (McpMarketplaceItem) =>
-          McpMarketplaceItem.id === action.payload.McpMarketplaceItemId,
-      );
+      const McpMarketplaceItem = state.find((McpMarketplaceItem) => McpMarketplaceItem.id === action.payload.McpMarketplaceItemId);
       if (McpMarketplaceItem) {
-        //  McpMarketplaceItem[action.property] = action.payload[action.property];
+      //  McpMarketplaceItem[action.property] = action.payload[action.property];
       }
     },
   },
@@ -39,6 +34,6 @@ const McpMarketplaceItemSlice = createSlice({
 export const {
   McpMarketplaceItemAdded,
   McpMarketplaceItemValueToggled,
-  McpMarketplaceItempropertySet,
+  McpMarketplaceItempropertySet
 } = McpMarketplaceItemSlice.actions;
 export default McpMarketplaceItemSlice.reducer;

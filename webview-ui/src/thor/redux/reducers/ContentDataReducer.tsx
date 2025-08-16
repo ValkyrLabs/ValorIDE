@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ContentData } from "../../model/ContentData";
+import { ContentData } from '../../model/ContentData';
 
 const ContentDataSlice = createSlice({
   name: "ContentDatas",
@@ -12,23 +12,20 @@ const ContentDataSlice = createSlice({
     },
 
     ContentDataValueToggled(state, action) {
-      console.log("ContentData TOGGLE");
-      console.warn(JSON.stringify(action));
-      const ContentData: ContentData = state.find(
-        (ContentData) => ContentData.id === action.payload.ContentDataId,
-      );
+      console.log("ContentData TOGGLE")
+      console.warn(JSON.stringify(action))
+      const ContentData:ContentData = state.find((ContentData) => ContentData.id === action.payload.ContentDataId);
       if (ContentData) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     ContentDatapropertySet(state, action) {
-      const ContentData = state.find(
-        (ContentData) => ContentData.id === action.payload.ContentDataId,
-      );
+      const ContentData = state.find((ContentData) => ContentData.id === action.payload.ContentDataId);
       if (ContentData) {
-        //  ContentData[action.property] = action.payload[action.property];
+      //  ContentData[action.property] = action.payload[action.property];
       }
     },
   },
@@ -37,6 +34,6 @@ const ContentDataSlice = createSlice({
 export const {
   ContentDataAdded,
   ContentDataValueToggled,
-  ContentDatapropertySet,
+  ContentDatapropertySet
 } = ContentDataSlice.actions;
 export default ContentDataSlice.reducer;

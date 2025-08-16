@@ -1,25 +1,22 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { NamedRange } from "../../model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { NamedRange } from '../../model'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type NamedRangeResponse = NamedRange[];
+type NamedRangeResponse = NamedRange[]
 
 export const NamedRangeService = createApi({
-  reducerPath: "NamedRange", // This should remain unique
+  reducerPath: 'NamedRange', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["NamedRange"],
+  tagTypes: ['NamedRange'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getNamedRangesPaged: build.query<
-      NamedRangeResponse,
-      { page: number; limit?: number }
-    >({
+    getNamedRangesPaged: build.query<NamedRangeResponse, { page: number; limit?: number }>({
       query: ({ page, limit = 20 }) => `NamedRange?page=${page}&limit=${limit}`,
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "NamedRange" as const, id })),
-              { type: "NamedRange", id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: 'NamedRange' as const, id })),
+              { type: 'NamedRange', id: `PAGE_${page}` },
             ]
           : [],
     }),
@@ -30,57 +27,50 @@ export const NamedRangeService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "NamedRange" as const, id })),
-              { type: "NamedRange", id: "LIST" },
+              ...result.map(({ id }) => ({ type: 'NamedRange' as const, id })),
+              { type: 'NamedRange', id: 'LIST' },
             ]
-          : [{ type: "NamedRange", id: "LIST" }],
+          : [{ type: 'NamedRange', id: 'LIST' }],
     }),
 
     // 3) Create
     addNamedRange: build.mutation<NamedRange, Partial<NamedRange>>({
       query: (body) => ({
         url: `NamedRange`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "NamedRange", id: "LIST" }],
+      invalidatesTags: [{ type: 'NamedRange', id: 'LIST' }],
     }),
 
     // 4) Get single by ID
     getNamedRange: build.query<NamedRange, string>({
       query: (id) => `NamedRange/${id}`,
-      providesTags: (result, error, id) => [{ type: "NamedRange", id }],
+      providesTags: (result, error, id) => [{ type: 'NamedRange', id }],
     }),
 
     // 5) Update
-    updateNamedRange: build.mutation<
-      void,
-      Pick<NamedRange, "id"> & Partial<NamedRange>
-    >({
+    updateNamedRange: build.mutation<void, Pick<NamedRange, 'id'> & Partial<NamedRange>>({
       query: ({ id, ...patch }) => ({
         url: `NamedRange/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            NamedRangeService.util.updateQueryData(
-              "getNamedRange",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
+            NamedRangeService.util.updateQueryData('getNamedRange', id, (draft) => {
+              Object.assign(draft, patch)
+            })
+          )
           try {
-            await queryFulfilled;
+            await queryFulfilled
           } catch {
-            patchResult.undo();
+            patchResult.undo()
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: "NamedRange", id }],
+      invalidatesTags: (result, error, { id }) => [{ type: 'NamedRange', id }],
     }),
 
     // 6) Delete
@@ -88,21 +78,21 @@ export const NamedRangeService = createApi({
       query(id) {
         return {
           url: `NamedRange/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "NamedRange", id }],
+      invalidatesTags: (result, error, id) => [{ type: 'NamedRange', id }],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetNamedRangesPagedQuery`
 export const {
-  useGetNamedRangesPagedQuery, // immediate fetch
+  useGetNamedRangesPagedQuery,     // immediate fetch
   useLazyGetNamedRangesPagedQuery, // lazy fetch
   useGetNamedRangeQuery,
   useGetNamedRangesQuery,
   useAddNamedRangeMutation,
   useUpdateNamedRangeMutation,
   useDeleteNamedRangeMutation,
-} = NamedRangeService;
+} = NamedRangeService

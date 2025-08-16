@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SalesOrder } from "../../model/SalesOrder";
+import { SalesOrder } from '../../model/SalesOrder';
 
 const SalesOrderSlice = createSlice({
   name: "SalesOrders",
@@ -12,23 +12,20 @@ const SalesOrderSlice = createSlice({
     },
 
     SalesOrderValueToggled(state, action) {
-      console.log("SalesOrder TOGGLE");
-      console.warn(JSON.stringify(action));
-      const SalesOrder: SalesOrder = state.find(
-        (SalesOrder) => SalesOrder.id === action.payload.SalesOrderId,
-      );
+      console.log("SalesOrder TOGGLE")
+      console.warn(JSON.stringify(action))
+      const SalesOrder:SalesOrder = state.find((SalesOrder) => SalesOrder.id === action.payload.SalesOrderId);
       if (SalesOrder) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     SalesOrderpropertySet(state, action) {
-      const SalesOrder = state.find(
-        (SalesOrder) => SalesOrder.id === action.payload.SalesOrderId,
-      );
+      const SalesOrder = state.find((SalesOrder) => SalesOrder.id === action.payload.SalesOrderId);
       if (SalesOrder) {
-        //  SalesOrder[action.property] = action.payload[action.property];
+      //  SalesOrder[action.property] = action.payload[action.property];
       }
     },
   },
@@ -37,6 +34,6 @@ const SalesOrderSlice = createSlice({
 export const {
   SalesOrderAdded,
   SalesOrderValueToggled,
-  SalesOrderpropertySet,
+  SalesOrderpropertySet
 } = SalesOrderSlice.actions;
 export default SalesOrderSlice.reducer;

@@ -1,25 +1,22 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { AclClass } from "../../model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { AclClass } from '../../model'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type AclClassResponse = AclClass[];
+type AclClassResponse = AclClass[]
 
 export const AclClassService = createApi({
-  reducerPath: "AclClass", // This should remain unique
+  reducerPath: 'AclClass', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["AclClass"],
+  tagTypes: ['AclClass'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getAclClasssPaged: build.query<
-      AclClassResponse,
-      { page: number; limit?: number }
-    >({
+    getAclClasssPaged: build.query<AclClassResponse, { page: number; limit?: number }>({
       query: ({ page, limit = 20 }) => `AclClass?page=${page}&limit=${limit}`,
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "AclClass" as const, id })),
-              { type: "AclClass", id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: 'AclClass' as const, id })),
+              { type: 'AclClass', id: `PAGE_${page}` },
             ]
           : [],
     }),
@@ -30,53 +27,50 @@ export const AclClassService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "AclClass" as const, id })),
-              { type: "AclClass", id: "LIST" },
+              ...result.map(({ id }) => ({ type: 'AclClass' as const, id })),
+              { type: 'AclClass', id: 'LIST' },
             ]
-          : [{ type: "AclClass", id: "LIST" }],
+          : [{ type: 'AclClass', id: 'LIST' }],
     }),
 
     // 3) Create
     addAclClass: build.mutation<AclClass, Partial<AclClass>>({
       query: (body) => ({
         url: `AclClass`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "AclClass", id: "LIST" }],
+      invalidatesTags: [{ type: 'AclClass', id: 'LIST' }],
     }),
 
     // 4) Get single by ID
     getAclClass: build.query<AclClass, string>({
       query: (id) => `AclClass/${id}`,
-      providesTags: (result, error, id) => [{ type: "AclClass", id }],
+      providesTags: (result, error, id) => [{ type: 'AclClass', id }],
     }),
 
     // 5) Update
-    updateAclClass: build.mutation<
-      void,
-      Pick<AclClass, "id"> & Partial<AclClass>
-    >({
+    updateAclClass: build.mutation<void, Pick<AclClass, 'id'> & Partial<AclClass>>({
       query: ({ id, ...patch }) => ({
         url: `AclClass/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            AclClassService.util.updateQueryData("getAclClass", id, (draft) => {
-              Object.assign(draft, patch);
-            }),
-          );
+            AclClassService.util.updateQueryData('getAclClass', id, (draft) => {
+              Object.assign(draft, patch)
+            })
+          )
           try {
-            await queryFulfilled;
+            await queryFulfilled
           } catch {
-            patchResult.undo();
+            patchResult.undo()
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: "AclClass", id }],
+      invalidatesTags: (result, error, { id }) => [{ type: 'AclClass', id }],
     }),
 
     // 6) Delete
@@ -84,21 +78,21 @@ export const AclClassService = createApi({
       query(id) {
         return {
           url: `AclClass/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "AclClass", id }],
+      invalidatesTags: (result, error, id) => [{ type: 'AclClass', id }],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetAclClasssPagedQuery`
 export const {
-  useGetAclClasssPagedQuery, // immediate fetch
+  useGetAclClasssPagedQuery,     // immediate fetch
   useLazyGetAclClasssPagedQuery, // lazy fetch
   useGetAclClassQuery,
   useGetAclClasssQuery,
   useAddAclClassMutation,
   useUpdateAclClassMutation,
   useDeleteAclClassMutation,
-} = AclClassService;
+} = AclClassService

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Stack } from "../../model/Stack";
+import { Stack } from '../../model/Stack';
 
 const StackSlice = createSlice({
   name: "Stacks",
@@ -12,26 +12,28 @@ const StackSlice = createSlice({
     },
 
     StackValueToggled(state, action) {
-      console.log("Stack TOGGLE");
-      console.warn(JSON.stringify(action));
-      const Stack: Stack = state.find(
-        (Stack) => Stack.id === action.payload.StackId,
-      );
+      console.log("Stack TOGGLE")
+      console.warn(JSON.stringify(action))
+      const Stack:Stack = state.find((Stack) => Stack.id === action.payload.StackId);
       if (Stack) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     StackpropertySet(state, action) {
       const Stack = state.find((Stack) => Stack.id === action.payload.StackId);
       if (Stack) {
-        //  Stack[action.property] = action.payload[action.property];
+      //  Stack[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const { StackAdded, StackValueToggled, StackpropertySet } =
-  StackSlice.actions;
+export const {
+  StackAdded,
+  StackValueToggled,
+  StackpropertySet
+} = StackSlice.actions;
 export default StackSlice.reducer;

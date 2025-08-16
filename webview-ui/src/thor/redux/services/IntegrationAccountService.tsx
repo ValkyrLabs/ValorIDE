@@ -1,29 +1,22 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { IntegrationAccount } from "../../model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { IntegrationAccount } from '../../model'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type IntegrationAccountResponse = IntegrationAccount[];
+type IntegrationAccountResponse = IntegrationAccount[]
 
 export const IntegrationAccountService = createApi({
-  reducerPath: "IntegrationAccount", // This should remain unique
+  reducerPath: 'IntegrationAccount', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["IntegrationAccount"],
+  tagTypes: ['IntegrationAccount'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getIntegrationAccountsPaged: build.query<
-      IntegrationAccountResponse,
-      { page: number; limit?: number }
-    >({
-      query: ({ page, limit = 20 }) =>
-        `IntegrationAccount?page=${page}&limit=${limit}`,
+    getIntegrationAccountsPaged: build.query<IntegrationAccountResponse, { page: number; limit?: number }>({
+      query: ({ page, limit = 20 }) => `IntegrationAccount?page=${page}&limit=${limit}`,
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({
-                type: "IntegrationAccount" as const,
-                id,
-              })),
-              { type: "IntegrationAccount", id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: 'IntegrationAccount' as const, id })),
+              { type: 'IntegrationAccount', id: `PAGE_${page}` },
             ]
           : [],
     }),
@@ -34,92 +27,72 @@ export const IntegrationAccountService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({
-                type: "IntegrationAccount" as const,
-                id,
-              })),
-              { type: "IntegrationAccount", id: "LIST" },
+              ...result.map(({ id }) => ({ type: 'IntegrationAccount' as const, id })),
+              { type: 'IntegrationAccount', id: 'LIST' },
             ]
-          : [{ type: "IntegrationAccount", id: "LIST" }],
+          : [{ type: 'IntegrationAccount', id: 'LIST' }],
     }),
 
     // 3) Create
-    addIntegrationAccount: build.mutation<
-      IntegrationAccount,
-      Partial<IntegrationAccount>
-    >({
+    addIntegrationAccount: build.mutation<IntegrationAccount, Partial<IntegrationAccount>>({
       query: (body) => ({
         url: `IntegrationAccount`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "IntegrationAccount", id: "LIST" }],
+      invalidatesTags: [{ type: 'IntegrationAccount', id: 'LIST' }],
     }),
 
     // 4) Get single by ID
     getIntegrationAccount: build.query<IntegrationAccount, string>({
       query: (id) => `IntegrationAccount/${id}`,
-      providesTags: (result, error, id) => [{ type: "IntegrationAccount", id }],
+      providesTags: (result, error, id) => [{ type: 'IntegrationAccount', id }],
     }),
 
     // 5) Update
-    updateIntegrationAccount: build.mutation<
-      void,
-      Pick<IntegrationAccount, "id"> & Partial<IntegrationAccount>
-    >({
+    updateIntegrationAccount: build.mutation<void, Pick<IntegrationAccount, 'id'> & Partial<IntegrationAccount>>({
       query: ({ id, ...patch }) => ({
         url: `IntegrationAccount/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            IntegrationAccountService.util.updateQueryData(
-              "getIntegrationAccount",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
+            IntegrationAccountService.util.updateQueryData('getIntegrationAccount', id, (draft) => {
+              Object.assign(draft, patch)
+            })
+          )
           try {
-            await queryFulfilled;
+            await queryFulfilled
           } catch {
-            patchResult.undo();
+            patchResult.undo()
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [
-        { type: "IntegrationAccount", id },
-      ],
+      invalidatesTags: (result, error, { id }) => [{ type: 'IntegrationAccount', id }],
     }),
 
     // 6) Delete
-    deleteIntegrationAccount: build.mutation<
-      { success: boolean; id: string },
-      number
-    >({
+    deleteIntegrationAccount: build.mutation<{ success: boolean; id: string }, number>({
       query(id) {
         return {
           url: `IntegrationAccount/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [
-        { type: "IntegrationAccount", id },
-      ],
+      invalidatesTags: (result, error, id) => [{ type: 'IntegrationAccount', id }],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetIntegrationAccountsPagedQuery`
 export const {
-  useGetIntegrationAccountsPagedQuery, // immediate fetch
+  useGetIntegrationAccountsPagedQuery,     // immediate fetch
   useLazyGetIntegrationAccountsPagedQuery, // lazy fetch
   useGetIntegrationAccountQuery,
   useGetIntegrationAccountsQuery,
   useAddIntegrationAccountMutation,
   useUpdateIntegrationAccountMutation,
   useDeleteIntegrationAccountMutation,
-} = IntegrationAccountService;
+} = IntegrationAccountService

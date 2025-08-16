@@ -1,28 +1,36 @@
-import {
-  getSecureKey,
-  postSecureKey,
-  getSecureKeyList,
-  deleteSecureKey,
-  updateSecureKey,
-} from "../../api";
+
+import { 
+    getSecureKey, 
+    postSecureKey,
+    getSecureKeyList , 
+    deleteSecureKey , 
+    updateSecureKey 
+} from '../../api';
 
 import {
-  ADD_SECUREKEY_REQUEST,
-  FETCH_SECUREKEY_REQUEST,
-  LIST_SECUREKEY_REQUEST,
-  UPDATE_SECUREKEY_REQUEST,
-  DELETE_SECUREKEY_REQUEST,
-  addSecureKeyFailure,
-  addSecureKeySuccess,
-  fetchSecureKeyFailure,
-  fetchSecureKeySuccess,
-  listSecureKeyFailure,
-  listSecureKeySuccess,
-  updateSecureKeyFailure,
-  updateSecureKeySuccess,
-  deleteSecureKeyFailure,
-  deleteSecureKeySuccess,
-} from "../actions/SecureKeyApiAction";
+
+    ADD_SECUREKEY_REQUEST,
+    FETCH_SECUREKEY_REQUEST,
+    LIST_SECUREKEY_REQUEST,
+    UPDATE_SECUREKEY_REQUEST,
+    DELETE_SECUREKEY_REQUEST,
+
+    addSecureKeyFailure,
+    addSecureKeySuccess,
+
+    fetchSecureKeyFailure,
+    fetchSecureKeySuccess,
+    
+    listSecureKeyFailure,
+    listSecureKeySuccess,
+
+    updateSecureKeyFailure,
+    updateSecureKeySuccess,
+    
+    deleteSecureKeyFailure,
+    deleteSecureKeySuccess,
+    
+} from '../actions/SecureKeyApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: SecureKey
 */
 
-export const SecureKeyMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("SecureKey MIDDLEWARE: " + JSON.stringify(action));
+export const SecureKeyMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("SecureKey MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_SECUREKEY_REQUEST:
-        try {
-          const response = postSecureKey(action.payload);
-          dispatch(addSecureKeySuccess(response.body));
-        } catch (error) {
-          dispatch(addSecureKeyFailure(error.message));
-        }
-        break;
 
-      case LIST_SECUREKEY_REQUEST:
-        try {
-          const response = getSecureKeyList();
-          dispatch(listSecureKeySuccess(response.body));
-        } catch (error) {
-          dispatch(listSecureKeyFailure(error.message));
-        }
-        break;
+        case ADD_SECUREKEY_REQUEST:
+            try {
+                const response = postSecureKey(action.payload);
+                dispatch(addSecureKeySuccess(response.body));
+            } catch (error) {
+                dispatch(addSecureKeyFailure(error.message));
+            }
+            break;
 
-      case FETCH_SECUREKEY_REQUEST:
-        try {
-          const response = getSecureKey(action.id);
-          dispatch(fetchSecureKeySuccess(response.body));
-        } catch (error) {
-          dispatch(fetchSecureKeyFailure(error.message));
-        }
-        break;
+        case LIST_SECUREKEY_REQUEST:
+            try {
+                const response = getSecureKeyList();
+                dispatch(listSecureKeySuccess(response.body));
+            } catch (error) {
+                dispatch(listSecureKeyFailure(error.message));
+            }
+            break;
 
-      case UPDATE_SECUREKEY_REQUEST:
-        try {
-          const { id, SecureKey } = action.payload;
-          const response = updateSecureKey(id);
-          dispatch(updateSecureKeySuccess(response.body));
-        } catch (error) {
-          dispatch(updateSecureKeyFailure(error.message));
-        }
-        break;
 
-      case DELETE_SECUREKEY_REQUEST:
-        try {
-          const { id, SecureKey } = action.payload;
-          const response = deleteSecureKey(id);
-          dispatch(deleteSecureKeySuccess(response.body));
-        } catch (error) {
-          dispatch(deleteSecureKeyFailure(error.message));
-        }
-        break;
+        case FETCH_SECUREKEY_REQUEST:
+            try {
+                const response = getSecureKey(action.id);
+                dispatch(fetchSecureKeySuccess(response.body));
+            } catch (error) {
+                dispatch(fetchSecureKeyFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_SECUREKEY_REQUEST:
+            try {
+                const { id, SecureKey } = action.payload;
+                const response = updateSecureKey(id);
+                dispatch(updateSecureKeySuccess(response.body));
+            } catch (error) {
+                dispatch(updateSecureKeyFailure(error.message));
+            }
+            break;
+
+        case DELETE_SECUREKEY_REQUEST:
+            try {
+                const { id, SecureKey } = action.payload;
+                const response = deleteSecureKey(id);
+                dispatch(deleteSecureKeySuccess(response.body));
+            } catch (error) {
+                dispatch(deleteSecureKeyFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

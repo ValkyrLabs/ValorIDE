@@ -1,28 +1,36 @@
-import {
-  getPtgRef,
-  postPtgRef,
-  getPtgRefList,
-  deletePtgRef,
-  updatePtgRef,
-} from "../../api";
+
+import { 
+    getPtgRef, 
+    postPtgRef,
+    getPtgRefList , 
+    deletePtgRef , 
+    updatePtgRef 
+} from '../../api';
 
 import {
-  ADD_PTGREF_REQUEST,
-  FETCH_PTGREF_REQUEST,
-  LIST_PTGREF_REQUEST,
-  UPDATE_PTGREF_REQUEST,
-  DELETE_PTGREF_REQUEST,
-  addPtgRefFailure,
-  addPtgRefSuccess,
-  fetchPtgRefFailure,
-  fetchPtgRefSuccess,
-  listPtgRefFailure,
-  listPtgRefSuccess,
-  updatePtgRefFailure,
-  updatePtgRefSuccess,
-  deletePtgRefFailure,
-  deletePtgRefSuccess,
-} from "../actions/PtgRefApiAction";
+
+    ADD_PTGREF_REQUEST,
+    FETCH_PTGREF_REQUEST,
+    LIST_PTGREF_REQUEST,
+    UPDATE_PTGREF_REQUEST,
+    DELETE_PTGREF_REQUEST,
+
+    addPtgRefFailure,
+    addPtgRefSuccess,
+
+    fetchPtgRefFailure,
+    fetchPtgRefSuccess,
+    
+    listPtgRefFailure,
+    listPtgRefSuccess,
+
+    updatePtgRefFailure,
+    updatePtgRefSuccess,
+    
+    deletePtgRefFailure,
+    deletePtgRefSuccess,
+    
+} from '../actions/PtgRefApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: PtgRef
 */
 
-export const PtgRefMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("PtgRef MIDDLEWARE: " + JSON.stringify(action));
+export const PtgRefMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("PtgRef MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_PTGREF_REQUEST:
-        try {
-          const response = postPtgRef(action.payload);
-          dispatch(addPtgRefSuccess(response.body));
-        } catch (error) {
-          dispatch(addPtgRefFailure(error.message));
-        }
-        break;
 
-      case LIST_PTGREF_REQUEST:
-        try {
-          const response = getPtgRefList();
-          dispatch(listPtgRefSuccess(response.body));
-        } catch (error) {
-          dispatch(listPtgRefFailure(error.message));
-        }
-        break;
+        case ADD_PTGREF_REQUEST:
+            try {
+                const response = postPtgRef(action.payload);
+                dispatch(addPtgRefSuccess(response.body));
+            } catch (error) {
+                dispatch(addPtgRefFailure(error.message));
+            }
+            break;
 
-      case FETCH_PTGREF_REQUEST:
-        try {
-          const response = getPtgRef(action.id);
-          dispatch(fetchPtgRefSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchPtgRefFailure(error.message));
-        }
-        break;
+        case LIST_PTGREF_REQUEST:
+            try {
+                const response = getPtgRefList();
+                dispatch(listPtgRefSuccess(response.body));
+            } catch (error) {
+                dispatch(listPtgRefFailure(error.message));
+            }
+            break;
 
-      case UPDATE_PTGREF_REQUEST:
-        try {
-          const { id, PtgRef } = action.payload;
-          const response = updatePtgRef(id);
-          dispatch(updatePtgRefSuccess(response.body));
-        } catch (error) {
-          dispatch(updatePtgRefFailure(error.message));
-        }
-        break;
 
-      case DELETE_PTGREF_REQUEST:
-        try {
-          const { id, PtgRef } = action.payload;
-          const response = deletePtgRef(id);
-          dispatch(deletePtgRefSuccess(response.body));
-        } catch (error) {
-          dispatch(deletePtgRefFailure(error.message));
-        }
-        break;
+        case FETCH_PTGREF_REQUEST:
+            try {
+                const response = getPtgRef(action.id);
+                dispatch(fetchPtgRefSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchPtgRefFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_PTGREF_REQUEST:
+            try {
+                const { id, PtgRef } = action.payload;
+                const response = updatePtgRef(id);
+                dispatch(updatePtgRefSuccess(response.body));
+            } catch (error) {
+                dispatch(updatePtgRefFailure(error.message));
+            }
+            break;
+
+        case DELETE_PTGREF_REQUEST:
+            try {
+                const { id, PtgRef } = action.payload;
+                const response = deletePtgRef(id);
+                dispatch(deletePtgRefSuccess(response.body));
+            } catch (error) {
+                dispatch(deletePtgRefFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

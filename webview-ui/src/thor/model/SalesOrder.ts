@@ -11,15 +11,18 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime";
+import { exists, mapValues } from '../src/runtime';
 import {
-  Customer,
-  CustomerFromJSON,
-  CustomerToJSON,
-  LineItem,
-  LineItemFromJSON,
-  LineItemToJSON,
-} from "./";
+
+
+    Customer,
+    CustomerFromJSON,
+    CustomerToJSON,
+    LineItem,
+    LineItemFromJSON,
+    LineItemToJSON,
+} from './';
+
 
 // thorapi
 
@@ -28,212 +31,176 @@ import {
  * @export
  * @interface SalesOrder
  */
-export type SalesOrder = {
-  /**
-   * The customer who placed the order.
-   * @type {string}
-   * @memberof SalesOrder
-   */
-  customerId: string;
-  /**
-   *
-   * @type {number}
-   * @memberof SalesOrder
-   */
-  totalAmount: number;
-  /**
-   * the date this order was placed
-   * @type {Date}
-   * @memberof SalesOrder
-   */
-  orderDate: Date;
-  /**
-   *
-   * @type {string}
-   * @memberof SalesOrder
-   */
-  status: SalesOrderStatusEnum;
-  /**
-   *
-   * @type {Customer}
-   * @memberof SalesOrder
-   */
-  customer?: Customer;
-  /**
-   *
-   * @type {Array<LineItem>}
-   * @memberof SalesOrder
-   */
-  orderItems?: Array<LineItem>;
-  /**
-   *
-   * @type {Array<LineItem>}
-   * @memberof SalesOrder
-   */
-  orderDiscounts?: Array<LineItem>;
-  /**
-   *
-   * @type {number}
-   * @memberof SalesOrder
-   */
-  taxAmount?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof SalesOrder
-   */
-  subtotalAmount?: number;
-  /**
-   * the date this estimate or prices expire
-   * @type {Date}
-   * @memberof SalesOrder
-   */
-  expirationDate?: Date;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof SalesOrder
-   */
-  id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof SalesOrder
-   */
-  ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof SalesOrder
-   */
-  createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof SalesOrder
-   */
-  keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof SalesOrder
-   */
-  lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof SalesOrder
-   */
-  lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof SalesOrder
-   */
-  lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof SalesOrder
-   */
-  lastModifiedDate?: Date;
-};
+export type SalesOrder  = {
+    /**
+     * The customer who placed the order.
+     * @type {string}
+     * @memberof SalesOrder
+     */
+    customerId: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof SalesOrder
+     */
+    totalAmount: number;
+    /**
+     * the date this order was placed
+     * @type {Date}
+     * @memberof SalesOrder
+     */
+    orderDate: Date;
+    /**
+     * 
+     * @type {string}
+     * @memberof SalesOrder
+     */
+    status: SalesOrderStatusEnum;
+    /**
+     * 
+     * @type {Customer}
+     * @memberof SalesOrder
+     */
+    customer?: Customer;
+    /**
+     * 
+     * @type {Array<LineItem>}
+     * @memberof SalesOrder
+     */
+    orderItems?: Array<LineItem>;
+    /**
+     * 
+     * @type {Array<LineItem>}
+     * @memberof SalesOrder
+     */
+    orderDiscounts?: Array<LineItem>;
+    /**
+     * 
+     * @type {number}
+     * @memberof SalesOrder
+     */
+    taxAmount?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof SalesOrder
+     */
+    subtotalAmount?: number;
+    /**
+     * the date this estimate or prices expire
+     * @type {Date}
+     * @memberof SalesOrder
+     */
+    expirationDate?: Date;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof SalesOrder
+     */
+    id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof SalesOrder
+     */
+    ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof SalesOrder
+     */
+    createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof SalesOrder
+     */
+    keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof SalesOrder
+     */
+    lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof SalesOrder
+     */
+    lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof SalesOrder
+     */
+    lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof SalesOrder
+     */
+    lastModifiedDate?: Date;
+}
 
 export function SalesOrderFromJSON(json: any): SalesOrder {
-  return {
-    customerId: json["customerId"],
-    totalAmount: json["totalAmount"],
-    orderDate: new Date(json["orderDate"]),
-    status: json["status"],
-    customer: !exists(json, "customer")
-      ? undefined
-      : CustomerFromJSON(json["customer"]),
-    orderItems: !exists(json, "orderItems")
-      ? undefined
-      : (json["orderItems"] as Array<any>).map(LineItemFromJSON),
-    orderDiscounts: !exists(json, "orderDiscounts")
-      ? undefined
-      : (json["orderDiscounts"] as Array<any>).map(LineItemFromJSON),
-    taxAmount: !exists(json, "taxAmount") ? undefined : json["taxAmount"],
-    subtotalAmount: !exists(json, "subtotalAmount")
-      ? undefined
-      : json["subtotalAmount"],
-    expirationDate: !exists(json, "expirationDate")
-      ? undefined
-      : new Date(json["expirationDate"]),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-  };
+    return {
+        'customerId': json['customerId'],
+        'totalAmount': json['totalAmount'],
+        'orderDate': new Date(json['orderDate']),
+        'status': json['status'],
+        'customer': !exists(json, 'customer') ? undefined : CustomerFromJSON(json['customer']),
+        'orderItems': !exists(json, 'orderItems') ? undefined : (json['orderItems'] as Array<any>).map(LineItemFromJSON),
+        'orderDiscounts': !exists(json, 'orderDiscounts') ? undefined : (json['orderDiscounts'] as Array<any>).map(LineItemFromJSON),
+        'taxAmount': !exists(json, 'taxAmount') ? undefined : json['taxAmount'],
+        'subtotalAmount': !exists(json, 'subtotalAmount') ? undefined : json['subtotalAmount'],
+        'expirationDate': !exists(json, 'expirationDate') ? undefined : new Date(json['expirationDate']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+    };
 }
 
 export function SalesOrderToJSON(value?: SalesOrder): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    customerId: value.customerId,
-    totalAmount: value.totalAmount,
-    orderDate: value.orderDate.toISOString(),
-    status: value.status,
-    customer: CustomerToJSON(value.customer),
-    orderItems:
-      value.orderItems === undefined
-        ? undefined
-        : (value.orderItems as Array<any>).map(LineItemToJSON),
-    orderDiscounts:
-      value.orderDiscounts === undefined
-        ? undefined
-        : (value.orderDiscounts as Array<any>).map(LineItemToJSON),
-    taxAmount: value.taxAmount,
-    subtotalAmount: value.subtotalAmount,
-    expirationDate:
-      value.expirationDate === undefined
-        ? undefined
-        : value.expirationDate.toISOString(),
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        'customerId': value.customerId,
+        'totalAmount': value.totalAmount,
+        'orderDate': value.orderDate.toISOString(),
+        'status': value.status,
+        'customer': CustomerToJSON(value.customer),
+        'orderItems': value.orderItems === undefined ? undefined : (value.orderItems as Array<any>).map(LineItemToJSON),
+        'orderDiscounts': value.orderDiscounts === undefined ? undefined : (value.orderDiscounts as Array<any>).map(LineItemToJSON),
+        'taxAmount': value.taxAmount,
+        'subtotalAmount': value.subtotalAmount,
+        'expirationDate': value.expirationDate === undefined ? undefined : value.expirationDate.toISOString(),
+        'id': value.id,
+        'ownerId': value.ownerId,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'keyHash': value.keyHash,
+        'lastAccessedById': value.lastAccessedById,
+        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
+        'lastModifiedById': value.lastModifiedById,
+        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum SalesOrderStatusEnum {
-  SHOPPING = "shopping",
-  PENDING = "pending",
-  SHIPPED = "shipped",
-  DELIVERED = "delivered",
-  CANCELED = "canceled",
+    SHOPPING = 'shopping',
+    PENDING = 'pending',
+    SHIPPED = 'shipped',
+    DELIVERED = 'delivered',
+    CANCELED = 'canceled'
 }
+
+

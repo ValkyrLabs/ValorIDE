@@ -1,28 +1,36 @@
-import {
-  getOasRequired,
-  postOasRequired,
-  getOasRequiredList,
-  deleteOasRequired,
-  updateOasRequired,
-} from "../../api";
+
+import { 
+    getOasRequired, 
+    postOasRequired,
+    getOasRequiredList , 
+    deleteOasRequired , 
+    updateOasRequired 
+} from '../../api';
 
 import {
-  ADD_OASREQUIRED_REQUEST,
-  FETCH_OASREQUIRED_REQUEST,
-  LIST_OASREQUIRED_REQUEST,
-  UPDATE_OASREQUIRED_REQUEST,
-  DELETE_OASREQUIRED_REQUEST,
-  addOasRequiredFailure,
-  addOasRequiredSuccess,
-  fetchOasRequiredFailure,
-  fetchOasRequiredSuccess,
-  listOasRequiredFailure,
-  listOasRequiredSuccess,
-  updateOasRequiredFailure,
-  updateOasRequiredSuccess,
-  deleteOasRequiredFailure,
-  deleteOasRequiredSuccess,
-} from "../actions/OasRequiredApiAction";
+
+    ADD_OASREQUIRED_REQUEST,
+    FETCH_OASREQUIRED_REQUEST,
+    LIST_OASREQUIRED_REQUEST,
+    UPDATE_OASREQUIRED_REQUEST,
+    DELETE_OASREQUIRED_REQUEST,
+
+    addOasRequiredFailure,
+    addOasRequiredSuccess,
+
+    fetchOasRequiredFailure,
+    fetchOasRequiredSuccess,
+    
+    listOasRequiredFailure,
+    listOasRequiredSuccess,
+
+    updateOasRequiredFailure,
+    updateOasRequiredSuccess,
+    
+    deleteOasRequiredFailure,
+    deleteOasRequiredSuccess,
+    
+} from '../actions/OasRequiredApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: OasRequired
 */
 
-export const OasRequiredMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("OasRequired MIDDLEWARE: " + JSON.stringify(action));
+export const OasRequiredMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("OasRequired MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_OASREQUIRED_REQUEST:
-        try {
-          const response = postOasRequired(action.payload);
-          dispatch(addOasRequiredSuccess(response.body));
-        } catch (error) {
-          dispatch(addOasRequiredFailure(error.message));
-        }
-        break;
 
-      case LIST_OASREQUIRED_REQUEST:
-        try {
-          const response = getOasRequiredList();
-          dispatch(listOasRequiredSuccess(response.body));
-        } catch (error) {
-          dispatch(listOasRequiredFailure(error.message));
-        }
-        break;
+        case ADD_OASREQUIRED_REQUEST:
+            try {
+                const response = postOasRequired(action.payload);
+                dispatch(addOasRequiredSuccess(response.body));
+            } catch (error) {
+                dispatch(addOasRequiredFailure(error.message));
+            }
+            break;
 
-      case FETCH_OASREQUIRED_REQUEST:
-        try {
-          const response = getOasRequired(action.id);
-          dispatch(fetchOasRequiredSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchOasRequiredFailure(error.message));
-        }
-        break;
+        case LIST_OASREQUIRED_REQUEST:
+            try {
+                const response = getOasRequiredList();
+                dispatch(listOasRequiredSuccess(response.body));
+            } catch (error) {
+                dispatch(listOasRequiredFailure(error.message));
+            }
+            break;
 
-      case UPDATE_OASREQUIRED_REQUEST:
-        try {
-          const { id, OasRequired } = action.payload;
-          const response = updateOasRequired(id);
-          dispatch(updateOasRequiredSuccess(response.body));
-        } catch (error) {
-          dispatch(updateOasRequiredFailure(error.message));
-        }
-        break;
 
-      case DELETE_OASREQUIRED_REQUEST:
-        try {
-          const { id, OasRequired } = action.payload;
-          const response = deleteOasRequired(id);
-          dispatch(deleteOasRequiredSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteOasRequiredFailure(error.message));
-        }
-        break;
+        case FETCH_OASREQUIRED_REQUEST:
+            try {
+                const response = getOasRequired(action.id);
+                dispatch(fetchOasRequiredSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchOasRequiredFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_OASREQUIRED_REQUEST:
+            try {
+                const { id, OasRequired } = action.payload;
+                const response = updateOasRequired(id);
+                dispatch(updateOasRequiredSuccess(response.body));
+            } catch (error) {
+                dispatch(updateOasRequiredFailure(error.message));
+            }
+            break;
+
+        case DELETE_OASREQUIRED_REQUEST:
+            try {
+                const { id, OasRequired } = action.payload;
+                const response = deleteOasRequired(id);
+                dispatch(deleteOasRequiredSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteOasRequiredFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

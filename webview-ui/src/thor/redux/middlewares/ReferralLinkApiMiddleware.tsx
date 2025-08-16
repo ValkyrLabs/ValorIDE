@@ -1,28 +1,36 @@
-import {
-  getReferralLink,
-  postReferralLink,
-  getReferralLinkList,
-  deleteReferralLink,
-  updateReferralLink,
-} from "../../api";
+
+import { 
+    getReferralLink, 
+    postReferralLink,
+    getReferralLinkList , 
+    deleteReferralLink , 
+    updateReferralLink 
+} from '../../api';
 
 import {
-  ADD_REFERRALLINK_REQUEST,
-  FETCH_REFERRALLINK_REQUEST,
-  LIST_REFERRALLINK_REQUEST,
-  UPDATE_REFERRALLINK_REQUEST,
-  DELETE_REFERRALLINK_REQUEST,
-  addReferralLinkFailure,
-  addReferralLinkSuccess,
-  fetchReferralLinkFailure,
-  fetchReferralLinkSuccess,
-  listReferralLinkFailure,
-  listReferralLinkSuccess,
-  updateReferralLinkFailure,
-  updateReferralLinkSuccess,
-  deleteReferralLinkFailure,
-  deleteReferralLinkSuccess,
-} from "../actions/ReferralLinkApiAction";
+
+    ADD_REFERRALLINK_REQUEST,
+    FETCH_REFERRALLINK_REQUEST,
+    LIST_REFERRALLINK_REQUEST,
+    UPDATE_REFERRALLINK_REQUEST,
+    DELETE_REFERRALLINK_REQUEST,
+
+    addReferralLinkFailure,
+    addReferralLinkSuccess,
+
+    fetchReferralLinkFailure,
+    fetchReferralLinkSuccess,
+    
+    listReferralLinkFailure,
+    listReferralLinkSuccess,
+
+    updateReferralLinkFailure,
+    updateReferralLinkSuccess,
+    
+    deleteReferralLinkFailure,
+    deleteReferralLinkSuccess,
+    
+} from '../actions/ReferralLinkApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ReferralLink
 */
 
-export const ReferralLinkMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("ReferralLink MIDDLEWARE: " + JSON.stringify(action));
+export const ReferralLinkMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("ReferralLink MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_REFERRALLINK_REQUEST:
-        try {
-          const response = postReferralLink(action.payload);
-          dispatch(addReferralLinkSuccess(response.body));
-        } catch (error) {
-          dispatch(addReferralLinkFailure(error.message));
-        }
-        break;
 
-      case LIST_REFERRALLINK_REQUEST:
-        try {
-          const response = getReferralLinkList();
-          dispatch(listReferralLinkSuccess(response.body));
-        } catch (error) {
-          dispatch(listReferralLinkFailure(error.message));
-        }
-        break;
+        case ADD_REFERRALLINK_REQUEST:
+            try {
+                const response = postReferralLink(action.payload);
+                dispatch(addReferralLinkSuccess(response.body));
+            } catch (error) {
+                dispatch(addReferralLinkFailure(error.message));
+            }
+            break;
 
-      case FETCH_REFERRALLINK_REQUEST:
-        try {
-          const response = getReferralLink(action.id);
-          dispatch(fetchReferralLinkSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchReferralLinkFailure(error.message));
-        }
-        break;
+        case LIST_REFERRALLINK_REQUEST:
+            try {
+                const response = getReferralLinkList();
+                dispatch(listReferralLinkSuccess(response.body));
+            } catch (error) {
+                dispatch(listReferralLinkFailure(error.message));
+            }
+            break;
 
-      case UPDATE_REFERRALLINK_REQUEST:
-        try {
-          const { id, ReferralLink } = action.payload;
-          const response = updateReferralLink(id);
-          dispatch(updateReferralLinkSuccess(response.body));
-        } catch (error) {
-          dispatch(updateReferralLinkFailure(error.message));
-        }
-        break;
 
-      case DELETE_REFERRALLINK_REQUEST:
-        try {
-          const { id, ReferralLink } = action.payload;
-          const response = deleteReferralLink(id);
-          dispatch(deleteReferralLinkSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteReferralLinkFailure(error.message));
-        }
-        break;
+        case FETCH_REFERRALLINK_REQUEST:
+            try {
+                const response = getReferralLink(action.id);
+                dispatch(fetchReferralLinkSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchReferralLinkFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_REFERRALLINK_REQUEST:
+            try {
+                const { id, ReferralLink } = action.payload;
+                const response = updateReferralLink(id);
+                dispatch(updateReferralLinkSuccess(response.body));
+            } catch (error) {
+                dispatch(updateReferralLinkFailure(error.message));
+            }
+            break;
+
+        case DELETE_REFERRALLINK_REQUEST:
+            try {
+                const { id, ReferralLink } = action.payload;
+                const response = deleteReferralLink(id);
+                dispatch(deleteReferralLinkSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteReferralLinkFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

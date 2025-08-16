@@ -11,8 +11,15 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime";
-import { ChartSeries, ChartSeriesFromJSON, ChartSeriesToJSON } from "./";
+import { exists, mapValues } from '../src/runtime';
+import {
+
+
+    ChartSeries,
+    ChartSeriesFromJSON,
+    ChartSeriesToJSON,
+} from './';
+
 
 // thorapi
 
@@ -21,240 +28,212 @@ import { ChartSeries, ChartSeriesFromJSON, ChartSeriesToJSON } from "./";
  * @export
  * @interface Chart
  */
-export type Chart = {
-  /**
-   * The UUID of the sheet containing this chart.
-   * @type {string}
-   * @memberof Chart
-   */
-  sheetId?: string;
-  /**
-   * Internal name of the chart (like ChartHandle.getChartName()).
-   * @type {string}
-   * @memberof Chart
-   */
-  name?: string;
-  /**
-   * The type of chart, corresponding to ChartHandle chart type in OpenXLS.
-   * @type {string}
-   * @memberof Chart
-   */
-  chartType?: ChartChartTypeEnum;
-  /**
-   * The main title displayed on the chart.
-   * @type {string}
-   * @memberof Chart
-   */
-  title?: string;
-  /**
-   * Label for the X axis (if applicable).
-   * @type {string}
-   * @memberof Chart
-   */
-  axisLabelX?: string;
-  /**
-   * Label for the Y axis (if applicable).
-   * @type {string}
-   * @memberof Chart
-   */
-  axisLabelY?: string;
-  /**
-   * Cell range for the category (X) axis labels. Matches e.g. \"Sheet1!A2:A12\"
-   * @type {string}
-   * @memberof Chart
-   */
-  categoryRange?: string;
-  /**
-   * Data series definitions for this chart.
-   * @type {Array<ChartSeries>}
-   * @memberof Chart
-   */
-  series?: Array<ChartSeries>;
-  /**
-   * Whether chart is embedded in the sheet or is a separate chart sheet.
-   * @type {boolean}
-   * @memberof Chart
-   */
-  embedded?: boolean;
-  /**
-   * Top-left cell position where the chart is anchored if embedded.
-   * @type {string}
-   * @memberof Chart
-   */
-  anchorCell?: string;
-  /**
-   * Optional offset in pixels from the anchor cell horizontally.
-   * @type {number}
-   * @memberof Chart
-   */
-  anchorOffsetX?: number;
-  /**
-   * Optional offset in pixels from the anchor cell vertically.
-   * @type {number}
-   * @memberof Chart
-   */
-  anchorOffsetY?: number;
-  /**
-   * Width of the chart in pixels when embedded.
-   * @type {number}
-   * @memberof Chart
-   */
-  width?: number;
-  /**
-   * Height of the chart in pixels when embedded.
-   * @type {number}
-   * @memberof Chart
-   */
-  height?: number;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof Chart
-   */
-  id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof Chart
-   */
-  ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof Chart
-   */
-  createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof Chart
-   */
-  keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof Chart
-   */
-  lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof Chart
-   */
-  lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof Chart
-   */
-  lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof Chart
-   */
-  lastModifiedDate?: Date;
-};
+export type Chart  = {
+    /**
+     * The UUID of the sheet containing this chart.
+     * @type {string}
+     * @memberof Chart
+     */
+    sheetId?: string;
+    /**
+     * Internal name of the chart (like ChartHandle.getChartName()).
+     * @type {string}
+     * @memberof Chart
+     */
+    name?: string;
+    /**
+     * The type of chart, corresponding to ChartHandle chart type in OpenXLS.
+     * @type {string}
+     * @memberof Chart
+     */
+    chartType?: ChartChartTypeEnum;
+    /**
+     * The main title displayed on the chart.
+     * @type {string}
+     * @memberof Chart
+     */
+    title?: string;
+    /**
+     * Label for the X axis (if applicable).
+     * @type {string}
+     * @memberof Chart
+     */
+    axisLabelX?: string;
+    /**
+     * Label for the Y axis (if applicable).
+     * @type {string}
+     * @memberof Chart
+     */
+    axisLabelY?: string;
+    /**
+     * Cell range for the category (X) axis labels. Matches e.g. \"Sheet1!A2:A12\"
+     * @type {string}
+     * @memberof Chart
+     */
+    categoryRange?: string;
+    /**
+     * Data series definitions for this chart.
+     * @type {Array<ChartSeries>}
+     * @memberof Chart
+     */
+    series?: Array<ChartSeries>;
+    /**
+     * Whether chart is embedded in the sheet or is a separate chart sheet.
+     * @type {boolean}
+     * @memberof Chart
+     */
+    embedded?: boolean;
+    /**
+     * Top-left cell position where the chart is anchored if embedded.
+     * @type {string}
+     * @memberof Chart
+     */
+    anchorCell?: string;
+    /**
+     * Optional offset in pixels from the anchor cell horizontally.
+     * @type {number}
+     * @memberof Chart
+     */
+    anchorOffsetX?: number;
+    /**
+     * Optional offset in pixels from the anchor cell vertically.
+     * @type {number}
+     * @memberof Chart
+     */
+    anchorOffsetY?: number;
+    /**
+     * Width of the chart in pixels when embedded.
+     * @type {number}
+     * @memberof Chart
+     */
+    width?: number;
+    /**
+     * Height of the chart in pixels when embedded.
+     * @type {number}
+     * @memberof Chart
+     */
+    height?: number;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof Chart
+     */
+    id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof Chart
+     */
+    ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof Chart
+     */
+    createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof Chart
+     */
+    keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof Chart
+     */
+    lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof Chart
+     */
+    lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof Chart
+     */
+    lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof Chart
+     */
+    lastModifiedDate?: Date;
+}
 
 export function ChartFromJSON(json: any): Chart {
-  return {
-    sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
-    name: !exists(json, "name") ? undefined : json["name"],
-    chartType: !exists(json, "chartType") ? undefined : json["chartType"],
-    title: !exists(json, "title") ? undefined : json["title"],
-    axisLabelX: !exists(json, "axisLabelX") ? undefined : json["axisLabelX"],
-    axisLabelY: !exists(json, "axisLabelY") ? undefined : json["axisLabelY"],
-    categoryRange: !exists(json, "categoryRange")
-      ? undefined
-      : json["categoryRange"],
-    series: !exists(json, "series")
-      ? undefined
-      : (json["series"] as Array<any>).map(ChartSeriesFromJSON),
-    embedded: !exists(json, "embedded") ? undefined : json["embedded"],
-    anchorCell: !exists(json, "anchorCell") ? undefined : json["anchorCell"],
-    anchorOffsetX: !exists(json, "anchorOffsetX")
-      ? undefined
-      : json["anchorOffsetX"],
-    anchorOffsetY: !exists(json, "anchorOffsetY")
-      ? undefined
-      : json["anchorOffsetY"],
-    width: !exists(json, "width") ? undefined : json["width"],
-    height: !exists(json, "height") ? undefined : json["height"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-  };
+    return {
+        'sheetId': !exists(json, 'sheetId') ? undefined : json['sheetId'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'chartType': !exists(json, 'chartType') ? undefined : json['chartType'],
+        'title': !exists(json, 'title') ? undefined : json['title'],
+        'axisLabelX': !exists(json, 'axisLabelX') ? undefined : json['axisLabelX'],
+        'axisLabelY': !exists(json, 'axisLabelY') ? undefined : json['axisLabelY'],
+        'categoryRange': !exists(json, 'categoryRange') ? undefined : json['categoryRange'],
+        'series': !exists(json, 'series') ? undefined : (json['series'] as Array<any>).map(ChartSeriesFromJSON),
+        'embedded': !exists(json, 'embedded') ? undefined : json['embedded'],
+        'anchorCell': !exists(json, 'anchorCell') ? undefined : json['anchorCell'],
+        'anchorOffsetX': !exists(json, 'anchorOffsetX') ? undefined : json['anchorOffsetX'],
+        'anchorOffsetY': !exists(json, 'anchorOffsetY') ? undefined : json['anchorOffsetY'],
+        'width': !exists(json, 'width') ? undefined : json['width'],
+        'height': !exists(json, 'height') ? undefined : json['height'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+    };
 }
 
 export function ChartToJSON(value?: Chart): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    sheetId: value.sheetId,
-    name: value.name,
-    chartType: value.chartType,
-    title: value.title,
-    axisLabelX: value.axisLabelX,
-    axisLabelY: value.axisLabelY,
-    categoryRange: value.categoryRange,
-    series:
-      value.series === undefined
-        ? undefined
-        : (value.series as Array<any>).map(ChartSeriesToJSON),
-    embedded: value.embedded,
-    anchorCell: value.anchorCell,
-    anchorOffsetX: value.anchorOffsetX,
-    anchorOffsetY: value.anchorOffsetY,
-    width: value.width,
-    height: value.height,
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        'sheetId': value.sheetId,
+        'name': value.name,
+        'chartType': value.chartType,
+        'title': value.title,
+        'axisLabelX': value.axisLabelX,
+        'axisLabelY': value.axisLabelY,
+        'categoryRange': value.categoryRange,
+        'series': value.series === undefined ? undefined : (value.series as Array<any>).map(ChartSeriesToJSON),
+        'embedded': value.embedded,
+        'anchorCell': value.anchorCell,
+        'anchorOffsetX': value.anchorOffsetX,
+        'anchorOffsetY': value.anchorOffsetY,
+        'width': value.width,
+        'height': value.height,
+        'id': value.id,
+        'ownerId': value.ownerId,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'keyHash': value.keyHash,
+        'lastAccessedById': value.lastAccessedById,
+        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
+        'lastModifiedById': value.lastModifiedById,
+        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum ChartChartTypeEnum {
-  AREA = "area",
-  BAR = "bar",
-  COLUMN = "column",
-  LINE = "line",
-  PIE = "pie",
-  SCATTER = "scatter",
-  RADAR = "radar",
-  DOUGHNUT = "doughnut",
-  STOCK = "stock",
+    AREA = 'area',
+    BAR = 'bar',
+    COLUMN = 'column',
+    LINE = 'line',
+    PIE = 'pie',
+    SCATTER = 'scatter',
+    RADAR = 'radar',
+    DOUGHNUT = 'doughnut',
+    STOCK = 'stock'
 }
+
+

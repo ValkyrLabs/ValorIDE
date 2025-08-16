@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ThorUXMeta } from "../../model/ThorUXMeta";
+import { ThorUXMeta } from '../../model/ThorUXMeta';
 
 const ThorUXMetaSlice = createSlice({
   name: "ThorUXMetas",
@@ -12,23 +12,20 @@ const ThorUXMetaSlice = createSlice({
     },
 
     ThorUXMetaValueToggled(state, action) {
-      console.log("ThorUXMeta TOGGLE");
-      console.warn(JSON.stringify(action));
-      const ThorUXMeta: ThorUXMeta = state.find(
-        (ThorUXMeta) => ThorUXMeta.id === action.payload.ThorUXMetaId,
-      );
+      console.log("ThorUXMeta TOGGLE")
+      console.warn(JSON.stringify(action))
+      const ThorUXMeta:ThorUXMeta = state.find((ThorUXMeta) => ThorUXMeta.id === action.payload.ThorUXMetaId);
       if (ThorUXMeta) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     ThorUXMetapropertySet(state, action) {
-      const ThorUXMeta = state.find(
-        (ThorUXMeta) => ThorUXMeta.id === action.payload.ThorUXMetaId,
-      );
+      const ThorUXMeta = state.find((ThorUXMeta) => ThorUXMeta.id === action.payload.ThorUXMetaId);
       if (ThorUXMeta) {
-        //  ThorUXMeta[action.property] = action.payload[action.property];
+      //  ThorUXMeta[action.property] = action.payload[action.property];
       }
     },
   },
@@ -37,6 +34,6 @@ const ThorUXMetaSlice = createSlice({
 export const {
   ThorUXMetaAdded,
   ThorUXMetaValueToggled,
-  ThorUXMetapropertySet,
+  ThorUXMetapropertySet
 } = ThorUXMetaSlice.actions;
 export default ThorUXMetaSlice.reducer;

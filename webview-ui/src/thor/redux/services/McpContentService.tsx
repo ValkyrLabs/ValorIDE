@@ -1,25 +1,22 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { McpContent } from "../../model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { McpContent } from '../../model'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type McpContentResponse = McpContent[];
+type McpContentResponse = McpContent[]
 
 export const McpContentService = createApi({
-  reducerPath: "McpContent", // This should remain unique
+  reducerPath: 'McpContent', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["McpContent"],
+  tagTypes: ['McpContent'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getMcpContentsPaged: build.query<
-      McpContentResponse,
-      { page: number; limit?: number }
-    >({
+    getMcpContentsPaged: build.query<McpContentResponse, { page: number; limit?: number }>({
       query: ({ page, limit = 20 }) => `McpContent?page=${page}&limit=${limit}`,
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "McpContent" as const, id })),
-              { type: "McpContent", id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: 'McpContent' as const, id })),
+              { type: 'McpContent', id: `PAGE_${page}` },
             ]
           : [],
     }),
@@ -30,57 +27,50 @@ export const McpContentService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "McpContent" as const, id })),
-              { type: "McpContent", id: "LIST" },
+              ...result.map(({ id }) => ({ type: 'McpContent' as const, id })),
+              { type: 'McpContent', id: 'LIST' },
             ]
-          : [{ type: "McpContent", id: "LIST" }],
+          : [{ type: 'McpContent', id: 'LIST' }],
     }),
 
     // 3) Create
     addMcpContent: build.mutation<McpContent, Partial<McpContent>>({
       query: (body) => ({
         url: `McpContent`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "McpContent", id: "LIST" }],
+      invalidatesTags: [{ type: 'McpContent', id: 'LIST' }],
     }),
 
     // 4) Get single by ID
     getMcpContent: build.query<McpContent, string>({
       query: (id) => `McpContent/${id}`,
-      providesTags: (result, error, id) => [{ type: "McpContent", id }],
+      providesTags: (result, error, id) => [{ type: 'McpContent', id }],
     }),
 
     // 5) Update
-    updateMcpContent: build.mutation<
-      void,
-      Pick<McpContent, "id"> & Partial<McpContent>
-    >({
+    updateMcpContent: build.mutation<void, Pick<McpContent, 'id'> & Partial<McpContent>>({
       query: ({ id, ...patch }) => ({
         url: `McpContent/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            McpContentService.util.updateQueryData(
-              "getMcpContent",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
+            McpContentService.util.updateQueryData('getMcpContent', id, (draft) => {
+              Object.assign(draft, patch)
+            })
+          )
           try {
-            await queryFulfilled;
+            await queryFulfilled
           } catch {
-            patchResult.undo();
+            patchResult.undo()
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: "McpContent", id }],
+      invalidatesTags: (result, error, { id }) => [{ type: 'McpContent', id }],
     }),
 
     // 6) Delete
@@ -88,21 +78,21 @@ export const McpContentService = createApi({
       query(id) {
         return {
           url: `McpContent/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "McpContent", id }],
+      invalidatesTags: (result, error, id) => [{ type: 'McpContent', id }],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetMcpContentsPagedQuery`
 export const {
-  useGetMcpContentsPagedQuery, // immediate fetch
+  useGetMcpContentsPagedQuery,     // immediate fetch
   useLazyGetMcpContentsPagedQuery, // lazy fetch
   useGetMcpContentQuery,
   useGetMcpContentsQuery,
   useAddMcpContentMutation,
   useUpdateMcpContentMutation,
   useDeleteMcpContentMutation,
-} = McpContentService;
+} = McpContentService

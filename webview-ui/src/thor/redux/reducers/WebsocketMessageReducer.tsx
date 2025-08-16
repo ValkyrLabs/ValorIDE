@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WebsocketMessage } from "../../model/WebsocketMessage";
+import { WebsocketMessage } from '../../model/WebsocketMessage';
 
 const WebsocketMessageSlice = createSlice({
   name: "WebsocketMessages",
@@ -12,25 +12,20 @@ const WebsocketMessageSlice = createSlice({
     },
 
     WebsocketMessageValueToggled(state, action) {
-      console.log("WebsocketMessage TOGGLE");
-      console.warn(JSON.stringify(action));
-      const WebsocketMessage: WebsocketMessage = state.find(
-        (WebsocketMessage) =>
-          WebsocketMessage.id === action.payload.WebsocketMessageId,
-      );
+      console.log("WebsocketMessage TOGGLE")
+      console.warn(JSON.stringify(action))
+      const WebsocketMessage:WebsocketMessage = state.find((WebsocketMessage) => WebsocketMessage.id === action.payload.WebsocketMessageId);
       if (WebsocketMessage) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     WebsocketMessagepropertySet(state, action) {
-      const WebsocketMessage = state.find(
-        (WebsocketMessage) =>
-          WebsocketMessage.id === action.payload.WebsocketMessageId,
-      );
+      const WebsocketMessage = state.find((WebsocketMessage) => WebsocketMessage.id === action.payload.WebsocketMessageId);
       if (WebsocketMessage) {
-        //  WebsocketMessage[action.property] = action.payload[action.property];
+      //  WebsocketMessage[action.property] = action.payload[action.property];
       }
     },
   },
@@ -39,6 +34,6 @@ const WebsocketMessageSlice = createSlice({
 export const {
   WebsocketMessageAdded,
   WebsocketMessageValueToggled,
-  WebsocketMessagepropertySet,
+  WebsocketMessagepropertySet
 } = WebsocketMessageSlice.actions;
 export default WebsocketMessageSlice.reducer;

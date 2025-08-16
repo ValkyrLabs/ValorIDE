@@ -1,28 +1,36 @@
-import {
-  getAddress,
-  postAddress,
-  getAddressList,
-  deleteAddress,
-  updateAddress,
-} from "../../api";
+
+import { 
+    getAddress, 
+    postAddress,
+    getAddressList , 
+    deleteAddress , 
+    updateAddress 
+} from '../../api';
 
 import {
-  ADD_ADDRESS_REQUEST,
-  FETCH_ADDRESS_REQUEST,
-  LIST_ADDRESS_REQUEST,
-  UPDATE_ADDRESS_REQUEST,
-  DELETE_ADDRESS_REQUEST,
-  addAddressFailure,
-  addAddressSuccess,
-  fetchAddressFailure,
-  fetchAddressSuccess,
-  listAddressFailure,
-  listAddressSuccess,
-  updateAddressFailure,
-  updateAddressSuccess,
-  deleteAddressFailure,
-  deleteAddressSuccess,
-} from "../actions/AddressApiAction";
+
+    ADD_ADDRESS_REQUEST,
+    FETCH_ADDRESS_REQUEST,
+    LIST_ADDRESS_REQUEST,
+    UPDATE_ADDRESS_REQUEST,
+    DELETE_ADDRESS_REQUEST,
+
+    addAddressFailure,
+    addAddressSuccess,
+
+    fetchAddressFailure,
+    fetchAddressSuccess,
+    
+    listAddressFailure,
+    listAddressSuccess,
+
+    updateAddressFailure,
+    updateAddressSuccess,
+    
+    deleteAddressFailure,
+    deleteAddressSuccess,
+    
+} from '../actions/AddressApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Address
 */
 
-export const AddressMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Address MIDDLEWARE: " + JSON.stringify(action));
+export const AddressMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Address MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_ADDRESS_REQUEST:
-        try {
-          const response = postAddress(action.payload);
-          dispatch(addAddressSuccess(response.body));
-        } catch (error) {
-          dispatch(addAddressFailure(error.message));
-        }
-        break;
 
-      case LIST_ADDRESS_REQUEST:
-        try {
-          const response = getAddressList();
-          dispatch(listAddressSuccess(response.body));
-        } catch (error) {
-          dispatch(listAddressFailure(error.message));
-        }
-        break;
+        case ADD_ADDRESS_REQUEST:
+            try {
+                const response = postAddress(action.payload);
+                dispatch(addAddressSuccess(response.body));
+            } catch (error) {
+                dispatch(addAddressFailure(error.message));
+            }
+            break;
 
-      case FETCH_ADDRESS_REQUEST:
-        try {
-          const response = getAddress(action.id);
-          dispatch(fetchAddressSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchAddressFailure(error.message));
-        }
-        break;
+        case LIST_ADDRESS_REQUEST:
+            try {
+                const response = getAddressList();
+                dispatch(listAddressSuccess(response.body));
+            } catch (error) {
+                dispatch(listAddressFailure(error.message));
+            }
+            break;
 
-      case UPDATE_ADDRESS_REQUEST:
-        try {
-          const { id, Address } = action.payload;
-          const response = updateAddress(id);
-          dispatch(updateAddressSuccess(response.body));
-        } catch (error) {
-          dispatch(updateAddressFailure(error.message));
-        }
-        break;
 
-      case DELETE_ADDRESS_REQUEST:
-        try {
-          const { id, Address } = action.payload;
-          const response = deleteAddress(id);
-          dispatch(deleteAddressSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteAddressFailure(error.message));
-        }
-        break;
+        case FETCH_ADDRESS_REQUEST:
+            try {
+                const response = getAddress(action.id);
+                dispatch(fetchAddressSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchAddressFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_ADDRESS_REQUEST:
+            try {
+                const { id, Address } = action.payload;
+                const response = updateAddress(id);
+                dispatch(updateAddressSuccess(response.body));
+            } catch (error) {
+                dispatch(updateAddressFailure(error.message));
+            }
+            break;
+
+        case DELETE_ADDRESS_REQUEST:
+            try {
+                const { id, Address } = action.payload;
+                const response = deleteAddress(id);
+                dispatch(deleteAddressSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteAddressFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

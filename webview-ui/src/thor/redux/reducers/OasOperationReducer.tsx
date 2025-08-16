@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasOperation } from "../../model/OasOperation";
+import { OasOperation } from '../../model/OasOperation';
 
 const OasOperationSlice = createSlice({
   name: "OasOperations",
@@ -12,23 +12,20 @@ const OasOperationSlice = createSlice({
     },
 
     OasOperationValueToggled(state, action) {
-      console.log("OasOperation TOGGLE");
-      console.warn(JSON.stringify(action));
-      const OasOperation: OasOperation = state.find(
-        (OasOperation) => OasOperation.id === action.payload.OasOperationId,
-      );
+      console.log("OasOperation TOGGLE")
+      console.warn(JSON.stringify(action))
+      const OasOperation:OasOperation = state.find((OasOperation) => OasOperation.id === action.payload.OasOperationId);
       if (OasOperation) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     OasOperationpropertySet(state, action) {
-      const OasOperation = state.find(
-        (OasOperation) => OasOperation.id === action.payload.OasOperationId,
-      );
+      const OasOperation = state.find((OasOperation) => OasOperation.id === action.payload.OasOperationId);
       if (OasOperation) {
-        //  OasOperation[action.property] = action.payload[action.property];
+      //  OasOperation[action.property] = action.payload[action.property];
       }
     },
   },
@@ -37,6 +34,6 @@ const OasOperationSlice = createSlice({
 export const {
   OasOperationAdded,
   OasOperationValueToggled,
-  OasOperationpropertySet,
+  OasOperationpropertySet
 } = OasOperationSlice.actions;
 export default OasOperationSlice.reducer;

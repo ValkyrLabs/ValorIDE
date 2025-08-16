@@ -1,28 +1,36 @@
-import {
-  getMcpServer,
-  postMcpServer,
-  getMcpServerList,
-  deleteMcpServer,
-  updateMcpServer,
-} from "../../api";
+
+import { 
+    getMcpServer, 
+    postMcpServer,
+    getMcpServerList , 
+    deleteMcpServer , 
+    updateMcpServer 
+} from '../../api';
 
 import {
-  ADD_MCPSERVER_REQUEST,
-  FETCH_MCPSERVER_REQUEST,
-  LIST_MCPSERVER_REQUEST,
-  UPDATE_MCPSERVER_REQUEST,
-  DELETE_MCPSERVER_REQUEST,
-  addMcpServerFailure,
-  addMcpServerSuccess,
-  fetchMcpServerFailure,
-  fetchMcpServerSuccess,
-  listMcpServerFailure,
-  listMcpServerSuccess,
-  updateMcpServerFailure,
-  updateMcpServerSuccess,
-  deleteMcpServerFailure,
-  deleteMcpServerSuccess,
-} from "../actions/McpServerApiAction";
+
+    ADD_MCPSERVER_REQUEST,
+    FETCH_MCPSERVER_REQUEST,
+    LIST_MCPSERVER_REQUEST,
+    UPDATE_MCPSERVER_REQUEST,
+    DELETE_MCPSERVER_REQUEST,
+
+    addMcpServerFailure,
+    addMcpServerSuccess,
+
+    fetchMcpServerFailure,
+    fetchMcpServerSuccess,
+    
+    listMcpServerFailure,
+    listMcpServerSuccess,
+
+    updateMcpServerFailure,
+    updateMcpServerSuccess,
+    
+    deleteMcpServerFailure,
+    deleteMcpServerSuccess,
+    
+} from '../actions/McpServerApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpServer
 */
 
-export const McpServerMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("McpServer MIDDLEWARE: " + JSON.stringify(action));
+export const McpServerMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("McpServer MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_MCPSERVER_REQUEST:
-        try {
-          const response = postMcpServer(action.payload);
-          dispatch(addMcpServerSuccess(response.body));
-        } catch (error) {
-          dispatch(addMcpServerFailure(error.message));
-        }
-        break;
 
-      case LIST_MCPSERVER_REQUEST:
-        try {
-          const response = getMcpServerList();
-          dispatch(listMcpServerSuccess(response.body));
-        } catch (error) {
-          dispatch(listMcpServerFailure(error.message));
-        }
-        break;
+        case ADD_MCPSERVER_REQUEST:
+            try {
+                const response = postMcpServer(action.payload);
+                dispatch(addMcpServerSuccess(response.body));
+            } catch (error) {
+                dispatch(addMcpServerFailure(error.message));
+            }
+            break;
 
-      case FETCH_MCPSERVER_REQUEST:
-        try {
-          const response = getMcpServer(action.id);
-          dispatch(fetchMcpServerSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchMcpServerFailure(error.message));
-        }
-        break;
+        case LIST_MCPSERVER_REQUEST:
+            try {
+                const response = getMcpServerList();
+                dispatch(listMcpServerSuccess(response.body));
+            } catch (error) {
+                dispatch(listMcpServerFailure(error.message));
+            }
+            break;
 
-      case UPDATE_MCPSERVER_REQUEST:
-        try {
-          const { id, McpServer } = action.payload;
-          const response = updateMcpServer(id);
-          dispatch(updateMcpServerSuccess(response.body));
-        } catch (error) {
-          dispatch(updateMcpServerFailure(error.message));
-        }
-        break;
 
-      case DELETE_MCPSERVER_REQUEST:
-        try {
-          const { id, McpServer } = action.payload;
-          const response = deleteMcpServer(id);
-          dispatch(deleteMcpServerSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteMcpServerFailure(error.message));
-        }
-        break;
+        case FETCH_MCPSERVER_REQUEST:
+            try {
+                const response = getMcpServer(action.id);
+                dispatch(fetchMcpServerSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchMcpServerFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_MCPSERVER_REQUEST:
+            try {
+                const { id, McpServer } = action.payload;
+                const response = updateMcpServer(id);
+                dispatch(updateMcpServerSuccess(response.body));
+            } catch (error) {
+                dispatch(updateMcpServerFailure(error.message));
+            }
+            break;
+
+        case DELETE_MCPSERVER_REQUEST:
+            try {
+                const { id, McpServer } = action.payload;
+                const response = deleteMcpServer(id);
+                dispatch(deleteMcpServerSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteMcpServerFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

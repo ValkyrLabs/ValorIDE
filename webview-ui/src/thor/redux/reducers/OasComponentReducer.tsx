@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasComponent } from "../../model/OasComponent";
+import { OasComponent } from '../../model/OasComponent';
 
 const OasComponentSlice = createSlice({
   name: "OasComponents",
@@ -12,23 +12,20 @@ const OasComponentSlice = createSlice({
     },
 
     OasComponentValueToggled(state, action) {
-      console.log("OasComponent TOGGLE");
-      console.warn(JSON.stringify(action));
-      const OasComponent: OasComponent = state.find(
-        (OasComponent) => OasComponent.id === action.payload.OasComponentId,
-      );
+      console.log("OasComponent TOGGLE")
+      console.warn(JSON.stringify(action))
+      const OasComponent:OasComponent = state.find((OasComponent) => OasComponent.id === action.payload.OasComponentId);
       if (OasComponent) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     OasComponentpropertySet(state, action) {
-      const OasComponent = state.find(
-        (OasComponent) => OasComponent.id === action.payload.OasComponentId,
-      );
+      const OasComponent = state.find((OasComponent) => OasComponent.id === action.payload.OasComponentId);
       if (OasComponent) {
-        //  OasComponent[action.property] = action.payload[action.property];
+      //  OasComponent[action.property] = action.payload[action.property];
       }
     },
   },
@@ -37,6 +34,6 @@ const OasComponentSlice = createSlice({
 export const {
   OasComponentAdded,
   OasComponentValueToggled,
-  OasComponentpropertySet,
+  OasComponentpropertySet
 } = OasComponentSlice.actions;
 export default OasComponentSlice.reducer;

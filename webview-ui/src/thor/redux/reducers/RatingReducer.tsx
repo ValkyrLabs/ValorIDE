@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Rating } from "../../model/Rating";
+import { Rating } from '../../model/Rating';
 
 const RatingSlice = createSlice({
   name: "Ratings",
@@ -12,28 +12,28 @@ const RatingSlice = createSlice({
     },
 
     RatingValueToggled(state, action) {
-      console.log("Rating TOGGLE");
-      console.warn(JSON.stringify(action));
-      const Rating: Rating = state.find(
-        (Rating) => Rating.id === action.payload.RatingId,
-      );
+      console.log("Rating TOGGLE")
+      console.warn(JSON.stringify(action))
+      const Rating:Rating = state.find((Rating) => Rating.id === action.payload.RatingId);
       if (Rating) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     RatingpropertySet(state, action) {
-      const Rating = state.find(
-        (Rating) => Rating.id === action.payload.RatingId,
-      );
+      const Rating = state.find((Rating) => Rating.id === action.payload.RatingId);
       if (Rating) {
-        //  Rating[action.property] = action.payload[action.property];
+      //  Rating[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const { RatingAdded, RatingValueToggled, RatingpropertySet } =
-  RatingSlice.actions;
+export const {
+  RatingAdded,
+  RatingValueToggled,
+  RatingpropertySet
+} = RatingSlice.actions;
 export default RatingSlice.reducer;

@@ -1,25 +1,22 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { SalesOrder } from "../../model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { SalesOrder } from '../../model'
+import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
-type SalesOrderResponse = SalesOrder[];
+type SalesOrderResponse = SalesOrder[]
 
 export const SalesOrderService = createApi({
-  reducerPath: "SalesOrder", // This should remain unique
+  reducerPath: 'SalesOrder', // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ["SalesOrder"],
+  tagTypes: ['SalesOrder'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getSalesOrdersPaged: build.query<
-      SalesOrderResponse,
-      { page: number; limit?: number }
-    >({
+    getSalesOrdersPaged: build.query<SalesOrderResponse, { page: number; limit?: number }>({
       query: ({ page, limit = 20 }) => `SalesOrder?page=${page}&limit=${limit}`,
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "SalesOrder" as const, id })),
-              { type: "SalesOrder", id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: 'SalesOrder' as const, id })),
+              { type: 'SalesOrder', id: `PAGE_${page}` },
             ]
           : [],
     }),
@@ -30,57 +27,50 @@ export const SalesOrderService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "SalesOrder" as const, id })),
-              { type: "SalesOrder", id: "LIST" },
+              ...result.map(({ id }) => ({ type: 'SalesOrder' as const, id })),
+              { type: 'SalesOrder', id: 'LIST' },
             ]
-          : [{ type: "SalesOrder", id: "LIST" }],
+          : [{ type: 'SalesOrder', id: 'LIST' }],
     }),
 
     // 3) Create
     addSalesOrder: build.mutation<SalesOrder, Partial<SalesOrder>>({
       query: (body) => ({
         url: `SalesOrder`,
-        method: "POST",
+        method: 'POST',
         body,
       }),
-      invalidatesTags: [{ type: "SalesOrder", id: "LIST" }],
+      invalidatesTags: [{ type: 'SalesOrder', id: 'LIST' }],
     }),
 
     // 4) Get single by ID
     getSalesOrder: build.query<SalesOrder, string>({
       query: (id) => `SalesOrder/${id}`,
-      providesTags: (result, error, id) => [{ type: "SalesOrder", id }],
+      providesTags: (result, error, id) => [{ type: 'SalesOrder', id }],
     }),
 
     // 5) Update
-    updateSalesOrder: build.mutation<
-      void,
-      Pick<SalesOrder, "id"> & Partial<SalesOrder>
-    >({
+    updateSalesOrder: build.mutation<void, Pick<SalesOrder, 'id'> & Partial<SalesOrder>>({
       query: ({ id, ...patch }) => ({
         url: `SalesOrder/${id}`,
-        method: "PUT",
+        method: 'PUT',
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SalesOrderService.util.updateQueryData(
-              "getSalesOrder",
-              id,
-              (draft) => {
-                Object.assign(draft, patch);
-              },
-            ),
-          );
+            SalesOrderService.util.updateQueryData('getSalesOrder', id, (draft) => {
+              Object.assign(draft, patch)
+            })
+          )
           try {
-            await queryFulfilled;
+            await queryFulfilled
           } catch {
-            patchResult.undo();
+            patchResult.undo()
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: "SalesOrder", id }],
+      invalidatesTags: (result, error, { id }) => [{ type: 'SalesOrder', id }],
     }),
 
     // 6) Delete
@@ -88,21 +78,21 @@ export const SalesOrderService = createApi({
       query(id) {
         return {
           url: `SalesOrder/${id}`,
-          method: "DELETE",
-        };
+          method: 'DELETE',
+        }
       },
-      invalidatesTags: (result, error, id) => [{ type: "SalesOrder", id }],
+      invalidatesTags: (result, error, id) => [{ type: 'SalesOrder', id }],
     }),
   }),
-});
+})
 
 // Notice we now also export `useLazyGetSalesOrdersPagedQuery`
 export const {
-  useGetSalesOrdersPagedQuery, // immediate fetch
+  useGetSalesOrdersPagedQuery,     // immediate fetch
   useLazyGetSalesOrdersPagedQuery, // lazy fetch
   useGetSalesOrderQuery,
   useGetSalesOrdersQuery,
   useAddSalesOrderMutation,
   useUpdateSalesOrderMutation,
   useDeleteSalesOrderMutation,
-} = SalesOrderService;
+} = SalesOrderService

@@ -84,6 +84,7 @@ export interface WebviewMessage {
     | "streamToThorapi"
     | "openFileExplorerTab"
     | "getThorapiFolderContents"
+    | "uploadOpenAPISpec"
     | "openFile";
 
   // | "relaunchChromeDebugMode"
@@ -139,6 +140,9 @@ export interface WebviewMessage {
   blobData?: string; // Base64 encoded blob data
   applicationId?: string;
   applicationName?: string; // User-friendly name for folder creation
+  // For uploadOpenAPISpec
+  fileContent?: string;
+  fileSize?: number;
 }
 
 export type ValorIDEAskResponse =

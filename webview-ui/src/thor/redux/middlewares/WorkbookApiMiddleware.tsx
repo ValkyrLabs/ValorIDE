@@ -1,28 +1,36 @@
-import {
-  getWorkbook,
-  postWorkbook,
-  getWorkbookList,
-  deleteWorkbook,
-  updateWorkbook,
-} from "../../api";
+
+import { 
+    getWorkbook, 
+    postWorkbook,
+    getWorkbookList , 
+    deleteWorkbook , 
+    updateWorkbook 
+} from '../../api';
 
 import {
-  ADD_WORKBOOK_REQUEST,
-  FETCH_WORKBOOK_REQUEST,
-  LIST_WORKBOOK_REQUEST,
-  UPDATE_WORKBOOK_REQUEST,
-  DELETE_WORKBOOK_REQUEST,
-  addWorkbookFailure,
-  addWorkbookSuccess,
-  fetchWorkbookFailure,
-  fetchWorkbookSuccess,
-  listWorkbookFailure,
-  listWorkbookSuccess,
-  updateWorkbookFailure,
-  updateWorkbookSuccess,
-  deleteWorkbookFailure,
-  deleteWorkbookSuccess,
-} from "../actions/WorkbookApiAction";
+
+    ADD_WORKBOOK_REQUEST,
+    FETCH_WORKBOOK_REQUEST,
+    LIST_WORKBOOK_REQUEST,
+    UPDATE_WORKBOOK_REQUEST,
+    DELETE_WORKBOOK_REQUEST,
+
+    addWorkbookFailure,
+    addWorkbookSuccess,
+
+    fetchWorkbookFailure,
+    fetchWorkbookSuccess,
+    
+    listWorkbookFailure,
+    listWorkbookSuccess,
+
+    updateWorkbookFailure,
+    updateWorkbookSuccess,
+    
+    deleteWorkbookFailure,
+    deleteWorkbookSuccess,
+    
+} from '../actions/WorkbookApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Workbook
 */
 
-export const WorkbookMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Workbook MIDDLEWARE: " + JSON.stringify(action));
+export const WorkbookMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Workbook MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_WORKBOOK_REQUEST:
-        try {
-          const response = postWorkbook(action.payload);
-          dispatch(addWorkbookSuccess(response.body));
-        } catch (error) {
-          dispatch(addWorkbookFailure(error.message));
-        }
-        break;
 
-      case LIST_WORKBOOK_REQUEST:
-        try {
-          const response = getWorkbookList();
-          dispatch(listWorkbookSuccess(response.body));
-        } catch (error) {
-          dispatch(listWorkbookFailure(error.message));
-        }
-        break;
+        case ADD_WORKBOOK_REQUEST:
+            try {
+                const response = postWorkbook(action.payload);
+                dispatch(addWorkbookSuccess(response.body));
+            } catch (error) {
+                dispatch(addWorkbookFailure(error.message));
+            }
+            break;
 
-      case FETCH_WORKBOOK_REQUEST:
-        try {
-          const response = getWorkbook(action.id);
-          dispatch(fetchWorkbookSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchWorkbookFailure(error.message));
-        }
-        break;
+        case LIST_WORKBOOK_REQUEST:
+            try {
+                const response = getWorkbookList();
+                dispatch(listWorkbookSuccess(response.body));
+            } catch (error) {
+                dispatch(listWorkbookFailure(error.message));
+            }
+            break;
 
-      case UPDATE_WORKBOOK_REQUEST:
-        try {
-          const { id, Workbook } = action.payload;
-          const response = updateWorkbook(id);
-          dispatch(updateWorkbookSuccess(response.body));
-        } catch (error) {
-          dispatch(updateWorkbookFailure(error.message));
-        }
-        break;
 
-      case DELETE_WORKBOOK_REQUEST:
-        try {
-          const { id, Workbook } = action.payload;
-          const response = deleteWorkbook(id);
-          dispatch(deleteWorkbookSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteWorkbookFailure(error.message));
-        }
-        break;
+        case FETCH_WORKBOOK_REQUEST:
+            try {
+                const response = getWorkbook(action.id);
+                dispatch(fetchWorkbookSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchWorkbookFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_WORKBOOK_REQUEST:
+            try {
+                const { id, Workbook } = action.payload;
+                const response = updateWorkbook(id);
+                dispatch(updateWorkbookSuccess(response.body));
+            } catch (error) {
+                dispatch(updateWorkbookFailure(error.message));
+            }
+            break;
+
+        case DELETE_WORKBOOK_REQUEST:
+            try {
+                const { id, Workbook } = action.payload;
+                const response = deleteWorkbook(id);
+                dispatch(deleteWorkbookSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteWorkbookFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

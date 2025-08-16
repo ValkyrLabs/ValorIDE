@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ExecModule } from "../../model/ExecModule";
+import { ExecModule } from '../../model/ExecModule';
 
 const ExecModuleSlice = createSlice({
   name: "ExecModules",
@@ -12,23 +12,20 @@ const ExecModuleSlice = createSlice({
     },
 
     ExecModuleValueToggled(state, action) {
-      console.log("ExecModule TOGGLE");
-      console.warn(JSON.stringify(action));
-      const ExecModule: ExecModule = state.find(
-        (ExecModule) => ExecModule.id === action.payload.ExecModuleId,
-      );
+      console.log("ExecModule TOGGLE")
+      console.warn(JSON.stringify(action))
+      const ExecModule:ExecModule = state.find((ExecModule) => ExecModule.id === action.payload.ExecModuleId);
       if (ExecModule) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     ExecModulepropertySet(state, action) {
-      const ExecModule = state.find(
-        (ExecModule) => ExecModule.id === action.payload.ExecModuleId,
-      );
+      const ExecModule = state.find((ExecModule) => ExecModule.id === action.payload.ExecModuleId);
       if (ExecModule) {
-        //  ExecModule[action.property] = action.payload[action.property];
+      //  ExecModule[action.property] = action.payload[action.property];
       }
     },
   },
@@ -37,6 +34,6 @@ const ExecModuleSlice = createSlice({
 export const {
   ExecModuleAdded,
   ExecModuleValueToggled,
-  ExecModulepropertySet,
+  ExecModulepropertySet
 } = ExecModuleSlice.actions;
 export default ExecModuleSlice.reducer;

@@ -2,94 +2,95 @@
 
 // OasOpenAPISpec
 
-export const FETCH_OASOPENAPISPEC_REQUEST = "FETCH_OASOPENAPISPEC_REQUEST";
-export const FETCH_OASOPENAPISPEC_SUCCESS = "FETCH_OASOPENAPISPEC_SUCCESS";
-export const FETCH_OASOPENAPISPEC_FAILURE = "FETCH_OASOPENAPISPEC_FAILURE";
+export const FETCH_OASOPENAPISPEC_REQUEST = 'FETCH_OASOPENAPISPEC_REQUEST';
+export const FETCH_OASOPENAPISPEC_SUCCESS = 'FETCH_OASOPENAPISPEC_SUCCESS';
+export const FETCH_OASOPENAPISPEC_FAILURE = 'FETCH_OASOPENAPISPEC_FAILURE';
 
-export const ADD_OASOPENAPISPEC_REQUEST = "ADD_OASOPENAPISPEC_REQUEST";
-export const ADD_OASOPENAPISPEC_SUCCESS = "ADD_OASOPENAPISPEC_SUCCESS";
-export const ADD_OASOPENAPISPEC_FAILURE = "ADD_OASOPENAPISPEC_FAILURE";
+export const ADD_OASOPENAPISPEC_REQUEST = 'ADD_OASOPENAPISPEC_REQUEST';
+export const ADD_OASOPENAPISPEC_SUCCESS = 'ADD_OASOPENAPISPEC_SUCCESS';
+export const ADD_OASOPENAPISPEC_FAILURE = 'ADD_OASOPENAPISPEC_FAILURE';
 
-export const UPDATE_OASOPENAPISPEC_REQUEST = "UPDATE_OASOPENAPISPEC_REQUEST";
-export const UPDATE_OASOPENAPISPEC_SUCCESS = "UPDATE_OASOPENAPISPEC_SUCCESS";
-export const UPDATE_OASOPENAPISPEC_FAILURE = "UPDATE_OASOPENAPISPEC_FAILURE";
+export const UPDATE_OASOPENAPISPEC_REQUEST = 'UPDATE_OASOPENAPISPEC_REQUEST';
+export const UPDATE_OASOPENAPISPEC_SUCCESS = 'UPDATE_OASOPENAPISPEC_SUCCESS';
+export const UPDATE_OASOPENAPISPEC_FAILURE = 'UPDATE_OASOPENAPISPEC_FAILURE';
 
-export const DELETE_OASOPENAPISPEC_REQUEST = "DELETE_OASOPENAPISPEC_REQUEST";
-export const DELETE_OASOPENAPISPEC_SUCCESS = "DELETE_OASOPENAPISPEC_SUCCESS";
-export const DELETE_OASOPENAPISPEC_FAILURE = "DELETE_OASOPENAPISPEC_FAILURE";
+export const DELETE_OASOPENAPISPEC_REQUEST = 'DELETE_OASOPENAPISPEC_REQUEST';
+export const DELETE_OASOPENAPISPEC_SUCCESS = 'DELETE_OASOPENAPISPEC_SUCCESS';
+export const DELETE_OASOPENAPISPEC_FAILURE = 'DELETE_OASOPENAPISPEC_FAILURE';
 
-export const LIST_OASOPENAPISPEC_REQUEST = "LIST_OASOPENAPISPEC_REQUEST";
-export const LIST_OASOPENAPISPEC_SUCCESS = "LIST_OASOPENAPISPEC_SUCCESS";
-export const LIST_OASOPENAPISPEC_FAILURE = "LIST_OASOPENAPISPEC_FAILURE";
+export const LIST_OASOPENAPISPEC_REQUEST = 'LIST_OASOPENAPISPEC_REQUEST';
+export const LIST_OASOPENAPISPEC_SUCCESS = 'LIST_OASOPENAPISPEC_SUCCESS';
+export const LIST_OASOPENAPISPEC_FAILURE = 'LIST_OASOPENAPISPEC_FAILURE';
 
 export const addOasOpenAPISpecRequest = () => ({
-  type: ADD_OASOPENAPISPEC_REQUEST,
+    type: ADD_OASOPENAPISPEC_REQUEST,
 });
 
 export const addOasOpenAPISpecSuccess = (OasOpenAPISpecs: any) => ({
-  type: ADD_OASOPENAPISPEC_SUCCESS,
-  payload: OasOpenAPISpecs,
+    type: ADD_OASOPENAPISPEC_SUCCESS,
+    payload: OasOpenAPISpecs,
 });
 
 export const addOasOpenAPISpecFailure = (error: Error) => ({
-  type: ADD_OASOPENAPISPEC_FAILURE,
-  payload: error,
+    type: ADD_OASOPENAPISPEC_FAILURE,
+    payload: error,
 });
 
+
 export const fetchOasOpenAPISpecRequest = () => ({
-  type: FETCH_OASOPENAPISPEC_REQUEST,
+    type: FETCH_OASOPENAPISPEC_REQUEST,
 });
 
 export const fetchOasOpenAPISpecSuccess = (OasOpenAPISpecs: any) => ({
-  type: FETCH_OASOPENAPISPEC_SUCCESS,
-  payload: OasOpenAPISpecs,
+    type: FETCH_OASOPENAPISPEC_SUCCESS,
+    payload: OasOpenAPISpecs,
 });
 
 export const fetchOasOpenAPISpecFailure = (error: Error) => ({
-  type: FETCH_OASOPENAPISPEC_FAILURE,
-  payload: error,
+    type: FETCH_OASOPENAPISPEC_FAILURE,
+    payload: error,
 });
 
 export const listOasOpenAPISpecRequest = () => ({
-  type: LIST_OASOPENAPISPEC_REQUEST,
+    type: LIST_OASOPENAPISPEC_REQUEST,
 });
 
 export const listOasOpenAPISpecSuccess = (OasOpenAPISpecs: any) => ({
-  type: LIST_OASOPENAPISPEC_SUCCESS,
-  payload: OasOpenAPISpecs,
+    type: LIST_OASOPENAPISPEC_SUCCESS,
+    payload: OasOpenAPISpecs,
 });
 
 export const listOasOpenAPISpecFailure = (error: Error) => ({
-  type: LIST_OASOPENAPISPEC_FAILURE,
-  payload: error,
+    type: LIST_OASOPENAPISPEC_FAILURE,
+    payload: error,
 });
 
 export const updateOasOpenAPISpecRequest = (OasOpenAPISpec: any) => ({
-  type: UPDATE_OASOPENAPISPEC_REQUEST,
-  payload: OasOpenAPISpec,
+    type: UPDATE_OASOPENAPISPEC_REQUEST,
+    payload: OasOpenAPISpec,
 });
 
 export const updateOasOpenAPISpecSuccess = (OasOpenAPISpec: any) => ({
-  type: UPDATE_OASOPENAPISPEC_SUCCESS,
-  payload: OasOpenAPISpec,
+    type: UPDATE_OASOPENAPISPEC_SUCCESS,
+    payload: OasOpenAPISpec,
 });
 
 export const updateOasOpenAPISpecFailure = (error: Error) => ({
-  type: UPDATE_OASOPENAPISPEC_FAILURE,
-  payload: error,
+    type: UPDATE_OASOPENAPISPEC_FAILURE,
+    payload: error,
 });
 
 export const deleteOasOpenAPISpecRequest = (OasOpenAPISpec: any) => ({
-  type: DELETE_OASOPENAPISPEC_REQUEST,
-  payload: OasOpenAPISpec,
+    type: DELETE_OASOPENAPISPEC_REQUEST,
+    payload: OasOpenAPISpec,
 });
 
 export const deleteOasOpenAPISpecSuccess = (OasOpenAPISpec: any) => ({
-  type: DELETE_OASOPENAPISPEC_SUCCESS,
-  payload: OasOpenAPISpec,
+    type: DELETE_OASOPENAPISPEC_SUCCESS,
+    payload: OasOpenAPISpec,
 });
 
 export const deleteOasOpenAPISpecFailure = (error: Error) => ({
-  type: DELETE_OASOPENAPISPEC_FAILURE,
-  payload: error,
+    type: DELETE_OASOPENAPISPEC_FAILURE,
+    payload: error,
 });

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { GoalDependency } from "../../model/GoalDependency";
+import { GoalDependency } from '../../model/GoalDependency';
 
 const GoalDependencySlice = createSlice({
   name: "GoalDependencys",
@@ -12,25 +12,20 @@ const GoalDependencySlice = createSlice({
     },
 
     GoalDependencyValueToggled(state, action) {
-      console.log("GoalDependency TOGGLE");
-      console.warn(JSON.stringify(action));
-      const GoalDependency: GoalDependency = state.find(
-        (GoalDependency) =>
-          GoalDependency.id === action.payload.GoalDependencyId,
-      );
+      console.log("GoalDependency TOGGLE")
+      console.warn(JSON.stringify(action))
+      const GoalDependency:GoalDependency = state.find((GoalDependency) => GoalDependency.id === action.payload.GoalDependencyId);
       if (GoalDependency) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     GoalDependencypropertySet(state, action) {
-      const GoalDependency = state.find(
-        (GoalDependency) =>
-          GoalDependency.id === action.payload.GoalDependencyId,
-      );
+      const GoalDependency = state.find((GoalDependency) => GoalDependency.id === action.payload.GoalDependencyId);
       if (GoalDependency) {
-        //  GoalDependency[action.property] = action.payload[action.property];
+      //  GoalDependency[action.property] = action.payload[action.property];
       }
     },
   },
@@ -39,6 +34,6 @@ const GoalDependencySlice = createSlice({
 export const {
   GoalDependencyAdded,
   GoalDependencyValueToggled,
-  GoalDependencypropertySet,
+  GoalDependencypropertySet
 } = GoalDependencySlice.actions;
 export default GoalDependencySlice.reducer;

@@ -1,28 +1,36 @@
-import {
-  getMergeRange,
-  postMergeRange,
-  getMergeRangeList,
-  deleteMergeRange,
-  updateMergeRange,
-} from "../../api";
+
+import { 
+    getMergeRange, 
+    postMergeRange,
+    getMergeRangeList , 
+    deleteMergeRange , 
+    updateMergeRange 
+} from '../../api';
 
 import {
-  ADD_MERGERANGE_REQUEST,
-  FETCH_MERGERANGE_REQUEST,
-  LIST_MERGERANGE_REQUEST,
-  UPDATE_MERGERANGE_REQUEST,
-  DELETE_MERGERANGE_REQUEST,
-  addMergeRangeFailure,
-  addMergeRangeSuccess,
-  fetchMergeRangeFailure,
-  fetchMergeRangeSuccess,
-  listMergeRangeFailure,
-  listMergeRangeSuccess,
-  updateMergeRangeFailure,
-  updateMergeRangeSuccess,
-  deleteMergeRangeFailure,
-  deleteMergeRangeSuccess,
-} from "../actions/MergeRangeApiAction";
+
+    ADD_MERGERANGE_REQUEST,
+    FETCH_MERGERANGE_REQUEST,
+    LIST_MERGERANGE_REQUEST,
+    UPDATE_MERGERANGE_REQUEST,
+    DELETE_MERGERANGE_REQUEST,
+
+    addMergeRangeFailure,
+    addMergeRangeSuccess,
+
+    fetchMergeRangeFailure,
+    fetchMergeRangeSuccess,
+    
+    listMergeRangeFailure,
+    listMergeRangeSuccess,
+
+    updateMergeRangeFailure,
+    updateMergeRangeSuccess,
+    
+    deleteMergeRangeFailure,
+    deleteMergeRangeSuccess,
+    
+} from '../actions/MergeRangeApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: MergeRange
 */
 
-export const MergeRangeMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("MergeRange MIDDLEWARE: " + JSON.stringify(action));
+export const MergeRangeMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("MergeRange MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_MERGERANGE_REQUEST:
-        try {
-          const response = postMergeRange(action.payload);
-          dispatch(addMergeRangeSuccess(response.body));
-        } catch (error) {
-          dispatch(addMergeRangeFailure(error.message));
-        }
-        break;
 
-      case LIST_MERGERANGE_REQUEST:
-        try {
-          const response = getMergeRangeList();
-          dispatch(listMergeRangeSuccess(response.body));
-        } catch (error) {
-          dispatch(listMergeRangeFailure(error.message));
-        }
-        break;
+        case ADD_MERGERANGE_REQUEST:
+            try {
+                const response = postMergeRange(action.payload);
+                dispatch(addMergeRangeSuccess(response.body));
+            } catch (error) {
+                dispatch(addMergeRangeFailure(error.message));
+            }
+            break;
 
-      case FETCH_MERGERANGE_REQUEST:
-        try {
-          const response = getMergeRange(action.id);
-          dispatch(fetchMergeRangeSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchMergeRangeFailure(error.message));
-        }
-        break;
+        case LIST_MERGERANGE_REQUEST:
+            try {
+                const response = getMergeRangeList();
+                dispatch(listMergeRangeSuccess(response.body));
+            } catch (error) {
+                dispatch(listMergeRangeFailure(error.message));
+            }
+            break;
 
-      case UPDATE_MERGERANGE_REQUEST:
-        try {
-          const { id, MergeRange } = action.payload;
-          const response = updateMergeRange(id);
-          dispatch(updateMergeRangeSuccess(response.body));
-        } catch (error) {
-          dispatch(updateMergeRangeFailure(error.message));
-        }
-        break;
 
-      case DELETE_MERGERANGE_REQUEST:
-        try {
-          const { id, MergeRange } = action.payload;
-          const response = deleteMergeRange(id);
-          dispatch(deleteMergeRangeSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteMergeRangeFailure(error.message));
-        }
-        break;
+        case FETCH_MERGERANGE_REQUEST:
+            try {
+                const response = getMergeRange(action.id);
+                dispatch(fetchMergeRangeSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchMergeRangeFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_MERGERANGE_REQUEST:
+            try {
+                const { id, MergeRange } = action.payload;
+                const response = updateMergeRange(id);
+                dispatch(updateMergeRangeSuccess(response.body));
+            } catch (error) {
+                dispatch(updateMergeRangeFailure(error.message));
+            }
+            break;
+
+        case DELETE_MERGERANGE_REQUEST:
+            try {
+                const { id, MergeRange } = action.payload;
+                const response = deleteMergeRange(id);
+                dispatch(deleteMergeRangeSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteMergeRangeFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

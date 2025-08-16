@@ -11,8 +11,15 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime";
-import { Cell, CellFromJSON, CellToJSON } from "./";
+import { exists, mapValues } from '../src/runtime';
+import {
+
+
+    Cell,
+    CellFromJSON,
+    CellToJSON,
+} from './';
+
 
 // thorapi
 
@@ -21,156 +28,132 @@ import { Cell, CellFromJSON, CellToJSON } from "./";
  * @export
  * @interface SheetColumn
  */
-export type SheetColumn = {
-  /**
-   * the sheet containing this column
-   * @type {string}
-   * @memberof SheetColumn
-   */
-  sheetId?: string;
-  /**
-   *
-   * @type {number}
-   * @memberof SheetColumn
-   */
-  colIndex?: number;
-  /**
-   *
-   * @type {boolean}
-   * @memberof SheetColumn
-   */
-  hidden?: boolean;
-  /**
-   *
-   * @type {boolean}
-   * @memberof SheetColumn
-   */
-  collapsed?: boolean;
-  /**
-   * For nested grouping
-   * @type {number}
-   * @memberof SheetColumn
-   */
-  outlineLevel?: number;
-  /**
-   *
-   * @type {Array<Cell>}
-   * @memberof SheetColumn
-   */
-  cells?: Array<Cell>;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof SheetColumn
-   */
-  id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof SheetColumn
-   */
-  ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof SheetColumn
-   */
-  createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof SheetColumn
-   */
-  keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof SheetColumn
-   */
-  lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof SheetColumn
-   */
-  lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof SheetColumn
-   */
-  lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof SheetColumn
-   */
-  lastModifiedDate?: Date;
-};
+export type SheetColumn  = {
+    /**
+     * the sheet containing this column
+     * @type {string}
+     * @memberof SheetColumn
+     */
+    sheetId?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof SheetColumn
+     */
+    colIndex?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SheetColumn
+     */
+    hidden?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof SheetColumn
+     */
+    collapsed?: boolean;
+    /**
+     * For nested grouping
+     * @type {number}
+     * @memberof SheetColumn
+     */
+    outlineLevel?: number;
+    /**
+     * 
+     * @type {Array<Cell>}
+     * @memberof SheetColumn
+     */
+    cells?: Array<Cell>;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof SheetColumn
+     */
+    id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof SheetColumn
+     */
+    ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof SheetColumn
+     */
+    createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof SheetColumn
+     */
+    keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof SheetColumn
+     */
+    lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof SheetColumn
+     */
+    lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof SheetColumn
+     */
+    lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof SheetColumn
+     */
+    lastModifiedDate?: Date;
+}
 
 export function SheetColumnFromJSON(json: any): SheetColumn {
-  return {
-    sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
-    colIndex: !exists(json, "colIndex") ? undefined : json["colIndex"],
-    hidden: !exists(json, "hidden") ? undefined : json["hidden"],
-    collapsed: !exists(json, "collapsed") ? undefined : json["collapsed"],
-    outlineLevel: !exists(json, "outlineLevel")
-      ? undefined
-      : json["outlineLevel"],
-    cells: !exists(json, "cells")
-      ? undefined
-      : (json["cells"] as Array<any>).map(CellFromJSON),
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-  };
+    return {
+        'sheetId': !exists(json, 'sheetId') ? undefined : json['sheetId'],
+        'colIndex': !exists(json, 'colIndex') ? undefined : json['colIndex'],
+        'hidden': !exists(json, 'hidden') ? undefined : json['hidden'],
+        'collapsed': !exists(json, 'collapsed') ? undefined : json['collapsed'],
+        'outlineLevel': !exists(json, 'outlineLevel') ? undefined : json['outlineLevel'],
+        'cells': !exists(json, 'cells') ? undefined : (json['cells'] as Array<any>).map(CellFromJSON),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+    };
 }
 
 export function SheetColumnToJSON(value?: SheetColumn): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    sheetId: value.sheetId,
-    colIndex: value.colIndex,
-    hidden: value.hidden,
-    collapsed: value.collapsed,
-    outlineLevel: value.outlineLevel,
-    cells:
-      value.cells === undefined
-        ? undefined
-        : (value.cells as Array<any>).map(CellToJSON),
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        'sheetId': value.sheetId,
+        'colIndex': value.colIndex,
+        'hidden': value.hidden,
+        'collapsed': value.collapsed,
+        'outlineLevel': value.outlineLevel,
+        'cells': value.cells === undefined ? undefined : (value.cells as Array<any>).map(CellToJSON),
+        'id': value.id,
+        'ownerId': value.ownerId,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'keyHash': value.keyHash,
+        'lastAccessedById': value.lastAccessedById,
+        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
+        'lastModifiedById': value.lastModifiedById,
+        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
+    };
 }
+
+

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { MediaObject } from "../../model/MediaObject";
+import { MediaObject } from '../../model/MediaObject';
 
 const MediaObjectSlice = createSlice({
   name: "MediaObjects",
@@ -12,23 +12,20 @@ const MediaObjectSlice = createSlice({
     },
 
     MediaObjectValueToggled(state, action) {
-      console.log("MediaObject TOGGLE");
-      console.warn(JSON.stringify(action));
-      const MediaObject: MediaObject = state.find(
-        (MediaObject) => MediaObject.id === action.payload.MediaObjectId,
-      );
+      console.log("MediaObject TOGGLE")
+      console.warn(JSON.stringify(action))
+      const MediaObject:MediaObject = state.find((MediaObject) => MediaObject.id === action.payload.MediaObjectId);
       if (MediaObject) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     MediaObjectpropertySet(state, action) {
-      const MediaObject = state.find(
-        (MediaObject) => MediaObject.id === action.payload.MediaObjectId,
-      );
+      const MediaObject = state.find((MediaObject) => MediaObject.id === action.payload.MediaObjectId);
       if (MediaObject) {
-        //  MediaObject[action.property] = action.payload[action.property];
+      //  MediaObject[action.property] = action.payload[action.property];
       }
     },
   },
@@ -37,6 +34,6 @@ const MediaObjectSlice = createSlice({
 export const {
   MediaObjectAdded,
   MediaObjectValueToggled,
-  MediaObjectpropertySet,
+  MediaObjectpropertySet
 } = MediaObjectSlice.actions;
 export default MediaObjectSlice.reducer;

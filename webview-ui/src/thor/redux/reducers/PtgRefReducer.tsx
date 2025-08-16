@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PtgRef } from "../../model/PtgRef";
+import { PtgRef } from '../../model/PtgRef';
 
 const PtgRefSlice = createSlice({
   name: "PtgRefs",
@@ -12,28 +12,28 @@ const PtgRefSlice = createSlice({
     },
 
     PtgRefValueToggled(state, action) {
-      console.log("PtgRef TOGGLE");
-      console.warn(JSON.stringify(action));
-      const PtgRef: PtgRef = state.find(
-        (PtgRef) => PtgRef.id === action.payload.PtgRefId,
-      );
+      console.log("PtgRef TOGGLE")
+      console.warn(JSON.stringify(action))
+      const PtgRef:PtgRef = state.find((PtgRef) => PtgRef.id === action.payload.PtgRefId);
       if (PtgRef) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     PtgRefpropertySet(state, action) {
-      const PtgRef = state.find(
-        (PtgRef) => PtgRef.id === action.payload.PtgRefId,
-      );
+      const PtgRef = state.find((PtgRef) => PtgRef.id === action.payload.PtgRefId);
       if (PtgRef) {
-        //  PtgRef[action.property] = action.payload[action.property];
+      //  PtgRef[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const { PtgRefAdded, PtgRefValueToggled, PtgRefpropertySet } =
-  PtgRefSlice.actions;
+export const {
+  PtgRefAdded,
+  PtgRefValueToggled,
+  PtgRefpropertySet
+} = PtgRefSlice.actions;
 export default PtgRefSlice.reducer;

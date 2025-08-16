@@ -1,28 +1,36 @@
-import {
-  getMcpMarketplaceCatalog,
-  postMcpMarketplaceCatalog,
-  getMcpMarketplaceCatalogList,
-  deleteMcpMarketplaceCatalog,
-  updateMcpMarketplaceCatalog,
-} from "../../api";
+
+import { 
+    getMcpMarketplaceCatalog, 
+    postMcpMarketplaceCatalog,
+    getMcpMarketplaceCatalogList , 
+    deleteMcpMarketplaceCatalog , 
+    updateMcpMarketplaceCatalog 
+} from '../../api';
 
 import {
-  ADD_MCPMARKETPLACECATALOG_REQUEST,
-  FETCH_MCPMARKETPLACECATALOG_REQUEST,
-  LIST_MCPMARKETPLACECATALOG_REQUEST,
-  UPDATE_MCPMARKETPLACECATALOG_REQUEST,
-  DELETE_MCPMARKETPLACECATALOG_REQUEST,
-  addMcpMarketplaceCatalogFailure,
-  addMcpMarketplaceCatalogSuccess,
-  fetchMcpMarketplaceCatalogFailure,
-  fetchMcpMarketplaceCatalogSuccess,
-  listMcpMarketplaceCatalogFailure,
-  listMcpMarketplaceCatalogSuccess,
-  updateMcpMarketplaceCatalogFailure,
-  updateMcpMarketplaceCatalogSuccess,
-  deleteMcpMarketplaceCatalogFailure,
-  deleteMcpMarketplaceCatalogSuccess,
-} from "../actions/McpMarketplaceCatalogApiAction";
+
+    ADD_MCPMARKETPLACECATALOG_REQUEST,
+    FETCH_MCPMARKETPLACECATALOG_REQUEST,
+    LIST_MCPMARKETPLACECATALOG_REQUEST,
+    UPDATE_MCPMARKETPLACECATALOG_REQUEST,
+    DELETE_MCPMARKETPLACECATALOG_REQUEST,
+
+    addMcpMarketplaceCatalogFailure,
+    addMcpMarketplaceCatalogSuccess,
+
+    fetchMcpMarketplaceCatalogFailure,
+    fetchMcpMarketplaceCatalogSuccess,
+    
+    listMcpMarketplaceCatalogFailure,
+    listMcpMarketplaceCatalogSuccess,
+
+    updateMcpMarketplaceCatalogFailure,
+    updateMcpMarketplaceCatalogSuccess,
+    
+    deleteMcpMarketplaceCatalogFailure,
+    deleteMcpMarketplaceCatalogSuccess,
+    
+} from '../actions/McpMarketplaceCatalogApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpMarketplaceCatalog
 */
 
-export const McpMarketplaceCatalogMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("McpMarketplaceCatalog MIDDLEWARE: " + JSON.stringify(action));
+export const McpMarketplaceCatalogMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("McpMarketplaceCatalog MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_MCPMARKETPLACECATALOG_REQUEST:
-        try {
-          const response = postMcpMarketplaceCatalog(action.payload);
-          dispatch(addMcpMarketplaceCatalogSuccess(response.body));
-        } catch (error) {
-          dispatch(addMcpMarketplaceCatalogFailure(error.message));
-        }
-        break;
 
-      case LIST_MCPMARKETPLACECATALOG_REQUEST:
-        try {
-          const response = getMcpMarketplaceCatalogList();
-          dispatch(listMcpMarketplaceCatalogSuccess(response.body));
-        } catch (error) {
-          dispatch(listMcpMarketplaceCatalogFailure(error.message));
-        }
-        break;
+        case ADD_MCPMARKETPLACECATALOG_REQUEST:
+            try {
+                const response = postMcpMarketplaceCatalog(action.payload);
+                dispatch(addMcpMarketplaceCatalogSuccess(response.body));
+            } catch (error) {
+                dispatch(addMcpMarketplaceCatalogFailure(error.message));
+            }
+            break;
 
-      case FETCH_MCPMARKETPLACECATALOG_REQUEST:
-        try {
-          const response = getMcpMarketplaceCatalog(action.id);
-          dispatch(fetchMcpMarketplaceCatalogSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchMcpMarketplaceCatalogFailure(error.message));
-        }
-        break;
+        case LIST_MCPMARKETPLACECATALOG_REQUEST:
+            try {
+                const response = getMcpMarketplaceCatalogList();
+                dispatch(listMcpMarketplaceCatalogSuccess(response.body));
+            } catch (error) {
+                dispatch(listMcpMarketplaceCatalogFailure(error.message));
+            }
+            break;
 
-      case UPDATE_MCPMARKETPLACECATALOG_REQUEST:
-        try {
-          const { id, McpMarketplaceCatalog } = action.payload;
-          const response = updateMcpMarketplaceCatalog(id);
-          dispatch(updateMcpMarketplaceCatalogSuccess(response.body));
-        } catch (error) {
-          dispatch(updateMcpMarketplaceCatalogFailure(error.message));
-        }
-        break;
 
-      case DELETE_MCPMARKETPLACECATALOG_REQUEST:
-        try {
-          const { id, McpMarketplaceCatalog } = action.payload;
-          const response = deleteMcpMarketplaceCatalog(id);
-          dispatch(deleteMcpMarketplaceCatalogSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteMcpMarketplaceCatalogFailure(error.message));
-        }
-        break;
+        case FETCH_MCPMARKETPLACECATALOG_REQUEST:
+            try {
+                const response = getMcpMarketplaceCatalog(action.id);
+                dispatch(fetchMcpMarketplaceCatalogSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchMcpMarketplaceCatalogFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_MCPMARKETPLACECATALOG_REQUEST:
+            try {
+                const { id, McpMarketplaceCatalog } = action.payload;
+                const response = updateMcpMarketplaceCatalog(id);
+                dispatch(updateMcpMarketplaceCatalogSuccess(response.body));
+            } catch (error) {
+                dispatch(updateMcpMarketplaceCatalogFailure(error.message));
+            }
+            break;
+
+        case DELETE_MCPMARKETPLACECATALOG_REQUEST:
+            try {
+                const { id, McpMarketplaceCatalog } = action.payload;
+                const response = deleteMcpMarketplaceCatalog(id);
+                dispatch(deleteMcpMarketplaceCatalogSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteMcpMarketplaceCatalogFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

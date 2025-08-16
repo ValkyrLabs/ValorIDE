@@ -1,7 +1,7 @@
 .file-explorer {
   display: flex;
   flex-direction: column;
-  minHeight: 200px;
+  min-height: 200px;
   background: var(--vscode-sideBar-background);
   border-right: 1px solid var(--vscode-sideBar-border);
 }

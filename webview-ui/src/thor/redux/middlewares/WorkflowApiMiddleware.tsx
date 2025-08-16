@@ -1,28 +1,36 @@
-import {
-  getWorkflow,
-  postWorkflow,
-  getWorkflowList,
-  deleteWorkflow,
-  updateWorkflow,
-} from "../../api";
+
+import { 
+    getWorkflow, 
+    postWorkflow,
+    getWorkflowList , 
+    deleteWorkflow , 
+    updateWorkflow 
+} from '../../api';
 
 import {
-  ADD_WORKFLOW_REQUEST,
-  FETCH_WORKFLOW_REQUEST,
-  LIST_WORKFLOW_REQUEST,
-  UPDATE_WORKFLOW_REQUEST,
-  DELETE_WORKFLOW_REQUEST,
-  addWorkflowFailure,
-  addWorkflowSuccess,
-  fetchWorkflowFailure,
-  fetchWorkflowSuccess,
-  listWorkflowFailure,
-  listWorkflowSuccess,
-  updateWorkflowFailure,
-  updateWorkflowSuccess,
-  deleteWorkflowFailure,
-  deleteWorkflowSuccess,
-} from "../actions/WorkflowApiAction";
+
+    ADD_WORKFLOW_REQUEST,
+    FETCH_WORKFLOW_REQUEST,
+    LIST_WORKFLOW_REQUEST,
+    UPDATE_WORKFLOW_REQUEST,
+    DELETE_WORKFLOW_REQUEST,
+
+    addWorkflowFailure,
+    addWorkflowSuccess,
+
+    fetchWorkflowFailure,
+    fetchWorkflowSuccess,
+    
+    listWorkflowFailure,
+    listWorkflowSuccess,
+
+    updateWorkflowFailure,
+    updateWorkflowSuccess,
+    
+    deleteWorkflowFailure,
+    deleteWorkflowSuccess,
+    
+} from '../actions/WorkflowApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Workflow
 */
 
-export const WorkflowMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Workflow MIDDLEWARE: " + JSON.stringify(action));
+export const WorkflowMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Workflow MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_WORKFLOW_REQUEST:
-        try {
-          const response = postWorkflow(action.payload);
-          dispatch(addWorkflowSuccess(response.body));
-        } catch (error) {
-          dispatch(addWorkflowFailure(error.message));
-        }
-        break;
 
-      case LIST_WORKFLOW_REQUEST:
-        try {
-          const response = getWorkflowList();
-          dispatch(listWorkflowSuccess(response.body));
-        } catch (error) {
-          dispatch(listWorkflowFailure(error.message));
-        }
-        break;
+        case ADD_WORKFLOW_REQUEST:
+            try {
+                const response = postWorkflow(action.payload);
+                dispatch(addWorkflowSuccess(response.body));
+            } catch (error) {
+                dispatch(addWorkflowFailure(error.message));
+            }
+            break;
 
-      case FETCH_WORKFLOW_REQUEST:
-        try {
-          const response = getWorkflow(action.id);
-          dispatch(fetchWorkflowSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchWorkflowFailure(error.message));
-        }
-        break;
+        case LIST_WORKFLOW_REQUEST:
+            try {
+                const response = getWorkflowList();
+                dispatch(listWorkflowSuccess(response.body));
+            } catch (error) {
+                dispatch(listWorkflowFailure(error.message));
+            }
+            break;
 
-      case UPDATE_WORKFLOW_REQUEST:
-        try {
-          const { id, Workflow } = action.payload;
-          const response = updateWorkflow(id);
-          dispatch(updateWorkflowSuccess(response.body));
-        } catch (error) {
-          dispatch(updateWorkflowFailure(error.message));
-        }
-        break;
 
-      case DELETE_WORKFLOW_REQUEST:
-        try {
-          const { id, Workflow } = action.payload;
-          const response = deleteWorkflow(id);
-          dispatch(deleteWorkflowSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteWorkflowFailure(error.message));
-        }
-        break;
+        case FETCH_WORKFLOW_REQUEST:
+            try {
+                const response = getWorkflow(action.id);
+                dispatch(fetchWorkflowSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchWorkflowFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_WORKFLOW_REQUEST:
+            try {
+                const { id, Workflow } = action.payload;
+                const response = updateWorkflow(id);
+                dispatch(updateWorkflowSuccess(response.body));
+            } catch (error) {
+                dispatch(updateWorkflowFailure(error.message));
+            }
+            break;
+
+        case DELETE_WORKFLOW_REQUEST:
+            try {
+                const { id, Workflow } = action.payload;
+                const response = deleteWorkflow(id);
+                dispatch(deleteWorkflowSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteWorkflowFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

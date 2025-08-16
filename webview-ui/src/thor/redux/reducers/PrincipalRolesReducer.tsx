@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PrincipalRoles } from "../../model/PrincipalRoles";
+import { PrincipalRoles } from '../../model/PrincipalRoles';
 
 const PrincipalRolesSlice = createSlice({
   name: "PrincipalRoless",
@@ -12,25 +12,20 @@ const PrincipalRolesSlice = createSlice({
     },
 
     PrincipalRolesValueToggled(state, action) {
-      console.log("PrincipalRoles TOGGLE");
-      console.warn(JSON.stringify(action));
-      const PrincipalRoles: PrincipalRoles = state.find(
-        (PrincipalRoles) =>
-          PrincipalRoles.id === action.payload.PrincipalRolesId,
-      );
+      console.log("PrincipalRoles TOGGLE")
+      console.warn(JSON.stringify(action))
+      const PrincipalRoles:PrincipalRoles = state.find((PrincipalRoles) => PrincipalRoles.id === action.payload.PrincipalRolesId);
       if (PrincipalRoles) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     PrincipalRolespropertySet(state, action) {
-      const PrincipalRoles = state.find(
-        (PrincipalRoles) =>
-          PrincipalRoles.id === action.payload.PrincipalRolesId,
-      );
+      const PrincipalRoles = state.find((PrincipalRoles) => PrincipalRoles.id === action.payload.PrincipalRolesId);
       if (PrincipalRoles) {
-        //  PrincipalRoles[action.property] = action.payload[action.property];
+      //  PrincipalRoles[action.property] = action.payload[action.property];
       }
     },
   },
@@ -39,6 +34,6 @@ const PrincipalRolesSlice = createSlice({
 export const {
   PrincipalRolesAdded,
   PrincipalRolesValueToggled,
-  PrincipalRolespropertySet,
+  PrincipalRolespropertySet
 } = PrincipalRolesSlice.actions;
 export default PrincipalRolesSlice.reducer;

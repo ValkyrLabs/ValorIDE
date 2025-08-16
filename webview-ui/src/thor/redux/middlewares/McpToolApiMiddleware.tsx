@@ -1,28 +1,36 @@
-import {
-  getMcpTool,
-  postMcpTool,
-  getMcpToolList,
-  deleteMcpTool,
-  updateMcpTool,
-} from "../../api";
+
+import { 
+    getMcpTool, 
+    postMcpTool,
+    getMcpToolList , 
+    deleteMcpTool , 
+    updateMcpTool 
+} from '../../api';
 
 import {
-  ADD_MCPTOOL_REQUEST,
-  FETCH_MCPTOOL_REQUEST,
-  LIST_MCPTOOL_REQUEST,
-  UPDATE_MCPTOOL_REQUEST,
-  DELETE_MCPTOOL_REQUEST,
-  addMcpToolFailure,
-  addMcpToolSuccess,
-  fetchMcpToolFailure,
-  fetchMcpToolSuccess,
-  listMcpToolFailure,
-  listMcpToolSuccess,
-  updateMcpToolFailure,
-  updateMcpToolSuccess,
-  deleteMcpToolFailure,
-  deleteMcpToolSuccess,
-} from "../actions/McpToolApiAction";
+
+    ADD_MCPTOOL_REQUEST,
+    FETCH_MCPTOOL_REQUEST,
+    LIST_MCPTOOL_REQUEST,
+    UPDATE_MCPTOOL_REQUEST,
+    DELETE_MCPTOOL_REQUEST,
+
+    addMcpToolFailure,
+    addMcpToolSuccess,
+
+    fetchMcpToolFailure,
+    fetchMcpToolSuccess,
+    
+    listMcpToolFailure,
+    listMcpToolSuccess,
+
+    updateMcpToolFailure,
+    updateMcpToolSuccess,
+    
+    deleteMcpToolFailure,
+    deleteMcpToolSuccess,
+    
+} from '../actions/McpToolApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpTool
 */
 
-export const McpToolMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("McpTool MIDDLEWARE: " + JSON.stringify(action));
+export const McpToolMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("McpTool MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_MCPTOOL_REQUEST:
-        try {
-          const response = postMcpTool(action.payload);
-          dispatch(addMcpToolSuccess(response.body));
-        } catch (error) {
-          dispatch(addMcpToolFailure(error.message));
-        }
-        break;
 
-      case LIST_MCPTOOL_REQUEST:
-        try {
-          const response = getMcpToolList();
-          dispatch(listMcpToolSuccess(response.body));
-        } catch (error) {
-          dispatch(listMcpToolFailure(error.message));
-        }
-        break;
+        case ADD_MCPTOOL_REQUEST:
+            try {
+                const response = postMcpTool(action.payload);
+                dispatch(addMcpToolSuccess(response.body));
+            } catch (error) {
+                dispatch(addMcpToolFailure(error.message));
+            }
+            break;
 
-      case FETCH_MCPTOOL_REQUEST:
-        try {
-          const response = getMcpTool(action.id);
-          dispatch(fetchMcpToolSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchMcpToolFailure(error.message));
-        }
-        break;
+        case LIST_MCPTOOL_REQUEST:
+            try {
+                const response = getMcpToolList();
+                dispatch(listMcpToolSuccess(response.body));
+            } catch (error) {
+                dispatch(listMcpToolFailure(error.message));
+            }
+            break;
 
-      case UPDATE_MCPTOOL_REQUEST:
-        try {
-          const { id, McpTool } = action.payload;
-          const response = updateMcpTool(id);
-          dispatch(updateMcpToolSuccess(response.body));
-        } catch (error) {
-          dispatch(updateMcpToolFailure(error.message));
-        }
-        break;
 
-      case DELETE_MCPTOOL_REQUEST:
-        try {
-          const { id, McpTool } = action.payload;
-          const response = deleteMcpTool(id);
-          dispatch(deleteMcpToolSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteMcpToolFailure(error.message));
-        }
-        break;
+        case FETCH_MCPTOOL_REQUEST:
+            try {
+                const response = getMcpTool(action.id);
+                dispatch(fetchMcpToolSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchMcpToolFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_MCPTOOL_REQUEST:
+            try {
+                const { id, McpTool } = action.payload;
+                const response = updateMcpTool(id);
+                dispatch(updateMcpToolSuccess(response.body));
+            } catch (error) {
+                dispatch(updateMcpToolFailure(error.message));
+            }
+            break;
+
+        case DELETE_MCPTOOL_REQUEST:
+            try {
+                const { id, McpTool } = action.payload;
+                const response = deleteMcpTool(id);
+                dispatch(deleteMcpToolSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteMcpToolFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PaymentTransaction } from "../../model/PaymentTransaction";
+import { PaymentTransaction } from '../../model/PaymentTransaction';
 
 const PaymentTransactionSlice = createSlice({
   name: "PaymentTransactions",
@@ -12,25 +12,20 @@ const PaymentTransactionSlice = createSlice({
     },
 
     PaymentTransactionValueToggled(state, action) {
-      console.log("PaymentTransaction TOGGLE");
-      console.warn(JSON.stringify(action));
-      const PaymentTransaction: PaymentTransaction = state.find(
-        (PaymentTransaction) =>
-          PaymentTransaction.id === action.payload.PaymentTransactionId,
-      );
+      console.log("PaymentTransaction TOGGLE")
+      console.warn(JSON.stringify(action))
+      const PaymentTransaction:PaymentTransaction = state.find((PaymentTransaction) => PaymentTransaction.id === action.payload.PaymentTransactionId);
       if (PaymentTransaction) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     PaymentTransactionpropertySet(state, action) {
-      const PaymentTransaction = state.find(
-        (PaymentTransaction) =>
-          PaymentTransaction.id === action.payload.PaymentTransactionId,
-      );
+      const PaymentTransaction = state.find((PaymentTransaction) => PaymentTransaction.id === action.payload.PaymentTransactionId);
       if (PaymentTransaction) {
-        //  PaymentTransaction[action.property] = action.payload[action.property];
+      //  PaymentTransaction[action.property] = action.payload[action.property];
       }
     },
   },
@@ -39,6 +34,6 @@ const PaymentTransactionSlice = createSlice({
 export const {
   PaymentTransactionAdded,
   PaymentTransactionValueToggled,
-  PaymentTransactionpropertySet,
+  PaymentTransactionpropertySet
 } = PaymentTransactionSlice.actions;
 export default PaymentTransactionSlice.reducer;

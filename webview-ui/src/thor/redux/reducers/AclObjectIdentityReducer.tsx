@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AclObjectIdentity } from "../../model/AclObjectIdentity";
+import { AclObjectIdentity } from '../../model/AclObjectIdentity';
 
 const AclObjectIdentitySlice = createSlice({
   name: "AclObjectIdentitys",
@@ -12,25 +12,20 @@ const AclObjectIdentitySlice = createSlice({
     },
 
     AclObjectIdentityValueToggled(state, action) {
-      console.log("AclObjectIdentity TOGGLE");
-      console.warn(JSON.stringify(action));
-      const AclObjectIdentity: AclObjectIdentity = state.find(
-        (AclObjectIdentity) =>
-          AclObjectIdentity.id === action.payload.AclObjectIdentityId,
-      );
+      console.log("AclObjectIdentity TOGGLE")
+      console.warn(JSON.stringify(action))
+      const AclObjectIdentity:AclObjectIdentity = state.find((AclObjectIdentity) => AclObjectIdentity.id === action.payload.AclObjectIdentityId);
       if (AclObjectIdentity) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     AclObjectIdentitypropertySet(state, action) {
-      const AclObjectIdentity = state.find(
-        (AclObjectIdentity) =>
-          AclObjectIdentity.id === action.payload.AclObjectIdentityId,
-      );
+      const AclObjectIdentity = state.find((AclObjectIdentity) => AclObjectIdentity.id === action.payload.AclObjectIdentityId);
       if (AclObjectIdentity) {
-        //  AclObjectIdentity[action.property] = action.payload[action.property];
+      //  AclObjectIdentity[action.property] = action.payload[action.property];
       }
     },
   },
@@ -39,6 +34,6 @@ const AclObjectIdentitySlice = createSlice({
 export const {
   AclObjectIdentityAdded,
   AclObjectIdentityValueToggled,
-  AclObjectIdentitypropertySet,
+  AclObjectIdentitypropertySet
 } = AclObjectIdentitySlice.actions;
 export default AclObjectIdentitySlice.reducer;

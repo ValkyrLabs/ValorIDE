@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { KeyMetric } from "../../model/KeyMetric";
+import { KeyMetric } from '../../model/KeyMetric';
 
 const KeyMetricSlice = createSlice({
   name: "KeyMetrics",
@@ -12,28 +12,28 @@ const KeyMetricSlice = createSlice({
     },
 
     KeyMetricValueToggled(state, action) {
-      console.log("KeyMetric TOGGLE");
-      console.warn(JSON.stringify(action));
-      const KeyMetric: KeyMetric = state.find(
-        (KeyMetric) => KeyMetric.id === action.payload.KeyMetricId,
-      );
+      console.log("KeyMetric TOGGLE")
+      console.warn(JSON.stringify(action))
+      const KeyMetric:KeyMetric = state.find((KeyMetric) => KeyMetric.id === action.payload.KeyMetricId);
       if (KeyMetric) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     KeyMetricpropertySet(state, action) {
-      const KeyMetric = state.find(
-        (KeyMetric) => KeyMetric.id === action.payload.KeyMetricId,
-      );
+      const KeyMetric = state.find((KeyMetric) => KeyMetric.id === action.payload.KeyMetricId);
       if (KeyMetric) {
-        //  KeyMetric[action.property] = action.payload[action.property];
+      //  KeyMetric[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const { KeyMetricAdded, KeyMetricValueToggled, KeyMetricpropertySet } =
-  KeyMetricSlice.actions;
+export const {
+  KeyMetricAdded,
+  KeyMetricValueToggled,
+  KeyMetricpropertySet
+} = KeyMetricSlice.actions;
 export default KeyMetricSlice.reducer;

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasObjectSchema } from "../../model/OasObjectSchema";
+import { OasObjectSchema } from '../../model/OasObjectSchema';
 
 const OasObjectSchemaSlice = createSlice({
   name: "OasObjectSchemas",
@@ -12,25 +12,20 @@ const OasObjectSchemaSlice = createSlice({
     },
 
     OasObjectSchemaValueToggled(state, action) {
-      console.log("OasObjectSchema TOGGLE");
-      console.warn(JSON.stringify(action));
-      const OasObjectSchema: OasObjectSchema = state.find(
-        (OasObjectSchema) =>
-          OasObjectSchema.id === action.payload.OasObjectSchemaId,
-      );
+      console.log("OasObjectSchema TOGGLE")
+      console.warn(JSON.stringify(action))
+      const OasObjectSchema:OasObjectSchema = state.find((OasObjectSchema) => OasObjectSchema.id === action.payload.OasObjectSchemaId);
       if (OasObjectSchema) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     OasObjectSchemapropertySet(state, action) {
-      const OasObjectSchema = state.find(
-        (OasObjectSchema) =>
-          OasObjectSchema.id === action.payload.OasObjectSchemaId,
-      );
+      const OasObjectSchema = state.find((OasObjectSchema) => OasObjectSchema.id === action.payload.OasObjectSchemaId);
       if (OasObjectSchema) {
-        //  OasObjectSchema[action.property] = action.payload[action.property];
+      //  OasObjectSchema[action.property] = action.payload[action.property];
       }
     },
   },
@@ -39,6 +34,6 @@ const OasObjectSchemaSlice = createSlice({
 export const {
   OasObjectSchemaAdded,
   OasObjectSchemaValueToggled,
-  OasObjectSchemapropertySet,
+  OasObjectSchemapropertySet
 } = OasObjectSchemaSlice.actions;
 export default OasObjectSchemaSlice.reducer;

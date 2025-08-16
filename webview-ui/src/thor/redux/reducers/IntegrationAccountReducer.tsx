@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { IntegrationAccount } from "../../model/IntegrationAccount";
+import { IntegrationAccount } from '../../model/IntegrationAccount';
 
 const IntegrationAccountSlice = createSlice({
   name: "IntegrationAccounts",
@@ -12,25 +12,20 @@ const IntegrationAccountSlice = createSlice({
     },
 
     IntegrationAccountValueToggled(state, action) {
-      console.log("IntegrationAccount TOGGLE");
-      console.warn(JSON.stringify(action));
-      const IntegrationAccount: IntegrationAccount = state.find(
-        (IntegrationAccount) =>
-          IntegrationAccount.id === action.payload.IntegrationAccountId,
-      );
+      console.log("IntegrationAccount TOGGLE")
+      console.warn(JSON.stringify(action))
+      const IntegrationAccount:IntegrationAccount = state.find((IntegrationAccount) => IntegrationAccount.id === action.payload.IntegrationAccountId);
       if (IntegrationAccount) {
         if (action.payload.target === "SOMETHING") {
+          
         }
       }
     },
-
+    
     IntegrationAccountpropertySet(state, action) {
-      const IntegrationAccount = state.find(
-        (IntegrationAccount) =>
-          IntegrationAccount.id === action.payload.IntegrationAccountId,
-      );
+      const IntegrationAccount = state.find((IntegrationAccount) => IntegrationAccount.id === action.payload.IntegrationAccountId);
       if (IntegrationAccount) {
-        //  IntegrationAccount[action.property] = action.payload[action.property];
+      //  IntegrationAccount[action.property] = action.payload[action.property];
       }
     },
   },
@@ -39,6 +34,6 @@ const IntegrationAccountSlice = createSlice({
 export const {
   IntegrationAccountAdded,
   IntegrationAccountValueToggled,
-  IntegrationAccountpropertySet,
+  IntegrationAccountpropertySet
 } = IntegrationAccountSlice.actions;
 export default IntegrationAccountSlice.reducer;

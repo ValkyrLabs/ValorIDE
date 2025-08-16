@@ -1,28 +1,36 @@
-import {
-  getMcpResourceTemplate,
-  postMcpResourceTemplate,
-  getMcpResourceTemplateList,
-  deleteMcpResourceTemplate,
-  updateMcpResourceTemplate,
-} from "../../api";
+
+import { 
+    getMcpResourceTemplate, 
+    postMcpResourceTemplate,
+    getMcpResourceTemplateList , 
+    deleteMcpResourceTemplate , 
+    updateMcpResourceTemplate 
+} from '../../api';
 
 import {
-  ADD_MCPRESOURCETEMPLATE_REQUEST,
-  FETCH_MCPRESOURCETEMPLATE_REQUEST,
-  LIST_MCPRESOURCETEMPLATE_REQUEST,
-  UPDATE_MCPRESOURCETEMPLATE_REQUEST,
-  DELETE_MCPRESOURCETEMPLATE_REQUEST,
-  addMcpResourceTemplateFailure,
-  addMcpResourceTemplateSuccess,
-  fetchMcpResourceTemplateFailure,
-  fetchMcpResourceTemplateSuccess,
-  listMcpResourceTemplateFailure,
-  listMcpResourceTemplateSuccess,
-  updateMcpResourceTemplateFailure,
-  updateMcpResourceTemplateSuccess,
-  deleteMcpResourceTemplateFailure,
-  deleteMcpResourceTemplateSuccess,
-} from "../actions/McpResourceTemplateApiAction";
+
+    ADD_MCPRESOURCETEMPLATE_REQUEST,
+    FETCH_MCPRESOURCETEMPLATE_REQUEST,
+    LIST_MCPRESOURCETEMPLATE_REQUEST,
+    UPDATE_MCPRESOURCETEMPLATE_REQUEST,
+    DELETE_MCPRESOURCETEMPLATE_REQUEST,
+
+    addMcpResourceTemplateFailure,
+    addMcpResourceTemplateSuccess,
+
+    fetchMcpResourceTemplateFailure,
+    fetchMcpResourceTemplateSuccess,
+    
+    listMcpResourceTemplateFailure,
+    listMcpResourceTemplateSuccess,
+
+    updateMcpResourceTemplateFailure,
+    updateMcpResourceTemplateSuccess,
+    
+    deleteMcpResourceTemplateFailure,
+    deleteMcpResourceTemplateSuccess,
+    
+} from '../actions/McpResourceTemplateApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpResourceTemplate
 */
 
-export const McpResourceTemplateMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("McpResourceTemplate MIDDLEWARE: " + JSON.stringify(action));
+export const McpResourceTemplateMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("McpResourceTemplate MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_MCPRESOURCETEMPLATE_REQUEST:
-        try {
-          const response = postMcpResourceTemplate(action.payload);
-          dispatch(addMcpResourceTemplateSuccess(response.body));
-        } catch (error) {
-          dispatch(addMcpResourceTemplateFailure(error.message));
-        }
-        break;
 
-      case LIST_MCPRESOURCETEMPLATE_REQUEST:
-        try {
-          const response = getMcpResourceTemplateList();
-          dispatch(listMcpResourceTemplateSuccess(response.body));
-        } catch (error) {
-          dispatch(listMcpResourceTemplateFailure(error.message));
-        }
-        break;
+        case ADD_MCPRESOURCETEMPLATE_REQUEST:
+            try {
+                const response = postMcpResourceTemplate(action.payload);
+                dispatch(addMcpResourceTemplateSuccess(response.body));
+            } catch (error) {
+                dispatch(addMcpResourceTemplateFailure(error.message));
+            }
+            break;
 
-      case FETCH_MCPRESOURCETEMPLATE_REQUEST:
-        try {
-          const response = getMcpResourceTemplate(action.id);
-          dispatch(fetchMcpResourceTemplateSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchMcpResourceTemplateFailure(error.message));
-        }
-        break;
+        case LIST_MCPRESOURCETEMPLATE_REQUEST:
+            try {
+                const response = getMcpResourceTemplateList();
+                dispatch(listMcpResourceTemplateSuccess(response.body));
+            } catch (error) {
+                dispatch(listMcpResourceTemplateFailure(error.message));
+            }
+            break;
 
-      case UPDATE_MCPRESOURCETEMPLATE_REQUEST:
-        try {
-          const { id, McpResourceTemplate } = action.payload;
-          const response = updateMcpResourceTemplate(id);
-          dispatch(updateMcpResourceTemplateSuccess(response.body));
-        } catch (error) {
-          dispatch(updateMcpResourceTemplateFailure(error.message));
-        }
-        break;
 
-      case DELETE_MCPRESOURCETEMPLATE_REQUEST:
-        try {
-          const { id, McpResourceTemplate } = action.payload;
-          const response = deleteMcpResourceTemplate(id);
-          dispatch(deleteMcpResourceTemplateSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteMcpResourceTemplateFailure(error.message));
-        }
-        break;
+        case FETCH_MCPRESOURCETEMPLATE_REQUEST:
+            try {
+                const response = getMcpResourceTemplate(action.id);
+                dispatch(fetchMcpResourceTemplateSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchMcpResourceTemplateFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_MCPRESOURCETEMPLATE_REQUEST:
+            try {
+                const { id, McpResourceTemplate } = action.payload;
+                const response = updateMcpResourceTemplate(id);
+                dispatch(updateMcpResourceTemplateSuccess(response.body));
+            } catch (error) {
+                dispatch(updateMcpResourceTemplateFailure(error.message));
+            }
+            break;
+
+        case DELETE_MCPRESOURCETEMPLATE_REQUEST:
+            try {
+                const { id, McpResourceTemplate } = action.payload;
+                const response = deleteMcpResourceTemplate(id);
+                dispatch(deleteMcpResourceTemplateSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteMcpResourceTemplateFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

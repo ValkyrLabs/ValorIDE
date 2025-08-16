@@ -56,3 +56,32 @@ export async function getAppDownloadUrl(
   const data = await res.json();
   return data.url;
 }
+
+// --- ValorIDE: ThorAPI output folder config utility ---
+
+import * as fs from "fs/promises";
+import * as path from "path";
+
+/**
+ * Reads the .valoride/config file and returns the "thorapi-output-folder" value,
+ * or the default "/src/thor" if not set or file is missing/invalid.
+ * @param cwd The current workspace directory (absolute path)
+ */
+export async function getThorapiOutputFolder(cwd: string): Promise<string> {
+  const configPath = path.join(cwd, ".valoride", "config");
+  const defaultFolder = "/src/thor";
+  try {
+    const content = await fs.readFile(configPath, "utf8");
+    const config = JSON.parse(content);
+    if (
+      config &&
+      typeof config["thorapi-output-folder"] === "string" &&
+      config["thorapi-output-folder"].trim() !== ""
+    ) {
+      return config["thorapi-output-folder"];
+    }
+  } catch (err) {
+    // File not found or parse error: fall back to default
+  }
+  return defaultFolder;
+}

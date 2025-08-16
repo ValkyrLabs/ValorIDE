@@ -1,28 +1,36 @@
-import {
-  getSheet,
-  postSheet,
-  getSheetList,
-  deleteSheet,
-  updateSheet,
-} from "../../api";
+
+import { 
+    getSheet, 
+    postSheet,
+    getSheetList , 
+    deleteSheet , 
+    updateSheet 
+} from '../../api';
 
 import {
-  ADD_SHEET_REQUEST,
-  FETCH_SHEET_REQUEST,
-  LIST_SHEET_REQUEST,
-  UPDATE_SHEET_REQUEST,
-  DELETE_SHEET_REQUEST,
-  addSheetFailure,
-  addSheetSuccess,
-  fetchSheetFailure,
-  fetchSheetSuccess,
-  listSheetFailure,
-  listSheetSuccess,
-  updateSheetFailure,
-  updateSheetSuccess,
-  deleteSheetFailure,
-  deleteSheetSuccess,
-} from "../actions/SheetApiAction";
+
+    ADD_SHEET_REQUEST,
+    FETCH_SHEET_REQUEST,
+    LIST_SHEET_REQUEST,
+    UPDATE_SHEET_REQUEST,
+    DELETE_SHEET_REQUEST,
+
+    addSheetFailure,
+    addSheetSuccess,
+
+    fetchSheetFailure,
+    fetchSheetSuccess,
+    
+    listSheetFailure,
+    listSheetSuccess,
+
+    updateSheetFailure,
+    updateSheetSuccess,
+    
+    deleteSheetFailure,
+    deleteSheetSuccess,
+    
+} from '../actions/SheetApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Sheet
 */
 
-export const SheetMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Sheet MIDDLEWARE: " + JSON.stringify(action));
+export const SheetMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("Sheet MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_SHEET_REQUEST:
-        try {
-          const response = postSheet(action.payload);
-          dispatch(addSheetSuccess(response.body));
-        } catch (error) {
-          dispatch(addSheetFailure(error.message));
-        }
-        break;
 
-      case LIST_SHEET_REQUEST:
-        try {
-          const response = getSheetList();
-          dispatch(listSheetSuccess(response.body));
-        } catch (error) {
-          dispatch(listSheetFailure(error.message));
-        }
-        break;
+        case ADD_SHEET_REQUEST:
+            try {
+                const response = postSheet(action.payload);
+                dispatch(addSheetSuccess(response.body));
+            } catch (error) {
+                dispatch(addSheetFailure(error.message));
+            }
+            break;
 
-      case FETCH_SHEET_REQUEST:
-        try {
-          const response = getSheet(action.id);
-          dispatch(fetchSheetSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchSheetFailure(error.message));
-        }
-        break;
+        case LIST_SHEET_REQUEST:
+            try {
+                const response = getSheetList();
+                dispatch(listSheetSuccess(response.body));
+            } catch (error) {
+                dispatch(listSheetFailure(error.message));
+            }
+            break;
 
-      case UPDATE_SHEET_REQUEST:
-        try {
-          const { id, Sheet } = action.payload;
-          const response = updateSheet(id);
-          dispatch(updateSheetSuccess(response.body));
-        } catch (error) {
-          dispatch(updateSheetFailure(error.message));
-        }
-        break;
 
-      case DELETE_SHEET_REQUEST:
-        try {
-          const { id, Sheet } = action.payload;
-          const response = deleteSheet(id);
-          dispatch(deleteSheetSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteSheetFailure(error.message));
-        }
-        break;
+        case FETCH_SHEET_REQUEST:
+            try {
+                const response = getSheet(action.id);
+                dispatch(fetchSheetSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchSheetFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_SHEET_REQUEST:
+            try {
+                const { id, Sheet } = action.payload;
+                const response = updateSheet(id);
+                dispatch(updateSheetSuccess(response.body));
+            } catch (error) {
+                dispatch(updateSheetFailure(error.message));
+            }
+            break;
+
+        case DELETE_SHEET_REQUEST:
+            try {
+                const { id, Sheet } = action.payload;
+                const response = deleteSheet(id);
+                dispatch(deleteSheetSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteSheetFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

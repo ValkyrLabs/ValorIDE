@@ -1,28 +1,36 @@
-import {
-  getBuildOutput,
-  postBuildOutput,
-  getBuildOutputList,
-  deleteBuildOutput,
-  updateBuildOutput,
-} from "../../api";
+
+import { 
+    getBuildOutput, 
+    postBuildOutput,
+    getBuildOutputList , 
+    deleteBuildOutput , 
+    updateBuildOutput 
+} from '../../api';
 
 import {
-  ADD_BUILDOUTPUT_REQUEST,
-  FETCH_BUILDOUTPUT_REQUEST,
-  LIST_BUILDOUTPUT_REQUEST,
-  UPDATE_BUILDOUTPUT_REQUEST,
-  DELETE_BUILDOUTPUT_REQUEST,
-  addBuildOutputFailure,
-  addBuildOutputSuccess,
-  fetchBuildOutputFailure,
-  fetchBuildOutputSuccess,
-  listBuildOutputFailure,
-  listBuildOutputSuccess,
-  updateBuildOutputFailure,
-  updateBuildOutputSuccess,
-  deleteBuildOutputFailure,
-  deleteBuildOutputSuccess,
-} from "../actions/BuildOutputApiAction";
+
+    ADD_BUILDOUTPUT_REQUEST,
+    FETCH_BUILDOUTPUT_REQUEST,
+    LIST_BUILDOUTPUT_REQUEST,
+    UPDATE_BUILDOUTPUT_REQUEST,
+    DELETE_BUILDOUTPUT_REQUEST,
+
+    addBuildOutputFailure,
+    addBuildOutputSuccess,
+
+    fetchBuildOutputFailure,
+    fetchBuildOutputSuccess,
+    
+    listBuildOutputFailure,
+    listBuildOutputSuccess,
+
+    updateBuildOutputFailure,
+    updateBuildOutputSuccess,
+    
+    deleteBuildOutputFailure,
+    deleteBuildOutputSuccess,
+    
+} from '../actions/BuildOutputApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: BuildOutput
 */
 
-export const BuildOutputMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("BuildOutput MIDDLEWARE: " + JSON.stringify(action));
+export const BuildOutputMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("BuildOutput MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_BUILDOUTPUT_REQUEST:
-        try {
-          const response = postBuildOutput(action.payload);
-          dispatch(addBuildOutputSuccess(response.body));
-        } catch (error) {
-          dispatch(addBuildOutputFailure(error.message));
-        }
-        break;
 
-      case LIST_BUILDOUTPUT_REQUEST:
-        try {
-          const response = getBuildOutputList();
-          dispatch(listBuildOutputSuccess(response.body));
-        } catch (error) {
-          dispatch(listBuildOutputFailure(error.message));
-        }
-        break;
+        case ADD_BUILDOUTPUT_REQUEST:
+            try {
+                const response = postBuildOutput(action.payload);
+                dispatch(addBuildOutputSuccess(response.body));
+            } catch (error) {
+                dispatch(addBuildOutputFailure(error.message));
+            }
+            break;
 
-      case FETCH_BUILDOUTPUT_REQUEST:
-        try {
-          const response = getBuildOutput(action.id);
-          dispatch(fetchBuildOutputSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchBuildOutputFailure(error.message));
-        }
-        break;
+        case LIST_BUILDOUTPUT_REQUEST:
+            try {
+                const response = getBuildOutputList();
+                dispatch(listBuildOutputSuccess(response.body));
+            } catch (error) {
+                dispatch(listBuildOutputFailure(error.message));
+            }
+            break;
 
-      case UPDATE_BUILDOUTPUT_REQUEST:
-        try {
-          const { id, BuildOutput } = action.payload;
-          const response = updateBuildOutput(id);
-          dispatch(updateBuildOutputSuccess(response.body));
-        } catch (error) {
-          dispatch(updateBuildOutputFailure(error.message));
-        }
-        break;
 
-      case DELETE_BUILDOUTPUT_REQUEST:
-        try {
-          const { id, BuildOutput } = action.payload;
-          const response = deleteBuildOutput(id);
-          dispatch(deleteBuildOutputSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteBuildOutputFailure(error.message));
-        }
-        break;
+        case FETCH_BUILDOUTPUT_REQUEST:
+            try {
+                const response = getBuildOutput(action.id);
+                dispatch(fetchBuildOutputSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchBuildOutputFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_BUILDOUTPUT_REQUEST:
+            try {
+                const { id, BuildOutput } = action.payload;
+                const response = updateBuildOutput(id);
+                dispatch(updateBuildOutputSuccess(response.body));
+            } catch (error) {
+                dispatch(updateBuildOutputFailure(error.message));
+            }
+            break;
+
+        case DELETE_BUILDOUTPUT_REQUEST:
+            try {
+                const { id, BuildOutput } = action.payload;
+                const response = deleteBuildOutput(id);
+                dispatch(deleteBuildOutputSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteBuildOutputFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+

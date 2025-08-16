@@ -11,7 +11,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime";
+import { exists, mapValues } from '../src/runtime';
 
 // thorapi
 
@@ -20,386 +20,349 @@ import { exists, mapValues } from "../src/runtime";
  * @export
  * @interface Stack
  */
-export type Stack = {
-  /**
-   * Name of the service API displayed in the UI
-   * @type {string}
-   * @memberof Stack
-   */
-  name: string;
-  /**
-   * YAML Swagger/OpenAPI Schema
-   * @type {string}
-   * @memberof Stack
-   */
-  schemaData: string;
-  /**
-   *
-   * @type {string}
-   * @memberof Stack
-   */
-  execModuleId?: string;
-  /**
-   * category of generated output
-   * @type {string}
-   * @memberof Stack
-   */
-  category?: StackCategoryEnum;
-  /**
-   * Name of the output build file(s) ie: mvn ArtifactID
-   * @type {string}
-   * @memberof Stack
-   */
-  artifactId?: string;
-  /**
-   * Id of the Application that this Stack belongs to, if any
-   * @type {string}
-   * @memberof Stack
-   */
-  applicationId?: string;
-  /**
-   * host (FQDN) name of to connect to the admin server -- do not include \'http(s):\' or slashes
-   * @type {string}
-   * @memberof Stack
-   */
-  adminServerHost?: string;
-  /**
-   * port of to connect to the admin server
-   * @type {string}
-   * @memberof Stack
-   */
-  adminServerPort?: string;
-  /**
-   * host of this service (FQDN) -- do not include \'http(s):\' or slashes
-   * @type {string}
-   * @memberof Stack
-   */
-  hostName?: string;
-  /**
-   * port of this service
-   * @type {string}
-   * @memberof Stack
-   */
-  hostPort?: string;
-  /**
-   * the name of the organization owner of the service used in classpath
-   * @type {string}
-   * @memberof Stack
-   */
-  orgName?: string;
-  /**
-   * The name of the git USER or ORG to push generated stack code
-   * @type {string}
-   * @memberof Stack
-   */
-  gitUser?: string;
-  /**
-   * The repository where the output Project will be pushed after generation
-   * @type {string}
-   * @memberof Stack
-   */
-  gitRepo?: string;
-  /**
-   * Whether to skip Swagger API build during Generation
-   * @type {boolean}
-   * @memberof Stack
-   */
-  skipSwaggerGen?: boolean;
-  /**
-   * Whether to skip Java Services and DAO build during Generation
-   * @type {boolean}
-   * @memberof Stack
-   */
-  skipJavaGen?: boolean;
-  /**
-   * Whether to skip Database Modification during Generation
-   * @type {boolean}
-   * @memberof Stack
-   */
-  skipDbGen?: boolean;
-  /**
-   * Whether to skip React Front End during Generation
-   * @type {boolean}
-   * @memberof Stack
-   */
-  skipReactGen?: boolean;
-  /**
-   * Will rename and any conflicting pre-existing tables during generation
-   * @type {boolean}
-   * @memberof Stack
-   */
-  dbGenDropTable?: boolean;
-  /**
-   * Secure key used to encrypt the data in the new platform
-   * @type {string}
-   * @memberof Stack
-   */
-  thorApiSecureKey?: string;
-  /**
-   * database url for the system
-   * @type {string}
-   * @memberof Stack
-   */
-  dbUrl?: string;
-  /**
-   * db name (schema name) for the system NOTE: must exist prior to initialization
-   * @type {string}
-   * @memberof Stack
-   */
-  dbName?: string;
-  /**
-   * database user for the system
-   * @type {string}
-   * @memberof Stack
-   */
-  dbUser?: string;
-  /**
-   * database password for the system
-   * @type {string}
-   * @memberof Stack
-   */
-  dbPassword?: string;
-  /**
-   * Name of the DB Schema to connect to  NOTE: must exist prior to initialization
-   * @type {string}
-   * @memberof Stack
-   */
-  schemaName?: string;
-  /**
-   * Backend Stack Service Language
-   * @type {string}
-   * @memberof Stack
-   */
-  language?: StackLanguageEnum;
-  /**
-   * Stack template repo
-   * @type {string}
-   * @memberof Stack
-   */
-  templateRepo?: StackTemplateRepoEnum;
-  /**
-   * File name containing Schema definition
-   * @type {string}
-   * @memberof Stack
-   */
-  schemaFileName?: string;
-  /**
-   * Current Stack status
-   * @type {string}
-   * @memberof Stack
-   */
-  status?: StackStatusEnum;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof Stack
-   */
-  id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof Stack
-   */
-  ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof Stack
-   */
-  createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof Stack
-   */
-  keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof Stack
-   */
-  lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof Stack
-   */
-  lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof Stack
-   */
-  lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof Stack
-   */
-  lastModifiedDate?: Date;
-};
+export type Stack  = {
+    /**
+     * Name of the service API displayed in the UI
+     * @type {string}
+     * @memberof Stack
+     */
+    name: string;
+    /**
+     * YAML Swagger/OpenAPI Schema
+     * @type {string}
+     * @memberof Stack
+     */
+    schemaData: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Stack
+     */
+    execModuleId?: string;
+    /**
+     * category of generated output
+     * @type {string}
+     * @memberof Stack
+     */
+    category?: StackCategoryEnum;
+    /**
+     * Name of the output build file(s) ie: mvn ArtifactID
+     * @type {string}
+     * @memberof Stack
+     */
+    artifactId?: string;
+    /**
+     * Id of the Application that this Stack belongs to, if any
+     * @type {string}
+     * @memberof Stack
+     */
+    applicationId?: string;
+    /**
+     * host (FQDN) name of to connect to the admin server -- do not include \'http(s):\' or slashes
+     * @type {string}
+     * @memberof Stack
+     */
+    adminServerHost?: string;
+    /**
+     * port of to connect to the admin server
+     * @type {string}
+     * @memberof Stack
+     */
+    adminServerPort?: string;
+    /**
+     * host of this service (FQDN) -- do not include \'http(s):\' or slashes
+     * @type {string}
+     * @memberof Stack
+     */
+    hostName?: string;
+    /**
+     * port of this service
+     * @type {string}
+     * @memberof Stack
+     */
+    hostPort?: string;
+    /**
+     * the name of the organization owner of the service used in classpath
+     * @type {string}
+     * @memberof Stack
+     */
+    orgName?: string;
+    /**
+     * The name of the git USER or ORG to push generated stack code
+     * @type {string}
+     * @memberof Stack
+     */
+    gitUser?: string;
+    /**
+     * The repository where the output Project will be pushed after generation
+     * @type {string}
+     * @memberof Stack
+     */
+    gitRepo?: string;
+    /**
+     * Whether to skip Swagger API build during Generation
+     * @type {boolean}
+     * @memberof Stack
+     */
+    skipSwaggerGen?: boolean;
+    /**
+     * Whether to skip Java Services and DAO build during Generation
+     * @type {boolean}
+     * @memberof Stack
+     */
+    skipJavaGen?: boolean;
+    /**
+     * Whether to skip Database Modification during Generation
+     * @type {boolean}
+     * @memberof Stack
+     */
+    skipDbGen?: boolean;
+    /**
+     * Whether to skip React Front End during Generation
+     * @type {boolean}
+     * @memberof Stack
+     */
+    skipReactGen?: boolean;
+    /**
+     * Will rename and any conflicting pre-existing tables during generation
+     * @type {boolean}
+     * @memberof Stack
+     */
+    dbGenDropTable?: boolean;
+    /**
+     * Secure key used to encrypt the data in the new platform
+     * @type {string}
+     * @memberof Stack
+     */
+    thorApiSecureKey?: string;
+    /**
+     * database url for the system
+     * @type {string}
+     * @memberof Stack
+     */
+    dbUrl?: string;
+    /**
+     * db name (schema name) for the system NOTE: must exist prior to initialization
+     * @type {string}
+     * @memberof Stack
+     */
+    dbName?: string;
+    /**
+     * database user for the system
+     * @type {string}
+     * @memberof Stack
+     */
+    dbUser?: string;
+    /**
+     * database password for the system
+     * @type {string}
+     * @memberof Stack
+     */
+    dbPassword?: string;
+    /**
+     * Name of the DB Schema to connect to  NOTE: must exist prior to initialization
+     * @type {string}
+     * @memberof Stack
+     */
+    schemaName?: string;
+    /**
+     * Backend Stack Service Language
+     * @type {string}
+     * @memberof Stack
+     */
+    language?: StackLanguageEnum;
+    /**
+     * Stack template repo
+     * @type {string}
+     * @memberof Stack
+     */
+    templateRepo?: StackTemplateRepoEnum;
+    /**
+     * File name containing Schema definition
+     * @type {string}
+     * @memberof Stack
+     */
+    schemaFileName?: string;
+    /**
+     * Current Stack status
+     * @type {string}
+     * @memberof Stack
+     */
+    status?: StackStatusEnum;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof Stack
+     */
+    id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof Stack
+     */
+    ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof Stack
+     */
+    createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof Stack
+     */
+    keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof Stack
+     */
+    lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof Stack
+     */
+    lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof Stack
+     */
+    lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof Stack
+     */
+    lastModifiedDate?: Date;
+}
 
 export function StackFromJSON(json: any): Stack {
-  return {
-    name: json["name"],
-    schemaData: json["schemaData"],
-    execModuleId: !exists(json, "execModuleId")
-      ? undefined
-      : json["execModuleId"],
-    category: !exists(json, "category") ? undefined : json["category"],
-    artifactId: !exists(json, "artifactId") ? undefined : json["artifactId"],
-    applicationId: !exists(json, "applicationId")
-      ? undefined
-      : json["applicationId"],
-    adminServerHost: !exists(json, "adminServerHost")
-      ? undefined
-      : json["adminServerHost"],
-    adminServerPort: !exists(json, "adminServerPort")
-      ? undefined
-      : json["adminServerPort"],
-    hostName: !exists(json, "hostName") ? undefined : json["hostName"],
-    hostPort: !exists(json, "hostPort") ? undefined : json["hostPort"],
-    orgName: !exists(json, "orgName") ? undefined : json["orgName"],
-    gitUser: !exists(json, "gitUser") ? undefined : json["gitUser"],
-    gitRepo: !exists(json, "gitRepo") ? undefined : json["gitRepo"],
-    skipSwaggerGen: !exists(json, "skipSwaggerGen")
-      ? undefined
-      : json["skipSwaggerGen"],
-    skipJavaGen: !exists(json, "skipJavaGen") ? undefined : json["skipJavaGen"],
-    skipDbGen: !exists(json, "skipDbGen") ? undefined : json["skipDbGen"],
-    skipReactGen: !exists(json, "skipReactGen")
-      ? undefined
-      : json["skipReactGen"],
-    dbGenDropTable: !exists(json, "dbGenDropTable")
-      ? undefined
-      : json["dbGenDropTable"],
-    thorApiSecureKey: !exists(json, "thorApiSecureKey")
-      ? undefined
-      : json["thorApiSecureKey"],
-    dbUrl: !exists(json, "dbUrl") ? undefined : json["dbUrl"],
-    dbName: !exists(json, "dbName") ? undefined : json["dbName"],
-    dbUser: !exists(json, "dbUser") ? undefined : json["dbUser"],
-    dbPassword: !exists(json, "dbPassword") ? undefined : json["dbPassword"],
-    schemaName: !exists(json, "schemaName") ? undefined : json["schemaName"],
-    language: !exists(json, "language") ? undefined : json["language"],
-    templateRepo: !exists(json, "templateRepo")
-      ? undefined
-      : json["templateRepo"],
-    schemaFileName: !exists(json, "schemaFileName")
-      ? undefined
-      : json["schemaFileName"],
-    status: !exists(json, "status") ? undefined : json["status"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-  };
+    return {
+        'name': json['name'],
+        'schemaData': json['schemaData'],
+        'execModuleId': !exists(json, 'execModuleId') ? undefined : json['execModuleId'],
+        'category': !exists(json, 'category') ? undefined : json['category'],
+        'artifactId': !exists(json, 'artifactId') ? undefined : json['artifactId'],
+        'applicationId': !exists(json, 'applicationId') ? undefined : json['applicationId'],
+        'adminServerHost': !exists(json, 'adminServerHost') ? undefined : json['adminServerHost'],
+        'adminServerPort': !exists(json, 'adminServerPort') ? undefined : json['adminServerPort'],
+        'hostName': !exists(json, 'hostName') ? undefined : json['hostName'],
+        'hostPort': !exists(json, 'hostPort') ? undefined : json['hostPort'],
+        'orgName': !exists(json, 'orgName') ? undefined : json['orgName'],
+        'gitUser': !exists(json, 'gitUser') ? undefined : json['gitUser'],
+        'gitRepo': !exists(json, 'gitRepo') ? undefined : json['gitRepo'],
+        'skipSwaggerGen': !exists(json, 'skipSwaggerGen') ? undefined : json['skipSwaggerGen'],
+        'skipJavaGen': !exists(json, 'skipJavaGen') ? undefined : json['skipJavaGen'],
+        'skipDbGen': !exists(json, 'skipDbGen') ? undefined : json['skipDbGen'],
+        'skipReactGen': !exists(json, 'skipReactGen') ? undefined : json['skipReactGen'],
+        'dbGenDropTable': !exists(json, 'dbGenDropTable') ? undefined : json['dbGenDropTable'],
+        'thorApiSecureKey': !exists(json, 'thorApiSecureKey') ? undefined : json['thorApiSecureKey'],
+        'dbUrl': !exists(json, 'dbUrl') ? undefined : json['dbUrl'],
+        'dbName': !exists(json, 'dbName') ? undefined : json['dbName'],
+        'dbUser': !exists(json, 'dbUser') ? undefined : json['dbUser'],
+        'dbPassword': !exists(json, 'dbPassword') ? undefined : json['dbPassword'],
+        'schemaName': !exists(json, 'schemaName') ? undefined : json['schemaName'],
+        'language': !exists(json, 'language') ? undefined : json['language'],
+        'templateRepo': !exists(json, 'templateRepo') ? undefined : json['templateRepo'],
+        'schemaFileName': !exists(json, 'schemaFileName') ? undefined : json['schemaFileName'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+    };
 }
 
 export function StackToJSON(value?: Stack): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    name: value.name,
-    schemaData: value.schemaData,
-    execModuleId: value.execModuleId,
-    category: value.category,
-    artifactId: value.artifactId,
-    applicationId: value.applicationId,
-    adminServerHost: value.adminServerHost,
-    adminServerPort: value.adminServerPort,
-    hostName: value.hostName,
-    hostPort: value.hostPort,
-    orgName: value.orgName,
-    gitUser: value.gitUser,
-    gitRepo: value.gitRepo,
-    skipSwaggerGen: value.skipSwaggerGen,
-    skipJavaGen: value.skipJavaGen,
-    skipDbGen: value.skipDbGen,
-    skipReactGen: value.skipReactGen,
-    dbGenDropTable: value.dbGenDropTable,
-    thorApiSecureKey: value.thorApiSecureKey,
-    dbUrl: value.dbUrl,
-    dbName: value.dbName,
-    dbUser: value.dbUser,
-    dbPassword: value.dbPassword,
-    schemaName: value.schemaName,
-    language: value.language,
-    templateRepo: value.templateRepo,
-    schemaFileName: value.schemaFileName,
-    status: value.status,
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        'name': value.name,
+        'schemaData': value.schemaData,
+        'execModuleId': value.execModuleId,
+        'category': value.category,
+        'artifactId': value.artifactId,
+        'applicationId': value.applicationId,
+        'adminServerHost': value.adminServerHost,
+        'adminServerPort': value.adminServerPort,
+        'hostName': value.hostName,
+        'hostPort': value.hostPort,
+        'orgName': value.orgName,
+        'gitUser': value.gitUser,
+        'gitRepo': value.gitRepo,
+        'skipSwaggerGen': value.skipSwaggerGen,
+        'skipJavaGen': value.skipJavaGen,
+        'skipDbGen': value.skipDbGen,
+        'skipReactGen': value.skipReactGen,
+        'dbGenDropTable': value.dbGenDropTable,
+        'thorApiSecureKey': value.thorApiSecureKey,
+        'dbUrl': value.dbUrl,
+        'dbName': value.dbName,
+        'dbUser': value.dbUser,
+        'dbPassword': value.dbPassword,
+        'schemaName': value.schemaName,
+        'language': value.language,
+        'templateRepo': value.templateRepo,
+        'schemaFileName': value.schemaFileName,
+        'status': value.status,
+        'id': value.id,
+        'ownerId': value.ownerId,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'keyHash': value.keyHash,
+        'lastAccessedById': value.lastAccessedById,
+        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
+        'lastModifiedById': value.lastModifiedById,
+        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum StackCategoryEnum {
-  FULLSTACK = "full stack",
-  FRONTEND = "front end",
-  API = "api",
-  DATALIBRARY = "data library",
-  INFRASTRUCTURE = "infrastructure",
-  DOCUMENTATION = "documentation",
+    FULLSTACK = 'full stack',
+    FRONTEND = 'front end',
+    API = 'api',
+    DATALIBRARY = 'data library',
+    INFRASTRUCTURE = 'infrastructure',
+    DOCUMENTATION = 'documentation'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum StackLanguageEnum {
-  JAVASPRING = "valkyrai_java_spring",
-  KOTLINSPRING = "valkyrai_kotlin_spring",
+    JAVASPRING = 'valkyrai_java_spring',
+    KOTLINSPRING = 'valkyrai_kotlin_spring'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum StackTemplateRepoEnum {
-  JAVASPRING = "java_spring",
-  TYPESCRIPTRTKBOOTSTRAP = "typescript_rtk_bootstrap",
+    JAVASPRING = 'java_spring',
+    TYPESCRIPTRTKBOOTSTRAP = 'typescript_rtk_bootstrap'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum StackStatusEnum {
-  AVAILABLE = "available",
-  SYNTAXERROR = "syntax_error",
-  COMPILATIONERROR = "compilation_error",
-  RUNTIMEERROR = "runtime_error",
-  DATABASEERROR = "database_error",
-  LOCKED = "locked",
+    AVAILABLE = 'available',
+    SYNTAXERROR = 'syntax_error',
+    COMPILATIONERROR = 'compilation_error',
+    RUNTIMEERROR = 'runtime_error',
+    DATABASEERROR = 'database_error',
+    LOCKED = 'locked'
 }
+
+

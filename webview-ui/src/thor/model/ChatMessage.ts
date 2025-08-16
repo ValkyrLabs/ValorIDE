@@ -11,7 +11,7 @@
  * Do not edit the class manually.
  */
 
-import { exists, mapValues } from "../src/runtime";
+import { exists, mapValues } from '../src/runtime';
 
 // thorapi
 
@@ -20,186 +20,167 @@ import { exists, mapValues } from "../src/runtime";
  * @export
  * @interface ChatMessage
  */
-export type ChatMessage = {
-  /**
-   * The role of the message sender (system, user, or assistant).
-   * @type {string}
-   * @memberof ChatMessage
-   */
-  role: ChatMessageRoleEnum;
-  /**
-   * The chat text or prompt being sent to the LLM.
-   * @type {string}
-   * @memberof ChatMessage
-   */
-  content: string;
-  /**
-   *
-   * @type {string}
-   * @memberof ChatMessage
-   */
-  sessionId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof ChatMessage
-   */
-  chatCompletionRequestId?: string;
-  /**
-   * Indicates if this message is connected to an active service (e.g., WebSocket).
-   * @type {boolean}
-   * @memberof ChatMessage
-   */
-  connected?: boolean;
-  /**
-   * Any JSON payload attached to this message.
-   * @type {string}
-   * @memberof ChatMessage
-   */
-  json?: string;
-  /**
-   * Type of the message source (e.g., \'api\', \'server_log\', \'p2p\').
-   * @type {string}
-   * @memberof ChatMessage
-   */
-  sourceType?: ChatMessageSourceTypeEnum;
-  /**
-   *
-   * @type {string}
-   * @memberof ChatMessage
-   */
-  sourceOwner?: string;
-  /**
-   * Unique identifier for object in the system
-   * @type {string}
-   * @memberof ChatMessage
-   */
-  id?: string;
-  /**
-   * UUID of owner of the object in the system
-   * @type {string}
-   * @memberof ChatMessage
-   */
-  ownerId?: string;
-  /**
-   * Date of object creation
-   * @type {Date}
-   * @memberof ChatMessage
-   */
-  createdDate?: Date;
-  /**
-   * Data, including hash of the key(s) used to encrypt this record.
-   * @type {string}
-   * @memberof ChatMessage
-   */
-  keyHash?: string;
-  /**
-   * Last user to access object
-   * @type {string}
-   * @memberof ChatMessage
-   */
-  lastAccessedById?: string;
-  /**
-   * Timestamp of last access of object
-   * @type {Date}
-   * @memberof ChatMessage
-   */
-  lastAccessedDate?: Date;
-  /**
-   * Unique identifier for user who last modifed the object in the system
-   * @type {string}
-   * @memberof ChatMessage
-   */
-  lastModifiedById?: string;
-  /**
-   * Date of last object modification
-   * @type {Date}
-   * @memberof ChatMessage
-   */
-  lastModifiedDate?: Date;
-};
+export type ChatMessage  = {
+    /**
+     * The role of the message sender (system, user, or assistant).
+     * @type {string}
+     * @memberof ChatMessage
+     */
+    role: ChatMessageRoleEnum;
+    /**
+     * The chat text or prompt being sent to the LLM.
+     * @type {string}
+     * @memberof ChatMessage
+     */
+    content: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatMessage
+     */
+    sessionId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatMessage
+     */
+    chatCompletionRequestId?: string;
+    /**
+     * Indicates if this message is connected to an active service (e.g., WebSocket).
+     * @type {boolean}
+     * @memberof ChatMessage
+     */
+    connected?: boolean;
+    /**
+     * Any JSON payload attached to this message.
+     * @type {string}
+     * @memberof ChatMessage
+     */
+    json?: string;
+    /**
+     * Type of the message source (e.g., \'api\', \'server_log\', \'p2p\').
+     * @type {string}
+     * @memberof ChatMessage
+     */
+    sourceType?: ChatMessageSourceTypeEnum;
+    /**
+     * 
+     * @type {string}
+     * @memberof ChatMessage
+     */
+    sourceOwner?: string;
+    /**
+     * Unique identifier for object in the system
+     * @type {string}
+     * @memberof ChatMessage
+     */
+    id?: string;
+    /**
+     * UUID of owner of the object in the system
+     * @type {string}
+     * @memberof ChatMessage
+     */
+    ownerId?: string;
+    /**
+     * Date of object creation
+     * @type {Date}
+     * @memberof ChatMessage
+     */
+    createdDate?: Date;
+    /**
+     * Data, including hash of the key(s) used to encrypt this record.
+     * @type {string}
+     * @memberof ChatMessage
+     */
+    keyHash?: string;
+    /**
+     * Last user to access object
+     * @type {string}
+     * @memberof ChatMessage
+     */
+    lastAccessedById?: string;
+    /**
+     * Timestamp of last access of object
+     * @type {Date}
+     * @memberof ChatMessage
+     */
+    lastAccessedDate?: Date;
+    /**
+     * Unique identifier for user who last modifed the object in the system
+     * @type {string}
+     * @memberof ChatMessage
+     */
+    lastModifiedById?: string;
+    /**
+     * Date of last object modification
+     * @type {Date}
+     * @memberof ChatMessage
+     */
+    lastModifiedDate?: Date;
+}
 
 export function ChatMessageFromJSON(json: any): ChatMessage {
-  return {
-    role: json["role"],
-    content: json["content"],
-    sessionId: !exists(json, "sessionId") ? undefined : json["sessionId"],
-    chatCompletionRequestId: !exists(json, "chatCompletionRequestId")
-      ? undefined
-      : json["chatCompletionRequestId"],
-    connected: !exists(json, "connected") ? undefined : json["connected"],
-    json: !exists(json, "json") ? undefined : json["json"],
-    sourceType: !exists(json, "sourceType") ? undefined : json["sourceType"],
-    sourceOwner: !exists(json, "sourceOwner") ? undefined : json["sourceOwner"],
-    id: !exists(json, "id") ? undefined : json["id"],
-    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-    createdDate: !exists(json, "createdDate")
-      ? undefined
-      : new Date(json["createdDate"]),
-    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-    lastAccessedById: !exists(json, "lastAccessedById")
-      ? undefined
-      : json["lastAccessedById"],
-    lastAccessedDate: !exists(json, "lastAccessedDate")
-      ? undefined
-      : new Date(json["lastAccessedDate"]),
-    lastModifiedById: !exists(json, "lastModifiedById")
-      ? undefined
-      : json["lastModifiedById"],
-    lastModifiedDate: !exists(json, "lastModifiedDate")
-      ? undefined
-      : new Date(json["lastModifiedDate"]),
-  };
+    return {
+        'role': json['role'],
+        'content': json['content'],
+        'sessionId': !exists(json, 'sessionId') ? undefined : json['sessionId'],
+        'chatCompletionRequestId': !exists(json, 'chatCompletionRequestId') ? undefined : json['chatCompletionRequestId'],
+        'connected': !exists(json, 'connected') ? undefined : json['connected'],
+        'json': !exists(json, 'json') ? undefined : json['json'],
+        'sourceType': !exists(json, 'sourceType') ? undefined : json['sourceType'],
+        'sourceOwner': !exists(json, 'sourceOwner') ? undefined : json['sourceOwner'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+    };
 }
 
 export function ChatMessageToJSON(value?: ChatMessage): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  return {
-    role: value.role,
-    content: value.content,
-    sessionId: value.sessionId,
-    chatCompletionRequestId: value.chatCompletionRequestId,
-    connected: value.connected,
-    json: value.json,
-    sourceType: value.sourceType,
-    sourceOwner: value.sourceOwner,
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    return {
+        'role': value.role,
+        'content': value.content,
+        'sessionId': value.sessionId,
+        'chatCompletionRequestId': value.chatCompletionRequestId,
+        'connected': value.connected,
+        'json': value.json,
+        'sourceType': value.sourceType,
+        'sourceOwner': value.sourceOwner,
+        'id': value.id,
+        'ownerId': value.ownerId,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
+        'keyHash': value.keyHash,
+        'lastAccessedById': value.lastAccessedById,
+        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
+        'lastModifiedById': value.lastModifiedById,
+        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
+    };
 }
 
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum ChatMessageRoleEnum {
-  SYSTEM = "system",
-  USER = "user",
-  ASSISTANT = "assistant",
+    SYSTEM = 'system',
+    USER = 'user',
+    ASSISTANT = 'assistant'
 }
 /**
- * @export
- * @enum {string}
- */
+* @export
+* @enum {string}
+*/
 export enum ChatMessageSourceTypeEnum {
-  API = "api",
-  SERVERLOG = "server_log",
-  P2P = "p2p",
+    API = 'api',
+    SERVERLOG = 'server_log',
+    P2P = 'p2p'
 }
+
+

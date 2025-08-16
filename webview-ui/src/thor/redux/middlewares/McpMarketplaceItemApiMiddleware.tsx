@@ -1,28 +1,36 @@
-import {
-  getMcpMarketplaceItem,
-  postMcpMarketplaceItem,
-  getMcpMarketplaceItemList,
-  deleteMcpMarketplaceItem,
-  updateMcpMarketplaceItem,
-} from "../../api";
+
+import { 
+    getMcpMarketplaceItem, 
+    postMcpMarketplaceItem,
+    getMcpMarketplaceItemList , 
+    deleteMcpMarketplaceItem , 
+    updateMcpMarketplaceItem 
+} from '../../api';
 
 import {
-  ADD_MCPMARKETPLACEITEM_REQUEST,
-  FETCH_MCPMARKETPLACEITEM_REQUEST,
-  LIST_MCPMARKETPLACEITEM_REQUEST,
-  UPDATE_MCPMARKETPLACEITEM_REQUEST,
-  DELETE_MCPMARKETPLACEITEM_REQUEST,
-  addMcpMarketplaceItemFailure,
-  addMcpMarketplaceItemSuccess,
-  fetchMcpMarketplaceItemFailure,
-  fetchMcpMarketplaceItemSuccess,
-  listMcpMarketplaceItemFailure,
-  listMcpMarketplaceItemSuccess,
-  updateMcpMarketplaceItemFailure,
-  updateMcpMarketplaceItemSuccess,
-  deleteMcpMarketplaceItemFailure,
-  deleteMcpMarketplaceItemSuccess,
-} from "../actions/McpMarketplaceItemApiAction";
+
+    ADD_MCPMARKETPLACEITEM_REQUEST,
+    FETCH_MCPMARKETPLACEITEM_REQUEST,
+    LIST_MCPMARKETPLACEITEM_REQUEST,
+    UPDATE_MCPMARKETPLACEITEM_REQUEST,
+    DELETE_MCPMARKETPLACEITEM_REQUEST,
+
+    addMcpMarketplaceItemFailure,
+    addMcpMarketplaceItemSuccess,
+
+    fetchMcpMarketplaceItemFailure,
+    fetchMcpMarketplaceItemSuccess,
+    
+    listMcpMarketplaceItemFailure,
+    listMcpMarketplaceItemSuccess,
+
+    updateMcpMarketplaceItemFailure,
+    updateMcpMarketplaceItemSuccess,
+    
+    deleteMcpMarketplaceItemFailure,
+    deleteMcpMarketplaceItemSuccess,
+    
+} from '../actions/McpMarketplaceItemApiAction';
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -40,62 +48,62 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpMarketplaceItem
 */
 
-export const McpMarketplaceItemMiddleware =
-  ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("McpMarketplaceItem MIDDLEWARE: " + JSON.stringify(action));
+export const McpMarketplaceItemMiddleware = ({ dispatch }) => (next) => async (action) => {
+    console.log("McpMarketplaceItem MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-      case ADD_MCPMARKETPLACEITEM_REQUEST:
-        try {
-          const response = postMcpMarketplaceItem(action.payload);
-          dispatch(addMcpMarketplaceItemSuccess(response.body));
-        } catch (error) {
-          dispatch(addMcpMarketplaceItemFailure(error.message));
-        }
-        break;
 
-      case LIST_MCPMARKETPLACEITEM_REQUEST:
-        try {
-          const response = getMcpMarketplaceItemList();
-          dispatch(listMcpMarketplaceItemSuccess(response.body));
-        } catch (error) {
-          dispatch(listMcpMarketplaceItemFailure(error.message));
-        }
-        break;
+        case ADD_MCPMARKETPLACEITEM_REQUEST:
+            try {
+                const response = postMcpMarketplaceItem(action.payload);
+                dispatch(addMcpMarketplaceItemSuccess(response.body));
+            } catch (error) {
+                dispatch(addMcpMarketplaceItemFailure(error.message));
+            }
+            break;
 
-      case FETCH_MCPMARKETPLACEITEM_REQUEST:
-        try {
-          const response = getMcpMarketplaceItem(action.id);
-          dispatch(fetchMcpMarketplaceItemSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchMcpMarketplaceItemFailure(error.message));
-        }
-        break;
+        case LIST_MCPMARKETPLACEITEM_REQUEST:
+            try {
+                const response = getMcpMarketplaceItemList();
+                dispatch(listMcpMarketplaceItemSuccess(response.body));
+            } catch (error) {
+                dispatch(listMcpMarketplaceItemFailure(error.message));
+            }
+            break;
 
-      case UPDATE_MCPMARKETPLACEITEM_REQUEST:
-        try {
-          const { id, McpMarketplaceItem } = action.payload;
-          const response = updateMcpMarketplaceItem(id);
-          dispatch(updateMcpMarketplaceItemSuccess(response.body));
-        } catch (error) {
-          dispatch(updateMcpMarketplaceItemFailure(error.message));
-        }
-        break;
 
-      case DELETE_MCPMARKETPLACEITEM_REQUEST:
-        try {
-          const { id, McpMarketplaceItem } = action.payload;
-          const response = deleteMcpMarketplaceItem(id);
-          dispatch(deleteMcpMarketplaceItemSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteMcpMarketplaceItemFailure(error.message));
-        }
-        break;
+        case FETCH_MCPMARKETPLACEITEM_REQUEST:
+            try {
+                const response = getMcpMarketplaceItem(action.id);
+                dispatch(fetchMcpMarketplaceItemSuccess(response.body));
+            } catch (error) {
+                dispatch(fetchMcpMarketplaceItemFailure(error.message));
+            }
+            break;
 
-      default:
-        break;
+        case UPDATE_MCPMARKETPLACEITEM_REQUEST:
+            try {
+                const { id, McpMarketplaceItem } = action.payload;
+                const response = updateMcpMarketplaceItem(id);
+                dispatch(updateMcpMarketplaceItemSuccess(response.body));
+            } catch (error) {
+                dispatch(updateMcpMarketplaceItemFailure(error.message));
+            }
+            break;
+
+        case DELETE_MCPMARKETPLACEITEM_REQUEST:
+            try {
+                const { id, McpMarketplaceItem } = action.payload;
+                const response = deleteMcpMarketplaceItem(id);
+                dispatch(deleteMcpMarketplaceItemSuccess(response.body));
+            } catch (error) {
+                dispatch(deleteMcpMarketplaceItemFailure(error.message));
+            }
+            break;
+
+        default:
+            break;
     }
-  };
+};
+
