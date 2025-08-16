@@ -1,9 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import ApiOptions from "../ApiOptions";
 import { ExtensionStateContextProvider } from "@/context/ExtensionStateContext";
-import "@testing-library/jest-dom";
 
 vi.mock("../../../context/ExtensionStateContext", async (importOriginal) => {
   const actual = await importOriginal();

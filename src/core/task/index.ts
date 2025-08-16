@@ -118,6 +118,7 @@ import { parseSlashCommands } from "@core/slash-commands";
 import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
 import { McpHub } from "@services/mcp/McpHub";
 import { isInTestMode } from "../../services/test/TestMode";
+import { OutputFilterService } from "@services/output-filter/OutputFilterService";
 
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -1407,20 +1408,23 @@ export class Task {
         output = result.stdout || result.stderr || "";
       }
 
-      Logger.info(`Command executed in Node: ${command}\nOutput:\n${output}`);
-
       // Add termination message if the command was terminated
       if (wasTerminated) {
         output +=
           "\nCommand was taking a while to run so it was auto terminated after 30s";
       }
 
+      // Filter the output to reduce verbosity
+      const filteredOutput = OutputFilterService.filterCommandOutput(output, command);
+      
+      Logger.info(`Command executed in Node: ${command}\nOutput:\n${filteredOutput}`);
+
       // Format the result similar to terminal output
       return [
         false,
         `Command executed${wasTerminated ? " (terminated after 30s)" : ""} with exit code ${
           result.exitCode
-        }.${output.length > 0 ? `\nOutput:\n${output}` : ""}`,
+        }.${filteredOutput.length > 0 ? `\nOutput:\n${filteredOutput}` : ""}`,
       ];
     } catch (error) {
       // Handle any errors that might occur
@@ -1501,8 +1505,11 @@ export class Task {
     };
 
     let result = "";
+    let fullOutput = ""; // Keep track of full output for filtering
+    
     process.on("line", (line) => {
       result += line + "\n";
+      fullOutput += line + "\n";
 
       if (!didContinue) {
         outputBuffer.push(line);
@@ -1547,6 +1554,9 @@ export class Task {
     // grouping command_output messages despite any gaps anyways)
     await setTimeoutPromise(50);
 
+    // Filter the full output before using it
+    const filteredOutput = OutputFilterService.filterCommandOutput(fullOutput, command);
+    
     result = result.trim();
 
     if (userFeedback) {
@@ -1555,7 +1565,7 @@ export class Task {
         true,
         formatResponse.toolResult(
           `Command is still running in the user's terminal.${
-            result.length > 0 ? `\nHere's the output so far:\n${result}` : ""
+            filteredOutput.length > 0 ? `\nHere's the output so far:\n${filteredOutput}` : ""
           }\n\nThe user provided the following feedback:\n<feedback>\n${userFeedback.text}\n</feedback>`,
           userFeedback.images,
         ),
@@ -1565,13 +1575,13 @@ export class Task {
     if (completed) {
       return [
         false,
-        `Command executed.${result.length > 0 ? `\nOutput:\n${result}` : ""}`,
+        `Command executed.${filteredOutput.length > 0 ? `\nOutput:\n${filteredOutput}` : ""}`,
       ];
     } else {
       return [
         false,
         `Command is still running in the user's terminal.${
-          result.length > 0 ? `\nHere's the output so far:\n${result}` : ""
+          filteredOutput.length > 0 ? `\nHere's the output so far:\n${filteredOutput}` : ""
         }\n\nYou will be updated on the terminal status and new output in the future.`,
       ];
     }

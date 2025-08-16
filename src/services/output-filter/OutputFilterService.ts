@@ -1,0 +1,255 @@
+import { Logger } from "@services/logging/Logger";
+
+export interface OutputFilterConfig {
+  maxOutputLength?: number;
+  enableStackTraceFiltering?: boolean;
+  enableProgressFiltering?: boolean;
+  enableVerboseFiltering?: boolean;
+}
+
+export class OutputFilterService {
+  private static readonly DEFAULT_MAX_OUTPUT_LENGTH = 5000;
+  private static readonly TRUNCATION_MESSAGE = "\n[Output truncated - showing relevant portions only]";
+
+  /**
+   * Filters Maven output to extract only relevant information
+   */
+  static filterMavenOutput(output: string, config: OutputFilterConfig = {}): string {
+    if (!output) return output;
+
+    let filtered = output;
+
+    // Remove download progress indicators
+    filtered = filtered.replace(/^(Download(ing|ed)|Progress).*$/gm, "");
+    
+    // Remove transfer progress
+    filtered = filtered.replace(/^\d+\/\d+ [kKmM]?B.*$/gm, "");
+    
+    // Extract only "Caused by" exceptions from stack traces
+    if (config.enableStackTraceFiltering !== false) {
+      filtered = this.extractCausedByExceptions(filtered);
+    }
+
+    // Remove empty lines created by filtering
+    filtered = filtered.replace(/^\s*[\r\n]+/gm, "\n");
+
+    // Apply length limit
+    return this.truncateOutput(filtered, config.maxOutputLength);
+  }
+
+  /**
+   * Filters npm/yarn output to reduce verbosity
+   */
+  static filterNpmOutput(output: string, config: OutputFilterConfig = {}): string {
+    if (!output) return output;
+
+    let filtered = output;
+
+    // Remove progress bars and spinners
+    filtered = filtered.replace(/^[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏].*$/gm, "");
+    
+    // Remove verbose npm timing info
+    filtered = filtered.replace(/^npm timing.*$/gm, "");
+    
+    // Remove audit details unless there are vulnerabilities
+    if (!filtered.includes("found") || filtered.includes("found 0")) {
+      filtered = filtered.replace(/^npm audit.*$/gm, "");
+    }
+
+    // Remove empty lines
+    filtered = filtered.replace(/^\s*[\r\n]+/gm, "\n");
+
+    return this.truncateOutput(filtered, config.maxOutputLength);
+  }
+
+  /**
+   * Filters Python/pip output
+   */
+  static filterPythonOutput(output: string, config: OutputFilterConfig = {}): string {
+    if (!output) return output;
+
+    let filtered = output;
+
+    // Remove pip download progress
+    filtered = filtered.replace(/^\s*\|[█▌▏\s]+\|.*$/gm, "");
+    
+    // Remove "Collecting" lines unless they fail
+    const lines = filtered.split('\n');
+    const filteredLines = lines.filter((line, index) => {
+      if (line.startsWith('Collecting') || line.startsWith('Downloading')) {
+        // Check if next few lines contain an error
+        const nextFewLines = lines.slice(index + 1, index + 5).join(' ');
+        return nextFewLines.toLowerCase().includes('error') || 
+               nextFewLines.toLowerCase().includes('failed');
+      }
+      return true;
+    });
+    filtered = filteredLines.join('\n');
+
+    return this.truncateOutput(filtered, config.maxOutputLength);
+  }
+
+  /**
+   * Generic output filter for any command
+   */
+  static filterCommandOutput(output: string, command: string, config: OutputFilterConfig = {}): string {
+    if (!output) return output;
+
+    // Detect the type of command and apply specific filters
+    if (command.includes('mvn') || command.includes('maven')) {
+      return this.filterMavenOutput(output, config);
+    } else if (command.includes('npm') || command.includes('yarn') || command.includes('pnpm')) {
+      return this.filterNpmOutput(output, config);
+    } else if (command.includes('pip') || command.includes('python')) {
+      return this.filterPythonOutput(output, config);
+    }
+
+    // Generic filtering for unknown commands
+    return this.filterGenericOutput(output, config);
+  }
+
+  /**
+   * Generic output filtering
+   */
+  private static filterGenericOutput(output: string, config: OutputFilterConfig = {}): string {
+    let filtered = output;
+
+    // Remove ANSI escape codes
+    // eslint-disable-next-line no-control-regex
+    filtered = filtered.replace(/\x1b\[[0-9;]*m/g, '');
+
+    // Remove excessive whitespace
+    filtered = filtered.replace(/^\s*[\r\n]+/gm, "\n");
+
+    // If output is very repetitive, summarize it
+    filtered = this.summarizeRepetitiveOutput(filtered);
+
+    return this.truncateOutput(filtered, config.maxOutputLength);
+  }
+
+  /**
+   * Extracts only "Caused by" exceptions from Java stack traces
+   */
+  private static extractCausedByExceptions(output: string): string {
+    const lines = output.split('\n');
+    const relevantLines: string[] = [];
+    let inStackTrace = false;
+    let captureNext = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      
+      // Detect start of exception
+      if (line.includes('Exception') || line.includes('Error')) {
+        inStackTrace = true;
+        relevantLines.push(line);
+        captureNext = 2; // Capture next 2 lines for context
+      }
+      // Capture "Caused by" lines
+      else if (line.trim().startsWith('Caused by:')) {
+        relevantLines.push(line);
+        captureNext = 3; // Capture more context for root cause
+      }
+      // Capture context lines
+      else if (captureNext > 0) {
+        relevantLines.push(line);
+        captureNext--;
+      }
+      // Skip stack trace details
+      else if (inStackTrace && line.trim().startsWith('at ')) {
+        continue;
+      }
+      // End of stack trace
+      else if (inStackTrace && line.trim() === '') {
+        inStackTrace = false;
+      }
+      // Normal output
+      else if (!inStackTrace) {
+        relevantLines.push(line);
+      }
+    }
+
+    return relevantLines.join('\n');
+  }
+
+  /**
+   * Summarizes repetitive output patterns
+   */
+  private static summarizeRepetitiveOutput(output: string): string {
+    const lines = output.split('\n');
+    const lineCount = new Map<string, number>();
+    const result: string[] = [];
+    let lastLine = '';
+    let repeatCount = 0;
+
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      
+      // Skip empty lines in counting
+      if (!trimmedLine) {
+        if (repeatCount > 1) {
+          result.push(`[Previous line repeated ${repeatCount} times]`);
+          repeatCount = 0;
+        }
+        result.push(line);
+        lastLine = '';
+        continue;
+      }
+
+      if (trimmedLine === lastLine) {
+        repeatCount++;
+      } else {
+        if (repeatCount > 1) {
+          result.push(`[Previous line repeated ${repeatCount} times]`);
+        }
+        result.push(line);
+        lastLine = trimmedLine;
+        repeatCount = 0;
+      }
+    }
+
+    if (repeatCount > 1) {
+      result.push(`[Previous line repeated ${repeatCount} times]`);
+    }
+
+    return result.join('\n');
+  }
+
+  /**
+   * Truncates output if it exceeds the maximum length
+   */
+  private static truncateOutput(output: string, maxLength?: number): string {
+    const limit = maxLength || this.DEFAULT_MAX_OUTPUT_LENGTH;
+    
+    if (output.length <= limit) {
+      return output;
+    }
+
+    // Try to truncate at a sensible point (end of line)
+    const truncatePoint = output.lastIndexOf('\n', limit);
+    const actualTruncatePoint = truncatePoint > limit * 0.8 ? truncatePoint : limit;
+
+    return output.substring(0, actualTruncatePoint) + this.TRUNCATION_MESSAGE;
+  }
+
+  /**
+   * Extracts error summary from output
+   */
+  static extractErrorSummary(output: string): string | null {
+    const errorPatterns = [
+      /error:\s*(.+)/i,
+      /failed:\s*(.+)/i,
+      /exception:\s*(.+)/i,
+      /caused by:\s*(.+)/i,
+    ];
+
+    for (const pattern of errorPatterns) {
+      const match = output.match(pattern);
+      if (match) {
+        return match[1].trim();
+      }
+    }
+
+    return null;
+  }
+}
