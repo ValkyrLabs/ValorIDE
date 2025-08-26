@@ -5,6 +5,7 @@ import { getUri } from "./getUri";
 import { getTheme } from "@integrations/theme/getTheme";
 import { Controller } from "@core/controller/index";
 import { findLast } from "@shared/array";
+import { UsageTrackingService } from "../../services/usage-tracking/UsageTrackingService";
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
 https://github.com/KumarVariable/vscode-extension-sidebar-html/blob/master/src/customSidebarViewProvider.ts
@@ -17,6 +18,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
   public view?: vscode.WebviewView | vscode.WebviewPanel;
   private disposables: vscode.Disposable[] = [];
   controller: Controller;
+  private usageTrackingService: UsageTrackingService;
 
   constructor(
     readonly context: vscode.ExtensionContext,
@@ -26,6 +28,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
     this.controller = new Controller(context, outputChannel, (message) =>
       this.view?.webview.postMessage(message),
     );
+    this.usageTrackingService = UsageTrackingService.getInstance();
   }
 
   async dispose() {
@@ -39,6 +42,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       }
     }
     await this.controller.dispose();
+    this.usageTrackingService.dispose();
     WebviewProvider.activeInstances.delete(this);
   }
 
@@ -80,6 +84,9 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       this.context.extensionMode === vscode.ExtensionMode.Development
         ? await this.getHMRHtmlContent(webviewView.webview)
         : this.getHtmlContent(webviewView.webview);
+
+    // Initialize usage tracking service with webview panel
+    this.usageTrackingService.setWebviewPanel(webviewView as vscode.WebviewPanel);
 
     // Sets up an event listener to listen for messages passed from the webview view context
     // and executes code based on the message that is received
@@ -161,6 +168,13 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
   }
 
   /**
+   * Get the usage tracking service instance
+   */
+  public getUsageTrackingService(): UsageTrackingService {
+    return this.usageTrackingService;
+  }
+
+  /**
    * Defines and returns the HTML that should be rendered within the webview panel.
    *
    * @remarks This is also the place where references to the React webview build files
@@ -190,17 +204,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       "index.js",
     ]);
 
-    // The codicon font from the React build output
-    // https://github.com/microsoft/vscode-extension-samples/blob/main/webview-codicons-sample/src/extension.ts
-    // we installed this package in the extension so that we can access it how its intended from the extension (the font file is likely bundled in vscode), and we just import the css fileinto our react app we don't have access to it
-    // don't forget to add font-src ${webview.cspSource};
-    const codiconsUri = getUri(webview, this.context.extensionUri, [
-      "node_modules",
-      "@vscode",
-      "codicons",
-      "dist",
-      "codicon.css",
-    ]);
+    // Codicon styles are now bundled into the main CSS file
 
     // const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "main.js"))
 
@@ -212,15 +216,15 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
 
     // Use a nonce to only allow a specific script to be run.
     /*
-				content security policy of your webview to only allow scripts that have a specific nonce
-				create a content security policy meta tag so that only loading scripts with a nonce is allowed
-				As your extension grows you will likely want to add custom styles, fonts, and/or images to your webview. If you do, you will need to update the content security policy meta tag to explicitly allow for these resources. E.g.
-								<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; font-src ${webview.cspSource}; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';">
-		- 'unsafe-inline' is required for styles due to vscode-webview-toolkit's dynamic style injection
-		- since we pass base64 images to the webview, we need to specify img-src ${webview.cspSource} data:;
+        content security policy of your webview to only allow scripts that have a specific nonce
+        create a content security policy meta tag so that only loading scripts with a nonce is allowed
+        As your extension grows you will likely want to add custom styles, fonts, and/or images to your webview. If you do, you will need to update the content security policy meta tag to explicitly allow for these resources. E.g.
+                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; font-src ${webview.cspSource}; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';">
+    - 'unsafe-inline' is required for styles due to vscode-webview-toolkit's dynamic style injection
+    - since we pass base64 images to the webview, we need to specify img-src ${webview.cspSource} data:;
 
-				in meta tag we add nonce attribute: A cryptographic nonce (only used once) to allow scripts. The server must generate a unique nonce value each time it transmits a policy. It is critical to provide a nonce that cannot be guessed as bypassing a resource's policy is otherwise trivial.
-				*/
+        in meta tag we add nonce attribute: A cryptographic nonce (only used once) to allow scripts. The server must generate a unique nonce value each time it transmits a policy. It is critical to provide a nonce that cannot be guessed as bypassing a resource's policy is otherwise trivial.
+        */
     const nonce = getNonce();
 
     // Tip: Install the es6-string-html VS Code extension to enable code highlighting below
@@ -232,7 +236,6 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
             <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
             <meta name="theme-color" content="#000000">
             <link rel="stylesheet" type="text/css" href="${stylesUri}">
-            <link href="${codiconsUri}" rel="stylesheet" />
 						<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src http://localhost:8080 https://*.valkyrlabs.com https://*.posthog.com https://*.firebaseauth.com https://*.firebaseio.com https://*.googleapis.com https://*.firebase.com; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} https: data:; script-src 'nonce-${nonce}' 'unsafe-eval';">
             <title>ValorIDE</title>
           </head>
@@ -274,13 +277,6 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       "assets",
       "index.css",
     ]);
-    const codiconsUri = getUri(webview, this.context.extensionUri, [
-      "node_modules",
-      "@vscode",
-      "codicons",
-      "dist",
-      "codicon.css",
-    ]);
 
     const scriptEntrypoint = "src/main.tsx";
     const scriptUri = `http://${localServerUrl}/${scriptEntrypoint}`;
@@ -312,7 +308,6 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
 					<meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
 					<meta http-equiv="Content-Security-Policy" content="${csp.join("; ")}">
 					<link rel="stylesheet" type="text/css" href="${stylesUri}">
-					<link href="${codiconsUri}" rel="stylesheet" />
 					<title>ValorIDE</title>
 				</head>
 				<body>

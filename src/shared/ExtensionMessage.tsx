@@ -62,7 +62,8 @@ export interface ExtensionMessage {
     | "loginSuccess"
     | "streamToThorapiResult"
     | "openFileExplorerResult"
-    | "workspaceFiles";
+    | "workspaceFiles"
+    | "contentData";
   text?: string;
   path?: string; // Used for openFileExplorerResult
   paths?: (string | null)[]; // Used for relativePathsResponse
@@ -159,6 +160,7 @@ export interface ExtensionMessage {
       type: "file" | "directory";
     }>;
   }>;
+  contentData?: any; // Data from the ContentData endpoint
 }
 
 export type Invoke =

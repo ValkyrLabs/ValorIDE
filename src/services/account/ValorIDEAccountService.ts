@@ -120,4 +120,43 @@ export class ValorIDEAccountService {
       return undefined;
     }
   }
+
+  /**
+   * Fetches content data from the ContentData endpoint
+   */
+  async fetchContentData(): Promise<any | undefined> {
+    try {
+      // Note: Using root path /ContentData instead of /v1/ContentData based on user's request
+      const url = "http://localhost:8080/ContentData";
+      const valorideApiKey = await this.getValorIDEApiKey();
+
+      if (!valorideApiKey) {
+        throw new Error("ValorIDE API key not found");
+      }
+
+      const requestConfig: AxiosRequestConfig = {
+        headers: {
+          Authorization: `Bearer ${valorideApiKey}`,
+          "Content-Type": "application/json",
+        },
+      };
+
+      const response: AxiosResponse<any> = await axios.get(url, requestConfig);
+
+      if (!response.data) {
+        throw new Error("Invalid response from ContentData API");
+      }
+
+      // Post to webview if needed
+      await this.postMessageToWebview({
+        type: "contentData",
+        contentData: response.data,
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch content data:", error);
+      return undefined;
+    }
+  }
 }

@@ -20,6 +20,7 @@ import {
   VSCodeLink,
 } from "@vscode/webview-ui-toolkit/react";
 import { vscode } from "@/utils/vscode";
+import { FaRecycle } from "react-icons/fa";
 
 type AccountViewProps = {
   onDone: () => void;
@@ -180,7 +181,8 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                       className="mt-1"
                       onClick={() => refetchBalance()}
                     >
-                      <span className="codicon codicon-refresh"></span>
+                      <FaRecycle/>
+                      
                     </VSCodeButton>
                   </>
                 )}

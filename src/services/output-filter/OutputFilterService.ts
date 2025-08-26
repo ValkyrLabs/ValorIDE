@@ -9,23 +9,92 @@ export interface OutputFilterConfig {
 
 export class OutputFilterService {
   private static readonly DEFAULT_MAX_OUTPUT_LENGTH = 5000;
-  private static readonly TRUNCATION_MESSAGE = "\n[Output truncated - showing relevant portions only]";
+  private static readonly TRUNCATION_MESSAGE = "\n[Output truncated - showing relevant portions and end of output]";
 
   /**
-   * Filters Maven output to extract only relevant information
+   * Filters Maven output to extract only relevant information.
+   * - Always shows [ERROR], [WARNING], and lines with "BUILD FAILURE"/"BUILD SUCCESS".
+   * - By default, collapses [INFO] lines except for the last 5 and any with "BUILD".
+   * - If enableVerboseFiltering is true, shows all lines.
+   * - Adds a summary if lines were collapsed.
    */
   static filterMavenOutput(output: string, config: OutputFilterConfig = {}): string {
     if (!output) return output;
 
-    let filtered = output;
+    // If verbose, show all output (except progress/download lines)
+    if (config.enableVerboseFiltering) {
+      let filtered = output;
+      filtered = filtered.replace(/^(Download(ing|ed)|Progress).*$/gm, "");
+      filtered = filtered.replace(/^\d+\/\d+ [kKmM]?B.*$/gm, "");
+      filtered = filtered.replace(/^\s*[\r\n]+/gm, "\n");
+      return this.truncateOutput(filtered, config.maxOutputLength);
+    }
 
-    // Remove download progress indicators
-    filtered = filtered.replace(/^(Download(ing|ed)|Progress).*$/gm, "");
-    
-    // Remove transfer progress
-    filtered = filtered.replace(/^\d+\/\d+ [kKmM]?B.*$/gm, "");
-    
-    // Extract only "Caused by" exceptions from stack traces
+    const lines = output.split('\n');
+    const importantLines: string[] = [];
+    const infoLines: string[] = [];
+    let buildStatusLine: string | null = null;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+
+      // Always show errors and warnings
+      if (
+        line.includes('[ERROR]') ||
+        line.includes('[WARNING]') ||
+        /BUILD (FAILURE|SUCCESS)/.test(line)
+      ) {
+        importantLines.push(line);
+        if (/BUILD (FAILURE|SUCCESS)/.test(line)) {
+          buildStatusLine = line;
+        }
+        continue;
+      }
+
+      // Remove download/progress lines
+      if (/^(Download(ing|ed)|Progress)/.test(line) || /^\d+\/\d+ [kKmM]?B/.test(line)) {
+        continue;
+      }
+
+      // Collect [INFO] lines for possible summarization
+      if (line.includes('[INFO]')) {
+        infoLines.push(line);
+        continue;
+      }
+
+      // Show any other non-empty lines
+      if (line.trim() !== '') {
+        importantLines.push(line);
+      }
+    }
+
+    // Show last 5 [INFO] lines (for context), and any with "BUILD"
+    const infoToShow = infoLines.filter(l => /BUILD/.test(l));
+    const lastInfo = infoLines.slice(-5);
+    for (const l of lastInfo) {
+      if (!infoToShow.includes(l)) infoToShow.push(l);
+    }
+
+    // Remove duplicates, preserve order
+    const seen = new Set<string>();
+    const infoFinal = infoToShow.filter(l => {
+      if (seen.has(l)) return false;
+      seen.add(l);
+      return true;
+    });
+
+    let filtered = '';
+    if (importantLines.length === 0 && infoFinal.length === 0) {
+      // fallback: show last 10 lines
+      filtered = lines.slice(-10).join('\n');
+    } else {
+      filtered = [...importantLines, ...infoFinal].join('\n');
+      if (infoLines.length > infoFinal.length) {
+        filtered += `\n[${infoLines.length - infoFinal.length} Maven [INFO] lines hidden for brevity]`;
+      }
+    }
+
+    // Extract only "Caused by" exceptions from stack traces if enabled
     if (config.enableStackTraceFiltering !== false) {
       filtered = this.extractCausedByExceptions(filtered);
     }
@@ -47,10 +116,10 @@ export class OutputFilterService {
 
     // Remove progress bars and spinners
     filtered = filtered.replace(/^[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏].*$/gm, "");
-    
+
     // Remove verbose npm timing info
     filtered = filtered.replace(/^npm timing.*$/gm, "");
-    
+
     // Remove audit details unless there are vulnerabilities
     if (!filtered.includes("found") || filtered.includes("found 0")) {
       filtered = filtered.replace(/^npm audit.*$/gm, "");
@@ -72,15 +141,15 @@ export class OutputFilterService {
 
     // Remove pip download progress
     filtered = filtered.replace(/^\s*\|[█▌▏\s]+\|.*$/gm, "");
-    
+
     // Remove "Collecting" lines unless they fail
     const lines = filtered.split('\n');
     const filteredLines = lines.filter((line, index) => {
       if (line.startsWith('Collecting') || line.startsWith('Downloading')) {
         // Check if next few lines contain an error
         const nextFewLines = lines.slice(index + 1, index + 5).join(' ');
-        return nextFewLines.toLowerCase().includes('error') || 
-               nextFewLines.toLowerCase().includes('failed');
+        return nextFewLines.toLowerCase().includes('error') ||
+          nextFewLines.toLowerCase().includes('failed');
       }
       return true;
     });
@@ -138,7 +207,7 @@ export class OutputFilterService {
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      
+
       // Detect start of exception
       if (line.includes('Exception') || line.includes('Error')) {
         inStackTrace = true;
@@ -184,7 +253,7 @@ export class OutputFilterService {
 
     for (const line of lines) {
       const trimmedLine = line.trim();
-      
+
       // Skip empty lines in counting
       if (!trimmedLine) {
         if (repeatCount > 1) {
@@ -220,7 +289,7 @@ export class OutputFilterService {
    */
   private static truncateOutput(output: string, maxLength?: number): string {
     const limit = maxLength || this.DEFAULT_MAX_OUTPUT_LENGTH;
-    
+
     if (output.length <= limit) {
       return output;
     }
@@ -229,7 +298,7 @@ export class OutputFilterService {
     const truncatePoint = output.lastIndexOf('\n', limit);
     const actualTruncatePoint = truncatePoint > limit * 0.8 ? truncatePoint : limit;
 
-    return output.substring(0, actualTruncatePoint) + this.TRUNCATION_MESSAGE;
+    return output.substring(actualTruncatePoint) + this.TRUNCATION_MESSAGE;
   }
 
   /**

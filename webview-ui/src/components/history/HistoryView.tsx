@@ -14,6 +14,7 @@ import { formatSize } from "@/utils/format";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import { useEvent } from "react-use";
 import DangerButton from "@/components/common/DangerButton";
+import { FaSearch, FaTimes, FaTrash, FaArrowUp, FaArrowDown, FaDatabase, FaArrowRight, FaRobot } from "react-icons/fa";
 
 type HistoryViewProps = {
   onDone: () => void;
@@ -208,16 +209,17 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
             >
               <div
                 slot="start"
-                className="codicon codicon-search"
                 style={{
                   fontSize: 13,
                   marginTop: 2.5,
                   opacity: 0.8,
                 }}
-              ></div>
+              >
+                <FaSearch />
+              </div>
               {searchQuery && (
                 <div
-                  className="input-icon-button codicon codicon-close"
+                  className="input-icon-button"
                   aria-label="Clear search"
                   onClick={() => setSearchQuery("")}
                   slot="end"
@@ -227,7 +229,9 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
                     alignItems: "center",
                     height: "100%",
                   }}
-                />
+                >
+                  <FaTimes />
+                </div>
               )}
             </VSCodeTextField>
             <VSCodeRadioGroup
@@ -333,7 +337,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
                           // fontWeight: "bold",
                         }}
                       >
-                        <span className="codicon codicon-trash"></span>
+                        <FaTrash />
                         {formatSize(item.size)}
                       </div>
                     </VSCodeButton>
@@ -392,8 +396,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
                             color: "var(--vscode-descriptionForeground)",
                           }}
                         >
-                          <i
-                            className="codicon codicon-arrow-up"
+                          <FaArrowUp
                             style={{
                               fontSize: "12px",
                               fontWeight: "bold",
@@ -410,8 +413,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
                             color: "var(--vscode-descriptionForeground)",
                           }}
                         >
-                          <i
-                            className="codicon codicon-arrow-down"
+                          <FaArrowDown
                             style={{
                               fontSize: "12px",
                               fontWeight: "bold",
@@ -449,8 +451,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
                             color: "var(--vscode-descriptionForeground)",
                           }}
                         >
-                          <i
-                            className="codicon codicon-database"
+                          <FaDatabase
                             style={{
                               fontSize: "12px",
                               fontWeight: "bold",
@@ -467,8 +468,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
                             color: "var(--vscode-descriptionForeground)",
                           }}
                         >
-                          <i
-                            className="codicon codicon-arrow-right"
+                          <FaArrowRight
                             style={{
                               fontSize: "12px",
                               fontWeight: "bold",

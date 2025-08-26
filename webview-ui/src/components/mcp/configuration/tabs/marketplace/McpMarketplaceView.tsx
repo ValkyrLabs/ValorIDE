@@ -8,6 +8,7 @@ import {
   VSCodeOption,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
+import { FaSync, FaSearch, FaTimes } from "react-icons/fa";
 import { McpMarketplaceItem } from "@shared/mcp";
 import { vscode } from "@/utils/vscode";
 import McpMarketplaceCard from "./McpMarketplaceCard";
@@ -175,10 +176,9 @@ const McpMarketplaceView = () => {
               disabled={isLoading}
               style={{ fontSize: "11px", padding: "4px 12px" }}
             >
-              <span
-                className="codicon codicon-refresh"
+              <FaSync
                 style={{ marginRight: "4px" }}
-              ></span>
+              />
               {isLoading ? "Retrying..." : "Retry"}
             </VSCodeButton>
           )}
@@ -215,7 +215,7 @@ const McpMarketplaceView = () => {
               {isLoading ? (
                 <VSCodeProgressRing style={{ width: "14px", height: "14px" }} />
               ) : (
-                <span className="codicon codicon-refresh"></span>
+                <FaSync />
               )}
               Refresh
             </VSCodeButton>
@@ -229,17 +229,16 @@ const McpMarketplaceView = () => {
           value={searchQuery}
           onInput={(e) => setSearchQuery((e.target as HTMLInputElement).value)}
         >
-          <div
-            slot="start"
-            className="codicon codicon-search"
-            style={{
-              fontSize: 13,
-              opacity: 0.8,
-            }}
-          />
+          <div slot="start">
+            <FaSearch
+              style={{
+                fontSize: 13,
+                opacity: 0.8,
+              }}
+            />
+          </div>
           {searchQuery && (
             <div
-              className="codicon codicon-close"
               aria-label="Clear search"
               onClick={() => setSearchQuery("")}
               slot="end"
@@ -250,7 +249,9 @@ const McpMarketplaceView = () => {
                 height: "100%",
                 cursor: "pointer",
               }}
-            />
+            >
+              <FaTimes />
+            </div>
           )}
         </VSCodeTextField>
 

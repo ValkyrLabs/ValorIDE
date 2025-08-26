@@ -11,6 +11,7 @@ import React, {
 import DynamicTextArea from "react-textarea-autosize";
 import { useClickAway, useEvent, useWindowSize } from "react-use";
 import styled from "styled-components";
+import { FaCamera, FaPaperPlane } from "react-icons/fa";
 import { mentionRegex, mentionRegexGlobal } from "@shared/context-mentions";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import { useExtensionState } from "@/context/ExtensionStateContext";
@@ -1520,7 +1521,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							/> */}
               <div
                 data-testid="send-button"
-                className={`input-icon-button ${textAreaDisabled ? "disabled" : ""} codicon codicon-send`}
+                className={`input-icon-button ${textAreaDisabled ? "disabled" : ""}`}
                 onClick={() => {
                   if (!textAreaDisabled) {
                     setIsTextAreaFocused(false);
@@ -1528,7 +1529,9 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
                   }
                 }}
                 style={{ fontSize: 15 }}
-              ></div>
+              >
+                <FaPaperPlane />
+              </div>
             </div>
           </div>
         </div>
@@ -1570,8 +1573,8 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
                 style={{ padding: "0px 0px", height: "20px" }}
               >
                 <ButtonContainer>
-                  <span
-                    className="codicon codicon-device-camera flex items-center"
+                  <FaCamera
+                    className="flex items-center"
                     style={{ fontSize: "14px", marginBottom: -3 }}
                   />
                   {/* {showButtonText && <span style={{ fontSize: "10px" }}>Images</span>} */}

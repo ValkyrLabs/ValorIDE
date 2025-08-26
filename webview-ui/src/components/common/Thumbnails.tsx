@@ -1,6 +1,7 @@
 import React, { useState, useRef, useLayoutEffect, memo } from "react";
 import { useWindowSize } from "react-use";
 import { vscode } from "@/utils/vscode";
+import { FaTimes } from "react-icons/fa";
 
 interface ThumbnailsProps {
   images: string[];
@@ -88,14 +89,13 @@ const Thumbnails = ({
                 cursor: "pointer",
               }}
             >
-              <span
-                className="codicon codicon-close"
+              <FaTimes
                 style={{
                   color: "var(--vscode-foreground)",
                   fontSize: 10,
                   fontWeight: "bold",
                 }}
-              ></span>
+              />
             </div>
           )}
         </div>

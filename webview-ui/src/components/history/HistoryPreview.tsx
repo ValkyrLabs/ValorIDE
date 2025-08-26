@@ -3,6 +3,7 @@ import { useExtensionState } from "@/context/ExtensionStateContext";
 import { vscode } from "@/utils/vscode";
 import { memo } from "react";
 import { formatLargeNumber } from "@/utils/format";
+import { FaComments } from "react-icons/fa";
 
 type HistoryPreviewProps = {
   showHistoryView: () => void;
@@ -58,13 +59,12 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
           alignItems: "center",
         }}
       >
-        <span
-          className="codicon codicon-comment-discussion"
+        <FaComments
           style={{
             marginRight: "4px",
             transform: "scale(0.9)",
           }}
-        ></span>
+        />
         <span
           style={{
             fontWeight: 500,

@@ -5,6 +5,7 @@ import { useExtensionState } from "@/context/ExtensionStateContext";
 import { vscode } from "@/utils/vscode";
 import { CODE_BLOCK_BG_COLOR } from "../common/CodeBlock";
 import { BrowserServiceClient } from "../../services/grpc-client";
+import { FaBroadcastTower, FaCog, FaWifi, FaDesktop, FaInfoCircle } from "react-icons/fa";
 
 interface ConnectionInfo {
   isConnected: boolean;
@@ -106,11 +107,11 @@ export const BrowserSettingsMenu = () => {
   };
 
   // Determine icon based on connection state
-  const getIconClass = () => {
+  const getIcon = () => {
     if (connectionInfo.isRemote) {
-      return "codicon-remote";
+      return <FaWifi />;
     } else {
-      return connectionInfo.isConnected ? "codicon-vm-running" : "codicon-info";
+      return connectionInfo.isConnected ? <FaDesktop /> : <FaInfoCircle />;
     }
   };
 
@@ -164,13 +165,14 @@ export const BrowserSettingsMenu = () => {
         title="Browser connection info"
         style={{ marginRight: "4px" }}
       >
-        <i
-          className={`codicon ${getIconClass()}`}
+        <div
           style={{
             fontSize: "14.5px",
             color: getIconColor(),
           }}
-        />
+        >
+          {getIcon()}
+        </div>
       </VSCodeButton>
 
       {showInfoPopover && (
@@ -208,8 +210,7 @@ export const BrowserSettingsMenu = () => {
       )}
 
       <VSCodeButton appearance="icon" onClick={openBrowserSettings}>
-        <i
-          className="codicon codicon-settings-gear"
+        <FaCog
           style={{ fontSize: "14.5px" }}
         />
       </VSCodeButton>

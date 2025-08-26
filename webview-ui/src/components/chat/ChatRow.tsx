@@ -14,6 +14,31 @@ import React, {
 import { useEvent, useSize } from "react-use";
 import styled from "styled-components";
 import {
+  FaExclamationTriangle,
+  FaExclamationCircle,
+  FaTerminal,
+  FaServer,
+  FaCheck,
+  FaQuestion,
+  FaChevronDown,
+  FaChevronUp,
+  FaChevronRight,
+  FaEdit,
+  FaSignOutAlt,
+  FaFileCode,
+  FaExternalLinkAlt,
+  FaFolderOpen,
+  FaSearch,
+  FaFile,
+  FaBook,
+  FaBug,
+  FaDatabase,
+  FaArrowUp,
+  FaArrowDown,
+  FaArrowRight,
+  FaTimes
+} from "react-icons/fa";
+import {
   ValorIDEApiReqInfo,
   ValorIDEAskQuestion,
   ValorIDEAskUseMcpServer,
@@ -207,37 +232,34 @@ export const ChatRowContent = ({
     switch (type) {
       case "error":
         return [
-          <span
-            className="codicon codicon-error"
+          <FaExclamationCircle
             style={{
               color: errorColor,
               marginBottom: "-1.5px",
             }}
-          ></span>,
+          />,
           <span style={{ color: errorColor, fontWeight: "bold" }}>Error</span>,
         ];
       case "mistake_limit_reached":
         return [
-          <span
-            className="codicon codicon-error"
+          <FaExclamationCircle
             style={{
               color: errorColor,
               marginBottom: "-1.5px",
             }}
-          ></span>,
+          />,
           <span style={{ color: errorColor, fontWeight: "bold" }}>
             ValorIDE is having trouble...
           </span>,
         ];
       case "auto_approval_max_req_reached":
         return [
-          <span
-            className="codicon codicon-warning"
+          <FaExclamationTriangle
             style={{
               color: errorColor,
               marginBottom: "-1.5px",
             }}
-          ></span>,
+          />,
           <span style={{ color: errorColor, fontWeight: "bold" }}>
             Maximum Requests Reached
           </span>,
@@ -247,13 +269,12 @@ export const ChatRowContent = ({
           isCommandExecuting ? (
             <ProgressIndicator />
           ) : (
-            <span
-              className="codicon codicon-terminal"
+            <FaTerminal
               style={{
                 color: normalColor,
                 marginBottom: "-1.5px",
               }}
-            ></span>
+            />
           ),
           <span style={{ color: normalColor, fontWeight: "bold" }}>
             ValorIDE wants to execute this command:
@@ -267,13 +288,12 @@ export const ChatRowContent = ({
           isMcpServerResponding ? (
             <ProgressIndicator />
           ) : (
-            <span
-              className="codicon codicon-server"
+            <FaServer
               style={{
                 color: normalColor,
                 marginBottom: "-1.5px",
               }}
-            ></span>
+            />
           ),
           <span
             style={{
@@ -298,13 +318,12 @@ export const ChatRowContent = ({
         ];
       case "completion_result":
         return [
-          <span
-            className="codicon codicon-check"
+          <FaCheck
             style={{
               color: successColor,
               marginBottom: "-1.5px",
             }}
-          ></span>,
+          />,
           <span style={{ color: successColor, fontWeight: "bold" }}>
             Task Completed
           </span>,
@@ -382,13 +401,12 @@ export const ChatRowContent = ({
         ];
       case "followup":
         return [
-          <span
-            className="codicon codicon-question"
+          <FaQuestion
             style={{
               color: normalColor,
               marginBottom: "-1.5px",
             }}
-          ></span>,
+          />,
           <span style={{ color: normalColor, fontWeight: "bold" }}>
             ValorIDE has a question:
           </span>,
