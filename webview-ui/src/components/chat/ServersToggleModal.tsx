@@ -16,6 +16,7 @@ import {
   isRetryableError,
   safeConvert,
 } from "@/utils/errorHandling";
+import { FaServer, FaSync, FaCog } from "react-icons/fa";
 
 const ServersToggleModal: React.FC = () => {
   const {
@@ -81,8 +82,7 @@ const ServersToggleModal: React.FC = () => {
             style={{ padding: "0px 0px", height: "20px" }}
           >
             <div className="flex items-center gap-1 text-xs whitespace-nowrap min-w-0 w-full">
-              <span
-                className="codicon codicon-server flex items-center"
+              <FaServer
                 style={{ fontSize: "12.5px", marginBottom: 1 }}
               />
             </div>
@@ -123,7 +123,7 @@ const ServersToggleModal: React.FC = () => {
                       style={{ width: "12px", height: "12px" }}
                     />
                   ) : (
-                    <span className="codicon codicon-refresh text-[10px]"></span>
+                    <FaSync style={{ fontSize: "10px" }} />
                   )}
                 </VSCodeButton>
               </Tooltip>
@@ -137,7 +137,7 @@ const ServersToggleModal: React.FC = () => {
                   setIsVisible(false);
                 }}
               >
-                <span className="codicon codicon-gear text-[10px]"></span>
+                <FaCog style={{ fontSize: "10px" }} />
               </VSCodeButton>
             </div>
           </div>
@@ -164,10 +164,9 @@ const ServersToggleModal: React.FC = () => {
                   onClick={handleRefresh}
                   style={{ fontSize: "11px", padding: "2px 8px" }}
                 >
-                  <span
-                    className="codicon codicon-refresh"
+                  <FaSync
                     style={{ marginRight: "4px" }}
-                  ></span>
+                  />
                   Retry
                 </VSCodeButton>
               </div>

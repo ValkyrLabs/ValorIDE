@@ -10,6 +10,7 @@ import { vscode } from "@/utils/vscode";
 import Thumbnails from "@/components/common/Thumbnails";
 import { normalizeApiConfiguration } from "@/components/settings/ApiOptions";
 import { validateSlashCommand } from "@/utils/slash-commands";
+import { FaArrowUp, FaArrowDown, FaDatabase, FaArrowRight, FaTrash } from "react-icons/fa";
 
 interface TaskHeaderProps {
   task: ValorIDEMessage;
@@ -417,8 +418,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                       gap: "3px",
                     }}
                   >
-                    <i
-                      className="codicon codicon-arrow-up"
+                    <FaArrowUp
                       style={{
                         fontSize: "12px",
                         fontWeight: "bold",
@@ -434,8 +434,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                       gap: "3px",
                     }}
                   >
-                    <i
-                      className="codicon codicon-arrow-down"
+                    <FaArrowDown
                       style={{
                         fontSize: "12px",
                         fontWeight: "bold",
@@ -473,8 +472,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                         gap: "3px",
                       }}
                     >
-                      <i
-                        className="codicon codicon-database"
+                      <FaDatabase
                         style={{
                           fontSize: "12px",
                           fontWeight: "bold",
@@ -490,8 +488,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                         gap: "3px",
                       }}
                     >
-                      <i
-                        className="codicon codicon-arrow-right"
+                      <FaArrowRight
                         style={{
                           fontSize: "12px",
                           fontWeight: "bold",
@@ -741,7 +738,7 @@ const DeleteButton: React.FC<{
         opacity: 0.6,
       }}
     >
-      <i className={`codicon codicon-trash`} />
+      <FaTrash />
       {taskSize}
     </div>
   </VSCodeButton>

@@ -6,6 +6,7 @@ import { vscode } from "@/utils/vscode";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import RulesToggleList from "./RulesToggleList";
 import Tooltip from "@/components/common/Tooltip";
+import { FaGavel } from "react-icons/fa";
 
 const ValorIDERulesToggleModal: React.FC = () => {
   const { globalValorIDERulesToggles = {}, localValorIDERulesToggles = {} } =
@@ -76,8 +77,7 @@ const ValorIDERulesToggleModal: React.FC = () => {
             style={{ padding: "0px 0px", height: "20px" }}
           >
             <div className="flex items-center gap-1 text-xs whitespace-nowrap min-w-0 w-full">
-              <span
-                className="codicon codicon-law flex items-center"
+              <FaGavel
                 style={{ fontSize: "12.5px", marginBottom: 1 }}
               />
             </div>
