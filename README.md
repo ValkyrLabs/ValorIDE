@@ -1,12 +1,3 @@
----
-title: "ValorIDE README"
-slug: valoride-readme
-authors: [Spaceghost69]
-date: "2025-09-01"
-category: "Documentation"
-tags: ["Privacy", "Policy", "ValorIDE"]
----
-
 ![ValorIDE Logo](https://valkyrlabs.com/assets/valorIde-horizontal-DyPXHpke.png)
 
 ## Agentic Coder, Powered by ThorAPI ⚡
