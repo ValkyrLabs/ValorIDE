@@ -9,6 +9,7 @@ import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { createPortal } from "react-dom";
 import { useFloating, offset, flip, shift } from "@floating-ui/react";
+import { FaBookmark } from "react-icons/fa";
 
 interface CheckmarkControlProps {
   messageTs?: number;
@@ -146,16 +147,7 @@ export const CheckmarkControl = ({
       $isCheckedOut={isCheckpointCheckedOut}
       onMouseLeave={handleControlsMouseLeave}
     >
-      <i
-        className="codicon codicon-bookmark"
-        style={{
-          color: isCheckpointCheckedOut
-            ? "var(--vscode-textLink-foreground)"
-            : "var(--vscode-descriptionForeground)",
-          fontSize: "12px",
-          flexShrink: 0,
-        }}
-      />
+      <FaBookmark />
       <Label $isCheckedOut={isCheckpointCheckedOut}>
         {isCheckpointCheckedOut ? "Checkpoint (restored)" : "Checkpoint"}
       </Label>
@@ -294,9 +286,9 @@ const DottedLine = styled.div<{ small?: boolean; $isCheckedOut?: boolean }>`
   background-image: linear-gradient(
     to right,
     ${(props) =>
-        props.$isCheckedOut
-          ? "var(--vscode-textLink-foreground)"
-          : "var(--vscode-descriptionForeground)"}
+    props.$isCheckedOut
+      ? "var(--vscode-textLink-foreground)"
+      : "var(--vscode-descriptionForeground)"}
       50%,
     transparent 50%
   );
@@ -343,16 +335,16 @@ const CustomButton = styled.button<{
     bottom: 0;
     border-radius: 1px;
     background-image: ${(props) =>
-      props.isActive || props.disabled
-        ? "none"
-        : `linear-gradient(to right, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%),
+    props.isActive || props.disabled
+      ? "none"
+      : `linear-gradient(to right, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%),
 			linear-gradient(to bottom, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%),
 			linear-gradient(to right, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%),
 			linear-gradient(to bottom, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%)`};
     background-size: ${(props) =>
-      props.isActive || props.disabled
-        ? "auto"
-        : `4px 1px, 1px 4px, 4px 1px, 1px 4px`};
+    props.isActive || props.disabled
+      ? "auto"
+      : `4px 1px, 1px 4px, 4px 1px, 1px 4px`};
     background-repeat: repeat-x, repeat-y, repeat-x, repeat-y;
     background-position:
       0 0,
@@ -363,9 +355,9 @@ const CustomButton = styled.button<{
 
   &:hover:not(:disabled) {
     background: ${(props) =>
-      props.$isCheckedOut
-        ? "var(--vscode-textLink-foreground)"
-        : "var(--vscode-descriptionForeground)"};
+    props.$isCheckedOut
+      ? "var(--vscode-textLink-foreground)"
+      : "var(--vscode-descriptionForeground)"};
     color: var(--vscode-editor-background);
     &::before {
       display: none;

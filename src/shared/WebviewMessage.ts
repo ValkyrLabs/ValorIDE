@@ -2,6 +2,7 @@ import { ApiConfiguration } from "./api";
 import { AutoApprovalSettings } from "./AutoApprovalSettings";
 import { BrowserSettings } from "./BrowserSettings";
 import { ChatSettings } from "./ChatSettings";
+import { ValorIDEAdvancedSettings } from "./AdvancedSettings";
 
 import { ChatContent } from "./ChatContent";
 import { TelemetrySetting } from "./TelemetrySetting";
@@ -37,6 +38,7 @@ export interface WebviewMessage {
     | "restartMcpServer"
     | "deleteMcpServer"
     | "autoApprovalSettings"
+    | "advancedSettings"
     | "browserSettings"
     | "browserRelaunchResult"
     | "togglePlanActMode"
@@ -97,6 +99,7 @@ export interface WebviewMessage {
   bool?: boolean;
   number?: number;
   autoApprovalSettings?: AutoApprovalSettings;
+  advancedSettings?: ValorIDEAdvancedSettings;
   browserSettings?: BrowserSettings;
   chatSettings?: ChatSettings;
   chatContent?: ChatContent;

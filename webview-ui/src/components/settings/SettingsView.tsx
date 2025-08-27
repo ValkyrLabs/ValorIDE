@@ -14,6 +14,7 @@ import { TabButton } from "../mcp/configuration/McpConfigurationView";
 import { useEvent } from "react-use";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import BrowserSettingsSection from "./BrowserSettingsSection";
+import { VscSettingsGear } from "react-icons/vsc";
 
 const { IS_DEV } = process.env;
 
@@ -283,7 +284,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
             }
             className="mt-0 mr-0 mb-4 ml-0"
           >
-            <i className="codicon codicon-settings-gear" />
+            <VscSettingsGear />
             Advanced Settings
           </SettingsButton>
         </div>

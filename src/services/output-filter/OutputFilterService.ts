@@ -1,6 +1,8 @@
 import { Logger } from "@services/logging/Logger";
+import { OutputFilterConfig, FilterPattern } from "@shared/AdvancedSettings";
 
-export interface OutputFilterConfig {
+// Legacy interface for backward compatibility
+export interface LegacyOutputFilterConfig {
   maxOutputLength?: number;
   enableStackTraceFiltering?: boolean;
   enableProgressFiltering?: boolean;
@@ -15,14 +17,18 @@ export class OutputFilterService {
    * Filters Maven output to extract only relevant information.
    * - Always shows [ERROR], [WARNING], and lines with "BUILD FAILURE"/"BUILD SUCCESS".
    * - By default, collapses [INFO] lines except for the last 5 and any with "BUILD".
-   * - If enableVerboseFiltering is true, shows all lines.
+   * - If verbosityLevel is 'verbose', shows all lines.
    * - Adds a summary if lines were collapsed.
    */
-  static filterMavenOutput(output: string, config: OutputFilterConfig = {}): string {
+  static filterMavenOutput(output: string, config: Partial<OutputFilterConfig> | LegacyOutputFilterConfig = {}): string {
     if (!output) return output;
 
+    // Handle legacy config or check verbosity level
+    const isVerbose = ('enableVerboseFiltering' in config && config.enableVerboseFiltering) || 
+                     ('verbosityLevel' in config && config.verbosityLevel === 'verbose');
+
     // If verbose, show all output (except progress/download lines)
-    if (config.enableVerboseFiltering) {
+    if (isVerbose) {
       let filtered = output;
       filtered = filtered.replace(/^(Download(ing|ed)|Progress).*$/gm, "");
       filtered = filtered.replace(/^\d+\/\d+ [kKmM]?B.*$/gm, "");
@@ -109,7 +115,7 @@ export class OutputFilterService {
   /**
    * Filters npm/yarn output to reduce verbosity
    */
-  static filterNpmOutput(output: string, config: OutputFilterConfig = {}): string {
+  static filterNpmOutput(output: string, config: Partial<OutputFilterConfig> | LegacyOutputFilterConfig = {}): string {
     if (!output) return output;
 
     let filtered = output;
@@ -134,7 +140,7 @@ export class OutputFilterService {
   /**
    * Filters Python/pip output
    */
-  static filterPythonOutput(output: string, config: OutputFilterConfig = {}): string {
+  static filterPythonOutput(output: string, config: Partial<OutputFilterConfig> | LegacyOutputFilterConfig = {}): string {
     if (!output) return output;
 
     let filtered = output;
@@ -161,7 +167,7 @@ export class OutputFilterService {
   /**
    * Generic output filter for any command
    */
-  static filterCommandOutput(output: string, command: string, config: OutputFilterConfig = {}): string {
+  static filterCommandOutput(output: string, command: string, config: Partial<OutputFilterConfig> | LegacyOutputFilterConfig = {}): string {
     if (!output) return output;
 
     // Detect the type of command and apply specific filters
@@ -180,7 +186,7 @@ export class OutputFilterService {
   /**
    * Generic output filtering
    */
-  private static filterGenericOutput(output: string, config: OutputFilterConfig = {}): string {
+  private static filterGenericOutput(output: string, config: Partial<OutputFilterConfig> | LegacyOutputFilterConfig = {}): string {
     let filtered = output;
 
     // Remove ANSI escape codes

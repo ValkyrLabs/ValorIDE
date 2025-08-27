@@ -6,6 +6,18 @@ import {
   SearchResult,
 } from "@/utils/context-mentions";
 import { cleanPathPrefix } from "@/components/common/CodeAccordian";
+import { 
+  FaSpinner, 
+  FaFile, 
+  FaFolder, 
+  FaExclamationTriangle, 
+  FaTerminal, 
+  FaLink, 
+  FaGitAlt, 
+  FaInfoCircle, 
+  FaChevronRight, 
+  FaPlus 
+} from "react-icons/fa";
 
 interface ContextMenuProps {
   onSelect: (type: ContextMenuOptionType, value?: string) => void;
@@ -154,24 +166,30 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     }
   };
 
-  const getIconForOption = (option: ContextMenuQueryItem): string => {
+  const getIconForOption = (option: ContextMenuQueryItem): React.ReactElement => {
+    const iconStyle = {
+      marginRight: "8px",
+      flexShrink: 0,
+      fontSize: "14px",
+    };
+
     switch (option.type) {
       case ContextMenuOptionType.File:
-        return "file";
+        return <FaFile style={iconStyle} />;
       case ContextMenuOptionType.Folder:
-        return "folder";
+        return <FaFolder style={iconStyle} />;
       case ContextMenuOptionType.Problems:
-        return "warning";
+        return <FaExclamationTriangle style={iconStyle} />;
       case ContextMenuOptionType.Terminal:
-        return "terminal";
+        return <FaTerminal style={iconStyle} />;
       case ContextMenuOptionType.URL:
-        return "link";
+        return <FaLink style={iconStyle} />;
       case ContextMenuOptionType.Git:
-        return "git-commit";
+        return <FaGitAlt style={iconStyle} />;
       case ContextMenuOptionType.NoResults:
-        return "info";
+        return <FaInfoCircle style={iconStyle} />;
       default:
-        return "file";
+        return <FaFile style={iconStyle} />;
     }
   };
 
@@ -218,10 +236,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
               opacity: 0.7,
             }}
           >
-            <i
-              className="codicon codicon-loading codicon-modifier-spin"
-              style={{ fontSize: "14px" }}
-            />
+            <FaSpinner />
             <span>Searching...</span>
           </div>
         )}
@@ -260,22 +275,14 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
                 overflow: "hidden",
               }}
             >
-              <i
-                className={`codicon codicon-${getIconForOption(option)}`}
-                style={{
-                  marginRight: "8px",
-                  flexShrink: 0,
-                  fontSize: "14px",
-                }}
-              />
+              {getIconForOption(option)}
               {renderOptionContent(option)}
             </div>
             {(option.type === ContextMenuOptionType.File ||
               option.type === ContextMenuOptionType.Folder ||
               option.type === ContextMenuOptionType.Git) &&
               !option.value && (
-                <i
-                  className="codicon codicon-chevron-right"
+                <FaChevronRight
                   style={{
                     fontSize: "14px",
                     flexShrink: 0,
@@ -289,15 +296,14 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
                 option.type === ContextMenuOptionType.Folder ||
                 option.type === ContextMenuOptionType.Git) &&
                 option.value)) && (
-              <i
-                className="codicon codicon-add"
-                style={{
-                  fontSize: "14px",
-                  flexShrink: 0,
-                  marginLeft: 8,
-                }}
-              />
-            )}
+                <FaPlus
+                  style={{
+                    fontSize: "14px",
+                    flexShrink: 0,
+                    marginLeft: 8,
+                  }}
+                />
+              )}
           </div>
         ))}
       </div>

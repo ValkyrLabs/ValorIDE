@@ -23,7 +23,7 @@ export async function fetchContentDataCommand(
         cancellable: false,
       },
       async (progress) => {
-        progress.report({ message: "Connecting to http://localhost:8080/ContentData..." });
+        progress.report({ message: `Connecting to ${process.env.REACT_APP_BASE_PATH?.replace('/v1', '') || "http://localhost:8080"}/ContentData...` });
         
         const contentData = await accountService.fetchContentData();
         

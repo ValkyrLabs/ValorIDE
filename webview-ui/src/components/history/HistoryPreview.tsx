@@ -3,7 +3,7 @@ import { useExtensionState } from "@/context/ExtensionStateContext";
 import { vscode } from "@/utils/vscode";
 import { memo } from "react";
 import { formatLargeNumber } from "@/utils/format";
-import { FaComments } from "react-icons/fa";
+import { FaComments, FaDollarSign } from "react-icons/fa";
 
 type HistoryPreviewProps = {
   showHistoryView: () => void;
@@ -137,7 +137,7 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
                   {!!item.totalCost && (
                     <>
                       {" • "}
-                      <span>API Cost: ${item.totalCost?.toFixed(4)}</span>
+                      <span><FaDollarSign />API Cost: ${item.totalCost?.toFixed(4)}</span>
                     </>
                   )}
                 </div>

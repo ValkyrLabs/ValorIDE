@@ -36,8 +36,17 @@ import {
   FaArrowUp,
   FaArrowDown,
   FaArrowRight,
-  FaTimes
+  FaTimes,
+  FaPlus,
+  FaExclamationTriangle as FaWarning,
+  FaCheckCircle,
+  FaTimes as FaClose,
+  FaFileAlt,
+  FaBrain,
+  FaCarCrash,
+  FaFileUpload
 } from "react-icons/fa";
+import { VscError, VscCheck } from "react-icons/vsc";
 import {
   ValorIDEApiReqInfo,
   ValorIDEAskQuestion,
@@ -99,7 +108,7 @@ interface ChatRowProps {
   sendMessageFromChatRow?: (text: string, images: string[]) => void;
 }
 
-interface ChatRowContentProps extends Omit<ChatRowProps, "onHeightChange"> {}
+interface ChatRowContentProps extends Omit<ChatRowProps, "onHeightChange"> { }
 
 export const ProgressIndicator = () => (
   <div
@@ -329,7 +338,7 @@ export const ChatRowContent = ({
           </span>,
         ];
       case "api_req_started":
-        const getIconSpan = (iconName: string, color: string) => (
+        const getIconSpan = (IconComponent: React.ComponentType<any>, color: string) => (
           <div
             style={{
               width: 16,
@@ -339,27 +348,26 @@ export const ChatRowContent = ({
               justifyContent: "center",
             }}
           >
-            <span
-              className={`codicon codicon-${iconName}`}
+            <IconComponent
               style={{
                 color,
                 fontSize: 16,
                 marginBottom: "-1.5px",
               }}
-            ></span>
+            />
           </div>
         );
         return [
           apiReqCancelReason != null ? (
             apiReqCancelReason === "user_cancelled" ? (
-              getIconSpan("error", cancelledColor)
+              getIconSpan(VscError, cancelledColor)
             ) : (
-              getIconSpan("error", errorColor)
+              getIconSpan(VscError, errorColor)
             )
           ) : cost != null ? (
-            getIconSpan("check", successColor)
+            getIconSpan(VscCheck, successColor)
           ) : apiRequestFailedMessage ? (
-            getIconSpan("error", errorColor)
+            getIconSpan(VscError, errorColor)
           ) : (
             <ProgressIndicator />
           ),
@@ -452,13 +460,12 @@ export const ChatRowContent = ({
       green: "var(--vscode-charts-green)",
     };
     const toolIcon = (
-      name: string,
+      IconComponent: React.ComponentType<any>,
       color?: string,
       rotation?: number,
       title?: string,
     ) => (
-      <span
-        className={`codicon codicon-${name}`}
+      <IconComponent
         style={{
           color: color
             ? colorMap[color as keyof typeof colorMap] || color
@@ -467,7 +474,7 @@ export const ChatRowContent = ({
           transform: rotation ? `rotate(${rotation}deg)` : undefined,
         }}
         title={title}
-      ></span>
+      />
     );
 
     switch (tool.tool) {
@@ -475,10 +482,10 @@ export const ChatRowContent = ({
         return (
           <>
             <div style={headerStyle}>
-              {toolIcon("edit")}
+              {toolIcon(FaEdit)}
               {tool.operationIsLocatedInWorkspace === false &&
                 toolIcon(
-                  "sign-out",
+                  FaSignOutAlt,
                   "yellow",
                   -90,
                   "This file is outside of your workspace",
@@ -500,10 +507,10 @@ export const ChatRowContent = ({
         return (
           <>
             <div style={headerStyle}>
-              {toolIcon("new-file")}
+              {toolIcon(FaPlus)}
               {tool.operationIsLocatedInWorkspace === false &&
                 toolIcon(
-                  "sign-out",
+                  FaSignOutAlt,
                   "yellow",
                   -90,
                   "This file is outside of your workspace",
@@ -525,10 +532,10 @@ export const ChatRowContent = ({
         return (
           <>
             <div style={headerStyle}>
-              {toolIcon("file-code")}
+              {toolIcon(FaFileCode)}
               {tool.operationIsLocatedInWorkspace === false &&
                 toolIcon(
-                  "sign-out",
+                  FaSignOutAlt,
                   "yellow",
                   -90,
                   "This file is outside of your workspace",
@@ -578,13 +585,12 @@ export const ChatRowContent = ({
                   {cleanPathPrefix(tool.path ?? "") + "\u200E"}
                 </span>
                 <div style={{ flexGrow: 1 }}></div>
-                <span
-                  className={`codicon codicon-link-external`}
+                <FaExternalLinkAlt
                   style={{
                     fontSize: 13.5,
                     margin: "1px 0",
                   }}
-                ></span>
+                />
               </div>
             </div>
           </>
@@ -593,10 +599,10 @@ export const ChatRowContent = ({
         return (
           <>
             <div style={headerStyle}>
-              {toolIcon("folder-opened")}
+              {toolIcon(FaFolderOpen)}
               {tool.operationIsLocatedInWorkspace === false &&
                 toolIcon(
-                  "sign-out",
+                  FaSignOutAlt,
                   "yellow",
                   -90,
                   "This is outside of your workspace",
@@ -620,10 +626,10 @@ export const ChatRowContent = ({
         return (
           <>
             <div style={headerStyle}>
-              {toolIcon("folder-opened")}
+              {toolIcon(FaFolderOpen)}
               {tool.operationIsLocatedInWorkspace === false &&
                 toolIcon(
-                  "sign-out",
+                  FaSignOutAlt,
                   "yellow",
                   -90,
                   "This is outside of your workspace",
@@ -647,10 +653,10 @@ export const ChatRowContent = ({
         return (
           <>
             <div style={headerStyle}>
-              {toolIcon("file-code")}
+              {toolIcon(FaFileCode)}
               {tool.operationIsLocatedInWorkspace === false &&
                 toolIcon(
-                  "sign-out",
+                  FaSignOutAlt,
                   "yellow",
                   -90,
                   "This is outside of your workspace",
@@ -673,10 +679,10 @@ export const ChatRowContent = ({
         return (
           <>
             <div style={headerStyle}>
-              {toolIcon("search")}
+              {toolIcon(FaSearch)}
               {tool.operationIsLocatedInWorkspace === false &&
                 toolIcon(
-                  "sign-out",
+                  FaSignOutAlt,
                   "yellow",
                   -90,
                   "This is outside of your workspace",
@@ -771,9 +777,7 @@ export const ChatRowContent = ({
                   padding: `2px 8px ${isExpanded ? 0 : 8}px 8px`,
                 }}
               >
-                <span
-                  className={`codicon codicon-chevron-${isExpanded ? "down" : "right"}`}
-                ></span>
+                {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
                 <span style={{ fontSize: "0.8em" }}>Command Output</span>
               </div>
               {isExpanded && (
@@ -793,7 +797,7 @@ export const ChatRowContent = ({
               color: "var(--vscode-editorWarning-foreground)",
             }}
           >
-            <i className="codicon codicon-warning"></i>
+            <FaWarning />
             <span>
               The model has determined this command requires explicit approval.
             </span>
@@ -898,7 +902,7 @@ export const ChatRowContent = ({
                   ...headerStyle,
                   marginBottom:
                     (cost == null && apiRequestFailedMessage) ||
-                    apiReqStreamingFailedMessage
+                      apiReqStreamingFailedMessage
                       ? 10
                       : 0,
                   justifyContent: "space-between",
@@ -928,70 +932,68 @@ export const ChatRowContent = ({
                     ${Number(cost || 0)?.toFixed(4)}
                   </VSCodeBadge>
                 </div>
-                <span
-                  className={`codicon codicon-chevron-${isExpanded ? "up" : "down"}`}
-                ></span>
+                {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
               </div>
               {((cost == null && apiRequestFailedMessage) ||
                 apiReqStreamingFailedMessage) && (
-                <>
-                  {(() => {
-                    // Try to parse the error message as JSON for credit limit error
-                    const errorData = parseErrorText(apiRequestFailedMessage);
-                    if (errorData) {
-                      if (
-                        errorData.code === "insufficient_credits" &&
-                        typeof errorData.current_balance === "number" &&
-                        typeof errorData.total_spent === "number" &&
-                        typeof errorData.total_promotions === "number" &&
-                        typeof errorData.message === "string"
-                      ) {
-                        return (
-                          <CreditLimitError
-                            currentBalance={errorData.current_balance}
-                            totalSpent={errorData.total_spent}
-                            totalPromotions={errorData.total_promotions}
-                            message={errorData.message}
-                          />
-                        );
+                  <>
+                    {(() => {
+                      // Try to parse the error message as JSON for credit limit error
+                      const errorData = parseErrorText(apiRequestFailedMessage);
+                      if (errorData) {
+                        if (
+                          errorData.code === "insufficient_credits" &&
+                          typeof errorData.current_balance === "number" &&
+                          typeof errorData.total_spent === "number" &&
+                          typeof errorData.total_promotions === "number" &&
+                          typeof errorData.message === "string"
+                        ) {
+                          return (
+                            <CreditLimitError
+                              currentBalance={errorData.current_balance}
+                              totalSpent={errorData.total_spent}
+                              totalPromotions={errorData.total_promotions}
+                              message={errorData.message}
+                            />
+                          );
+                        }
                       }
-                    }
 
-                    // Default error display
-                    return (
-                      <p
-                        style={{
-                          ...pStyle,
-                          color: "var(--vscode-errorForeground)",
-                        }}
-                      >
-                        {apiRequestFailedMessage ||
-                          apiReqStreamingFailedMessage}
-                        {apiRequestFailedMessage
-                          ?.toLowerCase()
-                          .includes("powershell") && (
-                          <>
-                            <br />
-                            <br />
-                            It seems like you're having Windows PowerShell
-                            issues, please see this{" "}
-                            <a
-                              href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
-                              style={{
-                                color: "inherit",
-                                textDecoration: "underline",
-                              }}
-                            >
-                              troubleshooting guide
-                            </a>
-                            .
-                          </>
-                        )}
-                      </p>
-                    );
-                  })()}
-                </>
-              )}
+                      // Default error display
+                      return (
+                        <p
+                          style={{
+                            ...pStyle,
+                            color: "var(--vscode-errorForeground)",
+                          }}
+                        >
+                          {apiRequestFailedMessage ||
+                            apiReqStreamingFailedMessage}
+                          {apiRequestFailedMessage
+                            ?.toLowerCase()
+                            .includes("powershell") && (
+                              <>
+                                <br />
+                                <br />
+                                It seems like you're having Windows PowerShell
+                                issues, please see this{" "}
+                                <a
+                                  href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
+                                  style={{
+                                    color: "inherit",
+                                    textDecoration: "underline",
+                                  }}
+                                >
+                                  troubleshooting guide
+                                </a>
+                                .
+                              </>
+                            )}
+                        </p>
+                      );
+                    })()}
+                  </>
+                )}
 
               {isExpanded && (
                 <div style={{ marginTop: "10px" }}>
@@ -1040,14 +1042,7 @@ export const ChatRowContent = ({
                         }}
                       >
                         Thinking
-                        <span
-                          className="codicon codicon-chevron-down"
-                          style={{
-                            display: "inline-block",
-                            transform: "translateY(3px)",
-                            marginLeft: "1.5px",
-                          }}
-                        />
+                        <FaBrain />
                       </span>
                       {message.text}
                     </div>
@@ -1068,13 +1063,7 @@ export const ChatRowContent = ({
                       >
                         {message.text + "\u200E"}
                       </span>
-                      <span
-                        className="codicon codicon-chevron-right"
-                        style={{
-                          marginLeft: "4px",
-                          flexShrink: 0,
-                        }}
-                      />
+                      <FaArrowRight />
                     </div>
                   )}
                 </div>
@@ -1148,14 +1137,7 @@ export const ChatRowContent = ({
                     marginBottom: 4,
                   }}
                 >
-                  <i
-                    className="codicon codicon-warning"
-                    style={{
-                      marginRight: 8,
-                      fontSize: 14,
-                      color: "var(--vscode-descriptionForeground)",
-                    }}
-                  ></i>
+                  <FaWarning />
                   <span style={{ fontWeight: 500 }}>Diff Edit Mismatch</span>
                 </div>
                 <div>
@@ -1185,14 +1167,7 @@ export const ChatRowContent = ({
                     marginBottom: 4,
                   }}
                 >
-                  <i
-                    className="codicon codicon-error"
-                    style={{
-                      marginRight: 8,
-                      fontSize: 18,
-                      color: "#FFA500",
-                    }}
-                  ></i>
+                  <FaCarCrash />
                   <span
                     style={{
                       fontWeight: 500,
@@ -1231,7 +1206,7 @@ export const ChatRowContent = ({
                 padding: "4px 0",
               }}
             >
-              <i className="codicon codicon-book" style={{ marginRight: 6 }} />
+              <FaBook />
               Loading MCP documentation
             </div>
           );
@@ -1287,10 +1262,7 @@ export const ChatRowContent = ({
                       width: "100%",
                     }}
                   >
-                    <i
-                      className="codicon codicon-new-file"
-                      style={{ marginRight: 6 }}
-                    />
+                    <FaFileUpload />
                     See new changes
                   </SuccessButton>
                 </div>
@@ -1317,14 +1289,7 @@ export const ChatRowContent = ({
                     marginBottom: 4,
                   }}
                 >
-                  <i
-                    className="codicon codicon-warning"
-                    style={{
-                      marginRight: 8,
-                      fontSize: 18,
-                      color: "#FFA500",
-                    }}
-                  ></i>
+                  <FaWarning />
                   <span
                     style={{
                       fontWeight: 500,
@@ -1453,13 +1418,7 @@ export const ChatRowContent = ({
                           });
                         }}
                       >
-                        <i
-                          className="codicon codicon-new-file"
-                          style={{
-                            marginRight: 6,
-                            cursor: seeNewChangesDisabled ? "wait" : "pointer",
-                          }}
-                        />
+                        <FaFile />
                         See new changes
                       </SuccessButton>
                     </div>
@@ -1509,13 +1468,7 @@ export const ChatRowContent = ({
           return (
             <>
               <div style={headerStyle}>
-                <span
-                  className="codicon codicon-new-file"
-                  style={{
-                    color: normalColor,
-                    marginBottom: "-1.5px",
-                  }}
-                ></span>
+                <FaFileUpload />
                 <span style={{ color: normalColor, fontWeight: "bold" }}>
                   ValorIDE wants to start a new task:
                 </span>
@@ -1527,13 +1480,7 @@ export const ChatRowContent = ({
           return (
             <>
               <div style={headerStyle}>
-                <span
-                  className="codicon codicon-new-file"
-                  style={{
-                    color: normalColor,
-                    marginBottom: "-1.5px",
-                  }}
-                ></span>
+                <FaFileUpload />
                 <span style={{ color: normalColor, fontWeight: "bold" }}>
                   ValorIDE wants to condense your conversation:
                 </span>

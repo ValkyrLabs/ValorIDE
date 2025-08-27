@@ -119,6 +119,7 @@ import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
 import { McpHub } from "@services/mcp/McpHub";
 import { isInTestMode } from "../../services/test/TestMode";
 import { OutputFilterService } from "@services/output-filter/OutputFilterService";
+import { ValorIDEAdvancedSettings, DEFAULT_ADVANCED_SETTINGS } from "@shared/AdvancedSettings";
 
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -228,7 +229,7 @@ export class Task {
     this.urlContentFetcher = new UrlContentFetcher(context);
     this.browserSession = new BrowserSession(context, browserSettings);
     this.contextManager = new ContextManager();
-    this.diffViewProvider = new DiffViewProvider(cwd);
+    this.diffViewProvider = new DiffViewProvider(cwd, DEFAULT_ADVANCED_SETTINGS.fileProcessing);
     this.customInstructions = customInstructions;
     this.autoApprovalSettings = autoApprovalSettings;
     this.browserSettings = browserSettings;

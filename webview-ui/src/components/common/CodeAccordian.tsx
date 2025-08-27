@@ -1,6 +1,7 @@
 import { memo, useMemo } from "react";
 import { getLanguageFromPath } from "@/utils/getLanguageFromPath";
 import CodeBlock, { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
+import { VscFeedback, VscOutput, VscDiff, VscChevronUp, VscChevronDown } from "react-icons/vsc";
 
 interface CodeAccordianProps {
   code?: string;
@@ -74,10 +75,11 @@ const CodeAccordian = ({
         >
           {isFeedback || isConsoleLogs ? (
             <div style={{ display: "flex", alignItems: "center" }}>
-              <span
-                className={`codicon codicon-${isFeedback ? "feedback" : "output"}`}
-                style={{ marginRight: "6px" }}
-              ></span>
+              {isFeedback ? (
+                <VscFeedback style={{ marginRight: "6px" }} />
+              ) : (
+                <VscOutput style={{ marginRight: "6px" }} />
+              )}
               <span
                 style={{
                   whiteSpace: "nowrap",
@@ -117,16 +119,15 @@ const CodeAccordian = ({
                 color: "var(--vscode-descriptionForeground)",
               }}
             >
-              <span
-                className="codicon codicon-diff-single"
-                style={{ marginRight: "4px" }}
-              ></span>
+              <VscDiff style={{ marginRight: "4px" }} />
               <span>{numberOfEdits}</span>
             </div>
           )}
-          <span
-            className={`codicon codicon-chevron-${isExpanded ? "up" : "down"}`}
-          ></span>
+          {isExpanded ? (
+            <VscChevronUp />
+          ) : (
+            <VscChevronDown />
+          )}
         </div>
       )}
       {(!(path || isFeedback || isConsoleLogs) || isExpanded) && (

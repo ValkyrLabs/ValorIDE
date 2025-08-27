@@ -1693,7 +1693,7 @@ export class Controller {
 
       // Fetch server details from marketplace using same URL pattern as ApplicationService
       const response = await axios.post<McpDownloadResponse>(
-        "http://localhost:8080/v1/McpServer",
+        `${process.env.REACT_APP_BASE_PATH || "http://localhost:8080/v1"}/McpServer`,
         { mcpId },
         {
           headers,

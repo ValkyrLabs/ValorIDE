@@ -3,6 +3,7 @@ import VSCodeButtonLink from "@/components/common/VSCodeButtonLink";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { vscode } from "@/utils/vscode";
 import { Invoke } from "@shared/ExtensionMessage";
+import { FaCreditCard, FaRecycle } from "react-icons/fa";
 
 interface CreditLimitErrorProps {
   currentBalance: number;
@@ -53,10 +54,7 @@ const CreditLimitError: React.FC<CreditLimitErrorProps> = ({
           marginBottom: "8px",
         }}
       >
-        <span
-          className="codicon codicon-credit-card"
-          style={{ fontSize: "14px", marginRight: "6px" }}
-        />
+        <FaCreditCard />
         Buy Credits
       </VSCodeButtonLink>
 
@@ -72,10 +70,7 @@ const CreditLimitError: React.FC<CreditLimitErrorProps> = ({
           width: "100%",
         }}
       >
-        <span
-          className="codicon codicon-refresh"
-          style={{ fontSize: "14px", marginRight: "6px" }}
-        />
+        <FaRecycle />
         Retry Request
       </VSCodeButton>
     </div>

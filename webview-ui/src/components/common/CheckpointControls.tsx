@@ -7,6 +7,7 @@ import { CheckpointsServiceClient } from "@/services/grpc-client";
 import { vscode } from "@/utils/vscode";
 import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
 import { ValorIDECheckpointRestore } from "@shared/WebviewMessage";
+import { FaCodeBranch, FaTrash } from "react-icons/fa";
 
 interface CheckpointOverlayProps {
   messageTs?: number;
@@ -137,10 +138,7 @@ export const CheckpointOverlay = ({ messageTs }: CheckpointOverlayProps) => {
           }
         }}
       >
-        <i
-          className="codicon codicon-diff-multiple"
-          style={{ position: "absolute" }}
-        />
+        <FaCodeBranch />
       </VSCodeButton>
       <div style={{ position: "relative" }} ref={containerRef}>
         <VSCodeButton
@@ -149,10 +147,7 @@ export const CheckpointOverlay = ({ messageTs }: CheckpointOverlayProps) => {
           style={{ cursor: "pointer" }}
           onClick={() => setShowRestoreConfirm(true)}
         >
-          <i
-            className="codicon codicon-discard"
-            style={{ position: "absolute" }}
-          />
+          <FaTrash />
         </VSCodeButton>
         {showRestoreConfirm && (
           <RestoreConfirmTooltip

@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import { useSize } from "react-use";
 import styled from "styled-components";
+import { FaSearch, FaGlobe, FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { BROWSER_VIEWPORT_PRESETS } from "@shared/BrowserSettings";
 import {
   BrowserAction,
@@ -410,10 +411,9 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
         {isBrowsing && !isLastMessageResume ? (
           <ProgressIndicator />
         ) : (
-          <span
-            className="codicon codicon-inspect"
+          <FaSearch
             style={browserIconStyle}
-          ></span>
+          />
         )}
         <span style={approveTextStyle}>
           <>
@@ -478,8 +478,7 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
             />
           ) : (
             <div style={noScreenshotContainerStyle}>
-              <span
-                className="codicon codicon-globe"
+              <FaGlobe
                 style={noScreenshotIconStyle}
               />
             </div>
@@ -511,9 +510,7 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
               padding: `9px 8px ${consoleLogsExpanded ? 0 : 8}px 8px`,
             }}
           >
-            <span
-              className={`codicon codicon-chevron-${consoleLogsExpanded ? "down" : "right"}`}
-            ></span>
+            {consoleLogsExpanded ? <FaChevronDown /> : <FaChevronRight />}
             <span style={consoleLogsTextStyle}>Console Logs</span>
           </div>
           {consoleLogsExpanded && (

@@ -4,6 +4,7 @@ import { useDebounceEffect } from "@/utils/useDebounceEffect";
 import styled from "styled-components";
 import { vscode } from "@/utils/vscode";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
+import { FaCopy } from "react-icons/fa";
 
 const MERMAID_THEME = {
   background: "#1e1e1e", // VS Code dark theme background
@@ -162,7 +163,7 @@ export default function MermaidBlock({ code }: MermaidBlockProps) {
           title="Copy Code"
           aria-label="Copy Code"
         >
-          <span className="codicon codicon-copy"></span>
+          <FaCopy />
         </StyledVSCodeButton>
       </ButtonContainer>
       <SvgContainer

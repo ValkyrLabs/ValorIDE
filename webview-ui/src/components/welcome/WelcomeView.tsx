@@ -31,17 +31,35 @@ const WelcomeView = memo(() => {
   return (
     <div className="fixed inset-0 p-0 flex flex-col">
       <div className="h-full px-5 overflow-auto">
-        <h2>Hi, I'm ValorIDE</h2>
-        <div className="flex justify-center my-5">
-          <Image src={valorIdeHorizontal} alt="ValorIDE Logo" className="size-16" fluid />
+        <div style={{ padding: "0 20px", flexShrink: 0 }}>
+          <div style={{ backgroundColor: "#222222", padding: "0 20px", flexShrink: 0 }}>
+            <a href="https://valkyrlabs.com/valoride">
+              <img
+                alt="Valkyr Labs"
+                src="https://valkyrlabs.com/assets/valorIde-horizontal-DyPXHpke.png"
+              />
+            </a>
+
+          </div>
+          <p>
+            <h2>Agentic Coder, Powered by ThorAPI</h2>
+            <VSCodeLink href="https://valkyrlabs.com/v1/docs/Products/ValorIDE/valoride-documentation" style={{ display: "inline" }}>
+              English Documentation
+            </VSCodeLink>
+            <VSCodeLink href="https://valkyrlabs.com/thorapi" style={{ display: "inline" }}>
+              ThorAPI Full-Stack CodeGen
+            </VSCodeLink>
+          </p>
+
         </div>
         <p>
           I can do all kinds of tasks thanks to breakthroughs in{" "}
           <VSCodeLink
-            href="https://www.anthropic.com/valoride/sonnet"
+            href="https://www.anthropic.com/"
             className="inline"
           >
-            Claude 3.7 Sonnet's
+
+            Claude Sonnet's
           </VSCodeLink>
           agentic coding capabilities and access to tools that let me create &
           edit files, explore complex projects, use a browser, and execute
