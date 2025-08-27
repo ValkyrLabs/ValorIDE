@@ -55,27 +55,6 @@ export class ValorIDEAccountService {
     return response.data;
   }
 
-  /**
-   * Fetches the user's current credit balance
-   */
-  async fetchBalance(): Promise<BalanceResponse | undefined> {
-    try {
-      const data = await this.authenticatedRequest<BalanceResponse>(
-        "/user/credits/balance",
-      );
-
-      // Post to webview
-      await this.postMessageToWebview({
-        type: "userCreditsBalance",
-        userCreditsBalance: data,
-      });
-
-      return data;
-    } catch (error) {
-      console.error("Failed to fetch balance:", error);
-      return undefined;
-    }
-  }
 
   /**
    * Fetches the user's usage transactions

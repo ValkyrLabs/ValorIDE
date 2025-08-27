@@ -4,6 +4,9 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { LoginService } from "./services/LoginService";
 import { LogoutService } from "./services/LogoutService";
+import { BalanceResponseService } from "../thor/redux/services/BalanceResponseService";
+import { UsageTransactionService } from "../thor/redux/services/UsageTransactionService";
+import { PaymentTransactionService } from "../thor/redux/services/PaymentTransactionService";
 
 // cool!
 import { websocketMiddleware } from "./middleware/websocketMiddleware";
@@ -20,6 +23,9 @@ const rootReducer = combineReducers({
   websocket: websocketReducer,
   [LoginService.reducerPath]: LoginService.reducer,
   [LogoutService.reducerPath]: LogoutService.reducer,
+  [BalanceResponseService.reducerPath]: BalanceResponseService.reducer,
+  [UsageTransactionService.reducerPath]: UsageTransactionService.reducer,
+  [PaymentTransactionService.reducerPath]: PaymentTransactionService.reducer,
 });
 
 const reducer = rootReducer;
@@ -30,6 +36,9 @@ const store = configureStore({
     getDefaultMiddleware()
       .concat(middlewares as any) // add the custom middlewares
       .concat(thorMiddlewares as any) // add the thor generated middlewares
+      .concat(BalanceResponseService.middleware)
+      .concat(UsageTransactionService.middleware)
+      .concat(PaymentTransactionService.middleware)
       .concat(websocketMiddleware),
 });
 

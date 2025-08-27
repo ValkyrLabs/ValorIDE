@@ -127,10 +127,10 @@ export class Controller {
   }
 
   /*
-	VSCode extensions use the disposable pattern to clean up resources when the sidebar/editor tab is closed by the user or system. This applies to event listening, commands, interacting with the UI, etc.
-	- https://vscode-docs.readthedocs.io/en/stable/extensions/patterns-and-principles/
-	- https://github.com/microsoft/vscode-extension-samples/blob/main/webview-sample/src/extension.ts
-	*/
+  VSCode extensions use the disposable pattern to clean up resources when the sidebar/editor tab is closed by the user or system. This applies to event listening, commands, interacting with the UI, etc.
+  - https://vscode-docs.readthedocs.io/en/stable/extensions/patterns-and-principles/
+  - https://github.com/microsoft/vscode-extension-samples/blob/main/webview-sample/src/extension.ts
+  */
   async dispose() {
     this.outputChannel.appendLine("Disposing ValorIDEProvider...");
     await this.clearTask();
@@ -282,10 +282,10 @@ export class Controller {
         await this.setUserInfo(
           message.user
             ? {
-                username: message.user.name || null,
-                email: null, // Replace with actual email if available
-                avatarUrl: null, // Replace with actual avatar URL if available
-              }
+              username: message.user.name || null,
+              email: null, // Replace with actual email if available
+              avatarUrl: null, // Replace with actual avatar URL if available
+            }
             : undefined,
         );
         await this.postStateToWebview();
@@ -1486,9 +1486,9 @@ export class Controller {
   async fetchUserCreditsData() {
     try {
       await Promise.all([
-        this.accountService?.fetchBalance(),
-        this.accountService?.fetchUsageTransactions(),
-        this.accountService?.fetchPaymentTransactions(),
+        // this.accountService?.fetchBalance(),
+        // this.accountService?.fetchUsageTransactions(),
+        // this.accountService?.fetchPaymentTransactions(),
       ]);
     } catch (error) {
       console.error("Failed to fetch user credits data:", error);
@@ -1856,31 +1856,31 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
     try {
       const response = await axios.get("https://openrouter.ai/api/v1/models");
       /*
-			{
-				"id": "anthropic/claude-3.5-sonnet",
-				"name": "Anthropic: ClaudeX 3.5 Sonnet",
-				"created": 1718841600,
-				"description": "ClaudeX 3.5 Sonnet delivers better-than-Opus capabilities, faster-than-Sonnet speeds, at the same Sonnet prices. Sonnet is particularly good at:\n\n- Coding: Autonomously writes, edits, and runs code with reasoning and troubleshooting\n- Data science: Augments human data science expertise; navigates unstructured data while using multiple tools for insights\n- Visual processing: excelling at interpreting charts, graphs, and images, accurately transcribing text to derive insights beyond just the text alone\n- Agentic tasks: exceptional tool use, making it great at agentic tasks (i.e. complex, multi-step problem solving tasks that require engaging with other systems)\n\n#multimodal",
-				"context_length": 200000,
-				"architecture": {
-					"modality": "text+image-\u003Etext",
-					"tokenizer": "Claude",
-					"instruct_type": null
-				},
-				"pricing": {
-					"prompt": "0.000003",
-					"completion": "0.000015",
-					"image": "0.0048",
-					"request": "0"
-				},
-				"top_provider": {
-					"context_length": 200000,
-					"max_completion_tokens": 8192,
-					"is_moderated": true
-				},
-				"per_request_limits": null
-			},
-			*/
+      {
+        "id": "anthropic/claude-3.5-sonnet",
+        "name": "Anthropic: ClaudeX 3.5 Sonnet",
+        "created": 1718841600,
+        "description": "ClaudeX 3.5 Sonnet delivers better-than-Opus capabilities, faster-than-Sonnet speeds, at the same Sonnet prices. Sonnet is particularly good at:\n\n- Coding: Autonomously writes, edits, and runs code with reasoning and troubleshooting\n- Data science: Augments human data science expertise; navigates unstructured data while using multiple tools for insights\n- Visual processing: excelling at interpreting charts, graphs, and images, accurately transcribing text to derive insights beyond just the text alone\n- Agentic tasks: exceptional tool use, making it great at agentic tasks (i.e. complex, multi-step problem solving tasks that require engaging with other systems)\n\n#multimodal",
+        "context_length": 200000,
+        "architecture": {
+          "modality": "text+image-\u003Etext",
+          "tokenizer": "Claude",
+          "instruct_type": null
+        },
+        "pricing": {
+          "prompt": "0.000003",
+          "completion": "0.000015",
+          "image": "0.0048",
+          "request": "0"
+        },
+        "top_provider": {
+          "context_length": 200000,
+          "max_completion_tokens": 8192,
+          "is_moderated": true
+        },
+        "per_request_limits": null
+      },
+      */
       if (response.data?.data) {
         const rawModels = response.data.data;
         const parsePrice = (price: any) => {
@@ -2391,20 +2391,20 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
   // Caching mechanism to keep track of webview messages + API conversation history per provider instance
 
   /*
-	Now that we use retainContextWhenHidden, we don't have to store a cache of valoride messages in the user's state, but we could to reduce memory footprint in long conversations.
+  Now that we use retainContextWhenHidden, we don't have to store a cache of valoride messages in the user's state, but we could to reduce memory footprint in long conversations.
 
-	- We have to be careful of what state is shared between ValorIDEProvider instances since there could be multiple instances of the extension running at once. For example when we cached valoride messages using the same key, two instances of the extension could end up using the same key and overwriting each other's messages.
-	- Some state does need to be shared between the instances, i.e. the API key--however there doesn't seem to be a good way to notify the other instances that the API key has changed.
+  - We have to be careful of what state is shared between ValorIDEProvider instances since there could be multiple instances of the extension running at once. For example when we cached valoride messages using the same key, two instances of the extension could end up using the same key and overwriting each other's messages.
+  - Some state does need to be shared between the instances, i.e. the API key--however there doesn't seem to be a good way to notify the other instances that the API key has changed.
 
-	We need to use a unique identifier for each ValorIDEProvider instance's message cache since we could be running several instances of the extension outside of just the sidebar i.e. in editor panels.
+  We need to use a unique identifier for each ValorIDEProvider instance's message cache since we could be running several instances of the extension outside of just the sidebar i.e. in editor panels.
 
-	// conversation history to send in API requests
+  // conversation history to send in API requests
 
-	/*
-	It seems that some API messages do not comply with vscode state requirements. Either the Anthropic library is manipulating these values somehow in the backend in a way that's creating cyclic references, or the API returns a function or a Symbol as part of the message content.
-	VSCode docs about state: "The value must be JSON-stringifyable ... value — A value. MUST not contain cyclic references."
-	For now we'll store the conversation history in memory, and if we need to store in state directly we'd need to do a manual conversion to ensure proper json stringification.
-	*/
+  /*
+  It seems that some API messages do not comply with vscode state requirements. Either the Anthropic library is manipulating these values somehow in the backend in a way that's creating cyclic references, or the API returns a function or a Symbol as part of the message content.
+  VSCode docs about state: "The value must be JSON-stringifyable ... value — A value. MUST not contain cyclic references."
+  For now we'll store the conversation history in memory, and if we need to store in state directly we'd need to do a manual conversion to ensure proper json stringification.
+  */
 
   // getApiConversationHistory(): Anthropic.MessageParam[] {
   // 	// const history = (await this.getGlobalState(

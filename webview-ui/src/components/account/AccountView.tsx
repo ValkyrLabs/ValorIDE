@@ -21,6 +21,7 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { vscode } from "@/utils/vscode";
 import { FaRecycle } from "react-icons/fa";
+import CoolButton from "../CoolButton";
 
 type AccountViewProps = {
   onDone: () => void;
@@ -45,8 +46,10 @@ const AccountView = ({ onDone }: AccountViewProps) => {
     isLoading: isBalanceLoading,
     refetch: refetchBalance,
   } = useGetBalanceResponsesQuery(undefined, {
-    skip: !isAuthenticated,
+    skip: false, // Always attempt to fetch applications
+    // skip: !isAuthenticated,
   });
+
   const { data: usageData, isLoading: isUsageLoading } =
     useGetUsageTransactionsQuery(undefined, {
       skip: !isAuthenticated,
@@ -107,21 +110,26 @@ const AccountView = ({ onDone }: AccountViewProps) => {
       {/* Tab content */}
       {activeTab === "login" ? (
         <div className="flex justify-center items-center flex-grow pr-3">
-          <Form isLoggedIn={isLoggedIn} />
+          {!isLoggedIn && (
+            <Form isLoggedIn={isLoggedIn} />
+          )}
+          {isLoggedIn && (
+            <CoolButton>Log Out</CoolButton>
+          )}
+
         </div>
       ) : activeTab === "applications" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
           {/* Applications List */}
           <div style={{ marginBottom: "32px" }}>
+
+            {/* OpenAPI File Picker */}
+            <div style={{ marginBottom: "32px" }}>
+              <OpenAPIFilePicker onFileSelected={handleOpenAPIFileSelected} />
+            </div>
             <ApplicationsList showTitle={true} title="Available Applications" />
           </div>
 
-          <VSCodeDivider className="my-6 w-full" />
-
-          {/* OpenAPI File Picker */}
-          <div style={{ marginBottom: "32px" }}>
-            <OpenAPIFilePicker onFileSelected={handleOpenAPIFileSelected} />
-          </div>
 
           <VSCodeDivider className="my-6 w-full" />
 
@@ -172,7 +180,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                   <>
                     <span>$</span>
                     <CountUp
-                      end={balanceData?.[0]?.currentBalance || 0}
+                      end={balanceData?.[0]?.currentBalance || .10}
                       duration={0.66}
                       decimals={2}
                     />
@@ -181,8 +189,8 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                       className="mt-1"
                       onClick={() => refetchBalance()}
                     >
-                      <FaRecycle/>
-                      
+                      <FaRecycle />
+
                     </VSCodeButton>
                   </>
                 )}

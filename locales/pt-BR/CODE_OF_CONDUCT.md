@@ -39,7 +39,7 @@ ser mais especificamente definido e esclarecido pelos mantenedores do projeto.
 
 ## Aplicação
 
-Casos de comportamento abusivo, assediador ou inaceitáveis podem ser reportados entrando em contato com a equipe do projeto pelo email hi@valkyrlabs.com/v1. Todas as queixas serão revisadas e investigadas confidencialmente. Mais detalhes sobre políticas específicas podem ser publicados separadamente.
+Casos de comportamento abusivo, assediador ou inaceitáveis podem ser reportados entrando em contato com a equipe do projeto pelo email support@valkyrlabs.com/v1. Todas as queixas serão revisadas e investigadas confidencialmente. Mais detalhes sobre políticas específicas podem ser publicados separadamente.
 
 Os mantenedores que não seguirem ou aplicarem este Código de Conduta de boa fé podem enfrentar repercussões temporárias ou permanentes determinadas por outros membros da liderança do projeto.
 

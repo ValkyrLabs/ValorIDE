@@ -50,7 +50,7 @@ ser definida y clarificada más específicamente por los mantenedores del proyec
 ## Aplicación
 
 Los casos de comportamiento abusivo, acosador o inaceptable de otra manera pueden
-ser reportados contactando al equipo del proyecto en hi@valkyrlabs.com/v1. Todas las quejas
+ser reportados contactando al equipo del proyecto en support@valkyrlabs.com/v1. Todas las quejas
 serán revisadas e investigadas y resultarán en una respuesta que
 se considere necesaria y apropiada a las circunstancias. El equipo del proyecto está
 obligado a mantener la confidencialidad con respecto al informante de un incidente.

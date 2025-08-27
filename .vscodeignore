@@ -4,6 +4,8 @@
 .husky/
 .vscode/
 .DS_Store
+.valoride
+ValorIDE_docs/
 
 # Exclude source, tests, docs, configs, and build scripts
 src/

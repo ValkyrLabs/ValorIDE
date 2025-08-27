@@ -1,192 +1,252 @@
-<div align="center"><sub>
-English | <a href="https://github.com/valkyrlabs/valoride/blob/main/locales/es/README.md" target="_blank">Español</a> | <a href="https://github.com/valkyrlabs/valoride/blob/main/locales/de/README.md" target="_blank">Deutsch</a> | <a href="https://github.com/valkyrlabs/valoride/blob/main/locales/ja/README.md" target="_blank">日本語</a> | <a href="https://github.com/valkyrlabs/valoride/blob/main/locales/zh-cn/README.md" target="_blank">简体中文</a> | <a href="https://github.com/valkyrlabs/valoride/blob/main/locales/zh-tw/README.md" target="_blank">繁體中文</a> | <a href="https://github.com/valkyrlabs/valoride/blob/main/locales/ko/README.md" target="_blank">한국어</a>
-</sub></div>
+---
+title: "ValorIDE README"
+slug: valoride-readme
+authors: [Spaceghost69]
+date: "2025-09-01"
+category: "Documentation"
+tags: ["Privacy", "Policy", "ValorIDE"]
+---
 
-# Valor IDE – Agentic Coder powered by ThorAPI
+![ValorIDE Logo](https://valkyrlabs.com/assets/valorIde-horizontal-DyPXHpke.png)
 
-<p align="center">
-  <img src="https://media.githubusercontent.com/media/valoride/valoride/main/assets/docs/demo.gif" width="100%" />
-</p>
+## Agentic Coder, Powered by ThorAPI ⚡
 
-<div align="center">
-<table>
-<tbody>
-<td align="center">
-<a href="https://marketplace.visualstudio.com/items?itemName=saoudrizwan.valoride-dev" target="_blank"><strong>Download on VS Marketplace</strong></a>
-</td>
-<td align="center">
-<a href="https://discord.gg/valoride" target="_blank"><strong>Discord</strong></a>
-</td>
-<td align="center">
-<a href="https://www.reddit.com/r/valoride/" target="_blank"><strong>r/valoride</strong></a>
-</td>
-<td align="center">
-<a href="https://github.com/valkyrlabs/valoride/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop" target="_blank"><strong>Feature Requests</strong></a>
-</td>
-<td align="center">
-<a href="https://docs.valkyrlabs.com/v1/getting-started/for-new-coders" target="_blank"><strong>Getting Started</strong></a>
-</td>
-</tbody>
-</table>
-</div>
-
-Meet ValorIDE, an AI assistant that can use your **CLI** a**N**d **E**ditor.
-
-Thanks to [Claude 4.x Opus agentic coding capabilities](https://www.anthropic.com/), ValorIDE can handle complex software development tasks step-by-step. With tools that let him create & edit files, explore large projects, use the browser, and execute terminal commands (after you grant permission), he can assist you in ways that go beyond code completion or tech support. ValorIDE can even use the Model Context Protocol (MCP) to create new tools and extend his own capabilities. While autonomous AI scripts traditionally run in sandboxed environments, this extension provides a human-in-the-loop GUI to approve every file change and terminal command, providing a safe and accessible way to explore the potential of agentic AI.
-
-1. Enter your task and add images to convert mockups into functional apps or fix bugs with screenshots.
-2. ValorIDE starts by analyzing your file structure & source code ASTs, running regex searches, and reading relevant files to get up to speed in existing projects. By carefully managing what information is added to context, ValorIDE can provide valuable assistance even for large, complex projects without overwhelming the context window.
-3. Once ValorIDE has the information he needs, he can:
-   - Create and edit files + monitor linter/compiler errors along the way, letting him proactively fix issues like missing imports and syntax errors on his own.
-   - Execute commands directly in your terminal and monitor their output as he works, letting him e.g., react to dev server issues after editing a file.
-   - For web development tasks, ValorIDE can launch the site in a headless browser, click, type, scroll, and capture screenshots + console logs, allowing him to fix runtime errors and visual bugs.
-4. When a task is completed, ValorIDE will present the result to you with a terminal command like `open -a "Google Chrome" index.html`, which you run with a click of a button.
-
-> [!TIP]
-> Use the `CMD/CTRL + Shift + P` shortcut to open the command palette and type "ValorIDE: Open In New Tab" to open the extension as a tab in your editor. This lets you use ValorIDE side-by-side with your file explorer, and see how he changes your workspace more clearly.
+[English Documentation](https://valkyrlabs.com/v1/docs/Products/ValorIDE/valoride-documentation)
 
 ---
 
-<img align="right" width="340" src="https://github.com/user-attachments/assets/3cf21e04-7ce9-4d22-a7b9-ba2c595e88a4">
+| [**Download on VS Marketplace**](https://marketplace.visualstudio.com/items?itemName=ValkyrLabsInc.valoride-dev) | [**Feature Requests**](https://github.com/valkyrlabs/valoride/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop) | [**Getting Started**](https://docs.valkyrlabs.com/v1/getting-started/for-new-coders) |
+| :--------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------: |
 
-### Use any API and Model
+## What is Valor IDE?
 
-ValorIDE supports API providers like OpenRouter, Anthropic, OpenAI, Google Gemini, AWS Bedrock, Azure, and GCP Vertex. You can also configure any OpenAI compatible API, or use a local model through LM Studio/Ollama. If you're using OpenRouter, the extension fetches their latest model list, allowing you to use the newest models as soon as they're available.
+Valor IDE is your **agentic coding companion** inside VS Code.\
+Unlike traditional "autocomplete" assistants, Valor IDE can actually **use your CLI and Editor** — giving it hands-on power to build, debug, and ship your code alongside you.
 
-The extension also keeps track of total tokens and API usage cost for the entire task loop and individual requests, keeping you informed of spend every step of the way.
+Built on **ThorAPI's secure generation engine** and **Claude Opus agentic capabilities**, Valor IDE is more than code completion:
 
-<!-- Transparent pixel to create line break after floating image -->
+- It analyzes your project with **AST parsing, regex search, and source tree exploration**.
+- It edits files, fixes errors, installs dependencies, and runs commands.
+- It can **launch a browser**, click around, capture console logs/screenshots, and fix UI bugs.
+- It extends itself with the **Model Context Protocol (MCP)** to add brand-new tools.
+- Every action is **human-in-the-loop**: you approve edits and commands, keeping safety + control in your hands.
 
-<img width="2000" height="0" src="https://github.com/user-attachments/assets/ee14e6f7-20b8-4391-9091-8e8e25561929"><br>
+**In short: Valor IDE is the future of coding—accessible, agentic, and always under your command.**
 
-<img align="left" width="370" src="https://github.com/user-attachments/assets/81be79a8-1fdb-4028-9129-5fe055e01e76">
+---
 
-### Run Commands in Terminal
+## How It Works
 
-Thanks to the new [shell integration updates in VSCode v1.93](https://code.visualstudio.com/updates/v1_93#_terminal-shell-integration-api), ValorIDE can execute commands directly in your terminal and receive the output. This allows him to perform a wide range of tasks, from installing packages and running build scripts to deploying applications, managing databases, and executing tests, all while adapting to your dev environment & toolchain to get the job done right.
+1. **Define a Task**
+   - Example: "Fix this bug" or "Convert this mockup into a working app."
+   - You can even add screenshots or errors from your workspace.
 
-For long running processes like dev servers, use the "Proceed While Running" button to let ValorIDE continue in the task while the command runs in the background. As ValorIDE works he’ll be notified of any new terminal output along the way, letting him react to issues that may come up, such as compile-time errors when editing files.
+2. **Valor IDE Gathers Context**
+   - Scans your project structure.
+   - Reads files and ASTs.
+   - Decides what's relevant without overwhelming the context window.
 
-<!-- Transparent pixel to create line break after floating image -->
+3. **Agentic Execution**
+   - Creates/edits files with diffs.
+   - Runs commands in your terminal and adapts to live output.
+   - For web projects, launches a headless browser to test/debug.
 
-<img width="2000" height="0" src="https://github.com/user-attachments/assets/ee14e6f7-20b8-4391-9091-8e8e25561929"><br>
+4. **Review & Approve**
+   - You see the diffs. You approve or revert.
+   - Valor IDE learns and continues until the task is complete.
 
-<img align="right" width="400" src="https://github.com/user-attachments/assets/c5977833-d9b8-491e-90f9-05f9cd38c588">
+> [!TIP]
+> Use the `CMD/CTRL + Shift + P` shortcut to open the command palette and type "ValorIDE: Open In New Tab" to open the extension as a tab in your editor. This lets you use ValorIDE side-by-side with your file explorer, and see how he changes your workspace more clearly.
 
-### Create and Edit Files
+---
 
-ValorIDE can create and edit files directly in your editor, presenting you a diff view of the changes. You can edit or revert ValorIDE's changes directly in the diff view editor, or provide feedback in chat until you're satisfied with the result. ValorIDE also monitors linter/compiler errors (missing imports, syntax errors, etc.) so he can fix issues that come up along the way on his own.
+## Core Features
 
-All changes made by ValorIDE are recorded in your file's Timeline, providing an easy way to track and revert modifications if needed.
+### 🔗 Use Any API & Model
 
-<!-- Transparent pixel to create line break after floating image -->
+Valor IDE integrates with OpenRouter, Anthropic, OpenAI, Google Gemini, AWS Bedrock, Azure, GCP Vertex, or local models (Ollama / LM Studio).\
+It also tracks **token usage and costs** across entire task loops, so you always know your spend.
 
-<img width="2000" height="0" src="https://github.com/user-attachments/assets/ee14e6f7-20b8-4391-9091-8e8e25561929"><br>
+---
 
-<img align="left" width="370" src="https://github.com/user-attachments/assets/bc2e85ba-dfeb-4fe6-9942-7cfc4703cbe5">
+### 🛠️ Valhalla Suite / ThorAPI
 
-### Use the Browser
+Valor IDE integrates with the rest of the Valhalla Suite from Valkyr Labs -- ThorAPI generated backend apis, Typescript (and other) client libraries and components.
 
-With Claude Sonnet's new [Computer Use](https://www.anthropic.com/news/3-5-models-and-computer-use) capability, ValorIDE can launch a browser, click elements, type text, and scroll, capturing screenshots and console logs at each step. This allows for interactive debugging, end-to-end testing, and even general web use! This gives him autonomy to fixing visual bugs and runtime issues without you needing to handhold and copy-pasting error logs yourself.
+**Full Application Generation:**
+- Generate complete applications from OpenAPI specifications
+- Poll generation status and download completed projects
+- Configurable ThorAPI output folders via `.valoride/config`
+- Seamless integration with generated Spring Boot backends and React frontends
 
-Try asking ValorIDE to "test the app", and watch as he runs a command like `npm run dev`, launches your locally running dev server in a browser, and performs a series of tests to confirm that everything works. [See a demo here.](https://x.com/sdrzn/status/1850880547825823989)
+ValkyrAI can be run as a service in your generated application stack, providing workflow automations, while built-in RBAC allows secure sharing of any object in the system.
 
-<!-- Transparent pixel to create line break after floating image -->
+Agentic reporting tracks **token usage and costs** across entire task loops, so you always know your spend and monetization features of the ValkyrLabs.com
 
-<img width="2000" height="0" src="https://github.com/user-attachments/assets/ee14e6f7-20b8-4391-9091-8e8e25561929"><br>
+---
 
-<img align="right" width="350" src="https://github.com/user-attachments/assets/ac0efa14-5c1f-4c26-a42d-9d7c56f5fadd">
+### 💳 ValorIDE Account Management
 
-### "add a tool that..."
+For ValorIDE account users, the extension provides comprehensive billing and usage tracking:
 
-Thanks to the [Model Context Protocol](https://github.com/modelcontextprotocol), ValorIDE can extend his capabilities through custom tools. While you can use [community-made servers](https://github.com/modelcontextprotocol/servers), ValorIDE can instead create and install tools tailored to your specific workflow. Just ask ValorIDE to "add a tool" and he will handle everything, from creating a new MCP server to installing it into the extension. These custom tools then become part of ValorIDE's toolkit, ready to use in future tasks.
+- **Credit Balance Monitoring**: Real-time balance display and transaction history
+- **Usage Analytics**: Detailed breakdown of token usage and costs per task
+- **Payment History**: Complete transaction records and billing management
+- **ContentData Integration**: Access to enhanced content and data services
 
-- "add a tool that fetches Jira tickets": Retrieve ticket ACs and put ValorIDE to work
-- "add a tool that manages AWS EC2s": Check server metrics and scale instances up or down
-- "add a tool that pulls the latest PagerDuty incidents": Fetch details and ask ValorIDE to fix bugs
+---
 
-<!-- Transparent pixel to create line break after floating image -->
+### 💻 Run Terminal Commands
 
-<img width="2000" height="0" src="https://github.com/user-attachments/assets/ee14e6f7-20b8-4391-9091-8e8e25561929"><br>
+With VS Code's new [Shell Integration API](https://code.visualstudio.com/updates/v1_93#_terminal-shell-integration-api), Valor IDE can:
 
-<img align="left" width="360" src="https://github.com/user-attachments/assets/7fdf41e6-281a-4b4b-ac19-020b838b6970">
+- Install packages, run builds, deploy, and test.
+- Handle long-running servers with background monitoring.
+- React dynamically to compile errors and environment issues.
 
-### Add Context
+---
 
-**`@url`:** Paste in a URL for the extension to fetch and convert to markdown, useful when you want to give ValorIDE the latest docs
+### 📝 Create & Edit Files
 
-**`@problems`:** Add workspace errors and warnings ('Problems' panel) for ValorIDE to fix
+- Edits appear in VS Code's diff view.
+- You can modify or reject changes instantly.
+- Valor IDE proactively fixes syntax/linter/compiler errors.
+- Every change is recorded in your file's **Timeline** for easy rollback.
 
-**`@file`:** Adds a file's contents so you don't have to waste API requests approving read file (+ type to search files)
+---
 
-**`@folder`:** Adds folder's files all at once to speed up your workflow even more
+### 🌐 Enhanced Browser Automation
 
-<!-- Transparent pixel to create line break after floating image -->
+With [Claude Sonnet's Computer Use](https://www.anthropic.com/news/3-5-models-and-computer-use):
 
-<img width="2000" height="0" src="https://github.com/user-attachments/assets/ee14e6f7-20b8-4391-9091-8e8e25561929"><br>
+- Launches a browser, clicks, types, scrolls.
+- Captures screenshots and console logs.
+- **Local Chrome Integration**: Connect to your existing Chrome browser for session-based debugging.
+- **Browser Discovery**: Automatically detect and connect to running Chrome instances.
+- Perfect for runtime debugging and fixing UI bugs.
 
-<img align="right" width="350" src="https://github.com/user-attachments/assets/140c8606-d3bf-41b9-9a1f-4dbf0d4c90cb">
+[See Demo](https://x.com/sdrzn/status/1850880547825823989)
 
-### Checkpoints: Compare and Restore
+---
 
-As ValorIDE works through a task, the extension takes a snapshot of your workspace at each step. You can use the 'Compare' button to see a diff between the snapshot and your current workspace, and the 'Restore' button to roll back to that point.
+### 🛠️ Extend with MCP
 
-For example, when working with a local web server, you can use 'Restore Workspace Only' to quickly test different versions of your app, then use 'Restore Task and Workspace' when you find the version you want to continue building from. This lets you safely explore different approaches without losing progress.
+Valor IDE can generate new **Model Context Protocol (MCP)** tools on the fly.\
+Example prompts:
 
-<!-- Transparent pixel to create line break after floating image -->
+- `add a tool that fetches Jira tickets`
+- `add a tool that manages AWS EC2s`
+- `add a tool that pulls PagerDuty incidents`
 
-<img width="2000" height="0" src="https://github.com/user-attachments/assets/ee14e6f7-20b8-4391-9091-8e8e25561929"><br>
+**Advanced MCP Features:**
+- **MCP Marketplace**: Discover and install curated MCP servers directly from the extension
+- **Remote MCP Servers**: Connect to MCP servers via Server-Sent Events (SSE)
+- **Rich Responses**: Automatic image previews, website thumbnails, and data visualizations
+- **Auto-Approval Settings**: Configure which MCP tools require approval
+
+These tools become part of Valor IDE's toolkit, ready for future use.
+
+---
+
+### 📂 Advanced Context & Mentions
+
+- `@url` → fetch a URL and convert docs to markdown.
+- `@problems` → pass workspace warnings/errors.
+- `@file` → add file contents.
+- `@folder` → add a whole folder's contents.
+- `@terminal` → reference active terminal contents.
+- `@git` → include git commits and working changes.
+
+**Smart Context Management:**
+- **Context Window Progress**: Visual indicator showing token usage and cost impact
+- **File Context Tracking**: Automatic metadata tracking for optimized context
+- **Sliding Window Management**: Maintains context beyond 200k tokens for long tasks
+
+---
+
+### 🎯 Plan/Act Mode Toggle
+
+Switch between planning and execution modes:
+
+- **Plan Mode**: Brainstorm and architect solutions with Valor IDE before implementation
+- **Act Mode**: Execute the planned solution with full tool access
+- **Mermaid Diagrams**: Visual representations of architecture and workflows in Plan mode
+- **Model Switching**: Use different models for planning vs. execution
+
+---
+
+### ⏪ Checkpoints: Compare & Restore
+
+- Snapshots your workspace at each task step.
+- Compare differences and restore versions safely.
+- Explore multiple approaches without losing progress.
+- **Visual Indicators**: Clear checkpoint markers in the chat interface
+- **Branch-per-Task**: Optimized storage with git-based checkpoint system
+
+---
+
+## Advanced Features
+
+### 🔧 Developer Tools
+
+- **Tree-Sitter AST Parsing**: Deep code analysis for better understanding
+- **Advanced Search**: Regex-based file search across your entire project
+- **File Content Optimization**: Smart handling of large files and binary detection
+- **Output Filtering**: Configurable output processing for cleaner results
+
+### ⚙️ Configuration & Customization
+
+- **`.valoriderules`**: Project-specific custom instructions and rules
+- **`.valorideignore`**: Exclude files and patterns from Valor IDE access
+- **Multiple Rule Files**: Support for `.valoriderules/` directory with multiple configuration files
+- **Advanced Settings**: Extended thinking budgets, reasoning effort controls, and model-specific options
+
+### 🚀 Enhanced UI/UX
+
+- **Drag & Drop**: Add files and folders directly to chat
+- **Favorite Models**: Quick access to your preferred models
+- **Advanced Auto-Approval**: Granular control over which operations require approval
+- **Rich Markdown**: Full support for code blocks, diagrams, and formatted content
+- **Task History Search**: Fuzzy search and filtering of previous tasks
+
+---
 
 ## Contributing
 
-To contribute to the project, start with our [Contributing Guide](CONTRIBUTING.md) to learn the basics. You can also join our [Discord](https://discord.gg/valoride) to chat with other contributors in the `#contributors` channel. If you're looking for full-time work, check out our open positions on our [careers page](https://valkyrlabs.com/v1/join-us)!
+- Start with our [Contributing Guide](CONTRIBUTING.md).
+- Join the [Discord](https://discord.gg/valoride) → `#contributors` channel.
+- Check open positions on our [Careers Page](https://valkyrlabs.com/v1/join-us).
 
-<details>
-<summary>Local Development Instructions</summary>
+### Local Development
 
-1. Clone the repository _(Requires [git-lfs](https://git-lfs.com/))_:
-   ```bash
-   git clone https://github.com/valkyrlabs/valoride.git
-   ```
-2. Open the project in VSCode:
-   ```bash
-   code valoride
-   ```
-3. Install the necessary dependencies for the extension and webview-gui:
-   ```bash
-   npm run install:all
-   ```
-4. Launch by pressing `F5` (or `Run`->`Start Debugging`) to open a new VSCode window with the extension loaded. (You may need to install the [esbuild problem matchers extension](https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers) if you run into issues building the project.)
+```bash
+# Clone the repo (requires git-lfs)
+git clone https://github.com/valkyrlabs/valoride.git
 
-</details>
+# Open in VS Code
+code valoride
 
-<details>
-<summary>Creating a Pull Request</summary>
+# Install dependencies
+npm run install:all
 
-1. Before creating a PR, generate a changeset entry:
+# Launch extension (F5 or Run → Start Debugging)
+```
 
-   ```bash
-   npm run changeset
-   ```
+> ⚠️ You may need [esbuild problem matchers](https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers) if build issues occur.
 
-   This will prompt you for:
+### Creating a Pull Request
 
-   - Type of change (major, minor, patch)
-     - `major` → breaking changes (1.0.0 → 2.0.0)
-     - `minor` → new features (1.0.0 → 1.1.0)
-     - `patch` → bug fixes (1.0.0 → 1.0.1)
-   - Description of your changes
+```bash
+# Create a changeset entry
+npm run changeset
+```
 
-2. Commit your changes and the generated `.changeset` file
+Follow prompts for type (`major`, `minor`, `patch`) and description.\
+Commit both your changes + `.changeset` file.\
+Push → Open PR → CI runs → Changesetbot handles versioning + release.
 
-3. Push your branch and create a PR on GitHub. Our CI will:
-   - Run tests and checks
-   - Changesetbot will create a comment showing the version impact
-   - When merged to main, changesetbot will create a Version Packages PR
-   - When the Version Packages PR is merged, a new release will be published
-
-</details>
+---
 
 ## License
 
-[Apache 2.0 © 2025 ValorIDE Bot Inc.](./LICENSE)
+[Apache 2.0 © 2025 Valkyr Labs Inc.](./LICENSE)
