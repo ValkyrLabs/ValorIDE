@@ -19,6 +19,7 @@ import {
   VSCodeTextArea,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
+import { VscCaseSensitive, VscWholeWord, VscRegex, VscChevronRight } from "react-icons/vsc";
 
 function Demo() {
   // function handleHowdyClick() {
@@ -91,17 +92,17 @@ function Demo() {
         <VSCodeTextField>
           <section slot="end" style={{ display: "flex", alignItems: "center" }}>
             <VSCodeButton appearance="icon" aria-label="Match Case">
-              <span className="codicon codicon-case-sensitive"></span>
+              <VscCaseSensitive />
             </VSCodeButton>
             <VSCodeButton appearance="icon" aria-label="Match Whole Word">
-              <span className="codicon codicon-whole-word"></span>
+              <VscWholeWord />
             </VSCodeButton>
             <VSCodeButton appearance="icon" aria-label="Use Regular Expression">
-              <span className="codicon codicon-regex"></span>
+              <VscRegex />
             </VSCodeButton>
           </section>
         </VSCodeTextField>
-        <span slot="end" className="codicon codicon-chevron-right"></span>
+        <VscChevronRight />
 
         <span className="flex gap-3">
           <VSCodeProgressRing />

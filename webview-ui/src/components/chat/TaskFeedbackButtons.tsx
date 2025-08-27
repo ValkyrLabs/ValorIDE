@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { vscode } from "@/utils/vscode";
 import { TaskFeedbackType } from "@shared/WebviewMessage";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
+import { FaThumbsUp } from "react-icons/fa";
 
 interface TaskFeedbackButtonsProps {
   messageTs: number;
@@ -81,9 +82,7 @@ const TaskFeedbackButtons: React.FC<TaskFeedbackButtonsProps> = ({
             aria-label="This was helpful"
           >
             <IconWrapper>
-              <span
-                className={`codicon ${feedback === "thumbs_up" ? "codicon-thumbsup-filled" : "codicon-thumbsup"}`}
-              />
+              ${feedback === "thumbs_up" ? <FaThumbsUp /> : <i>no comment</i>}
             </IconWrapper>
           </VSCodeButton>
         </ButtonWrapper>
@@ -96,9 +95,7 @@ const TaskFeedbackButtons: React.FC<TaskFeedbackButtonsProps> = ({
             aria-label="This wasn't helpful"
           >
             <IconWrapper>
-              <span
-                className={`codicon ${feedback === "thumbs_down" ? "codicon-thumbsdown-filled" : "codicon-thumbsdown"}`}
-              />
+              ${feedback === "thumbs_up" ? <FaThumbsUp /> : <i>no comment</i>}
             </IconWrapper>
           </VSCodeButton>
         </ButtonWrapper>
@@ -107,7 +104,7 @@ const TaskFeedbackButtons: React.FC<TaskFeedbackButtonsProps> = ({
 					appearance="icon"
 					title="Report a bug"
 					aria-label="Report a bug">
-					<span className="codicon codicon-bug" />
+					
 				</VSCodeButtonLink> */}
       </ButtonsContainer>
     </Container>

@@ -1,4 +1,5 @@
 import { VSCodeButton, VSCodeLink } from "@vscode/webview-ui-toolkit/react"
+import { VscChevronDown } from "react-icons/vsc"
 import debounce from "debounce"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useDeepCompareEffect, useEvent, useMount } from "react-use"
@@ -956,7 +957,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 									scrollToBottomSmooth()
 									disableAutoScrollRef.current = false
 								}}>
-								<span className="codicon codicon-chevron-down" style={{ fontSize: "18px" }}></span>
+								<VscChevronDown style={{ fontSize: "18px" }} />
 							</ScrollToBottomButton>
 						</div>
 					) : (

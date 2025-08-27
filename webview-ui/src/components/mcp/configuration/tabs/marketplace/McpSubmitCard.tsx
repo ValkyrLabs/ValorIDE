@@ -1,3 +1,5 @@
+import { VscAdd } from "react-icons/vsc";
+
 const McpSubmitCard = () => {
   return (
     <div
@@ -13,7 +15,7 @@ const McpSubmitCard = () => {
       }}
     >
       {/* Icon */}
-      <i className="codicon codicon-add" style={{ fontSize: "18px" }} />
+      <VscAdd style={{ fontSize: "18px" }} />
 
       {/* Content */}
       <div

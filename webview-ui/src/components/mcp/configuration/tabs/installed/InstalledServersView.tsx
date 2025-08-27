@@ -15,6 +15,7 @@ import {
   safeConvert,
 } from "@/utils/errorHandling";
 import Tooltip from "@/components/common/Tooltip";
+import { VscRefresh, VscServer } from "react-icons/vsc";
 const InstalledServersView = () => {
   const {
     data: mcpServers,
@@ -96,7 +97,7 @@ const InstalledServersView = () => {
             {isLoading ? (
               <VSCodeProgressRing style={{ width: "14px", height: "14px" }} />
             ) : (
-              <span className="codicon codicon-refresh"></span>
+              <VscRefresh />
             )}
             Refresh
           </VSCodeButton>
@@ -133,10 +134,9 @@ const InstalledServersView = () => {
               disabled={isLoading}
               style={{ fontSize: "11px", padding: "4px 12px" }}
             >
-              <span
-                className="codicon codicon-refresh"
+              <VscRefresh
                 style={{ marginRight: "4px" }}
-              ></span>
+              />
               {isLoading ? "Retrying..." : "Retry"}
             </VSCodeButton>
           )}
@@ -158,10 +158,9 @@ const InstalledServersView = () => {
             vscode.postMessage({ type: "openMcpSettings" });
           }}
         >
-          <span
-            className="codicon codicon-server"
+          <VscServer
             style={{ marginRight: "6px" }}
-          ></span>
+          />
           Configure MCP Servers
         </VSCodeButton>
 

@@ -7,7 +7,7 @@ import type {
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 
 export class ValorIDEAccountService {
-  private readonly baseUrl = "http://localhost:8080/v1";
+  private readonly baseUrl = process.env.REACT_APP_BASE_PATH || "http://localhost:8080/v1";
   private postMessageToWebview: (message: ExtensionMessage) => Promise<void>;
   private getValorIDEApiKey: () => Promise<string | undefined>;
 
@@ -106,7 +106,7 @@ export class ValorIDEAccountService {
   async fetchContentData(): Promise<any | undefined> {
     try {
       // Note: Using root path /ContentData instead of /v1/ContentData based on user's request
-      const url = "http://localhost:8080/ContentData";
+      const url = `${process.env.REACT_APP_BASE_PATH?.replace('/v1', '') || "http://localhost:8080"}/ContentData`;
       const valorideApiKey = await this.getValorIDEApiKey();
 
       if (!valorideApiKey) {

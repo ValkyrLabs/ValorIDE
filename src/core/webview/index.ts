@@ -236,7 +236,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
             <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
             <meta name="theme-color" content="#000000">
             <link rel="stylesheet" type="text/css" href="${stylesUri}">
-						<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src http://localhost:8080 https://*.valkyrlabs.com https://*.posthog.com https://*.firebaseauth.com https://*.firebaseio.com https://*.googleapis.com https://*.firebase.com; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} https: data:; script-src 'nonce-${nonce}' 'unsafe-eval';">
+						<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${process.env.REACT_APP_BASE_PATH?.replace('/v1', '') || 'http://localhost:8080'} https://*.valkyrlabs.com https://*.posthog.com https://*.firebaseauth.com https://*.firebaseio.com https://*.googleapis.com https://*.firebase.com; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} https: data:; script-src 'nonce-${nonce}' 'unsafe-eval';">
             <title>ValorIDE</title>
           </head>
           <body>

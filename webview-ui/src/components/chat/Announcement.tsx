@@ -5,6 +5,7 @@ import {
   VSC_DESCRIPTION_FOREGROUND,
   VSC_INACTIVE_SELECTION_BACKGROUND,
 } from "@/utils/vscStyles";
+import { FaRegWindowClose } from "react-icons/fa";
 
 interface AnnouncementProps {
   version: string;
@@ -48,7 +49,7 @@ const Announcement = ({ version, hideAnnouncement }: AnnouncementProps) => {
         onClick={hideAnnouncement}
         style={closeIconStyle}
       >
-        <span className="codicon codicon-close"></span>
+        <FaRegWindowClose />
       </VSCodeButton>
       <h3 style={h3TitleStyle}>
         🎉{"  "}New in v{minorVersion}

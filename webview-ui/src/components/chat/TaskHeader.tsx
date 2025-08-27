@@ -10,7 +10,7 @@ import { vscode } from "@/utils/vscode";
 import Thumbnails from "@/components/common/Thumbnails";
 import { normalizeApiConfiguration } from "@/components/settings/ApiOptions";
 import { validateSlashCommand } from "@/utils/slash-commands";
-import { FaArrowUp, FaArrowDown, FaDatabase, FaArrowRight, FaTrash } from "react-icons/fa";
+import { FaArrowUp, FaArrowDown, FaDatabase, FaArrowRight, FaTrash, FaChevronDown, FaChevronRight, FaTimes, FaExclamationTriangle } from "react-icons/fa";
 
 interface TaskHeaderProps {
   task: ValorIDEMessage;
@@ -259,9 +259,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                 flexShrink: 0,
               }}
             >
-              <span
-                className={`codicon codicon-chevron-${isTaskExpanded ? "down" : "right"}`}
-              ></span>
+              {isTaskExpanded ? <FaChevronDown /> : <FaChevronRight />}
             </div>
             <div
               style={{
@@ -307,7 +305,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
             onClick={onClose}
             style={{ marginLeft: 6, flexShrink: 0 }}
           >
-            <span className="codicon codicon-close"></span>
+            <FaTimes />
           </VSCodeButton>
         </div>
         {isTaskExpanded && (
@@ -535,7 +533,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                     fontSize: "11px",
                   }}
                 >
-                  <i className="codicon codicon-warning" />
+                  <FaExclamationTriangle />
                   <span>
                     {checkpointTrackerErrorMessage.replace(
                       /disabling checkpoints\.$/,

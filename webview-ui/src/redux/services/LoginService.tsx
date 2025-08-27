@@ -31,7 +31,7 @@ export const LoginService = createApi({
 
     loginUser: build.mutation<Login, Partial<Login>>({
       query: (body) => ({
-        url: `http://localhost:8080/v1/auth/login`,
+        url: `${import.meta.env.VITE_basePath || "http://localhost:8080/v1"}/auth/login`,
         method: "POST",
         body,
       }),

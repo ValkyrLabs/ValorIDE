@@ -1,6 +1,6 @@
 /**
  * MCP Tool for fetching ContentData from the backend API
- * This tool can be used within ValorIDE to fetch data from http://localhost:8080/ContentData
+ * This tool can be used within ValorIDE to fetch data from the ContentData endpoint
  */
 
 import * as vscode from "vscode";

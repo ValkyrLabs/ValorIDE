@@ -48,7 +48,7 @@ const ObjectTreeView = ({
   useEffect(() => {
     const fetchOpenApiSpec = async () => {
       try {
-        const response = await fetch("http://localhost:8080/v1/api-docs");
+        const response = await fetch(`${import.meta.env.VITE_basePath || "http://localhost:8080/v1"}/api-docs`);
         const spec = await response.json();
         setOpenApiSpec(spec);
       } catch (error) {

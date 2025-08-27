@@ -2,6 +2,7 @@ import { VSCodeCheckbox } from "@vscode/webview-ui-toolkit/react";
 import { McpTool } from "@shared/mcp";
 import { vscode } from "@/utils/vscode";
 import { useExtensionState } from "@/context/ExtensionStateContext";
+import { VscSymbolMethod } from "react-icons/vsc";
 
 type McpToolRowProps = {
   tool: McpTool;
@@ -43,10 +44,9 @@ const McpToolRow = ({ tool, serverName }: McpToolRowProps) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
-          <span
-            className="codicon codicon-symbol-method"
+          <VscSymbolMethod
             style={{ marginRight: "6px" }}
-          ></span>
+          />
           <span style={{ fontWeight: 500 }}>{tool.name}</span>
         </div>
         {serverName &&
