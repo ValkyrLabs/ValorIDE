@@ -11,6 +11,7 @@ import {
   VSCodePanelTab,
   VSCodePanelView,
 } from "@vscode/webview-ui-toolkit/react";
+import { FaChevronDown, FaChevronRight, FaSync, FaTrash } from "react-icons/fa";
 import { getMcpServerDisplayName } from "@/utils/mcp";
 import DangerButton from "@/components/common/DangerButton";
 import McpToolRow from "./McpToolRow";
@@ -159,10 +160,9 @@ const ServerRow = ({
         onClick={handleRowClick}
       >
         {!server.error && isExpandable && (
-          <span
-            className={`codicon codicon-chevron-${isExpanded ? "down" : "right"}`}
-            style={{ marginRight: "8px" }}
-          />
+          isExpanded
+            ? <FaChevronDown style={{ marginRight: "8px" }} />
+            : <FaChevronRight style={{ marginRight: "8px" }} />
         )}
         <span
           style={{
@@ -196,7 +196,7 @@ const ServerRow = ({
               }}
               disabled={server.status === "connecting"}
             >
-              <span className="codicon codicon-sync"></span>
+              <FaSync />
             </VSCodeButton>
             {hasTrashIcon && (
               <VSCodeButton
@@ -208,7 +208,7 @@ const ServerRow = ({
                 }}
                 disabled={isDeleting}
               >
-                <span className="codicon codicon-trash"></span>
+                <FaTrash />
               </VSCodeButton>
             )}
           </div>

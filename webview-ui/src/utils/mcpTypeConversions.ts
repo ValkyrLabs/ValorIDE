@@ -167,7 +167,7 @@ export function convertThorMcpMarketplaceItemToShared(
       name: thorItem.name || "Unknown Item",
       author: thorItem.author || "Unknown Author",
       description: thorItem.description || "",
-      codiconIcon: thorItem.codiconIcon || "",
+      icon: thorItem.icon || "",
       logoUrl: thorItem.logoUrl || "",
       category: thorItem.category || "Uncategorized",
       tags:

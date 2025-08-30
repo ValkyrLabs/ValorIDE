@@ -35,6 +35,7 @@ const AppContent = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [showMcp, setShowMcp] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
+  const [showGeneratedFiles, setShowGeneratedFiles] = useState(false);
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [mcpTab, setMcpTab] = useState<McpViewTab | undefined>(undefined);
   // Always show file explorer by default
@@ -54,6 +55,7 @@ const AppContent = () => {
             setShowHistory(false);
             setShowMcp(false);
             setShowAccount(false);
+            setShowGeneratedFiles(false);
             setShowApplicationProgress(false);
             // Keep file explorer visible
             break;
@@ -62,6 +64,7 @@ const AppContent = () => {
             setShowHistory(true);
             setShowMcp(false);
             setShowAccount(false);
+            setShowGeneratedFiles(false);
             setShowApplicationProgress(false);
             // Keep file explorer visible
             break;
@@ -73,6 +76,7 @@ const AppContent = () => {
             }
             setShowMcp(true);
             setShowAccount(false);
+            setShowGeneratedFiles(false);
             setShowApplicationProgress(false);
             // Keep file explorer visible
             break;
@@ -81,6 +85,7 @@ const AppContent = () => {
             setShowHistory(false);
             setShowMcp(false);
             setShowAccount(true);
+            setShowGeneratedFiles(false);
             setShowApplicationProgress(false);
             // Keep file explorer visible
             break;
@@ -89,6 +94,16 @@ const AppContent = () => {
             setShowHistory(false);
             setShowMcp(false);
             setShowAccount(false);
+            setShowGeneratedFiles(false);
+            setShowApplicationProgress(false);
+            // Keep file explorer visible
+            break;
+          case "generatedFilesButtonClicked":
+            setShowSettings(false);
+            setShowHistory(false);
+            setShowMcp(false);
+            setShowAccount(false);
+            setShowGeneratedFiles(true);
             setShowApplicationProgress(false);
             // Keep file explorer visible
             break;
@@ -108,6 +123,7 @@ const AppContent = () => {
             setShowHistory(false);
             setShowMcp(false);
             setShowAccount(true);
+            setShowGeneratedFiles(false);
           }
         }
         break;
@@ -117,12 +133,12 @@ const AppContent = () => {
   useEvent("message", handleMessage);
 
   // useEffect(() => {
-  // 	if (telemetrySetting === "enabled") {
-  // 		posthog.identify(vscMachineId)
-  // 		posthog.opt_in_capturing()
-  // 	} else {
-  // 		posthog.opt_out_capturing()
-  // 	}
+  //  if (telemetrySetting === "enabled") {
+  //   posthog.identify(vscMachineId)
+  //   posthog.opt_in_capturing()
+  //  } else {
+  //   posthog.opt_out_capturing()
+  //  }
   // }, [telemetrySetting, vscMachineId])
 
   useEffect(() => {
@@ -150,7 +166,7 @@ const AppContent = () => {
   }
 
   const isMainViewHidden =
-    showSettings || showHistory || showMcp || showAccount;
+    showSettings || showHistory || showMcp || showAccount || showGeneratedFiles;
 
   return (
     <>
@@ -164,6 +180,7 @@ const AppContent = () => {
             <McpView initialTab={mcpTab} onDone={() => setShowMcp(false)} />
           )}
           {showAccount && <AccountView onDone={() => setShowAccount(false)} />}
+          {showGeneratedFiles && <GeneratedFilesView />}
 
           {/* Application Progress Overlay - shows over the split pane */}
           {showApplicationProgress && (
@@ -194,6 +211,7 @@ const AppContent = () => {
                 setShowSettings(false);
                 setShowMcp(false);
                 setShowAccount(false);
+                setShowGeneratedFiles(false);
                 setShowApplicationProgress(false);
                 setShowHistory(true);
               }}
@@ -216,6 +234,10 @@ const App = () => {
       <AppContent />
     </ExtensionStateContextProvider>
   );
+};
+
+const GeneratedFilesView = () => {
+  return <div>Generated Files View</div>;
 };
 
 export default App;

@@ -28,7 +28,7 @@ import {
  * @export
  * @interface McpMarketplaceItem
  */
-export type McpMarketplaceItem  = {
+export type McpMarketplaceItem = {
     /**
      * 
      * @type {string}
@@ -58,7 +58,7 @@ export type McpMarketplaceItem  = {
      * @type {string}
      * @memberof McpMarketplaceItem
      */
-    codiconIcon: string;
+    icon: string;
     /**
      * 
      * @type {string}
@@ -199,7 +199,7 @@ export function McpMarketplaceItemFromJSON(json: any): McpMarketplaceItem {
         'name': json['name'],
         'author': json['author'],
         'description': json['description'],
-        'codiconIcon': json['codiconIcon'],
+        'icon': json['icon'],
         'logoUrl': json['logoUrl'],
         'category': json['category'],
         'tags': (json['tags'] as Array<any>).map(McpMarketplaceItemTagFromJSON),
@@ -234,7 +234,7 @@ export function McpMarketplaceItemToJSON(value?: McpMarketplaceItem): any {
         'name': value.name,
         'author': value.author,
         'description': value.description,
-        'codiconIcon': value.codiconIcon,
+        'icon': value.icon,
         'logoUrl': value.logoUrl,
         'category': value.category,
         'tags': (value.tags as Array<any>).map(McpMarketplaceItemTagToJSON),

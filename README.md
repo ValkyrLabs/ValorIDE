@@ -65,6 +65,7 @@ It also tracks **token usage and costs** across entire task loops, so you always
 Valor IDE integrates with the rest of the Valhalla Suite from Valkyr Labs -- ThorAPI generated backend apis, Typescript (and other) client libraries and components.
 
 **Full Application Generation:**
+
 - Generate complete applications from OpenAPI specifications
 - Poll generation status and download completed projects
 - Configurable ThorAPI output folders via `.valoride/config`
@@ -130,6 +131,7 @@ Example prompts:
 - `add a tool that pulls PagerDuty incidents`
 
 **Advanced MCP Features:**
+
 - **MCP Marketplace**: Discover and install curated MCP servers directly from the extension
 - **Remote MCP Servers**: Connect to MCP servers via Server-Sent Events (SSE)
 - **Rich Responses**: Automatic image previews, website thumbnails, and data visualizations
@@ -149,6 +151,7 @@ These tools become part of Valor IDE's toolkit, ready for future use.
 - `@git` → include git commits and working changes.
 
 **Smart Context Management:**
+
 - **Context Window Progress**: Visual indicator showing token usage and cost impact
 - **File Context Tracking**: Automatic metadata tracking for optimized context
 - **Sliding Window Management**: Maintains context beyond 200k tokens for long tasks

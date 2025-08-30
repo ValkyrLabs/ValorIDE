@@ -17,6 +17,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { FaChevronDown, FaChevronRight, FaCheck, FaTimes } from "react-icons/fa";
 import ThinkingBudgetSlider from "./ThinkingBudgetSlider";
 import { useEvent, useInterval } from "react-use";
 import styled from "styled-components";
@@ -1133,12 +1134,11 @@ const ApiOptions = ({
             }}
             onClick={() => setModelConfigurationSelected((val) => !val)}
           >
-            <span
-              className={`codicon ${modelConfigurationSelected ? "codicon-chevron-down" : "codicon-chevron-right"}`}
-              style={{
-                marginRight: "4px",
-              }}
-            ></span>
+              {modelConfigurationSelected ? (
+                <FaChevronDown style={{ marginRight: "4px" }} />
+              ) : (
+                <FaChevronRight style={{ marginRight: "4px" }} />
+              )}
             <span
               style={{
                 fontWeight: 700,
@@ -2247,17 +2247,29 @@ const ModelInfoSupportsItem = ({
         : "var(--vscode-errorForeground)",
     }}
   >
-    <i
-      className={`codicon codicon-${isSupported ? "check" : "x"}`}
-      style={{
-        marginRight: 4,
-        marginBottom: isSupported ? 1 : -1,
-        fontSize: isSupported ? 11 : 13,
-        fontWeight: 700,
-        display: "inline-block",
-        verticalAlign: "bottom",
-      }}
-    ></i>
+    {isSupported ? (
+      <FaCheck
+        style={{
+          marginRight: 4,
+          marginBottom: 1,
+          fontSize: 11,
+          fontWeight: 700,
+          display: "inline-block",
+          verticalAlign: "bottom",
+        }}
+      />
+    ) : (
+      <FaTimes
+        style={{
+          marginRight: 4,
+          marginBottom: -1,
+          fontSize: 13,
+          fontWeight: 700,
+          display: "inline-block",
+          verticalAlign: "bottom",
+        }}
+      />
+    )}
     {isSupported ? supportsLabel : doesNotSupportLabel}
   </span>
 );

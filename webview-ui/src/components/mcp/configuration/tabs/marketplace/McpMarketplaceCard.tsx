@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { McpMarketplaceItem, McpServer } from "@shared/mcp";
 import { vscode } from "@/utils/vscode";
 import { useEvent } from "react-use";
+import { FaGithub, FaStar, FaCloudDownloadAlt, FaKey, FaExclamationTriangle } from "react-icons/fa";
 
 interface McpMarketplaceCardProps {
   item: McpMarketplaceItem;
@@ -180,10 +181,7 @@ const McpMarketplaceCard = ({
                   style={{ display: "flex", gap: "4px", alignItems: "center" }}
                   ref={githubLinkRef}
                 >
-                  <span
-                    className="codicon codicon-github"
-                    style={{ fontSize: "14px" }}
-                  />
+                  <FaGithub style={{ fontSize: "14px" }} />
                   <span
                     style={{
                       overflow: "hidden",
@@ -205,7 +203,7 @@ const McpMarketplaceCard = ({
                   flexShrink: 0,
                 }}
               >
-                <span className="codicon codicon-star-full" />
+                <FaStar />
                 <span style={{ wordBreak: "break-all" }}>
                   {item.githubStars?.toLocaleString() ?? 0}
                 </span>
@@ -219,17 +217,13 @@ const McpMarketplaceCard = ({
                   flexShrink: 0,
                 }}
               >
-                <span className="codicon codicon-cloud-download" />
+                <FaCloudDownloadAlt />
                 <span style={{ wordBreak: "break-all" }}>
                   {item.downloadCount?.toLocaleString() ?? 0}
                 </span>
               </div>
               {item.requiresApiKey && (
-                <span
-                  className="codicon codicon-key"
-                  title="Requires API key"
-                  style={{ flexShrink: 0 }}
-                />
+                <FaKey title="Requires API key" style={{ flexShrink: 0 }} />
               )}
             </div>
           </div>
@@ -237,21 +231,21 @@ const McpMarketplaceCard = ({
 
         {/* Description and tags */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {/* {!item.isRecommended && (
-						<div
-							style={{
-								display: "flex",
-								alignItems: "center",
-								gap: "4px",
-								fontSize: "12px",
-								color: "var(--vscode-notificationsWarningIcon-foreground)",
-								marginTop: -3,
-								marginBottom: -3,
-							}}>
-							<span className="codicon codicon-warning" style={{ fontSize: "14px" }} />
-							<span>Community Made (use at your own risk)</span>
-						</div>
-					)} */}
+              {/* {!item.isRecommended && (
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "4px",
+                                fontSize: "12px",
+                                color: "var(--vscode-notificationsWarningIcon-foreground)",
+                                marginTop: -3,
+                                marginBottom: -3,
+                            }}>
+                            <FaExclamationTriangle style={{ fontSize: "14px" }} />
+                            <span>Community Made (use at your own risk)</span>
+                        </div>
+                    )} */}
 
           <p style={{ fontSize: "13px", margin: 0 }}>{item.description}</p>
           <div

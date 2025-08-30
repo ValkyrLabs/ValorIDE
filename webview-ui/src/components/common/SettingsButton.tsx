@@ -20,11 +20,6 @@ const StyledButton = styled(VSCodeButton)`
     border-color: var(--settings-button-active) !important;
   }
 
-  i.codicon {
-    margin-right: 6px;
-    flex-shrink: 0;
-    font-size: 16px !important;
-  }
 `;
 
 interface SettingsButtonProps

@@ -6,8 +6,6 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 
 // import reportWebVitals from "./reportWebVitals"
-// Import codicon CSS for VSCode icons
-import "./assets/codicon.css";
 import "./App.css";
 import "./index.css";
 

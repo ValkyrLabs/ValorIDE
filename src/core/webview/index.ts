@@ -204,8 +204,6 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       "index.js",
     ]);
 
-    // Codicon styles are now bundled into the main CSS file
-
     // const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "main.js"))
 
     // const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "reset.css"))

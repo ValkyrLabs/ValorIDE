@@ -11,6 +11,7 @@ import { BROWSER_VIEWPORT_PRESETS } from "../../../../src/shared/BrowserSettings
 import { useExtensionState } from "../../context/ExtensionStateContext";
 import { vscode } from "../../utils/vscode";
 import styled from "styled-components";
+import { FaCheck } from "react-icons/fa";
 import { BrowserServiceClient } from "../../services/grpc-client";
 
 const ConnectionStatusIndicator = ({
@@ -33,7 +34,7 @@ const ConnectionStatusIndicator = ({
         </>
       ) : isConnected === true ? (
         <>
-          <CheckIcon className="codicon codicon-check" />
+          <FaCheck />
           <StatusText style={{ color: "var(--vscode-terminal-ansiGreen)" }}>
             Connected
           </StatusText>

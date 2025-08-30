@@ -115,7 +115,9 @@ const ValorIDERulesToggleModal: React.FC = () => {
                 });
                 setIsVisible(false);
               }}
-            ></VSCodeButton>
+            >
+              <FaGavel />
+            </VSCodeButton>
           </div>
 
           {/* Global Rules Section */}

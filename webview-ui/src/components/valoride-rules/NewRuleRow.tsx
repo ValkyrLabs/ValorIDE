@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { vscode } from "@/utils/vscode";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
+import { FaPlus } from "react-icons/fa";
 import { useClickAway } from "react-use";
 
 interface NewRuleRowProps {
@@ -110,7 +111,7 @@ const NewRuleRow: React.FC<NewRuleRowProps> = ({ isGlobal }) => {
                 title="Create rule file"
                 style={{ padding: "0px" }}
               >
-                <span className="codicon codicon-add text-[14px]" />
+                <FaPlus style={{ fontSize: "14px" }} />
               </VSCodeButton>
             </div>
           </form>
@@ -130,7 +131,7 @@ const NewRuleRow: React.FC<NewRuleRowProps> = ({ isGlobal }) => {
                 }}
                 style={{ padding: "0px" }}
               >
-                <span className="codicon codicon-add text-[14px]" />
+                <FaPlus style={{ fontSize: "14px" }} />
               </VSCodeButton>
             </div>
           </>
