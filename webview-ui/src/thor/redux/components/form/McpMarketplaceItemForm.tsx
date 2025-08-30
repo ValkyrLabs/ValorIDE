@@ -49,134 +49,134 @@ McpMarketplaceItem
    (Skip read-only fields and container types)
 -------------------------------------------------------- */
 const validationSchema = Yup.object().shape({
-    
-        githubUrl: Yup.string()
-          
-          .required("githubUrl is required.")
-          ,
-    
-        name: Yup.string()
-          
-          .required("name is required.")
-          ,
-    
-        author: Yup.string()
-          
-          .required("author is required.")
-          ,
-    
-        description: Yup.string()
-          
-          .required("description is required.")
-          ,
-    
-        codiconIcon: Yup.string()
-          
-          .required("codiconIcon is required.")
-          ,
-    
-        logoUrl: Yup.string()
-          
-          .required("logoUrl is required.")
-          ,
-    
-        category: Yup.string()
-          
-          .required("category is required.")
-          ,
-    
-        requiresApiKey: Yup.boolean()
-          .oneOf([true], "The requiresApiKey must be true.").required("requiresApiKey is required.")
-          ,
-    
-        isRecommended: Yup.boolean()
-          .oneOf([true], "The isRecommended must be true.").required("isRecommended is required.")
-          ,
-    
-        githubStars: Yup.number()
-          
-          .required("githubStars is required.")
-          ,
-    
-        downloadCount: Yup.number()
-          
-          .required("downloadCount is required.")
-          ,
-    
-        createdAt: Yup.date()
-          
-          .required("createdAt is required.")
-          ,
-    
-        updatedAt: Yup.date()
-          
-          .required("updatedAt is required.")
-          ,
-    
-        lastGithubSync: Yup.date()
-          
-          .required("lastGithubSync is required.")
-          ,
-    
-        mcpMarketplaceCatalogId: Yup.string()
-          
-          
-          ,
-    
-        mcpServerId: Yup.string()
-          
-          
-          ,
-    
-        readmeContent: Yup.string()
-          
-          
-          ,
-    
-        llmsInstallationContent: Yup.string()
-          
-          
-          ,
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
-        createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
-        lastModifiedDate: Yup.date()
-          
-          
-          ,
+
+  githubUrl: Yup.string()
+
+    .required("githubUrl is required.")
+  ,
+
+  name: Yup.string()
+
+    .required("name is required.")
+  ,
+
+  author: Yup.string()
+
+    .required("author is required.")
+  ,
+
+  description: Yup.string()
+
+    .required("description is required.")
+  ,
+
+  icon: Yup.string()
+
+    .required("icon is required.")
+  ,
+
+  logoUrl: Yup.string()
+
+    .required("logoUrl is required.")
+  ,
+
+  category: Yup.string()
+
+    .required("category is required.")
+  ,
+
+  requiresApiKey: Yup.boolean()
+    .oneOf([true], "The requiresApiKey must be true.").required("requiresApiKey is required.")
+  ,
+
+  isRecommended: Yup.boolean()
+    .oneOf([true], "The isRecommended must be true.").required("isRecommended is required.")
+  ,
+
+  githubStars: Yup.number()
+
+    .required("githubStars is required.")
+  ,
+
+  downloadCount: Yup.number()
+
+    .required("downloadCount is required.")
+  ,
+
+  createdAt: Yup.date()
+
+    .required("createdAt is required.")
+  ,
+
+  updatedAt: Yup.date()
+
+    .required("updatedAt is required.")
+  ,
+
+  lastGithubSync: Yup.date()
+
+    .required("lastGithubSync is required.")
+  ,
+
+  mcpMarketplaceCatalogId: Yup.string()
+
+
+  ,
+
+  mcpServerId: Yup.string()
+
+
+  ,
+
+  readmeContent: Yup.string()
+
+
+  ,
+
+  llmsInstallationContent: Yup.string()
+
+
+  ,
+
+  id: Yup.string()
+
+
+  ,
+
+  ownerId: Yup.string()
+
+
+  ,
+
+  createdDate: Yup.date()
+
+
+  ,
+
+  keyHash: Yup.string()
+
+
+  ,
+
+  lastAccessedById: Yup.string()
+
+
+  ,
+
+  lastAccessedDate: Yup.date()
+
+
+  ,
+
+  lastModifiedById: Yup.string()
+
+
+  ,
+
+  lastModifiedDate: Yup.date()
+
+
+  ,
 });
 
 /* -----------------------------------------------------
@@ -184,7 +184,7 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const McpMarketplaceItemForm: React.FC = () => {
   const [addMcpMarketplaceItem, addMcpMarketplaceItemResult] = useAddMcpMarketplaceItemMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
@@ -202,202 +202,202 @@ const McpMarketplaceItemForm: React.FC = () => {
 
   /* INITIAL VALUES - skip read-only fields */
   const initialValues: Partial<McpMarketplaceItem> = {
-          
 
-            githubUrl: 'null',
 
+    githubUrl: 'null',
 
 
 
 
-          
 
-            name: 'null',
 
 
+    name: 'null',
 
 
 
-          
 
-            author: 'null',
 
 
 
+    author: 'null',
 
 
-          
 
-            description: 'null',
 
 
 
 
+    description: 'null',
 
-          
 
-            codiconIcon: 'null',
 
 
 
 
 
-          
+    icon: 'null',
 
-            logoUrl: 'null',
 
 
 
 
 
-          
 
-            category: 'null',
+    logoUrl: 'null',
 
 
 
 
 
-          
-            requiresApiKey: undefined, 
 
 
+    category: 'null',
 
 
 
 
-          
-            isRecommended: undefined, 
 
 
+    requiresApiKey: undefined,
 
 
 
 
-          
 
 
 
-            githubStars: 0,
+    isRecommended: undefined,
 
 
 
-          
 
 
 
-            downloadCount: 0,
 
 
 
-          
 
+    githubStars: 0,
 
 
 
 
 
-          
 
 
+    downloadCount: 0,
 
 
 
 
-          
 
 
 
 
 
 
-          
 
-            mcpMarketplaceCatalogId: 'null',
 
 
 
 
 
-          
 
-            mcpServerId: 'null',
 
 
 
 
 
-          
 
-            readmeContent: 'null',
 
 
 
+    mcpMarketplaceCatalogId: 'null',
 
 
-          
 
-            llmsInstallationContent: 'null',
 
 
 
 
+    mcpServerId: 'null',
 
-          
 
-            id: '55c08ee3-4243-4a34-aea2-961335c5bc8c',
 
 
 
 
 
-          
+    readmeContent: 'null',
 
-            ownerId: '236f1d0e-9ceb-4bbe-b738-1e8869f0c1fe',
 
 
 
 
 
-          
 
+    llmsInstallationContent: 'null',
 
 
 
 
 
-          
 
-            keyHash: 'null',
 
+    id: '55c08ee3-4243-4a34-aea2-961335c5bc8c',
 
 
 
 
-          
 
-            lastAccessedById: '5bd4366d-29b9-4ddf-85da-8e65f7594695',
 
 
+    ownerId: '236f1d0e-9ceb-4bbe-b738-1e8869f0c1fe',
 
 
 
-          
 
 
 
 
 
 
-          
 
-            lastModifiedById: 'e4b0fc9b-cec2-42ad-9ad8-268b01dbb615',
 
 
 
 
+    keyHash: 'null',
 
-          
+
+
+
+
+
+
+    lastAccessedById: '5bd4366d-29b9-4ddf-85da-8e65f7594695',
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    lastModifiedById: 'e4b0fc9b-cec2-42ad-9ad8-268b01dbb615',
+
+
+
+
+
+
 
 
 
@@ -427,7 +427,7 @@ const McpMarketplaceItemForm: React.FC = () => {
     try {
       console.log("McpMarketplaceItem form values:", values);
       const result = await addMcpMarketplaceItem(values).unwrap();
-      
+
       // If object was created successfully and has an ID, offer to set permissions
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
@@ -437,7 +437,7 @@ const McpMarketplaceItemForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create McpMarketplaceItem:', error);
@@ -484,408 +484,408 @@ const McpMarketplaceItemForm: React.FC = () => {
                   <FaRegPlusSquare size={36} /> Add New McpMarketplaceItem
                 </Accordion.Header>
                 <Accordion.Body>
-                    
-                    <label htmlFor="githubUrl" className="nice-form-control">
-                      <b>
-                        Github Url:
-                        {touched.githubUrl &&
-                         !errors.githubUrl && (
+
+                  <label htmlFor="githubUrl" className="nice-form-control">
+                    <b>
+                      Github Url:
+                      {touched.githubUrl &&
+                        !errors.githubUrl && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="githubUrl"
-                            type="text"
-                            className={
-                              errors.githubUrl
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="githubUrl"
+                      type="text"
+                      className={
+                        errors.githubUrl
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="githubUrl"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="name" className="nice-form-control">
-                      <b>
-                        Name:
-                        {touched.name &&
-                         !errors.name && (
+                    <ErrorMessage
+                      className="error"
+                      name="githubUrl"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="name" className="nice-form-control">
+                    <b>
+                      Name:
+                      {touched.name &&
+                        !errors.name && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="name"
-                            type="text"
-                            className={
-                              errors.name
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="name"
+                      type="text"
+                      className={
+                        errors.name
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="name"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="author" className="nice-form-control">
-                      <b>
-                        Author:
-                        {touched.author &&
-                         !errors.author && (
+                    <ErrorMessage
+                      className="error"
+                      name="name"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="author" className="nice-form-control">
+                    <b>
+                      Author:
+                      {touched.author &&
+                        !errors.author && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="author"
-                            type="text"
-                            className={
-                              errors.author
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="author"
+                      type="text"
+                      className={
+                        errors.author
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="author"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="description" className="nice-form-control">
-                      <b>
-                        Description:
-                        {touched.description &&
-                         !errors.description && (
+                    <ErrorMessage
+                      className="error"
+                      name="author"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="description" className="nice-form-control">
+                    <b>
+                      Description:
+                      {touched.description &&
+                        !errors.description && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="description"
-                            type="text"
-                            className={
-                              errors.description
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="description"
+                      type="text"
+                      className={
+                        errors.description
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="description"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="codiconIcon" className="nice-form-control">
-                      <b>
-                        Codicon Icon:
-                        {touched.codiconIcon &&
-                         !errors.codiconIcon && (
+                    <ErrorMessage
+                      className="error"
+                      name="description"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="icon" className="nice-form-control">
+                    <b>
+                      Icon:
+                      {touched.icon &&
+                        !errors.icon && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="codiconIcon"
-                            type="text"
-                            className={
-                              errors.codiconIcon
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="icon"
+                      type="text"
+                      className={
+                        errors.icon
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="codiconIcon"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="logoUrl" className="nice-form-control">
-                      <b>
-                        Logo Url:
-                        {touched.logoUrl &&
-                         !errors.logoUrl && (
+                    <ErrorMessage
+                      className="error"
+                      name="icon"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="logoUrl" className="nice-form-control">
+                    <b>
+                      Logo Url:
+                      {touched.logoUrl &&
+                        !errors.logoUrl && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="logoUrl"
-                            type="text"
-                            className={
-                              errors.logoUrl
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="logoUrl"
+                      type="text"
+                      className={
+                        errors.logoUrl
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="logoUrl"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="category" className="nice-form-control">
-                      <b>
-                        Category:
-                        {touched.category &&
-                         !errors.category && (
+                    <ErrorMessage
+                      className="error"
+                      name="logoUrl"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="category" className="nice-form-control">
+                    <b>
+                      Category:
+                      {touched.category &&
+                        !errors.category && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="category"
-                            type="text"
-                            className={
-                              errors.category
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="category"
+                      type="text"
+                      className={
+                        errors.category
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="category"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="requiresApiKey" className="nice-form-control">
-                      <b>
-                        Requires Api Key:
-                        {touched.requiresApiKey &&
-                         !errors.requiresApiKey && (
+                    <ErrorMessage
+                      className="error"
+                      name="category"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="requiresApiKey" className="nice-form-control">
+                    <b>
+                      Requires Api Key:
+                      {touched.requiresApiKey &&
+                        !errors.requiresApiKey && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            required
-                            id="requiresApiKey"
-                            name="requiresApiKey"
-                            onChange={(e) => {
-                              setFieldTouched('requiresApiKey', true);
-                              setFieldValue('requiresApiKey', e.target.checked);
-                            }}
-                            isInvalid={!!errors.requiresApiKey}
-                            className={
-                              errors.requiresApiKey ? 'error' : ''
-                            }
-                          />
-
-
-
+                    {/* CHECKBOX FIELD */}
+                    <BSForm.Check
+                      required
+                      id="requiresApiKey"
+                      name="requiresApiKey"
+                      onChange={(e) => {
+                        setFieldTouched('requiresApiKey', true);
+                        setFieldValue('requiresApiKey', e.target.checked);
+                      }}
+                      isInvalid={!!errors.requiresApiKey}
+                      className={
+                        errors.requiresApiKey ? 'error' : ''
+                      }
+                    />
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="requiresApiKey"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="isRecommended" className="nice-form-control">
-                      <b>
-                        Is Recommended:
-                        {touched.isRecommended &&
-                         !errors.isRecommended && (
+
+
+
+                    <ErrorMessage
+                      className="error"
+                      name="requiresApiKey"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="isRecommended" className="nice-form-control">
+                    <b>
+                      Is Recommended:
+                      {touched.isRecommended &&
+                        !errors.isRecommended && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
-                          {/* CHECKBOX FIELD */}
-                          <BSForm.Check
-                            required
-                            id="isRecommended"
-                            name="isRecommended"
-                            onChange={(e) => {
-                              setFieldTouched('isRecommended', true);
-                              setFieldValue('isRecommended', e.target.checked);
-                            }}
-                            isInvalid={!!errors.isRecommended}
-                            className={
-                              errors.isRecommended ? 'error' : ''
-                            }
-                          />
-
-
-
+                    {/* CHECKBOX FIELD */}
+                    <BSForm.Check
+                      required
+                      id="isRecommended"
+                      name="isRecommended"
+                      onChange={(e) => {
+                        setFieldTouched('isRecommended', true);
+                        setFieldValue('isRecommended', e.target.checked);
+                      }}
+                      isInvalid={!!errors.isRecommended}
+                      className={
+                        errors.isRecommended ? 'error' : ''
+                      }
+                    />
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="isRecommended"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="githubStars" className="nice-form-control">
-                      <b>
-                        Github Stars:
-                        {touched.githubStars &&
-                         !errors.githubStars && (
+
+
+
+                    <ErrorMessage
+                      className="error"
+                      name="isRecommended"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="githubStars" className="nice-form-control">
+                    <b>
+                      Github Stars:
+                      {touched.githubStars &&
+                        !errors.githubStars && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
 
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="githubStars"
-                            type="text"
-                            className={
-                              errors.githubStars
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* INTEGER FIELD */}
+                    <Field
+                      name="githubStars"
+                      type="text"
+                      className={
+                        errors.githubStars
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="githubStars"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="downloadCount" className="nice-form-control">
-                      <b>
-                        Download Count:
-                        {touched.downloadCount &&
-                         !errors.downloadCount && (
+                    <ErrorMessage
+                      className="error"
+                      name="githubStars"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="downloadCount" className="nice-form-control">
+                    <b>
+                      Download Count:
+                      {touched.downloadCount &&
+                        !errors.downloadCount && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
 
-                          {/* INTEGER FIELD */}
-                          <Field
-                            name="downloadCount"
-                            type="text"
-                            className={
-                              errors.downloadCount
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* INTEGER FIELD */}
+                    <Field
+                      name="downloadCount"
+                      type="text"
+                      className={
+                        errors.downloadCount
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="downloadCount"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="createdAt" className="nice-form-control">
-                      <b>
-                        Created At:
-                        {touched.createdAt &&
-                         !errors.createdAt && (
+                    <ErrorMessage
+                      className="error"
+                      name="downloadCount"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="createdAt" className="nice-form-control">
+                    <b>
+                      Created At:
+                      {touched.createdAt &&
+                        !errors.createdAt && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
@@ -895,22 +895,22 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="createdAt"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="updatedAt" className="nice-form-control">
-                      <b>
-                        Updated At:
-                        {touched.updatedAt &&
-                         !errors.updatedAt && (
+                    <ErrorMessage
+                      className="error"
+                      name="createdAt"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="updatedAt" className="nice-form-control">
+                    <b>
+                      Updated At:
+                      {touched.updatedAt &&
+                        !errors.updatedAt && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
@@ -920,22 +920,22 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="updatedAt"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="lastGithubSync" className="nice-form-control">
-                      <b>
-                        Last Github Sync:
-                        {touched.lastGithubSync &&
-                         !errors.lastGithubSync && (
+                    <ErrorMessage
+                      className="error"
+                      name="updatedAt"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="lastGithubSync" className="nice-form-control">
+                    <b>
+                      Last Github Sync:
+                      {touched.lastGithubSync &&
+                        !errors.lastGithubSync && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
@@ -945,232 +945,232 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="lastGithubSync"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="mcpMarketplaceCatalogId" className="nice-form-control">
-                      <b>
-                        Mcp Marketplace Catalog Id:
-                        {touched.mcpMarketplaceCatalogId &&
-                         !errors.mcpMarketplaceCatalogId && (
+                    <ErrorMessage
+                      className="error"
+                      name="lastGithubSync"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="mcpMarketplaceCatalogId" className="nice-form-control">
+                    <b>
+                      Mcp Marketplace Catalog Id:
+                      {touched.mcpMarketplaceCatalogId &&
+                        !errors.mcpMarketplaceCatalogId && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="mcpMarketplaceCatalogId"
-                            type="text"
-                            className={
-                              errors.mcpMarketplaceCatalogId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="mcpMarketplaceCatalogId"
+                      type="text"
+                      className={
+                        errors.mcpMarketplaceCatalogId
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="mcpMarketplaceCatalogId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="mcpServerId" className="nice-form-control">
-                      <b>
-                        Mcp Server Id:
-                        {touched.mcpServerId &&
-                         !errors.mcpServerId && (
+                    <ErrorMessage
+                      className="error"
+                      name="mcpMarketplaceCatalogId"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="mcpServerId" className="nice-form-control">
+                    <b>
+                      Mcp Server Id:
+                      {touched.mcpServerId &&
+                        !errors.mcpServerId && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="mcpServerId"
-                            type="text"
-                            className={
-                              errors.mcpServerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="mcpServerId"
+                      type="text"
+                      className={
+                        errors.mcpServerId
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="mcpServerId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="readmeContent" className="nice-form-control">
-                      <b>
-                        Readme Content:
-                        {touched.readmeContent &&
-                         !errors.readmeContent && (
+                    <ErrorMessage
+                      className="error"
+                      name="mcpServerId"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="readmeContent" className="nice-form-control">
+                    <b>
+                      Readme Content:
+                      {touched.readmeContent &&
+                        !errors.readmeContent && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="readmeContent"
-                            type="text"
-                            className={
-                              errors.readmeContent
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="readmeContent"
+                      type="text"
+                      className={
+                        errors.readmeContent
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="readmeContent"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="llmsInstallationContent" className="nice-form-control">
-                      <b>
-                        Llms Installation Content:
-                        {touched.llmsInstallationContent &&
-                         !errors.llmsInstallationContent && (
+                    <ErrorMessage
+                      className="error"
+                      name="readmeContent"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="llmsInstallationContent" className="nice-form-control">
+                    <b>
+                      Llms Installation Content:
+                      {touched.llmsInstallationContent &&
+                        !errors.llmsInstallationContent && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="llmsInstallationContent"
-                            type="text"
-                            className={
-                              errors.llmsInstallationContent
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="llmsInstallationContent"
+                      type="text"
+                      className={
+                        errors.llmsInstallationContent
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="llmsInstallationContent"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="id" className="nice-form-control">
-                      <b>
-                        Id:
-                        {touched.id &&
-                         !errors.id && (
+                    <ErrorMessage
+                      className="error"
+                      name="llmsInstallationContent"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="id" className="nice-form-control">
+                    <b>
+                      Id:
+                      {touched.id &&
+                        !errors.id && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="id"
+                      type="text"
+                      className={
+                        errors.id
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="id"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="ownerId" className="nice-form-control">
-                      <b>
-                        Owner Id:
-                        {touched.ownerId &&
-                         !errors.ownerId && (
+                    <ErrorMessage
+                      className="error"
+                      name="id"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="ownerId" className="nice-form-control">
+                    <b>
+                      Owner Id:
+                      {touched.ownerId &&
+                        !errors.ownerId && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="ownerId"
+                      type="text"
+                      className={
+                        errors.ownerId
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="ownerId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="createdDate" className="nice-form-control">
-                      <b>
-                        Created Date:
-                        {touched.createdDate &&
-                         !errors.createdDate && (
+                    <ErrorMessage
+                      className="error"
+                      name="ownerId"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="createdDate" className="nice-form-control">
+                    <b>
+                      Created Date:
+                      {touched.createdDate &&
+                        !errors.createdDate && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
@@ -1180,92 +1180,92 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="createdDate"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="keyHash" className="nice-form-control">
-                      <b>
-                        Key Hash:
-                        {touched.keyHash &&
-                         !errors.keyHash && (
+                    <ErrorMessage
+                      className="error"
+                      name="createdDate"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="keyHash" className="nice-form-control">
+                    <b>
+                      Key Hash:
+                      {touched.keyHash &&
+                        !errors.keyHash && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="keyHash"
+                      type="text"
+                      className={
+                        errors.keyHash
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="keyHash"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="lastAccessedById" className="nice-form-control">
-                      <b>
-                        Last Accessed By Id:
-                        {touched.lastAccessedById &&
-                         !errors.lastAccessedById && (
+                    <ErrorMessage
+                      className="error"
+                      name="keyHash"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="lastAccessedById" className="nice-form-control">
+                    <b>
+                      Last Accessed By Id:
+                      {touched.lastAccessedById &&
+                        !errors.lastAccessedById && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="lastAccessedById"
+                      type="text"
+                      className={
+                        errors.lastAccessedById
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="lastAccessedById"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="lastAccessedDate" className="nice-form-control">
-                      <b>
-                        Last Accessed Date:
-                        {touched.lastAccessedDate &&
-                         !errors.lastAccessedDate && (
+                    <ErrorMessage
+                      className="error"
+                      name="lastAccessedById"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="lastAccessedDate" className="nice-form-control">
+                    <b>
+                      Last Accessed Date:
+                      {touched.lastAccessedDate &&
+                        !errors.lastAccessedDate && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
@@ -1275,57 +1275,57 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="lastAccessedDate"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="lastModifiedById" className="nice-form-control">
-                      <b>
-                        Last Modified By Id:
-                        {touched.lastModifiedById &&
-                         !errors.lastModifiedById && (
+                    <ErrorMessage
+                      className="error"
+                      name="lastAccessedDate"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="lastModifiedById" className="nice-form-control">
+                    <b>
+                      Last Modified By Id:
+                      {touched.lastModifiedById &&
+                        !errors.lastModifiedById && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
+                    {/* TEXT FIELD */}
+                    <Field
+                      name="lastModifiedById"
+                      type="text"
+                      className={
+                        errors.lastModifiedById
+                          ? 'form-control field-error'
+                          : 'nice-form-control form-control'
+                      }
+                    />
 
 
 
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="lastModifiedById"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
-                    <label htmlFor="lastModifiedDate" className="nice-form-control">
-                      <b>
-                        Last Modified Date:
-                        {touched.lastModifiedDate &&
-                         !errors.lastModifiedDate && (
+                    <ErrorMessage
+                      className="error"
+                      name="lastModifiedById"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+
+                  <label htmlFor="lastModifiedDate" className="nice-form-control">
+                    <b>
+                      Last Modified Date:
+                      {touched.lastModifiedDate &&
+                        !errors.lastModifiedDate && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
-                      </b>
+                    </b>
 
 
 
@@ -1335,13 +1335,13 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
-                      <ErrorMessage
-                        className="error"
-                        name="lastModifiedDate"
-                        component="span"
-                      />
-                    </label>
-                    <br />
+                    <ErrorMessage
+                      className="error"
+                      name="lastModifiedDate"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
@@ -1350,7 +1350,7 @@ const McpMarketplaceItemForm: React.FC = () => {
                   >
                     {isSubmitting && (
                       <Spinner
-                        style={ { float: 'left' } }
+                        style={{ float: 'left' }}
                         as="span"
                         animation="grow"
                         variant="light"

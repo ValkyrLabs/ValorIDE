@@ -268,9 +268,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 								textAlign: "center",
 								padding: "0px 10px",
 							}}>
-							<span
-								className="codicon codicon-robot"
-								style={{ fontSize: "60px", marginBottom: "10px" }}></span>
+								<FaRobot style={{ fontSize: "60px", marginBottom: "10px" }} />
 							<div>Start a task to see it here</div>
 						</div>
 					)} */}

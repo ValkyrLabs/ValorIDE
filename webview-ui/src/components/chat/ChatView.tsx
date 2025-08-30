@@ -24,6 +24,7 @@ import { vscode } from "@/utils/vscode"
 import { TaskServiceClient } from "@/services/grpc-client"
 import HistoryPreview from "@/components/history/HistoryPreview"
 import { normalizeApiConfiguration } from "@/components/settings/ApiOptions"
+import { useChatInputPersistence } from "@/utils/useSessionStorage"
 import Announcement from "@/components/chat/Announcement"
 import AutoApproveMenu from "@/components/chat/AutoApproveMenu"
 import BrowserSessionRow from "@/components/chat/BrowserSessionRow"
@@ -64,10 +65,10 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		return getTotalTokensFromApiReqMessage(lastApiReqMessage)
 	}, [modifiedMessages])
 
-	const [inputValue, setInputValue] = useState("")
+	// Use persistent storage for chat input
+	const { inputValue, setInputValue, selectedImages, setSelectedImages, clearChatInput } = useChatInputPersistence()
 	const textAreaRef = useRef<HTMLTextAreaElement>(null)
 	const [textAreaDisabled, setTextAreaDisabled] = useState(false)
-	const [selectedImages, setSelectedImages] = useState<string[]>([])
 
 	// we need to hold on to the ask because useEffect > lastMessage will always let us know when an ask comes in and handle it, but by the time handleMessage is called, the last message might not be the ask anymore (it could be a say that followed)
 	const [valorideAsk, setValorIDEAsk] = useState<ValorIDEAsk | undefined>(undefined)
@@ -221,9 +222,8 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 						case "api_req_started":
 							if (secondLastMessage?.ask === "command_output") {
 								// if the last ask is a command_output, and we receive an api_req_started, then that means the command has finished and we don't need input from the user anymore (in every other case, the user has to interact with input field or buttons to continue, which does the following automatically)
-								setInputValue("")
+								clearChatInput()
 								setTextAreaDisabled(true)
-								setSelectedImages([])
 								setValorIDEAsk(undefined)
 								setEnableButtons(false)
 							}
@@ -333,9 +333,8 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 						// there is no other case that a textfield should be enabled
 					}
 				}
-				setInputValue("")
+				clearChatInput()
 				setTextAreaDisabled(true)
-				setSelectedImages([])
 				setValorIDEAsk(undefined)
 				setEnableButtons(false)
 				// setPrimaryButtonText(undefined)
@@ -343,7 +342,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				disableAutoScrollRef.current = false
 			}
 		},
-		[messages.length, valorideAsk],
+		[messages.length, valorideAsk, clearChatInput],
 	)
 
 	const startNewTask = useCallback(async () => {
@@ -380,8 +379,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 						})
 					}
 					// Clear input state after sending
-					setInputValue("")
-					setSelectedImages([])
+					clearChatInput()
 					break
 				case "completion_result":
 				case "resume_completed_task":
@@ -409,7 +407,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			// setSecondaryButtonText(undefined)
 			disableAutoScrollRef.current = false
 		},
-		[valorideAsk, startNewTask, lastMessage],
+		[valorideAsk, startNewTask, lastMessage, clearChatInput],
 	)
 
 	const handleSecondaryButtonClick = useCallback(
@@ -446,8 +444,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 						})
 					}
 					// Clear input state after sending
-					setInputValue("")
-					setSelectedImages([])
+					clearChatInput()
 					break
 			}
 			setTextAreaDisabled(true)
@@ -457,7 +454,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			// setSecondaryButtonText(undefined)
 			disableAutoScrollRef.current = false
 		},
-		[valorideAsk, startNewTask, isStreaming],
+		[valorideAsk, startNewTask, isStreaming, clearChatInput],
 	)
 
 	const handleTaskCloseButtonClick = useCallback(() => {

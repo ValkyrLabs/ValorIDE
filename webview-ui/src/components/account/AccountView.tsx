@@ -37,7 +37,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
   );
 
   // Default to login tab when unauthenticated, otherwise account
-  const [activeTab, setActiveTab] = useState<"login" | "account" | "applications">(
+  const [activeTab, setActiveTab] = useState<"login" | "account" | "applications" | "generatedFiles">(
     isAuthenticated ? "account" : "login",
   );
 
@@ -105,6 +105,13 @@ const AccountView = ({ onDone }: AccountViewProps) => {
         >
           Applications
         </VSCodeButton>
+        <VSCodeButton
+          appearance={activeTab === "generatedFiles" ? "primary" : "secondary"}
+          onClick={() => setActiveTab("generatedFiles")}
+          disabled={false}
+        >
+          Generated Files
+        </VSCodeButton>
       </div>
 
       {/* Tab content */}
@@ -129,11 +136,9 @@ const AccountView = ({ onDone }: AccountViewProps) => {
             </div>
             <ApplicationsList showTitle={true} title="Available Applications" />
           </div>
-
-
-          <VSCodeDivider className="my-6 w-full" />
-
-          {/* File Explorer for Applications */}
+        </div>
+      ) : activeTab === "generatedFiles" ? (
+        <div className="h-full flex flex-col pr-3 overflow-y-auto">
           <div className="flex-grow flex flex-col min-h-0">
             <h3 style={{ marginBottom: "16px" }}>Generated Files</h3>
             <FileExplorer

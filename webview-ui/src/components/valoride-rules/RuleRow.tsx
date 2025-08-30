@@ -1,6 +1,7 @@
 import { vscode } from "@/utils/vscode";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { FileServiceClient } from "@/services/grpc-client";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const RuleRow: React.FC<{
   rulePath: string;
@@ -71,10 +72,7 @@ const RuleRow: React.FC<{
             onClick={handleEditClick}
             style={{ height: "20px" }}
           >
-            <span
-              className="codicon codicon-edit"
-              style={{ fontSize: "14px" }}
-            />
+            <FaEdit style={{ fontSize: "14px" }} />
           </VSCodeButton>
           <VSCodeButton
             appearance="icon"
@@ -83,10 +81,7 @@ const RuleRow: React.FC<{
             onClick={handleDeleteClick}
             style={{ height: "20px" }}
           >
-            <span
-              className="codicon codicon-trash"
-              style={{ fontSize: "14px" }}
-            />
+            <FaTrash style={{ fontSize: "14px" }} />
           </VSCodeButton>
         </div>
       </div>

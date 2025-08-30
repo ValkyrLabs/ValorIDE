@@ -285,9 +285,6 @@ const StyledVSCodeButton = styled(VSCodeButton)`
   justify-content: center;
   transition: all 0.2s ease;
 
-  .codicon {
-    font-size: 14px;
-  }
 
   &:hover {
     background-color: var(--vscode-button-secondaryHoverBackground);

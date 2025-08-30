@@ -76,7 +76,8 @@ export interface ExtensionMessage {
     | "accountLoginClicked"
     | "accountLogoutClicked"
     | "accountButtonClicked"
-    | "focusChatInput";
+    | "focusChatInput"
+    | "generatedFilesButtonClicked";
 
   invoke?: Invoke;
   state?: ExtensionState;

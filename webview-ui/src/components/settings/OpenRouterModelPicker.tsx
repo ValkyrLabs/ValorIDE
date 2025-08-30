@@ -1,4 +1,5 @@
 import { VSCodeLink, VSCodeTextField } from "@vscode/webview-ui-toolkit/react";
+import { FaTimes } from "react-icons/fa";
 import Fuse from "fuse.js";
 import React, {
   KeyboardEvent,
@@ -290,7 +291,7 @@ const OpenRouterModelPicker: React.FC<OpenRouterModelPickerProps> = ({
           >
             {searchTerm && (
               <div
-                className="input-icon-button codicon codicon-close"
+                className="input-icon-button"
                 aria-label="Clear search"
                 onClick={() => {
                   handleModelChange("");
@@ -301,9 +302,11 @@ const OpenRouterModelPicker: React.FC<OpenRouterModelPickerProps> = ({
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  height: "100%",
+                  height: "100%"
                 }}
-              />
+              >
+                <FaTimes style={{ fontSize: "14px" }}/>
+              </div>
             )}
           </VSCodeTextField>
           {isDropdownVisible && (
