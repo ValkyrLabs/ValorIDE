@@ -24,7 +24,7 @@
 <a href="https://github.com/valkyrlabs/valoride/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop" target="_blank"><strong>功能建議</strong></a>
 </td>
 <td align="center">
-<a href="https://docs.valkyrlabs.com/v1/getting-started/getting-started-new-coders" target="_blank"><strong>新手上路</strong></a>
+<a href="https://valkyrlabs.com/v1/getting-started/getting-started-new-coders" target="_blank"><strong>新手上路</strong></a>
 </td>
 </tbody>
 </table>
@@ -173,7 +173,6 @@ ValorIDE 可以直接在您的編輯器中建立和編輯檔案，並顯示變�
    ```
 
    這會提示您填寫：
-
    - 變更類型（major、minor、patch）
      - `major` → 重大變更（1.0.0 → 2.0.0）
      - `minor` → 新功能（1.0.0 → 1.1.0）

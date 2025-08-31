@@ -22,6 +22,7 @@ import {
 import { vscode } from "@/utils/vscode";
 import { FaRecycle } from "react-icons/fa";
 import CoolButton from "../CoolButton";
+import { Card } from "react-bootstrap";
 
 type AccountViewProps = {
   onDone: () => void;
@@ -116,9 +117,36 @@ const AccountView = ({ onDone }: AccountViewProps) => {
 
       {/* Tab content */}
       {activeTab === "login" ? (
-        <div className="flex justify-center items-center flex-grow pr-3">
-          {!isLoggedIn && (
-            <Form isLoggedIn={isLoggedIn} />
+        <div className="flex justify-center">
+          {authenticatedPrincipal === null && (
+            <Card>
+              <Card.Header>
+                <h3>Login to Access Your Account</h3>
+              </Card.Header>
+              <Card.Body>
+                <Form isLoggedIn={isLoggedIn} />
+              </Card.Body>
+              <Card.Footer>
+                <div style={{ fontSize: "0.85em", color: "var(--vscode-descriptionForeground)" }}>
+                  Don't have an account?{" "}
+                  <VSCodeLink
+                    href="https://valkyrlabs.com/signup"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Signup Now
+                  </VSCodeLink>
+                  Forgot your username or password?{" "}
+                  <VSCodeLink
+                    href="https://valkyrlabs.com/restore-access"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Restore Access
+                  </VSCodeLink>
+                </div>
+              </Card.Footer>
+            </Card>
           )}
           {isLoggedIn && (
             <CoolButton>Log Out</CoolButton>

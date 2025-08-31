@@ -48,6 +48,7 @@ import SlashCommandMenu from "@/components/chat/SlashCommandMenu";
 import { ChatSettings } from "@shared/ChatSettings";
 import ServersToggleModal from "./ServersToggleModal";
 import ValorIDERulesToggleModal from "../valoride-rules/ValorIDERulesToggleModal";
+import CoolButton from "../CoolButton";
 
 interface ChatTextAreaProps {
   inputValue: string;
@@ -83,9 +84,9 @@ const SwitchOption = styled.div<{ isActive: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-      !props.isActive
-        ? "var(--vscode-toolbar-hoverBackground)"
-        : "transparent"};
+    !props.isActive
+      ? "var(--vscode-toolbar-hoverBackground)"
+      : "transparent"};
   }
 `;
 
@@ -215,18 +216,18 @@ const ModelDisplayButton = styled.a<{ isActive?: boolean; disabled?: boolean }>`
   &:hover,
   &:focus {
     color: ${(props) =>
-      props.disabled
-        ? "var(--vscode-descriptionForeground)"
-        : "var(--vscode-foreground)"};
+    props.disabled
+      ? "var(--vscode-descriptionForeground)"
+      : "var(--vscode-foreground)"};
     text-decoration: ${(props) => (props.disabled ? "none" : "underline")};
     outline: none;
   }
 
   &:active {
     color: ${(props) =>
-      props.disabled
-        ? "var(--vscode-descriptionForeground)"
-        : "var(--vscode-foreground)"};
+    props.disabled
+      ? "var(--vscode-descriptionForeground)"
+      : "var(--vscode-foreground)"};
     text-decoration: ${(props) => (props.disabled ? "none" : "underline")};
     outline: none;
   }
@@ -1331,6 +1332,8 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
       <div>
         <div
           style={{
+            border: 0,
+            borderRadius: 10,
             padding: "10px 15px",
             opacity: textAreaDisabled ? 0.5 : 1,
             position: "relative",
@@ -1371,8 +1374,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
               style={{
                 position: "absolute",
                 inset: "10px 15px",
-                border: "1px solid var(--vscode-input-border)",
-                borderRadius: 2,
+                borderRadius: 10,
                 pointerEvents: "none",
                 zIndex: 5,
               }}
@@ -1395,7 +1397,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
               fontFamily: "var(--vscode-font-family)",
               fontSize: "var(--vscode-editor-font-size)",
               lineHeight: "var(--vscode-editor-line-height)",
-              borderRadius: 2,
+              borderRadius: 10,
               borderLeft: 0,
               borderRight: 0,
               borderTop: 0,
@@ -1445,7 +1447,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
               backgroundColor: "transparent",
               color: "var(--vscode-input-foreground)",
               //border: "1px solid var(--vscode-input-border)",
-              borderRadius: 2,
+              borderRadius: 10,
               fontFamily: "var(--vscode-font-family)",
               fontSize: "var(--vscode-editor-font-size)",
               lineHeight: "var(--vscode-editor-line-height)",
@@ -1507,19 +1509,20 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
                 alignItems: "center",
               }}
             >
-              <div
+              <button
+                style={{ minWidth: "32px", minHeight: "32px", backgroundColor: "blue", borderRadius: "16px" }}
                 data-testid="send-button"
-                className={`input-icon-button ${textAreaDisabled ? "disabled" : ""}`}
+                disabled={textAreaDisabled}
                 onClick={() => {
                   if (!textAreaDisabled) {
                     setIsTextAreaFocused(false);
                     onSend();
                   }
                 }}
-                style={{ fontSize: 15 }}
               >
+
                 <FaPaperPlane />
-              </div>
+              </button>
             </div>
           </div>
         </div>

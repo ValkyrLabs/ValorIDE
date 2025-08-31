@@ -136,28 +136,9 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 
   return (
     <>
-      <style>
-        {`
-					.history-item:hover {
-						background-color: var(--vscode-list-hoverBackground);
-					}
-					.delete-button, .export-button {
-						opacity: 0;
-						pointer-events: none;
-					}
-					.history-item:hover .delete-button,
-					.history-item:hover .export-button {
-						opacity: 1;
-						pointer-events: auto;
-					}
-					.history-item-highlight {
-						background-color: var(--vscode-editor-findMatchHighlightBackground);
-						color: inherit;
-					}
-				`}
-      </style>
       <div
         style={{
+          borderRadius: "10px",
           position: "fixed",
           top: 0,
           left: 0,

@@ -3,7 +3,7 @@ import { useExtensionState } from "@/context/ExtensionStateContext";
 import { vscode } from "@/utils/vscode";
 import { memo } from "react";
 import { formatLargeNumber } from "@/utils/format";
-import { FaComments, FaDollarSign } from "react-icons/fa";
+import { FaComments, FaDollarSign, FaHistory } from "react-icons/fa";
 
 type HistoryPreviewProps = {
   showHistoryView: () => void;
@@ -76,12 +76,13 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
         </span>
       </div>
 
-      <div style={{ padding: "0px 20px 0 20px" }}>
+      <div style={{ borderRadius: "10px", padding: "0px 20px 0 20px" }}>
         {taskHistory
           .filter((item) => item.ts && item.task)
           .slice(0, 3)
           .map((item) => (
             <div
+              style={{ maxHeight: "50px" }}
               key={item.id}
               className="history-preview-item"
               onClick={() => handleHistorySelect(item.id)}
@@ -152,7 +153,6 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
           }}
         >
           <VSCodeButton
-            appearance="icon"
             onClick={() => showHistoryView()}
             style={{
               opacity: 0.9,
@@ -164,7 +164,7 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
                 color: "var(--vscode-descriptionForeground)",
               }}
             >
-              View all history
+              <FaHistory /> View all history
             </div>
           </VSCodeButton>
         </div>
