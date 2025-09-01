@@ -783,7 +783,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	useEvent("wheel", handleWheel, window, { passive: true }) // passive improves scrolling performance
 
 	const placeholderText = useMemo(() => {
-		const text = task ? "Let's do something great!" : "Enter your command..."
+		const text = task ? "Start with your command..." : "Enter your command..."
 		return text
 	}, [task])
 

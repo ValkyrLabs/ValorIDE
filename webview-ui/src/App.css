@@ -18,6 +18,15 @@ p {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.bigReveal {
+  padding: 5em;
+  margin-bottom: 15em;
+
+  min-height: 1000px;
+
+  max-height: 65em;
+}
+
 .dropdown-menu {
   border-radius: 5px;
   cursor: pointer;
@@ -38,16 +47,59 @@ p {
   width: 100%;
 }
 
+.dropdown-item:hover {
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+ul > li .nav-link {
+  overflow: hidden;
+  min-width: 230px;
+  max-height: 32px;
+}
+
+ul > li .nav-link:hover,
+ul > li .nav-link:hover,
+button > .nav-link:active,
+button > .nav-link:active:hover {
+  color: #ff9900;
+}
+
+.history-item {
+  border-radius: 10px;
+}
+
+.history-item:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+.delete-button,
+.export-button {
+  opacity: 0;
+  pointer-events: none;
+}
+.history-item:hover .delete-button,
+.history-item:hover .export-button {
+  opacity: 1;
+  pointer-events: auto;
+}
+.history-item-highlight {
+  background-color: var(--vscode-editor-findMatchHighlightBackground);
+  color: inherit;
+}
 .quote {
   margin: 3em;
   border-left-style: solid;
   border-left-color: orange;
   border-left-width: 20px;
   padding: 1em;
-
+  background-color: #222222;
   border-radius: 10px;
 
   text-align: right;
+}
+
+.chat-text {
+  font-size: 1.5em;
+  color: var(--text-color);
 }
 
 .textCard {
@@ -57,11 +109,14 @@ p {
   width: 80%;
   margin-left: 3em;
   margin-right: 3em;
-  background-color: var(--bs-info-bg-subtle) !important;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.container {
+  min-width: 100%;
 }
 
 .nav-tabs {
-  position: sticky;
   min-width: 100px;
   text-align: center;
   padding: 0em;
@@ -71,16 +126,11 @@ p {
 }
 
 .tab-content {
-}
-
-.tab-header {
-  float: left;
-  color: var(--bs-light-text-emphasis) !important;
-  background-color: var(--bs-primary-bg-subtle) !important;
+  min-width: 100%;
 }
 
 .nav:focus {
-  background-color: var(--bs-info-bg-subtle) !important;
+  background-color: red;
 }
 
 .nav {
@@ -104,37 +154,16 @@ p {
   /*url("./assets/images/heimdallm-toon.png") top center/cover;*/
 }
 
-.heimdallmHero {
-  max-height: 50em;
-  opacity: 0.8;
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.75)),
-    url("./assets/images/heimdallm-cyber.png") top center/cover;
-}
-
-.valkyraiHero {
-  max-height: 50em;
-  opacity: 0.8;
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.75)),
-    url("./assets/images/valkyrai-cyber.png") 0em 20% / cover;
-}
-
 .thorApiHero {
   max-height: 50em;
   opacity: 0.8;
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.85)),
-    url("./assets/images/thorapi-cyber.png") top center/cover;
 }
 
 .valhalla {
   max-height: 50em;
   padding: 7em;
   margin-top: 1em;
-  background:
-    linear-gradient(rgba(255, 153, 0, 0.5), rgba(0, 0, 0, 0.75)),
-    url("./assets/images/valhalla.png") center center/cover;
+
   color: #fff;
   height: 80vh;
   opacity: 0.95;
@@ -227,13 +256,18 @@ a:hover,
 
 /* Hero section styling for dark mode */
 .footer {
-  background: url("./assets/images/app_diagram_white_1.png");
   color: #fff;
   height: 50vh;
 }
 
+.btnx {
+  min-width: 100%;
+  min-height: 3em;
+  transition: background-color 1.5s ease;
+}
+
 .a:hover {
-  background-color: var(--bs-info-bg-subtle) !important;
+  background-color: #e67e22;
 }
 
 /* Styling for feature sections in dark mode */
@@ -249,28 +283,36 @@ a:hover,
 
 /* Call to action section styling */
 .cta-final {
-  background-color: var(--bs-info-bg-subtle) !important;
-
+  background-color: #fa8231;
+  color: #fff;
   padding: 40px 20px;
 }
 
 .cta-final button {
-  background-color: var(--bs-info-bg-subtle) !important;
-
+  background-color: #fff;
+  color: #fa8231;
   padding: 10px 20px;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
+button {
+  width: 100px;
+  border: 1 solid black;
+  color: #fff;
+}
+
 /* Footer styling for dark mode */
 footer {
+  background-color: #333;
   color: #fff;
   padding: 20px;
   text-align: center;
 }
 
 footer a {
+  color: #fa8231;
   margin: 0 10px;
   text-decoration: none;
 }
@@ -282,20 +324,11 @@ footer a:hover {
 .big-hero-section {
   height: 0vh;
 
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.5)),
-    url("./assets/images/desktop-cool-blue-dashboard.png") no-repeat center
-      center/cover;
-
   text-align: center;
 }
 
 .hero-section {
   height: 50vh;
-
-  background:
-    linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.5)),
-    url("./assets/images/AppDesign.jpg") no-repeat center center/cover;
 
   text-align: center;
 }
@@ -314,7 +347,7 @@ footer a:hover {
 }
 
 .form-control {
-  background-color: var(--bs-error-bg-subtle) !important;
+  background-color: rgba(50, 50, 50, 0.8);
   margin: 0.5em;
   padding: 1em;
   /* Dark input fields for contrast */
@@ -365,6 +398,12 @@ footer a:hover {
   /* Ensure it is on top of the background */
   pointer-events: auto;
   /* Ensure this container is interactive */
+}
+
+.carouselCard {
+  overflow-y: scroll;
+  min-height: 350px;
+  margin: 1.5em;
 }
 
 .thumbnailImage {
@@ -429,7 +468,7 @@ footer a:hover {
   color: var(--light-text-color);
   font-size: 1.5em;
   white-space: nowrap;
-  background-color: var(--bs-info-bg-subtle) !important;
+  background-color: rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   min-width: 80%;
   padding: 0.5em;
@@ -441,14 +480,14 @@ footer a:hover {
 
   /*  white-space: nowrap; */
   font-weight: bold;
-  background-color: var(--bs-info-bg-subtle) !important;
+  background-color: rgba(0, 0, 0, 0.25);
   border-radius: 10px;
   min-width: 100%;
   padding: 0.5em;
 }
 
 .coolText {
-  background-color: var(--bs-info-bg-subtle) !important;
+  background-color: rgba(0, 0, 0, 0.05);
   overflow-y: scroll;
   border-radius: 10px;
   min-width: 500px;
@@ -472,6 +511,7 @@ footer a:hover {
   margin-top: -2rem;
   margin-bottom: 2rem;
   font-size: 0.875em;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .blockquote-footer::before {
@@ -481,6 +521,7 @@ footer a:hover {
 .menuTextContent a:hover {
   text-decoration: none;
   display: block;
+  color: black;
 }
 
 .menuTextContentSM a:hover {
@@ -491,6 +532,7 @@ footer a:hover {
 
 .App {
   padding: 0px;
+
   padding-left: 2em;
   padding-right: 2em;
   margin: 0em;
@@ -498,6 +540,11 @@ footer a:hover {
 
 .titleImage {
   max-width: 200%;
+}
+
+.col-md-6 {
+  background-color: "red";
+  border: 0;
 }
 
 .megaIcon {
@@ -524,6 +571,8 @@ footer a:hover {
 }
 
 .pricing-header {
+  background-color: #0d1b2a;
+  color: #ffffff;
   text-align: center;
   padding: 20px;
 }
@@ -539,6 +588,7 @@ footer a:hover {
 }
 
 .pricing-features {
+  color: rgb(240, 240, 201);
   list-style: none;
   padding: 0;
   font-size: 1.5em;
@@ -552,12 +602,14 @@ footer a:hover {
 }
 
 .pricing-button {
+  background-color: #1b263b;
   border: none;
   width: 100%;
   padding: 15px;
 }
 
 .pricing-button:hover {
+  background-color: #0d1b2a;
 }
 
 .nav-bar-top {
@@ -571,6 +623,7 @@ footer a:hover {
 /** FORMIK/FORMS SECTION **/
 
 .form {
+  background-color: rgba(0, 0, 0, 0.5);
   padding: 0.5em;
   margin: 0.25em;
   border-radius: 5px;
@@ -592,18 +645,11 @@ footer a:hover {
   border-radius: 5px;
   border-width: 20;
   border-color: black;
-  /* background-color: rgba(255, 0, 0, 0.5); */
-  background-color: var(--bs-error-bg-subtle) !important;
+  background-color: rgba(255, 0, 0, 0.5);
 }
 
 .nice-form-control {
   min-width: 100%;
-  color: var(--bs-form-valid-color) !important;
-  /* 
-  --bs-form-valid-border-color: #62c462;
-  --bs-form-invalid-color: #ee5f5b;
-  --bs-form-invalid-border-color: #ee5f5b;
-  */
 }
 
 .errorMessage {
@@ -616,21 +662,31 @@ footer a:hover {
   min-width: 100%;
   border-radius: 5px;
   border-width: 0;
-  color: var(--bs-error-text-emphasis) !important;
-  background-color: var(--bs-error-bg-subtle) !important;
+  background-color: rgba(255, 0, 0, 0.75);
+}
+
+.scroll-tabs-container {
+  max-height: 80px;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+.scroll-tabs {
+  max-height: 80px;
+  min-width: 15000px;
+  flex-direction: row;
+  overflow: visible;
 }
 
 .dialogBgBlur {
-  background-color: var(--bs-info-bg-subtle) !important;
-  /*background-color: red;*/
+  background-color: red;
   filter: blur(2px);
 }
 
 /** TABLES **/
 
 .tbody {
-  background-color: var(--bs-info-bg-subtle) !important;
-  /*background-color: white;*/
+  background-color: white;
 }
 
 .list-container {
@@ -641,65 +697,47 @@ footer a:hover {
 }
 
 .tableContainer {
+  background-color: "white";
+  min-height: 100vh;
 }
 
 .table {
+  color: rgb(69, 69, 69);
 }
 
 .tableCell {
   overflow: hidden;
   border-width: 1px;
-  border-color: var(--bs-primary-bg-subtle);
-  width: 200px;
-  color: var(--bs-primary-text-emphasis);
-}
-
-.checkbox-big {
-  min-width: 20px;
-  min-height: 20px;
+  border-color: rgb(174, 174, 174);
+  max-width: 200px;
+  color: rgb(0, 0, 0);
 }
 
 /* ## SPREADSHEET ## */
 /* Style the table to resemble an Excel-like spreadsheet */
-
-.spreadsheet-container {
-  background-color: var(--bs-info-bg-subtle) !important;
-  margin: 0px;
-  padding: 0px;
-  padding-right: 100px;
-  border-radius: 10px;
-  overflow: auto;
-}
-
-.spreadsheet-header {
-  border-radius: 10px;
-}
-
 .spreadsheet-table {
-  margin: 10px;
-  border-radius: 10px;
+  background-color: white;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 1.25em;
+  font-size: 1em;
+  color: rgb(26, 26, 26);
   border-collapse: collapse;
 }
 
 .spreadsheet-table thead {
-  position: absolute;
+  position: static;
+
   margin-bottom: 10em;
-  background-color: var(--bs-info-bg-subtle) !important;
-  /*background-color: #c5c5c5;*/
+  background-color: #c5c5c5;
 }
 
 .spreadsheet-table th {
-  border-radius: 10px;
   padding: 4px;
-  position: absolute;
+  position: sticky;
   z-index: 2;
 }
 
 .spreadsheet-table th,
 .spreadsheet-table td {
-  border-radius: 2px;
   border: 1px solid #737373;
   padding: 1px;
   max-width: 250px;
@@ -711,11 +749,11 @@ footer a:hover {
 }
 
 .spreadsheet-table tr:nth-child(even) {
-  /*background-color: #e7e5e5;*/
+  background-color: #e7e5e5;
 }
 
 .spreadsheet-table tr:hover {
-  /*background-color: #afafaf;*/
+  background-color: #afafaf;
 }
 
 .spreadsheet-table td.editing {
@@ -730,7 +768,6 @@ footer a:hover {
 /* Form control adjustments to match Excel appearance */
 .spreadsheet-table input[type="text"],
 .spreadsheet-table select {
-  border-radius: 2px;
   width: 100%;
   height: 100%;
   border: none;
@@ -748,16 +785,16 @@ footer a:hover {
 .spreadsheet-table input[type="text"]:focus,
 .spreadsheet-table select:focus {
   outline: none;
+  color: black;
   margin: 0px;
   border-radius: 0;
   padding: 0px;
   border: 1px solid #4285f4;
-  color: var(--bs-success-bg-subtle);
-  /*background-color: #f9f9f9;*/
+  background-color: #f9f9f9;
 }
 
 .spreadsheet-table .form-control {
-  color: var(--bs-primary);
+  color: #333333;
 }
 
 /* Add a hover effect */
@@ -804,49 +841,30 @@ footer a:hover {
   padding: 0px;
 }
 
-.carouselCard {
-  background-color: "blue";
-}
-
 /* Styling for the cards */
 .displayCard {
-  cursor: pointer;
-  padding: 0.25em;
-  background-color: var(--bs-success-bg-subtle);
+  padding: 0.5em;
   cursor: pointer;
   border-radius: 10px;
   border-width: 1px;
-  margin: 0.25em;
+  border-color: white;
+  width: 250px;
+  min-height: 250px;
+  margin: 0.1em;
   float: left;
-
+  flex-direction: row;
+  flex-wrap: wrap;
+  background-color: rgba(255, 255, 255, 0.25);
   /*backdrop-filter: blur(1px);
   box-shadow: 3px 6px 3px 3px #888888;
   transition: transform 1.2s, box-shadow .25s;*/
 }
 
-.displayCard: hover {
-  background-color: var(--bs-warning-bg-subtle);
+.displayCard:hover {
+  background-color: rgba(255, 255, 255, 0.15);
   /* Add a hover effect 
  transform: scale(1.015);
-  box-shadow: 0 3px 3px rgb
-  a(0, 0, 0, 0.4), 0 -3px 3px rgba(255, 255, 255, 0.2);*/
-}
-
-.full-size-container {
-}
-
-.appContainer {
-  margin-top: 0em;
-  min-width: 100%;
-  min-heigh: 200%;
-}
-
-/** looks like sheet tabs */
-.card-scroller {
-  height: 75px;
-  overflow: hidden;
-  overflow-y: scroll;
-  flex-wrap: nowrap;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.4), 0 -3px 3px rgba(255, 255, 255, 0.2);*/
 }
 
 /* Card header styling */
@@ -895,7 +913,7 @@ footer a:hover {
 
 label {
   width: 100%;
-  background-color: var(--bs-error-bg-subtle) !important;
+  background: linear-gradient(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.5));
 }
 
 /* Responsive styling for smaller devices */
@@ -943,22 +961,13 @@ label {
 
 /* Responsive styling for smaller devices */
 @media (max-width: 768px) {
-  .quote {
-    margin-top: 20em;
-    font-size: 0.7em;
-  }
-
   .bigReveal {
-    overflow: hidden;
-    font-size: 0.6em;
-    padding-top: 3em;
-    padding-bottom: 20em;
-    margin-top: 0em;
-    margin-bottom: 3em;
+    padding-top: 15em;
+    padding-bottom: 15em;
     padding: 0em;
-    height: 75em;
-    min-height: 75em;
-    max-height: 75em;
+    height: 85em;
+    min-height: 85em;
+    max-height: 85em;
   }
 
   .menuTextContent {
@@ -967,10 +976,6 @@ label {
 
   .menuTextContentSM {
     display: inline;
-  }
-
-  .cms-nav-links {
-    font-size: 0.5em;
   }
 
   .content-container {
@@ -996,6 +1001,14 @@ label {
     max-height: 250px;
   }
 
+  .carousel {
+    padding: 0em;
+  }
+
+  .carouselCard {
+    min-width: 250px;
+  }
+
   .pricing-price {
     font-size: 2em;
   }
@@ -1006,8 +1019,8 @@ label {
 
   .spreadsheet-table th,
   .spreadsheet-table td {
-    min-height: 100%;
-    padding: 0px;
+    min-height: 100vh;
+    padding: 6px;
   }
 }
 
@@ -1020,5 +1033,172 @@ label {
   .spreadsheet-table td {
     padding: 4px;
     font-size: 12px;
+  }
+}
+.applications-list {
+  padding: 10px;
+  color: var(--vscode-foreground);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 400px;
+}
+
+.applications-list ul {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 300px;
+}
+
+.applications-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: 300px;
+}
+
+.application-card {
+  border: 1px solid var(--vscode-editorWidget-border);
+  border-radius: 8px;
+  padding: 16px;
+  background-color: var(--vscode-editor-background);
+}
+
+.application-card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.application-info {
+  flex-grow: 1;
+}
+
+.application-name {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+}
+
+.application-description {
+  margin: 0 0 8px 0;
+  color: var(--vscode-descriptionForeground);
+  font-size: 14px;
+}
+
+.application-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.application-type {
+  background-color: #007bff;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.application-status {
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.application-status.status-ready {
+  background-color: #28a745;
+}
+
+.application-status.status-deployed {
+  background-color: #17a2b8;
+}
+
+.application-status.status-pending {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.application-status:not(.status-ready):not(.status-deployed):not(
+    .status-pending
+  ) {
+  background-color: #6c757d;
+}
+.loading-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 0;
+}
+.error-message {
+  color: var(--vscode-errorForeground);
+  padding: 10px;
+  border: 1px solid var(--vscode-errorBorder);
+  border-radius: 4px;
+  background-color: var(--vscode-inputValidation-errorBackground);
+}
+.application-item {
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid var(--vscode-editorWidget-border);
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.application-info {
+  flex-grow: 1;
+}
+.application-name {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.application-description {
+  color: var(--vscode-descriptionForeground);
+  margin-bottom: 6px;
+  font-size: 0.9em;
+}
+.application-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.8em;
+  color: var(--vscode-descriptionForeground);
+}
+.application-type,
+.application-status {
+  padding: 2px 6px;
+  border-radius: 3px;
+  background-color: var(--vscode-badge-background);
+  color: var(--vscode-badge-foreground);
+}
+
+.application-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 120px;
+}
+
+.application-buttons vscode-button {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .application-buttons {
+    flex-direction: row;
+    gap: 8px;
+    min-width: auto;
+  }
+
+  .application-buttons vscode-button {
+    width: auto;
+    min-width: 80px;
   }
 }
