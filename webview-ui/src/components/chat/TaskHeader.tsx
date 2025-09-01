@@ -91,7 +91,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
     window.addEventListener("resize", updateMaxHeight)
     return () => {
       window.removeEventListener("resize", updateMaxHeight)
-    }
+    }d
   }, [updateMaxHeight])
 
   After:

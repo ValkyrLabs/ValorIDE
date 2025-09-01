@@ -87,39 +87,37 @@ const AccountView = ({ onDone }: AccountViewProps) => {
       {/* Tab navigation */}
       <div className="flex gap-2 mb-4">
 
-        {!isAuthenticated && (
-          <VSCodeButton
-            appearance={activeTab === "login" ? "primary" : "secondary"}
-            onClick={() => setActiveTab("login")}
-          >
-            Login
-          </VSCodeButton>
-        )}
+        <VSCodeButton
+          appearance={activeTab === "login" ? "primary" : "secondary"}
+          onClick={() => setActiveTab("login")}
+        >
+          Login
+        </VSCodeButton>
         <VSCodeButton
           appearance={activeTab === "account" ? "primary" : "secondary"}
           onClick={() => setActiveTab("account")}
-          disabled={!isAuthenticated}
+          disabled={false}
         >
           Account
         </VSCodeButton>
         <VSCodeButton
           appearance={activeTab === "applications" ? "primary" : "secondary"}
           onClick={() => setActiveTab("applications")}
-          disabled={!isAuthenticated}
+          disabled={false}
         >
           Applications
         </VSCodeButton>
         <VSCodeButton
           appearance={activeTab === "generatedFiles" ? "primary" : "secondary"}
           onClick={() => setActiveTab("generatedFiles")}
-          disabled={!isAuthenticated}
+          disabled={false}
         >
           Generated Files
         </VSCodeButton>
       </div>
 
       {/* Tab content */}
-      {activeTab === "login" && !isAuthenticated ? (
+      {activeTab === "login" ? (
         <div className="flex justify-center">
           {authenticatedPrincipal === null && (
             <Card>

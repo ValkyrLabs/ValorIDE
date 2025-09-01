@@ -16,7 +16,14 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
   };
 
   const formatDate = (timestamp: number) => {
+    const today = new Date();
     const date = new Date(timestamp);
+
+    // it was today just list time
+    if (date.getTime() > (today.getTime() - (1000 * 60 * 60 * 24))) {
+      return "today at " + date.toLocaleString("en-US").substring(12);
+    }
+
     return date
       ?.toLocaleString("en-US", {
         month: "long",
@@ -88,18 +95,7 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
               onClick={() => handleHistorySelect(item.id)}
             >
               <div style={{ padding: "12px" }}>
-                <div style={{ marginBottom: "8px" }}>
-                  <span
-                    style={{
-                      color: "var(--vscode-descriptionForeground)",
-                      fontWeight: 500,
-                      fontSize: "0.85em",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {formatDate(item.ts)}
-                  </span>
-                </div>
+
                 <div
                   style={{
                     fontSize: "var(--vscode-font-size)",
@@ -114,6 +110,17 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
                     overflowWrap: "anywhere",
                   }}
                 >
+                  <span
+                    style={{
+                      color: "var(--vscode-foreground)",
+                      fontWeight: 500,
+                      fontSize: "0.85em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {formatDate(item.ts)}
+                  </span>
+                  {" • "}
                   {item.task}
                 </div>
                 <div

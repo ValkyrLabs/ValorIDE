@@ -32,7 +32,7 @@ const WelcomeView = memo(() => {
     <div className="fixed inset-0 p-0 flex flex-col">
       <div className="h-full px-5 overflow-auto">
         <div style={{ padding: "0 20px", flexShrink: 0 }}>
-          <div style={{ backgroundColor: "#222222", padding: "0 20px", flexShrink: 0 }}>
+          <div style={{ padding: "0 20px", flexShrink: 0 }}>
             <a href="https://valkyrlabs.com/valoride">
               <img
                 alt="Valkyr Labs"
