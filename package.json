@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.107",
+  "version": "3.20.114",
   "icon": "assets/icons/icon.png",
   "galleryBanner": {
     "color": "#617A91",
@@ -197,6 +197,8 @@
     }
   },
   "scripts": {
+    "package:staging": "yarn run build:webview:staging && yarn run check-types && yarn run lint && node esbuild.js --production",
+    "package:prod": "yarn run build:webview:prod && yarn run check-types && yarn run lint && node esbuild.js --production",
     "v": "node increment-version.js && vsce package",
     "vscode:prepublish": "yarn run package",
     "compile": "yarn run check-types && yarn run lint && node esbuild.js",

@@ -16,16 +16,32 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
   };
 
   const formatDate = (timestamp: number) => {
-    const today = new Date();
+    const now = new Date();
     const date = new Date(timestamp);
 
-    // it was today just list time
-    if (date.getTime() > (today.getTime() - (1000 * 60 * 60 * 24))) {
-      return "today at " + date.toLocaleString("en-US").substring(12);
+    // Normalize to midnight for day comparisons
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    // Format just the time portion
+    const timeStr = date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    if (date >= today) {
+      return `TODAY AT: ${timeStr}`;
     }
 
+    if (date >= yesterday && date < today) {
+      return `YESTERDAY AT: ${timeStr}`;
+    }
+
+    // Fallback: full formatted date
     return date
-      ?.toLocaleString("en-US", {
+      .toLocaleString("en-US", {
         month: "long",
         day: "numeric",
         hour: "numeric",
@@ -33,7 +49,6 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
         hour12: true,
       })
       .replace(", ", " ")
-      .replace(" at", ",")
       .toUpperCase();
   };
 

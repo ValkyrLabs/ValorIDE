@@ -217,9 +217,10 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
     <div style={{ padding: "10px 13px 10px 13px" }}>
       <div
         style={{
-          backgroundColor: "var(--vscode-badge-background)",
+          backgroundColor: "var(--vscode-sideBar-border)",
 
-          borderRadius: "3px",
+
+          borderRadius: "10px",
           padding: "9px 10px 9px 14px",
           display: "flex",
           flexDirection: "column",
@@ -285,11 +286,10 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
               style={{
                 marginLeft: 10,
                 backgroundColor:
-                  "color-mix(in srgb, var(--vscode-badge-foreground) 70%, transparent)",
-
+                  "color-mix(in srgb, var(--vscode-errorForeground) 100%, transparent)",
                 padding: "2px 4px",
                 borderRadius: "500px",
-                fontSize: "11px",
+                fontSize: "12px",
                 fontWeight: 500,
                 display: "inline-block",
                 flexShrink: 0,
