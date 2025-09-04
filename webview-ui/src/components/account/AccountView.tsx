@@ -51,11 +51,11 @@ const AccountView = ({ onDone }: AccountViewProps) => {
     // skip: !isAuthenticated,
   });
 
-  const { data: usageData, isLoading: isUsageLoading } =
+  const { data: usageData, isLoading: isUsageLoading, refetch: refetchUsage } =
     useGetUsageTransactionsQuery(undefined, {
       skip: !isAuthenticated,
     });
-  const { data: paymentsData, isLoading: isPaymentsLoading } =
+  const { data: paymentsData, isLoading: isPaymentsLoading, refetch: refetchPayments } =
     useGetPaymentTransactionsQuery(undefined, {
       skip: !isAuthenticated,
     });
@@ -223,7 +223,13 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                     <VSCodeButton
                       appearance="icon"
                       className="mt-1"
-                      onClick={() => refetchBalance()}
+                      onClick={() => {
+                        refetchBalance();
+                        if (isAuthenticated) {
+                          refetchUsage();
+                          refetchPayments();
+                        }
+                      }}
                     >
                       <FaRecycle />
 

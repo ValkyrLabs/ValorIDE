@@ -3,7 +3,7 @@ import {
   VSCodeDataGridRow,
   VSCodeDataGridCell,
 } from "@vscode/webview-ui-toolkit/react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { TabButton } from "../mcp/configuration/McpConfigurationView";
 import { UsageTransaction, PaymentTransaction } from "@/thor/model";
 import { formatDollars, formatTimestamp } from "@/utils/format";
@@ -20,6 +20,20 @@ const CreditsHistoryTable = ({
   paymentsData,
 }: CreditsHistoryTableProps) => {
   const [activeTab, setActiveTab] = useState<"usage" | "payments">("usage");
+  const [selectedUsageRow, setSelectedUsageRow] = useState<number | null>(null);
+  const [selectedPaymentRow, setSelectedPaymentRow] = useState<number | null>(null);
+
+  const handleUsageRowClick = useCallback((index: number, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setSelectedUsageRow(selectedUsageRow === index ? null : index);
+  }, [selectedUsageRow]);
+
+  const handlePaymentRowClick = useCallback((index: number, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setSelectedPaymentRow(selectedPaymentRow === index ? null : index);
+  }, [selectedPaymentRow]);
 
   return (
     <div className="flex flex-col flex-grow h-full">
@@ -78,7 +92,14 @@ const CreditsHistoryTable = ({
                     </VSCodeDataGridRow>
 
                     {usageData.map((row, index) => (
-                      <VSCodeDataGridRow key={index}>
+                      <VSCodeDataGridRow 
+                        key={index}
+                        onClick={(event) => handleUsageRowClick(index, event)}
+                        style={{ 
+                          cursor: 'pointer',
+                          backgroundColor: selectedUsageRow === index ? 'var(--vscode-list-activeSelectionBackground)' : 'transparent'
+                        }}
+                      >
                         <VSCodeDataGridCell grid-column="1">
                           {row.spentAt.toISOString()}
                         </VSCodeDataGridCell>
@@ -124,9 +145,16 @@ const CreditsHistoryTable = ({
                     </VSCodeDataGridRow>
 
                     {paymentsData.map((row, index) => (
-                      <VSCodeDataGridRow key={index}>
+                      <VSCodeDataGridRow 
+                        key={index}
+                        onClick={(event) => handlePaymentRowClick(index, event)}
+                        style={{ 
+                          cursor: 'pointer',
+                          backgroundColor: selectedPaymentRow === index ? 'var(--vscode-list-activeSelectionBackground)' : 'transparent'
+                        }}
+                      >
                         <VSCodeDataGridCell grid-column="1">
-                          {row.paidAt.toISOString()}
+                          {row.paidAt && row.paidAt.toISOString()}
                         </VSCodeDataGridCell>
                         <VSCodeDataGridCell grid-column="2">{`$${formatDollars(row.amountCents)}`}</VSCodeDataGridCell>
                         <VSCodeDataGridCell grid-column="3">{`${row.credits}`}</VSCodeDataGridCell>

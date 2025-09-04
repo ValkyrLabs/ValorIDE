@@ -289,10 +289,11 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                   "color-mix(in srgb, var(--vscode-errorForeground) 100%, transparent)",
                 padding: "2px 4px",
                 borderRadius: "500px",
-                fontSize: "12px",
-                fontWeight: 500,
+                fontSize: "14px",
+                fontWeight: 800,
                 display: "inline-block",
                 flexShrink: 0,
+                color: "var(--vscode-foreground)",
               }}
             >
               ${totalCost?.toFixed(4)}

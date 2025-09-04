@@ -301,6 +301,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
                     <VSCodeButton
                       appearance="icon"
                       onClick={(e) => {
+                        e.preventDefault();
                         e.stopPropagation();
                         handleDeleteHistoryItem(item.id);
                       }}
@@ -527,6 +528,7 @@ const ExportButton = ({ itemId }: { itemId: string }) => (
     className="export-button"
     appearance="icon"
     onClick={(e) => {
+      e.preventDefault();
       e.stopPropagation();
       vscode.postMessage({ type: "exportTaskWithId", text: itemId });
     }}

@@ -32,19 +32,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   ErrorService.initialize();
   Logger.initialize(outputChannel);
-  Logger.log("ValorIDE extension activated");
-
+  // Register the webview view provider FIRST
   const sidebarWebview = new WebviewProvider(context, outputChannel);
-
-  // Initialize test mode and add disposables to context
-  context.subscriptions.push(...initializeTestMode(context, sidebarWebview));
-
-  vscode.commands.executeCommand(
-    "setContext",
-    "valoride.isDevMode",
-    IS_DEV && IS_DEV === "true",
-  );
-
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       WebviewProvider.sideBarId,
@@ -54,6 +43,25 @@ export function activate(context: vscode.ExtensionContext) {
       },
     ),
   );
+
+  Logger.log("ValorIDE extension activated");
+
+  // Initialize test mode and set dev mode context
+  context.subscriptions.push(...initializeTestMode(context, sidebarWebview));
+  vscode.commands.executeCommand(
+    "setContext",
+    "valoride.isDevMode",
+    IS_DEV && IS_DEV === "true",
+  );
+
+  // Ensure our Activity Bar container is visible, then focus our view
+  // This helps recover if the container was hidden from prior layout changes
+  void vscode.commands.executeCommand(
+    "workbench.view.extension.valoride-activitybar",
+  );
+  // Proactively reveal the sidebar view once after activation
+  // This helps surface the Activity Bar icon if the container was hidden/cached
+  void vscode.commands.executeCommand(`${WebviewProvider.sideBarId}.focus`);
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
@@ -144,6 +152,39 @@ export function activate(context: vscode.ExtensionContext) {
       ),
     };
     tabWebview.resolveWebviewView(panel);
+
+    // Mark editor title context so our toolbar buttons appear in tab view
+    await vscode.commands.executeCommand(
+      "setContext",
+      "valoride.isValorIDETab",
+      panel.active === true,
+    );
+
+    // Update context when tab selection changes
+    panel.onDidChangeViewState(
+      () => {
+        void vscode.commands.executeCommand(
+          "setContext",
+          "valoride.isValorIDETab",
+          panel.active === true,
+        );
+      },
+      undefined,
+      context.subscriptions,
+    );
+
+    // Clear context on dispose
+    panel.onDidDispose(
+      () => {
+        void vscode.commands.executeCommand(
+          "setContext",
+          "valoride.isValorIDETab",
+          false,
+        );
+      },
+      undefined,
+      context.subscriptions,
+    );
 
     // Lock the editor group so clicking on files doesn't open them over the panel
     await setTimeoutPromise(100);
@@ -516,6 +557,72 @@ export function activate(context: vscode.ExtensionContext) {
     }),
   );
 
+  // Add diagnostic command to help troubleshoot extension issues
+  context.subscriptions.push(
+    vscode.commands.registerCommand("valoride.diagnostics", () => {
+      const diagnostics = {
+        activeInstances: WebviewProvider.getAllInstances().length,
+        sidebarInstance: !!WebviewProvider.getSidebarInstance(),
+        tabInstances: WebviewProvider.getTabInstances().length,
+        visibleInstance: !!WebviewProvider.getVisibleInstance(),
+        extensionVersion: context.extension?.packageJSON?.version,
+        vscodeVersion: vscode.version,
+        platform: process.platform,
+        extensionMode: context.extensionMode,
+        globalStoragePath: context.globalStorageUri.fsPath,
+        workspaceStoragePath: context.storageUri?.fsPath,
+        machineId: vscode.env.machineId,
+        sessionId: vscode.env.sessionId,
+        uriScheme: vscode.env.uriScheme,
+      };
+      
+      const diagnosticsText = JSON.stringify(diagnostics, null, 2);
+      Logger.log(`ValorIDE Diagnostics:\n${diagnosticsText}`);
+      
+      vscode.window.showInformationMessage(
+        `ValorIDE Diagnostics logged to output channel. Active instances: ${diagnostics.activeInstances}`,
+        "Show Output"
+      ).then((selection) => {
+        if (selection === "Show Output") {
+          outputChannel.show();
+        }
+      });
+    }),
+  );
+
+  // Command: Fix Layout (Resets view locations and focuses ValorIDE container/view)
+  context.subscriptions.push(
+    vscode.commands.registerCommand("valoride.fixLayout", async () => {
+      const choice = await vscode.window.showWarningMessage(
+        "Reset all view locations to defaults? This can fix ValorIDE appearing in Chat instead of the sidebar.",
+        { modal: true },
+        "Reset",
+        "Cancel",
+      );
+      if (choice !== "Reset") return;
+
+      try {
+        await vscode.commands.executeCommand(
+          "workbench.action.resetViewLocations",
+        );
+      } catch (err) {
+        Logger.log(`Error running resetViewLocations: ${err}`);
+      }
+
+      // Bring our container and view to the front after reset
+      void vscode.commands.executeCommand(
+        "workbench.view.extension.valoride-activitybar",
+      );
+      void vscode.commands.executeCommand(
+        `${WebviewProvider.sideBarId}.focus`,
+      );
+
+      vscode.window.showInformationMessage(
+        "View locations reset. ValorIDE sidebar restored (if previously moved).",
+      );
+    }),
+  );
+
   return createValorIDEAPI(outputChannel, sidebarWebview.controller);
 }
 
@@ -529,11 +636,30 @@ const { IS_DEV, DEV_WORKSPACE_FOLDER } = process.env;
 
 // This method is called when your extension is deactivated
 export function deactivate() {
-  // Clean up test mode
-  cleanupTestMode();
+  return new Promise<void>((resolve) => {
+    Logger.log("Starting ValorIDE extension deactivation...");
+    
+    try {
+      // Clean up test mode
+      cleanupTestMode();
+      Logger.log("Test mode cleaned up successfully");
+    } catch (error) {
+      Logger.log(`Error cleaning up test mode: ${error}`);
+      console.error("Error cleaning up test mode:", error);
+    }
 
-  telemetryService.shutdown();
-  Logger.log("ValorIDE extension deactivated");
+    try {
+      // Shutdown telemetry
+      telemetryService.shutdown();
+      Logger.log("Telemetry service shut down successfully");
+    } catch (error) {
+      Logger.log(`Error shutting down telemetry: ${error}`);
+      console.error("Error shutting down telemetry:", error);
+    }
+
+    Logger.log("ValorIDE extension deactivated successfully");
+    resolve();
+  });
 }
 
 // Set up development mode file watcher
