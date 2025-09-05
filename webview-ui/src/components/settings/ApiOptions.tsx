@@ -72,6 +72,7 @@ import OpenRouterModelPicker, {
 } from "./OpenRouterModelPicker";
 import { ValorIDEAccountInfoCard } from "./ValorIDEAccountInfoCard";
 import RequestyModelPicker from "./RequestyModelPicker";
+import { useGetLlmDetailssQuery } from "@/thor/redux/services/LlmDetailsService";
 
 interface ApiOptionsProps {
   showModelOptions: boolean;
@@ -220,6 +221,25 @@ const ApiOptions = ({
   }, []);
   useEvent("message", handleMessage);
 
+  // Valkyrai LLMDetails
+  const { data: llmDetailsList } = useGetLlmDetailssQuery();
+  const valkyraiModels: Record<string, ModelInfo> = useMemo(() => {
+    const models: Record<string, ModelInfo> = {};
+    (llmDetailsList || []).forEach((m) => {
+      if (!m.id) return;
+      models[m.id] = {
+        maxTokens: m.maxTokens,
+        contextWindow: m.contextWindow,
+        supportsImages: m.supportsImages,
+        supportsPromptCache: !!m.supportsPromptCache,
+        inputPrice: m.inputPrice,
+        outputPrice: m.outputPrice,
+        description: m.description || `${m.provider} ${m.name}${m.version ? ` (${m.version})` : ""}`,
+      } as ModelInfo;
+    });
+    return models;
+  }, [llmDetailsList]);
+
   /*
 	VSCodeDropdown has an open bug where dynamically rendered options don't auto select the provided value prop. You can see this for yourself by comparing  it with normal select/option elements, which work as expected.
 	https://github.com/microsoft/vscode-webview-ui-toolkit/issues/433
@@ -276,6 +296,7 @@ const ApiOptions = ({
             position: "relative",
           }}
         >
+          <VSCodeOption value="valkyrai">Valkyrai (LLM Details)</VSCodeOption>
           <VSCodeOption value="valoride">ValorIDE</VSCodeOption>
           <VSCodeOption value="openrouter">OpenRouter</VSCodeOption>
           <VSCodeOption value="anthropic">Anthropic</VSCodeOption>
@@ -303,6 +324,66 @@ const ApiOptions = ({
       {selectedProvider === "valoride" && (
         <div style={{ marginBottom: 14, marginTop: 4 }}>
           <ValorIDEAccountInfoCard />
+        </div>
+      )}
+
+      {selectedProvider === "valkyrai" && (
+        <div>
+          <VSCodeTextField
+            value={apiConfiguration?.valkyraiHost || ""}
+            style={{ width: "100%" }}
+            type="url"
+            onInput={handleInputChange("valkyraiHost")}
+            placeholder="http://localhost:8080"
+          >
+            <span style={{ fontWeight: 500 }}>Valkyrai Host</span>
+          </VSCodeTextField>
+          <VSCodeTextField
+            value={apiConfiguration?.valkyraiJwt || ""}
+            style={{ width: "100%", marginTop: 6 }}
+            type="password"
+            onInput={handleInputChange("valkyraiJwt")}
+            placeholder="Optional JWT Bearer Token"
+          >
+            <span style={{ fontWeight: 500 }}>JWT Token</span>
+          </VSCodeTextField>
+          <div style={{ marginTop: 8 }}>
+            <label htmlFor="valkyrai-model"><span style={{ fontWeight: 500 }}>LLM (from LlmDetails)</span></label>
+            <DropdownContainer>
+              <VSCodeDropdown
+                id="valkyrai-model"
+                value={apiConfiguration?.valkyraiServiceId || ""}
+                onChange={(e: any) => {
+                  const newValue = e.target?.value || "";
+                  setApiConfiguration({
+                    ...apiConfiguration,
+                    apiModelId: newValue,
+                    valkyraiServiceId: newValue,
+                  });
+                  if (saveImmediately) {
+                    const currentFullApiConfig = extensionState.apiConfiguration;
+                    vscode.postMessage({
+                      type: "apiConfiguration",
+                      apiConfiguration: {
+                        ...currentFullApiConfig,
+                        apiProvider: "valkyrai",
+                        apiModelId: newValue,
+                        valkyraiServiceId: newValue,
+                      },
+                    });
+                  }
+                }}
+                style={{ width: "100%" }}
+              >
+                <VSCodeOption value="">Select an LLM...</VSCodeOption>
+                {(llmDetailsList || []).map((m) => (
+                  <VSCodeOption key={m.id || ""} value={m.id || ""}>
+                    {`${m.name || m.version || m.provider}${m.id ? ` [${m.id}]` : ""}`}
+                  </VSCodeOption>
+                ))}
+              </VSCodeDropdown>
+            </DropdownContainer>
+          </div>
         </div>
       )}
 
@@ -2304,6 +2385,12 @@ export function normalizeApiConfiguration(
     };
   };
   switch (provider) {
+    case "valkyrai":
+      return {
+        selectedProvider: provider,
+        selectedModelId: apiConfiguration?.valkyraiServiceId || "",
+        selectedModelInfo: openAiModelInfoSaneDefaults,
+      };
     case "anthropic":
       return getProviderData(anthropicModels, anthropicDefaultModelId);
     case "bedrock":

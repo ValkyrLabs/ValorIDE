@@ -35,10 +35,11 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
     console.log("Starting WebviewProvider disposal...");
     
     try {
-      if (this.view && "dispose" in this.view) {
-        this.view.dispose();
-        console.log("Webview disposed successfully");
-      }
+      // Do NOT dispose the webview here.
+      // VS Code owns the lifetime of WebviewView/WebviewPanel and will invoke our onDidDispose handler.
+      // Disposing it again from within our dispose() leads to double-disposal and VS Code internals
+      // (e.g., ContextKeyService) being accessed after disposal, causing errors like
+      // "AbstractContextKeyService has been disposed" when menus/actions resolve.
     } catch (error) {
       console.error("Error disposing webview:", error);
     }
@@ -70,6 +71,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
     }
 
     WebviewProvider.activeInstances.delete(this);
+    this.view = undefined;
     console.log("WebviewProvider disposal completed");
   }
 

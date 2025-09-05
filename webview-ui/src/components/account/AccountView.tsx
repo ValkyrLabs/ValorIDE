@@ -20,27 +20,30 @@ import {
   VSCodeLink,
 } from "@vscode/webview-ui-toolkit/react";
 import { vscode } from "@/utils/vscode";
-import { FaRecycle } from "react-icons/fa";
+import { FaBackward, FaRecycle } from "react-icons/fa";
 import CoolButton from "../CoolButton";
 import { Card } from "react-bootstrap";
+import { Login } from "@thor/model";
+import { FormikHelpers } from "formik";
+import { useLoginUserMutation } from "../../redux/services/AuthService";
 
 type AccountViewProps = {
   onDone: () => void;
 };
 
 const AccountView = ({ onDone }: AccountViewProps) => {
-  const { userInfo, authenticatedPrincipal, isLoggedIn, jwtToken } =
+  const { userInfo, authenticatedUser, isLoggedIn, jwtToken } =
     useExtensionState();
 
   // Determine authenticated status
   const isAuthenticated = Boolean(
-    isLoggedIn || authenticatedPrincipal || userInfo || jwtToken,
+    isLoggedIn || authenticatedUser || userInfo || jwtToken,
   );
 
   // Default to login tab when unauthenticated, otherwise account
-  const [activeTab, setActiveTab] = useState<"login" | "account" | "applications" | "generatedFiles">(
-    isAuthenticated ? "account" : "login",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "login" | "account" | "applications" | "generatedFiles"
+  >(isAuthenticated ? "account" : "login");
 
   const {
     data: balanceData,
@@ -55,16 +58,38 @@ const AccountView = ({ onDone }: AccountViewProps) => {
     useGetUsageTransactionsQuery(undefined, {
       skip: !isAuthenticated,
     });
-  const { data: paymentsData, isLoading: isPaymentsLoading, refetch: refetchPayments } =
-    useGetPaymentTransactionsQuery(undefined, {
-      skip: !isAuthenticated,
-    });
+  const {
+    data: paymentsData,
+    isLoading: isPaymentsLoading,
+    refetch: refetchPayments,
+  } = useGetPaymentTransactionsQuery(undefined, {
+    skip: !isAuthenticated,
+  });
 
   // Combined loading state
   const loading = isBalanceLoading || isUsageLoading || isPaymentsLoading;
 
-  const handleLogin = () => {
-    vscode.postMessage({ type: "accountLoginClicked" });
+  const [loginUser] = useLoginUserMutation();
+
+  const handleLogin = async (
+    values: Login,
+    { setSubmitting }: FormikHelpers<Login>,
+  ) => {
+    try {
+      const result = await loginUser(values).unwrap();
+      if (result.token) {
+        sessionStorage.setItem("jwtToken", result.token);
+        sessionStorage.setItem(
+          "authenticatedUser",
+          JSON.stringify(result.user),
+        );
+        setActiveTab("account");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleLogout = () => {
@@ -83,32 +108,40 @@ const AccountView = ({ onDone }: AccountViewProps) => {
   }, []);
 
   return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column", margin: "1em", padding: ".5em" }}>
+    <div
+      style={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        margin: "1em",
+        padding: ".5em",
+      }}
+    >
       {/* Tab navigation */}
       <div className="scroll-tabs-container">
         <div className="nav-tabs scroll-tabs">
-          <div 
+          <div
             className={`nav-link ${activeTab === "login" ? "active" : ""}`}
             onClick={() => setActiveTab("login")}
             style={{ cursor: "pointer" }}
           >
             Login
           </div>
-          <div 
+          <div
             className={`nav-link ${activeTab === "account" ? "active" : ""}`}
             onClick={() => setActiveTab("account")}
             style={{ cursor: "pointer" }}
           >
             Account
           </div>
-          <div 
+          <div
             className={`nav-link ${activeTab === "applications" ? "active" : ""}`}
             onClick={() => setActiveTab("applications")}
             style={{ cursor: "pointer" }}
           >
             Applications
           </div>
-          <div 
+          <div
             className={`nav-link ${activeTab === "generatedFiles" ? "active" : ""}`}
             onClick={() => setActiveTab("generatedFiles")}
             style={{ cursor: "pointer" }}
@@ -121,16 +154,18 @@ const AccountView = ({ onDone }: AccountViewProps) => {
       {/* Tab content */}
       {activeTab === "login" ? (
         <div className="flex justify-center">
-          {authenticatedPrincipal === null && (
+          {authenticatedUser === null && (
             <Card>
               <Card.Header>
                 <h3>Login to Access Your Account</h3>
               </Card.Header>
               <Card.Body>
-                <Form isLoggedIn={isLoggedIn} />
+                <Form onSubmit={handleLogin} isLoggedIn={isLoggedIn} />
               </Card.Body>
               <Card.Footer>
-                <div style={{ fontSize: "0.85em", color: "var(--vscode-descriptionForeground)" }}>
+                <div
+                  style={{ fontSize: "0.85em", color: "var(--vscode-descriptionForeground)" }}
+                >
                   Don't have an account?{" "}
                   <VSCodeLink
                     href="https://valkyrlabs.com/signup"
@@ -151,16 +186,12 @@ const AccountView = ({ onDone }: AccountViewProps) => {
               </Card.Footer>
             </Card>
           )}
-          {isLoggedIn && (
-            <CoolButton>Log Out</CoolButton>
-          )}
-
+          {isLoggedIn && <CoolButton onClick={handleLogout}>Log Out</CoolButton>}
         </div>
       ) : activeTab === "applications" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
           {/* Applications List */}
           <div style={{ marginBottom: "32px" }}>
-
             {/* OpenAPI File Picker */}
             <div style={{ marginBottom: "32px" }}>
               <OpenAPIFilePicker onFileSelected={handleOpenAPIFileSelected} />
@@ -198,7 +229,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                 onClick={handleLogout}
                 className="w-full min-[225px]:w-1/2"
               >
-                Log out
+                <FaBackward />
               </VSCodeButton>
             </div>
 
@@ -216,7 +247,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                   <>
                     <span>$</span>
                     <CountUp
-                      end={balanceData?.[0]?.currentBalance || .10}
+                      end={balanceData?.[0]?.currentBalance || 0.1}
                       duration={0.66}
                       decimals={2}
                     />
@@ -232,7 +263,6 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                       }}
                     >
                       <FaRecycle />
-
                     </VSCodeButton>
                   </>
                 )}

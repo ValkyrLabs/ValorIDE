@@ -26,6 +26,10 @@ let outputChannel: vscode.OutputChannel;
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
+import { CommunicationService, CommunicationRole } from "./services/communication/CommunicationService";
+
+let communicationService: CommunicationService | null = null;
+
 export function activate(context: vscode.ExtensionContext) {
   outputChannel = vscode.window.createOutputChannel("ValorIDE");
   context.subscriptions.push(outputChannel);
@@ -45,6 +49,31 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   Logger.log("ValorIDE extension activated");
+
+  // Initialize CommunicationService only in browser-like contexts (e.g., web UI)
+  if (CommunicationService.isSupported()) {
+    // For example, use environment variable or config to decide role
+    const role: CommunicationRole =
+      process.env.VALORIDE_ROLE === "manager" ? "manager" : "worker";
+    communicationService = new CommunicationService({ role });
+    communicationService.connect();
+
+    communicationService.on("message", (message) => {
+      Logger.log(
+        `CommunicationService received message: ${JSON.stringify(message)}`,
+      );
+      // TODO: Add message handling logic here, e.g., dispatch commands or update UI
+    });
+
+    // Optional: surface service errors to output channel (won't crash)
+    communicationService.on("error", (err) => {
+      Logger.log(`CommunicationService error: ${String(err)}`);
+    });
+  } else {
+    Logger.log(
+      "CommunicationService not supported in this environment; skipping init.",
+    );
+  }
 
   // Initialize test mode and set dev mode context
   context.subscriptions.push(...initializeTestMode(context, sidebarWebview));

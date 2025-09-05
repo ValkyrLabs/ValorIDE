@@ -6,7 +6,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 import type { AppDispatch, RootState } from "../../redux/store"; // Adjust to your store
 import type { WebsocketMessage } from "../../thor/model/WebsocketMessage"; // Adjust to your store
-import { WEBSOCKET_URL } from "../../websocket/websocket";
+import { WEBSOCKET_URL, isValidWsUrl } from "../../websocket/websocket";
 import CoolButton from "../CoolButton";
 import { addMessage, setConnected } from "./websocketSlice"; // Ensure these actions are correct
 // import { WebsocketMessageAdded } from "../../thor/redux/reducers/WebsocketMessageReducer";
@@ -17,9 +17,8 @@ const { Client } = StompJs;
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
-const socketUrl = WEBSOCKET_URL;
+// Create client without brokerURL; we will configure it once URL is validated.
 const stompClient = new Client({
-  brokerURL: socketUrl,
   reconnectDelay: 5000,
   onConnect: () => {
     console.log("Connected to WebSocket");
@@ -58,6 +57,22 @@ const ServerConsole = () => {
 
   useEffect(() => {
     const socketUrl = WEBSOCKET_URL;
+    if (!isValidWsUrl(socketUrl)) {
+      console.warn(
+        "ServerConsole: WebSocket disabled (missing or invalid REACT_APP_WS_BASE_PATH).",
+      );
+      dispatch(setConnected(false));
+      // Optionally, log a console message to the UI
+      dispatch(
+        addMessage({
+          type: "console",
+          payload:
+            "WebSocket disabled: set REACT_APP_WS_BASE_PATH to ws(s)://host:port.",
+          createdDate: new Date(),
+        } as any),
+      );
+      return;
+    }
     stompClient.configure({
       brokerURL: socketUrl,
       reconnectDelay: 5000,
