@@ -286,10 +286,10 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
               style={{
                 marginLeft: 10,
                 backgroundColor:
-                  "color-mix(in srgb, var(--vscode-errorForeground) 100%, transparent)",
+                  "var(--vscode-textCodeBlock-foreground)",
                 padding: "2px 4px",
                 borderRadius: "500px",
-                fontSize: "14px",
+                fontSize: "16px",
                 fontWeight: 800,
                 display: "inline-block",
                 flexShrink: 0,

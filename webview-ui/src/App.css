@@ -329,7 +329,6 @@ footer a:hover {
 
 .hero-section {
   height: 50vh;
-
   text-align: center;
 }
 
@@ -347,11 +346,12 @@ footer a:hover {
 }
 
 .form-control {
-  background-color: rgba(50, 50, 50, 0.8);
   margin: 0.5em;
   padding: 1em;
+  border-radius: 10px;
+  width: 80%;
+  float: right;
   /* Dark input fields for contrast */
-  color: #fff;
   /* White text for readability */
 }
 
@@ -1206,12 +1206,12 @@ label {
   }
 }
 
-  .nav-link {
+.nav-link {
   padding: 8px 16px;
   margin: 0 2px;
 }
 
-  .nav-link {
+.nav-link {
   padding: 8px 16px;
   margin: 0 2px;
   border-radius: 6px;
