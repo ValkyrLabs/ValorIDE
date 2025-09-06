@@ -17,6 +17,7 @@ export type ApiProvider =
   | "doubao"
   | "mistral"
   | "vscode-lm"
+  | "valkyrai"
   | "valoride"
   | "litellm"
   | "asksage"
@@ -80,6 +81,10 @@ export interface ApiHandlerOptions {
   thinkingBudgetTokens?: number;
   reasoningEffort?: string;
   sambanovaApiKey?: string;
+  // Valkyrai pass-through settings
+  valkyraiHost?: string; // e.g. http://localhost:8080
+  valkyraiJwt?: string; // optional bearer
+  valkyraiServiceId?: string; // selected LlmDetails.id
 }
 
 export type ApiConfiguration = ApiHandlerOptions & {
@@ -1718,5 +1723,4 @@ export const requestyDefaultModelInfo: ModelInfo = {
   description:
     "Anthropic's most intelligent model. Highest level of intelligence and capability.",
 };
-
 

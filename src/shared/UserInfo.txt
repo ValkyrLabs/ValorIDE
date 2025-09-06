@@ -1,5 +1,0 @@
-export UserInfo extends Principal{
-	username: string | null
-	email: string | null
-	avatarUrl: string | null
-}

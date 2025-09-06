@@ -15,9 +15,11 @@ import McpMarketplaceCard from "./McpMarketplaceCard";
 import McpSubmitCard from "./McpSubmitCard";
 import { useGetMcpServersQuery } from "@/thor/redux/services/McpServerService";
 import { useGetMcpMarketplaceCatalogsQuery } from "@/thor/redux/services/McpMarketplaceCatalogService";
+import { useGetMcpMarketplaceItemsQuery } from "@/thor/redux/services/McpMarketplaceItemService";
 import {
   convertThorMcpServersToShared,
   convertThorMcpMarketplaceCatalogsToShared,
+  convertThorMcpMarketplaceItemsToShared,
 } from "@/utils/mcpTypeConversions";
 import {
   formatError,
@@ -39,6 +41,12 @@ const McpMarketplaceView = () => {
     isLoading: catalogLoading,
     refetch: refetchCatalog,
   } = useGetMcpMarketplaceCatalogsQuery();
+  const {
+    data: marketplaceItems,
+    error: itemsError,
+    isLoading: itemsLoading,
+    refetch: refetchItems,
+  } = useGetMcpMarketplaceItemsQuery();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<
@@ -64,21 +72,33 @@ const McpMarketplaceView = () => {
     );
   }, [marketplaceCatalogs]);
 
-  const items = sharedMarketplaceCatalog.items;
+  // Convert marketplace items directly
+  const sharedMarketplaceItems = React.useMemo(() => {
+    return safeConvert(
+      marketplaceItems,
+      convertThorMcpMarketplaceItemsToShared,
+      [],
+      "McpMarketplaceView - Marketplace Items",
+    );
+  }, [marketplaceItems]);
+
+  // Use direct marketplace items if available, otherwise fall back to catalog items
+  const items = sharedMarketplaceItems.length > 0 ? sharedMarketplaceItems : sharedMarketplaceCatalog.items;
 
   // Combined loading and error states
-  const isLoading = serversLoading || catalogLoading;
-  const error = serversError || catalogError;
+  const isLoading = serversLoading || catalogLoading || itemsLoading;
+  const error = serversError || catalogError || itemsError;
 
   const handleRefresh = React.useCallback(() => {
     try {
       refetchServers();
       refetchCatalog();
+      refetchItems();
       vscode.postMessage({ type: "fetchMcpMarketplace", bool: true });
     } catch (error) {
       console.error("Failed to refresh marketplace:", error);
     }
-  }, [refetchServers, refetchCatalog]);
+  }, [refetchServers, refetchCatalog, refetchItems]);
 
   const categories = useMemo(() => {
     const uniqueCategories = new Set(items.map((item) => item.category));

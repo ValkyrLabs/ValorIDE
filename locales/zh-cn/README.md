@@ -20,7 +20,7 @@
 <a href="https://github.com/valkyrlabs/valoride/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop" target="_blank"><strong>功能请求</strong></a>
 </td>
 <td align="center">
-<a href="https://docs.valkyrlabs.com/v1/getting-started/for-new-coders" target="_blank"><strong>新手上路</strong></a>
+<a href="https://valkyrlabs.com/v1/getting-started/for-new-coders" target="_blank"><strong>新手上路</strong></a>
 </td>
 </tbody>
 </table>
@@ -142,16 +142,16 @@ ValorIDE 所做的所有更改都会记录在你的文件时间轴中，提供�
 
 1. 克隆仓库 _(需要 [git-lfs](https://git-lfs.com/))_：
    `bash
-    git clone https://github.com/valkyrlabs/valoride.git
-    `
+ git clone https://github.com/valkyrlabs/valoride.git
+ `
 2. 在 VSCode 中打开项目：
    `bash
-    code valoride
-    `
+ code valoride
+ `
 3. 安装扩展和 webview-gui 的必要依赖：
    `bash
-    npm run install:all
-    `
+ npm run install:all
+ `
 4. 按 `F5`（或 `运行`->`开始调试`）启动以打开一个加载了扩展的新 VSCode 窗口。（如果你在构建项目时遇到问题，可能需要安装 [esbuild problem matchers 扩展](https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers)）
 
 </details>

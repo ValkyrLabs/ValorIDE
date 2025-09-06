@@ -124,7 +124,7 @@ const UserMessage: React.FC<UserMessageProps> = ({
               padding: "6px",
               fontFamily: "inherit",
               fontSize: "inherit",
-              lineHeight: "inherit",
+              lineHeight: "2em",
               boxSizing: "border-box",
               resize: "none",
               overflowX: "hidden",

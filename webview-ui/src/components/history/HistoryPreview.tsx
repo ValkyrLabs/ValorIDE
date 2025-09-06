@@ -3,7 +3,7 @@ import { useExtensionState } from "@/context/ExtensionStateContext";
 import { vscode } from "@/utils/vscode";
 import { memo } from "react";
 import { formatLargeNumber } from "@/utils/format";
-import { FaComments, FaDollarSign } from "react-icons/fa";
+import { FaComments, FaDollarSign, FaHistory } from "react-icons/fa";
 
 type HistoryPreviewProps = {
   showHistoryView: () => void;
@@ -16,9 +16,32 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
   };
 
   const formatDate = (timestamp: number) => {
+    const now = new Date();
     const date = new Date(timestamp);
+
+    // Normalize to midnight for day comparisons
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    // Format just the time portion
+    const timeStr = date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    if (date >= today) {
+      return `TODAY AT: ${timeStr}`;
+    }
+
+    if (date >= yesterday && date < today) {
+      return `YESTERDAY AT: ${timeStr}`;
+    }
+
+    // Fallback: full formatted date
     return date
-      ?.toLocaleString("en-US", {
+      .toLocaleString("en-US", {
         month: "long",
         day: "numeric",
         hour: "numeric",
@@ -26,7 +49,6 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
         hour12: true,
       })
       .replace(", ", " ")
-      .replace(" at", ",")
       .toUpperCase();
   };
 
@@ -76,29 +98,19 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
         </span>
       </div>
 
-      <div style={{ padding: "0px 20px 0 20px" }}>
+      <div style={{ borderRadius: "10px", padding: "0px 20px 0 20px" }}>
         {taskHistory
           .filter((item) => item.ts && item.task)
           .slice(0, 3)
           .map((item) => (
             <div
+              style={{ maxHeight: "50px" }}
               key={item.id}
               className="history-preview-item"
               onClick={() => handleHistorySelect(item.id)}
             >
               <div style={{ padding: "12px" }}>
-                <div style={{ marginBottom: "8px" }}>
-                  <span
-                    style={{
-                      color: "var(--vscode-descriptionForeground)",
-                      fontWeight: 500,
-                      fontSize: "0.85em",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {formatDate(item.ts)}
-                  </span>
-                </div>
+
                 <div
                   style={{
                     fontSize: "var(--vscode-font-size)",
@@ -113,6 +125,17 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
                     overflowWrap: "anywhere",
                   }}
                 >
+                  <span
+                    style={{
+                      color: "var(--vscode-foreground)",
+                      fontWeight: 500,
+                      fontSize: "0.85em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {formatDate(item.ts)}
+                  </span>
+                  {" • "}
                   {item.task}
                 </div>
                 <div
@@ -152,7 +175,6 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
           }}
         >
           <VSCodeButton
-            appearance="icon"
             onClick={() => showHistoryView()}
             style={{
               opacity: 0.9,
@@ -164,7 +186,7 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
                 color: "var(--vscode-descriptionForeground)",
               }}
             >
-              View all history
+              <FaHistory /> View all history
             </div>
           </VSCodeButton>
         </div>

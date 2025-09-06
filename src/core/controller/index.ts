@@ -132,20 +132,47 @@ export class Controller {
   - https://github.com/microsoft/vscode-extension-samples/blob/main/webview-sample/src/extension.ts
   */
   async dispose() {
-    this.outputChannel.appendLine("Disposing ValorIDEProvider...");
-    await this.clearTask();
-    this.outputChannel.appendLine("Cleared task");
+    this.outputChannel.appendLine("Starting ValorIDEProvider disposal...");
+    
+    try {
+      await this.clearTask();
+      this.outputChannel.appendLine("Task cleared successfully");
+    } catch (error) {
+      this.outputChannel.appendLine(`Error clearing task: ${error}`);
+      console.error("Error clearing task:", error);
+    }
+
+    // Dispose all disposables with individual error handling
     while (this.disposables.length) {
-      const x = this.disposables.pop();
-      if (x) {
-        x.dispose();
+      const disposable = this.disposables.pop();
+      if (disposable) {
+        try {
+          disposable.dispose();
+        } catch (error) {
+          this.outputChannel.appendLine(`Error disposing resource: ${error}`);
+          console.error("Error disposing resource:", error);
+        }
       }
     }
-    this.workspaceTracker.dispose();
-    this.mcpHub.dispose();
-    this.outputChannel.appendLine("Disposed all disposables");
 
-    console.error("Controller disposed");
+    try {
+      this.workspaceTracker.dispose();
+      this.outputChannel.appendLine("Workspace tracker disposed successfully");
+    } catch (error) {
+      this.outputChannel.appendLine(`Error disposing workspace tracker: ${error}`);
+      console.error("Error disposing workspace tracker:", error);
+    }
+
+    try {
+      await this.mcpHub.dispose();
+      this.outputChannel.appendLine("MCP hub disposed successfully");
+    } catch (error) {
+      this.outputChannel.appendLine(`Error disposing MCP hub: ${error}`);
+      console.error("Error disposing MCP hub:", error);
+    }
+
+    this.outputChannel.appendLine("ValorIDEProvider disposal completed");
+    console.log("Controller disposed successfully");
   }
 
   // Auth methods

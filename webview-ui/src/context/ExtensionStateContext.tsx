@@ -29,6 +29,7 @@ import { DEFAULT_BROWSER_SETTINGS } from "@shared/BrowserSettings";
 import { DEFAULT_CHAT_SETTINGS } from "@shared/ChatSettings";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
 import { Principal } from "@/thor/model";
+import { Application } from "@/thor/model/Application";
 
 interface ExtensionStateContextType extends ExtensionState {
   didHydrateState: boolean;
@@ -52,7 +53,12 @@ interface ExtensionStateContextType extends ExtensionState {
   isLoggedIn?: boolean;
 
   jwtToken?: string;
-  authenticatedPrincipal?: Principal;
+  authenticatedUser?: Principal;
+
+  // Applications state
+  applications: Application[];
+  applicationsLoading: boolean;
+  applicationsError: any;
 
   // MCP loading and error states
   mcpServersLoading: boolean;
@@ -113,9 +119,14 @@ export const ExtensionStateContextProvider: React.FC<{
   const [mcpMarketplaceCatalogError, setMcpMarketplaceCatalogError] =
     useState<any>(null);
 
+  // Applications state
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [applicationsLoading, setApplicationsLoading] = useState(false);
+  const [applicationsError, setApplicationsError] = useState<any>(null);
+
   // Authentication state - prioritize backend state over sessionStorage
   const [jwtToken, setJwtToken] = useState<string | undefined>();
-  const [authenticatedPrincipal, setAuthenticatedPrincipal] = useState<
+  const [authenticatedUser, setAuthenticatedUser] = useState<
     Principal | undefined
   >();
 
@@ -144,16 +155,20 @@ export const ExtensionStateContextProvider: React.FC<{
 
           // Update authentication state from backend
           if (incoming.authenticatedPrincipal) {
-            setAuthenticatedPrincipal(incoming.authenticatedPrincipal);
+            const principal =
+              typeof incoming.authenticatedPrincipal === "string"
+                ? JSON.parse(incoming.authenticatedPrincipal)
+                : incoming.authenticatedPrincipal;
+            setAuthenticatedUser(principal);
             // Sync with sessionStorage for ThorAPI requests
             sessionStorage.setItem(
-              "authenticatedPrincipal",
-              JSON.stringify(incoming.authenticatedPrincipal),
+              "authenticatedUser",
+              JSON.stringify(principal),
             );
           } else {
             // Clear authentication state if backend says user is not authenticated
-            setAuthenticatedPrincipal(undefined);
-            sessionStorage.removeItem("authenticatedPrincipal");
+            setAuthenticatedUser(undefined);
+            sessionStorage.removeItem("authenticatedUser");
           }
 
           // Handle JWT token from backend state
@@ -282,23 +297,21 @@ export const ExtensionStateContextProvider: React.FC<{
           setJwtToken(token);
         }
 
-        // Store authenticated principal in sessionStorage
+        // Store authenticated user in sessionStorage
         if (authenticatedPrincipalStr) {
           sessionStorage.setItem(
-            "authenticatedPrincipal",
+            "authenticatedUser",
             authenticatedPrincipalStr,
           );
-          const principal = JSON.parse(authenticatedPrincipalStr);
-          setAuthenticatedPrincipal(principal);
+          const user = JSON.parse(authenticatedPrincipalStr);
+          setAuthenticatedUser(user);
 
           setState((prevState) => ({
             ...prevState,
             // Store the JWT token
             jwtToken: token,
-            // Store the authenticated principal object
-            authenticatedPrincipal: principal,
             // Also update userInfo for backward compatibility
-            userInfo: principal,
+            userInfo: user,
             isLoggedIn: true,
           }));
         } else {
@@ -308,6 +321,16 @@ export const ExtensionStateContextProvider: React.FC<{
             jwtToken: token,
             isLoggedIn: true,
           }));
+        }
+        break;
+      }
+      case "LIST_APPLICATION_SUCCESS": {
+        // Handle applications list from extension
+        const apps = (message as any).payload;
+        if (apps && Array.isArray(apps)) {
+          setApplications(apps);
+          setApplicationsLoading(false);
+          setApplicationsError(null);
         }
         break;
       }
@@ -322,19 +345,19 @@ export const ExtensionStateContextProvider: React.FC<{
     // Initialize authentication state from sessionStorage as fallback
     // but prioritize backend state when it arrives
     const existingToken = sessionStorage.getItem("jwtToken");
-    const existingPrincipal = sessionStorage.getItem("authenticatedPrincipal");
+    const existingUser = sessionStorage.getItem("authenticatedUser");
 
     if (existingToken) {
       setJwtToken(existingToken);
     }
 
-    if (existingPrincipal) {
+    if (existingUser) {
       try {
-        const principal = JSON.parse(existingPrincipal);
-        setAuthenticatedPrincipal(principal);
+        const user = JSON.parse(existingUser);
+        setAuthenticatedUser(user);
       } catch (error) {
-        console.error("Failed to parse stored authenticated principal:", error);
-        sessionStorage.removeItem("authenticatedPrincipal");
+        console.error("Failed to parse stored authenticated user:", error);
+        sessionStorage.removeItem("authenticatedUser");
       }
     }
   }, []);
@@ -347,9 +370,9 @@ export const ExtensionStateContextProvider: React.FC<{
 
   // Determine authentication status - prioritize backend state, fallback to local state
   const isAuthenticated =
-    state.isLoggedIn ?? !!(jwtToken || authenticatedPrincipal);
+    state.isLoggedIn ?? !!(jwtToken || authenticatedUser);
   const currentUser =
-    state.authenticatedPrincipal || authenticatedPrincipal || state.userInfo;
+    authenticatedUser || state.userInfo;
   const currentToken = state.jwtToken || jwtToken;
 
   const contextValue: ExtensionStateContextType = {
@@ -368,9 +391,13 @@ export const ExtensionStateContextProvider: React.FC<{
     localValorIDERulesToggles: state.localValorIDERulesToggles || {},
     // Use computed authentication state
     jwtToken: currentToken,
-    authenticatedPrincipal: currentUser,
+    authenticatedUser: currentUser,
     userInfo: currentUser,
     isLoggedIn: isAuthenticated,
+    // Applications state
+    applications,
+    applicationsLoading,
+    applicationsError,
     setApiConfiguration: (value) =>
       setState((prevState) => ({
         ...prevState,

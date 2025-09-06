@@ -20,26 +20,30 @@ import {
   VSCodeLink,
 } from "@vscode/webview-ui-toolkit/react";
 import { vscode } from "@/utils/vscode";
-import { FaRecycle } from "react-icons/fa";
+import { FaBackward, FaRecycle } from "react-icons/fa";
 import CoolButton from "../CoolButton";
+import { Card } from "react-bootstrap";
+import { Login } from "@thor/model";
+import { FormikHelpers } from "formik";
+import { useLoginUserMutation } from "../../redux/services/AuthService";
 
 type AccountViewProps = {
   onDone: () => void;
 };
 
 const AccountView = ({ onDone }: AccountViewProps) => {
-  const { userInfo, authenticatedPrincipal, isLoggedIn, jwtToken } =
+  const { userInfo, authenticatedUser, isLoggedIn, jwtToken } =
     useExtensionState();
 
   // Determine authenticated status
   const isAuthenticated = Boolean(
-    isLoggedIn || authenticatedPrincipal || userInfo || jwtToken,
+    isLoggedIn || authenticatedUser || userInfo || jwtToken,
   );
 
   // Default to login tab when unauthenticated, otherwise account
-  const [activeTab, setActiveTab] = useState<"login" | "account" | "applications" | "generatedFiles">(
-    isAuthenticated ? "account" : "login",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "login" | "account" | "applications" | "generatedFiles"
+  >(isAuthenticated ? "account" : "login");
 
   const {
     data: balanceData,
@@ -50,20 +54,42 @@ const AccountView = ({ onDone }: AccountViewProps) => {
     // skip: !isAuthenticated,
   });
 
-  const { data: usageData, isLoading: isUsageLoading } =
+  const { data: usageData, isLoading: isUsageLoading, refetch: refetchUsage } =
     useGetUsageTransactionsQuery(undefined, {
       skip: !isAuthenticated,
     });
-  const { data: paymentsData, isLoading: isPaymentsLoading } =
-    useGetPaymentTransactionsQuery(undefined, {
-      skip: !isAuthenticated,
-    });
+  const {
+    data: paymentsData,
+    isLoading: isPaymentsLoading,
+    refetch: refetchPayments,
+  } = useGetPaymentTransactionsQuery(undefined, {
+    skip: !isAuthenticated,
+  });
 
   // Combined loading state
   const loading = isBalanceLoading || isUsageLoading || isPaymentsLoading;
 
-  const handleLogin = () => {
-    vscode.postMessage({ type: "accountLoginClicked" });
+  const [loginUser] = useLoginUserMutation();
+
+  const handleLogin = async (
+    values: Login,
+    { setSubmitting }: FormikHelpers<Login>,
+  ) => {
+    try {
+      const result = await loginUser(values).unwrap();
+      if (result.token) {
+        sessionStorage.setItem("jwtToken", result.token);
+        sessionStorage.setItem(
+          "authenticatedUser",
+          JSON.stringify(result.user),
+        );
+        setActiveTab("account");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleLogout = () => {
@@ -82,54 +108,90 @@ const AccountView = ({ onDone }: AccountViewProps) => {
   }, []);
 
   return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+    <div
+      style={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        margin: "1em",
+        padding: ".5em",
+      }}
+    >
       {/* Tab navigation */}
-      <div className="flex gap-2 mb-4">
-        <VSCodeButton
-          appearance={activeTab === "login" ? "primary" : "secondary"}
-          onClick={() => setActiveTab("login")}
-        >
-          Login
-        </VSCodeButton>
-        <VSCodeButton
-          appearance={activeTab === "account" ? "primary" : "secondary"}
-          onClick={() => setActiveTab("account")}
-          disabled={false}
-        >
-          Account
-        </VSCodeButton>
-        <VSCodeButton
-          appearance={activeTab === "applications" ? "primary" : "secondary"}
-          onClick={() => setActiveTab("applications")}
-          disabled={false}
-        >
-          Applications
-        </VSCodeButton>
-        <VSCodeButton
-          appearance={activeTab === "generatedFiles" ? "primary" : "secondary"}
-          onClick={() => setActiveTab("generatedFiles")}
-          disabled={false}
-        >
-          Generated Files
-        </VSCodeButton>
+      <div className="scroll-tabs-container">
+        <div className="nav-tabs scroll-tabs">
+          <div
+            className={`nav-link ${activeTab === "login" ? "active" : ""}`}
+            onClick={() => setActiveTab("login")}
+            style={{ cursor: "pointer" }}
+          >
+            Login
+          </div>
+          <div
+            className={`nav-link ${activeTab === "account" ? "active" : ""}`}
+            onClick={() => setActiveTab("account")}
+            style={{ cursor: "pointer" }}
+          >
+            Account
+          </div>
+          <div
+            className={`nav-link ${activeTab === "applications" ? "active" : ""}`}
+            onClick={() => setActiveTab("applications")}
+            style={{ cursor: "pointer" }}
+          >
+            Applications
+          </div>
+          <div
+            className={`nav-link ${activeTab === "generatedFiles" ? "active" : ""}`}
+            onClick={() => setActiveTab("generatedFiles")}
+            style={{ cursor: "pointer" }}
+          >
+            Generated Files
+          </div>
+        </div>
       </div>
 
       {/* Tab content */}
       {activeTab === "login" ? (
-        <div className="flex justify-center items-center flex-grow pr-3">
-          {!isLoggedIn && (
-            <Form isLoggedIn={isLoggedIn} />
+        <div className="flex justify-center">
+          {authenticatedUser === null && (
+            <Card>
+              <Card.Header>
+                <h3>Login to Access Your Account</h3>
+              </Card.Header>
+              <Card.Body>
+                <Form onSubmit={handleLogin} isLoggedIn={isLoggedIn} />
+              </Card.Body>
+              <Card.Footer>
+                <div
+                  style={{ fontSize: "0.85em", color: "var(--vscode-descriptionForeground)" }}
+                >
+                  Don't have an account?{" "}
+                  <VSCodeLink
+                    href="https://valkyrlabs.com/signup"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Signup Now
+                  </VSCodeLink>
+                  Forgot your username or password?{" "}
+                  <VSCodeLink
+                    href="https://valkyrlabs.com/restore-access"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Restore Access
+                  </VSCodeLink>
+                </div>
+              </Card.Footer>
+            </Card>
           )}
-          {isLoggedIn && (
-            <CoolButton>Log Out</CoolButton>
-          )}
-
+          {isLoggedIn && <CoolButton onClick={handleLogout}>Log Out</CoolButton>}
         </div>
       ) : activeTab === "applications" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
           {/* Applications List */}
           <div style={{ marginBottom: "32px" }}>
-
             {/* OpenAPI File Picker */}
             <div style={{ marginBottom: "32px" }}>
               <OpenAPIFilePicker onFileSelected={handleOpenAPIFileSelected} />
@@ -167,7 +229,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                 onClick={handleLogout}
                 className="w-full min-[225px]:w-1/2"
               >
-                Log out
+                <FaBackward />
               </VSCodeButton>
             </div>
 
@@ -185,17 +247,22 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                   <>
                     <span>$</span>
                     <CountUp
-                      end={balanceData?.[0]?.currentBalance || .10}
+                      end={balanceData?.[0]?.currentBalance || 0.1}
                       duration={0.66}
                       decimals={2}
                     />
                     <VSCodeButton
                       appearance="icon"
                       className="mt-1"
-                      onClick={() => refetchBalance()}
+                      onClick={() => {
+                        refetchBalance();
+                        if (isAuthenticated) {
+                          refetchUsage();
+                          refetchPayments();
+                        }
+                      }}
                     >
                       <FaRecycle />
-
                     </VSCodeButton>
                   </>
                 )}

@@ -4,14 +4,14 @@ import {
   addMessage,
   setConnected,
 } from "../../components/ServerConsole/websocketSlice";
-import { WEBSOCKET_URL } from "../../websocket/websocket";
+import { WEBSOCKET_URL, isValidWsUrl } from "../../websocket/websocket";
 
 import WebSocketState from "../services/websocketSlice";
 
 const socketUrl = WEBSOCKET_URL;
 
+// Initialize client without brokerURL; configure on connect with validation.
 const stompClient = new StompJs.Client({
-  brokerURL: socketUrl,
   reconnectDelay: 5000,
   onConnect: () => {
     console.log("Connected to WebSocket");
@@ -35,14 +35,25 @@ export const websocketMiddleware: AppMiddleware =
   (store) => (next) => (action: any) => {
     switch (action.type) {
       case "WEBSOCKET_CONNECT":
+        if (!isValidWsUrl(socketUrl)) {
+          console.warn(
+            "WEBSOCKET_CONNECT skipped: REACT_APP_WS_BASE_PATH is missing or invalid.",
+          );
+          return next(action);
+        }
+
         stompClient.configure({
           brokerURL: socketUrl,
           reconnectDelay: 5000,
           onConnect: () => {
             store.dispatch(setConnected(true));
             stompClient.subscribe("/topic/messages", (message) => {
-              const parsedMessage = JSON.parse(message.body);
-              store.dispatch(addMessage(parsedMessage));
+              try {
+                const parsedMessage = JSON.parse(message.body);
+                store.dispatch(addMessage(parsedMessage));
+              } catch (e) {
+                console.error("STOMP message parse error:", e);
+              }
             });
           },
           onDisconnect: () => {

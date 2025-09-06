@@ -120,9 +120,27 @@
 
 .file-item-name {
   flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-x: auto;
+  overflow-y: hidden;
   white-space: nowrap;
+  min-width: 0;
+}
+
+.file-item-name::-webkit-scrollbar {
+  height: 4px;
+}
+
+.file-item-name::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.file-item-name::-webkit-scrollbar-thumb {
+  background: var(--vscode-scrollbarSlider-background);
+  border-radius: 2px;
+}
+
+.file-item-name::-webkit-scrollbar-thumb:hover {
+  background: var(--vscode-scrollbarSlider-hoverBackground);
 }
 
 .file-item-new-badge {

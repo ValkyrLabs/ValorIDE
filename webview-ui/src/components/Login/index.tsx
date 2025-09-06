@@ -2,6 +2,7 @@
  * Login Form
  */
 
+import React, { useState } from "react";
 import { Card, Col, Nav, Row } from "react-bootstrap";
 import { FaHandPointUp } from "react-icons/fa";
 import { FiCalendar, FiLock, FiUserCheck, FiUserPlus } from "react-icons/fi";
@@ -20,6 +21,20 @@ const initialUser: Principal = {
 };
 
 const Login = (props) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Simulate login success
+  const handleLogin = (values, helpers) => {
+    setIsLoggedIn(true);
+    if (helpers && typeof helpers.setSubmitting === "function") {
+      helpers.setSubmitting(false);
+    }
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
+
   return (
     <div style={{ margin: "2em" }}>
       <Row>
@@ -43,12 +58,20 @@ const Login = (props) => {
           <Card style={{ padding: "1em", marginBottom: "3em" }}>
             <Card.Header>
               <h4>
-                <FiUserCheck size={30} /> Login Now
+                <FiUserCheck size={30} /> {isLoggedIn ? "Logout" : "Login Now"}
               </h4>
-              <h5>Sign into your Valkyr Labs account.</h5>
+              <h5>
+                {isLoggedIn
+                  ? "You are logged in. You can logout or switch users below."
+                  : "Sign into your Valkyr Labs account."}
+              </h5>
             </Card.Header>
             <Card.Body>
-              <Form />
+              <Form
+                onSubmit={handleLogin}
+                isLoggedIn={isLoggedIn}
+                onLogout={handleLogout}
+              />
             </Card.Body>
           </Card>
         </Col>

@@ -63,7 +63,8 @@ export interface ExtensionMessage {
     | "streamToThorapiResult"
     | "openFileExplorerResult"
     | "workspaceFiles"
-    | "contentData";
+    | "contentData"
+    | "LIST_APPLICATION_SUCCESS";
   text?: string;
   path?: string; // Used for openFileExplorerResult
   paths?: (string | null)[]; // Used for relativePathsResponse

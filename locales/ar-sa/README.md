@@ -24,7 +24,7 @@
 <a href="https://github.com/valkyrlabs/valoride/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop" target="_blank"><strong>طلبات الميزات</strong></a>
 </td>
 <td align="center">
-<a href="https://docs.valkyrlabs.com/v1/getting-started/getting-started-new-coders" target="_blank"><strong>البدء</strong></a>
+<a href="https://valkyrlabs.com/v1/getting-started/getting-started-new-coders" target="_blank"><strong>البدء</strong></a>
 </td>
 </tbody>
 </table>
@@ -170,7 +170,6 @@
    ```
 
    سيطلب منك تحديد:
-
    - نوع التغيير (رئيسي، ثانوي، إصلاح)
      - `رئيسي` → تغييرات غير متوافقة (1.0.0 → 2.0.0)
      - `ثانوي` → ميزات جديدة (1.0.0 → 1.1.0)

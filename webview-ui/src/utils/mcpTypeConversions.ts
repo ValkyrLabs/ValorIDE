@@ -253,6 +253,31 @@ export function convertThorMcpServersToShared(
 }
 
 /**
+ * Convert array of ThorAPI McpMarketplaceItems to shared MCP types with error handling
+ */
+export function convertThorMcpMarketplaceItemsToShared(
+  thorItems: ThorMcpMarketplaceItem[] | null | undefined,
+): SharedMcpMarketplaceItem[] {
+  if (!thorItems || !Array.isArray(thorItems)) {
+    console.warn(
+      "Attempted to convert null/undefined/invalid ThorMcpMarketplaceItem array",
+    );
+    return [];
+  }
+
+  try {
+    return thorItems.map(convertThorMcpMarketplaceItemToShared).filter(Boolean);
+  } catch (error) {
+    console.error(
+      "Failed to convert ThorMcpMarketplaceItem array to SharedMcpMarketplaceItem array:",
+      error,
+      thorItems,
+    );
+    return [];
+  }
+}
+
+/**
  * Convert array of ThorAPI McpMarketplaceCatalogs to shared MCP types with error handling
  */
 export function convertThorMcpMarketplaceCatalogsToShared(
