@@ -29,6 +29,7 @@ import { DEFAULT_BROWSER_SETTINGS } from "@shared/BrowserSettings";
 import { DEFAULT_CHAT_SETTINGS } from "@shared/ChatSettings";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
 import { Principal } from "@/thor/model";
+import { Application } from "@/thor/model/Application";
 
 interface ExtensionStateContextType extends ExtensionState {
   didHydrateState: boolean;
@@ -53,6 +54,11 @@ interface ExtensionStateContextType extends ExtensionState {
 
   jwtToken?: string;
   authenticatedPrincipal?: Principal;
+
+  // Applications state
+  applications: Application[];
+  applicationsLoading: boolean;
+  applicationsError: any;
 
   // MCP loading and error states
   mcpServersLoading: boolean;
@@ -112,6 +118,11 @@ export const ExtensionStateContextProvider: React.FC<{
     useState(false);
   const [mcpMarketplaceCatalogError, setMcpMarketplaceCatalogError] =
     useState<any>(null);
+
+  // Applications state
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [applicationsLoading, setApplicationsLoading] = useState(false);
+  const [applicationsError, setApplicationsError] = useState<any>(null);
 
   // Authentication state - prioritize backend state over sessionStorage
   const [jwtToken, setJwtToken] = useState<string | undefined>();
@@ -311,6 +322,16 @@ export const ExtensionStateContextProvider: React.FC<{
         }
         break;
       }
+      case "LIST_APPLICATION_SUCCESS": {
+        // Handle applications list from extension
+        const apps = (message as any).payload;
+        if (apps && Array.isArray(apps)) {
+          setApplications(apps);
+          setApplicationsLoading(false);
+          setApplicationsError(null);
+        }
+        break;
+      }
     }
   }, []);
 
@@ -371,6 +392,10 @@ export const ExtensionStateContextProvider: React.FC<{
     authenticatedPrincipal: currentUser,
     userInfo: currentUser,
     isLoggedIn: isAuthenticated,
+    // Applications state
+    applications,
+    applicationsLoading,
+    applicationsError,
     setApiConfiguration: (value) =>
       setState((prevState) => ({
         ...prevState,

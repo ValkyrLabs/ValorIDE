@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.85",
+  "version": "3.20.155",
   "icon": "assets/icons/icon.png",
   "galleryBanner": {
     "color": "#617A91",
@@ -44,24 +44,35 @@
     "ai",
     "llama"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:valoride-dev.SidebarProvider",
+    "onViewContainer:valoride-activitybar",
+    "onCommand:valoride.openInNewTab",
+    "onCommand:valoride.diagnostics",
+    "onCommand:valoride.fixLayout"
+  ],
   "main": "./dist/extension.js",
+  "extensionKind": [
+    "ui",
+    "workspace"
+  ],
   "contributes": {
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "valoride-dev-ActivityBar",
+          "id": "valoride-activitybar",
           "title": "Valor IDE",
           "icon": "assets/icons/icon.svg"
         }
       ]
     },
     "views": {
-      "valoride-dev-ActivityBar": [
+      "valoride-activitybar": [
         {
           "type": "webview",
           "id": "valoride-dev.SidebarProvider",
-          "name": ""
+          "name": "ValorIDE"
         }
       ]
     },
@@ -100,6 +111,16 @@
         "command": "valoride.openInNewTab",
         "title": "Open In New Tab",
         "category": "ValorIDE"
+      },
+      {
+        "command": "valoride.diagnostics",
+        "title": "Show Diagnostics",
+        "category": "ValorIDE"
+      },
+      {
+        "command": "valoride.fixLayout",
+        "title": "Fix Layout (Reset View Locations)",
+        "category": "ValorIDE"
       }
     ],
     "menus": {
@@ -133,6 +154,38 @@
           "command": "valoride.accountButtonClicked",
           "group": "navigation@6",
           "when": "view == valoride-dev.SidebarProvider"
+        },
+        {
+          "command": "valoride.fixLayout",
+          "group": "navigation@7",
+          "when": "view == valoride-dev.SidebarProvider"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "valoride.plusButtonClicked",
+          "group": "navigation@1",
+          "when": "valoride.isValorIDETab"
+        },
+        {
+          "command": "valoride.mcpButtonClicked",
+          "group": "navigation@2",
+          "when": "valoride.isValorIDETab"
+        },
+        {
+          "command": "valoride.historyButtonClicked",
+          "group": "navigation@3",
+          "when": "valoride.isValorIDETab"
+        },
+        {
+          "command": "valoride.settingsButtonClicked",
+          "group": "navigation@4",
+          "when": "valoride.isValorIDETab"
+        },
+        {
+          "command": "valoride.accountButtonClicked",
+          "group": "navigation@5",
+          "when": "valoride.isValorIDETab"
         }
       ]
     },
@@ -197,6 +250,8 @@
     }
   },
   "scripts": {
+    "package:staging": "yarn run build:webview:staging && yarn run check-types && yarn run lint && node esbuild.js --production",
+    "package:prod": "yarn run build:webview:prod && yarn run check-types && yarn run lint && node esbuild.js --production",
     "v": "node increment-version.js && vsce package",
     "vscode:prepublish": "yarn run package",
     "compile": "yarn run check-types && yarn run lint && node esbuild.js",

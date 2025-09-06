@@ -66,36 +66,36 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
   }, [isTaskExpanded]);
 
   /*
-	When dealing with event listeners in React components that depend on state variables, we face a challenge. We want our listener to always use the most up-to-date version of a callback function that relies on current state, but we don't want to constantly add and remove event listeners as that function updates. This scenario often arises with resize listeners or other window events. Simply adding the listener in a useEffect with an empty dependency array risks using stale state, while including the callback in the dependencies can lead to unnecessary re-registrations of the listener. There are react hook libraries that provide a elegant solution to this problem by utilizing the useRef hook to maintain a reference to the latest callback function without triggering re-renders or effect re-runs. This approach ensures that our event listener always has access to the most current state while minimizing performance overhead and potential memory leaks from multiple listener registrations. 
-	Sources
-	- https://usehooks-ts.com/react-hook/use-event-listener
-	- https://streamich.github.io/react-use/?path=/story/sensors-useevent--docs
-	- https://github.com/streamich/react-use/blob/master/src/useEvent.ts
-	- https://stackoverflow.com/questions/55565444/how-to-register-event-with-useeffect-hooks
+  When dealing with event listeners in React components that depend on state variables, we face a challenge. We want our listener to always use the most up-to-date version of a callback function that relies on current state, but we don't want to constantly add and remove event listeners as that function updates. This scenario often arises with resize listeners or other window events. Simply adding the listener in a useEffect with an empty dependency array risks using stale state, while including the callback in the dependencies can lead to unnecessary re-registrations of the listener. There are react hook libraries that provide a elegant solution to this problem by utilizing the useRef hook to maintain a reference to the latest callback function without triggering re-renders or effect re-runs. This approach ensures that our event listener always has access to the most current state while minimizing performance overhead and potential memory leaks from multiple listener registrations. 
+  Sources
+  - https://usehooks-ts.com/react-hook/use-event-listener
+  - https://streamich.github.io/react-use/?path=/story/sensors-useevent--docs
+  - https://github.com/streamich/react-use/blob/master/src/useEvent.ts
+  - https://stackoverflow.com/questions/55565444/how-to-register-event-with-useeffect-hooks
 
-	Before:
+  Before:
 	
-	const updateMaxHeight = useCallback(() => {
-		if (isExpanded && textContainerRef.current) {
-			const maxHeight = window.innerHeight * (3 / 5)
-			textContainerRef.current.style.maxHeight = `${maxHeight}px`
-		}
-	}, [isExpanded])
+  const updateMaxHeight = useCallback(() => {
+    if (isExpanded && textContainerRef.current) {
+      const maxHeight = window.innerHeight * (3 / 5)
+      textContainerRef.current.style.maxHeight = `${maxHeight}px`
+    }
+  }, [isExpanded])
 
-	useEffect(() => {
-		updateMaxHeight()
-	}, [isExpanded, updateMaxHeight])
+  useEffect(() => {
+    updateMaxHeight()
+  }, [isExpanded, updateMaxHeight])
 
-	useEffect(() => {
-		window.removeEventListener("resize", updateMaxHeight)
-		window.addEventListener("resize", updateMaxHeight)
-		return () => {
-			window.removeEventListener("resize", updateMaxHeight)
-		}
-	}, [updateMaxHeight])
+  useEffect(() => {
+    window.removeEventListener("resize", updateMaxHeight)
+    window.addEventListener("resize", updateMaxHeight)
+    return () => {
+      window.removeEventListener("resize", updateMaxHeight)
+    }d
+  }, [updateMaxHeight])
 
-	After:
-	*/
+  After:
+  */
 
   const { height: windowHeight, width: windowWidth } = useWindowSize();
 
@@ -192,9 +192,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                 style={{
                   flex: 1,
                   height: "4px",
-                  backgroundColor:
-                    "color-mix(in srgb, var(--vscode-badge-foreground) 20%, transparent)",
-                  borderRadius: "2px",
+                  borderRadius: "10px",
                   overflow: "hidden",
                 }}
               >
@@ -219,9 +217,10 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
     <div style={{ padding: "10px 13px 10px 13px" }}>
       <div
         style={{
-          backgroundColor: "var(--vscode-badge-background)",
-          color: "var(--vscode-badge-foreground)",
-          borderRadius: "3px",
+          backgroundColor: "var(--vscode-sideBar-border)",
+
+
+          borderRadius: "10px",
           padding: "9px 10px 9px 14px",
           display: "flex",
           flexDirection: "column",
@@ -287,14 +286,14 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
               style={{
                 marginLeft: 10,
                 backgroundColor:
-                  "color-mix(in srgb, var(--vscode-badge-foreground) 70%, transparent)",
-                color: "var(--vscode-badge-background)",
+                  "var(--vscode-textCodeBlock-foreground)",
                 padding: "2px 4px",
                 borderRadius: "500px",
-                fontSize: "11px",
-                fontWeight: 500,
+                fontSize: "16px",
+                fontWeight: 800,
                 display: "inline-block",
                 flexShrink: 0,
+                color: "var(--vscode-foreground)",
               }}
             >
               ${totalCost?.toFixed(4)}
@@ -542,40 +541,40 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                     {checkpointTrackerErrorMessage.endsWith(
                       "disabling checkpoints.",
                     ) && (
-                      <>
-                        <a
-                          onClick={() => {
-                            vscode.postMessage({
-                              type: "openExtensionSettings",
-                              text: "enableCheckpoints",
-                            });
-                          }}
-                          style={{
-                            color: "inherit",
-                            textDecoration: "underline",
-                            cursor: "pointer",
-                          }}
-                        >
-                          disabling checkpoints.
-                        </a>
-                      </>
-                    )}
+                        <>
+                          <a
+                            onClick={() => {
+                              vscode.postMessage({
+                                type: "openExtensionSettings",
+                                text: "enableCheckpoints",
+                              });
+                            }}
+                            style={{
+                              color: "inherit",
+                              textDecoration: "underline",
+                              cursor: "pointer",
+                            }}
+                          >
+                            disabling checkpoints.
+                          </a>
+                        </>
+                      )}
                     {checkpointTrackerErrorMessage.includes(
                       "Git must be installed to use checkpoints.",
                     ) && (
-                      <>
-                        {" "}
-                        <a
-                          href="https://github.com/valkyrlabs/valoride/wiki/Installing-Git-for-Checkpoints"
-                          style={{
-                            color: "inherit",
-                            textDecoration: "underline",
-                          }}
-                        >
-                          See here for instructions.
-                        </a>
-                      </>
-                    )}
+                        <>
+                          {" "}
+                          <a
+                            href="https://github.com/valkyrlabs/valoride/wiki/Installing-Git-for-Checkpoints"
+                            style={{
+                              color: "inherit",
+                              textDecoration: "underline",
+                            }}
+                          >
+                            See here for instructions.
+                          </a>
+                        </>
+                      )}
                   </span>
                 </div>
               )}

@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import { Application } from "../../webview-ui/src/thor/model/Application";
 
-const BASE_URL = "https://valkyr.example.com"; // TODO: Replace with actual backend URL
+const BASE_URL = "https://api-0.valkyrlabs.com";
 
 export async function getApps(jwt: string): Promise<Application[]> {
   const res = await fetch(`${BASE_URL}/api/apps`, {

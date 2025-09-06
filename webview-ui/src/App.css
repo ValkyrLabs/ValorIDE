@@ -64,6 +64,27 @@ button > .nav-link:active:hover {
   color: #ff9900;
 }
 
+.history-item {
+  border-radius: 10px;
+}
+
+.history-item:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+.delete-button,
+.export-button {
+  opacity: 0;
+  pointer-events: none;
+}
+.history-item:hover .delete-button,
+.history-item:hover .export-button {
+  opacity: 1;
+  pointer-events: auto;
+}
+.history-item-highlight {
+  background-color: var(--vscode-editor-findMatchHighlightBackground);
+  color: inherit;
+}
 .quote {
   margin: 3em;
   border-left-style: solid;
@@ -74,6 +95,11 @@ button > .nav-link:active:hover {
   border-radius: 10px;
 
   text-align: right;
+}
+
+.chat-text {
+  font-size: 1.5em;
+  color: var(--text-color);
 }
 
 .textCard {
@@ -303,7 +329,6 @@ footer a:hover {
 
 .hero-section {
   height: 50vh;
-
   text-align: center;
 }
 
@@ -321,11 +346,12 @@ footer a:hover {
 }
 
 .form-control {
-  background-color: rgba(50, 50, 50, 0.8);
   margin: 0.5em;
   padding: 1em;
+  border-radius: 10px;
+  width: 80%;
+  float: right;
   /* Dark input fields for contrast */
-  color: #fff;
   /* White text for readability */
 }
 
@@ -489,7 +515,7 @@ footer a:hover {
 }
 
 .blockquote-footer::before {
-  content: "— ";
+  content: "— ";
 }
 
 .menuTextContent a:hover {
@@ -640,12 +666,15 @@ footer a:hover {
 }
 
 .scroll-tabs-container {
+  display: flex;
+  margin-bottom: 16px;
   max-height: 80px;
   overflow: hidden;
   overflow-y: scroll;
 }
 
 .scroll-tabs {
+  display: flex;
   max-height: 80px;
   min-width: 15000px;
   flex-direction: row;
@@ -1175,4 +1204,77 @@ label {
     width: auto;
     min-width: 80px;
   }
+}
+
+.nav-link {
+  padding: 8px 16px;
+  margin: 0 2px;
+}
+
+.nav-link {
+  padding: 8px 16px;
+  margin: 0 2px;
+  border-radius: 6px;
+  background-color: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  border: 1px solid var(--vscode-button-border);
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  background-color: var(--vscode-button-hoverBackground);
+  color: var(--vscode-button-foreground);
+  transform: translateY(-1px);
+}
+
+.nav-link.active {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border-color: var(--vscode-focusBorder);
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link.active:hover {
+  background-color: var(--vscode-button-hoverBackground);
+}
+
+/* Fix for missing tabs - simple visible styling */
+.nav-tabs .nav-link {
+  display: inline-block;
+  padding: 8px 16px;
+  margin: 0 4px;
+  background-color: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  border: 1px solid var(--vscode-button-border);
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.nav-tabs .nav-link:hover {
+  background-color: var(--vscode-button-hoverBackground);
+  color: var(--vscode-button-foreground);
+}
+
+.nav-tabs .nav-link.active {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border-color: var(--vscode-focusBorder);
+  font-weight: 600;
+}
+
+.scroll-tabs-container {
+  display: flex;
+  margin-bottom: 16px;
+}
+
+.nav-tabs.scroll-tabs {
+  display: flex;
+  gap: 4px;
+  border: none;
 }

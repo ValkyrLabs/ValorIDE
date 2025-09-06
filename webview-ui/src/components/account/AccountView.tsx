@@ -22,6 +22,7 @@ import {
 import { vscode } from "@/utils/vscode";
 import { FaRecycle } from "react-icons/fa";
 import CoolButton from "../CoolButton";
+import { Card } from "react-bootstrap";
 
 type AccountViewProps = {
   onDone: () => void;
@@ -50,11 +51,11 @@ const AccountView = ({ onDone }: AccountViewProps) => {
     // skip: !isAuthenticated,
   });
 
-  const { data: usageData, isLoading: isUsageLoading } =
+  const { data: usageData, isLoading: isUsageLoading, refetch: refetchUsage } =
     useGetUsageTransactionsQuery(undefined, {
       skip: !isAuthenticated,
     });
-  const { data: paymentsData, isLoading: isPaymentsLoading } =
+  const { data: paymentsData, isLoading: isPaymentsLoading, refetch: refetchPayments } =
     useGetPaymentTransactionsQuery(undefined, {
       skip: !isAuthenticated,
     });
@@ -82,43 +83,73 @@ const AccountView = ({ onDone }: AccountViewProps) => {
   }, []);
 
   return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", margin: "1em", padding: ".5em" }}>
       {/* Tab navigation */}
-      <div className="flex gap-2 mb-4">
-        <VSCodeButton
-          appearance={activeTab === "login" ? "primary" : "secondary"}
-          onClick={() => setActiveTab("login")}
-        >
-          Login
-        </VSCodeButton>
-        <VSCodeButton
-          appearance={activeTab === "account" ? "primary" : "secondary"}
-          onClick={() => setActiveTab("account")}
-          disabled={false}
-        >
-          Account
-        </VSCodeButton>
-        <VSCodeButton
-          appearance={activeTab === "applications" ? "primary" : "secondary"}
-          onClick={() => setActiveTab("applications")}
-          disabled={false}
-        >
-          Applications
-        </VSCodeButton>
-        <VSCodeButton
-          appearance={activeTab === "generatedFiles" ? "primary" : "secondary"}
-          onClick={() => setActiveTab("generatedFiles")}
-          disabled={false}
-        >
-          Generated Files
-        </VSCodeButton>
+      <div className="scroll-tabs-container">
+        <div className="nav-tabs scroll-tabs">
+          <div 
+            className={`nav-link ${activeTab === "login" ? "active" : ""}`}
+            onClick={() => setActiveTab("login")}
+            style={{ cursor: "pointer" }}
+          >
+            Login
+          </div>
+          <div 
+            className={`nav-link ${activeTab === "account" ? "active" : ""}`}
+            onClick={() => setActiveTab("account")}
+            style={{ cursor: "pointer" }}
+          >
+            Account
+          </div>
+          <div 
+            className={`nav-link ${activeTab === "applications" ? "active" : ""}`}
+            onClick={() => setActiveTab("applications")}
+            style={{ cursor: "pointer" }}
+          >
+            Applications
+          </div>
+          <div 
+            className={`nav-link ${activeTab === "generatedFiles" ? "active" : ""}`}
+            onClick={() => setActiveTab("generatedFiles")}
+            style={{ cursor: "pointer" }}
+          >
+            Generated Files
+          </div>
+        </div>
       </div>
 
       {/* Tab content */}
       {activeTab === "login" ? (
-        <div className="flex justify-center items-center flex-grow pr-3">
-          {!isLoggedIn && (
-            <Form isLoggedIn={isLoggedIn} />
+        <div className="flex justify-center">
+          {authenticatedPrincipal === null && (
+            <Card>
+              <Card.Header>
+                <h3>Login to Access Your Account</h3>
+              </Card.Header>
+              <Card.Body>
+                <Form isLoggedIn={isLoggedIn} />
+              </Card.Body>
+              <Card.Footer>
+                <div style={{ fontSize: "0.85em", color: "var(--vscode-descriptionForeground)" }}>
+                  Don't have an account?{" "}
+                  <VSCodeLink
+                    href="https://valkyrlabs.com/signup"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Signup Now
+                  </VSCodeLink>
+                  Forgot your username or password?{" "}
+                  <VSCodeLink
+                    href="https://valkyrlabs.com/restore-access"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Restore Access
+                  </VSCodeLink>
+                </div>
+              </Card.Footer>
+            </Card>
           )}
           {isLoggedIn && (
             <CoolButton>Log Out</CoolButton>
@@ -192,7 +223,13 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                     <VSCodeButton
                       appearance="icon"
                       className="mt-1"
-                      onClick={() => refetchBalance()}
+                      onClick={() => {
+                        refetchBalance();
+                        if (isAuthenticated) {
+                          refetchUsage();
+                          refetchPayments();
+                        }
+                      }}
                     >
                       <FaRecycle />
 

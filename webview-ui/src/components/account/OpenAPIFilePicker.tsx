@@ -30,7 +30,7 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
       // Validate file type
       const validExtensions = [".yaml", ".yml", ".json"];
       const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf("."));
-      
+
       if (!validExtensions.includes(fileExtension)) {
         setUploadStatus({
           type: "error",
@@ -54,7 +54,7 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
     try {
       // Read file content
       const fileContent = await selectedFile.text();
-      
+
       // Validate that it's a valid OpenAPI spec (basic validation)
       let parsedContent;
       try {
@@ -103,10 +103,10 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
     <div className="openapi-file-picker">
       <div className="file-picker-header" style={{ marginBottom: "16px" }}>
         <h3>Upload OpenAPI Specification</h3>
-        <p style={{ 
-          fontSize: "14px", 
+        <p style={{
+          fontSize: "14px",
           color: "var(--vscode-descriptionForeground)",
-          marginTop: "8px" 
+          marginTop: "8px"
         }}>
           Select a local OpenAPI spec file (.yaml, .yml, or .json) to upload to the generator
         </p>
@@ -129,7 +129,7 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
           >
             Select File
           </VSCodeButton>
-          
+
           {selectedFile && (
             <>
               <VSCodeButton
@@ -146,7 +146,7 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
                   "Upload"
                 )}
               </VSCodeButton>
-              
+
               <VSCodeButton
                 appearance="secondary"
                 onClick={handleClear}
@@ -180,14 +180,15 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
 
       {uploadStatus.type && (
         <div className={`upload-status status-${uploadStatus.type}`} style={{
-          padding: "12px",
+          padding: "1em",
+          margin: "1em",
           border: `1px solid ${uploadStatus.type === "success" ? "var(--vscode-charts-green)" : "var(--vscode-errorForeground)"}`,
-          borderRadius: "4px",
-          backgroundColor: uploadStatus.type === "success" 
-            ? "var(--vscode-terminal-ansiGreen)" 
+          borderRadius: 10,
+          backgroundColor: uploadStatus.type === "success"
+            ? "var(--vscode-badge-background)"
             : "var(--vscode-inputValidation-errorBackground)",
-          color: uploadStatus.type === "success" 
-            ? "var(--vscode-charts-green)" 
+          color: uploadStatus.type === "success"
+            ? "var(--vscode-badge-foreground)"
             : "var(--vscode-errorForeground)",
           fontSize: "14px"
         }}>

@@ -32,18 +32,45 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
   }
 
   async dispose() {
-    if (this.view && "dispose" in this.view) {
-      this.view.dispose();
+    console.log("Starting WebviewProvider disposal...");
+    
+    try {
+      if (this.view && "dispose" in this.view) {
+        this.view.dispose();
+        console.log("Webview disposed successfully");
+      }
+    } catch (error) {
+      console.error("Error disposing webview:", error);
     }
+
+    // Dispose all disposables with individual error handling
     while (this.disposables.length) {
-      const x = this.disposables.pop();
-      if (x) {
-        x.dispose();
+      const disposable = this.disposables.pop();
+      if (disposable) {
+        try {
+          disposable.dispose();
+        } catch (error) {
+          console.error("Error disposing resource:", error);
+        }
       }
     }
-    await this.controller.dispose();
-    this.usageTrackingService.dispose();
+
+    try {
+      await this.controller.dispose();
+      console.log("Controller disposed successfully");
+    } catch (error) {
+      console.error("Error disposing controller:", error);
+    }
+
+    try {
+      this.usageTrackingService.dispose();
+      console.log("Usage tracking service disposed successfully");
+    } catch (error) {
+      console.error("Error disposing usage tracking service:", error);
+    }
+
     WebviewProvider.activeInstances.delete(this);
+    console.log("WebviewProvider disposal completed");
   }
 
   public static getVisibleInstance(): WebviewProvider | undefined {
