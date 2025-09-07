@@ -4,6 +4,8 @@ import { createRoot } from "react-dom/client";
 
 import ReactDOM from "react-dom/client";
 import App from "./App";
+// Initialize Thor/STOMP bridge so CommunicationService can relay to mothership
+import "./telecom/thorBridge";
 
 // import reportWebVitals from "./reportWebVitals"
 import "./App.css";

@@ -55,8 +55,23 @@ Built on **ThorAPI's secure generation engine** and **Claude Opus agentic capabi
 
 ### 🔗 Use Any API & Model
 
-Valor IDE integrates with OpenRouter, Anthropic, OpenAI, Google Gemini, AWS Bedrock, Azure, GCP Vertex, or local models (Ollama / LM Studio).\
+Valor IDE connects to model apis to perform AI-powered code generation and other tasks.
+
+Valor integrates with almost any LLM model api including Anthropic, OpenAI, Google Gemini, AWS Bedrock, Azure, GCP Vertex, or local models (Ollama / LM Studio).\
+
+Valor also can connect to ValkyrAI models that you can customize and train to your specific environment, project, and business needs.
+
 It also tracks **token usage and costs** across entire task loops, so you always know your spend.
+
+---
+
+### 🔗 Use Customized Models for Projects
+
+Valor IDE integrates with ValkyrAI models that you can customize and configure for your specific needs.
+
+Adjust the initial prompt with technical details specific to your project(s) and business(es) to save time and maximize efficiency and effectiveness.
+
+Using Valor Telecom you can configure a management Model and a work execution Model and run a supervised project right within your IDE.
 
 ---
 
@@ -74,6 +89,12 @@ Valor IDE integrates with the rest of the Valhalla Suite from Valkyr Labs -- Tho
 ValkyrAI can be run as a service in your generated application stack, providing workflow automations, while built-in RBAC allows secure sharing of any object in the system.
 
 Agentic reporting tracks **token usage and costs** across entire task loops, so you always know your spend and monetization features of the ValkyrLabs.com
+
+### 🛠️ Valor Telecom
+
+Telecom allows multiple Valor instances to communicate and orchestrate tasks together.
+
+It's an innovative and fun way to increase the power of Valor in your IDE.
 
 ---
 

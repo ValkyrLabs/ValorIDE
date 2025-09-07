@@ -22,6 +22,8 @@ import { combineCommandSequences } from "@shared/combineCommandSequences"
 import { getApiMetrics } from "@shared/getApiMetrics"
 import { useExtensionState } from "@/context/ExtensionStateContext"
 import { useCommunicationService } from "@/context/CommunicationServiceContext"
+import StatusBadge from "@/components/common/StatusBadge"
+import OfflineBanner from "@/components/common/OfflineBanner"
 import { vscode } from "@/utils/vscode"
 import { TaskServiceClient } from "@/services/grpc-client"
 import HistoryPreview from "@/components/history/HistoryPreview"
@@ -405,7 +407,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 						messages={messageOrGroup}
 						isLast={index === groupedMessages.length - 1}
 						lastModifiedMessage={modifiedMessages.at(-1)}
-						onHeightChange={() => {}}
+						onHeightChange={() => { }}
 						isExpanded={(messageTs: number) => expandedRows[messageTs] ?? false}
 						onToggleExpand={(messageTs: number) => {
 							setExpandedRows((prev) => ({
@@ -429,7 +431,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					}}
 					lastModifiedMessage={modifiedMessages.at(-1)}
 					isLast={index === groupedMessages.length - 1}
-					onHeightChange={() => {}}
+					onHeightChange={() => { }}
 					inputValue={inputValue}
 					sendMessageFromChatRow={handleSendMessage}
 				/>
@@ -519,12 +521,29 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				overflow: "hidden",
 			}}
 		>
-			{multipleInstances && <RobotIconComponent />}
-			<div style={{ padding: "5px", fontSize: "12px", color: "#888" }}>
-				{handshakeMessages.map((msg, idx) => (
-					<div key={idx}>{msg}</div>
-				))}
+			<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 10px" }}>
+				<div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+					{multipleInstances && <RobotIconComponent />}
+				</div>
+				{/* Communication status badge */}
+				{(() => {
+					const svc: any = communicationService as any;
+					const ready = !!svc?.ready;
+					const hasError = !!svc?.error;
+					const value = ready ? "Online" : hasError ? "Error" : "Offline";
+					const kind = ready ? "ok" : hasError ? "error" : "warn";
+					return <StatusBadge label="Telecom" value={value} kind={kind as any} title={hasError ? String(svc.error) : undefined} />
+				})()}
 			</div>
+			<OfflineBanner />
+			{/* Optional: compact handshake debug log in dev mode */}
+			{handshakeMessages.length > 0 && (
+				<div style={{ padding: "4px 10px", fontSize: "11px", color: "#888", maxHeight: 64, overflowY: "auto" }}>
+					{handshakeMessages.map((msg, idx) => (
+						<div key={idx}>{msg}</div>
+					))}
+				</div>
+			)}
 
 			{task ? (
 				<TaskHeader

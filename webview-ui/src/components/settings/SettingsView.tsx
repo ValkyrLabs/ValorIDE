@@ -15,6 +15,9 @@ import { useEvent } from "react-use";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import BrowserSettingsSection from "./BrowserSettingsSection";
 import { VscSettingsGear } from "react-icons/vsc";
+import StatusBadge from "@/components/common/StatusBadge";
+import OfflineBanner from "@/components/common/OfflineBanner";
+import { useCommunicationService } from "@/context/CommunicationServiceContext";
 
 const { IS_DEV } = process.env;
 
@@ -104,7 +107,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
         // uses someVar and anotherVar
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [someVar])
-	If we only want to run code once on mount we can use react-use's useEffectOnce or useMount
+  If we only want to run code once on mount we can use react-use's useEffectOnce or useMount
     */
 
   const handleMessage = useCallback(
@@ -160,13 +163,63 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
     handleSubmit(true);
   };
 
+  const communicationService = useCommunicationService() as any;
+  const [peers, setPeers] = useState<string[]>([]);
+  const [phase, setPhase] = useState<string | undefined>(undefined);
+  const ready = !!communicationService?.ready;
+  const hasError = !!communicationService?.error;
+  const hubConnected = !!communicationService?.hubConnected;
+  const thorConnected = !!communicationService?.thorConnected;
+  useEffect(() => {
+    if (!communicationService) return;
+    const handlePresence = (list: string[]) => setPeers(list);
+    const handleStatus = (s: any) => setPhase(s?.phase);
+    communicationService.on?.("presence", handlePresence);
+    communicationService.on?.("status", handleStatus);
+    return () => {
+      communicationService.off?.("presence", handlePresence);
+      communicationService.off?.("status", handleStatus);
+    };
+  }, [communicationService]);
+
+  const value = ready
+    ? hubConnected && thorConnected
+      ? "Online (Hub+Server)"
+      : hubConnected
+        ? "Online (Local)"
+        : "Online (Server)"
+    : hasError
+      ? "Error"
+      : phase === "connecting" ? "Connecting..." : "Offline";
+  const kind = ready ? "ok" : hasError ? "error" : "warn";
+
   return (
     <div className="fixed top-0 left-0 right-0 bottom-0 pt-[10px] pr-0 pb-0 pl-5 flex flex-col overflow-hidden">
       <div className="flex justify-between items-center mb-[13px] pr-[17px]">
         <h3 className="text-[var(--vscode-foreground)] m-0">Settings</h3>
-        <VSCodeButton onClick={() => handleSubmit(false)}>Save</VSCodeButton>
+        <div className="flex items-center gap-2">
+          <StatusBadge label="Telecom" value={value} kind={kind as any} title={hasError ? String(communicationService.error) : undefined} />
+          <VSCodeButton onClick={() => handleSubmit(false)}>Save</VSCodeButton>
+        </div>
       </div>
       <div className="grow overflow-y-scroll pr-2 flex flex-col">
+        <OfflineBanner />
+        {peers.length > 0 && (
+          <div className="border border-solid border-[var(--vscode-panel-border)] rounded-md p-[10px] mb-3 bg-[var(--vscode-panel-background)] text-[var(--vscode-foreground)]">
+            <div className="mb-2 font-semibold">Active instances</div>
+            <div className="flex flex-wrap gap-2">
+              {peers.map((id) => (
+                <span key={id} style={{
+                  border: "1px solid var(--vscode-panel-border)",
+                  borderRadius: 6,
+                  padding: "2px 6px",
+                  fontSize: 12,
+                  background: "var(--vscode-editor-background)",
+                }}>{id}</span>
+              ))}
+            </div>
+          </div>
+        )}
         {/* Tabs container */}
         {planActSeparateModelsSetting ? (
           <div className="border border-solid border-[var(--vscode-panel-border)] rounded-md p-[10px] mb-5 bg-[var(--vscode-panel-background)]">

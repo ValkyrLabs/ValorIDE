@@ -7,6 +7,9 @@ import AddRemoteServerForm from "./tabs/add-server/AddRemoteServerForm";
 import McpMarketplaceView from "./tabs/marketplace/McpMarketplaceView";
 import InstalledServersView from "./tabs/installed/InstalledServersView";
 import { McpViewTab } from "@shared/mcp";
+import StatusBadge from "@/components/common/StatusBadge";
+import OfflineBanner from "@/components/common/OfflineBanner";
+import { useCommunicationService } from "@/context/CommunicationServiceContext";
 
 type McpViewProps = {
   onDone: () => void;
@@ -37,6 +40,12 @@ const McpConfigurationView = ({ onDone, initialTab }: McpViewProps) => {
     }
   }, [mcpMarketplaceEnabled]);
 
+  const communicationService = useCommunicationService() as any;
+  const ready = !!communicationService?.ready;
+  const hasError = !!communicationService?.error;
+  const value = ready ? "Online" : hasError ? "Error" : "Offline";
+  const kind = ready ? "ok" : hasError ? "error" : "warn";
+
   return (
     <div
       style={{
@@ -60,9 +69,13 @@ const McpConfigurationView = ({ onDone, initialTab }: McpViewProps) => {
         <h3 style={{ color: "var(--vscode-foreground)", margin: 0 }}>
           MCP Servers
         </h3>
-        <VSCodeButton onClick={onDone}>Done</VSCodeButton>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <StatusBadge label="Telecom" value={value} kind={kind as any} title={hasError ? String(communicationService.error) : undefined} />
+          <VSCodeButton onClick={onDone}>Done</VSCodeButton>
+        </div>
       </div>
 
+      <OfflineBanner style={{ margin: "0 17px 6px 20px" }} />
       <div style={{ flex: 1, overflow: "auto" }}>
         {/* Tabs container */}
         <div

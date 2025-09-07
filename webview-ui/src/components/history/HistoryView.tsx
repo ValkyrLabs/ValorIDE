@@ -15,6 +15,9 @@ import { ExtensionMessage } from "@shared/ExtensionMessage";
 import { useEvent } from "react-use";
 import DangerButton from "@/components/common/DangerButton";
 import { FaSearch, FaTimes, FaTrash, FaArrowUp, FaArrowDown, FaDatabase, FaArrowRight, FaRobot } from "react-icons/fa";
+import StatusBadge from "@/components/common/StatusBadge";
+import OfflineBanner from "@/components/common/OfflineBanner";
+import { useCommunicationService } from "@/context/CommunicationServiceContext";
 
 type HistoryViewProps = {
   onDone: () => void;
@@ -134,6 +137,12 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
     return results;
   }, [presentableTasks, searchQuery, fuse, sortOption]);
 
+  const communicationService = useCommunicationService() as any;
+  const ready = !!communicationService?.ready;
+  const hasError = !!communicationService?.error;
+  const value = ready ? "Online" : hasError ? "Error" : "Offline";
+  const kind = ready ? "ok" : hasError ? "error" : "warn";
+
   return (
     <>
       <div
@@ -165,8 +174,12 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
           >
             History
           </h3>
-          <VSCodeButton onClick={onDone}>Done</VSCodeButton>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <StatusBadge label="Telecom" value={value} kind={kind as any} title={hasError ? String(communicationService.error) : undefined} />
+            <VSCodeButton onClick={onDone}>Done</VSCodeButton>
+          </div>
         </div>
+        <OfflineBanner style={{ marginTop: 0, marginLeft: 20, marginRight: 17 }} />
         <div style={{ padding: "5px 17px 6px 17px" }}>
           <div
             style={{

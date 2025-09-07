@@ -11,6 +11,7 @@ import Thumbnails from "@/components/common/Thumbnails";
 import { normalizeApiConfiguration } from "@/components/settings/ApiOptions";
 import { validateSlashCommand } from "@/utils/slash-commands";
 import { FaArrowUp, FaArrowDown, FaDatabase, FaArrowRight, FaTrash, FaChevronDown, FaChevronRight, FaTimes, FaExclamationTriangle } from "react-icons/fa";
+import StatusBadge from "../common/StatusBadge";
 
 interface TaskHeaderProps {
   task: ValorIDEMessage;
@@ -270,7 +271,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                 minWidth: 0, // This allows the div to shrink below its content size
               }}
             >
-              <span style={{ fontWeight: "bold" }}>
+              <span style={{ fontSize: 14, fontWeight: "bold" }}>
                 Task
                 {!isTaskExpanded && ":"}
               </span>
@@ -282,22 +283,14 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
             </div>
           </div>
           {!isTaskExpanded && isCostAvailable && (
-            <div
-              style={{
-                marginLeft: 10,
-                backgroundColor:
-                  "color-mix(in srgb, var(--vscode-errorForeground) 100%, transparent)",
-                padding: "2px 4px",
-                borderRadius: "500px",
-                fontSize: "24px",
-                fontWeight: 800,
-                display: "inline-block",
-                flexShrink: 0,
-                color: "var(--vscode-errorForeground)",
-              }}
-            >
-              ${totalCost?.toFixed(4)}
-            </div>
+
+            <StatusBadge
+              label="Cost:"
+              value={`$${totalCost?.toFixed(4)}`}
+              title="API Cost for this task"
+              style={{ fontSize: 14, padding: "2px 6px" }}
+            />
+
           )}
           <VSCodeButton
             appearance="icon"

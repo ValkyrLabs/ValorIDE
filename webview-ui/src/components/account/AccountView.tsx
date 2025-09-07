@@ -1,4 +1,4 @@
-import { memo, useState, useCallback } from "react";
+import { memo, useState, useCallback, useEffect } from "react";
 
 import { UsageTransaction, PaymentTransaction } from "@/thor/model";
 import { useGetBalanceResponsesQuery } from "@/thor/redux/services/BalanceResponseService";
@@ -26,6 +26,9 @@ import { Card } from "react-bootstrap";
 import { Login } from "@thor/model";
 import { FormikHelpers } from "formik";
 import { useLoginUserMutation } from "../../redux/services/AuthService";
+import StatusBadge from "@/components/common/StatusBadge";
+import OfflineBanner from "@/components/common/OfflineBanner";
+import { useCommunicationService } from "@/context/CommunicationServiceContext";
 
 type AccountViewProps = {
   onDone: () => void;
@@ -107,6 +110,35 @@ const AccountView = ({ onDone }: AccountViewProps) => {
     console.log("OpenAPI file selected:", file.name);
   }, []);
 
+  const communicationService = useCommunicationService() as any;
+  const [peers, setPeers] = useState<string[]>([]);
+  const [phase, setPhase] = useState<string | undefined>(undefined);
+  const ready = !!communicationService?.ready;
+  const hasError = !!communicationService?.error;
+  const hubConnected = !!communicationService?.hubConnected;
+  const thorConnected = !!communicationService?.thorConnected;
+  useEffect(() => {
+    if (!communicationService) return;
+    const handlePresence = (list: string[]) => setPeers(list);
+    const handleStatus = (s: any) => setPhase(s?.phase);
+    communicationService.on?.("presence", handlePresence);
+    communicationService.on?.("status", handleStatus);
+    return () => {
+      communicationService.off?.("presence", handlePresence);
+      communicationService.off?.("status", handleStatus);
+    };
+  }, [communicationService]);
+  const value = ready
+    ? hubConnected && thorConnected
+      ? "Online (Hub+Server)"
+      : hubConnected
+        ? "Online (Local)"
+        : "Online (Server)"
+    : hasError
+      ? "Error"
+      : phase === "connecting" ? "Connecting..." : "Offline";
+  const kind = ready ? "ok" : hasError ? "error" : "warn";
+
   return (
     <div
       style={{
@@ -117,6 +149,27 @@ const AccountView = ({ onDone }: AccountViewProps) => {
         padding: ".5em",
       }}
     >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+        <div style={{ color: "var(--vscode-foreground)" }}>Account</div>
+        <StatusBadge label="Telecom" value={value} kind={kind as any} title={hasError ? String(communicationService.error) : undefined} />
+      </div>
+      {peers.length > 0 && (
+        <div className="border border-solid border-[var(--vscode-panel-border)] rounded-md p-[10px] mb-3 bg-[var(--vscode-panel-background)] text-[var(--vscode-foreground)]">
+          <div className="mb-2 font-semibold">Active instances</div>
+          <div className="flex flex-wrap gap-2">
+            {peers.map((id) => (
+              <span key={id} style={{
+                border: "1px solid var(--vscode-panel-border)",
+                borderRadius: 6,
+                padding: "2px 6px",
+                fontSize: 12,
+                background: "var(--vscode-editor-background)",
+              }}>{id}</span>
+            ))}
+          </div>
+        </div>
+      )}
+      <OfflineBanner />
       {/* Tab navigation */}
       <div className="scroll-tabs-container">
         <div className="nav-tabs scroll-tabs">

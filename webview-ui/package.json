@@ -14,6 +14,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.1.1",
     "@floating-ui/react": "^0.27.4",
     "@vscode/webview-ui-toolkit": "^1.4.0",
     "debounce": "^2.1.1",

@@ -26,6 +26,10 @@ export class CommunicationService extends EventEmitter {
   private connected: boolean = false;
   public ready: boolean = false;
   public error: Error | null = null;
+  private vscodeApi: any | null = null;
+  public hubConnected: boolean = false;
+  public thorConnected: boolean = false;
+  private peers: Set<string> = new Set();
 
   constructor(options: CommunicationServiceOptions) {
     super();
@@ -64,9 +68,60 @@ export class CommunicationService extends EventEmitter {
       return;
     }
     try {
+      // Thor/STOMP bridge -> emits CustomEvent('websocket-message', { detail }) in webview
       window.addEventListener("websocket-message", this.handleIncomingMessage);
+
+      // VS Code extension hub -> receives postMessage({ type: 'telecom:message', message })
+      window.addEventListener("message", (evt: MessageEvent) => {
+        try {
+          const data: any = evt.data;
+          if (data && data.type === "telecom:message" && data.message) {
+            const msg = data.message as CommunicationMessage;
+            if (msg.senderId !== this.senderId) {
+              this.emit("message", msg);
+              // Track presence from hub
+              if (msg.type === "presence:join" && msg.payload?.id) {
+                this.peers.add(msg.payload.id);
+                this.emit("presence", Array.from(this.peers));
+              }
+              if (msg.type === "presence:leave" && msg.payload?.id) {
+                this.peers.delete(msg.payload.id);
+                this.emit("presence", Array.from(this.peers));
+              }
+              if (msg.type === "presence:state" && Array.isArray(msg.payload?.ids)) {
+                this.peers = new Set(msg.payload.ids);
+                this.emit("presence", Array.from(this.peers));
+              }
+            }
+          }
+        } catch (e) {
+          // ignore
+        }
+      });
+
+      // VS Code API (webview only)
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.vscodeApi = (window as any).acquireVsCodeApi?.();
+      } catch {
+        this.vscodeApi = null;
+      }
+      this.hubConnected = !!this.vscodeApi;
+
+      // Thor connection status from thorBridge
+      window.addEventListener("telecom-status", (evt: Event) => {
+        try {
+          const ce = evt as CustomEvent<{ thorConnected: boolean; phase: string }>;
+          this.thorConnected = !!ce.detail?.thorConnected;
+          // ready when either hub or thor connected
+          this.ready = this.hubConnected || this.thorConnected;
+          this.emit("status", { hubConnected: this.hubConnected, thorConnected: this.thorConnected, phase: ce.detail?.phase });
+        } catch {
+          // ignore
+        }
+      });
       this.connected = true;
-      this.ready = true;
+      this.ready = this.hubConnected || this.thorConnected;
       this.error = null;
     } catch (err: any) {
       this.ready = false;
@@ -119,8 +174,18 @@ export class CommunicationService extends EventEmitter {
         messageId: this.generateMessageId(),
         timestamp: Date.now(),
       };
+      // Thor/STOMP bridge listener (inside webview) picks this up
       const event = new CustomEvent("websocket-send", { detail: message });
       window.dispatchEvent(event);
+
+      // Local multi-instance via VS Code hub
+      if (this.vscodeApi) {
+        try {
+          this.vscodeApi.postMessage({ type: "telecom:send", message });
+        } catch {
+          // ignore postMessage errors
+        }
+      }
     } catch (err: any) {
       this.error = err instanceof Error ? err : new Error(String(err));
       this.emitSafeError(this.error, "sendMessage");

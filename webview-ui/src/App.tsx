@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useEvent } from "react-use";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import ChatView from "./components/chat/ChatView";
+import { ChatErrorBoundary } from "./components/chat/ChatErrorBoundary";
 import HistoryView from "./components/history/HistoryView";
 import SettingsView from "./components/settings/SettingsView";
 import WelcomeView from "./components/welcome/WelcomeView";
@@ -206,21 +207,23 @@ const AppContent = () => {
 
           {/* Show chat view when not in other views */}
           {!isMainViewHidden && (
-            <ChatView
-              showHistoryView={() => {
-                setShowSettings(false);
-                setShowMcp(false);
-                setShowAccount(false);
-                setShowGeneratedFiles(false);
-                setShowApplicationProgress(false);
-                setShowHistory(true);
+            <ChatErrorBoundary errorTitle="Chat failed to render" errorBody="Please reload the view or check connection settings." height="100%">
+              <ChatView
+                showHistoryView={() => {
+                  setShowSettings(false);
+                  setShowMcp(false);
+                  setShowAccount(false);
+                  setShowGeneratedFiles(false);
+                  setShowApplicationProgress(false);
+                  setShowHistory(true);
+                }}
+                isHidden={false}
+                showAnnouncement={showAnnouncement}
+                hideAnnouncement={() => {
+                  setShowAnnouncement(false);
               }}
-              isHidden={false}
-              showAnnouncement={showAnnouncement}
-              hideAnnouncement={() => {
-                setShowAnnouncement(false);
-              }}
-            />
+              />
+            </ChatErrorBoundary>
           )}
         </>
       )}
