@@ -19,11 +19,14 @@ export type SecretKey =
   | "asksageApiKey"
   | "xaiApiKey"
   | "sambanovaApiKey"
+  | "valkyraiJwt"
   | "jwtToken";
 
 export type GlobalStateKey =
   | "apiProvider"
   | "apiModelId"
+  | "valkyraiHost"
+  | "valkyraiServiceId"
   | "awsRegion"
   | "awsUseCrossRegionInference"
   | "awsBedrockUsePromptCache"

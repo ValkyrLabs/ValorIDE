@@ -140,9 +140,49 @@ export const ExtensionStateContextProvider: React.FC<{
 
     switch (message.type) {
       case "state": {
-        setState((prevState) => {
-          const incoming = message.state!;
+        const incoming = message.state!;
 
+        // 1) Update auth-related local state + sessionStorage OUTSIDE of the setState updater
+        try {
+          if (incoming.authenticatedPrincipal) {
+            const principal =
+              typeof incoming.authenticatedPrincipal === "string"
+                ? JSON.parse(incoming.authenticatedPrincipal)
+                : incoming.authenticatedPrincipal;
+            setAuthenticatedUser(principal);
+            sessionStorage.setItem("authenticatedUser", JSON.stringify(principal));
+          } else {
+            setAuthenticatedUser(undefined);
+            sessionStorage.removeItem("authenticatedUser");
+          }
+
+          if (incoming.jwtToken) {
+            setJwtToken(incoming.jwtToken);
+            sessionStorage.setItem("jwtToken", incoming.jwtToken);
+            try {
+              window.dispatchEvent(
+                new CustomEvent("jwt-token-updated", {
+                  detail: { token: incoming.jwtToken, timestamp: Date.now(), source: "extension-state" },
+                }),
+              );
+            } catch {}
+          } else if (incoming.isLoggedIn === false) {
+            setJwtToken(undefined);
+            sessionStorage.removeItem("jwtToken");
+            try {
+              window.dispatchEvent(
+                new CustomEvent("jwt-token-updated", {
+                  detail: { token: null, timestamp: Date.now(), source: "extension-state" },
+                }),
+              );
+            } catch {}
+          }
+        } catch {
+          // Ignore sessionStorage errors in webview sandbox
+        }
+
+        // 2) Update the main extension state via a PURE updater (no side-effects here)
+        setState((prevState) => {
           // Prevent unnecessary updates if state is the same
           if (JSON.stringify(prevState) === JSON.stringify(incoming)) {
             return prevState;
@@ -152,34 +192,6 @@ export const ExtensionStateContextProvider: React.FC<{
           const incomingVersion = incoming.autoApprovalSettings?.version ?? 1;
           const currentVersion = prevState.autoApprovalSettings?.version ?? 1;
           const shouldUpdateAutoApproval = incomingVersion > currentVersion;
-
-          // Update authentication state from backend
-          if (incoming.authenticatedPrincipal) {
-            const principal =
-              typeof incoming.authenticatedPrincipal === "string"
-                ? JSON.parse(incoming.authenticatedPrincipal)
-                : incoming.authenticatedPrincipal;
-            setAuthenticatedUser(principal);
-            // Sync with sessionStorage for ThorAPI requests
-            sessionStorage.setItem(
-              "authenticatedUser",
-              JSON.stringify(principal),
-            );
-          } else {
-            // Clear authentication state if backend says user is not authenticated
-            setAuthenticatedUser(undefined);
-            sessionStorage.removeItem("authenticatedUser");
-          }
-
-          // Handle JWT token from backend state
-          if (incoming.jwtToken) {
-            setJwtToken(incoming.jwtToken);
-            sessionStorage.setItem("jwtToken", incoming.jwtToken);
-          } else if (incoming.isLoggedIn === false) {
-            // Clear JWT token if backend says user is not logged in
-            setJwtToken(undefined);
-            sessionStorage.removeItem("jwtToken");
-          }
 
           return {
             ...incoming,
@@ -295,6 +307,13 @@ export const ExtensionStateContextProvider: React.FC<{
         if (token) {
           sessionStorage.setItem("jwtToken", token);
           setJwtToken(token);
+          try {
+            window.dispatchEvent(
+              new CustomEvent("jwt-token-updated", {
+                detail: { token, timestamp: Date.now(), source: "extension-loginSuccess" },
+              }),
+            );
+          } catch {}
         }
 
         // Store authenticated user in sessionStorage

@@ -15,6 +15,7 @@ import { useEvent } from "react-use";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import BrowserSettingsSection from "./BrowserSettingsSection";
 import { VscSettingsGear } from "react-icons/vsc";
+import { FaStar, FaShareAlt } from "react-icons/fa";
 import StatusBadge from "@/components/common/StatusBadge";
 import OfflineBanner from "@/components/common/OfflineBanner";
 import { useCommunicationService } from "@/context/CommunicationServiceContext";
@@ -193,11 +194,37 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
       : phase === "connecting" ? "Connecting..." : "Offline";
   const kind = ready ? "ok" : hasError ? "error" : "warn";
 
+  const [copied, setCopied] = useState(false);
+  const handleStar = () => {
+    vscode.postMessage({ type: "openInBrowser", url: "https://github.com/valkyrlabs/valoride" });
+  };
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        "https://marketplace.visualstudio.com/items?itemName=ValkyrLabsInc.valoride-dev",
+      );
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch (e) {
+      // Fallback: open in browser if clipboard blocked
+      vscode.postMessage({
+        type: "openInBrowser",
+        url: "https://marketplace.visualstudio.com/items?itemName=ValkyrLabsInc.valoride-dev",
+      });
+    }
+  };
+
   return (
     <div className="fixed top-0 left-0 right-0 bottom-0 pt-[10px] pr-0 pb-0 pl-5 flex flex-col overflow-hidden">
       <div className="flex justify-between items-center mb-[13px] pr-[17px]">
         <h3 className="text-[var(--vscode-foreground)] m-0">Settings</h3>
         <div className="flex items-center gap-2">
+          <VSCodeButton appearance="secondary" onClick={handleStar} title="Star us on GitHub">
+            <span className="flex items-center gap-2"><FaStar /> Star</span>
+          </VSCodeButton>
+          <VSCodeButton appearance="secondary" onClick={handleShare} title="Copy Marketplace link to clipboard">
+            <span className="flex items-center gap-2"><FaShareAlt /> {copied ? "Copied" : "Share"}</span>
+          </VSCodeButton>
           <StatusBadge label="Telecom" value={value} kind={kind as any} title={hasError ? String(communicationService.error) : undefined} />
           <VSCodeButton onClick={() => handleSubmit(false)}>Save</VSCodeButton>
         </div>

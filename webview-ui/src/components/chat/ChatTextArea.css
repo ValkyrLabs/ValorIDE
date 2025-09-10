@@ -1,0 +1,62 @@
+.chat-text-area {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: transparent;
+  color: var(--vscode-input-foreground);
+  border-radius: 10px;
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-editor-font-size);
+  line-height: 2em;
+  resize: none;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  padding: 9px 28px 3px 9px;
+  flex: 1;
+  z-index: 1;
+  outline: none;
+  /* default glow color (happy) */
+  --glow-color: #61dafb;
+}
+
+.chat-text-area.happy {
+  --glow-color: #61dafb;
+  border: 1px solid var(--glow-color);
+  box-shadow: 0 0 8px var(--glow-color);
+}
+
+/* Pulse even when happy if extended thinking is enabled */
+.chat-text-area.happy.extended-thinking {
+  animation: glowPulse 1.75s ease-in-out infinite;
+}
+
+.chat-text-area.waiting {
+  --glow-color: #ff9900;
+  border: 1px solid var(--glow-color);
+  box-shadow: 0 0 8px var(--glow-color);
+  animation: glowPulse 1.75s ease-in-out infinite;
+}
+
+.chat-text-area.sad {
+  --glow-color: #ff0000;
+  border: 1px solid var(--glow-color);
+  box-shadow: 0 0 8px var(--glow-color);
+  animation: glowPulse 1.75s ease-in-out infinite;
+}
+
+.chat-text-area.stubborn {
+  /* Keep stubborn mode pulsing regardless of state */
+  animation: glowPulse 1.75s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 6px var(--glow-color);
+  }
+  50% {
+    box-shadow: 0 0 16px var(--glow-color);
+  }
+  100% {
+    box-shadow: 0 0 6px var(--glow-color);
+  }
+}

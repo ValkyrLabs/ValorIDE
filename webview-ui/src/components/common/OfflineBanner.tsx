@@ -1,10 +1,24 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useCommunicationService } from "@/context/CommunicationServiceContext";
 
 const OfflineBanner: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
   const svc: any = useCommunicationService();
   const isNoop = !!svc?.isNoop;
-  if (!isNoop) return null;
+  const [isVisible, setIsVisible] = useState(isNoop); // Banner is visible only if communication is not working
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isNoop) {
+      timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 5000); // Hide after 5 seconds
+    }
+    return () => {
+      if (timer) clearTimeout(timer); // Clear timeout on component unmount
+    };
+  }, [isNoop]); // Re-run effect if isNoop changes
+
+  if (!isVisible) return null; // Do not render if not visible
 
   return (
     <div
@@ -27,4 +41,3 @@ const OfflineBanner: React.FC<{ style?: React.CSSProperties }> = ({ style }) => 
 };
 
 export default OfflineBanner;
-

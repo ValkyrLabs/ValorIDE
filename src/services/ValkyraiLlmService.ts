@@ -47,7 +47,9 @@ export async function callValkyraiLlm(req: ValkyraiLlmRequest): Promise<Valkyrai
     throw new ValkyraiLlmServiceError("Missing required parameters: host, serviceId, or prompt");
   }
 
-  const url = `${host.replace(/\/$/, "")}/v1/llm-details/${serviceId}/chat`;
+  // Host is expected to be the full API base path (e.g., http://host:8080/v1)
+  // so we append the resource path without adding /v1 again.
+  const url = `${host.replace(/\/$/, "")}/llm-details/${serviceId}/chat`;
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };

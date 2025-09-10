@@ -57,7 +57,7 @@ Now that you have ValorIDE installed, you'll need to set up your OpenRouter API 
     - Select your preferred API model.
       - **Recommended Models for Coding:**
         - `anthropic/claude-4.1-opus`: Most used for coding tasks.
-        - `google/gemini-2.0-flash-exp:free`: A free option for coding.
+        - `google/gemini-2.5-flash:free`: A free option for coding.
         - `deepseek/deepseek-chat`: SUPER CHEAP, almost as good as 3.5 sonnet
       - [OpenRouter Model Rankings](https://openrouter.ai/rankings/programming)
 

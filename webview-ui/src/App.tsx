@@ -9,6 +9,7 @@ import WelcomeView from "./components/welcome/WelcomeView";
 import AccountView from "./components/account/AccountView";
 import FileExplorer from "./components/FileExplorer/FileExplorer";
 import ApplicationProgress from "./components/ApplicationProgress/ApplicationProgress";
+import ServerConsole from "./components/ServerConsole";
 import SplitPane, {
   SplitPaneLeft,
   SplitPaneRight,
@@ -37,6 +38,7 @@ const AppContent = () => {
   const [showMcp, setShowMcp] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
   const [showGeneratedFiles, setShowGeneratedFiles] = useState(false);
+  const [showServerConsole, setShowServerConsole] = useState(false);
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [mcpTab, setMcpTab] = useState<McpViewTab | undefined>(undefined);
   // Always show file explorer by default
@@ -49,6 +51,16 @@ const AppContent = () => {
   const handleMessage = useCallback((e: MessageEvent) => {
     const message: ExtensionMessage = e.data;
     switch (message.type) {
+      case "loginSuccess":
+        // After successful login, show the Account view and keep File Explorer visible
+        setShowSettings(false);
+        setShowHistory(false);
+        setShowMcp(false);
+        setShowAccount(true);
+        setShowGeneratedFiles(false);
+        setShowApplicationProgress(false);
+        setShowFileExplorer(true);
+        break;
       case "action":
         switch (message.action!) {
           case "settingsButtonClicked":
@@ -57,6 +69,7 @@ const AppContent = () => {
             setShowMcp(false);
             setShowAccount(false);
             setShowGeneratedFiles(false);
+            setShowServerConsole(false);
             setShowApplicationProgress(false);
             // Keep file explorer visible
             break;
@@ -66,6 +79,7 @@ const AppContent = () => {
             setShowMcp(false);
             setShowAccount(false);
             setShowGeneratedFiles(false);
+            setShowServerConsole(false);
             setShowApplicationProgress(false);
             // Keep file explorer visible
             break;
@@ -78,6 +92,7 @@ const AppContent = () => {
             setShowMcp(true);
             setShowAccount(false);
             setShowGeneratedFiles(false);
+            setShowServerConsole(false);
             setShowApplicationProgress(false);
             // Keep file explorer visible
             break;
@@ -87,6 +102,7 @@ const AppContent = () => {
             setShowMcp(false);
             setShowAccount(true);
             setShowGeneratedFiles(false);
+            setShowServerConsole(false);
             setShowApplicationProgress(false);
             // Keep file explorer visible
             break;
@@ -96,6 +112,7 @@ const AppContent = () => {
             setShowMcp(false);
             setShowAccount(false);
             setShowGeneratedFiles(false);
+            setShowServerConsole(false);
             setShowApplicationProgress(false);
             // Keep file explorer visible
             break;
@@ -105,6 +122,17 @@ const AppContent = () => {
             setShowMcp(false);
             setShowAccount(false);
             setShowGeneratedFiles(true);
+            setShowServerConsole(false);
+            setShowApplicationProgress(false);
+            // Keep file explorer visible
+            break;
+          case "serverConsoleButtonClicked":
+            setShowSettings(false);
+            setShowHistory(false);
+            setShowMcp(false);
+            setShowAccount(false);
+            setShowGeneratedFiles(false);
+            setShowServerConsole(true);
             setShowApplicationProgress(false);
             // Keep file explorer visible
             break;
@@ -167,7 +195,7 @@ const AppContent = () => {
   }
 
   const isMainViewHidden =
-    showSettings || showHistory || showMcp || showAccount || showGeneratedFiles;
+    showSettings || showHistory || showMcp || showAccount || showGeneratedFiles || showServerConsole;
 
   return (
     <>
@@ -182,6 +210,7 @@ const AppContent = () => {
           )}
           {showAccount && <AccountView onDone={() => setShowAccount(false)} />}
           {showGeneratedFiles && <GeneratedFilesView />}
+          {showServerConsole && <ServerConsole />}
 
           {/* Application Progress Overlay - shows over the split pane */}
           {showApplicationProgress && (

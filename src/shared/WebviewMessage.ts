@@ -86,6 +86,9 @@ export interface WebviewMessage {
     | "streamToThorapi"
     | "openFileExplorerTab"
     | "getThorapiFolderContents"
+    | "promptAddGeneratedToProject"
+    | "addGeneratedToProject"
+    | "startServer"
     | "uploadOpenAPISpec"
     | "openFile";
 
@@ -143,6 +146,10 @@ export interface WebviewMessage {
   blobData?: string; // Base64 encoded blob data
   applicationId?: string;
   applicationName?: string; // User-friendly name for folder creation
+  // For addGeneratedToProject
+  folderName?: string; // Folder name for project integration
+  // For startServer
+  serverType?: "spring-boot" | "nestjs" | "typescript"; // Server type for starting services
   // For uploadOpenAPISpec
   fileContent?: string;
   fileSize?: number;

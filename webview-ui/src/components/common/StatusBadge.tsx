@@ -19,15 +19,25 @@ export const StatusBadge: React.FC<{
         };
       case "warn":
         return {
+          bg: "var(--vscode-editor-background)",
+          fg: "var(--vscode-editor-foreground)",
+          border: "1px solid var(--vscode-inputValidation-warningBorder)"
+          /*
           bg: "var(--vscode-inputValidation-warningBackground)",
           fg: "var(--vscode-inputValidation-warningForeground)",
           border: "var(--vscode-inputValidation-warningBorder)"
+          */
         };
       case "error":
         return {
+          bg: "var(--vscode-editor-background)",
+          fg: "var(--vscode-editor-foreground)",
+          border: "1px solid var(--vscode-inputValidation-warningBorder)"
+          /*
           bg: "var(--vscode-inputValidation-errorBackground)",
           fg: "var(--vscode-inputValidation-errorForeground)",
           border: "var(--vscode-inputValidation-errorBorder)"
+          */
         };
       default:
         return {

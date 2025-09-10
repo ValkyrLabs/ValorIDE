@@ -1,4 +1,4 @@
-import { memo, useState, useCallback, useEffect } from "react";
+import { memo, useState, useCallback, useEffect, useMemo } from "react";
 
 import { UsageTransaction, PaymentTransaction } from "@/thor/model";
 import { useGetBalanceResponsesQuery } from "@/thor/redux/services/BalanceResponseService";
@@ -9,6 +9,7 @@ import ValorIDELogoWhite from "../../assets/ValorIDELogoWhite";
 import CountUp from "react-countup";
 import CreditsHistoryTable from "./CreditsHistoryTable";
 import { useExtensionState } from "@/context/ExtensionStateContext";
+import { getApiMetrics } from "@shared/getApiMetrics";
 import ApplicationsList from "./ApplicationsList";
 import OpenAPIFilePicker from "./OpenAPIFilePicker";
 import Form from "../Login/form";
@@ -37,16 +38,33 @@ type AccountViewProps = {
 const AccountView = ({ onDone }: AccountViewProps) => {
   const { userInfo, authenticatedUser, isLoggedIn, jwtToken } =
     useExtensionState();
+  // Read live messages once at top-level to respect Hooks rules
+  const { valorideMessages } = useExtensionState();
+  // Compute API metrics from messages once using useMemo
+  const apiMetrics = useMemo(() => getApiMetrics(valorideMessages || []), [valorideMessages]);
 
   // Determine authenticated status
   const isAuthenticated = Boolean(
     isLoggedIn || authenticatedUser || userInfo || jwtToken,
   );
 
+  // Local immediate login flag to reveal tabs before context updates
+  const [didLogin, setDidLogin] = useState(false);
+  const authed = isAuthenticated || didLogin;
+
   // Default to login tab when unauthenticated, otherwise account
   const [activeTab, setActiveTab] = useState<
     "login" | "account" | "applications" | "generatedFiles"
-  >(isAuthenticated ? "account" : "login");
+  >(authed ? "account" : "login");
+
+  // Keep active tab in sync with authentication state
+  useEffect(() => {
+    if (authed) {
+      setActiveTab((tab) => (tab === "login" ? "account" : tab));
+    } else {
+      setActiveTab("login");
+    }
+  }, [authed]);
 
   const {
     data: balanceData,
@@ -82,10 +100,18 @@ const AccountView = ({ onDone }: AccountViewProps) => {
       const result = await loginUser(values).unwrap();
       if (result.token) {
         sessionStorage.setItem("jwtToken", result.token);
+        try {
+          window.dispatchEvent(
+            new CustomEvent("jwt-token-updated", {
+              detail: { token: result.token, timestamp: Date.now(), source: "account-login" },
+            }),
+          );
+        } catch {}
         sessionStorage.setItem(
           "authenticatedUser",
           JSON.stringify(result.user),
         );
+        setDidLogin(true);
         setActiveTab("account");
       }
     } catch (error) {
@@ -97,6 +123,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
 
   const handleLogout = () => {
     vscode.postMessage({ type: "accountLogoutClicked" });
+    setDidLogin(false);
   };
 
   const handleFileSelect = useCallback((filePath: string) => {
@@ -173,47 +200,53 @@ const AccountView = ({ onDone }: AccountViewProps) => {
       {/* Tab navigation */}
       <div className="scroll-tabs-container">
         <div className="nav-tabs scroll-tabs">
-          <div
-            className={`nav-link ${activeTab === "login" ? "active" : ""}`}
-            onClick={() => setActiveTab("login")}
-            style={{ cursor: "pointer" }}
-          >
-            Login
-          </div>
-          <div
-            className={`nav-link ${activeTab === "account" ? "active" : ""}`}
-            onClick={() => setActiveTab("account")}
-            style={{ cursor: "pointer" }}
-          >
-            Account
-          </div>
-          <div
-            className={`nav-link ${activeTab === "applications" ? "active" : ""}`}
-            onClick={() => setActiveTab("applications")}
-            style={{ cursor: "pointer" }}
-          >
-            Applications
-          </div>
-          <div
-            className={`nav-link ${activeTab === "generatedFiles" ? "active" : ""}`}
-            onClick={() => setActiveTab("generatedFiles")}
-            style={{ cursor: "pointer" }}
-          >
-            Generated Files
-          </div>
+          {!authed && (
+            <div
+              className={`nav-link ${activeTab === "login" ? "active" : ""}`}
+              onClick={() => setActiveTab("login")}
+              style={{ cursor: "pointer" }}
+            >
+              Login
+            </div>
+          )}
+          {authed && (
+            <>
+              <div
+                className={`nav-link ${activeTab === "account" ? "active" : ""}`}
+                onClick={() => setActiveTab("account")}
+                style={{ cursor: "pointer" }}
+              >
+                Account
+              </div>
+              <div
+                className={`nav-link ${activeTab === "applications" ? "active" : ""}`}
+                onClick={() => setActiveTab("applications")}
+                style={{ cursor: "pointer" }}
+              >
+                Applications
+              </div>
+              <div
+                className={`nav-link ${activeTab === "generatedFiles" ? "active" : ""}`}
+                onClick={() => setActiveTab("generatedFiles")}
+                style={{ cursor: "pointer" }}
+              >
+                Generated Files
+              </div>
+            </>
+          )}
         </div>
       </div>
 
       {/* Tab content */}
       {activeTab === "login" ? (
         <div className="flex justify-center">
-          {authenticatedUser === null && (
+          {!authed && (
             <Card>
               <Card.Header>
                 <h3>Login to Access Your Account</h3>
               </Card.Header>
               <Card.Body>
-                <Form onSubmit={handleLogin} isLoggedIn={isLoggedIn} />
+                <Form onSubmit={handleLogin} isLoggedIn={false} />
               </Card.Body>
               <Card.Footer>
                 <div
@@ -239,7 +272,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
               </Card.Footer>
             </Card>
           )}
-          {isLoggedIn && <CoolButton onClick={handleLogout}>Log Out</CoolButton>}
+          {/* When authenticated, login view is hidden and tab list updates */}
         </div>
       ) : activeTab === "applications" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
@@ -298,12 +331,16 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                   </div>
                 ) : (
                   <>
-                    <span>$</span>
-                    <CountUp
-                      end={balanceData?.[0]?.currentBalance || 0.1}
-                      duration={0.66}
-                      decimals={2}
-                    />
+                    {(() => {
+                      const rawBalance = balanceData?.[0]?.currentBalance || 0;
+                      const effectiveBalance = Math.max(0, rawBalance - (apiMetrics.totalCost || 0));
+                      return (
+                        <>
+                          <span>$</span>
+                          <CountUp end={effectiveBalance} duration={0.66} decimals={2} />
+                        </>
+                      );
+                    })()}
                     <VSCodeButton
                       appearance="icon"
                       className="mt-1"

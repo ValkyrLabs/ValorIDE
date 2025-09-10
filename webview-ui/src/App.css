@@ -1,6 +1,7 @@
 /* Base styling for the entire app */
 
 body {
+  --vscode-editor-line-height: 2em;
   font-family: "Orbitron", sans-serif;
   /*  background: linear-gradient(rgba(0, 0, 0, 1), rgba(255, 255, 255, 0.25));
   url("./assets/images/heimdallm-toon.png") top center/cover;*/
@@ -301,6 +302,50 @@ button {
   width: 100px;
   border: 1 solid black;
   color: #fff;
+}
+
+/* Glowing button styles (inspired by chat text area) */
+.glow-button {
+  
+  --glow-color: #61dafb;
+  display: inline-block;
+  border: 1px solid var(--glow-color);
+  box-shadow: 0 0 8px var(--glow-color);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--vscode-foreground);
+  transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.glow-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 12px var(--glow-color);
+}
+
+.glow-button:active {
+  transform: translateY(0);
+  box-shadow: 0 0 6px var(--glow-color);
+}
+
+/* Optional mood variants */
+.glow-button.happy {
+  --glow-color: #61dafb; /* cyan */
+}
+
+.glow-button.waiting {
+  --glow-color: #ff9900; /* amber */
+  animation: glowPulse 1.75s ease-in-out infinite;
+}
+
+.glow-button.sad {
+  --glow-color: #ff0000; /* red */
+  animation: glowPulse 1.75s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 6px var(--glow-color); }
+  50% { box-shadow: 0 0 16px var(--glow-color); }
+  100% { box-shadow: 0 0 6px var(--glow-color); }
 }
 
 /* Footer styling for dark mode */

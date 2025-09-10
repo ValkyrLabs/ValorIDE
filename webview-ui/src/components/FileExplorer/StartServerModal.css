@@ -1,0 +1,193 @@
+.start-server-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.start-server-modal-content {
+  background-color: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-widget-border);
+  border-radius: 4px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow: hidden;
+  animation: slideIn 0.2s ease-in-out;
+}
+
+.start-server-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--vscode-widget-border);
+  background-color: var(--vscode-titleBar-activeBackground);
+}
+
+.start-server-modal-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--vscode-titleBar-activeForeground);
+}
+
+.start-server-modal-body {
+  padding: 20px;
+  color: var(--vscode-editor-foreground);
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.start-server-modal-body p {
+  margin: 0 0 12px 0;
+  line-height: 1.5;
+}
+
+.start-server-modal-path {
+  background-color: var(--vscode-textCodeBlock-background);
+  padding: 8px 12px;
+  border-radius: 3px;
+  border: 1px solid var(--vscode-widget-border);
+  margin: 12px 0;
+}
+
+.start-server-modal-path code {
+  font-family: var(--vscode-editor-font-family);
+  font-size: var(--vscode-editor-font-size);
+  color: var(--vscode-textPreformat-foreground);
+  word-break: break-all;
+}
+
+.start-server-modal-details {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--vscode-widget-border);
+}
+
+.start-server-modal-details > p {
+  font-weight: 500;
+  margin-bottom: 12px;
+  color: var(--vscode-editor-foreground);
+}
+
+.start-server-modal-command,
+.start-server-modal-port {
+  margin: 12px 0;
+  padding: 8px 12px;
+  background-color: var(--vscode-textCodeBlock-background);
+  border-radius: 3px;
+  border-left: 3px solid var(--vscode-focusBorder);
+}
+
+.start-server-modal-command strong,
+.start-server-modal-port strong {
+  color: var(--vscode-editor-foreground);
+  font-weight: 600;
+}
+
+.start-server-modal-command code,
+.start-server-modal-port code {
+  background-color: var(--vscode-input-background);
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-family: var(--vscode-editor-font-family);
+  font-size: 0.9em;
+  color: var(--vscode-textPreformat-foreground);
+  margin-left: 8px;
+}
+
+.start-server-modal-features {
+  margin-top: 16px;
+}
+
+.start-server-modal-features p {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--vscode-editor-foreground);
+}
+
+.start-server-modal-features ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.start-server-modal-features li {
+  margin-bottom: 6px;
+  line-height: 1.4;
+  color: var(--vscode-editor-foreground);
+}
+
+.start-server-modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--vscode-widget-border);
+  background-color: var(--vscode-editor-background);
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 700px) {
+  .start-server-modal-content {
+    width: 95%;
+    margin: 20px;
+  }
+  
+  .start-server-modal-header,
+  .start-server-modal-body,
+  .start-server-modal-footer {
+    padding: 16px;
+  }
+  
+  .start-server-modal-footer {
+    flex-direction: column-reverse;
+  }
+  
+  .start-server-modal-footer vscode-button {
+    width: 100%;
+  }
+}
+
+/* Scrollbar styling for the modal body */
+.start-server-modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.start-server-modal-body::-webkit-scrollbar-track {
+  background: var(--vscode-scrollbarSlider-background);
+}
+
+.start-server-modal-body::-webkit-scrollbar-thumb {
+  background: var(--vscode-scrollbarSlider-hoverBackground);
+  border-radius: 4px;
+}
+
+.start-server-modal-body::-webkit-scrollbar-thumb:hover {
+  background: var(--vscode-scrollbarSlider-activeBackground);
+}

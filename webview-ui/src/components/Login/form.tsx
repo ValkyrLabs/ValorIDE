@@ -1,18 +1,12 @@
-import {
-  ErrorMessage,
-  Field,
-  Formik,
-  FormikHelpers,
-} from "formik";
+import { ErrorMessage, Field, Formik, FormikHelpers } from "formik";
 import React from "react";
 import { Col, Row, Spinner } from "react-bootstrap";
 import { FaCheckCircle } from "react-icons/fa";
 import { FiUserCheck } from "react-icons/fi";
 import * as Yup from "yup";
-import { useLoginUserMutation } from "../../redux/services/AuthService";
 import { Login } from "@thor/model";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
-import ApplicationsList from "../account/ApplicationsList";
+import "./index.css";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string()
@@ -28,9 +22,6 @@ interface FormProps {
 }
 
 const Form: React.FC<FormProps> = ({ onSubmit, isLoggedIn, onLogout }) => {
-  const [loginUser, loginUserResult] = useLoginUserMutation();
-  const loginFailed = loginUserResult.status === "rejected";
-
   const initialValues: Login = {
     username: "",
     password: "",
@@ -40,7 +31,7 @@ const Form: React.FC<FormProps> = ({ onSubmit, isLoggedIn, onLogout }) => {
     <div>
       {isLoggedIn && (
         <div style={{ marginBottom: "1em" }}>
-          <VSCodeButton onClick={onLogout} type="button" style={{ marginRight: "1em" }}>
+          <VSCodeButton className="glow-button waiting" onClick={onLogout} type="button" style={{ marginRight: "1em" }}>
             Logout
           </VSCodeButton>
           <span style={{ fontWeight: "bold", marginLeft: "1em" }}>or: Switch Users</span>
@@ -61,15 +52,6 @@ const Form: React.FC<FormProps> = ({ onSubmit, isLoggedIn, onLogout }) => {
           touched,
         }) => (
           <form onSubmit={handleSubmit} className="form">
-            {loginFailed && (
-              <Row>
-                <Col>
-                  <div className="error">
-                    Login failed.
-                  </div>
-                </Col>
-              </Row>
-            )}
             <Row>
               <Col md={12}>
                 <label htmlFor="username" className="nice-form-control">
@@ -86,8 +68,8 @@ const Form: React.FC<FormProps> = ({ onSubmit, isLoggedIn, onLogout }) => {
                     type="text"
                     className={
                       errors.username
-                        ? "form-control field-error"
-                        : "form-control"
+                        ? "form-control field-error  glow-button sad"
+                        : "form-control glow-button happy"
                     }
                   />
                   <ErrorMessage
@@ -114,8 +96,8 @@ const Form: React.FC<FormProps> = ({ onSubmit, isLoggedIn, onLogout }) => {
                     type="password"
                     className={
                       errors.password
-                        ? "form-control field-error"
-                        : "form-control"
+                        ? "form-control field-error glow-button sad"
+                        : "form-control glow-button happy"
                     }
                   />
                   <ErrorMessage
@@ -130,7 +112,8 @@ const Form: React.FC<FormProps> = ({ onSubmit, isLoggedIn, onLogout }) => {
               <Col>
                 {!isLoggedIn && (
                   <VSCodeButton
-                    disabled={!isValid || loginUserResult.isLoading}
+                    className="glow-button happy form-control"
+                    disabled={!isValid || isSubmitting}
                     type="submit"
                   >
                     {isSubmitting && (
@@ -142,15 +125,6 @@ const Form: React.FC<FormProps> = ({ onSubmit, isLoggedIn, onLogout }) => {
                       />
                     )}
                     <FiUserCheck size={30} /> Login Now
-                  </VSCodeButton>
-                )}
-                {isLoggedIn && (
-                  <VSCodeButton
-                    disabled={!isValid || loginUserResult.isLoading}
-                    type="submit"
-                    style={{ marginLeft: "1em" }}
-                  >
-                    <FiUserCheck size={30} /> Switch User
                   </VSCodeButton>
                 )}
               </Col>

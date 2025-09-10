@@ -21,6 +21,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, toggle }) => {
         localStorage.setItem("authToken", result.token);
         localStorage.setItem("authenticatedUser", JSON.stringify(result.user || {}));
         setIsLoggedIn(true);
+        // Hide the modal after successful login
+        try { toggle(); } catch {}
       } else {
         alert("Login succeeded but no token returned.");
       }

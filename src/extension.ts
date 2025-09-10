@@ -12,6 +12,8 @@ import { telemetryService } from "./services/telemetry/TelemetryService";
 import { WebviewProvider } from "./core/webview";
 import { ErrorService } from "./services/error/ErrorService";
 import { initializeTestMode, cleanupTestMode } from "./services/test/TestMode";
+import { registerUrlCommands } from "./commands/urlCommands";
+import { registerAliasCommands } from "./commands/aliasCommands";
 
 /*
 Built using https://github.com/microsoft/vscode-webview-ui-toolkit
@@ -26,9 +28,10 @@ let outputChannel: vscode.OutputChannel;
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
-import { CommunicationService, CommunicationRole } from "./services/communication/CommunicationService";
-
-let communicationService: CommunicationService | null = null;
+// Defer loading of browser-only CommunicationService to avoid pulling Vite/runtime
+// modules into the extension host at activation time.
+let communicationService: any | null = null;
+let toolRelayService: any | null = null;
 
 export function activate(context: vscode.ExtensionContext) {
   outputChannel = vscode.window.createOutputChannel("ValorIDE");
@@ -50,15 +53,32 @@ export function activate(context: vscode.ExtensionContext) {
 
   Logger.log("ValorIDE extension activated");
 
+  // Register utility commands
+  registerUrlCommands(context);
+  registerAliasCommands(context);
+
   // Initialize CommunicationService only in browser-like contexts (e.g., web UI)
-  if (CommunicationService.isSupported()) {
-    // For example, use environment variable or config to decide role
-    const role: CommunicationRole =
-      process.env.VALORIDE_ROLE === "manager" ? "manager" : "worker";
-    communicationService = new CommunicationService({ role });
+  // Use dynamic import to avoid loading Vite/webview code in Node extension host.
+  void (async () => {
+    const hasWindow = typeof (globalThis as any).window !== "undefined";
+    if (!hasWindow) {
+      Logger.log(
+        "CommunicationService not supported in this environment; skipping init.",
+      );
+      return;
+    }
+    const mod = await import("./services/communication/CommunicationService");
+    if (!mod?.CommunicationService?.isSupported()) {
+      Logger.log(
+        "CommunicationService not supported in this environment; skipping init.",
+      );
+      return;
+    }
+    const role = process.env.VALORIDE_ROLE === "manager" ? "manager" : "worker";
+    communicationService = new mod.CommunicationService({ role });
     communicationService.connect();
 
-    communicationService.on("message", (message) => {
+    communicationService.on("message", (message: any) => {
       Logger.log(
         `CommunicationService received message: ${JSON.stringify(message)}`,
       );
@@ -66,14 +86,43 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     // Optional: surface service errors to output channel (won't crash)
-    communicationService.on("error", (err) => {
+    communicationService.on("error", (err: any) => {
       Logger.log(`CommunicationService error: ${String(err)}`);
     });
-  } else {
-    Logger.log(
-      "CommunicationService not supported in this environment; skipping init.",
-    );
-  }
+
+    // Initialize ToolRelayService for remote control capabilities
+    try {
+      const toolRelayMod = await import("./services/communication/ToolRelayService");
+      const visibleWebview = WebviewProvider.getVisibleInstance() || sidebarWebview;
+      if (visibleWebview?.controller) {
+        toolRelayService = new toolRelayMod.ToolRelayService(
+          communicationService,
+          visibleWebview.controller
+        );
+        Logger.log("ToolRelayService initialized for remote control");
+      }
+    } catch (error) {
+      Logger.log(`Failed to initialize ToolRelayService: ${error}`);
+    }
+  })();
+
+  // Register Explorer decorations and context actions for downloaded ThorAPI projects
+  void import("./integrations/explorer/ProjectDecorationProvider")
+    .then(({ registerProjectExplorerIntegrations }) => {
+      registerProjectExplorerIntegrations(context, outputChannel);
+    })
+    .catch((e) => {
+      Logger.log(`Explorer integration registration failed: ${String(e)}`);
+    });
+
+  // Register the Projects tree view with inline actions
+  void import("./integrations/explorer/ProjectsView")
+    .then(({ registerProjectsView }) => {
+      registerProjectsView(context, outputChannel);
+    })
+    .catch((e) => {
+      Logger.log(`Projects view registration failed: ${String(e)}`);
+    });
 
   // Initialize test mode and set dev mode context
   context.subscriptions.push(...initializeTestMode(context, sidebarWebview));
@@ -293,6 +342,28 @@ export function activate(context: vscode.ExtensionContext) {
             openAccount(WebviewProvider.getSidebarInstance());
           } else {
             WebviewProvider.getTabInstances().forEach(openAccount);
+          }
+        });
+      },
+    ),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "valoride.serverConsoleButtonClicked",
+      (webview: any) => {
+        WebviewProvider.getAllInstances().forEach((instance) => {
+          const openServerConsole = async (instance?: WebviewProvider) => {
+            instance?.controller.postMessageToWebview({
+              type: "action",
+              action: "serverConsoleButtonClicked",
+            });
+          };
+          const isSidebar = !webview;
+          if (isSidebar) {
+            openServerConsole(WebviewProvider.getSidebarInstance());
+          } else {
+            WebviewProvider.getTabInstances().forEach(openServerConsole);
           }
         });
       },

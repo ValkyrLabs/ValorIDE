@@ -1,12 +1,10 @@
 import EventEmitter from "events";
-
-export type CommunicationMessage = {
-  type: string;
-  payload: any;
-  senderId: string;
-  messageId: string;
-  timestamp: number;
-};
+import {
+  WebsocketMessage,
+  WebsocketMessageFromJSON,
+  WebsocketMessageToJSON,
+  WebsocketMessageTypeEnum,
+} from "@thor/model";
 
 export type CommunicationRole = "manager" | "worker";
 
@@ -16,31 +14,44 @@ interface CommunicationServiceOptions {
 }
 
 /**
- * CommunicationService wraps the existing ValkyrAI WebSocket client
- * to provide inter-window communication between ValorIDE instances.
- * Now with robust error handling for all environments.
+ * HubAppMessage represents messages exchanged via VSCode extension hub.
+ */
+type HubAppMessage = {
+  type: string;
+  payload: any;
+  senderId: string;
+  messageId: string;
+  timestamp: number;
+};
+
+/**
+ * CommunicationService wraps STOMP/WebSocket and VSCode hub messaging,
+ * normalizing all messages into WebsocketMessage entities.
  */
 export class CommunicationService extends EventEmitter {
   private role: CommunicationRole;
   private senderId: string;
-  private connected: boolean = false;
-  public ready: boolean = false;
+  private connected = false;
+  public ready = false;
   public error: Error | null = null;
   private vscodeApi: any | null = null;
-  public hubConnected: boolean = false;
-  public thorConnected: boolean = false;
-  private peers: Set<string> = new Set();
+  public hubConnected = false;
+  public thorConnected = false;
+  private peers = new Set<string>();
+  // Lightweight WebRTC P2P support for resilience
+  private rtcPeers = new Map<string, RTCPeerConnection>();
+  private rtcChannels = new Map<string, RTCDataChannel>();
+  private rtcEnabled = true;
+  private iceServers: RTCIceServer[] = [{ urls: ["stun:stun.l.google.com:19302"] }];
+  private p2pOpenCount = 0;
 
   constructor(options: CommunicationServiceOptions) {
     super();
     this.role = options.role;
     this.senderId = options.senderId ?? this.generateSenderId();
-    // Prevent Node/EventEmitter from crashing the process on 'error' with no listeners
-    // Consumers can still subscribe to 'error', but we default to a no-op handler.
+    // Prevent uncaught 'error' crashes
     if (this.listenerCount("error") === 0) {
-      this.on("error", () => {
-        // Swallow by default; actual logging happens in emitSafeError
-      });
+      this.on("error", () => {});
     }
   }
 
@@ -49,146 +60,220 @@ export class CommunicationService extends EventEmitter {
   }
 
   public static isSupported(): boolean {
-    // Only run in browser-like environments
     return typeof window !== "undefined" && typeof window.addEventListener === "function";
   }
 
   public connect() {
     if (this.connected) return;
     if (!CommunicationService.isSupported()) {
-      // Gracefully noop in non-browser environments (e.g., VS Code extension host)
-      this.ready = false;
-      this.error = new Error(
-        "CommunicationService: Not running in a browser context.",
-      );
-      // Log as a warning instead of emitting 'error' to avoid crashing the host.
-      if (typeof console !== "undefined") {
-        console.warn(this.error.message);
-      }
+      this.error = new Error("CommunicationService: Not running in a browser context.");
+      console.warn(this.error.message);
       return;
     }
-    try {
-      // Thor/STOMP bridge -> emits CustomEvent('websocket-message', { detail }) in webview
-      window.addEventListener("websocket-message", this.handleIncomingMessage);
 
-      // VS Code extension hub -> receives postMessage({ type: 'telecom:message', message })
-      window.addEventListener("message", (evt: MessageEvent) => {
-        try {
-          const data: any = evt.data;
-          if (data && data.type === "telecom:message" && data.message) {
-            const msg = data.message as CommunicationMessage;
-            if (msg.senderId !== this.senderId) {
-              this.emit("message", msg);
-              // Track presence from hub
-              if (msg.type === "presence:join" && msg.payload?.id) {
-                this.peers.add(msg.payload.id);
-                this.emit("presence", Array.from(this.peers));
+    try {
+      // Listen for Thor/STOMP bridge messages from webview (AppMessage shape)
+      window.addEventListener("websocket-message", (evt: Event) => {
+        const custom = evt as CustomEvent;
+        const appMsg = custom.detail;
+        if (!appMsg || typeof appMsg.type !== "string") return;
+
+        // Handle potential WebRTC signaling tunneled via Thor broker
+        if (appMsg.type.startsWith("webrtc:")) {
+          this.handleWebRTCSignal(appMsg as any);
+          return;
+        }
+
+        // Handle presence mirrored via broker
+        if (appMsg.type.startsWith("presence:")) {
+          try {
+            if (appMsg.type === "presence:join") {
+              if (appMsg.payload?.id && appMsg.payload.id !== this.senderId) {
+                this.peers.add(appMsg.payload.id);
+                this.tryInitiateWebRTC(appMsg.payload.id);
               }
-              if (msg.type === "presence:leave" && msg.payload?.id) {
-                this.peers.delete(msg.payload.id);
-                this.emit("presence", Array.from(this.peers));
+            } else if (appMsg.type === "presence:leave") {
+              if (appMsg.payload?.id) {
+                this.peers.delete(appMsg.payload.id);
+                this.teardownPeer(appMsg.payload.id);
               }
-              if (msg.type === "presence:state" && Array.isArray(msg.payload?.ids)) {
-                this.peers = new Set(msg.payload.ids);
-                this.emit("presence", Array.from(this.peers));
-              }
+            } else if (appMsg.type === "presence:state" && Array.isArray(appMsg.payload?.ids)) {
+              this.peers = new Set(appMsg.payload.ids);
+              this.peers.forEach((id: string) => this.tryInitiateWebRTC(id));
             }
+            this.emit("presence", Array.from(this.peers));
+          } catch {
+            // ignore malformed presence payloads
           }
-        } catch (e) {
-          // ignore
+          return;
+        }
+
+        // Normalize AppMessage to WebsocketMessage for consumers
+        try {
+          const ws: WebsocketMessage = {
+            id: appMsg.messageId,
+            type: appMsg.type as WebsocketMessageTypeEnum,
+            payload: JSON.stringify(appMsg.payload ?? {}),
+            time: new Date(appMsg.timestamp || Date.now()).toISOString(),
+            user: { id: appMsg.senderId || "" } as any,
+          };
+          this.emit("message", ws);
+        } catch {
+          // ignore invalid payloads
         }
       });
 
-      // VS Code API (webview only)
+      // Listen for VSCode extension hub messages
+      window.addEventListener("message", (evt: MessageEvent) => {
+        const data = evt.data;
+        if (data?.type === "telecom:message" && data.message) {
+          const appMsg = data.message as HubAppMessage;
+          if (appMsg.senderId !== this.senderId) {
+            // Handle presence and WebRTC signaling first
+            if (appMsg.type?.startsWith?.("webrtc:")) {
+              this.handleWebRTCSignal(appMsg);
+              return;
+            }
+            const wsMsg: WebsocketMessage = {
+              id: appMsg.messageId,
+              type: appMsg.type as WebsocketMessageTypeEnum,
+              payload: JSON.stringify(appMsg.payload),
+              time: new Date(appMsg.timestamp).toISOString(),
+              user: { id: appMsg.senderId } as any,
+            };
+            this.emit("message", wsMsg);
+            // Manage presence
+            if (appMsg.type === "presence:join") {
+              this.peers.add(appMsg.payload.id);
+              this.tryInitiateWebRTC(appMsg.payload.id);
+              // Mirror presence over broker for cross-window discovery
+              try { this.sendMessage("presence:join", { id: appMsg.payload.id }); } catch (e) { void e; }
+            }
+            if (appMsg.type === "presence:leave") {
+              this.peers.delete(appMsg.payload.id);
+              this.teardownPeer(appMsg.payload.id);
+              // Mirror presence over broker for cross-window discovery
+              try { this.sendMessage("presence:leave", { id: appMsg.payload.id }); } catch (e) { void e; }
+            }
+            if (appMsg.type === "presence:state" && Array.isArray(appMsg.payload.ids)) {
+              this.peers = new Set(appMsg.payload.ids);
+              // Opportunistically initiate P2P with stable ordering to avoid glare
+              this.peers.forEach((id) => this.tryInitiateWebRTC(id));
+            }
+            this.emit("presence", Array.from(this.peers));
+          }
+        }
+      });
+
+      // Acquire VSCode API for hub post back
       try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.vscodeApi = (window as any).acquireVsCodeApi?.();
       } catch {
         this.vscodeApi = null;
       }
       this.hubConnected = !!this.vscodeApi;
 
-      // Thor connection status from thorBridge
+      // Listen for STOMP connection status events
       window.addEventListener("telecom-status", (evt: Event) => {
-        try {
-          const ce = evt as CustomEvent<{ thorConnected: boolean; phase: string }>;
-          this.thorConnected = !!ce.detail?.thorConnected;
-          // ready when either hub or thor connected
-          this.ready = this.hubConnected || this.thorConnected;
-          this.emit("status", { hubConnected: this.hubConnected, thorConnected: this.thorConnected, phase: ce.detail?.phase });
-        } catch {
-          // ignore
-        }
+        const ce = evt as CustomEvent<{ thorConnected: boolean; phase: string }>;
+        this.thorConnected = !!ce.detail?.thorConnected;
+        this.ready = this.hubConnected || this.thorConnected;
+        this.emit("status", {
+          hubConnected: this.hubConnected,
+          thorConnected: this.thorConnected,
+          phase: ce.detail.phase,
+        });
       });
+
       this.connected = true;
-      this.ready = this.hubConnected || this.thorConnected;
-      this.error = null;
+      this.ready = this.hubConnected;
+
+      // Aggressively trigger local peer discovery and P2P handshakes.
+      // Do an immediate kick, then a short burst of retries to catch
+      // tabs/views that are still initializing.
+      const kick = () => {
+        try {
+          this.connectToVsCodePeers();
+          this.reconnectPeers();
+        } catch {/* ignore */}
+      };
+      // Immediate kick to engage hub promptly
+      kick();
+      // Initial kick shortly after connect to allow VS Code to
+      // wire up the webview message channel.
+      setTimeout(kick, 50);
+      // Fast retries for ~5s or until we see peers
+      let attempts = 0;
+      const maxAttempts = 20; // ~5s at 250ms
+      const retry = setInterval(() => {
+        attempts++;
+        if (this.peers.size > 0 || attempts >= maxAttempts) {
+          clearInterval(retry);
+          return;
+        }
+        kick();
+      }, 250);
     } catch (err: any) {
-      this.ready = false;
       this.error = err instanceof Error ? err : new Error(String(err));
-      this.emitSafeError(this.error, "connect");
+      this.emit("error", this.error);
     }
   }
 
   public disconnect() {
-    if (!this.connected) return;
-    if (!CommunicationService.isSupported()) return;
+    if (!this.connected || !CommunicationService.isSupported()) return;
     try {
-      window.removeEventListener("websocket-message", this.handleIncomingMessage);
+      window.removeEventListener("websocket-message", () => {});
+      window.removeEventListener("message", () => {});
       this.connected = false;
       this.ready = false;
     } catch (err: any) {
       this.error = err instanceof Error ? err : new Error(String(err));
-      this.emitSafeError(this.error, "disconnect");
+      this.emit("error", this.error);
     }
   }
 
-  private handleIncomingMessage = (event: Event) => {
-    try {
-      const customEvent = event as CustomEvent;
-      const message: CommunicationMessage = customEvent.detail;
-      if (!message || typeof message !== "object") return;
-      if (message.senderId === this.senderId) {
-        // Ignore own messages
-        return;
-      }
-      this.emit("message", message);
-    } catch (err: any) {
-      this.error = err instanceof Error ? err : new Error(String(err));
-      this.emitSafeError(this.error, "message handler");
-    }
-  };
-
-  public sendMessage(type: string, payload: any) {
-    if (!this.connected || !CommunicationService.isSupported()) {
-      if (typeof console !== "undefined") {
-        console.warn("CommunicationService: Not connected or not supported, cannot send message.");
-      }
+  public sendMessage(appType: string, payload: any) {
+    if (!this.connected) {
+      console.warn("CommunicationService: Not connected, cannot send.");
       return;
     }
-    try {
-      const message: CommunicationMessage = {
-        type,
-        payload,
-        senderId: this.senderId,
-        messageId: this.generateMessageId(),
-        timestamp: Date.now(),
-      };
-      // Thor/STOMP bridge listener (inside webview) picks this up
-      const event = new CustomEvent("websocket-send", { detail: message });
-      window.dispatchEvent(event);
-
-      // Local multi-instance via VS Code hub
-      if (this.vscodeApi) {
-        try {
-          this.vscodeApi.postMessage({ type: "telecom:send", message });
-        } catch {
-          // ignore postMessage errors
-        }
+    const appMsg: HubAppMessage = {
+      type: appType,
+      payload,
+      senderId: this.senderId,
+      messageId: this.generateMessageId(),
+      timestamp: Date.now(),
+    };
+    window.dispatchEvent(new CustomEvent("websocket-send", { detail: appMsg }));
+    if (this.vscodeApi) {
+      try {
+        this.vscodeApi.postMessage({ type: "telecom:send", message: appMsg });
+      } catch (err) {
+        // Ignore failures when VS Code host is not available
+        void err;
       }
+    }
+    // Opportunistically mirror over active P2P channels for resilience
+    try {
+      this.rtcChannels.forEach((ch) => {
+        if (ch.readyState === "open") ch.send(JSON.stringify(appMsg));
+      });
     } catch (err: any) {
-      this.error = err instanceof Error ? err : new Error(String(err));
-      this.emitSafeError(this.error, "sendMessage");
+      // Do not disrupt normal flow
+      void err;
+    }
+  }
+
+  /**
+   * Ask the VS Code extension hub to (re)sync presence and announce us
+   * so that other ValorIDE views in this VS Code instance can connect.
+   */
+  public connectToVsCodePeers() {
+    if (!this.vscodeApi) return;
+    try {
+      this.vscodeApi.postMessage({ type: "telecom:connect" });
+    } catch (e) {
+      // ignore
     }
   }
 
@@ -196,11 +281,185 @@ export class CommunicationService extends EventEmitter {
     return Math.random().toString(36).substring(2, 12);
   }
 
-  private emitSafeError(error: Error, context: string) {
-    if (typeof console !== "undefined") {
-      console.error(`CommunicationService ${context} error:`, error);
+  // ===== WebRTC helpers =====
+  private getOrderedPair(otherId: string): { caller: boolean } {
+    // Deterministic role selection to avoid glare
+    return { caller: this.senderId < otherId };
+  }
+
+  /** Public toggle for enabling/disabling WebRTC P2P. */
+  public setP2PEnabled(enabled: boolean) {
+    this.rtcEnabled = !!enabled;
+    if (!this.rtcEnabled) {
+      try {
+        this.rtcChannels.forEach((_, id) => this.teardownPeer(id));
+      } catch { /* ignore */ }
     }
-    // Always emit 'error' safely; default no-op listener prevents crash
-    this.emit("error", error);
+    this.emit("p2p-status", this.getP2PStatus());
+    try {
+      window.dispatchEvent(new CustomEvent("telecom-p2p", { detail: this.getP2PStatus() }));
+    } catch { /* ignore */ }
+  }
+
+  private async tryInitiateWebRTC(peerId: string) {
+    if (!this.rtcEnabled) return;
+    if (!peerId || peerId === this.senderId) return;
+    if (this.rtcPeers.has(peerId)) return;
+    const { caller } = this.getOrderedPair(peerId);
+    if (!caller) return; // Only caller side creates offer
+    try {
+      const pc = this.createPeer(peerId);
+      const channel = pc.createDataChannel("valoride");
+      this.attachChannel(peerId, channel);
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      this.sendMessage("webrtc:offer", { to: peerId, from: this.senderId, sdp: offer });
+    } catch (e) {
+      // Swallow P2P init failures to keep resilience best-effort
+      void e;
+    }
+  }
+
+  private createPeer(peerId: string): RTCPeerConnection {
+    const pc = new RTCPeerConnection({ iceServers: this.iceServers });
+    pc.onicecandidate = (ev) => {
+      if (!ev.candidate) return;
+      this.sendMessage("webrtc:ice", { to: peerId, from: this.senderId, candidate: ev.candidate });
+    };
+    pc.ondatachannel = (ev) => {
+      this.attachChannel(peerId, ev.channel);
+    };
+    pc.onconnectionstatechange = () => {
+      if (["failed", "closed", "disconnected"].includes(pc.connectionState)) {
+        this.teardownPeer(peerId);
+      }
+    };
+    this.rtcPeers.set(peerId, pc);
+    return pc;
+  }
+
+  private attachChannel(peerId: string, ch: RTCDataChannel) {
+    ch.onopen = () => {
+      this.emit("p2p", { peerId, state: "open" });
+      this.p2pOpenCount = this.countOpenChannels();
+      this.emit("p2p-status", this.getP2PStatus());
+      try {
+        window.dispatchEvent(new CustomEvent("telecom-p2p", { detail: this.getP2PStatus() }));
+      } catch (e) { void e; }
+    };
+    ch.onclose = () => {
+      this.emit("p2p", { peerId, state: "closed" });
+      this.p2pOpenCount = this.countOpenChannels();
+      this.emit("p2p-status", this.getP2PStatus());
+      try {
+        window.dispatchEvent(new CustomEvent("telecom-p2p", { detail: this.getP2PStatus() }));
+      } catch (e) { void e; }
+    };
+    ch.onerror = () => {
+      this.emit("p2p", { peerId, state: "error" });
+      this.p2pOpenCount = this.countOpenChannels();
+      this.emit("p2p-status", this.getP2PStatus());
+      try {
+        window.dispatchEvent(new CustomEvent("telecom-p2p", { detail: this.getP2PStatus() }));
+      } catch (e) { void e; }
+    };
+    ch.onmessage = (ev) => {
+      try {
+        const app = JSON.parse(ev.data);
+        // Normalize to WebsocketMessage shape for consumers when possible
+        if (app && app.type && app.messageId) {
+          const ws: WebsocketMessage = {
+            id: app.messageId,
+            type: app.type as WebsocketMessageTypeEnum,
+            payload: JSON.stringify(app.payload ?? {}),
+            time: new Date(app.timestamp || Date.now()).toISOString(),
+            user: { id: app.senderId || peerId } as any,
+          };
+          this.emit("message", ws);
+        }
+      } catch {
+        // ignore malformed P2P payloads
+      }
+    };
+    this.rtcChannels.set(peerId, ch);
+  }
+
+  private teardownPeer(peerId: string) {
+    try {
+      this.rtcChannels.get(peerId)?.close();
+    } catch (e) { void e; }
+    this.rtcChannels.delete(peerId);
+    try {
+      this.rtcPeers.get(peerId)?.close();
+    } catch (e) { void e; }
+    this.rtcPeers.delete(peerId);
+    this.p2pOpenCount = this.countOpenChannels();
+    this.emit("p2p-status", this.getP2PStatus());
+    try {
+      window.dispatchEvent(new CustomEvent("telecom-p2p", { detail: this.getP2PStatus() }));
+    } catch (e) { void e; }
+  }
+
+  private async handleWebRTCSignal(msg: HubAppMessage) {
+    if (!this.rtcEnabled) return;
+    const { type, payload, senderId } = msg;
+    const from = payload?.from || senderId;
+    const to = payload?.to;
+    if (to && to !== this.senderId) return; // Not addressed to us
+
+    if (type === "webrtc:offer") {
+      try {
+        const pc = this.rtcPeers.get(from) || this.createPeer(from);
+        await pc.setRemoteDescription(new RTCSessionDescription(payload.sdp));
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        this.sendMessage("webrtc:answer", { to: from, from: this.senderId, sdp: answer });
+      } catch (e) {
+        void e;
+      }
+      return;
+    }
+    if (type === "webrtc:answer") {
+      try {
+        const pc = this.rtcPeers.get(from);
+        if (!pc) return;
+        await pc.setRemoteDescription(new RTCSessionDescription(payload.sdp));
+      } catch (e) {
+        void e;
+      }
+      return;
+    }
+    if (type === "webrtc:ice") {
+      try {
+        const pc = this.rtcPeers.get(from);
+        if (!pc) return;
+        await pc.addIceCandidate(new RTCIceCandidate(payload.candidate));
+      } catch (e) {
+        void e;
+      }
+      return;
+    }
+  }
+
+  // Public P2P API
+  public reconnectPeers() {
+    try {
+      this.rtcChannels.forEach((_, id) => this.teardownPeer(id));
+      this.peers.forEach((id) => this.tryInitiateWebRTC(id));
+    } catch (e) { void e; }
+  }
+
+  public configureIceServers(servers: RTCIceServer[]) {
+    if (Array.isArray(servers) && servers.length > 0) this.iceServers = servers;
+  }
+
+  public getP2PStatus(): { open: number; peers: number } {
+    return { open: this.p2pOpenCount, peers: this.peers.size };
+  }
+
+  private countOpenChannels(): number {
+    let n = 0;
+    this.rtcChannels.forEach((ch) => { if (ch.readyState === "open") n++; });
+    return n;
   }
 }

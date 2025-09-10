@@ -27,7 +27,7 @@
     "paths": {
       "@/*": ["src/*"],
       "@api/*": ["src/api/*"],
-      "@thor/*": ["src/webview-ui/src/thor/*"],
+      "@thor/*": ["webview-ui/src/thor/*"],
       "@websocket/*": ["webview-ui/src/websocket/*"],
       "@core/*": ["src/core/*"],
       "@integrations/*": ["src/integrations/*"],

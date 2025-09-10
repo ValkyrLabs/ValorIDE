@@ -15,7 +15,10 @@ export class ValkyraiHandler implements ApiHandler {
     _systemPrompt: string,
     messages: Anthropic.Messages.MessageParam[],
   ): ApiStream {
-    const host = this.options.valkyraiHost || process.env.REACT_APP_BASE_PATH || "http://localhost:8080";
+    const host =
+      this.options.valkyraiHost ||
+      process.env.REACT_APP_BASE_PATH ||
+      "http://localhost:8080/v1";
     const serviceId = this.options.valkyraiServiceId || this.options.apiModelId || "";
     const jwt = this.options.valkyraiJwt;
 
@@ -38,4 +41,3 @@ export class ValkyraiHandler implements ApiHandler {
     };
   }
 }
-

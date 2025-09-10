@@ -259,6 +259,12 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
     const nonce = getNonce();
 
     // Tip: Install the es6-string-html VS Code extension to enable code highlighting below
+    const cfg = vscode.workspace.getConfiguration("valoride");
+    const telecomConfig = {
+      turnServers: cfg.get<any[]>("telecom.turnServers", ["stun:stun.l.google.com:19302"]),
+      bonjour: cfg.get<boolean>("telecom.discovery.bonjour", false),
+      p2pEnabled: cfg.get<boolean>("telecom.p2pEnabled", true),
+    };
     return /*html*/ `
         <!DOCTYPE html>
         <html lang="en">
@@ -273,6 +279,9 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
           <body>
             <noscript>You need to enable JavaScript to run this app.</noscript>
             <div id="root"></div>
+            <script nonce="${nonce}">
+              try { window.__valorideTelecomConfig = ${JSON.stringify(telecomConfig)}; } catch {}
+            </script>
             <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
           </body>
         </html>
@@ -331,6 +340,12 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       `connect-src https://* ws://${localServerUrl} ws://0.0.0.0:${localPort} http://${localServerUrl} http://0.0.0.0:${localPort}`,
     ];
 
+    const cfg = vscode.workspace.getConfiguration("valoride");
+    const telecomConfig = {
+      turnServers: cfg.get<any[]>("telecom.turnServers", ["stun:stun.l.google.com:19302"]),
+      bonjour: cfg.get<boolean>("telecom.discovery.bonjour", false),
+      p2pEnabled: cfg.get<boolean>("telecom.p2pEnabled", true),
+    };
     return /*html*/ `
 			<!DOCTYPE html>
 			<html lang="en">
@@ -344,6 +359,9 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
 				<body>
 					<div id="root"></div>
 					${reactRefresh}
+					<script nonce="${nonce}">
+						try { window.__valorideTelecomConfig = ${JSON.stringify(telecomConfig)}; } catch {}
+					</script>
 					<script type="module" src="${scriptUri}"></script>
 				</body>
 			</html>

@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.163",
+  "version": "3.20.221",
   "icon": "assets/icons/icon.png",
   "galleryBanner": {
     "color": "#617A91",
@@ -47,10 +47,22 @@
   "activationEvents": [
     "onStartupFinished",
     "onView:valoride-dev.SidebarProvider",
+    "onView:valoride-dev.ProjectsView",
     "onViewContainer:valoride-activitybar",
     "onCommand:valoride.openInNewTab",
     "onCommand:valoride.diagnostics",
-    "onCommand:valoride.fixLayout"
+    "onCommand:valoride.fixLayout",
+    "onCommand:valoride.openUrlInEditor",
+    "onCommand:valoride.addThorAliasesFromFolder",
+    "onCommand:valoride.projectActions",
+    "onCommand:valoride.projects.refresh",
+    "onCommand:valoride.projects.build",
+    "onCommand:valoride.projects.run",
+    "onCommand:valoride.projects.openInWindow",
+    "onCommand:valoride.projects.openTerminal",
+    "onCommand:valoride.projects.openReadme",
+    "onCommand:valoride.projects.reveal",
+    "onCommand:valoride.projects.copyPath"
   ],
   "main": "./dist/extension.js",
   "extensionKind": [
@@ -73,6 +85,11 @@
           "type": "webview",
           "id": "valoride-dev.SidebarProvider",
           "name": "ValorIDE"
+        },
+        {
+          "type": "tree",
+          "id": "valoride-dev.ProjectsView",
+          "name": "Projects"
         }
       ]
     },
@@ -86,6 +103,11 @@
         "command": "valoride.accountButtonClicked",
         "title": "Account Settings",
         "icon": "$(zap)"
+      },
+      {
+        "command": "valoride.serverConsoleButtonClicked",
+        "title": "Server Console",
+        "icon": "$(debug-console)"
       },
       {
         "command": "valoride.mcpButtonClicked",
@@ -119,8 +141,60 @@
       },
       {
         "command": "valoride.fixLayout",
-        "title": "Fix Layout (Reset View Locations)",
+        "title": "Reset Layout",
+        "category": "ValorIDE",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "valoride.openUrlInEditor",
+        "title": "Open URL In Editor",
         "category": "ValorIDE"
+      },
+      {
+        "command": "valoride.addThorAliasesFromFolder",
+        "title": "Add @thor Aliases From Folder",
+        "category": "ValorIDE"
+      },
+      {
+        "command": "valoride.projectActions",
+        "title": "ValorIDE: Project Actions",
+        "category": "ValorIDE"
+      },
+      {
+        "command": "valoride.projects.refresh",
+        "title": "Refresh Projects",
+        "category": "ValorIDE",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "valoride.projects.openInWindow",
+        "title": "Open in New Window",
+        "category": "ValorIDE",
+        "icon": "$(link-external)"
+      },
+      {
+        "command": "valoride.projects.openTerminal",
+        "title": "Open Terminal Here",
+        "category": "ValorIDE",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "valoride.projects.openReadme",
+        "title": "Open README",
+        "category": "ValorIDE",
+        "icon": "$(book)"
+      },
+      {
+        "command": "valoride.projects.reveal",
+        "title": "Reveal in Explorer",
+        "category": "ValorIDE",
+        "icon": "$(folder)"
+      },
+      {
+        "command": "valoride.projects.copyPath",
+        "title": "Copy Folder Path",
+        "category": "ValorIDE",
+        "icon": "$(clippy)"
       }
     ],
     "menus": {
@@ -156,9 +230,73 @@
           "when": "view == valoride-dev.SidebarProvider"
         },
         {
-          "command": "valoride.fixLayout",
+          "command": "valoride.serverConsoleButtonClicked",
           "group": "navigation@7",
           "when": "view == valoride-dev.SidebarProvider"
+        },
+        {
+          "command": "valoride.fixLayout",
+          "group": "navigation@8",
+          "when": "view == valoride-dev.SidebarProvider"
+        },
+        {
+          "command": "valoride.projects.refresh",
+          "group": "navigation@1",
+          "when": "view == valoride-dev.ProjectsView"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "valoride.projects.openInWindow",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "inline@1"
+        },
+        {
+          "command": "valoride.projects.build",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "inline@2"
+        },
+        {
+          "command": "valoride.projects.run",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "inline@3"
+        },
+        {
+          "command": "valoride.projects.openTerminal",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "inline@4"
+        },
+        {
+          "command": "valoride.projects.openReadme",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "inline@5"
+        },
+        {
+          "command": "valoride.projects.reveal",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "2_navigation@1"
+        },
+        {
+          "command": "valoride.projects.copyPath",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "2_navigation@2"
+        },
+        {
+          "command": "valoride.addThorAliasesFromFolder",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "3_edit@1"
+        }
+      ],
+      "explorer/context": [
+        {
+          "when": "explorerResourceIsFolder == true",
+          "command": "valoride.addThorAliasesFromFolder",
+          "group": "navigation@9"
+        },
+        {
+          "when": "explorerResourceIsFolder == true && resourceFilename =~ /^v\\d+\\./ && resourceDirname =~ /thorapi/",
+          "command": "valoride.projectActions",
+          "group": "navigation@1"
         }
       ],
       "editor/title": [
@@ -192,6 +330,47 @@
     "configuration": {
       "title": "ValorIDE",
       "properties": {
+        "valoride.telecom.turnServers": {
+          "type": "array",
+          "markdownDescription": "List of ICE/TURN servers for P2P (RTCConfiguration. Each entry may be a string URL or an object with { urls, username, credential }).",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "stun:example.org or turn:example.org:3478"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "urls": {
+                    "type": [
+                      "string",
+                      "array"
+                    ],
+                    "description": "ICE server URLs"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "credential": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "urls"
+                ]
+              }
+            ]
+          },
+          "default": [
+            "stun:stun.l.google.com:19302"
+          ]
+        },
+        "valoride.telecom.discovery.bonjour": {
+          "type": "boolean",
+          "markdownDescription": "Enable experimental Bonjour/mDNS peer discovery for local network rendezvous (requires reload).",
+          "default": false
+        },
         "valoride.vsCodeLmModelSelector": {
           "type": "object",
           "properties": {

@@ -3703,10 +3703,7 @@ export class Task {
                 }
                 this.consecutiveMistakeCount = 0;
 
-                if (
-                  this.autoApprovalSettings.enabled &&
-                  this.autoApprovalSettings.enableNotifications
-                ) {
+                if (this.autoApprovalSettings.enableNotifications) {
                   showSystemNotification({
                     subtitle: "ValorIDE has a question...",
                     message: question.replace(/\n/g, " "),
@@ -4157,10 +4154,7 @@ export class Task {
                 }
                 this.consecutiveMistakeCount = 0;
 
-                if (
-                  this.autoApprovalSettings.enabled &&
-                  this.autoApprovalSettings.enableNotifications
-                ) {
+                if (this.autoApprovalSettings.enableNotifications) {
                   showSystemNotification({
                     subtitle: "Task Completed",
                     message: result.replace(/\n/g, " "),

@@ -5,7 +5,7 @@ import { FiTerminal } from "react-icons/fi";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 import type { AppDispatch, RootState } from "../../redux/store"; // Adjust to your store
-import type { WebsocketMessage } from "../../thor/model/WebsocketMessage"; // Adjust to your store
+import { WebsocketMessage, WebsocketMessageFromJSON, WebsocketMessageToJSON, WebsocketMessageTypeEnum } from "../../thor/model";
 import { WEBSOCKET_URL, isValidWsUrl } from "../../websocket/websocket";
 import CoolButton from "../CoolButton";
 import { addMessage, setConnected } from "./websocketSlice"; // Ensure these actions are correct
@@ -79,13 +79,13 @@ const ServerConsole = () => {
       onConnect: () => {
         dispatch(setConnected(true));
         stompClient.subscribe("/topic/statuses", (message) => {
-          const parsedMessage: WebsocketMessage = JSON.parse(message.body);
+          const parsedMessage = WebsocketMessageFromJSON(JSON.parse(message.body));
           //alert("status: " + parsedMessage.payload)
           dispatch(addMessage(parsedMessage));
           scrollToBottom();
         });
         stompClient.subscribe("/topic/messages", (message) => {
-          const parsedMessage: WebsocketMessage = JSON.parse(message.body);
+          const parsedMessage = WebsocketMessageFromJSON(JSON.parse(message.body));
           //alert("message: " + parsedMessage.payload)
           dispatch(addMessage(parsedMessage));
           scrollToBottom();
@@ -119,13 +119,13 @@ const ServerConsole = () => {
   };
 
   const sendMessage = () => {
-    const message = {
+    const message: WebsocketMessage = {
+      type: WebsocketMessageTypeEnum.USER,
       payload: chatText,
-      type: "user",
     };
     stompClient.publish({
       destination: "/app/chat",
-      body: JSON.stringify(message),
+      body: JSON.stringify(WebsocketMessageToJSON(message)),
     });
     setChatText("");
   };

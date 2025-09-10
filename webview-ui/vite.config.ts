@@ -46,6 +46,7 @@ export default defineConfig({
       "@context": resolve(__dirname, "./src/context"),
       "@shared": resolve(__dirname, "../src/shared"),
       "@utils": resolve(__dirname, "./src/utils"),
+      "@thor": resolve(__dirname, "./src/thor"),
     },
   },
 });

@@ -46,7 +46,7 @@ const Login = (props) => {
           <br />
           <Nav.Link>
             <Link to="/sign-up">
-              <CoolButton variant="dark">
+              <CoolButton variant="dark" className="glow-button happy">
                 <FiUserPlus size={30} /> Signup Now
               </CoolButton>
             </Link>

@@ -383,6 +383,24 @@ export class Controller {
         });
         break;
       }
+      case "displayVSCodeInfo": {
+        if (message.text) {
+          vscode.window.showInformationMessage(message.text);
+        }
+        break;
+      }
+      case "displayVSCodeWarning": {
+        if (message.text) {
+          vscode.window.showWarningMessage(message.text);
+        }
+        break;
+      }
+      case "displayVSCodeError": {
+        if (message.text) {
+          vscode.window.showErrorMessage(message.text);
+        }
+        break;
+      }
       case "newTask":
         // Code that should run in response to the hello message command
         //vscode.window.showInformationMessage(message.text!)
@@ -1104,6 +1122,154 @@ export class Controller {
         }
         break;
       }
+      case "promptAddGeneratedToProject": {
+        try {
+          const rel = message.text || "";
+          const cwd = vscode.workspace.workspaceFolders
+            ?.map((folder) => folder.uri.fsPath)
+            .at(0);
+          if (!cwd || !rel) break;
+          const abs = path.resolve(cwd, rel);
+
+          const choice = await vscode.window.showInformationMessage(
+            `Add generated code at "${rel}" to your project?`,
+            { modal: false },
+            "Add",
+            "Skip",
+          );
+          if (choice !== "Add") break;
+
+          // Reuse existing command to update tsconfig aliases and includes
+          await vscode.commands.executeCommand(
+            "valoride.addThorAliasesFromFolder",
+            vscode.Uri.file(abs),
+          );
+        } catch (err) {
+          console.error("promptAddGeneratedToProject error", err);
+          vscode.window.showWarningMessage(
+            `Failed to prepare alias update: ${err instanceof Error ? err.message : String(err)}`,
+          );
+        }
+        break;
+      }
+      case "addGeneratedToProject": {
+        try {
+          const rel = message.text || "";
+          const folderName = message.folderName || "";
+          const cwd = vscode.workspace.workspaceFolders
+            ?.map((folder) => folder.uri.fsPath)
+            .at(0);
+          if (!cwd || !rel) break;
+          const abs = path.resolve(cwd, rel);
+
+          // Reuse existing command to update tsconfig aliases and includes
+          await vscode.commands.executeCommand(
+            "valoride.addThorAliasesFromFolder",
+            vscode.Uri.file(abs),
+          );
+
+          // Show success message
+          vscode.window.showInformationMessage(
+            `Successfully added "${folderName}" to your project with TypeScript aliases.`,
+          );
+        } catch (err) {
+          console.error("addGeneratedToProject error", err);
+          vscode.window.showErrorMessage(
+            `Failed to add generated code to project: ${err instanceof Error ? err.message : String(err)}`,
+          );
+        }
+        break;
+      }
+      case "startServer": {
+        try {
+          const rel = message.text || "";
+          const folderName = message.folderName || "";
+          const serverType = message.serverType || "spring-boot";
+          const cwd = vscode.workspace.workspaceFolders
+            ?.map((folder) => folder.uri.fsPath)
+            .at(0);
+          if (!cwd || !rel) break;
+          const abs = path.resolve(cwd, rel);
+
+          let command: string;
+          let port: string;
+          let serverDescription: string;
+
+          switch (serverType) {
+            case "spring-boot":
+              command = "mvn spring-boot:run";
+              port = "8080";
+              serverDescription = "Spring Boot development server";
+              break;
+            case "nestjs":
+              command = "npm run start:dev";
+              port = "3000";
+              serverDescription = "Nest.js development server";
+              break;
+            case "typescript":
+              command = "npm run build";
+              port = "";
+              serverDescription = "TypeScript client build";
+              break;
+            default:
+              command = "npm start";
+              port = "3000";
+              serverDescription = "development server";
+          }
+
+          // For TypeScript client builds, also ensure tsconfig alias mapping is applied
+          if (serverType === "typescript") {
+            try {
+              await vscode.commands.executeCommand(
+                "valoride.addThorAliasesFromFolder",
+                vscode.Uri.file(abs),
+              );
+            } catch (e) {
+              console.warn(
+                `Failed to update tsconfig aliases for ${folderName}: ${e instanceof Error ? e.message : String(e)}`,
+              );
+            }
+          }
+
+          // Open a new terminal and run the command
+          const terminal = vscode.window.createTerminal({
+            name: `${folderName} Server`,
+            cwd: abs,
+          });
+          
+          terminal.show();
+          terminal.sendText(command);
+
+          // Show success message
+          const portMessage = port ? ` (localhost:${port})` : "";
+          vscode.window.showInformationMessage(
+            `Starting ${serverDescription} for "${folderName}"${portMessage}. Check the terminal for output.`,
+          );
+
+          // If it's a web server, offer to open in browser after a delay
+          if (port && serverType !== "typescript") {
+            setTimeout(() => {
+              vscode.window
+                .showInformationMessage(
+                  `Server should be running on localhost:${port}. Open in browser?`,
+                  "Open Browser",
+                  "Later",
+                )
+                .then((choice) => {
+                  if (choice === "Open Browser") {
+                    vscode.env.openExternal(vscode.Uri.parse(`http://localhost:${port}`));
+                  }
+                });
+            }, 5000); // Wait 5 seconds for server to start
+          }
+        } catch (err) {
+          console.error("startServer error", err);
+          vscode.window.showErrorMessage(
+            `Failed to start server: ${err instanceof Error ? err.message : String(err)}`,
+          );
+        }
+        break;
+      }
       case "streamToThorapi": {
         try {
           const { blobData, applicationId, applicationName, filename } = message;
@@ -1127,12 +1293,12 @@ export class Controller {
           // Extract if it's a zip file
           let extractedPath: string | undefined;
           if (finalFilename.endsWith(".zip")) {
-            // Use applicationName for folder name, fallback to applicationId if not provided
-            const folderName = applicationName || applicationId;
-            // Extract the zip file using the proper zip library with application name as subfolder
-            await extractLocalZip(filePath, thorapiFolderPath, folderName);
-            extractedPath = path.join(thorapiFolderPath, folderName);
-
+            // Use applicationName as fallback; prefer versioned folder from filename
+            extractedPath = await extractLocalZip(
+              filePath,
+              thorapiFolderPath,
+              applicationName || applicationId,
+            );
             // Delete the zip file after successful extraction
             await fs.unlink(filePath);
           }

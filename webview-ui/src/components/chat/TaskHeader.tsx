@@ -10,7 +10,7 @@ import { vscode } from "@/utils/vscode";
 import Thumbnails from "@/components/common/Thumbnails";
 import { normalizeApiConfiguration } from "@/components/settings/ApiOptions";
 import { validateSlashCommand } from "@/utils/slash-commands";
-import { FaArrowUp, FaArrowDown, FaDatabase, FaArrowRight, FaTrash, FaChevronDown, FaChevronRight, FaTimes, FaExclamationTriangle } from "react-icons/fa";
+import { FaArrowUp, FaArrowDown, FaDatabase, FaArrowRight, FaTrash, FaChevronDown, FaChevronRight, FaTimes, FaExclamationTriangle, FaCopy, FaCheck } from "react-icons/fa";
 import StatusBadge from "../common/StatusBadge";
 
 interface TaskHeaderProps {
@@ -40,7 +40,9 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
     useExtensionState();
   const [isTaskExpanded, setIsTaskExpanded] = useState(false);
   const [isTextExpanded, setIsTextExpanded] = useState(false);
+  const [copyToastVisible, setCopyToastVisible] = useState(false);
   const [showSeeMore, setShowSeeMore] = useState(false);
+  const [copied, setCopied] = useState(false);
   const textContainerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
 
@@ -66,37 +68,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
     }
   }, [isTaskExpanded]);
 
-  /*
-  When dealing with event listeners in React components that depend on state variables, we face a challenge. We want our listener to always use the most up-to-date version of a callback function that relies on current state, but we don't want to constantly add and remove event listeners as that function updates. This scenario often arises with resize listeners or other window events. Simply adding the listener in a useEffect with an empty dependency array risks using stale state, while including the callback in the dependencies can lead to unnecessary re-registrations of the listener. There are react hook libraries that provide a elegant solution to this problem by utilizing the useRef hook to maintain a reference to the latest callback function without triggering re-renders or effect re-runs. This approach ensures that our event listener always has access to the most current state while minimizing performance overhead and potential memory leaks from multiple listener registrations. 
-  Sources
-  - https://usehooks-ts.com/react-hook/use-event-listener
-  - https://streamich.github.io/react-use/?path=/story/sensors-useevent--docs
-  - https://github.com/streamich/react-use/blob/master/src/useEvent.ts
-  - https://stackoverflow.com/questions/55565444/how-to-register-event-with-useeffect-hooks
-
-  Before:
-	
-  const updateMaxHeight = useCallback(() => {
-    if (isExpanded && textContainerRef.current) {
-      const maxHeight = window.innerHeight * (3 / 5)
-      textContainerRef.current.style.maxHeight = `${maxHeight}px`
-    }
-  }, [isExpanded])
-
-  useEffect(() => {
-    updateMaxHeight()
-  }, [isExpanded, updateMaxHeight])
-
-  useEffect(() => {
-    window.removeEventListener("resize", updateMaxHeight)
-    window.addEventListener("resize", updateMaxHeight)
-    return () => {
-      window.removeEventListener("resize", updateMaxHeight)
-    }d
-  }, [updateMaxHeight])
-
-  After:
-  */
+  // Track window size for responsive layout without manual listeners
 
   const { height: windowHeight, width: windowWidth } = useWindowSize();
 
@@ -230,6 +202,26 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
           zIndex: 1,
         }}
       >
+        {copyToastVisible && (
+          <div
+            style={{
+              position: "absolute",
+              top: 6,
+              right: 40,
+              background: "var(--vscode-badge-background)",
+              color: "var(--vscode-badge-foreground)",
+              border: "1px solid var(--vscode-badge-foreground)",
+              borderRadius: 6,
+              padding: "2px 8px",
+              fontSize: 12,
+              boxShadow: "0 0 6px rgba(0,0,0,0.2)",
+              pointerEvents: "none",
+            }}
+            aria-live="polite"
+          >
+            Copied
+          </div>
+        )}
         <div
           style={{
             display: "flex",
@@ -282,6 +274,29 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
               )}
             </div>
           </div>
+          {/* Copy button when collapsed */}
+          {!isTaskExpanded && (
+            <VSCodeButton
+              appearance="icon"
+              title={copied ? "Copied" : "Copy task text"}
+              onClick={async (e) => {
+                e.stopPropagation();
+                try {
+                  await navigator.clipboard.writeText(task.text || "");
+                  setCopied(true);
+                  setCopyToastVisible(true);
+                  setTimeout(() => {
+                    setCopied(false);
+                    setCopyToastVisible(false);
+                  }, 1200);
+                } catch {}
+              }}
+              style={{ marginLeft: 6, flexShrink: 0 }}
+            >
+              {copied ? <FaCheck /> : <FaCopy />}
+            </VSCodeButton>
+          )}
+
           {!isTaskExpanded && isCostAvailable && (
 
             <StatusBadge
@@ -326,6 +341,29 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                 }}
               >
                 {highlightText(task.text, false)}
+              </div>
+              {/* Copy task text button */}
+              <div style={{ position: "absolute", top: 0, right: 0 }}>
+                <VSCodeButton
+                  appearance="icon"
+                  title={copied ? "Copied" : "Copy task text"}
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    try {
+                      await navigator.clipboard.writeText(task.text || "");
+                      setCopied(true);
+                      setCopyToastVisible(true);
+                      setTimeout(() => {
+                        setCopied(false);
+                        setCopyToastVisible(false);
+                      }, 1200);
+                    } catch (err) {
+                      // no-op
+                    }
+                  }}
+                >
+                  {copied ? <FaCheck /> : <FaCopy />}
+                </VSCodeButton>
               </div>
               {!isTextExpanded && showSeeMore && (
                 <div

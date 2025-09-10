@@ -265,3 +265,22 @@ Push → Open PR → CI runs → Changesetbot handles versioning + release.
 ## License
 
 [Apache 2.0 © 2025 Valkyr Labs Inc.](./LICENSE)
+
+---
+
+### 🚀 Latest Developments
+
+- **ThorAPI Enhancements**: Continued development and integration with ThorAPI, including work on the Engager project and the TelecomP2P component.
+    - **TelecomP2P Component**: Development of a new TelecomP2P component for peer-to-peer communication.
+    - **Engager Project**: Ongoing work on the Typescript client for the Engager project.
+- **Communication Service**: Improvements and testing of the CommunicationService.
+- **State Management**: Updates to core state management functionalities.
+- **MCP and Valhalla Suite**: Ongoing work on the Model Context Protocol (MCP) and the broader Valhalla Suite, enhancing agentic capabilities and integration with other Valkyr Labs products.
+
+---
+
+## Additional Resources
+
+- **ValorIDE GitHub Repository:** [https://github.com/valkyrlabs/valoride](https://github.com/valkyrlabs/valoride)
+- **MCP Documentation:** [https://modelcontextprotocol.org/docs](https://modelcontextprotocol.org/docs)
+- **ValorIDE Documentation:** [docs/README.md](docs/README.md)

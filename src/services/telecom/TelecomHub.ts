@@ -35,11 +35,29 @@ export class TelecomHub {
 
     const subscription = webview.onDidReceiveMessage((message: any) => {
       if (!message || typeof message !== "object") return;
-      if (message.type !== "telecom:send") return;
-      const msg: AppMessage | undefined = message.message;
-      if (!msg) return;
-      // Fan-out to all other providers
-      this.broadcast(msg, provider);
+      // Explicit connect request from webview: re-send presence snapshot and rebroadcast join
+      if (message.type === "telecom:connect") {
+        const selfMeta = this.providers.get(provider);
+        if (!selfMeta) return;
+        // Send snapshot to requester
+        this.sendPresenceSnapshot(provider, selfMeta.id);
+        // Re-announce join to others to kick handshakes
+        const join: AppMessage = {
+          type: "presence:join",
+          payload: { id: selfMeta.id },
+          senderId: selfMeta.id,
+          messageId: Math.random().toString(36).slice(2, 12),
+          timestamp: Date.now(),
+        };
+        this.broadcast(join, provider);
+        return;
+      }
+      if (message.type === "telecom:send") {
+        const msg: AppMessage | undefined = message.message;
+        if (!msg) return;
+        // Fan-out to all other providers
+        this.broadcast(msg, provider);
+      }
     });
 
     // Auto-cleanup on dispose
@@ -61,23 +79,7 @@ export class TelecomHub {
     this.providers.set(provider, { id, dispose: () => { subscription.dispose(); disposeHandle.dispose(); } });
 
     // Send current presence snapshot to the new provider
-    const others = Array.from(this.providers.entries())
-      .filter(([prov]) => prov !== provider)
-      .map(([, meta]) => meta.id);
-    try {
-      provider.view?.webview.postMessage({
-        type: "telecom:message",
-        message: {
-          type: "presence:state",
-          payload: { ids: others },
-          senderId: id,
-          messageId: Math.random().toString(36).slice(2, 12),
-          timestamp: Date.now(),
-        },
-      });
-    } catch (e) {
-      console.log(e);
-    }
+    this.sendPresenceSnapshot(provider, id);
 
     // Broadcast presence join to others
     const join: AppMessage = {
@@ -99,6 +101,26 @@ export class TelecomHub {
       } catch (err) {
         // ignore individual postMessage failures
       }
+    }
+  }
+
+  private sendPresenceSnapshot(provider: WebviewProvider, selfId: string) {
+    const others = Array.from(this.providers.entries())
+      .filter(([prov]) => prov !== provider)
+      .map(([, meta]) => meta.id);
+    try {
+      provider.view?.webview.postMessage({
+        type: "telecom:message",
+        message: {
+          type: "presence:state",
+          payload: { ids: others },
+          senderId: selfId,
+          messageId: Math.random().toString(36).slice(2, 12),
+          timestamp: Date.now(),
+        },
+      });
+    } catch (e) {
+      // ignore
     }
   }
 }

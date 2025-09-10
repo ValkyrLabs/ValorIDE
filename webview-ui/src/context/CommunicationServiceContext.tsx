@@ -65,7 +65,24 @@ export const CommunicationServiceProvider: React.FC<{ role: CommunicationRole; c
       if (!supported) {
         return createNoopCommunicationService("Not running in a browser context");
       }
-      return new CommunicationService({ role });
+      const svc = new CommunicationService({ role });
+      try {
+        const cfg = (window as any)?.__valorideTelecomConfig;
+        if (cfg?.turnServers) {
+          const toServers = (arr: any[]): RTCIceServer[] => arr.map((e) => {
+            if (!e) return undefined as any;
+            if (typeof e === 'string') return { urls: e } as RTCIceServer;
+            if (e.urls) return { urls: e.urls, username: e.username, credential: e.credential } as RTCIceServer;
+            return undefined as any;
+          }).filter(Boolean) as RTCIceServer[];
+          svc.configureIceServers(toServers(cfg.turnServers));
+        }
+        if (typeof cfg?.p2pEnabled === 'boolean') {
+          try { (svc as any).setP2PEnabled?.(!!cfg.p2pEnabled); } catch {}
+        }
+        // Future: if (cfg?.bonjour) { /* enable local discovery */ }
+      } catch {}
+      return svc;
     } catch (err: any) {
       const message = err instanceof Error ? err.message : String(err);
       if (typeof console !== "undefined") {
