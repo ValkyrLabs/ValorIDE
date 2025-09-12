@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Formula } from '../../model/Formula';
+import { Formula } from '@thor/model/Formula';
 
 const FormulaSlice = createSlice({
   name: "Formulas",

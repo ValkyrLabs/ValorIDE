@@ -5,7 +5,7 @@ import {
     getAddressList , 
     deleteAddress , 
     updateAddress 
-} from '../../api';
+} from '../../api/AddressApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const AddressMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_ADDRESS_REQUEST:
             try {
-                const response = getAddressList();
+                const response = getAddressList({});
                 dispatch(listAddressSuccess(response.body));
             } catch (error) {
                 dispatch(listAddressFailure(error.message));

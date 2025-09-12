@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasOpenAPISpec } from '../../model/OasOpenAPISpec';
+import { OasOpenAPISpec } from '@thor/model/OasOpenAPISpec';
 
 const OasOpenAPISpecSlice = createSlice({
   name: "OasOpenAPISpecs",

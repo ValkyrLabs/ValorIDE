@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { UserPreference } from '../../model/UserPreference';
+import { UserPreference } from '@thor/model/UserPreference';
 
 const UserPreferenceSlice = createSlice({
   name: "UserPreferences",

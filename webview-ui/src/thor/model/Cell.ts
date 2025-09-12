@@ -58,22 +58,10 @@ export type Cell  = {
     hyperlink?: string;
     /**
      * 
-     * @type {string}
-     * @memberof Cell
-     */
-    sheetRowId?: string;
-    /**
-     * 
      * @type {SheetRow}
      * @memberof Cell
      */
     row?: SheetRow;
-    /**
-     * 
-     * @type {string}
-     * @memberof Cell
-     */
-    sheetColumnId?: string;
     /**
      * 
      * @type {SheetColumn}
@@ -159,9 +147,7 @@ export function CellFromJSON(json: any): Cell {
         'sheetId': !exists(json, 'sheetId') ? undefined : json['sheetId'],
         'comment': !exists(json, 'comment') ? undefined : json['comment'],
         'hyperlink': !exists(json, 'hyperlink') ? undefined : json['hyperlink'],
-        'sheetRowId': !exists(json, 'sheetRowId') ? undefined : json['sheetRowId'],
         'row': !exists(json, 'row') ? undefined : SheetRowFromJSON(json['row']),
-        'sheetColumnId': !exists(json, 'sheetColumnId') ? undefined : json['sheetColumnId'],
         'column': !exists(json, 'column') ? undefined : SheetColumnFromJSON(json['column']),
         'stringValue': !exists(json, 'stringValue') ? undefined : json['stringValue'],
         'numberValue': !exists(json, 'numberValue') ? undefined : json['numberValue'],
@@ -186,9 +172,7 @@ export function CellToJSON(value?: Cell): any {
         'sheetId': value.sheetId,
         'comment': value.comment,
         'hyperlink': value.hyperlink,
-        'sheetRowId': value.sheetRowId,
         'row': SheetRowToJSON(value.row),
-        'sheetColumnId': value.sheetColumnId,
         'column': SheetColumnToJSON(value.column),
         'stringValue': value.stringValue,
         'numberValue': value.numberValue,

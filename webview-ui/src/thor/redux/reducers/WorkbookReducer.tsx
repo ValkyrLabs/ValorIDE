@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Workbook } from '../../model/Workbook';
+import { Workbook } from '@thor/model/Workbook';
 
 const WorkbookSlice = createSlice({
   name: "Workbooks",

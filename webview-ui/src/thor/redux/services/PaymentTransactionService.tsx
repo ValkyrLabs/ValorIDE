@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { PaymentTransaction } from '../../model'
+import { PaymentTransaction } from '@thor/model/PaymentTransaction'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type PaymentTransactionResponse = PaymentTransaction[]
@@ -10,8 +10,13 @@ export const PaymentTransactionService = createApi({
   tagTypes: ['PaymentTransaction'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getPaymentTransactionsPaged: build.query<PaymentTransactionResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `PaymentTransaction?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getPaymentTransactionsPaged: build.query<PaymentTransactionResponse, { page: number; size?: number; example?: Partial<PaymentTransaction> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `PaymentTransaction?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const PaymentTransactionService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getPaymentTransactions: build.query<PaymentTransactionResponse, void>({
-      query: () => `PaymentTransaction`,
+    getPaymentTransactions: build.query<PaymentTransactionResponse, { example?: Partial<PaymentTransaction> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `PaymentTransaction?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `PaymentTransaction`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const PaymentTransactionService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'PaymentTransaction', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'PaymentTransaction', id },
+        { type: 'PaymentTransaction', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

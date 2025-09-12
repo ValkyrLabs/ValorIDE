@@ -5,7 +5,7 @@ import {
     getLlmDetailsList , 
     deleteLlmDetails , 
     updateLlmDetails 
-} from '../../api';
+} from '../../api/LlmDetailsApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const LlmDetailsMiddleware = ({ dispatch }) => (next) => async (action) =
 
         case LIST_LLMDETAILS_REQUEST:
             try {
-                const response = getLlmDetailsList();
+                const response = getLlmDetailsList({});
                 dispatch(listLlmDetailsSuccess(response.body));
             } catch (error) {
                 dispatch(listLlmDetailsFailure(error.message));

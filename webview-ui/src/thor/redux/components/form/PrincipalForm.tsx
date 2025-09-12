@@ -4,20 +4,22 @@ import {
   Form as BSForm,
   Accordion,
   Col,
-  Nav,
   Row,
   Spinner
 } from 'react-bootstrap';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
-import CoolButton from '../../../../components/CoolButton';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
 import * as Yup from 'yup';
-import PermissionDialog from '../../../../components/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
 
 
 import {
   Principal,
-} from '../../../model';
+} from '@thor/model';
 
 import { useAddPrincipalMutation } from '../../services/PrincipalService';
 
@@ -29,7 +31,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -45,153 +47,39 @@ The Valkyr Principal. Represents a user, service, or agent in the system with pr
 -------------------------------------------------------- */
 
 /* -----------------------------------------------------
-   YUP VALIDATION SCHEMA
-   (Skip read-only fields and container types)
+   YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
+const asNumber = (schema: Yup.NumberSchema) =>
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+
 const validationSchema = Yup.object().shape({
-    
-        username: Yup.string()
-          
-          .required("username is required.")
-          ,
-    
-        password: Yup.string()
-          
-          .required("password is required.")
-          ,
-    
-        email: Yup.string()
-          .email()
-          .required("email is required.")
-          .matches(/^[a-zA-Z0-9_!#$%&’*+\/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$/, "email must match pattern The main email address for the user (encrypted)"),
-    
-        firstName: Yup.string()
-          
-          
-          ,
-    
-        middleName: Yup.string()
-          
-          
-          ,
-    
-        lastName: Yup.string()
-          
-          
-          ,
-      
-        federalIdentification: Yup.string()
-          
-          
-          .matches(/^\\d{3}-\\d{2}-\\d{4}$/, "federalIdentification must match pattern SSN or a 10 digit federal government ID (encrypted)"),
-    
-        residenceCountry: Yup.string()
-          
-          
-          ,
-    
-        stateIdentification: Yup.string()
-          
-          
-          .matches(/^\\d{10}$/, "stateIdentification must match pattern Driver\&#39;s License or a 10 digit state government ID"),
-    
-        residenceState: Yup.string()
-          
-          
-          ,
-    
-        social: Yup.string()
-          
-          
-          ,
-    
-        bio: Yup.string()
-          
-          
-          ,
-    
-        notes: Yup.string()
-          
-          
-          ,
-    
-        avatarUrl: Yup.string()
-          
-          
-          ,
-    
-        organizationId: Yup.string()
-          
-          
-          ,
-    
-        acceptedCookies: Yup.boolean()
-          
-          .notRequired(),
-    
-        acceptedTos: Yup.boolean()
-          
-          .notRequired(),
-    
-        enabled: Yup.boolean()
-          
-          .notRequired(),
-    
-        credentialNonExpired: Yup.boolean()
-          
-          .notRequired(),
-    
-        accountEnabled: Yup.boolean()
-          
-          .notRequired(),
-    
-        accountNonLocked: Yup.boolean()
-          
-          .notRequired(),
-    
-        accountNonExpired: Yup.boolean()
-          
-          .notRequired(),
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
-        createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
-        lastModifiedDate: Yup.date()
-          
-          
-          ,
+        username: Yup.string().required("username is required."),
+        password: Yup.string().required("password is required."),
+        email: Yup.string().email("Invalid email").required("email is required.").matches(/^[a-zA-Z0-9_!#$%&’*+\/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$/, "email must match pattern The main email address"),
+        firstName: Yup.string(),
+        middleName: Yup.string(),
+        lastName: Yup.string(),
+        federalIdentification: Yup.string().matches(/^\\d{3}-\\d{2}-\\d{4}$/, "federalIdentification must match pattern SSN or a 10 digit federal government ID (encrypted)"),
+        residenceCountry: Yup.string(),
+        stateIdentification: Yup.string().matches(/^\\d{10}$/, "stateIdentification must match pattern Driver\&#39;s License or a 10 digit state government ID"),
+        residenceState: Yup.string(),
+        phone: Yup.string().matches(/^\\+?[1-9]\\d{1,14}$/, "phone must match pattern The main phone number"),
+        social: Yup.string(),
+        bio: Yup.string(),
+        notes: Yup.string(),
+        avatarUrl: Yup.string(),
+        acceptedCookies: Yup.boolean(),
+        acceptedTos: Yup.boolean(),
+        enabled: Yup.boolean(),
+        credentialNonExpired: Yup.boolean(),
+        accountEnabled: Yup.boolean(),
+        accountNonLocked: Yup.boolean(),
+        accountNonExpired: Yup.boolean(),
+        id: Yup.string(),
+        ownerId: Yup.string(),
+        keyHash: Yup.string(),
+        lastAccessedById: Yup.string(),
+        lastModifiedById: Yup.string(),
 });
 
 /* -----------------------------------------------------
@@ -199,261 +87,53 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const PrincipalForm: React.FC = () => {
   const [addPrincipal, addPrincipalResult] = useAddPrincipalMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user', // This should come from authentication context
+    username: 'current_user',
     permissions: {
-      isOwner: true, // This should be determined by checking object ownership
-      isAdmin: true, // This should come from user roles
+      isOwner: true,
+      isAdmin: true,
       canGrantPermissions: true,
       permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
-  /* INITIAL VALUES - skip read-only fields */
+  /* -----------------------------------------------------
+     INITIAL VALUES - only NON read-only fields
+  -------------------------------------------------------- */
   const initialValues: Partial<Principal> = {
-          
-
-            username: 'Sparky',
-
-
-
-
-
-          
-
-            password: 'HardToGuess1980',
-
-
-
-
-
-          
-
-            email: 'wiley.coyote@acme-corp.com',
-
-
-
-
-
-          
-
-            firstName: 'Peace',
-
-
-
-
-
-          
-
-            middleName: 'Love',
-
-
-
-
-
-          
-
-            lastName: 'Harmony',
-
-
-
-
-
-                
-
-            federalIdentification: '111-22-3333',
-
-
-
-
-
-          
-
-            residenceCountry: 'USA',
-
-
-
-
-
-          
-
-            stateIdentification: '3333333333',
-
-
-
-
-
-          
-
-            residenceState: 'CA',
-
-
-
-
-
-          
-
-            social: 'https://twitter.com/ValkyrAI',
-
-
-
-
-
-          
-
-            bio: 'null',
-
-
-
-
-
-          
-
-            notes: 'Notes about this account',
-
-
-
-
-
-          
-
-            avatarUrl: 'https://img.com/mypic.png',
-
-
-
-
-
-          
-
-            organizationId: 'null',
-
-
-
-
-
-          
-            acceptedCookies: true, 
-
-
-
-
-
-
-          
-            acceptedTos: true, 
-
-
-
-
-
-
-          
-            enabled: true, 
-
-
-
-
-
-
-          
-            credentialNonExpired: true, 
-
-
-
-
-
-
-          
-            accountEnabled: true, 
-
-
-
-
-
-
-          
-            accountNonLocked: true, 
-
-
-
-
-
-
-          
-            accountNonExpired: false, 
-
-
-
-
-
-
-          
-
-            id: '6cd28c89-bd36-4c8c-8725-1351ac445d57',
-
-
-
-
-
-          
-
-            ownerId: '4a88ca46-8cf9-4c54-b95b-45f870cb6131',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            keyHash: 'null',
-
-
-
-
-
-          
-
-            lastAccessedById: 'eaeb1ae2-ced3-49c8-8349-194caedd11b8',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            lastModifiedById: '80344c65-a987-46e1-b5fe-f2723998c233',
-
-
-
-
-
-          
-
-
-
-
-
-
+          username: '',
+          password: '',
+          email: '',
+          firstName: '',
+          middleName: '',
+          lastName: '',
+          federalIdentification: '',
+          residenceCountry: '',
+          stateIdentification: '',
+          residenceState: '',
+          phone: '',
+          social: '',
+          bio: '',
+          notes: '',
+          avatarUrl: '',
+          acceptedCookies: false,
+          acceptedTos: false,
+          enabled: false,
+          credentialNonExpired: false,
+          accountEnabled: false,
+          accountNonLocked: false,
+          accountNonExpired: false,
+          id: '',
+          ownerId: '',
+          keyHash: '',
+          lastAccessedById: '',
+          lastModifiedById: '',
   };
 
   // Permission Management Handlers
@@ -469,16 +149,16 @@ const PrincipalForm: React.FC = () => {
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
     console.log('Permissions saved for new Principal:', grants);
-    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Principal>) => {
     try {
       console.log("Principal form values:", values);
-      const result = await addPrincipal(values).unwrap();
-      
-      // If object was created successfully and has an ID, offer to set permissions
+
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addPrincipal(values as any).unwrap();
+
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
           `Principal created successfully! Would you like to set permissions for this object?`
@@ -487,7 +167,7 @@ const PrincipalForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create Principal:', error);
@@ -507,6 +187,7 @@ const PrincipalForm: React.FC = () => {
           isSubmitting,
           isValid,
           errors,
+          values,
           setFieldValue,
           touched,
           setFieldTouched,
@@ -514,27 +195,13 @@ const PrincipalForm: React.FC = () => {
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={36} />
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  touched: {JSON.stringify(touched)}
-                  <br />
-                  addPrincipalResult: {JSON.stringify(addPrincipalResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-              {/* Editable Fields (NON-read-only) */}
+              
+              {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                  <FaRegPlusSquare size={36} /> Add New Principal
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New Principal
                 </Accordion.Header>
                 <Accordion.Body>
-                    
                     <label htmlFor="username" className="nice-form-control">
                       <b>
                         Username:
@@ -546,15 +213,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="username"
-                            type="text"
-                            className={
-                              errors.username
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.username}
+                            placeholder="Username"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -569,7 +234,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="password" className="nice-form-control">
                       <b>
                         Password:
@@ -581,15 +245,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="password"
-                            type="text"
-                            className={
-                              errors.password
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.password}
+                            placeholder="Password"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -604,7 +266,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="email" className="nice-form-control">
                       <b>
                         Email:
@@ -616,15 +277,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="email"
-                            type="text"
-                            className={
-                              errors.email
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.email}
+                            placeholder="Email"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -639,7 +298,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="firstName" className="nice-form-control">
                       <b>
                         First Name:
@@ -651,15 +309,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="firstName"
-                            type="text"
-                            className={
-                              errors.firstName
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.firstName}
+                            placeholder="First Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -674,7 +330,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="middleName" className="nice-form-control">
                       <b>
                         Middle Name:
@@ -686,15 +341,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="middleName"
-                            type="text"
-                            className={
-                              errors.middleName
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.middleName}
+                            placeholder="Middle Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -709,7 +362,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastName" className="nice-form-control">
                       <b>
                         Last Name:
@@ -721,15 +373,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastName"
-                            type="text"
-                            className={
-                              errors.lastName
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastName}
+                            placeholder="Last Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -744,7 +394,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                                      
                     <label htmlFor="federalIdentification" className="nice-form-control">
                       <b>
                         Federal Identification:
@@ -756,15 +405,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="federalIdentification"
-                            type="text"
-                            className={
-                              errors.federalIdentification
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.federalIdentification}
+                            placeholder="Federal Identification"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -779,7 +426,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="residenceCountry" className="nice-form-control">
                       <b>
                         Residence Country:
@@ -791,15 +437,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="residenceCountry"
-                            type="text"
-                            className={
-                              errors.residenceCountry
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.residenceCountry}
+                            placeholder="Residence Country"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -814,7 +458,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="stateIdentification" className="nice-form-control">
                       <b>
                         State Identification:
@@ -826,15 +469,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="stateIdentification"
-                            type="text"
-                            className={
-                              errors.stateIdentification
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.stateIdentification}
+                            placeholder="State Identification"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -849,7 +490,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="residenceState" className="nice-form-control">
                       <b>
                         Residence State:
@@ -861,15 +501,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="residenceState"
-                            type="text"
-                            className={
-                              errors.residenceState
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.residenceState}
+                            placeholder="Residence State"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -884,7 +522,38 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
+                    <label htmlFor="phone" className="nice-form-control">
+                      <b>
+                        Phone:
+                        {touched.phone &&
+                         !errors.phone && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="phone"
+                            value={values?.phone}
+                            placeholder="Phone"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="phone"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="social" className="nice-form-control">
                       <b>
                         Social:
@@ -896,15 +565,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="social"
-                            type="text"
-                            className={
-                              errors.social
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.social}
+                            placeholder="Social"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -919,7 +586,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="bio" className="nice-form-control">
                       <b>
                         Bio:
@@ -931,15 +597,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="bio"
-                            type="text"
-                            className={
-                              errors.bio
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.bio}
+                            placeholder="Bio"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -954,7 +618,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="notes" className="nice-form-control">
                       <b>
                         Notes:
@@ -966,15 +629,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="notes"
-                            type="text"
-                            className={
-                              errors.notes
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.notes}
+                            placeholder="Notes"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -989,7 +650,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="avatarUrl" className="nice-form-control">
                       <b>
                         Avatar Url:
@@ -1001,15 +661,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="avatarUrl"
-                            type="text"
-                            className={
-                              errors.avatarUrl
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.avatarUrl}
+                            placeholder="Avatar Url"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1024,42 +682,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
-                    <label htmlFor="organizationId" className="nice-form-control">
-                      <b>
-                        Organization Id:
-                        {touched.organizationId &&
-                         !errors.organizationId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="organizationId"
-                            type="text"
-                            className={
-                              errors.organizationId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="organizationId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
                     <label htmlFor="acceptedCookies" className="nice-form-control">
                       <b>
                         Accepted Cookies:
@@ -1072,7 +694,6 @@ const PrincipalForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="acceptedCookies"
                             name="acceptedCookies"
                             onChange={(e) => {
@@ -1080,9 +701,7 @@ const PrincipalForm: React.FC = () => {
                               setFieldValue('acceptedCookies', e.target.checked);
                             }}
                             isInvalid={!!errors.acceptedCookies}
-                            className={
-                              errors.acceptedCookies ? 'error' : ''
-                            }
+                            className={errors.acceptedCookies ? 'error' : ''}
                           />
 
 
@@ -1098,7 +717,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="acceptedTos" className="nice-form-control">
                       <b>
                         Accepted Tos:
@@ -1111,7 +729,6 @@ const PrincipalForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="acceptedTos"
                             name="acceptedTos"
                             onChange={(e) => {
@@ -1119,9 +736,7 @@ const PrincipalForm: React.FC = () => {
                               setFieldValue('acceptedTos', e.target.checked);
                             }}
                             isInvalid={!!errors.acceptedTos}
-                            className={
-                              errors.acceptedTos ? 'error' : ''
-                            }
+                            className={errors.acceptedTos ? 'error' : ''}
                           />
 
 
@@ -1137,7 +752,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="enabled" className="nice-form-control">
                       <b>
                         Enabled:
@@ -1150,7 +764,6 @@ const PrincipalForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="enabled"
                             name="enabled"
                             onChange={(e) => {
@@ -1158,9 +771,7 @@ const PrincipalForm: React.FC = () => {
                               setFieldValue('enabled', e.target.checked);
                             }}
                             isInvalid={!!errors.enabled}
-                            className={
-                              errors.enabled ? 'error' : ''
-                            }
+                            className={errors.enabled ? 'error' : ''}
                           />
 
 
@@ -1176,7 +787,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="credentialNonExpired" className="nice-form-control">
                       <b>
                         Credential Non Expired:
@@ -1189,7 +799,6 @@ const PrincipalForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="credentialNonExpired"
                             name="credentialNonExpired"
                             onChange={(e) => {
@@ -1197,9 +806,7 @@ const PrincipalForm: React.FC = () => {
                               setFieldValue('credentialNonExpired', e.target.checked);
                             }}
                             isInvalid={!!errors.credentialNonExpired}
-                            className={
-                              errors.credentialNonExpired ? 'error' : ''
-                            }
+                            className={errors.credentialNonExpired ? 'error' : ''}
                           />
 
 
@@ -1215,7 +822,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="accountEnabled" className="nice-form-control">
                       <b>
                         Account Enabled:
@@ -1228,7 +834,6 @@ const PrincipalForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="accountEnabled"
                             name="accountEnabled"
                             onChange={(e) => {
@@ -1236,9 +841,7 @@ const PrincipalForm: React.FC = () => {
                               setFieldValue('accountEnabled', e.target.checked);
                             }}
                             isInvalid={!!errors.accountEnabled}
-                            className={
-                              errors.accountEnabled ? 'error' : ''
-                            }
+                            className={errors.accountEnabled ? 'error' : ''}
                           />
 
 
@@ -1254,7 +857,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="accountNonLocked" className="nice-form-control">
                       <b>
                         Account Non Locked:
@@ -1267,7 +869,6 @@ const PrincipalForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="accountNonLocked"
                             name="accountNonLocked"
                             onChange={(e) => {
@@ -1275,9 +876,7 @@ const PrincipalForm: React.FC = () => {
                               setFieldValue('accountNonLocked', e.target.checked);
                             }}
                             isInvalid={!!errors.accountNonLocked}
-                            className={
-                              errors.accountNonLocked ? 'error' : ''
-                            }
+                            className={errors.accountNonLocked ? 'error' : ''}
                           />
 
 
@@ -1293,7 +892,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="accountNonExpired" className="nice-form-control">
                       <b>
                         Account Non Expired:
@@ -1306,7 +904,6 @@ const PrincipalForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="accountNonExpired"
                             name="accountNonExpired"
                             onChange={(e) => {
@@ -1314,9 +911,7 @@ const PrincipalForm: React.FC = () => {
                               setFieldValue('accountNonExpired', e.target.checked);
                             }}
                             isInvalid={!!errors.accountNonExpired}
-                            className={
-                              errors.accountNonExpired ? 'error' : ''
-                            }
+                            className={errors.accountNonExpired ? 'error' : ''}
                           />
 
 
@@ -1332,7 +927,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="id" className="nice-form-control">
                       <b>
                         Id:
@@ -1344,15 +938,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.id}
+                            placeholder="Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1367,7 +959,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
@@ -1379,15 +970,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1402,7 +991,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
@@ -1427,7 +1015,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
@@ -1439,15 +1026,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1462,7 +1047,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedById" className="nice-form-control">
                       <b>
                         Last Accessed By Id:
@@ -1474,15 +1058,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastAccessedById}
+                            placeholder="Last Accessed By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1497,7 +1079,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedDate" className="nice-form-control">
                       <b>
                         Last Accessed Date:
@@ -1522,7 +1103,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedById" className="nice-form-control">
                       <b>
                         Last Modified By Id:
@@ -1534,15 +1114,13 @@ const PrincipalForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastModifiedById}
+                            placeholder="Last Modified By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1557,7 +1135,6 @@ const PrincipalForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedDate" className="nice-form-control">
                       <b>
                         Last Modified Date:
@@ -1585,43 +1162,34 @@ const PrincipalForm: React.FC = () => {
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
+                    disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (
-                      <Spinner
-                        style={ { float: 'left' } }
-                        as="span"
-                        animation="grow"
-                        variant="light"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FaCheckCircle size={30} /> Create New Principal
+                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New Principal
                   </CoolButton>
+
+                  {addPrincipalResult.error && (
+                    <div className="error" style={ { marginTop: 12 }}>
+                      {JSON.stringify('data' in (addPrincipalResult as any).error ? (addPrincipalResult as any).error.data : (addPrincipalResult as any).error)}
+                    </div>
+                  )}
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Read-Only System Fields */}
-              <Accordion.Item eventKey="2">
-                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                    <Col md={6} sm={12}>
-                      <BSForm.Group>
-                        <BSForm.Label>
-                          Fingerprint
-                        </BSForm.Label>
-                        <BSForm.Control
-                          plaintext
-                          readOnly
-                          defaultValue={"" /* or some fetched data for read-only */}
-                        />
-                      </BSForm.Group>
-                    </Col>
-                  </Row>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addPrincipalResult: {JSON.stringify(addPrincipalResult)}
                 </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
           </form>
         )}

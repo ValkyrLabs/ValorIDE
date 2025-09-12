@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { IntegrationAccount } from '../../model'
+import { IntegrationAccount } from '@thor/model/IntegrationAccount'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type IntegrationAccountResponse = IntegrationAccount[]
@@ -10,8 +10,13 @@ export const IntegrationAccountService = createApi({
   tagTypes: ['IntegrationAccount'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getIntegrationAccountsPaged: build.query<IntegrationAccountResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `IntegrationAccount?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getIntegrationAccountsPaged: build.query<IntegrationAccountResponse, { page: number; size?: number; example?: Partial<IntegrationAccount> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `IntegrationAccount?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const IntegrationAccountService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getIntegrationAccounts: build.query<IntegrationAccountResponse, void>({
-      query: () => `IntegrationAccount`,
+    getIntegrationAccounts: build.query<IntegrationAccountResponse, { example?: Partial<IntegrationAccount> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `IntegrationAccount?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `IntegrationAccount`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const IntegrationAccountService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'IntegrationAccount', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'IntegrationAccount', id },
+        { type: 'IntegrationAccount', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

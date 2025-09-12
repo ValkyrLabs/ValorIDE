@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { McpResourceTemplate } from '../../model'
+import { McpResourceTemplate } from '@thor/model/McpResourceTemplate'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type McpResourceTemplateResponse = McpResourceTemplate[]
@@ -10,8 +10,13 @@ export const McpResourceTemplateService = createApi({
   tagTypes: ['McpResourceTemplate'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getMcpResourceTemplatesPaged: build.query<McpResourceTemplateResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `McpResourceTemplate?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getMcpResourceTemplatesPaged: build.query<McpResourceTemplateResponse, { page: number; size?: number; example?: Partial<McpResourceTemplate> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `McpResourceTemplate?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const McpResourceTemplateService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMcpResourceTemplates: build.query<McpResourceTemplateResponse, void>({
-      query: () => `McpResourceTemplate`,
+    getMcpResourceTemplates: build.query<McpResourceTemplateResponse, { example?: Partial<McpResourceTemplate> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `McpResourceTemplate?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `McpResourceTemplate`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const McpResourceTemplateService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'McpResourceTemplate', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'McpResourceTemplate', id },
+        { type: 'McpResourceTemplate', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

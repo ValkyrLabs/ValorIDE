@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Solution } from '../../model/Solution';
+import { Solution } from '@thor/model/Solution';
 
 const SolutionSlice = createSlice({
   name: "Solutions",

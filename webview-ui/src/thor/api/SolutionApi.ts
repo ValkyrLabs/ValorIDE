@@ -16,323 +16,294 @@ Template file: typescript-redux-query/apis.mustache
 Description: SolutionApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import { Solution, SolutionFromJSON, SolutionToJSON } from "../model";
+    Solution,
+    SolutionFromJSON,
+    SolutionToJSON,
+} from '../model';
 
 export interface DeleteSolutionRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetSolutionRequest {
-  id: string;
+    id: string;
+}
+
+export interface GetSolutionListRequest {
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
 }
 
 export interface PostSolutionRequest {
-  solution: Solution;
+    solution: Solution;
 }
 
 export interface UpdateSolutionRequest {
-  id: string;
-  solution: Solution;
+    id: string;
+    solution: Solution;
 }
+
 
 /**
  * Deletes a specific Solution.
  * Delete a Solution.
  */
-function deleteSolutionRaw<T>(
-  requestParameters: DeleteSolutionRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteSolution.",
-    );
-  }
+function deleteSolutionRaw<T>(requestParameters: DeleteSolutionRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteSolution.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Solution/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Solution/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific Solution.
- * Delete a Solution.
- */
-export function deleteSolution<T>(
-  requestParameters: DeleteSolutionRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteSolutionRaw(requestParameters, requestConfig);
+* Deletes a specific Solution.
+* Delete a Solution.
+*/
+export function deleteSolution<T>(requestParameters: DeleteSolutionRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteSolutionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single Solution for a specific uid.
  * Retrieve a single Solution
  */
-function getSolutionRaw<T>(
-  requestParameters: GetSolutionRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Solution> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getSolution.",
-    );
-  }
+function getSolutionRaw<T>(requestParameters: GetSolutionRequest, requestConfig: runtime.TypedQueryConfig<T, Solution> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getSolution.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Solution/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(SolutionFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Solution/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SolutionFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single Solution for a specific uid.
- * Retrieve a single Solution
- */
-export function getSolution<T>(
-  requestParameters: GetSolutionRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Solution>,
-): QueryConfig<T> {
-  return getSolutionRaw(requestParameters, requestConfig);
+* Retrieves a single Solution for a specific uid.
+* Retrieve a single Solution
+*/
+export function getSolution<T>(requestParameters: GetSolutionRequest, requestConfig?: runtime.TypedQueryConfig<T, Solution>): QueryConfig<T> {
+    return getSolutionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Solutions.
  * Retrieve a list of Solutions
  */
-function getSolutionListRaw<T>(
-  requestConfig: runtime.TypedQueryConfig<T, Array<Solution>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getSolutionListRaw<T>(requestParameters: GetSolutionListRequest, requestConfig: runtime.TypedQueryConfig<T, Array<Solution>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
+    queryParameters = {};
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Solution`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(SolutionFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
+
+
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Solution`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(SolutionFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of Solutions.
- * Retrieve a list of Solutions
- */
-export function getSolutionList<T>(
-  requestConfig?: runtime.TypedQueryConfig<T, Array<Solution>>,
-): QueryConfig<T> {
-  return getSolutionListRaw(requestConfig);
-}
-
-/**
- * Creates a new Solution.
- * Create a new Solution
- */
-function postSolutionRaw<T>(
-  requestParameters: PostSolutionRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Solution> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.solution === null ||
-    requestParameters.solution === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "solution",
-      "Required parameter requestParameters.solution was null or undefined when calling postSolution.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Solution`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || SolutionToJSON(requestParameters.solution),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(SolutionFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of Solutions.
+* Retrieve a list of Solutions
+*/
+export function getSolutionList<T>(requestParameters: GetSolutionListRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Solution>>): QueryConfig<T> {
+    return getSolutionListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new Solution.
  * Create a new Solution
  */
-export function postSolution<T>(
-  requestParameters: PostSolutionRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Solution>,
-): QueryConfig<T> {
-  return postSolutionRaw(requestParameters, requestConfig);
+function postSolutionRaw<T>(requestParameters: PostSolutionRequest, requestConfig: runtime.TypedQueryConfig<T, Solution> = {}): QueryConfig<T> {
+    if (requestParameters.solution === null || requestParameters.solution === undefined) {
+        throw new runtime.RequiredError('solution','Required parameter requestParameters.solution was null or undefined when calling postSolution.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Solution`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || SolutionToJSON(requestParameters.solution),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SolutionFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Creates a new Solution.
+* Create a new Solution
+*/
+export function postSolution<T>(requestParameters: PostSolutionRequest, requestConfig?: runtime.TypedQueryConfig<T, Solution>): QueryConfig<T> {
+    return postSolutionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Solution.
  * Update an existing Solution
  */
-function updateSolutionRaw<T>(
-  requestParameters: UpdateSolutionRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Solution> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateSolution.",
-    );
-  }
+function updateSolutionRaw<T>(requestParameters: UpdateSolutionRequest, requestConfig: runtime.TypedQueryConfig<T, Solution> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateSolution.');
+    }
 
-  if (
-    requestParameters.solution === null ||
-    requestParameters.solution === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "solution",
-      "Required parameter requestParameters.solution was null or undefined when calling updateSolution.",
-    );
-  }
+    if (requestParameters.solution === null || requestParameters.solution === undefined) {
+        throw new runtime.RequiredError('solution','Required parameter requestParameters.solution was null or undefined when calling updateSolution.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Solution/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || SolutionToJSON(requestParameters.solution),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(SolutionFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Solution/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || SolutionToJSON(requestParameters.solution),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SolutionFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing Solution.
- * Update an existing Solution
- */
-export function updateSolution<T>(
-  requestParameters: UpdateSolutionRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Solution>,
-): QueryConfig<T> {
-  return updateSolutionRaw(requestParameters, requestConfig);
+* Updates an existing Solution.
+* Update an existing Solution
+*/
+export function updateSolution<T>(requestParameters: UpdateSolutionRequest, requestConfig?: runtime.TypedQueryConfig<T, Solution>): QueryConfig<T> {
+    return updateSolutionRaw(requestParameters, requestConfig);
 }
+

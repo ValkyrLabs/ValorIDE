@@ -14,7 +14,7 @@ export const ValorIDEAccountInfoCard = () => {
   const handleLogout = () => {
     // First notify extension to clear API keys and state
     vscode.postMessage({ type: "accountLogoutClicked" });
-    // Then sign out of Firebase
+    // Then sign out of valkyrai
     // handleSignOut()
   };
 

@@ -5,7 +5,7 @@ import {
     getRatingList , 
     deleteRating , 
     updateRating 
-} from '../../api';
+} from '../../api/RatingApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const RatingMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_RATING_REQUEST:
             try {
-                const response = getRatingList();
+                const response = getRatingList({});
                 dispatch(listRatingSuccess(response.body));
             } catch (error) {
                 dispatch(listRatingFailure(error.message));

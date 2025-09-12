@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasObjectSchema } from '../../model/OasObjectSchema';
+import { OasObjectSchema } from '@thor/model/OasObjectSchema';
 
 const OasObjectSchemaSlice = createSlice({
   name: "OasObjectSchemas",

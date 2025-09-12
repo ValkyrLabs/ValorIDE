@@ -33,12 +33,6 @@ import {
  */
 export type SalesOrder  = {
     /**
-     * The customer who placed the order.
-     * @type {string}
-     * @memberof SalesOrder
-     */
-    customerId: string;
-    /**
      * 
      * @type {number}
      * @memberof SalesOrder
@@ -144,7 +138,6 @@ export type SalesOrder  = {
 
 export function SalesOrderFromJSON(json: any): SalesOrder {
     return {
-        'customerId': json['customerId'],
         'totalAmount': json['totalAmount'],
         'orderDate': new Date(json['orderDate']),
         'status': json['status'],
@@ -170,7 +163,6 @@ export function SalesOrderToJSON(value?: SalesOrder): any {
         return undefined;
     }
     return {
-        'customerId': value.customerId,
         'totalAmount': value.totalAmount,
         'orderDate': value.orderDate.toISOString(),
         'status': value.status,

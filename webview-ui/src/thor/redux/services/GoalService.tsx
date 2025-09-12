@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Goal } from '../../model'
+import { Goal } from '@thor/model/Goal'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type GoalResponse = Goal[]
@@ -10,8 +10,13 @@ export const GoalService = createApi({
   tagTypes: ['Goal'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getGoalsPaged: build.query<GoalResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Goal?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getGoalsPaged: build.query<GoalResponse, { page: number; size?: number; example?: Partial<Goal> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Goal?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const GoalService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getGoals: build.query<GoalResponse, void>({
-      query: () => `Goal`,
+    getGoals: build.query<GoalResponse, { example?: Partial<Goal> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Goal?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Goal`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const GoalService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Goal', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Goal', id },
+        { type: 'Goal', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

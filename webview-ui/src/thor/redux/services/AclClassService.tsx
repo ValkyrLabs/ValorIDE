@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { AclClass } from '../../model'
+import { AclClass } from '@thor/model/AclClass'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type AclClassResponse = AclClass[]
@@ -10,8 +10,13 @@ export const AclClassService = createApi({
   tagTypes: ['AclClass'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getAclClasssPaged: build.query<AclClassResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `AclClass?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getAclClasssPaged: build.query<AclClassResponse, { page: number; size?: number; example?: Partial<AclClass> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `AclClass?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const AclClassService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getAclClasss: build.query<AclClassResponse, void>({
-      query: () => `AclClass`,
+    getAclClasss: build.query<AclClassResponse, { example?: Partial<AclClass> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `AclClass?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `AclClass`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const AclClassService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'AclClass', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'AclClass', id },
+        { type: 'AclClass', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

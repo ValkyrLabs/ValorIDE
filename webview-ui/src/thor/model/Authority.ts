@@ -16,11 +16,17 @@ import { exists, mapValues } from '../src/runtime';
 // thorapi
 
 /**
- * Spring Security ACL Authority ie SHARE_READ_UUID, SHARE_WRITE_UUID
+ * Simple GrantedAuthority mapping for a user
  * @export
  * @interface Authority
  */
 export type Authority  = {
+    /**
+     * 
+     * @type {string}
+     * @memberof Authority
+     */
+    username: string;
     /**
      * 
      * @type {string}
@@ -85,6 +91,7 @@ export type Authority  = {
 
 export function AuthorityFromJSON(json: any): Authority {
     return {
+        'username': json['username'],
         'authority': json['authority'],
         'principalId': !exists(json, 'principalId') ? undefined : json['principalId'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -103,6 +110,7 @@ export function AuthorityToJSON(value?: Authority): any {
         return undefined;
     }
     return {
+        'username': value.username,
         'authority': value.authority,
         'principalId': value.principalId,
         'id': value.id,

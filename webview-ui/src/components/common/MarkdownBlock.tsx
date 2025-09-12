@@ -210,6 +210,42 @@ const StyledPre = styled.pre<{ theme: any }>`
       .join("")}
 `;
 
+const rehypeFlattenInvalidBlocks = () => {
+  // List of block-level elements per HTML5 spec
+  const BLOCK_TAGS = new Set([
+    "address", "article", "aside", "blockquote", "canvas", "dd", "div", "dl", "dt", "fieldset",
+    "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "header",
+    "hr", "li", "main", "nav", "noscript", "ol", "output", "p", "pre", "section", "table",
+    "tfoot", "ul", "video"
+  ]);
+  return (tree: any) => {
+    visit(tree, (node: any, index: number, parent: any) => {
+      if (!parent || typeof index !== "number") return;
+      // If this node is a block element and its parent is also a block element (and not allowed to nest)
+      if (
+        BLOCK_TAGS.has(node.tagName) &&
+        BLOCK_TAGS.has(parent.tagName) &&
+        // Allow <li> inside <ul>/<ol>, <dt>/<dd> inside <dl>
+        !(
+          (parent.tagName === "ul" && node.tagName === "li") ||
+          (parent.tagName === "ol" && node.tagName === "li") ||
+          (parent.tagName === "dl" && (node.tagName === "dt" || node.tagName === "dd"))
+        )
+      ) {
+        // Move this node out to be a sibling of its parent
+        parent.children.splice(index, 1);
+        const grandparent = parent.parent;
+        if (grandparent && Array.isArray(grandparent.children)) {
+          const parentIdx = grandparent.children.indexOf(parent);
+          if (parentIdx !== -1) {
+            grandparent.children.splice(parentIdx + 1, 0, node);
+          }
+        }
+      }
+    });
+  };
+};
+
 const MarkdownBlock = memo(({ markdown }: MarkdownBlockProps) => {
   const { theme } = useExtensionState();
   const [reactContent, setMarkdown] = useRemark({
@@ -230,6 +266,7 @@ const MarkdownBlock = memo(({ markdown }: MarkdownBlockProps) => {
     ],
     rehypePlugins: [
       rehypeHighlight as any,
+      rehypeFlattenInvalidBlocks,
       {
         // languages: {},
       } as Options,

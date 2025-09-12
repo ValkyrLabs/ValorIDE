@@ -5,7 +5,7 @@ import {
     getChartSeriesList , 
     deleteChartSeries , 
     updateChartSeries 
-} from '../../api';
+} from '../../api/ChartSeriesApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const ChartSeriesMiddleware = ({ dispatch }) => (next) => async (action) 
 
         case LIST_CHARTSERIES_REQUEST:
             try {
-                const response = getChartSeriesList();
+                const response = getChartSeriesList({});
                 dispatch(listChartSeriesSuccess(response.body));
             } catch (error) {
                 dispatch(listChartSeriesFailure(error.message));

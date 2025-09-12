@@ -5,7 +5,7 @@ import {
     getInvoiceList , 
     deleteInvoice , 
     updateInvoice 
-} from '../../api';
+} from '../../api/InvoiceApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const InvoiceMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_INVOICE_REQUEST:
             try {
-                const response = getInvoiceList();
+                const response = getInvoiceList({});
                 dispatch(listInvoiceSuccess(response.body));
             } catch (error) {
                 dispatch(listInvoiceFailure(error.message));

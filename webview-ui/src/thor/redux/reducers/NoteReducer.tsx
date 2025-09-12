@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Note } from '../../model/Note';
+import { Note } from '@thor/model/Note';
 
 const NoteSlice = createSlice({
   name: "Notes",

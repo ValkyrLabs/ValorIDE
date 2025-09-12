@@ -5,7 +5,7 @@ import {
     getMcpServerList , 
     deleteMcpServer , 
     updateMcpServer 
-} from '../../api';
+} from '../../api/McpServerApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const McpServerMiddleware = ({ dispatch }) => (next) => async (action) =>
 
         case LIST_MCPSERVER_REQUEST:
             try {
-                const response = getMcpServerList();
+                const response = getMcpServerList({});
                 dispatch(listMcpServerSuccess(response.body));
             } catch (error) {
                 dispatch(listMcpServerFailure(error.message));

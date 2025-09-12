@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { BackupConfig } from '../../model/BackupConfig';
+import { BackupConfig } from '@thor/model/BackupConfig';
 
 const BackupConfigSlice = createSlice({
   name: "BackupConfigs",

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Cell } from '../../model/Cell';
+import { Cell } from '@thor/model/Cell';
 
 const CellSlice = createSlice({
   name: "Cells",

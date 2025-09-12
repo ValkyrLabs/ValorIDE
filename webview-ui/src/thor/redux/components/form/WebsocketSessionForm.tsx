@@ -4,22 +4,24 @@ import {
   Form as BSForm,
   Accordion,
   Col,
-  Nav,
   Row,
   Spinner
 } from 'react-bootstrap';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
-import CoolButton from '../../../../components/CoolButton';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
 import * as Yup from 'yup';
-import PermissionDialog from '../../../../components/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
 
 
 import {
   WebsocketSession,
   WebsocketSessionStateEnum,
   WebsocketSessionTypeEnum,
-} from '../../../model';
+} from '@thor/model';
 
 import { useAddWebsocketSessionMutation } from '../../services/WebsocketSessionService';
 
@@ -31,7 +33,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -63,69 +65,25 @@ const TypeValidation = () => {
 };
 
 /* -----------------------------------------------------
-   YUP VALIDATION SCHEMA
-   (Skip read-only fields and container types)
+   YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
+const asNumber = (schema: Yup.NumberSchema) =>
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+
 const validationSchema = Yup.object().shape({
-    
-        execModuleId: Yup.string()
-          
-          
-          ,
-    
+        execModuleId: Yup.string(),
       state: Yup.mixed()
         .oneOf(StateValidation(), "Invalid value for state")
-        
-        .notRequired(),
-    
+        ,
       type: Yup.mixed()
         .oneOf(TypeValidation(), "Invalid value for type")
-        
-        .notRequired(),
-    
-        connected: Yup.boolean()
-          
-          .notRequired(),
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
-        createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
-        lastModifiedDate: Yup.date()
-          
-          
-          ,
+        ,
+        connected: Yup.boolean(),
+        id: Yup.string(),
+        ownerId: Yup.string(),
+        keyHash: Yup.string(),
+        lastAccessedById: Yup.string(),
+        lastModifiedById: Yup.string(),
 });
 
 /* -----------------------------------------------------
@@ -133,111 +91,35 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const WebsocketSessionForm: React.FC = () => {
   const [addWebsocketSession, addWebsocketSessionResult] = useAddWebsocketSessionMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user', // This should come from authentication context
+    username: 'current_user',
     permissions: {
-      isOwner: true, // This should be determined by checking object ownership
-      isAdmin: true, // This should come from user roles
+      isOwner: true,
+      isAdmin: true,
       canGrantPermissions: true,
       permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
-  /* INITIAL VALUES - skip read-only fields */
+  /* -----------------------------------------------------
+     INITIAL VALUES - only NON read-only fields
+  -------------------------------------------------------- */
   const initialValues: Partial<WebsocketSession> = {
-          
-
-            execModuleId: 'null',
-
-
-
-
-
-          
-          state:
-            WebsocketSessionStateEnum[
-              Object.keys(WebsocketSessionStateEnum)[0]
-            ],
-          
-          type:
-            WebsocketSessionTypeEnum[
-              Object.keys(WebsocketSessionTypeEnum)[0]
-            ],
-          
-            connected: undefined, 
-
-
-
-
-
-
-          
-
-            id: '857b7d60-64f6-485e-a8e1-cfdf6717d2fe',
-
-
-
-
-
-          
-
-            ownerId: 'a5d82fa1-caa3-4a5d-a7f0-6f9556da3f42',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            keyHash: 'null',
-
-
-
-
-
-          
-
-            lastAccessedById: 'cfc3ea93-3d19-4ce7-88be-c2602840c380',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            lastModifiedById: '34577326-4657-49ea-a63f-28c52937e6be',
-
-
-
-
-
-          
-
-
-
-
-
-
+          execModuleId: '',
+        state: undefined,
+        type: undefined,
+          connected: false,
+          id: '',
+          ownerId: '',
+          keyHash: '',
+          lastAccessedById: '',
+          lastModifiedById: '',
   };
 
   // Permission Management Handlers
@@ -253,16 +135,16 @@ const WebsocketSessionForm: React.FC = () => {
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
     console.log('Permissions saved for new WebsocketSession:', grants);
-    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<WebsocketSession>) => {
     try {
       console.log("WebsocketSession form values:", values);
-      const result = await addWebsocketSession(values).unwrap();
-      
-      // If object was created successfully and has an ID, offer to set permissions
+
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addWebsocketSession(values as any).unwrap();
+
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
           `WebsocketSession created successfully! Would you like to set permissions for this object?`
@@ -271,7 +153,7 @@ const WebsocketSessionForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create WebsocketSession:', error);
@@ -291,6 +173,7 @@ const WebsocketSessionForm: React.FC = () => {
           isSubmitting,
           isValid,
           errors,
+          values,
           setFieldValue,
           touched,
           setFieldTouched,
@@ -298,27 +181,13 @@ const WebsocketSessionForm: React.FC = () => {
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={36} />
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  touched: {JSON.stringify(touched)}
-                  <br />
-                  addWebsocketSessionResult: {JSON.stringify(addWebsocketSessionResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-              {/* Editable Fields (NON-read-only) */}
+              
+              {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                  <FaRegPlusSquare size={36} /> Add New WebsocketSession
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New WebsocketSession
                 </Accordion.Header>
                 <Accordion.Body>
-                    
                     <label htmlFor="execModuleId" className="nice-form-control">
                       <b>
                         Exec Module Id:
@@ -330,15 +199,13 @@ const WebsocketSessionForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="execModuleId"
-                            type="text"
-                            className={
-                              errors.execModuleId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.execModuleId}
+                            placeholder="Exec Module Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -353,7 +220,6 @@ const WebsocketSessionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="state" className="nice-form-control">
                       <b>
                         State:
@@ -373,7 +239,7 @@ const WebsocketSessionForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('state', true);
-                            setFieldValue('state', e.target.value);
+                            setFieldValue('state', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select State" />
@@ -388,7 +254,6 @@ const WebsocketSessionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="type" className="nice-form-control">
                       <b>
                         Type:
@@ -408,7 +273,7 @@ const WebsocketSessionForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('type', true);
-                            setFieldValue('type', e.target.value);
+                            setFieldValue('type', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Type" />
@@ -423,7 +288,6 @@ const WebsocketSessionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="connected" className="nice-form-control">
                       <b>
                         Connected:
@@ -436,7 +300,6 @@ const WebsocketSessionForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="connected"
                             name="connected"
                             onChange={(e) => {
@@ -444,9 +307,7 @@ const WebsocketSessionForm: React.FC = () => {
                               setFieldValue('connected', e.target.checked);
                             }}
                             isInvalid={!!errors.connected}
-                            className={
-                              errors.connected ? 'error' : ''
-                            }
+                            className={errors.connected ? 'error' : ''}
                           />
 
 
@@ -462,7 +323,6 @@ const WebsocketSessionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="id" className="nice-form-control">
                       <b>
                         Id:
@@ -474,15 +334,13 @@ const WebsocketSessionForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.id}
+                            placeholder="Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -497,7 +355,6 @@ const WebsocketSessionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
@@ -509,15 +366,13 @@ const WebsocketSessionForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -532,7 +387,6 @@ const WebsocketSessionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
@@ -557,7 +411,6 @@ const WebsocketSessionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
@@ -569,15 +422,13 @@ const WebsocketSessionForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -592,7 +443,6 @@ const WebsocketSessionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedById" className="nice-form-control">
                       <b>
                         Last Accessed By Id:
@@ -604,15 +454,13 @@ const WebsocketSessionForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastAccessedById}
+                            placeholder="Last Accessed By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -627,7 +475,6 @@ const WebsocketSessionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedDate" className="nice-form-control">
                       <b>
                         Last Accessed Date:
@@ -652,7 +499,6 @@ const WebsocketSessionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedById" className="nice-form-control">
                       <b>
                         Last Modified By Id:
@@ -664,15 +510,13 @@ const WebsocketSessionForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastModifiedById}
+                            placeholder="Last Modified By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -687,7 +531,6 @@ const WebsocketSessionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedDate" className="nice-form-control">
                       <b>
                         Last Modified Date:
@@ -715,31 +558,34 @@ const WebsocketSessionForm: React.FC = () => {
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
+                    disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (
-                      <Spinner
-                        style={ { float: 'left' } }
-                        as="span"
-                        animation="grow"
-                        variant="light"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FaCheckCircle size={30} /> Create New WebsocketSession
+                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New WebsocketSession
                   </CoolButton>
+
+                  {addWebsocketSessionResult.error && (
+                    <div className="error" style={ { marginTop: 12 }}>
+                      {JSON.stringify('data' in (addWebsocketSessionResult as any).error ? (addWebsocketSessionResult as any).error.data : (addWebsocketSessionResult as any).error)}
+                    </div>
+                  )}
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Read-Only System Fields */}
-              <Accordion.Item eventKey="2">
-                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                  </Row>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addWebsocketSessionResult: {JSON.stringify(addWebsocketSessionResult)}
                 </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
           </form>
         )}

@@ -5,7 +5,7 @@ import {
     getMediaObjectList , 
     deleteMediaObject , 
     updateMediaObject 
-} from '../../api';
+} from '../../api/MediaObjectApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const MediaObjectMiddleware = ({ dispatch }) => (next) => async (action) 
 
         case LIST_MEDIAOBJECT_REQUEST:
             try {
-                const response = getMediaObjectList();
+                const response = getMediaObjectList({});
                 dispatch(listMediaObjectSuccess(response.body));
             } catch (error) {
                 dispatch(listMediaObjectFailure(error.message));

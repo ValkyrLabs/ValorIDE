@@ -5,7 +5,7 @@ import {
     getSecureKeyList , 
     deleteSecureKey , 
     updateSecureKey 
-} from '../../api';
+} from '../../api/SecureKeyApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const SecureKeyMiddleware = ({ dispatch }) => (next) => async (action) =>
 
         case LIST_SECUREKEY_REQUEST:
             try {
-                const response = getSecureKeyList();
+                const response = getSecureKeyList({});
                 dispatch(listSecureKeySuccess(response.body));
             } catch (error) {
                 dispatch(listSecureKeyFailure(error.message));

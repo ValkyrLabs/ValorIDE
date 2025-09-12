@@ -5,7 +5,7 @@ import {
     getExecModuleList , 
     deleteExecModule , 
     updateExecModule 
-} from '../../api';
+} from '../../api/ExecModuleApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const ExecModuleMiddleware = ({ dispatch }) => (next) => async (action) =
 
         case LIST_EXECMODULE_REQUEST:
             try {
-                const response = getExecModuleList();
+                const response = getExecModuleList({});
                 dispatch(listExecModuleSuccess(response.body));
             } catch (error) {
                 dispatch(listExecModuleFailure(error.message));

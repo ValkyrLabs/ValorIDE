@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ThorUXComponent } from '../../model/ThorUXComponent';
+import { ThorUXComponent } from '@thor/model/ThorUXComponent';
 
 const ThorUXComponentSlice = createSlice({
   name: "ThorUXComponents",

@@ -16,23 +16,23 @@ import { exists, mapValues } from '../src/runtime';
 // thorapi
 
 /**
- * ACL_SID lets us uniquely identify any principal or authority in the system (“SID” stands for “Security IDentity”). The only columns are the ID, a textual representation of the SID, and a flag to indicate whether the textual representation refers to a principal name or a GrantedAuthority. Thus, there is a single row for each unique principal or GrantedAuthority. When used in the context of receiving a permission, an SID is generally called a “recipient”.
+ * Security IDentity (SID). One row per unique principal (username) or GrantedAuthority. 
  * @export
  * @interface AclSid
  */
 export type AclSid  = {
     /**
-     * 
+     * Username or authority name (e.g., \'anonymousUser\' or \'ROLE_ADMIN\' or a UUID as a string)
      * @type {string}
      * @memberof AclSid
      */
-    sid?: string;
+    sid: string;
     /**
-     * 
-     * @type {string}
+     * true if SID refers to a principal (username), false if it refers to a GrantedAuthority
+     * @type {boolean}
      * @memberof AclSid
      */
-    principal?: string;
+    principal: boolean;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -85,8 +85,8 @@ export type AclSid  = {
 
 export function AclSidFromJSON(json: any): AclSid {
     return {
-        'sid': !exists(json, 'sid') ? undefined : json['sid'],
-        'principal': !exists(json, 'principal') ? undefined : json['principal'],
+        'sid': json['sid'],
+        'principal': json['principal'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),

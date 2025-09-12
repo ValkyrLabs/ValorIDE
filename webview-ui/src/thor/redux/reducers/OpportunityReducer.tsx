@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Opportunity } from '../../model/Opportunity';
+import { Opportunity } from '@thor/model/Opportunity';
 
 const OpportunitySlice = createSlice({
   name: "Opportunitys",

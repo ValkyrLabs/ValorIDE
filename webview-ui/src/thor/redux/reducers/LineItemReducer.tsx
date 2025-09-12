@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { LineItem } from '../../model/LineItem';
+import { LineItem } from '@thor/model/LineItem';
 
 const LineItemSlice = createSlice({
   name: "LineItems",

@@ -70,6 +70,8 @@ export interface WebviewMessage {
     | "requestTotalTasksSize"
     | "relaunchChromeDebugMode"
     | "taskFeedback"
+    | "requestSetBudgetLimit"
+    | "requestSetApiThrottle"
     | "getDetectedChromePath"
     | "detectedChromePath"
     | "scrollToSettings"

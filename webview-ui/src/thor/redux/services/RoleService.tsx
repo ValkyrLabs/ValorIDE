@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Role } from '../../model'
+import { Role } from '@thor/model/Role'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type RoleResponse = Role[]
@@ -10,8 +10,13 @@ export const RoleService = createApi({
   tagTypes: ['Role'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getRolesPaged: build.query<RoleResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Role?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getRolesPaged: build.query<RoleResponse, { page: number; size?: number; example?: Partial<Role> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Role?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const RoleService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getRoles: build.query<RoleResponse, void>({
-      query: () => `Role`,
+    getRoles: build.query<RoleResponse, { example?: Partial<Role> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Role?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Role`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const RoleService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Role', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Role', id },
+        { type: 'Role', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

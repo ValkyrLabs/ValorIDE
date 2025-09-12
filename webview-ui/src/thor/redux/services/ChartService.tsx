@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Chart } from '../../model'
+import { Chart } from '@thor/model/Chart'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type ChartResponse = Chart[]
@@ -10,8 +10,13 @@ export const ChartService = createApi({
   tagTypes: ['Chart'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getChartsPaged: build.query<ChartResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Chart?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getChartsPaged: build.query<ChartResponse, { page: number; size?: number; example?: Partial<Chart> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Chart?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const ChartService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getCharts: build.query<ChartResponse, void>({
-      query: () => `Chart`,
+    getCharts: build.query<ChartResponse, { example?: Partial<Chart> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Chart?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Chart`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const ChartService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Chart', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Chart', id },
+        { type: 'Chart', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

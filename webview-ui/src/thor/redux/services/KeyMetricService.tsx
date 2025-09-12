@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { KeyMetric } from '../../model'
+import { KeyMetric } from '@thor/model/KeyMetric'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type KeyMetricResponse = KeyMetric[]
@@ -10,8 +10,13 @@ export const KeyMetricService = createApi({
   tagTypes: ['KeyMetric'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getKeyMetricsPaged: build.query<KeyMetricResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `KeyMetric?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getKeyMetricsPaged: build.query<KeyMetricResponse, { page: number; size?: number; example?: Partial<KeyMetric> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `KeyMetric?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const KeyMetricService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getKeyMetrics: build.query<KeyMetricResponse, void>({
-      query: () => `KeyMetric`,
+    getKeyMetrics: build.query<KeyMetricResponse, { example?: Partial<KeyMetric> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `KeyMetric?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `KeyMetric`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const KeyMetricService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'KeyMetric', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'KeyMetric', id },
+        { type: 'KeyMetric', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

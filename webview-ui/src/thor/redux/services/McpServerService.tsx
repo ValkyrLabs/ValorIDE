@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { McpServer } from '../../model'
+import { McpServer } from '@thor/model/McpServer'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type McpServerResponse = McpServer[]
@@ -10,8 +10,13 @@ export const McpServerService = createApi({
   tagTypes: ['McpServer'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getMcpServersPaged: build.query<McpServerResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `McpServer?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getMcpServersPaged: build.query<McpServerResponse, { page: number; size?: number; example?: Partial<McpServer> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `McpServer?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const McpServerService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMcpServers: build.query<McpServerResponse, void>({
-      query: () => `McpServer`,
+    getMcpServers: build.query<McpServerResponse, { example?: Partial<McpServer> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `McpServer?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `McpServer`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const McpServerService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'McpServer', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'McpServer', id },
+        { type: 'McpServer', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

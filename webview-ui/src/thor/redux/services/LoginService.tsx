@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Login } from '../../model'
+import { Login } from '@thor/model/Login'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type LoginResponse = Login[]
@@ -10,8 +10,13 @@ export const LoginService = createApi({
   tagTypes: ['Login'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getLoginsPaged: build.query<LoginResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Login?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getLoginsPaged: build.query<LoginResponse, { page: number; size?: number; example?: Partial<Login> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Login?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const LoginService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getLogins: build.query<LoginResponse, void>({
-      query: () => `Login`,
+    getLogins: build.query<LoginResponse, { example?: Partial<Login> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Login?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Login`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const LoginService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Login', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Login', id },
+        { type: 'Login', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

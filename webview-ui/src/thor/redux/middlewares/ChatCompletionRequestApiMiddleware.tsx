@@ -5,7 +5,7 @@ import {
     getChatCompletionRequestList , 
     deleteChatCompletionRequest , 
     updateChatCompletionRequest 
-} from '../../api';
+} from '../../api/ChatCompletionRequestApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const ChatCompletionRequestMiddleware = ({ dispatch }) => (next) => async
 
         case LIST_CHATCOMPLETIONREQUEST_REQUEST:
             try {
-                const response = getChatCompletionRequestList();
+                const response = getChatCompletionRequestList({});
                 dispatch(listChatCompletionRequestSuccess(response.body));
             } catch (error) {
                 dispatch(listChatCompletionRequestFailure(error.message));

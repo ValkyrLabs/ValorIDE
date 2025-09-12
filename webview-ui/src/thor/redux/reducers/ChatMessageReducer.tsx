@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ChatMessage } from '../../model/ChatMessage';
+import { ChatMessage } from '@thor/model/ChatMessage';
 
 const ChatMessageSlice = createSlice({
   name: "ChatMessages",

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasServer } from '../../model/OasServer';
+import { OasServer } from '@thor/model/OasServer';
 
 const OasServerSlice = createSlice({
   name: "OasServers",

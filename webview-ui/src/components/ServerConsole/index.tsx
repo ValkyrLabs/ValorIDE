@@ -1,19 +1,19 @@
 import * as StompJs from "@stomp/stompjs";
 import { useEffect, useState } from "react";
-import { Badge, Card, Col, Form, Image, Row } from "react-bootstrap";
-import { FiTerminal } from "react-icons/fi";
+import { Badge, Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
+import { FiTerminal, FiWifi, FiWifiOff, FiActivity, FiSend, FiMaximize2, FiMinimize2 } from "react-icons/fi";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
-import type { AppDispatch, RootState } from "../../redux/store"; // Adjust to your store
+import type { AppDispatch, RootState } from "../../redux/store";
 import { WebsocketMessage, WebsocketMessageFromJSON, WebsocketMessageToJSON, WebsocketMessageTypeEnum } from "../../thor/model";
-import { WEBSOCKET_URL, isValidWsUrl } from "../../websocket/websocket";
-import CoolButton from "../CoolButton";
-import { addMessage, setConnected } from "./websocketSlice"; // Ensure these actions are correct
-// import { WebsocketMessageAdded } from "../../thor/redux/reducers/WebsocketMessageReducer";
+import { isValidWsUrl } from "../../websocket/websocket";
+import { useMothership } from "../../context/MothershipContext";
+import { addMessage, setConnected } from "./websocketSlice";
+import { WSS_BASE_PATH } from "@/thor/src";
+import "./ServerConsole.css";
 
 const { Client } = StompJs;
 
-// Use throughout your app instead of plain `useAppDispatch` and `useAppSelector`
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
@@ -33,68 +33,58 @@ const stompClient = new Client({
 });
 
 const ServerConsole = () => {
-  const [maxxed, setMaxxed] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
   const [chatText, setChatText] = useState("");
-  const connected = useAppSelector(
-    (state: RootState) => state.websocket.connected,
-  );
-  const messages = useAppSelector(
-    (state: RootState) => state.websocket.messages,
-  );
-
+  const [isConnecting, setIsConnecting] = useState(false);
+  
+  const connected = useAppSelector((state: RootState) => state.websocket.connected);
+  const messages = useAppSelector((state: RootState) => state.websocket.messages);
+  const { isConnected: mothershipConnected } = useMothership();
+  
   const dispatch = useAppDispatch();
 
-  // Adjust your selectors based on your actual state shape.
-  // Here we assume WebsocketSession reducer has a `messages` array.
-  // TODO: this will need to be lazy loaded and server memory managed
-  /*
-  const { connected, messages, user } = useAppSelector((state: RootState) => ({
-    connected: state.websocket.connected,
-    messages: state.messages || [],
-    responses: state.websocket,
-    user: state.Principal
-  }));*/
+  // Determine connection state for styling
+  const connectionState: 'happy' | 'sad' | 'waiting' = isConnecting ? 'waiting' : 
+    (connected && mothershipConnected) ? 'happy' : 'sad';
 
   useEffect(() => {
-    const socketUrl = WEBSOCKET_URL;
+    const socketUrl = WSS_BASE_PATH;
     if (!isValidWsUrl(socketUrl)) {
-      console.warn(
-        "ServerConsole: WebSocket disabled (missing or invalid REACT_APP_WS_BASE_PATH).",
-      );
+      console.warn("ServerConsole: WebSocket disabled (missing or invalid REACT_APP_WS_BASE_PATH).");
       dispatch(setConnected(false));
-      // Optionally, log a console message to the UI
-      dispatch(
-        addMessage({
-          type: "console",
-          payload:
-            "WebSocket disabled: set REACT_APP_WS_BASE_PATH to ws(s)://host:port.",
-          createdDate: new Date(),
-        } as any),
-      );
+      dispatch(addMessage({
+        type: "console",
+        payload: "WebSocket disabled: set REACT_APP_WS_BASE_PATH to ws(s)://host:port.",
+        createdDate: new Date(),
+      } as any));
       return;
     }
+
+    setIsConnecting(true);
+    
     stompClient.configure({
       brokerURL: socketUrl,
       reconnectDelay: 5000,
       onConnect: () => {
+        setIsConnecting(false);
         dispatch(setConnected(true));
+        
         stompClient.subscribe("/topic/statuses", (message) => {
           const parsedMessage = WebsocketMessageFromJSON(JSON.parse(message.body));
-          //alert("status: " + parsedMessage.payload)
           dispatch(addMessage(parsedMessage));
-          scrollToBottom();
         });
+        
         stompClient.subscribe("/topic/messages", (message) => {
           const parsedMessage = WebsocketMessageFromJSON(JSON.parse(message.body));
-          //alert("message: " + parsedMessage.payload)
           dispatch(addMessage(parsedMessage));
-          scrollToBottom();
         });
       },
       onDisconnect: () => {
+        setIsConnecting(false);
         dispatch(setConnected(false));
       },
       onStompError: (frame) => {
+        setIsConnecting(false);
         console.error("Broker error: " + frame.headers["message"]);
         console.error("Details: " + frame.body);
       },
@@ -105,51 +95,87 @@ const ServerConsole = () => {
     return () => {
       stompClient.deactivate();
     };
-  }, [dispatch, stompClient]);
+  }, [dispatch]);
 
-  const scrollToBottom = () => {
-    alert("fix scroll ");
-    //animateScroll.scrollToBottom({
-    // containerId: "messages",
-    //});
-  };
-
-  const handleCommandTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setChatText(e.target.value);
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
   const sendMessage = () => {
+    if (!chatText.trim() || !connected) return;
+
     const message: WebsocketMessage = {
       type: WebsocketMessageTypeEnum.USER,
-      payload: chatText,
+      payload: chatText.trim(),
     };
+
     stompClient.publish({
       destination: "/app/chat",
       body: JSON.stringify(WebsocketMessageToJSON(message)),
     });
+
     setChatText("");
   };
 
-  const maxheight = maxxed ? window.innerHeight - 200 : "80px";
+  const getStatusText = () => {
+    if (isConnecting) return 'Connecting...';
+    if (connected && mothershipConnected) return 'Connected to Mothership';
+    if (connected) return 'Server Connected';
+    return 'Disconnected';
+  };
+
+  const getStatusIcon = () => {
+    if (isConnecting) return <FiActivity />;
+    if (connected && mothershipConnected) return <FiWifi />;
+    if (connected) return <FiTerminal />;
+    return <FiWifiOff />;
+  };
 
   return (
-    <Card bg="primary" style={{ borderRadius: 0 }}>
-      <Card.Header style={{ padding: "5px" }}>VALKYRAI CONSOLE</Card.Header>
-      <Card.Body
-        id="messages"
-        style={{
-          backgroundColor: "rgba(0,0,0,0.3)",
-          overflowY: "scroll",
-          maxHeight: maxheight,
-          minHeight: maxheight,
-        }}
-      >
+    <Card className={`server-console connection-${connectionState}`}>
+      <Card.Header className="console-header p-3">
+        <Row className="align-items-center">
+          <Col>
+            <h6 className="console-title d-flex align-items-center mb-0">
+              <FiTerminal className="icon" size={18} />
+              ValkyrAI Mothership Console
+            </h6>
+          </Col>
+          <Col xs="auto">
+            <div className="connection-status d-flex align-items-center">
+              <div className={`status-icon ${isConnecting ? 'connecting' : ''}`}>
+                {getStatusIcon()}
+              </div>
+              {getStatusText()}
+            </div>
+          </Col>
+          <Col xs="auto">
+            <Button 
+              size="sm"
+              className="control-btn"
+              onClick={() => setIsMaximized(!isMaximized)}
+              title={isMaximized ? 'Minimize' : 'Maximize'}
+            >
+              {isMaximized ? <FiMinimize2 size={14} /> : <FiMaximize2 size={14} />}
+            </Button>
+          </Col>
+        </Row>
+      </Card.Header>
+
+      <Card.Body className={`messages-container ${isMaximized ? 'maximized' : ''} p-0`}>
         {Array.isArray(messages) && messages.length > 0 ? (
           messages.map((message: WebsocketMessage, index: number) => {
             const { payload, time, type } = message;
             const typeMap = {
               error: "danger",
-              warn: "warning",
+              warn: "warning", 
               success: "success",
               agent: "info",
               broadcast: "info",
@@ -163,62 +189,70 @@ const ServerConsole = () => {
               user: "info",
             };
 
-            const variant =
-              typeMap[type as keyof typeof typeMap] || "secondary";
+            const variant = typeMap[type as keyof typeof typeMap] || "secondary";
 
             return (
-              <Row key={index}>
-                <Col sm={2} md={2} lg={1}>
-                  <Badge bg={variant}>{type}</Badge>
-                </Col>
-                <Col sm={2} md={1} lg={1}>
-                  {time}
-                </Col>
-                <Col sm={2} md={3} lg={2}>
-                  <Image
-                    roundedCircle
-                    style={{
-                      border: "1px solid blue",
-                      width: "32px",
-                      height: "32px",
-                    }}
-                    src={message.user ? message.user.avatarUrl : ""}
-                  />
-                  <b>{message.user ? message.user.username : "anon"}</b>
-                </Col>
-                <Col sm={6} md={6} lg={8}>
-                  {payload}
-                </Col>
-              </Row>
+              <div key={index} className="message-row">
+                <Badge className={`message-badge badge-${variant}`}>
+                  {type || 'msg'}
+                </Badge>
+                
+                <div className="message-time">
+                  {time ? new Date(time).toLocaleTimeString() : 'now'}
+                </div>
+                
+                <div className="message-user">
+                  <div className="user-avatar">
+                    {message.user?.username?.charAt(0)?.toUpperCase() || '?'}
+                  </div>
+                  <span style={{ fontSize: '12px', fontWeight: 600 }}>
+                    {message.user?.username || 'Anonymous'}
+                  </span>
+                </div>
+                
+                <div className="message-content">
+                  {payload || 'Empty message'}
+                </div>
+              </div>
             );
           })
         ) : (
-          <div style={{ color: "white" }}>No messages available.</div>
+          <div className="empty-state">
+            <div className="empty-icon">
+              <FiActivity />
+            </div>
+            <div>
+              Waiting for mothership communications...
+              <br />
+              <span style={{ fontSize: '12px', opacity: 0.6 }}>
+                Connect to start receiving real-time updates
+              </span>
+            </div>
+          </div>
         )}
       </Card.Body>
-      <Card.Footer style={{ maxHeight: "25px", padding: 0 }}>
-        <Row>
-          <Col md={10}>
-            <Form.Control
-              style={{ maxHeight: "5em" }}
-              type="textarea"
-              value={chatText}
-              onChange={handleCommandTextChange}
-            />
-          </Col>
-          <Col md={2}>
-            {true && (
-              <CoolButton
-                customStyle={{ width: "20px", height: "20px" }}
-                size="tiny"
-                variant="success"
-                onClick={sendMessage}
-              >
-                <FiTerminal size={20} />
-              </CoolButton>
-            )}
-          </Col>
-        </Row>
+
+      <Card.Footer className="input-container">
+        <InputGroup>
+          <Form.Control
+            className="message-input"
+            type="text"
+            value={chatText}
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
+            placeholder={connected ? "Send message to mothership..." : "Connecting..."}
+            disabled={!connected}
+          />
+          
+          <Button
+            className="send-btn"
+            onClick={sendMessage}
+            disabled={!connected || !chatText.trim()}
+            title="Send Message"
+          >
+            <FiSend />
+          </Button>
+        </InputGroup>
       </Card.Footer>
     </Card>
   );

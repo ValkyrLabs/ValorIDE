@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { WebsocketMessage } from '../../model'
+import { WebsocketMessage } from '@thor/model/WebsocketMessage'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type WebsocketMessageResponse = WebsocketMessage[]
@@ -10,8 +10,13 @@ export const WebsocketMessageService = createApi({
   tagTypes: ['WebsocketMessage'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getWebsocketMessagesPaged: build.query<WebsocketMessageResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `WebsocketMessage?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getWebsocketMessagesPaged: build.query<WebsocketMessageResponse, { page: number; size?: number; example?: Partial<WebsocketMessage> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WebsocketMessage?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const WebsocketMessageService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWebsocketMessages: build.query<WebsocketMessageResponse, void>({
-      query: () => `WebsocketMessage`,
+    getWebsocketMessages: build.query<WebsocketMessageResponse, { example?: Partial<WebsocketMessage> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `WebsocketMessage?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `WebsocketMessage`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const WebsocketMessageService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'WebsocketMessage', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'WebsocketMessage', id },
+        { type: 'WebsocketMessage', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

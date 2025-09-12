@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Authority } from '../../model/Authority';
+import { Authority } from '@thor/model/Authority';
 
 const AuthoritySlice = createSlice({
   name: "Authoritys",

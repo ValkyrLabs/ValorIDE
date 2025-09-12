@@ -16,323 +16,294 @@ Template file: typescript-redux-query/apis.mustache
 Description: BlankRangeApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import { BlankRange, BlankRangeFromJSON, BlankRangeToJSON } from "../model";
+    BlankRange,
+    BlankRangeFromJSON,
+    BlankRangeToJSON,
+} from '../model';
 
 export interface DeleteBlankRangeRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetBlankRangeRequest {
-  id: string;
+    id: string;
+}
+
+export interface GetBlankRangeListRequest {
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
 }
 
 export interface PostBlankRangeRequest {
-  blankRange: BlankRange;
+    blankRange: BlankRange;
 }
 
 export interface UpdateBlankRangeRequest {
-  id: string;
-  blankRange: BlankRange;
+    id: string;
+    blankRange: BlankRange;
 }
+
 
 /**
  * Deletes a specific BlankRange.
  * Delete a BlankRange.
  */
-function deleteBlankRangeRaw<T>(
-  requestParameters: DeleteBlankRangeRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteBlankRange.",
-    );
-  }
+function deleteBlankRangeRaw<T>(requestParameters: DeleteBlankRangeRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteBlankRange.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/BlankRange/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BlankRange/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific BlankRange.
- * Delete a BlankRange.
- */
-export function deleteBlankRange<T>(
-  requestParameters: DeleteBlankRangeRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteBlankRangeRaw(requestParameters, requestConfig);
+* Deletes a specific BlankRange.
+* Delete a BlankRange.
+*/
+export function deleteBlankRange<T>(requestParameters: DeleteBlankRangeRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteBlankRangeRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single BlankRange for a specific uid.
  * Retrieve a single BlankRange
  */
-function getBlankRangeRaw<T>(
-  requestParameters: GetBlankRangeRequest,
-  requestConfig: runtime.TypedQueryConfig<T, BlankRange> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getBlankRange.",
-    );
-  }
+function getBlankRangeRaw<T>(requestParameters: GetBlankRangeRequest, requestConfig: runtime.TypedQueryConfig<T, BlankRange> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getBlankRange.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/BlankRange/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(BlankRangeFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BlankRange/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BlankRangeFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single BlankRange for a specific uid.
- * Retrieve a single BlankRange
- */
-export function getBlankRange<T>(
-  requestParameters: GetBlankRangeRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, BlankRange>,
-): QueryConfig<T> {
-  return getBlankRangeRaw(requestParameters, requestConfig);
+* Retrieves a single BlankRange for a specific uid.
+* Retrieve a single BlankRange
+*/
+export function getBlankRange<T>(requestParameters: GetBlankRangeRequest, requestConfig?: runtime.TypedQueryConfig<T, BlankRange>): QueryConfig<T> {
+    return getBlankRangeRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of BlankRanges.
  * Retrieve a list of BlankRanges
  */
-function getBlankRangeListRaw<T>(
-  requestConfig: runtime.TypedQueryConfig<T, Array<BlankRange>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getBlankRangeListRaw<T>(requestParameters: GetBlankRangeListRequest, requestConfig: runtime.TypedQueryConfig<T, Array<BlankRange>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
+    queryParameters = {};
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/BlankRange`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(BlankRangeFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
+
+
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BlankRange`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(BlankRangeFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of BlankRanges.
- * Retrieve a list of BlankRanges
- */
-export function getBlankRangeList<T>(
-  requestConfig?: runtime.TypedQueryConfig<T, Array<BlankRange>>,
-): QueryConfig<T> {
-  return getBlankRangeListRaw(requestConfig);
-}
-
-/**
- * Creates a new BlankRange.
- * Create a new BlankRange
- */
-function postBlankRangeRaw<T>(
-  requestParameters: PostBlankRangeRequest,
-  requestConfig: runtime.TypedQueryConfig<T, BlankRange> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.blankRange === null ||
-    requestParameters.blankRange === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "blankRange",
-      "Required parameter requestParameters.blankRange was null or undefined when calling postBlankRange.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/BlankRange`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || BlankRangeToJSON(requestParameters.blankRange),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(BlankRangeFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of BlankRanges.
+* Retrieve a list of BlankRanges
+*/
+export function getBlankRangeList<T>(requestParameters: GetBlankRangeListRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<BlankRange>>): QueryConfig<T> {
+    return getBlankRangeListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new BlankRange.
  * Create a new BlankRange
  */
-export function postBlankRange<T>(
-  requestParameters: PostBlankRangeRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, BlankRange>,
-): QueryConfig<T> {
-  return postBlankRangeRaw(requestParameters, requestConfig);
+function postBlankRangeRaw<T>(requestParameters: PostBlankRangeRequest, requestConfig: runtime.TypedQueryConfig<T, BlankRange> = {}): QueryConfig<T> {
+    if (requestParameters.blankRange === null || requestParameters.blankRange === undefined) {
+        throw new runtime.RequiredError('blankRange','Required parameter requestParameters.blankRange was null or undefined when calling postBlankRange.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BlankRange`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || BlankRangeToJSON(requestParameters.blankRange),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BlankRangeFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Creates a new BlankRange.
+* Create a new BlankRange
+*/
+export function postBlankRange<T>(requestParameters: PostBlankRangeRequest, requestConfig?: runtime.TypedQueryConfig<T, BlankRange>): QueryConfig<T> {
+    return postBlankRangeRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing BlankRange.
  * Update an existing BlankRange
  */
-function updateBlankRangeRaw<T>(
-  requestParameters: UpdateBlankRangeRequest,
-  requestConfig: runtime.TypedQueryConfig<T, BlankRange> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateBlankRange.",
-    );
-  }
+function updateBlankRangeRaw<T>(requestParameters: UpdateBlankRangeRequest, requestConfig: runtime.TypedQueryConfig<T, BlankRange> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateBlankRange.');
+    }
 
-  if (
-    requestParameters.blankRange === null ||
-    requestParameters.blankRange === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "blankRange",
-      "Required parameter requestParameters.blankRange was null or undefined when calling updateBlankRange.",
-    );
-  }
+    if (requestParameters.blankRange === null || requestParameters.blankRange === undefined) {
+        throw new runtime.RequiredError('blankRange','Required parameter requestParameters.blankRange was null or undefined when calling updateBlankRange.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/BlankRange/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || BlankRangeToJSON(requestParameters.blankRange),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(BlankRangeFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BlankRange/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || BlankRangeToJSON(requestParameters.blankRange),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BlankRangeFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing BlankRange.
- * Update an existing BlankRange
- */
-export function updateBlankRange<T>(
-  requestParameters: UpdateBlankRangeRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, BlankRange>,
-): QueryConfig<T> {
-  return updateBlankRangeRaw(requestParameters, requestConfig);
+* Updates an existing BlankRange.
+* Update an existing BlankRange
+*/
+export function updateBlankRange<T>(requestParameters: UpdateBlankRangeRequest, requestConfig?: runtime.TypedQueryConfig<T, BlankRange>): QueryConfig<T> {
+    return updateBlankRangeRaw(requestParameters, requestConfig);
 }
+

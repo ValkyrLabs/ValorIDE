@@ -5,7 +5,7 @@ import {
     getLoginList , 
     deleteLogin , 
     updateLogin 
-} from '../../api';
+} from '../../api/LoginApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const LoginMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_LOGIN_REQUEST:
             try {
-                const response = getLoginList();
+                const response = getLoginList({});
                 dispatch(listLoginSuccess(response.body));
             } catch (error) {
                 dispatch(listLoginFailure(error.message));

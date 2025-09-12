@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { OasEnum } from '../../model'
+import { OasEnum } from '@thor/model/OasEnum'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type OasEnumResponse = OasEnum[]
@@ -10,8 +10,13 @@ export const OasEnumService = createApi({
   tagTypes: ['OasEnum'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getOasEnumsPaged: build.query<OasEnumResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `OasEnum?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getOasEnumsPaged: build.query<OasEnumResponse, { page: number; size?: number; example?: Partial<OasEnum> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasEnum?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const OasEnumService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasEnums: build.query<OasEnumResponse, void>({
-      query: () => `OasEnum`,
+    getOasEnums: build.query<OasEnumResponse, { example?: Partial<OasEnum> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `OasEnum?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `OasEnum`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const OasEnumService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'OasEnum', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'OasEnum', id },
+        { type: 'OasEnum', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpDownloadResponse } from '../../model/McpDownloadResponse';
+import { McpDownloadResponse } from '@thor/model/McpDownloadResponse';
 
 const McpDownloadResponseSlice = createSlice({
   name: "McpDownloadResponses",

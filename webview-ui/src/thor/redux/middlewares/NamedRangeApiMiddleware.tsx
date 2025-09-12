@@ -5,7 +5,7 @@ import {
     getNamedRangeList , 
     deleteNamedRange , 
     updateNamedRange 
-} from '../../api';
+} from '../../api/NamedRangeApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const NamedRangeMiddleware = ({ dispatch }) => (next) => async (action) =
 
         case LIST_NAMEDRANGE_REQUEST:
             try {
-                const response = getNamedRangeList();
+                const response = getNamedRangeList({});
                 dispatch(listNamedRangeSuccess(response.body));
             } catch (error) {
                 dispatch(listNamedRangeFailure(error.message));

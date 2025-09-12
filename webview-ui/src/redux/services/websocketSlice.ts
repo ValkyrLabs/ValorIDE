@@ -12,12 +12,15 @@ const websocketSlice = createSlice({
   name: "websocket",
   initialState,
   reducers: {
+    setConnected: (state, action: PayloadAction<boolean>) => {
+      state.connected = !!action.payload;
+    },
     addMessage: (state, action: PayloadAction<WebsocketMessage>) => {
       state.messages.push(action.payload);
     },
   },
 });
 
-export const { addMessage } = websocketSlice.actions;
+export const { setConnected, addMessage } = websocketSlice.actions;
 
 export default websocketSlice.reducer;

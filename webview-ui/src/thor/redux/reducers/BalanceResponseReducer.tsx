@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { BalanceResponse } from '../../model/BalanceResponse';
+import { BalanceResponse } from '@thor/model/BalanceResponse';
 
 const BalanceResponseSlice = createSlice({
   name: "BalanceResponses",

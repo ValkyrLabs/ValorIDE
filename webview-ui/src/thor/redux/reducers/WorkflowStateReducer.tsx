@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WorkflowState } from '../../model/WorkflowState';
+import { WorkflowState } from '@thor/model/WorkflowState';
 
 const WorkflowStateSlice = createSlice({
   name: "WorkflowStates",

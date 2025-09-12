@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Sheet } from '../../model/Sheet';
+import { Sheet } from '@thor/model/Sheet';
 
 const SheetSlice = createSlice({
   name: "Sheets",

@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { LineItem } from '../../model'
+import { LineItem } from '@thor/model/LineItem'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type LineItemResponse = LineItem[]
@@ -10,8 +10,13 @@ export const LineItemService = createApi({
   tagTypes: ['LineItem'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getLineItemsPaged: build.query<LineItemResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `LineItem?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getLineItemsPaged: build.query<LineItemResponse, { page: number; size?: number; example?: Partial<LineItem> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `LineItem?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const LineItemService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getLineItems: build.query<LineItemResponse, void>({
-      query: () => `LineItem`,
+    getLineItems: build.query<LineItemResponse, { example?: Partial<LineItem> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `LineItem?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `LineItem`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const LineItemService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'LineItem', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'LineItem', id },
+        { type: 'LineItem', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

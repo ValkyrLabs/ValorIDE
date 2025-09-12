@@ -20,6 +20,14 @@ import type {
 } from "./ValorIDEAccount";
 import { ValorIDERulesToggles } from "./valoride-rules";
 
+export interface RemoteCommand {
+  id: string;
+  type: string;
+  payload: any;
+  sourceInstanceId: string;
+  targetInstanceId?: string;
+}
+
 // webview will hold state
 export interface ExtensionMessage {
   type:
@@ -64,7 +72,8 @@ export interface ExtensionMessage {
     | "openFileExplorerResult"
     | "workspaceFiles"
     | "contentData"
-    | "LIST_APPLICATION_SUCCESS";
+    | "LIST_APPLICATION_SUCCESS"
+    | "remoteCommand";
   text?: string;
   path?: string; // Used for openFileExplorerResult
   paths?: (string | null)[]; // Used for relativePathsResponse
@@ -164,6 +173,7 @@ export interface ExtensionMessage {
     }>;
   }>;
   contentData?: any; // Data from the ContentData endpoint
+  command?: RemoteCommand; // Remote command from mothership
 }
 
 export type Invoke =

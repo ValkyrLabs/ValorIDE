@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SecureKey } from '../../model/SecureKey';
+import { SecureKey } from '@thor/model/SecureKey';
 
 const SecureKeySlice = createSlice({
   name: "SecureKeys",

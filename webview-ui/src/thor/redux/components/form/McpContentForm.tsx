@@ -4,20 +4,22 @@ import {
   Form as BSForm,
   Accordion,
   Col,
-  Nav,
   Row,
   Spinner
 } from 'react-bootstrap';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
-import CoolButton from '../../../../components/CoolButton';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
 import * as Yup from 'yup';
-import PermissionDialog from '../../../../components/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
 
 
 import {
   McpContent,
-} from '../../../model';
+} from '@thor/model';
 
 import { useAddMcpContentMutation } from '../../services/McpContentService';
 
@@ -29,7 +31,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -45,65 +47,20 @@ McpContent
 -------------------------------------------------------- */
 
 /* -----------------------------------------------------
-   YUP VALIDATION SCHEMA
-   (Skip read-only fields and container types)
+   YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
+const asNumber = (schema: Yup.NumberSchema) =>
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+
 const validationSchema = Yup.object().shape({
-    
-        mcpToolCallResponseId: Yup.string()
-          
-          
-          ,
-    
-        contentType: Yup.string()
-          
-          
-          ,
-    
-        text: Yup.string()
-          
-          
-          ,
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
-        createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
-        lastModifiedDate: Yup.date()
-          
-          
-          ,
+        mcpToolCallResponseId: Yup.string(),
+        contentType: Yup.string(),
+        text: Yup.string(),
+        id: Yup.string(),
+        ownerId: Yup.string(),
+        keyHash: Yup.string(),
+        lastAccessedById: Yup.string(),
+        lastModifiedById: Yup.string(),
 });
 
 /* -----------------------------------------------------
@@ -111,109 +68,34 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const McpContentForm: React.FC = () => {
   const [addMcpContent, addMcpContentResult] = useAddMcpContentMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user', // This should come from authentication context
+    username: 'current_user',
     permissions: {
-      isOwner: true, // This should be determined by checking object ownership
-      isAdmin: true, // This should come from user roles
+      isOwner: true,
+      isAdmin: true,
       canGrantPermissions: true,
       permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
-  /* INITIAL VALUES - skip read-only fields */
+  /* -----------------------------------------------------
+     INITIAL VALUES - only NON read-only fields
+  -------------------------------------------------------- */
   const initialValues: Partial<McpContent> = {
-          
-
-            mcpToolCallResponseId: 'null',
-
-
-
-
-
-          
-
-            contentType: 'null',
-
-
-
-
-
-          
-
-            text: 'null',
-
-
-
-
-
-          
-
-            id: '12dfd08f-a435-4e9b-bcb6-8406b1ae7903',
-
-
-
-
-
-          
-
-            ownerId: '0f868cb5-a0a2-4f5a-be86-487a67371486',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            keyHash: 'null',
-
-
-
-
-
-          
-
-            lastAccessedById: '783baa38-4881-41dd-8fb3-01ecdbaa0723',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            lastModifiedById: '95422907-0a60-41b6-b269-97600f35b435',
-
-
-
-
-
-          
-
-
-
-
-
-
+          mcpToolCallResponseId: '',
+          contentType: '',
+          text: '',
+          id: '',
+          ownerId: '',
+          keyHash: '',
+          lastAccessedById: '',
+          lastModifiedById: '',
   };
 
   // Permission Management Handlers
@@ -229,16 +111,16 @@ const McpContentForm: React.FC = () => {
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
     console.log('Permissions saved for new McpContent:', grants);
-    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<McpContent>) => {
     try {
       console.log("McpContent form values:", values);
-      const result = await addMcpContent(values).unwrap();
-      
-      // If object was created successfully and has an ID, offer to set permissions
+
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addMcpContent(values as any).unwrap();
+
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
           `McpContent created successfully! Would you like to set permissions for this object?`
@@ -247,7 +129,7 @@ const McpContentForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create McpContent:', error);
@@ -267,6 +149,7 @@ const McpContentForm: React.FC = () => {
           isSubmitting,
           isValid,
           errors,
+          values,
           setFieldValue,
           touched,
           setFieldTouched,
@@ -274,27 +157,13 @@ const McpContentForm: React.FC = () => {
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={36} />
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  touched: {JSON.stringify(touched)}
-                  <br />
-                  addMcpContentResult: {JSON.stringify(addMcpContentResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-              {/* Editable Fields (NON-read-only) */}
+              
+              {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                  <FaRegPlusSquare size={36} /> Add New McpContent
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New McpContent
                 </Accordion.Header>
                 <Accordion.Body>
-                    
                     <label htmlFor="mcpToolCallResponseId" className="nice-form-control">
                       <b>
                         Mcp Tool Call Response Id:
@@ -306,15 +175,13 @@ const McpContentForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="mcpToolCallResponseId"
-                            type="text"
-                            className={
-                              errors.mcpToolCallResponseId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.mcpToolCallResponseId}
+                            placeholder="Mcp Tool Call Response Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -329,7 +196,6 @@ const McpContentForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="contentType" className="nice-form-control">
                       <b>
                         Content Type:
@@ -341,15 +207,13 @@ const McpContentForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="contentType"
-                            type="text"
-                            className={
-                              errors.contentType
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.contentType}
+                            placeholder="Content Type"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -364,7 +228,6 @@ const McpContentForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="text" className="nice-form-control">
                       <b>
                         Text:
@@ -376,15 +239,13 @@ const McpContentForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="text"
-                            type="text"
-                            className={
-                              errors.text
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.text}
+                            placeholder="Text"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -399,7 +260,6 @@ const McpContentForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="id" className="nice-form-control">
                       <b>
                         Id:
@@ -411,15 +271,13 @@ const McpContentForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.id}
+                            placeholder="Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -434,7 +292,6 @@ const McpContentForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
@@ -446,15 +303,13 @@ const McpContentForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -469,7 +324,6 @@ const McpContentForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
@@ -494,7 +348,6 @@ const McpContentForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
@@ -506,15 +359,13 @@ const McpContentForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -529,7 +380,6 @@ const McpContentForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedById" className="nice-form-control">
                       <b>
                         Last Accessed By Id:
@@ -541,15 +391,13 @@ const McpContentForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastAccessedById}
+                            placeholder="Last Accessed By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -564,7 +412,6 @@ const McpContentForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedDate" className="nice-form-control">
                       <b>
                         Last Accessed Date:
@@ -589,7 +436,6 @@ const McpContentForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedById" className="nice-form-control">
                       <b>
                         Last Modified By Id:
@@ -601,15 +447,13 @@ const McpContentForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastModifiedById}
+                            placeholder="Last Modified By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -624,7 +468,6 @@ const McpContentForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedDate" className="nice-form-control">
                       <b>
                         Last Modified Date:
@@ -652,31 +495,34 @@ const McpContentForm: React.FC = () => {
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
+                    disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (
-                      <Spinner
-                        style={ { float: 'left' } }
-                        as="span"
-                        animation="grow"
-                        variant="light"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FaCheckCircle size={30} /> Create New McpContent
+                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New McpContent
                   </CoolButton>
+
+                  {addMcpContentResult.error && (
+                    <div className="error" style={ { marginTop: 12 }}>
+                      {JSON.stringify('data' in (addMcpContentResult as any).error ? (addMcpContentResult as any).error.data : (addMcpContentResult as any).error)}
+                    </div>
+                  )}
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Read-Only System Fields */}
-              <Accordion.Item eventKey="2">
-                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                  </Row>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addMcpContentResult: {JSON.stringify(addMcpContentResult)}
                 </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
           </form>
         )}

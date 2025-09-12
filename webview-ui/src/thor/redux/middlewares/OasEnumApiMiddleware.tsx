@@ -5,7 +5,7 @@ import {
     getOasEnumList , 
     deleteOasEnum , 
     updateOasEnum 
-} from '../../api';
+} from '../../api/OasEnumApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const OasEnumMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_OASENUM_REQUEST:
             try {
-                const response = getOasEnumList();
+                const response = getOasEnumList({});
                 dispatch(listOasEnumSuccess(response.body));
             } catch (error) {
                 dispatch(listOasEnumFailure(error.message));

@@ -5,7 +5,7 @@ import {
     getMcpDownloadResponseList , 
     deleteMcpDownloadResponse , 
     updateMcpDownloadResponse 
-} from '../../api';
+} from '../../api/McpDownloadResponseApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const McpDownloadResponseMiddleware = ({ dispatch }) => (next) => async (
 
         case LIST_MCPDOWNLOADRESPONSE_REQUEST:
             try {
-                const response = getMcpDownloadResponseList();
+                const response = getMcpDownloadResponseList({});
                 dispatch(listMcpDownloadResponseSuccess(response.body));
             } catch (error) {
                 dispatch(listMcpDownloadResponseFailure(error.message));

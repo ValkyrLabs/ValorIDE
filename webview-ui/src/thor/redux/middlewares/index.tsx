@@ -20,8 +20,11 @@ import { Middleware, combineReducers, configureStore } from "@reduxjs/toolkit";
 // IMPORTant
 import { AclEntryService } from '../services/AclEntryService';
 import { AddressService } from '../services/AddressService';
-import { ApplicationService } from '../services/ApplicationService';
+import { AgentService } from '../services/AgentService';
+import { AgentEventTriggerService } from '../services/AgentEventTriggerService';
+import { ApplicationService } from '../../../redux/services/ApplicationService';
 import { BackupConfigService } from '../services/BackupConfigService';
+import { BalanceResponseService } from '../services/BalanceResponseService';
 import { BlankRangeService } from '../services/BlankRangeService';
 import { BorderService } from '../services/BorderService';
 import { BuildService } from '../services/BuildService';
@@ -43,6 +46,7 @@ import { FormatService } from '../services/FormatService';
 import { FormulaService } from '../services/FormulaService';
 import { GoalService } from '../services/GoalService';
 import { GoalDependencyService } from '../services/GoalDependencyService';
+import { HostInstanceService } from '../services/HostInstanceService';
 import { IntegrationAccountService } from '../services/IntegrationAccountService';
 import { InvoiceService } from '../services/InvoiceService';
 import { KeyMetricService } from '../services/KeyMetricService';
@@ -77,6 +81,7 @@ import { OasSecuritySchemeService } from '../services/OasSecuritySchemeService';
 import { OasServerService } from '../services/OasServerService';
 import { OpportunityService } from '../services/OpportunityService';
 import { OrganizationService } from '../services/OrganizationService';
+import { PaymentTransactionService } from '../services/PaymentTransactionService';
 import { PivotTableService } from '../services/PivotTableService';
 import { PrincipalService } from '../services/PrincipalService';
 import { ProductService } from '../services/ProductService';
@@ -84,6 +89,7 @@ import { PtgService } from '../services/PtgService';
 import { PtgRefService } from '../services/PtgRefService';
 import { RatingService } from '../services/RatingService';
 import { ReferralLinkService } from '../services/ReferralLinkService';
+import { RoleService } from '../services/RoleService';
 import { SalesActivityService } from '../services/SalesActivityService';
 import { SalesOrderService } from '../services/SalesOrderService';
 import { SalesPipelineService } from '../services/SalesPipelineService';
@@ -96,6 +102,7 @@ import { StrategicPriorityService } from '../services/StrategicPriorityService';
 import { TaskService } from '../services/TaskService';
 import { ThorUXComponentService } from '../services/ThorUXComponentService';
 import { ThorUXMetaService } from '../services/ThorUXMetaService';
+import { UsageTransactionService } from '../services/UsageTransactionService';
 import { UserPreferenceService } from '../services/UserPreferenceService';
 import { WebsocketMessageService } from '../services/WebsocketMessageService';
 import { WebsocketSessionService } from '../services/WebsocketSessionService';
@@ -104,11 +111,14 @@ import { WorkflowService } from '../services/WorkflowService';
 import { WorkflowStateService } from '../services/WorkflowStateService';
 
 // use to populate external store
-export const middlewares : Middleware[] = [
+export const middlewares: Middleware[] = [
     AclEntryService.middleware as Middleware,
     AddressService.middleware as Middleware,
+    AgentService.middleware as Middleware,
+    AgentEventTriggerService.middleware as Middleware,
     ApplicationService.middleware as Middleware,
     BackupConfigService.middleware as Middleware,
+    BalanceResponseService.middleware as Middleware,
     BlankRangeService.middleware as Middleware,
     BorderService.middleware as Middleware,
     BuildService.middleware as Middleware,
@@ -130,6 +140,7 @@ export const middlewares : Middleware[] = [
     FormulaService.middleware as Middleware,
     GoalService.middleware as Middleware,
     GoalDependencyService.middleware as Middleware,
+    HostInstanceService.middleware as Middleware,
     IntegrationAccountService.middleware as Middleware,
     InvoiceService.middleware as Middleware,
     KeyMetricService.middleware as Middleware,
@@ -164,6 +175,7 @@ export const middlewares : Middleware[] = [
     OasServerService.middleware as Middleware,
     OpportunityService.middleware as Middleware,
     OrganizationService.middleware as Middleware,
+    PaymentTransactionService.middleware as Middleware,
     PivotTableService.middleware as Middleware,
     PrincipalService.middleware as Middleware,
     ProductService.middleware as Middleware,
@@ -171,6 +183,7 @@ export const middlewares : Middleware[] = [
     PtgRefService.middleware as Middleware,
     RatingService.middleware as Middleware,
     ReferralLinkService.middleware as Middleware,
+    RoleService.middleware as Middleware,
     SalesActivityService.middleware as Middleware,
     SalesOrderService.middleware as Middleware,
     SalesPipelineService.middleware as Middleware,
@@ -183,6 +196,7 @@ export const middlewares : Middleware[] = [
     TaskService.middleware as Middleware,
     ThorUXComponentService.middleware as Middleware,
     ThorUXMetaService.middleware as Middleware,
+    UsageTransactionService.middleware as Middleware,
     UserPreferenceService.middleware as Middleware,
     WebsocketMessageService.middleware as Middleware,
     WebsocketSessionService.middleware as Middleware,

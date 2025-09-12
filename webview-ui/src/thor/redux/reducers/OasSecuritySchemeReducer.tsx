@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasSecurityScheme } from '../../model/OasSecurityScheme';
+import { OasSecurityScheme } from '@thor/model/OasSecurityScheme';
 
 const OasSecuritySchemeSlice = createSlice({
   name: "OasSecuritySchemes",

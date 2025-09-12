@@ -142,9 +142,8 @@ export function createAccountServiceForCommands(
   // JWT token retrieval function
   const getValorIDEApiKey = async (): Promise<string | undefined> => {
     try {
-      // Use the ValkyrAI config to get the token
-      const { ValkyrAIAuthConfig } = await import("../services/auth/valkyrai-config");
-      return await ValkyrAIAuthConfig.getToken(context);
+      // Get JWT token from extension secrets storage
+      return await context.secrets.get("jwtToken");
     } catch (error) {
       console.error("Failed to get ValorIDE API key:", error);
       return undefined;

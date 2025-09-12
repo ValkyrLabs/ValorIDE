@@ -115,7 +115,7 @@ export type ContentData  = {
      * @type {Principal}
      * @memberof ContentData
      */
-    owner?: Principal;
+    author?: Principal;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -181,7 +181,7 @@ export function ContentDataFromJSON(json: any): ContentData {
         'status': !exists(json, 'status') ? undefined : json['status'],
         'releaseDate': !exists(json, 'releaseDate') ? undefined : new Date(json['releaseDate']),
         'contentMedia': !exists(json, 'contentMedia') ? undefined : (json['contentMedia'] as Array<any>).map(ContentMediaLinkFromJSON),
-        'owner': !exists(json, 'owner') ? undefined : PrincipalFromJSON(json['owner']),
+        'author': !exists(json, 'author') ? undefined : PrincipalFromJSON(json['author']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -211,7 +211,7 @@ export function ContentDataToJSON(value?: ContentData): any {
         'status': value.status,
         'releaseDate': value.releaseDate === undefined ? undefined : value.releaseDate.toISOString(),
         'contentMedia': value.contentMedia === undefined ? undefined : (value.contentMedia as Array<any>).map(ContentMediaLinkToJSON),
-        'owner': PrincipalToJSON(value.owner),
+        'author': PrincipalToJSON(value.author),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

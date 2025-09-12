@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { BalanceResponse } from '../../model'
+import { BalanceResponse } from '@thor/model/BalanceResponse'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type BalanceResponseResponse = BalanceResponse[]
@@ -10,8 +10,13 @@ export const BalanceResponseService = createApi({
   tagTypes: ['BalanceResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getBalanceResponsesPaged: build.query<BalanceResponseResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `BalanceResponse?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getBalanceResponsesPaged: build.query<BalanceResponseResponse, { page: number; size?: number; example?: Partial<BalanceResponse> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `BalanceResponse?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const BalanceResponseService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getBalanceResponses: build.query<BalanceResponseResponse, void>({
-      query: () => `BalanceResponse`,
+    getBalanceResponses: build.query<BalanceResponseResponse, { example?: Partial<BalanceResponse> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `BalanceResponse?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `BalanceResponse`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const BalanceResponseService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'BalanceResponse', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'BalanceResponse', id },
+        { type: 'BalanceResponse', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

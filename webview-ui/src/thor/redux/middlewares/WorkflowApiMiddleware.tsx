@@ -5,7 +5,7 @@ import {
     getWorkflowList , 
     deleteWorkflow , 
     updateWorkflow 
-} from '../../api';
+} from '../../api/WorkflowApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const WorkflowMiddleware = ({ dispatch }) => (next) => async (action) => 
 
         case LIST_WORKFLOW_REQUEST:
             try {
-                const response = getWorkflowList();
+                const response = getWorkflowList({});
                 dispatch(listWorkflowSuccess(response.body));
             } catch (error) {
                 dispatch(listWorkflowFailure(error.message));

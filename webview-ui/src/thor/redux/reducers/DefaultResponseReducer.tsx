@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { DefaultResponse } from '../../model/DefaultResponse';
+import { DefaultResponse } from '@thor/model/DefaultResponse';
 
 const DefaultResponseSlice = createSlice({
   name: "DefaultResponses",

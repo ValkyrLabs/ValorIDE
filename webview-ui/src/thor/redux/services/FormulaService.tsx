@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Formula } from '../../model'
+import { Formula } from '@thor/model/Formula'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type FormulaResponse = Formula[]
@@ -10,8 +10,13 @@ export const FormulaService = createApi({
   tagTypes: ['Formula'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getFormulasPaged: build.query<FormulaResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Formula?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getFormulasPaged: build.query<FormulaResponse, { page: number; size?: number; example?: Partial<Formula> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Formula?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const FormulaService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getFormulas: build.query<FormulaResponse, void>({
-      query: () => `Formula`,
+    getFormulas: build.query<FormulaResponse, { example?: Partial<Formula> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Formula?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Formula`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const FormulaService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Formula', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Formula', id },
+        { type: 'Formula', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

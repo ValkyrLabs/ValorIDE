@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { BuildOutput } from '../../model'
+import { BuildOutput } from '@thor/model/BuildOutput'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type BuildOutputResponse = BuildOutput[]
@@ -10,8 +10,13 @@ export const BuildOutputService = createApi({
   tagTypes: ['BuildOutput'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getBuildOutputsPaged: build.query<BuildOutputResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `BuildOutput?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getBuildOutputsPaged: build.query<BuildOutputResponse, { page: number; size?: number; example?: Partial<BuildOutput> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `BuildOutput?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const BuildOutputService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getBuildOutputs: build.query<BuildOutputResponse, void>({
-      query: () => `BuildOutput`,
+    getBuildOutputs: build.query<BuildOutputResponse, { example?: Partial<BuildOutput> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `BuildOutput?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `BuildOutput`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const BuildOutputService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'BuildOutput', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'BuildOutput', id },
+        { type: 'BuildOutput', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasResponse } from '../../model/OasResponse';
+import { OasResponse } from '@thor/model/OasResponse';
 
 const OasResponseSlice = createSlice({
   name: "OasResponses",

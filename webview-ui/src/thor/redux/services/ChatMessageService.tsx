@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { ChatMessage } from '../../model'
+import { ChatMessage } from '@thor/model/ChatMessage'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type ChatMessageResponse = ChatMessage[]
@@ -10,8 +10,13 @@ export const ChatMessageService = createApi({
   tagTypes: ['ChatMessage'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getChatMessagesPaged: build.query<ChatMessageResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `ChatMessage?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getChatMessagesPaged: build.query<ChatMessageResponse, { page: number; size?: number; example?: Partial<ChatMessage> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ChatMessage?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const ChatMessageService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getChatMessages: build.query<ChatMessageResponse, void>({
-      query: () => `ChatMessage`,
+    getChatMessages: build.query<ChatMessageResponse, { example?: Partial<ChatMessage> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `ChatMessage?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `ChatMessage`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const ChatMessageService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ChatMessage', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'ChatMessage', id },
+        { type: 'ChatMessage', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

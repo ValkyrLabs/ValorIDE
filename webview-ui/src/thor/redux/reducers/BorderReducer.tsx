@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Border } from '../../model/Border';
+import { Border } from '@thor/model/Border';
 
 const BorderSlice = createSlice({
   name: "Borders",

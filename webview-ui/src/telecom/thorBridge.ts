@@ -33,13 +33,50 @@ if (typeof window !== "undefined") {
     };
 
     const toAppMessage = (raw: any): AppMessage | null => {
-      // Expect Thor WebsocketMessage payload to be a JSON string with { topic, payload, senderId, messageId, timestamp }
+      // Expect Thor WebsocketMessage payload to be either:
+      // - a JSON string body with shape { payload: string|object, ... }
+      // - or already-parsed object
+      // And the payload content to be a JSON string/object with shape:
+      //   { topic, payload, senderId, messageId, timestamp }
       try {
         const asObj = typeof raw === "string" ? JSON.parse(raw) : raw;
         const payloadField = asObj?.payload;
         if (!payloadField) return null;
-        const decoded = typeof payloadField === "string" ? JSON.parse(payloadField) : payloadField;
-        if (!decoded || !decoded.topic) return null;
+
+        let decoded: any = null;
+        if (typeof payloadField === "string") {
+          // Some servers wrap the JSON with a human prefix like "MESSAGE RECEIVED: {...}"
+          // Strip any prefix before the first '{' to recover valid JSON.
+          let s = payloadField.trim();
+          const braceIdx = s.indexOf("{");
+          if (braceIdx > 0) s = s.slice(braceIdx);
+          try {
+            decoded = JSON.parse(s);
+          } catch {
+            // Fall back to null if still not parseable
+            decoded = null;
+          }
+        } else if (typeof payloadField === "object") {
+          decoded = payloadField;
+        }
+
+        // If decoded is still null, try interpreting the whole body as the decoded payload
+        if (!decoded) {
+          // As a last resort, map a minimal shape from the outer object
+          if (typeof asObj?.type === "string") {
+            return {
+              type: asObj.type,
+              payload: asObj.payload ?? {},
+              senderId: "",
+              messageId: Math.random().toString(36).slice(2, 12),
+              timestamp: Date.now(),
+            };
+          }
+          return null;
+        }
+
+        // We now have the decoded envelope with a topic & payload
+        if (!decoded.topic) return null;
         return {
           type: decoded.topic,
           payload: decoded.payload,
@@ -47,7 +84,8 @@ if (typeof window !== "undefined") {
           messageId: decoded.messageId || Math.random().toString(36).slice(2, 12),
           timestamp: decoded.timestamp || Date.now(),
         };
-      } catch {
+      } catch (e) {
+        // Swallow parse errors but keep the bridge alive
         return null;
       }
     };

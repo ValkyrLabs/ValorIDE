@@ -5,7 +5,7 @@ import {
     getProductList , 
     deleteProduct , 
     updateProduct 
-} from '../../api';
+} from '../../api/ProductApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const ProductMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_PRODUCT_REQUEST:
             try {
-                const response = getProductList();
+                const response = getProductList({});
                 dispatch(listProductSuccess(response.body));
             } catch (error) {
                 dispatch(listProductFailure(error.message));

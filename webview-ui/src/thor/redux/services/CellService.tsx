@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Cell } from '../../model'
+import { Cell } from '@thor/model/Cell'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type CellResponse = Cell[]
@@ -10,8 +10,13 @@ export const CellService = createApi({
   tagTypes: ['Cell'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getCellsPaged: build.query<CellResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Cell?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getCellsPaged: build.query<CellResponse, { page: number; size?: number; example?: Partial<Cell> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Cell?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const CellService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getCells: build.query<CellResponse, void>({
-      query: () => `Cell`,
+    getCells: build.query<CellResponse, { example?: Partial<Cell> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Cell?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Cell`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const CellService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Cell', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Cell', id },
+        { type: 'Cell', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

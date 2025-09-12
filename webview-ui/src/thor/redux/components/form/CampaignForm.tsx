@@ -4,21 +4,23 @@ import {
   Form as BSForm,
   Accordion,
   Col,
-  Nav,
   Row,
   Spinner
 } from 'react-bootstrap';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
-import CoolButton from '../../../../components/CoolButton';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
 import * as Yup from 'yup';
-import PermissionDialog from '../../../../components/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
 
 
 import {
   Campaign,
   CampaignStatusEnum,
-} from '../../../model';
+} from '@thor/model';
 
 import { useAddCampaignMutation } from '../../services/CampaignService';
 
@@ -30,7 +32,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -54,85 +56,24 @@ const StatusValidation = () => {
 };
 
 /* -----------------------------------------------------
-   YUP VALIDATION SCHEMA
-   (Skip read-only fields and container types)
+   YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
+const asNumber = (schema: Yup.NumberSchema) =>
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+
 const validationSchema = Yup.object().shape({
-    
-        campaignId: Yup.string()
-          
-          .required("campaignId is required.")
-          ,
-    
-        name: Yup.string()
-          
-          .required("name is required.")
-          ,
-    
-        startDate: Yup.date()
-          
-          .required("startDate is required.")
-          ,
-    
-        endDate: Yup.date()
-          
-          .required("endDate is required.")
-          ,
-    
+        campaignId: Yup.string().required("campaignId is required."),
+        name: Yup.string().required("name is required."),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
-        .required("status is required.")
-        ,
-    
-        notes: Yup.string()
-          
-          
-          ,
-    
-        budget: Yup.number()
-          
-          
-          ,
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
-        createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
-        lastModifiedDate: Yup.date()
-          
-          
-          ,
+        .required("status is required."),
+        notes: Yup.string(),
+        budget: asNumber(Yup.number()),
+        id: Yup.string(),
+        ownerId: Yup.string(),
+        keyHash: Yup.string(),
+        lastAccessedById: Yup.string(),
+        lastModifiedById: Yup.string(),
 });
 
 /* -----------------------------------------------------
@@ -140,136 +81,36 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const CampaignForm: React.FC = () => {
   const [addCampaign, addCampaignResult] = useAddCampaignMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user', // This should come from authentication context
+    username: 'current_user',
     permissions: {
-      isOwner: true, // This should be determined by checking object ownership
-      isAdmin: true, // This should come from user roles
+      isOwner: true,
+      isAdmin: true,
       canGrantPermissions: true,
       permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
-  /* INITIAL VALUES - skip read-only fields */
+  /* -----------------------------------------------------
+     INITIAL VALUES - only NON read-only fields
+  -------------------------------------------------------- */
   const initialValues: Partial<Campaign> = {
-          
-
-            campaignId: 'null',
-
-
-
-
-
-          
-
-            name: 'null',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-          status:
-            CampaignStatusEnum[
-              Object.keys(CampaignStatusEnum)[0]
-            ],
-          
-
-            notes: 'null',
-
-
-
-
-
-          
-
-
-
-
-
-            budget: 0.00,
-
-          
-
-            id: 'a95eaf56-f48f-47b8-a3f7-ffc1abff9f31',
-
-
-
-
-
-          
-
-            ownerId: 'e8e424e4-965c-4276-b618-47cdbe7a9899',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            keyHash: 'null',
-
-
-
-
-
-          
-
-            lastAccessedById: '1db84287-c69e-4944-8b93-6af8e7bb7d1d',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            lastModifiedById: '67bd20ec-34bd-40b0-b198-fec5ef65c761',
-
-
-
-
-
-          
-
-
-
-
-
-
+          campaignId: '',
+          name: '',
+        status: undefined,
+          notes: '',
+          budget: undefined,
+          id: '',
+          ownerId: '',
+          keyHash: '',
+          lastAccessedById: '',
+          lastModifiedById: '',
   };
 
   // Permission Management Handlers
@@ -285,16 +126,16 @@ const CampaignForm: React.FC = () => {
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
     console.log('Permissions saved for new Campaign:', grants);
-    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Campaign>) => {
     try {
       console.log("Campaign form values:", values);
-      const result = await addCampaign(values).unwrap();
-      
-      // If object was created successfully and has an ID, offer to set permissions
+
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addCampaign(values as any).unwrap();
+
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
           `Campaign created successfully! Would you like to set permissions for this object?`
@@ -303,7 +144,7 @@ const CampaignForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create Campaign:', error);
@@ -323,6 +164,7 @@ const CampaignForm: React.FC = () => {
           isSubmitting,
           isValid,
           errors,
+          values,
           setFieldValue,
           touched,
           setFieldTouched,
@@ -330,27 +172,13 @@ const CampaignForm: React.FC = () => {
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={36} />
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  touched: {JSON.stringify(touched)}
-                  <br />
-                  addCampaignResult: {JSON.stringify(addCampaignResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-              {/* Editable Fields (NON-read-only) */}
+              
+              {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                  <FaRegPlusSquare size={36} /> Add New Campaign
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New Campaign
                 </Accordion.Header>
                 <Accordion.Body>
-                    
                     <label htmlFor="campaignId" className="nice-form-control">
                       <b>
                         Campaign Id:
@@ -362,15 +190,13 @@ const CampaignForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="campaignId"
-                            type="text"
-                            className={
-                              errors.campaignId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.campaignId}
+                            placeholder="Campaign Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -385,7 +211,6 @@ const CampaignForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
@@ -397,15 +222,13 @@ const CampaignForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="name"
-                            type="text"
-                            className={
-                              errors.name
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -420,7 +243,6 @@ const CampaignForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="startDate" className="nice-form-control">
                       <b>
                         Start Date:
@@ -445,7 +267,6 @@ const CampaignForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="endDate" className="nice-form-control">
                       <b>
                         End Date:
@@ -470,7 +291,6 @@ const CampaignForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
@@ -490,7 +310,7 @@ const CampaignForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value);
+                            setFieldValue('status', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Status" />
@@ -505,7 +325,6 @@ const CampaignForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="notes" className="nice-form-control">
                       <b>
                         Notes:
@@ -517,15 +336,13 @@ const CampaignForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="notes"
-                            type="text"
-                            className={
-                              errors.notes
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.notes}
+                            placeholder="Notes"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -540,7 +357,6 @@ const CampaignForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="budget" className="nice-form-control">
                       <b>
                         Budget:
@@ -558,7 +374,13 @@ const CampaignForm: React.FC = () => {
                           {/* DOUBLE FIELD */}
                           <Field
                             name="budget"
-                            type="text"
+                            type="number"
+                            step="any"
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('budget', true);
+                              const v = e.target.value;
+                              setFieldValue('budget', v === '' ? undefined : Number(v));
+                            }}
                             className={
                               errors.budget
                                 ? 'form-control field-error'
@@ -575,7 +397,6 @@ const CampaignForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="id" className="nice-form-control">
                       <b>
                         Id:
@@ -587,15 +408,13 @@ const CampaignForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.id}
+                            placeholder="Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -610,7 +429,6 @@ const CampaignForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
@@ -622,15 +440,13 @@ const CampaignForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -645,7 +461,6 @@ const CampaignForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
@@ -670,7 +485,6 @@ const CampaignForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
@@ -682,15 +496,13 @@ const CampaignForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -705,7 +517,6 @@ const CampaignForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedById" className="nice-form-control">
                       <b>
                         Last Accessed By Id:
@@ -717,15 +528,13 @@ const CampaignForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastAccessedById}
+                            placeholder="Last Accessed By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -740,7 +549,6 @@ const CampaignForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedDate" className="nice-form-control">
                       <b>
                         Last Accessed Date:
@@ -765,7 +573,6 @@ const CampaignForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedById" className="nice-form-control">
                       <b>
                         Last Modified By Id:
@@ -777,15 +584,13 @@ const CampaignForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastModifiedById}
+                            placeholder="Last Modified By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -800,7 +605,6 @@ const CampaignForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedDate" className="nice-form-control">
                       <b>
                         Last Modified Date:
@@ -828,31 +632,34 @@ const CampaignForm: React.FC = () => {
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
+                    disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (
-                      <Spinner
-                        style={ { float: 'left' } }
-                        as="span"
-                        animation="grow"
-                        variant="light"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FaCheckCircle size={30} /> Create New Campaign
+                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New Campaign
                   </CoolButton>
+
+                  {addCampaignResult.error && (
+                    <div className="error" style={ { marginTop: 12 }}>
+                      {JSON.stringify('data' in (addCampaignResult as any).error ? (addCampaignResult as any).error.data : (addCampaignResult as any).error)}
+                    </div>
+                  )}
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Read-Only System Fields */}
-              <Accordion.Item eventKey="2">
-                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                  </Row>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addCampaignResult: {JSON.stringify(addCampaignResult)}
                 </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
           </form>
         )}

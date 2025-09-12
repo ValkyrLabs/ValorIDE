@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PrincipalRoles } from '../../model/PrincipalRoles';
+import { PrincipalRoles } from '@thor/model/PrincipalRoles';
 
 const PrincipalRolesSlice = createSlice({
   name: "PrincipalRoless",

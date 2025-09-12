@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { PrincipalRoles } from '../../model'
+import { PrincipalRoles } from '@thor/model/PrincipalRoles'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type PrincipalRolesResponse = PrincipalRoles[]
@@ -10,8 +10,13 @@ export const PrincipalRolesService = createApi({
   tagTypes: ['PrincipalRoles'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getPrincipalRolessPaged: build.query<PrincipalRolesResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `PrincipalRoles?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getPrincipalRolessPaged: build.query<PrincipalRolesResponse, { page: number; size?: number; example?: Partial<PrincipalRoles> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `PrincipalRoles?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const PrincipalRolesService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getPrincipalRoless: build.query<PrincipalRolesResponse, void>({
-      query: () => `PrincipalRoles`,
+    getPrincipalRoless: build.query<PrincipalRolesResponse, { example?: Partial<PrincipalRoles> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `PrincipalRoles?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `PrincipalRoles`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const PrincipalRolesService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'PrincipalRoles', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'PrincipalRoles', id },
+        { type: 'PrincipalRoles', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

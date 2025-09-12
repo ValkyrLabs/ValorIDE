@@ -5,7 +5,7 @@ import {
     getOasParameterList , 
     deleteOasParameter , 
     updateOasParameter 
-} from '../../api';
+} from '../../api/OasParameterApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const OasParameterMiddleware = ({ dispatch }) => (next) => async (action)
 
         case LIST_OASPARAMETER_REQUEST:
             try {
-                const response = getOasParameterList();
+                const response = getOasParameterList({});
                 dispatch(listOasParameterSuccess(response.body));
             } catch (error) {
                 dispatch(listOasParameterFailure(error.message));

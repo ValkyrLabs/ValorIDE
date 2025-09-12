@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { MediaObject } from '../../model'
+import { MediaObject } from '@thor/model/MediaObject'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type MediaObjectResponse = MediaObject[]
@@ -10,8 +10,13 @@ export const MediaObjectService = createApi({
   tagTypes: ['MediaObject'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getMediaObjectsPaged: build.query<MediaObjectResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `MediaObject?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getMediaObjectsPaged: build.query<MediaObjectResponse, { page: number; size?: number; example?: Partial<MediaObject> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `MediaObject?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const MediaObjectService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMediaObjects: build.query<MediaObjectResponse, void>({
-      query: () => `MediaObject`,
+    getMediaObjects: build.query<MediaObjectResponse, { example?: Partial<MediaObject> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `MediaObject?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `MediaObject`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const MediaObjectService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'MediaObject', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'MediaObject', id },
+        { type: 'MediaObject', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

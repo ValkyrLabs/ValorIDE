@@ -5,7 +5,7 @@ import {
     getBorderList , 
     deleteBorder , 
     updateBorder 
-} from '../../api';
+} from '../../api/BorderApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const BorderMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_BORDER_REQUEST:
             try {
-                const response = getBorderList();
+                const response = getBorderList({});
                 dispatch(listBorderSuccess(response.body));
             } catch (error) {
                 dispatch(listBorderFailure(error.message));

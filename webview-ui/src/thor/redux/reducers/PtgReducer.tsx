@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Ptg } from '../../model/Ptg';
+import { Ptg } from '@thor/model/Ptg';
 
 const PtgSlice = createSlice({
   name: "Ptgs",

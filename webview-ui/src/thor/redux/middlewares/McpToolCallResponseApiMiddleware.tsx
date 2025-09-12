@@ -5,7 +5,7 @@ import {
     getMcpToolCallResponseList , 
     deleteMcpToolCallResponse , 
     updateMcpToolCallResponse 
-} from '../../api';
+} from '../../api/McpToolCallResponseApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const McpToolCallResponseMiddleware = ({ dispatch }) => (next) => async (
 
         case LIST_MCPTOOLCALLRESPONSE_REQUEST:
             try {
-                const response = getMcpToolCallResponseList();
+                const response = getMcpToolCallResponseList({});
                 dispatch(listMcpToolCallResponseSuccess(response.body));
             } catch (error) {
                 dispatch(listMcpToolCallResponseFailure(error.message));

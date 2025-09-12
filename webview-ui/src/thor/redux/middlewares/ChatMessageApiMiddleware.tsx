@@ -5,7 +5,7 @@ import {
     getChatMessageList , 
     deleteChatMessage , 
     updateChatMessage 
-} from '../../api';
+} from '../../api/ChatMessageApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const ChatMessageMiddleware = ({ dispatch }) => (next) => async (action) 
 
         case LIST_CHATMESSAGE_REQUEST:
             try {
-                const response = getChatMessageList();
+                const response = getChatMessageList({});
                 dispatch(listChatMessageSuccess(response.body));
             } catch (error) {
                 dispatch(listChatMessageFailure(error.message));

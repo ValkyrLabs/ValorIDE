@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { GoalDependency } from '../../model/GoalDependency';
+import { GoalDependency } from '@thor/model/GoalDependency';
 
 const GoalDependencySlice = createSlice({
   name: "GoalDependencys",

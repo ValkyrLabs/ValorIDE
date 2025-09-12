@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ChatResponse } from '../../model/ChatResponse';
+import { ChatResponse } from '@thor/model/ChatResponse';
 
 const ChatResponseSlice = createSlice({
   name: "ChatResponses",

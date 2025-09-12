@@ -5,7 +5,7 @@ import {
     getMergeRangeList , 
     deleteMergeRange , 
     updateMergeRange 
-} from '../../api';
+} from '../../api/MergeRangeApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const MergeRangeMiddleware = ({ dispatch }) => (next) => async (action) =
 
         case LIST_MERGERANGE_REQUEST:
             try {
-                const response = getMergeRangeList();
+                const response = getMergeRangeList({});
                 dispatch(listMergeRangeSuccess(response.body));
             } catch (error) {
                 dispatch(listMergeRangeFailure(error.message));

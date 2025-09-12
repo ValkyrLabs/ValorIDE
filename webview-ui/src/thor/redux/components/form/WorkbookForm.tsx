@@ -4,21 +4,23 @@ import {
   Form as BSForm,
   Accordion,
   Col,
-  Nav,
   Row,
   Spinner
 } from 'react-bootstrap';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
-import CoolButton from '../../../../components/CoolButton';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
 import * as Yup from 'yup';
-import PermissionDialog from '../../../../components/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
 
 
 import {
   Workbook,
   WorkbookStatusEnum,
-} from '../../../model';
+} from '@thor/model';
 
 import { useAddWorkbookMutation } from '../../services/WorkbookService';
 
@@ -30,7 +32,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -55,60 +57,21 @@ const StatusValidation = () => {
 };
 
 /* -----------------------------------------------------
-   YUP VALIDATION SCHEMA
-   (Skip read-only fields and container types)
+   YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
+const asNumber = (schema: Yup.NumberSchema) =>
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+
 const validationSchema = Yup.object().shape({
-    
-        name: Yup.string()
-          
-          
-          ,
-    
+        name: Yup.string(),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
-        
-        .notRequired(),
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
-        createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
-        lastModifiedDate: Yup.date()
-          
-          
-          ,
+        ,
+        id: Yup.string(),
+        ownerId: Yup.string(),
+        keyHash: Yup.string(),
+        lastAccessedById: Yup.string(),
+        lastModifiedById: Yup.string(),
 });
 
 /* -----------------------------------------------------
@@ -116,98 +79,33 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const WorkbookForm: React.FC = () => {
   const [addWorkbook, addWorkbookResult] = useAddWorkbookMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user', // This should come from authentication context
+    username: 'current_user',
     permissions: {
-      isOwner: true, // This should be determined by checking object ownership
-      isAdmin: true, // This should come from user roles
+      isOwner: true,
+      isAdmin: true,
       canGrantPermissions: true,
       permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
-  /* INITIAL VALUES - skip read-only fields */
+  /* -----------------------------------------------------
+     INITIAL VALUES - only NON read-only fields
+  -------------------------------------------------------- */
   const initialValues: Partial<Workbook> = {
-          
-
-            name: 'My Workbook',
-
-
-
-
-
-          
-          status:
-            WorkbookStatusEnum[
-              Object.keys(WorkbookStatusEnum)[0]
-            ],
-          
-
-            id: 'f8fe7b7b-6942-4ad6-beca-5e377dfbef87',
-
-
-
-
-
-          
-
-            ownerId: 'e9f65758-89cc-4123-ad45-d58676c70d70',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            keyHash: 'null',
-
-
-
-
-
-          
-
-            lastAccessedById: '6c100175-95b3-41e5-ad0b-b761f01ef276',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            lastModifiedById: '19c31ed8-3a4e-4009-805b-d4b55a8a5895',
-
-
-
-
-
-          
-
-
-
-
-
-
+          name: '',
+        status: undefined,
+          id: '',
+          ownerId: '',
+          keyHash: '',
+          lastAccessedById: '',
+          lastModifiedById: '',
   };
 
   // Permission Management Handlers
@@ -223,16 +121,16 @@ const WorkbookForm: React.FC = () => {
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
     console.log('Permissions saved for new Workbook:', grants);
-    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Workbook>) => {
     try {
       console.log("Workbook form values:", values);
-      const result = await addWorkbook(values).unwrap();
-      
-      // If object was created successfully and has an ID, offer to set permissions
+
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addWorkbook(values as any).unwrap();
+
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
           `Workbook created successfully! Would you like to set permissions for this object?`
@@ -241,7 +139,7 @@ const WorkbookForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create Workbook:', error);
@@ -261,6 +159,7 @@ const WorkbookForm: React.FC = () => {
           isSubmitting,
           isValid,
           errors,
+          values,
           setFieldValue,
           touched,
           setFieldTouched,
@@ -268,27 +167,13 @@ const WorkbookForm: React.FC = () => {
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={36} />
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  touched: {JSON.stringify(touched)}
-                  <br />
-                  addWorkbookResult: {JSON.stringify(addWorkbookResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-              {/* Editable Fields (NON-read-only) */}
+              
+              {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                  <FaRegPlusSquare size={36} /> Add New Workbook
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New Workbook
                 </Accordion.Header>
                 <Accordion.Body>
-                    
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
@@ -300,15 +185,13 @@ const WorkbookForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="name"
-                            type="text"
-                            className={
-                              errors.name
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -323,7 +206,6 @@ const WorkbookForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
@@ -343,7 +225,7 @@ const WorkbookForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value);
+                            setFieldValue('status', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Status" />
@@ -358,7 +240,6 @@ const WorkbookForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="id" className="nice-form-control">
                       <b>
                         Id:
@@ -370,15 +251,13 @@ const WorkbookForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.id}
+                            placeholder="Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -393,7 +272,6 @@ const WorkbookForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
@@ -405,15 +283,13 @@ const WorkbookForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -428,7 +304,6 @@ const WorkbookForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
@@ -453,7 +328,6 @@ const WorkbookForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
@@ -465,15 +339,13 @@ const WorkbookForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -488,7 +360,6 @@ const WorkbookForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedById" className="nice-form-control">
                       <b>
                         Last Accessed By Id:
@@ -500,15 +371,13 @@ const WorkbookForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastAccessedById}
+                            placeholder="Last Accessed By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -523,7 +392,6 @@ const WorkbookForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedDate" className="nice-form-control">
                       <b>
                         Last Accessed Date:
@@ -548,7 +416,6 @@ const WorkbookForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedById" className="nice-form-control">
                       <b>
                         Last Modified By Id:
@@ -560,15 +427,13 @@ const WorkbookForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastModifiedById}
+                            placeholder="Last Modified By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -583,7 +448,6 @@ const WorkbookForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedDate" className="nice-form-control">
                       <b>
                         Last Modified Date:
@@ -611,31 +475,34 @@ const WorkbookForm: React.FC = () => {
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
+                    disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (
-                      <Spinner
-                        style={ { float: 'left' } }
-                        as="span"
-                        animation="grow"
-                        variant="light"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FaCheckCircle size={30} /> Create New Workbook
+                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New Workbook
                   </CoolButton>
+
+                  {addWorkbookResult.error && (
+                    <div className="error" style={ { marginTop: 12 }}>
+                      {JSON.stringify('data' in (addWorkbookResult as any).error ? (addWorkbookResult as any).error.data : (addWorkbookResult as any).error)}
+                    </div>
+                  )}
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Read-Only System Fields */}
-              <Accordion.Item eventKey="2">
-                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                  </Row>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addWorkbookResult: {JSON.stringify(addWorkbookResult)}
                 </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
           </form>
         )}

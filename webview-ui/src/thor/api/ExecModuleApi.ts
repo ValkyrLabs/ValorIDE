@@ -16,323 +16,294 @@ Template file: typescript-redux-query/apis.mustache
 Description: ExecModuleApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import { ExecModule, ExecModuleFromJSON, ExecModuleToJSON } from "../model";
+    ExecModule,
+    ExecModuleFromJSON,
+    ExecModuleToJSON,
+} from '../model';
 
 export interface DeleteExecModuleRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetExecModuleRequest {
-  id: string;
+    id: string;
+}
+
+export interface GetExecModuleListRequest {
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
 }
 
 export interface PostExecModuleRequest {
-  execModule: ExecModule;
+    execModule: ExecModule;
 }
 
 export interface UpdateExecModuleRequest {
-  id: string;
-  execModule: ExecModule;
+    id: string;
+    execModule: ExecModule;
 }
+
 
 /**
  * Deletes a specific ExecModule.
  * Delete a ExecModule.
  */
-function deleteExecModuleRaw<T>(
-  requestParameters: DeleteExecModuleRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteExecModule.",
-    );
-  }
+function deleteExecModuleRaw<T>(requestParameters: DeleteExecModuleRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteExecModule.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ExecModule/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ExecModule/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific ExecModule.
- * Delete a ExecModule.
- */
-export function deleteExecModule<T>(
-  requestParameters: DeleteExecModuleRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteExecModuleRaw(requestParameters, requestConfig);
+* Deletes a specific ExecModule.
+* Delete a ExecModule.
+*/
+export function deleteExecModule<T>(requestParameters: DeleteExecModuleRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteExecModuleRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single ExecModule for a specific uid.
  * Retrieve a single ExecModule
  */
-function getExecModuleRaw<T>(
-  requestParameters: GetExecModuleRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ExecModule> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getExecModule.",
-    );
-  }
+function getExecModuleRaw<T>(requestParameters: GetExecModuleRequest, requestConfig: runtime.TypedQueryConfig<T, ExecModule> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getExecModule.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ExecModule/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ExecModuleFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ExecModule/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ExecModuleFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single ExecModule for a specific uid.
- * Retrieve a single ExecModule
- */
-export function getExecModule<T>(
-  requestParameters: GetExecModuleRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ExecModule>,
-): QueryConfig<T> {
-  return getExecModuleRaw(requestParameters, requestConfig);
+* Retrieves a single ExecModule for a specific uid.
+* Retrieve a single ExecModule
+*/
+export function getExecModule<T>(requestParameters: GetExecModuleRequest, requestConfig?: runtime.TypedQueryConfig<T, ExecModule>): QueryConfig<T> {
+    return getExecModuleRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of ExecModules.
  * Retrieve a list of ExecModules
  */
-function getExecModuleListRaw<T>(
-  requestConfig: runtime.TypedQueryConfig<T, Array<ExecModule>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getExecModuleListRaw<T>(requestParameters: GetExecModuleListRequest, requestConfig: runtime.TypedQueryConfig<T, Array<ExecModule>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
+    queryParameters = {};
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ExecModule`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(ExecModuleFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
+
+
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ExecModule`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(ExecModuleFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of ExecModules.
- * Retrieve a list of ExecModules
- */
-export function getExecModuleList<T>(
-  requestConfig?: runtime.TypedQueryConfig<T, Array<ExecModule>>,
-): QueryConfig<T> {
-  return getExecModuleListRaw(requestConfig);
-}
-
-/**
- * Creates a new ExecModule.
- * Create a new ExecModule
- */
-function postExecModuleRaw<T>(
-  requestParameters: PostExecModuleRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ExecModule> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.execModule === null ||
-    requestParameters.execModule === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "execModule",
-      "Required parameter requestParameters.execModule was null or undefined when calling postExecModule.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ExecModule`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || ExecModuleToJSON(requestParameters.execModule),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ExecModuleFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of ExecModules.
+* Retrieve a list of ExecModules
+*/
+export function getExecModuleList<T>(requestParameters: GetExecModuleListRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<ExecModule>>): QueryConfig<T> {
+    return getExecModuleListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new ExecModule.
  * Create a new ExecModule
  */
-export function postExecModule<T>(
-  requestParameters: PostExecModuleRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ExecModule>,
-): QueryConfig<T> {
-  return postExecModuleRaw(requestParameters, requestConfig);
+function postExecModuleRaw<T>(requestParameters: PostExecModuleRequest, requestConfig: runtime.TypedQueryConfig<T, ExecModule> = {}): QueryConfig<T> {
+    if (requestParameters.execModule === null || requestParameters.execModule === undefined) {
+        throw new runtime.RequiredError('execModule','Required parameter requestParameters.execModule was null or undefined when calling postExecModule.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ExecModule`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || ExecModuleToJSON(requestParameters.execModule),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ExecModuleFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Creates a new ExecModule.
+* Create a new ExecModule
+*/
+export function postExecModule<T>(requestParameters: PostExecModuleRequest, requestConfig?: runtime.TypedQueryConfig<T, ExecModule>): QueryConfig<T> {
+    return postExecModuleRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing ExecModule.
  * Update an existing ExecModule
  */
-function updateExecModuleRaw<T>(
-  requestParameters: UpdateExecModuleRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ExecModule> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateExecModule.",
-    );
-  }
+function updateExecModuleRaw<T>(requestParameters: UpdateExecModuleRequest, requestConfig: runtime.TypedQueryConfig<T, ExecModule> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateExecModule.');
+    }
 
-  if (
-    requestParameters.execModule === null ||
-    requestParameters.execModule === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "execModule",
-      "Required parameter requestParameters.execModule was null or undefined when calling updateExecModule.",
-    );
-  }
+    if (requestParameters.execModule === null || requestParameters.execModule === undefined) {
+        throw new runtime.RequiredError('execModule','Required parameter requestParameters.execModule was null or undefined when calling updateExecModule.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ExecModule/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || ExecModuleToJSON(requestParameters.execModule),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ExecModuleFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ExecModule/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || ExecModuleToJSON(requestParameters.execModule),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ExecModuleFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing ExecModule.
- * Update an existing ExecModule
- */
-export function updateExecModule<T>(
-  requestParameters: UpdateExecModuleRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ExecModule>,
-): QueryConfig<T> {
-  return updateExecModuleRaw(requestParameters, requestConfig);
+* Updates an existing ExecModule.
+* Update an existing ExecModule
+*/
+export function updateExecModule<T>(requestParameters: UpdateExecModuleRequest, requestConfig?: runtime.TypedQueryConfig<T, ExecModule>): QueryConfig<T> {
+    return updateExecModuleRaw(requestParameters, requestConfig);
 }
+

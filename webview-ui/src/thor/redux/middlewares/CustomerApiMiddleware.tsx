@@ -5,7 +5,7 @@ import {
     getCustomerList , 
     deleteCustomer , 
     updateCustomer 
-} from '../../api';
+} from '../../api/CustomerApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const CustomerMiddleware = ({ dispatch }) => (next) => async (action) => 
 
         case LIST_CUSTOMER_REQUEST:
             try {
-                const response = getCustomerList();
+                const response = getCustomerList({});
                 dispatch(listCustomerSuccess(response.body));
             } catch (error) {
                 dispatch(listCustomerFailure(error.message));

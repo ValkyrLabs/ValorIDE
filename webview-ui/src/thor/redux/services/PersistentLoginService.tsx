@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { PersistentLogin } from '../../model'
+import { PersistentLogin } from '@thor/model/PersistentLogin'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type PersistentLoginResponse = PersistentLogin[]
@@ -10,8 +10,13 @@ export const PersistentLoginService = createApi({
   tagTypes: ['PersistentLogin'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getPersistentLoginsPaged: build.query<PersistentLoginResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `PersistentLogin?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getPersistentLoginsPaged: build.query<PersistentLoginResponse, { page: number; size?: number; example?: Partial<PersistentLogin> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `PersistentLogin?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const PersistentLoginService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getPersistentLogins: build.query<PersistentLoginResponse, void>({
-      query: () => `PersistentLogin`,
+    getPersistentLogins: build.query<PersistentLoginResponse, { example?: Partial<PersistentLogin> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `PersistentLogin?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `PersistentLogin`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const PersistentLoginService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'PersistentLogin', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'PersistentLogin', id },
+        { type: 'PersistentLogin', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

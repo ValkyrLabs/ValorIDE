@@ -5,7 +5,7 @@ import {
     getChartList , 
     deleteChart , 
     updateChart 
-} from '../../api';
+} from '../../api/ChartApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const ChartMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_CHART_REQUEST:
             try {
-                const response = getChartList();
+                const response = getChartList({});
                 dispatch(listChartSuccess(response.body));
             } catch (error) {
                 dispatch(listChartFailure(error.message));

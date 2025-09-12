@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { StrategicPriority } from '../../model/StrategicPriority';
+import { StrategicPriority } from '@thor/model/StrategicPriority';
 
 const StrategicPrioritySlice = createSlice({
   name: "StrategicPrioritys",

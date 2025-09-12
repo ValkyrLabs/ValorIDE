@@ -5,7 +5,7 @@ import {
     getOasPathList , 
     deleteOasPath , 
     updateOasPath 
-} from '../../api';
+} from '../../api/OasPathApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const OasPathMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_OASPATH_REQUEST:
             try {
-                const response = getOasPathList();
+                const response = getOasPathList({});
                 dispatch(listOasPathSuccess(response.body));
             } catch (error) {
                 dispatch(listOasPathFailure(error.message));

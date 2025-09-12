@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ThorUXMeta } from '../../model/ThorUXMeta';
+import { ThorUXMeta } from '@thor/model/ThorUXMeta';
 
 const ThorUXMetaSlice = createSlice({
   name: "ThorUXMetas",

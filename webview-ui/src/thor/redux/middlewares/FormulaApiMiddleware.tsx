@@ -5,7 +5,7 @@ import {
     getFormulaList , 
     deleteFormula , 
     updateFormula 
-} from '../../api';
+} from '../../api/FormulaApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const FormulaMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_FORMULA_REQUEST:
             try {
-                const response = getFormulaList();
+                const response = getFormulaList({});
                 dispatch(listFormulaSuccess(response.body));
             } catch (error) {
                 dispatch(listFormulaFailure(error.message));

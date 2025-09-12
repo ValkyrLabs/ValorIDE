@@ -4,22 +4,24 @@ import {
   Form as BSForm,
   Accordion,
   Col,
-  Nav,
   Row,
   Spinner
 } from 'react-bootstrap';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
-import CoolButton from '../../../../components/CoolButton';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
 import * as Yup from 'yup';
-import PermissionDialog from '../../../../components/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
 
 
 import {
   ChatMessage,
   ChatMessageRoleEnum,
   ChatMessageSourceTypeEnum,
-} from '../../../model';
+} from '@thor/model';
 
 import { useAddChatMessageMutation } from '../../services/ChatMessageService';
 
@@ -31,7 +33,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -61,89 +63,29 @@ const SourceTypeValidation = () => {
 };
 
 /* -----------------------------------------------------
-   YUP VALIDATION SCHEMA
-   (Skip read-only fields and container types)
+   YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
+const asNumber = (schema: Yup.NumberSchema) =>
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+
 const validationSchema = Yup.object().shape({
-    
       role: Yup.mixed()
         .oneOf(RoleValidation(), "Invalid value for role")
-        .required("role is required.")
-        ,
-    
-        content: Yup.string()
-          
-          .required("content is required.")
-          ,
-    
-        sessionId: Yup.string()
-          
-          
-          ,
-    
-        chatCompletionRequestId: Yup.string()
-          
-          
-          ,
-    
-        connected: Yup.boolean()
-          
-          .notRequired(),
-    
-        json: Yup.string()
-          
-          
-          ,
-    
+        .required("role is required."),
+        content: Yup.string().required("content is required."),
+        sessionId: Yup.string(),
+        chatCompletionRequestId: Yup.string(),
+        connected: Yup.boolean(),
+        json: Yup.string(),
       sourceType: Yup.mixed()
         .oneOf(SourceTypeValidation(), "Invalid value for sourceType")
-        
-        .notRequired(),
-    
-        sourceOwner: Yup.string()
-          
-          
-          ,
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
-        createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
-        lastModifiedDate: Yup.date()
-          
-          
-          ,
+        ,
+        sourceOwner: Yup.string(),
+        id: Yup.string(),
+        ownerId: Yup.string(),
+        keyHash: Yup.string(),
+        lastAccessedById: Yup.string(),
+        lastModifiedById: Yup.string(),
 });
 
 /* -----------------------------------------------------
@@ -151,143 +93,39 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const ChatMessageForm: React.FC = () => {
   const [addChatMessage, addChatMessageResult] = useAddChatMessageMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user', // This should come from authentication context
+    username: 'current_user',
     permissions: {
-      isOwner: true, // This should be determined by checking object ownership
-      isAdmin: true, // This should come from user roles
+      isOwner: true,
+      isAdmin: true,
       canGrantPermissions: true,
       permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
-  /* INITIAL VALUES - skip read-only fields */
+  /* -----------------------------------------------------
+     INITIAL VALUES - only NON read-only fields
+  -------------------------------------------------------- */
   const initialValues: Partial<ChatMessage> = {
-          
-          role:
-            ChatMessageRoleEnum[
-              Object.keys(ChatMessageRoleEnum)[0]
-            ],
-          
-
-            content: 'What is the next step for our adventure?',
-
-
-
-
-
-          
-
-            sessionId: 'null',
-
-
-
-
-
-          
-
-            chatCompletionRequestId: 'null',
-
-
-
-
-
-          
-            connected: undefined, 
-
-
-
-
-
-
-          
-
-            json: 'null',
-
-
-
-
-
-          
-          sourceType:
-            ChatMessageSourceTypeEnum[
-              Object.keys(ChatMessageSourceTypeEnum)[0]
-            ],
-          
-
-            sourceOwner: 'null',
-
-
-
-
-
-          
-
-            id: '335fac77-ed30-43f2-828d-87d3d854f5f6',
-
-
-
-
-
-          
-
-            ownerId: '409d9cc1-2c8f-40f3-816c-7234f80fff95',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            keyHash: 'null',
-
-
-
-
-
-          
-
-            lastAccessedById: '96842428-ebfa-4d20-ab70-55fda728c39c',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            lastModifiedById: '88c691bf-bce2-4747-b11c-14edc956b022',
-
-
-
-
-
-          
-
-
-
-
-
-
+        role: undefined,
+          content: '',
+          sessionId: '',
+          chatCompletionRequestId: '',
+          connected: false,
+          json: '',
+        sourceType: undefined,
+          sourceOwner: '',
+          id: '',
+          ownerId: '',
+          keyHash: '',
+          lastAccessedById: '',
+          lastModifiedById: '',
   };
 
   // Permission Management Handlers
@@ -303,16 +141,16 @@ const ChatMessageForm: React.FC = () => {
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
     console.log('Permissions saved for new ChatMessage:', grants);
-    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ChatMessage>) => {
     try {
       console.log("ChatMessage form values:", values);
-      const result = await addChatMessage(values).unwrap();
-      
-      // If object was created successfully and has an ID, offer to set permissions
+
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addChatMessage(values as any).unwrap();
+
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
           `ChatMessage created successfully! Would you like to set permissions for this object?`
@@ -321,7 +159,7 @@ const ChatMessageForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create ChatMessage:', error);
@@ -341,6 +179,7 @@ const ChatMessageForm: React.FC = () => {
           isSubmitting,
           isValid,
           errors,
+          values,
           setFieldValue,
           touched,
           setFieldTouched,
@@ -348,27 +187,13 @@ const ChatMessageForm: React.FC = () => {
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={36} />
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  touched: {JSON.stringify(touched)}
-                  <br />
-                  addChatMessageResult: {JSON.stringify(addChatMessageResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-              {/* Editable Fields (NON-read-only) */}
+              
+              {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                  <FaRegPlusSquare size={36} /> Add New ChatMessage
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New ChatMessage
                 </Accordion.Header>
                 <Accordion.Body>
-                    
                     <label htmlFor="role" className="nice-form-control">
                       <b>
                         Role:
@@ -388,7 +213,7 @@ const ChatMessageForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('role', true);
-                            setFieldValue('role', e.target.value);
+                            setFieldValue('role', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Role" />
@@ -403,7 +228,6 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="content" className="nice-form-control">
                       <b>
                         Content:
@@ -415,15 +239,13 @@ const ChatMessageForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="content"
-                            type="text"
-                            className={
-                              errors.content
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.content}
+                            placeholder="Content"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -438,7 +260,6 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="sessionId" className="nice-form-control">
                       <b>
                         Session Id:
@@ -450,15 +271,13 @@ const ChatMessageForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="sessionId"
-                            type="text"
-                            className={
-                              errors.sessionId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.sessionId}
+                            placeholder="Session Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -473,7 +292,6 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="chatCompletionRequestId" className="nice-form-control">
                       <b>
                         Chat Completion Request Id:
@@ -485,15 +303,13 @@ const ChatMessageForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="chatCompletionRequestId"
-                            type="text"
-                            className={
-                              errors.chatCompletionRequestId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.chatCompletionRequestId}
+                            placeholder="Chat Completion Request Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -508,7 +324,6 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="connected" className="nice-form-control">
                       <b>
                         Connected:
@@ -521,7 +336,6 @@ const ChatMessageForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="connected"
                             name="connected"
                             onChange={(e) => {
@@ -529,9 +343,7 @@ const ChatMessageForm: React.FC = () => {
                               setFieldValue('connected', e.target.checked);
                             }}
                             isInvalid={!!errors.connected}
-                            className={
-                              errors.connected ? 'error' : ''
-                            }
+                            className={errors.connected ? 'error' : ''}
                           />
 
 
@@ -547,7 +359,6 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="json" className="nice-form-control">
                       <b>
                         Json:
@@ -559,15 +370,13 @@ const ChatMessageForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="json"
-                            type="text"
-                            className={
-                              errors.json
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.json}
+                            placeholder="Json"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -582,7 +391,6 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="sourceType" className="nice-form-control">
                       <b>
                         Source Type:
@@ -602,7 +410,7 @@ const ChatMessageForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('sourceType', true);
-                            setFieldValue('sourceType', e.target.value);
+                            setFieldValue('sourceType', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Source Type" />
@@ -617,7 +425,6 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="sourceOwner" className="nice-form-control">
                       <b>
                         Source Owner:
@@ -629,15 +436,13 @@ const ChatMessageForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="sourceOwner"
-                            type="text"
-                            className={
-                              errors.sourceOwner
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.sourceOwner}
+                            placeholder="Source Owner"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -652,7 +457,6 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="id" className="nice-form-control">
                       <b>
                         Id:
@@ -664,15 +468,13 @@ const ChatMessageForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.id}
+                            placeholder="Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -687,7 +489,6 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
@@ -699,15 +500,13 @@ const ChatMessageForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -722,7 +521,6 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
@@ -747,7 +545,6 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
@@ -759,15 +556,13 @@ const ChatMessageForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -782,7 +577,6 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedById" className="nice-form-control">
                       <b>
                         Last Accessed By Id:
@@ -794,15 +588,13 @@ const ChatMessageForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastAccessedById}
+                            placeholder="Last Accessed By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -817,7 +609,6 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedDate" className="nice-form-control">
                       <b>
                         Last Accessed Date:
@@ -842,7 +633,6 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedById" className="nice-form-control">
                       <b>
                         Last Modified By Id:
@@ -854,15 +644,13 @@ const ChatMessageForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastModifiedById}
+                            placeholder="Last Modified By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -877,7 +665,6 @@ const ChatMessageForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedDate" className="nice-form-control">
                       <b>
                         Last Modified Date:
@@ -905,31 +692,34 @@ const ChatMessageForm: React.FC = () => {
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
+                    disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (
-                      <Spinner
-                        style={ { float: 'left' } }
-                        as="span"
-                        animation="grow"
-                        variant="light"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FaCheckCircle size={30} /> Create New ChatMessage
+                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New ChatMessage
                   </CoolButton>
+
+                  {addChatMessageResult.error && (
+                    <div className="error" style={ { marginTop: 12 }}>
+                      {JSON.stringify('data' in (addChatMessageResult as any).error ? (addChatMessageResult as any).error.data : (addChatMessageResult as any).error)}
+                    </div>
+                  )}
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Read-Only System Fields */}
-              <Accordion.Item eventKey="2">
-                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                  </Row>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addChatMessageResult: {JSON.stringify(addChatMessageResult)}
                 </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
           </form>
         )}

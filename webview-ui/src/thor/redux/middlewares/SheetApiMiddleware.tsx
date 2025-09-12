@@ -5,7 +5,7 @@ import {
     getSheetList , 
     deleteSheet , 
     updateSheet 
-} from '../../api';
+} from '../../api/SheetApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const SheetMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_SHEET_REQUEST:
             try {
-                const response = getSheetList();
+                const response = getSheetList({});
                 dispatch(listSheetSuccess(response.body));
             } catch (error) {
                 dispatch(listSheetFailure(error.message));

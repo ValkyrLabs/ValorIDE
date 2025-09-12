@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { McpToolCallResponse } from '../../model'
+import { McpToolCallResponse } from '@thor/model/McpToolCallResponse'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type McpToolCallResponseResponse = McpToolCallResponse[]
@@ -10,8 +10,13 @@ export const McpToolCallResponseService = createApi({
   tagTypes: ['McpToolCallResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getMcpToolCallResponsesPaged: build.query<McpToolCallResponseResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `McpToolCallResponse?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getMcpToolCallResponsesPaged: build.query<McpToolCallResponseResponse, { page: number; size?: number; example?: Partial<McpToolCallResponse> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `McpToolCallResponse?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const McpToolCallResponseService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMcpToolCallResponses: build.query<McpToolCallResponseResponse, void>({
-      query: () => `McpToolCallResponse`,
+    getMcpToolCallResponses: build.query<McpToolCallResponseResponse, { example?: Partial<McpToolCallResponse> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `McpToolCallResponse?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `McpToolCallResponse`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const McpToolCallResponseService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'McpToolCallResponse', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'McpToolCallResponse', id },
+        { type: 'McpToolCallResponse', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

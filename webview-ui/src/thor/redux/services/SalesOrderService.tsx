@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { SalesOrder } from '../../model'
+import { SalesOrder } from '@thor/model/SalesOrder'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type SalesOrderResponse = SalesOrder[]
@@ -10,8 +10,13 @@ export const SalesOrderService = createApi({
   tagTypes: ['SalesOrder'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getSalesOrdersPaged: build.query<SalesOrderResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `SalesOrder?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getSalesOrdersPaged: build.query<SalesOrderResponse, { page: number; size?: number; example?: Partial<SalesOrder> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SalesOrder?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const SalesOrderService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSalesOrders: build.query<SalesOrderResponse, void>({
-      query: () => `SalesOrder`,
+    getSalesOrders: build.query<SalesOrderResponse, { example?: Partial<SalesOrder> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `SalesOrder?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `SalesOrder`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const SalesOrderService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'SalesOrder', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'SalesOrder', id },
+        { type: 'SalesOrder', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

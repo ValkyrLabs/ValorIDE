@@ -120,6 +120,9 @@ import { McpHub } from "@services/mcp/McpHub";
 import { isInTestMode } from "../../services/test/TestMode";
 import { OutputFilterService } from "@services/output-filter/OutputFilterService";
 import { ValorIDEAdvancedSettings, DEFAULT_ADVANCED_SETTINGS } from "@shared/AdvancedSettings";
+import { ToolRelayService } from "@services/communication/ToolRelayService";
+import { CommunicationService } from "@services/communication/CommunicationService";
+import { WebsocketMessageTypeEnum } from "@thor/model";
 
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -142,6 +145,8 @@ export class Task {
   private postMessageToWebview: (message: ExtensionMessage) => Promise<void>;
   private reinitExistingTaskFromId: (taskId: string) => Promise<void>;
   private cancelTask: () => Promise<void>;
+  private toolRelayService?: ToolRelayService;
+  private communicationService?: CommunicationService;
 
   readonly taskId: string;
   api: ApiHandler;
@@ -195,6 +200,26 @@ export class Task {
   private didCompleteReadingStream = false;
   private didAutomaticallyRetryFailedApiRequest = false;
 
+  /**
+   * Relays tool commands to remote ValorIDE instances via websocket mothership.
+   * This enables "remote control" functionality where one ValorIDE can control another.
+   */
+  private async relayToolCommandToMothership(
+    toolName: string,
+    params: Record<string, any>
+  ): Promise<void> {
+    try {
+      if (!this.toolRelayService || typeof this.toolRelayService.sendToolCommand !== "function") {
+        // Tool relay service not available or not connected
+        return;
+      }
+      await this.toolRelayService.sendToolCommand(toolName, params);
+    } catch (error) {
+      // Silently fail for relay - do not break local functionality
+      console.warn("Failed to relay tool command to mothership:", error);
+    }
+  }
+
   constructor(
     context: vscode.ExtensionContext,
     mcpHub: McpHub,
@@ -212,6 +237,7 @@ export class Task {
     task?: string,
     images?: string[],
     historyItem?: HistoryItem,
+    communicationService?: CommunicationService,
   ) {
     this.context = context;
     this.mcpHub = mcpHub;
@@ -234,6 +260,7 @@ export class Task {
     this.autoApprovalSettings = autoApprovalSettings;
     this.browserSettings = browserSettings;
     this.chatSettings = chatSettings;
+    this.communicationService = communicationService;
 
     // Initialize taskId first
     if (historyItem) {
@@ -4365,6 +4392,31 @@ export class Task {
       (m) => m.say === "api_req_started",
     );
 
+    // Optional: Pause if budget limit reached
+    try {
+      const limit = this.chatSettings?.budgetLimit;
+      if (typeof limit === "number" && limit >= 0) {
+        const apiMetrics = getApiMetrics(
+          combineApiRequests(combineCommandSequences(this.valorideMessages)),
+        );
+        if (apiMetrics.totalCost >= limit) {
+          vscode.window.showWarningMessage(
+            `Budget limit reached ($${limit.toFixed(2)}). Task paused. Increase the budget to continue.`,
+          );
+          return true; // end loop without sending a new API call
+        }
+      }
+    } catch (e) {
+      // Non-fatal: budget check issues shouldn't break the task
+      console.error("Budget check failed:", e);
+    }
+
+    // Optional: throttle between API calls
+    const delay = this.chatSettings?.apiThrottleMs;
+    if (typeof delay === "number" && delay > 0) {
+      await new Promise((r) => setTimeout(r, delay));
+    }
+
     // Save checkpoint if this is the first API request
     const isFirstRequest =
       this.valorideMessages.filter((m) => m.say === "api_req_started")
@@ -4648,6 +4700,23 @@ export class Task {
           updateApiReqMsg();
           await this.saveValorIDEMessagesAndUpdateHistory();
           await this.postStateToWebview();
+
+          // Track usage and update balance on server via webview
+          try {
+            const { trackApiUsageWithPricing } = await import("../../api/usage-tracking");
+            await trackApiUsageWithPricing(
+              currentProviderId,
+              this.api.getModel().id,
+              inputTokens,
+              outputTokens,
+            );
+          } catch (err) {
+            console.error("Failed to track usage after stream (fetch path):", err);
+          }
+          try {
+            const { WebviewProvider } = await import("../webview/index");
+            WebviewProvider.getVisibleInstance()?.getUsageTrackingService().requestBalance();
+          } catch {}
         });
       }
 
@@ -4675,6 +4744,23 @@ export class Task {
       await this.saveValorIDEMessagesAndUpdateHistory();
       await this.postStateToWebview();
 
+      // Track usage and update balance on server via webview
+      try {
+        const { trackApiUsageWithPricing } = await import("../../api/usage-tracking");
+        await trackApiUsageWithPricing(
+          currentProviderId,
+          this.api.getModel().id,
+          inputTokens,
+          outputTokens,
+        );
+      } catch (err) {
+        console.error("Failed to track usage after stream:", err);
+      }
+      try {
+        const { WebviewProvider } = await import("../webview/index");
+        WebviewProvider.getVisibleInstance()?.getUsageTrackingService().requestBalance();
+      } catch {}
+
       // now add to apiconversationhistory
       // need to save assistant responses to file before proceeding to tool use since user can exit at any moment and we wouldn't be able to save the assistant's response
       let didEndLoop = false;
@@ -4686,10 +4772,27 @@ export class Task {
           "assistant",
         );
 
-        await this.addToApiConversationHistory({
-          role: "assistant",
-          content: [{ type: "text", text: assistantMessage }],
-        });
+    await this.addToApiConversationHistory({
+      role: "assistant",
+      content: [{ type: "text", text: assistantMessage }],
+    });
+
+    // Send websocket message after every API response if communicationService is available
+    if (this.communicationService) {
+      try {
+        this.communicationService.sendMessage(
+          "api_action",
+          {
+            taskId: this.taskId,
+            message: assistantMessage,
+            timestamp: Date.now(),
+          }
+        );
+      } catch (err) {
+        // Log but do not throw
+        console.warn("Failed to send websocket message for API action:", err);
+      }
+    }
 
         // NOTE: this comment is here for future reference - this was a workaround for userMessageContent not getting set to true. It was due to it not recursively calling for partial blocks when didRejectTool, so it would get stuck waiting for a partial block to complete before it could continue.
         // in case the content blocks finished

@@ -49,12 +49,6 @@ export type Organization  = {
     phone?: string;
     /**
      * 
-     * @type {string}
-     * @memberof Organization
-     */
-    addressId?: string;
-    /**
-     * 
      * @type {Address}
      * @memberof Organization
      */
@@ -114,7 +108,6 @@ export function OrganizationFromJSON(json: any): Organization {
         'name': json['name'],
         'homePage': !exists(json, 'homePage') ? undefined : json['homePage'],
         'phone': !exists(json, 'phone') ? undefined : json['phone'],
-        'addressId': !exists(json, 'addressId') ? undefined : json['addressId'],
         'address': !exists(json, 'address') ? undefined : AddressFromJSON(json['address']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -135,7 +128,6 @@ export function OrganizationToJSON(value?: Organization): any {
         'name': value.name,
         'homePage': value.homePage,
         'phone': value.phone,
-        'addressId': value.addressId,
         'address': AddressToJSON(value.address),
         'id': value.id,
         'ownerId': value.ownerId,

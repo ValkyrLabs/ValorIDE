@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { AclObjectIdentity } from '../../model'
+import { AclObjectIdentity } from '@thor/model/AclObjectIdentity'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type AclObjectIdentityResponse = AclObjectIdentity[]
@@ -10,8 +10,13 @@ export const AclObjectIdentityService = createApi({
   tagTypes: ['AclObjectIdentity'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getAclObjectIdentitysPaged: build.query<AclObjectIdentityResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `AclObjectIdentity?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getAclObjectIdentitysPaged: build.query<AclObjectIdentityResponse, { page: number; size?: number; example?: Partial<AclObjectIdentity> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `AclObjectIdentity?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const AclObjectIdentityService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getAclObjectIdentitys: build.query<AclObjectIdentityResponse, void>({
-      query: () => `AclObjectIdentity`,
+    getAclObjectIdentitys: build.query<AclObjectIdentityResponse, { example?: Partial<AclObjectIdentity> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `AclObjectIdentity?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `AclObjectIdentity`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const AclObjectIdentityService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'AclObjectIdentity', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'AclObjectIdentity', id },
+        { type: 'AclObjectIdentity', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

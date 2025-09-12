@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { OasServer } from '../../model'
+import { OasServer } from '@thor/model/OasServer'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type OasServerResponse = OasServer[]
@@ -10,8 +10,13 @@ export const OasServerService = createApi({
   tagTypes: ['OasServer'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getOasServersPaged: build.query<OasServerResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `OasServer?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getOasServersPaged: build.query<OasServerResponse, { page: number; size?: number; example?: Partial<OasServer> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasServer?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const OasServerService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasServers: build.query<OasServerResponse, void>({
-      query: () => `OasServer`,
+    getOasServers: build.query<OasServerResponse, { example?: Partial<OasServer> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `OasServer?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `OasServer`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const OasServerService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'OasServer', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'OasServer', id },
+        { type: 'OasServer', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

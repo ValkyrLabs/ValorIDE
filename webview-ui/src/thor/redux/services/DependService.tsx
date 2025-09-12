@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Depend } from '../../model'
+import { Depend } from '@thor/model/Depend'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type DependResponse = Depend[]
@@ -10,8 +10,13 @@ export const DependService = createApi({
   tagTypes: ['Depend'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getDependsPaged: build.query<DependResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Depend?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getDependsPaged: build.query<DependResponse, { page: number; size?: number; example?: Partial<Depend> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Depend?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const DependService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getDepends: build.query<DependResponse, void>({
-      query: () => `Depend`,
+    getDepends: build.query<DependResponse, { example?: Partial<Depend> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Depend?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Depend`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const DependService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Depend', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Depend', id },
+        { type: 'Depend', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

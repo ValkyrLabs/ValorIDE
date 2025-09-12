@@ -5,7 +5,7 @@ import {
     getOasSecuritySchemeList , 
     deleteOasSecurityScheme , 
     updateOasSecurityScheme 
-} from '../../api';
+} from '../../api/OasSecuritySchemeApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const OasSecuritySchemeMiddleware = ({ dispatch }) => (next) => async (ac
 
         case LIST_OASSECURITYSCHEME_REQUEST:
             try {
-                const response = getOasSecuritySchemeList();
+                const response = getOasSecuritySchemeList({});
                 dispatch(listOasSecuritySchemeSuccess(response.body));
             } catch (error) {
                 dispatch(listOasSecuritySchemeFailure(error.message));

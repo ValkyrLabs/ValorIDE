@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Logout } from '../../model/Logout';
+import { Logout } from '@thor/model/Logout';
 
 const LogoutSlice = createSlice({
   name: "Logouts",

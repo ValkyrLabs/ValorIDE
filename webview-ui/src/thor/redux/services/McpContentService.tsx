@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { McpContent } from '../../model'
+import { McpContent } from '@thor/model/McpContent'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type McpContentResponse = McpContent[]
@@ -10,8 +10,13 @@ export const McpContentService = createApi({
   tagTypes: ['McpContent'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getMcpContentsPaged: build.query<McpContentResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `McpContent?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getMcpContentsPaged: build.query<McpContentResponse, { page: number; size?: number; example?: Partial<McpContent> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `McpContent?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const McpContentService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMcpContents: build.query<McpContentResponse, void>({
-      query: () => `McpContent`,
+    getMcpContents: build.query<McpContentResponse, { example?: Partial<McpContent> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `McpContent?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `McpContent`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const McpContentService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'McpContent', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'McpContent', id },
+        { type: 'McpContent', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

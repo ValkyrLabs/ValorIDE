@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Format } from '../../model/Format';
+import { Format } from '@thor/model/Format';
 
 const FormatSlice = createSlice({
   name: "Formats",

@@ -5,7 +5,7 @@ import {
     getGoalList , 
     deleteGoal , 
     updateGoal 
-} from '../../api';
+} from '../../api/GoalApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const GoalMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_GOAL_REQUEST:
             try {
-                const response = getGoalList();
+                const response = getGoalList({});
                 dispatch(listGoalSuccess(response.body));
             } catch (error) {
                 dispatch(listGoalFailure(error.message));

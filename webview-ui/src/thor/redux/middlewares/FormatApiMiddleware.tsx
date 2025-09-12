@@ -5,7 +5,7 @@ import {
     getFormatList , 
     deleteFormat , 
     updateFormat 
-} from '../../api';
+} from '../../api/FormatApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const FormatMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_FORMAT_REQUEST:
             try {
-                const response = getFormatList();
+                const response = getFormatList({});
                 dispatch(listFormatSuccess(response.body));
             } catch (error) {
                 dispatch(listFormatFailure(error.message));

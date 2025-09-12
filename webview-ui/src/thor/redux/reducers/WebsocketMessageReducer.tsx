@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WebsocketMessage } from '../../model/WebsocketMessage';
+import { WebsocketMessage } from '@thor/model/WebsocketMessage';
 
 const WebsocketMessageSlice = createSlice({
   name: "WebsocketMessages",

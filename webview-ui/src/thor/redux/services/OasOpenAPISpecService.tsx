@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { OasOpenAPISpec } from '../../model'
+import { OasOpenAPISpec } from '@thor/model/OasOpenAPISpec'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type OasOpenAPISpecResponse = OasOpenAPISpec[]
@@ -10,8 +10,13 @@ export const OasOpenAPISpecService = createApi({
   tagTypes: ['OasOpenAPISpec'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getOasOpenAPISpecsPaged: build.query<OasOpenAPISpecResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `OasOpenAPISpec?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getOasOpenAPISpecsPaged: build.query<OasOpenAPISpecResponse, { page: number; size?: number; example?: Partial<OasOpenAPISpec> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasOpenAPISpec?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const OasOpenAPISpecService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasOpenAPISpecs: build.query<OasOpenAPISpecResponse, void>({
-      query: () => `OasOpenAPISpec`,
+    getOasOpenAPISpecs: build.query<OasOpenAPISpecResponse, { example?: Partial<OasOpenAPISpec> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `OasOpenAPISpec?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `OasOpenAPISpec`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const OasOpenAPISpecService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'OasOpenAPISpec', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'OasOpenAPISpec', id },
+        { type: 'OasOpenAPISpec', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

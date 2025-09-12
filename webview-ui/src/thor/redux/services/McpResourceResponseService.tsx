@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { McpResourceResponse } from '../../model'
+import { McpResourceResponse } from '@thor/model/McpResourceResponse'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type McpResourceResponseResponse = McpResourceResponse[]
@@ -10,8 +10,13 @@ export const McpResourceResponseService = createApi({
   tagTypes: ['McpResourceResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getMcpResourceResponsesPaged: build.query<McpResourceResponseResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `McpResourceResponse?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getMcpResourceResponsesPaged: build.query<McpResourceResponseResponse, { page: number; size?: number; example?: Partial<McpResourceResponse> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `McpResourceResponse?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const McpResourceResponseService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMcpResourceResponses: build.query<McpResourceResponseResponse, void>({
-      query: () => `McpResourceResponse`,
+    getMcpResourceResponses: build.query<McpResourceResponseResponse, { example?: Partial<McpResourceResponse> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `McpResourceResponse?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `McpResourceResponse`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const McpResourceResponseService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'McpResourceResponse', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'McpResourceResponse', id },
+        { type: 'McpResourceResponse', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

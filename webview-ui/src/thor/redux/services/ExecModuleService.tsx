@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { ExecModule } from '../../model'
+import { ExecModule } from '@thor/model/ExecModule'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type ExecModuleResponse = ExecModule[]
@@ -10,8 +10,13 @@ export const ExecModuleService = createApi({
   tagTypes: ['ExecModule'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getExecModulesPaged: build.query<ExecModuleResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `ExecModule?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getExecModulesPaged: build.query<ExecModuleResponse, { page: number; size?: number; example?: Partial<ExecModule> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ExecModule?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const ExecModuleService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getExecModules: build.query<ExecModuleResponse, void>({
-      query: () => `ExecModule`,
+    getExecModules: build.query<ExecModuleResponse, { example?: Partial<ExecModule> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `ExecModule?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `ExecModule`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const ExecModuleService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ExecModule', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'ExecModule', id },
+        { type: 'ExecModule', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

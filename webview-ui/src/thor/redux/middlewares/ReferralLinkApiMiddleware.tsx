@@ -5,7 +5,7 @@ import {
     getReferralLinkList , 
     deleteReferralLink , 
     updateReferralLink 
-} from '../../api';
+} from '../../api/ReferralLinkApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const ReferralLinkMiddleware = ({ dispatch }) => (next) => async (action)
 
         case LIST_REFERRALLINK_REQUEST:
             try {
-                const response = getReferralLinkList();
+                const response = getReferralLinkList({});
                 dispatch(listReferralLinkSuccess(response.body));
             } catch (error) {
                 dispatch(listReferralLinkFailure(error.message));

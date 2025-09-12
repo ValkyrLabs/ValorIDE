@@ -5,7 +5,7 @@ import {
     getSolutionList , 
     deleteSolution , 
     updateSolution 
-} from '../../api';
+} from '../../api/SolutionApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const SolutionMiddleware = ({ dispatch }) => (next) => async (action) => 
 
         case LIST_SOLUTION_REQUEST:
             try {
-                const response = getSolutionList();
+                const response = getSolutionList({});
                 dispatch(listSolutionSuccess(response.body));
             } catch (error) {
                 dispatch(listSolutionFailure(error.message));

@@ -16,331 +16,294 @@ Template file: typescript-redux-query/apis.mustache
 Description: IntegrationAccountApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import {
-  IntegrationAccount,
-  IntegrationAccountFromJSON,
-  IntegrationAccountToJSON,
-} from "../model";
+    IntegrationAccount,
+    IntegrationAccountFromJSON,
+    IntegrationAccountToJSON,
+} from '../model';
 
 export interface DeleteIntegrationAccountRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetIntegrationAccountRequest {
-  id: string;
+    id: string;
+}
+
+export interface GetIntegrationAccountListRequest {
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
 }
 
 export interface PostIntegrationAccountRequest {
-  integrationAccount: IntegrationAccount;
+    integrationAccount: IntegrationAccount;
 }
 
 export interface UpdateIntegrationAccountRequest {
-  id: string;
-  integrationAccount: IntegrationAccount;
+    id: string;
+    integrationAccount: IntegrationAccount;
 }
+
 
 /**
  * Deletes a specific IntegrationAccount.
  * Delete a IntegrationAccount.
  */
-function deleteIntegrationAccountRaw<T>(
-  requestParameters: DeleteIntegrationAccountRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteIntegrationAccount.",
-    );
-  }
+function deleteIntegrationAccountRaw<T>(requestParameters: DeleteIntegrationAccountRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteIntegrationAccount.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/IntegrationAccount/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/IntegrationAccount/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific IntegrationAccount.
- * Delete a IntegrationAccount.
- */
-export function deleteIntegrationAccount<T>(
-  requestParameters: DeleteIntegrationAccountRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteIntegrationAccountRaw(requestParameters, requestConfig);
+* Deletes a specific IntegrationAccount.
+* Delete a IntegrationAccount.
+*/
+export function deleteIntegrationAccount<T>(requestParameters: DeleteIntegrationAccountRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteIntegrationAccountRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single IntegrationAccount for a specific uid.
  * Retrieve a single IntegrationAccount
  */
-function getIntegrationAccountRaw<T>(
-  requestParameters: GetIntegrationAccountRequest,
-  requestConfig: runtime.TypedQueryConfig<T, IntegrationAccount> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getIntegrationAccount.",
-    );
-  }
+function getIntegrationAccountRaw<T>(requestParameters: GetIntegrationAccountRequest, requestConfig: runtime.TypedQueryConfig<T, IntegrationAccount> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getIntegrationAccount.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/IntegrationAccount/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(IntegrationAccountFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/IntegrationAccount/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(IntegrationAccountFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single IntegrationAccount for a specific uid.
- * Retrieve a single IntegrationAccount
- */
-export function getIntegrationAccount<T>(
-  requestParameters: GetIntegrationAccountRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, IntegrationAccount>,
-): QueryConfig<T> {
-  return getIntegrationAccountRaw(requestParameters, requestConfig);
+* Retrieves a single IntegrationAccount for a specific uid.
+* Retrieve a single IntegrationAccount
+*/
+export function getIntegrationAccount<T>(requestParameters: GetIntegrationAccountRequest, requestConfig?: runtime.TypedQueryConfig<T, IntegrationAccount>): QueryConfig<T> {
+    return getIntegrationAccountRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of IntegrationAccounts.
  * Retrieve a list of IntegrationAccounts
  */
-function getIntegrationAccountListRaw<T>(
-  requestConfig: runtime.TypedQueryConfig<T, Array<IntegrationAccount>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getIntegrationAccountListRaw<T>(requestParameters: GetIntegrationAccountListRequest, requestConfig: runtime.TypedQueryConfig<T, Array<IntegrationAccount>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
+    queryParameters = {};
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/IntegrationAccount`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(IntegrationAccountFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
+
+
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/IntegrationAccount`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(IntegrationAccountFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of IntegrationAccounts.
- * Retrieve a list of IntegrationAccounts
- */
-export function getIntegrationAccountList<T>(
-  requestConfig?: runtime.TypedQueryConfig<T, Array<IntegrationAccount>>,
-): QueryConfig<T> {
-  return getIntegrationAccountListRaw(requestConfig);
-}
-
-/**
- * Creates a new IntegrationAccount.
- * Create a new IntegrationAccount
- */
-function postIntegrationAccountRaw<T>(
-  requestParameters: PostIntegrationAccountRequest,
-  requestConfig: runtime.TypedQueryConfig<T, IntegrationAccount> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.integrationAccount === null ||
-    requestParameters.integrationAccount === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "integrationAccount",
-      "Required parameter requestParameters.integrationAccount was null or undefined when calling postIntegrationAccount.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/IntegrationAccount`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      IntegrationAccountToJSON(requestParameters.integrationAccount),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(IntegrationAccountFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of IntegrationAccounts.
+* Retrieve a list of IntegrationAccounts
+*/
+export function getIntegrationAccountList<T>(requestParameters: GetIntegrationAccountListRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<IntegrationAccount>>): QueryConfig<T> {
+    return getIntegrationAccountListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new IntegrationAccount.
  * Create a new IntegrationAccount
  */
-export function postIntegrationAccount<T>(
-  requestParameters: PostIntegrationAccountRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, IntegrationAccount>,
-): QueryConfig<T> {
-  return postIntegrationAccountRaw(requestParameters, requestConfig);
+function postIntegrationAccountRaw<T>(requestParameters: PostIntegrationAccountRequest, requestConfig: runtime.TypedQueryConfig<T, IntegrationAccount> = {}): QueryConfig<T> {
+    if (requestParameters.integrationAccount === null || requestParameters.integrationAccount === undefined) {
+        throw new runtime.RequiredError('integrationAccount','Required parameter requestParameters.integrationAccount was null or undefined when calling postIntegrationAccount.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/IntegrationAccount`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || IntegrationAccountToJSON(requestParameters.integrationAccount),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(IntegrationAccountFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Creates a new IntegrationAccount.
+* Create a new IntegrationAccount
+*/
+export function postIntegrationAccount<T>(requestParameters: PostIntegrationAccountRequest, requestConfig?: runtime.TypedQueryConfig<T, IntegrationAccount>): QueryConfig<T> {
+    return postIntegrationAccountRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing IntegrationAccount.
  * Update an existing IntegrationAccount
  */
-function updateIntegrationAccountRaw<T>(
-  requestParameters: UpdateIntegrationAccountRequest,
-  requestConfig: runtime.TypedQueryConfig<T, IntegrationAccount> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateIntegrationAccount.",
-    );
-  }
+function updateIntegrationAccountRaw<T>(requestParameters: UpdateIntegrationAccountRequest, requestConfig: runtime.TypedQueryConfig<T, IntegrationAccount> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateIntegrationAccount.');
+    }
 
-  if (
-    requestParameters.integrationAccount === null ||
-    requestParameters.integrationAccount === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "integrationAccount",
-      "Required parameter requestParameters.integrationAccount was null or undefined when calling updateIntegrationAccount.",
-    );
-  }
+    if (requestParameters.integrationAccount === null || requestParameters.integrationAccount === undefined) {
+        throw new runtime.RequiredError('integrationAccount','Required parameter requestParameters.integrationAccount was null or undefined when calling updateIntegrationAccount.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/IntegrationAccount/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      IntegrationAccountToJSON(requestParameters.integrationAccount),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(IntegrationAccountFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/IntegrationAccount/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || IntegrationAccountToJSON(requestParameters.integrationAccount),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(IntegrationAccountFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing IntegrationAccount.
- * Update an existing IntegrationAccount
- */
-export function updateIntegrationAccount<T>(
-  requestParameters: UpdateIntegrationAccountRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, IntegrationAccount>,
-): QueryConfig<T> {
-  return updateIntegrationAccountRaw(requestParameters, requestConfig);
+* Updates an existing IntegrationAccount.
+* Update an existing IntegrationAccount
+*/
+export function updateIntegrationAccount<T>(requestParameters: UpdateIntegrationAccountRequest, requestConfig?: runtime.TypedQueryConfig<T, IntegrationAccount>): QueryConfig<T> {
+    return updateIntegrationAccountRaw(requestParameters, requestConfig);
 }
+

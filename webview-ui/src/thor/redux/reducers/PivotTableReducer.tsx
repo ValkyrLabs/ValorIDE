@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PivotTable } from '../../model/PivotTable';
+import { PivotTable } from '@thor/model/PivotTable';
 
 const PivotTableSlice = createSlice({
   name: "PivotTables",

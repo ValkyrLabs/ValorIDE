@@ -5,7 +5,7 @@ import {
     getMcpMarketplaceItemList , 
     deleteMcpMarketplaceItem , 
     updateMcpMarketplaceItem 
-} from '../../api';
+} from '../../api/McpMarketplaceItemApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const McpMarketplaceItemMiddleware = ({ dispatch }) => (next) => async (a
 
         case LIST_MCPMARKETPLACEITEM_REQUEST:
             try {
-                const response = getMcpMarketplaceItemList();
+                const response = getMcpMarketplaceItemList({});
                 dispatch(listMcpMarketplaceItemSuccess(response.body));
             } catch (error) {
                 dispatch(listMcpMarketplaceItemFailure(error.message));

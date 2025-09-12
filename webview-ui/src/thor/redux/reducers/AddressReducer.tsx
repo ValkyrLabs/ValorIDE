@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Address } from '../../model/Address';
+import { Address } from '@thor/model/Address';
 
 const AddressSlice = createSlice({
   name: "Addresss",

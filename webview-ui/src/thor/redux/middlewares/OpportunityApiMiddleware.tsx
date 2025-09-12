@@ -5,7 +5,7 @@ import {
     getOpportunityList , 
     deleteOpportunity , 
     updateOpportunity 
-} from '../../api';
+} from '../../api/OpportunityApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const OpportunityMiddleware = ({ dispatch }) => (next) => async (action) 
 
         case LIST_OPPORTUNITY_REQUEST:
             try {
-                const response = getOpportunityList();
+                const response = getOpportunityList({});
                 dispatch(listOpportunitySuccess(response.body));
             } catch (error) {
                 dispatch(listOpportunityFailure(error.message));

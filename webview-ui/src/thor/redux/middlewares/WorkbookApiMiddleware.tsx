@@ -5,7 +5,7 @@ import {
     getWorkbookList , 
     deleteWorkbook , 
     updateWorkbook 
-} from '../../api';
+} from '../../api/WorkbookApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const WorkbookMiddleware = ({ dispatch }) => (next) => async (action) => 
 
         case LIST_WORKBOOK_REQUEST:
             try {
-                const response = getWorkbookList();
+                const response = getWorkbookList({});
                 dispatch(listWorkbookSuccess(response.body));
             } catch (error) {
                 dispatch(listWorkbookFailure(error.message));

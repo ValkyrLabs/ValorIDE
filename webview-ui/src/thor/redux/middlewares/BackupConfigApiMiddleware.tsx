@@ -5,7 +5,7 @@ import {
     getBackupConfigList , 
     deleteBackupConfig , 
     updateBackupConfig 
-} from '../../api';
+} from '../../api/BackupConfigApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const BackupConfigMiddleware = ({ dispatch }) => (next) => async (action)
 
         case LIST_BACKUPCONFIG_REQUEST:
             try {
-                const response = getBackupConfigList();
+                const response = getBackupConfigList({});
                 dispatch(listBackupConfigSuccess(response.body));
             } catch (error) {
                 dispatch(listBackupConfigFailure(error.message));

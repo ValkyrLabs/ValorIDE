@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { IntegrationAccount } from '../../model/IntegrationAccount';
+import { IntegrationAccount } from '@thor/model/IntegrationAccount';
 
 const IntegrationAccountSlice = createSlice({
   name: "IntegrationAccounts",

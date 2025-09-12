@@ -5,7 +5,7 @@ import {
     getMcpToolList , 
     deleteMcpTool , 
     updateMcpTool 
-} from '../../api';
+} from '../../api/McpToolApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const McpToolMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_MCPTOOL_REQUEST:
             try {
-                const response = getMcpToolList();
+                const response = getMcpToolList({});
                 dispatch(listMcpToolSuccess(response.body));
             } catch (error) {
                 dispatch(listMcpToolFailure(error.message));

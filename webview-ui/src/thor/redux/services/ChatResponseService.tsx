@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { ChatResponse } from '../../model'
+import { ChatResponse } from '@thor/model/ChatResponse'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type ChatResponseResponse = ChatResponse[]
@@ -10,8 +10,13 @@ export const ChatResponseService = createApi({
   tagTypes: ['ChatResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getChatResponsesPaged: build.query<ChatResponseResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `ChatResponse?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getChatResponsesPaged: build.query<ChatResponseResponse, { page: number; size?: number; example?: Partial<ChatResponse> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ChatResponse?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const ChatResponseService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getChatResponses: build.query<ChatResponseResponse, void>({
-      query: () => `ChatResponse`,
+    getChatResponses: build.query<ChatResponseResponse, { example?: Partial<ChatResponse> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `ChatResponse?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `ChatResponse`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const ChatResponseService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ChatResponse', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'ChatResponse', id },
+        { type: 'ChatResponse', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Stack } from '../../model/Stack';
+import { Stack } from '@thor/model/Stack';
 
 const StackSlice = createSlice({
   name: "Stacks",

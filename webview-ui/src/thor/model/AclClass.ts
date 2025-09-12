@@ -16,7 +16,7 @@ import { exists, mapValues } from '../src/runtime';
 // thorapi
 
 /**
- * ACL_CLASS lets us uniquely identify any domain object class in the system. The only columns are the ID and the Java class name. Thus, there is a single row for each unique Class for which we wish to store ACL permissions.
+ * Maps a Java class name to an internal ID for ACL usage.
  * @export
  * @interface AclClass
  */
@@ -26,7 +26,7 @@ export type AclClass  = {
      * @type {string}
      * @memberof AclClass
      */
-    _class?: string;
+    _class: string;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -79,7 +79,7 @@ export type AclClass  = {
 
 export function AclClassFromJSON(json: any): AclClass {
     return {
-        '_class': !exists(json, '_class') ? undefined : json['_class'],
+        '_class': json['_class'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),

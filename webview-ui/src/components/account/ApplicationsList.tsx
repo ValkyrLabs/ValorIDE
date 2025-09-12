@@ -8,7 +8,7 @@ import {
   useGetApplicationsQuery,
   useGenerateApplicationMutation,
   useDeployApplicationMutation,
-} from "../../thor/redux/services/ApplicationService";
+} from "../../redux/services/ApplicationService";
 import { vscode } from "../../utils/vscode";
 import FileExplorer from "../FileExplorer/FileExplorer";
 import { useExtensionState } from "../../context/ExtensionStateContext";

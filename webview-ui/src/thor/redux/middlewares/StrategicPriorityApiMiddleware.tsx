@@ -5,7 +5,7 @@ import {
     getStrategicPriorityList , 
     deleteStrategicPriority , 
     updateStrategicPriority 
-} from '../../api';
+} from '../../api/StrategicPriorityApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const StrategicPriorityMiddleware = ({ dispatch }) => (next) => async (ac
 
         case LIST_STRATEGICPRIORITY_REQUEST:
             try {
-                const response = getStrategicPriorityList();
+                const response = getStrategicPriorityList({});
                 dispatch(listStrategicPrioritySuccess(response.body));
             } catch (error) {
                 dispatch(listStrategicPriorityFailure(error.message));

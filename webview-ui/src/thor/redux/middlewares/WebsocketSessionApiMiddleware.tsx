@@ -5,7 +5,7 @@ import {
     getWebsocketSessionList , 
     deleteWebsocketSession , 
     updateWebsocketSession 
-} from '../../api';
+} from '../../api/WebsocketSessionApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const WebsocketSessionMiddleware = ({ dispatch }) => (next) => async (act
 
         case LIST_WEBSOCKETSESSION_REQUEST:
             try {
-                const response = getWebsocketSessionList();
+                const response = getWebsocketSessionList({});
                 dispatch(listWebsocketSessionSuccess(response.body));
             } catch (error) {
                 dispatch(listWebsocketSessionFailure(error.message));

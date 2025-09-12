@@ -16,323 +16,294 @@ Template file: typescript-redux-query/apis.mustache
 Description: BuildOutputApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import { BuildOutput, BuildOutputFromJSON, BuildOutputToJSON } from "../model";
+    BuildOutput,
+    BuildOutputFromJSON,
+    BuildOutputToJSON,
+} from '../model';
 
 export interface DeleteBuildOutputRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetBuildOutputRequest {
-  id: string;
+    id: string;
+}
+
+export interface GetBuildOutputListRequest {
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
 }
 
 export interface PostBuildOutputRequest {
-  buildOutput: BuildOutput;
+    buildOutput: BuildOutput;
 }
 
 export interface UpdateBuildOutputRequest {
-  id: string;
-  buildOutput: BuildOutput;
+    id: string;
+    buildOutput: BuildOutput;
 }
+
 
 /**
  * Deletes a specific BuildOutput.
  * Delete a BuildOutput.
  */
-function deleteBuildOutputRaw<T>(
-  requestParameters: DeleteBuildOutputRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteBuildOutput.",
-    );
-  }
+function deleteBuildOutputRaw<T>(requestParameters: DeleteBuildOutputRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteBuildOutput.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/BuildOutput/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BuildOutput/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific BuildOutput.
- * Delete a BuildOutput.
- */
-export function deleteBuildOutput<T>(
-  requestParameters: DeleteBuildOutputRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteBuildOutputRaw(requestParameters, requestConfig);
+* Deletes a specific BuildOutput.
+* Delete a BuildOutput.
+*/
+export function deleteBuildOutput<T>(requestParameters: DeleteBuildOutputRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteBuildOutputRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single BuildOutput for a specific uid.
  * Retrieve a single BuildOutput
  */
-function getBuildOutputRaw<T>(
-  requestParameters: GetBuildOutputRequest,
-  requestConfig: runtime.TypedQueryConfig<T, BuildOutput> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getBuildOutput.",
-    );
-  }
+function getBuildOutputRaw<T>(requestParameters: GetBuildOutputRequest, requestConfig: runtime.TypedQueryConfig<T, BuildOutput> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getBuildOutput.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/BuildOutput/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(BuildOutputFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BuildOutput/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BuildOutputFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single BuildOutput for a specific uid.
- * Retrieve a single BuildOutput
- */
-export function getBuildOutput<T>(
-  requestParameters: GetBuildOutputRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, BuildOutput>,
-): QueryConfig<T> {
-  return getBuildOutputRaw(requestParameters, requestConfig);
+* Retrieves a single BuildOutput for a specific uid.
+* Retrieve a single BuildOutput
+*/
+export function getBuildOutput<T>(requestParameters: GetBuildOutputRequest, requestConfig?: runtime.TypedQueryConfig<T, BuildOutput>): QueryConfig<T> {
+    return getBuildOutputRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of BuildOutputs.
  * Retrieve a list of BuildOutputs
  */
-function getBuildOutputListRaw<T>(
-  requestConfig: runtime.TypedQueryConfig<T, Array<BuildOutput>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getBuildOutputListRaw<T>(requestParameters: GetBuildOutputListRequest, requestConfig: runtime.TypedQueryConfig<T, Array<BuildOutput>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
+    queryParameters = {};
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/BuildOutput`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(BuildOutputFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
+
+
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BuildOutput`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(BuildOutputFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of BuildOutputs.
- * Retrieve a list of BuildOutputs
- */
-export function getBuildOutputList<T>(
-  requestConfig?: runtime.TypedQueryConfig<T, Array<BuildOutput>>,
-): QueryConfig<T> {
-  return getBuildOutputListRaw(requestConfig);
-}
-
-/**
- * Creates a new BuildOutput.
- * Create a new BuildOutput
- */
-function postBuildOutputRaw<T>(
-  requestParameters: PostBuildOutputRequest,
-  requestConfig: runtime.TypedQueryConfig<T, BuildOutput> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.buildOutput === null ||
-    requestParameters.buildOutput === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "buildOutput",
-      "Required parameter requestParameters.buildOutput was null or undefined when calling postBuildOutput.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/BuildOutput`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || BuildOutputToJSON(requestParameters.buildOutput),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(BuildOutputFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of BuildOutputs.
+* Retrieve a list of BuildOutputs
+*/
+export function getBuildOutputList<T>(requestParameters: GetBuildOutputListRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<BuildOutput>>): QueryConfig<T> {
+    return getBuildOutputListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new BuildOutput.
  * Create a new BuildOutput
  */
-export function postBuildOutput<T>(
-  requestParameters: PostBuildOutputRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, BuildOutput>,
-): QueryConfig<T> {
-  return postBuildOutputRaw(requestParameters, requestConfig);
+function postBuildOutputRaw<T>(requestParameters: PostBuildOutputRequest, requestConfig: runtime.TypedQueryConfig<T, BuildOutput> = {}): QueryConfig<T> {
+    if (requestParameters.buildOutput === null || requestParameters.buildOutput === undefined) {
+        throw new runtime.RequiredError('buildOutput','Required parameter requestParameters.buildOutput was null or undefined when calling postBuildOutput.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BuildOutput`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || BuildOutputToJSON(requestParameters.buildOutput),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BuildOutputFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Creates a new BuildOutput.
+* Create a new BuildOutput
+*/
+export function postBuildOutput<T>(requestParameters: PostBuildOutputRequest, requestConfig?: runtime.TypedQueryConfig<T, BuildOutput>): QueryConfig<T> {
+    return postBuildOutputRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing BuildOutput.
  * Update an existing BuildOutput
  */
-function updateBuildOutputRaw<T>(
-  requestParameters: UpdateBuildOutputRequest,
-  requestConfig: runtime.TypedQueryConfig<T, BuildOutput> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateBuildOutput.",
-    );
-  }
+function updateBuildOutputRaw<T>(requestParameters: UpdateBuildOutputRequest, requestConfig: runtime.TypedQueryConfig<T, BuildOutput> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateBuildOutput.');
+    }
 
-  if (
-    requestParameters.buildOutput === null ||
-    requestParameters.buildOutput === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "buildOutput",
-      "Required parameter requestParameters.buildOutput was null or undefined when calling updateBuildOutput.",
-    );
-  }
+    if (requestParameters.buildOutput === null || requestParameters.buildOutput === undefined) {
+        throw new runtime.RequiredError('buildOutput','Required parameter requestParameters.buildOutput was null or undefined when calling updateBuildOutput.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/BuildOutput/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || BuildOutputToJSON(requestParameters.buildOutput),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(BuildOutputFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BuildOutput/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || BuildOutputToJSON(requestParameters.buildOutput),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BuildOutputFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing BuildOutput.
- * Update an existing BuildOutput
- */
-export function updateBuildOutput<T>(
-  requestParameters: UpdateBuildOutputRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, BuildOutput>,
-): QueryConfig<T> {
-  return updateBuildOutputRaw(requestParameters, requestConfig);
+* Updates an existing BuildOutput.
+* Update an existing BuildOutput
+*/
+export function updateBuildOutput<T>(requestParameters: UpdateBuildOutputRequest, requestConfig?: runtime.TypedQueryConfig<T, BuildOutput>): QueryConfig<T> {
+    return updateBuildOutputRaw(requestParameters, requestConfig);
 }
+

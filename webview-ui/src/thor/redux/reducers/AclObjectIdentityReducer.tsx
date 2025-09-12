@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AclObjectIdentity } from '../../model/AclObjectIdentity';
+import { AclObjectIdentity } from '@thor/model/AclObjectIdentity';
 
 const AclObjectIdentitySlice = createSlice({
   name: "AclObjectIdentitys",

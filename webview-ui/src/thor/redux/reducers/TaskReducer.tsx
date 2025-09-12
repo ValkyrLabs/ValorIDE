@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Task } from '../../model/Task';
+import { Task } from '@thor/model/Task';
 
 const TaskSlice = createSlice({
   name: "Tasks",

@@ -5,7 +5,7 @@ import {
     getKeyMetricList , 
     deleteKeyMetric , 
     updateKeyMetric 
-} from '../../api';
+} from '../../api/KeyMetricApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const KeyMetricMiddleware = ({ dispatch }) => (next) => async (action) =>
 
         case LIST_KEYMETRIC_REQUEST:
             try {
-                const response = getKeyMetricList();
+                const response = getKeyMetricList({});
                 dispatch(listKeyMetricSuccess(response.body));
             } catch (error) {
                 dispatch(listKeyMetricFailure(error.message));

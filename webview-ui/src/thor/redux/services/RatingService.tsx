@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Rating } from '../../model'
+import { Rating } from '@thor/model/Rating'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type RatingResponse = Rating[]
@@ -10,8 +10,13 @@ export const RatingService = createApi({
   tagTypes: ['Rating'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getRatingsPaged: build.query<RatingResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Rating?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getRatingsPaged: build.query<RatingResponse, { page: number; size?: number; example?: Partial<Rating> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Rating?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const RatingService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getRatings: build.query<RatingResponse, void>({
-      query: () => `Rating`,
+    getRatings: build.query<RatingResponse, { example?: Partial<Rating> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Rating?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Rating`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const RatingService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Rating', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Rating', id },
+        { type: 'Rating', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

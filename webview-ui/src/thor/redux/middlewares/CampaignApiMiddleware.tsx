@@ -5,7 +5,7 @@ import {
     getCampaignList , 
     deleteCampaign , 
     updateCampaign 
-} from '../../api';
+} from '../../api/CampaignApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const CampaignMiddleware = ({ dispatch }) => (next) => async (action) => 
 
         case LIST_CAMPAIGN_REQUEST:
             try {
-                const response = getCampaignList();
+                const response = getCampaignList({});
                 dispatch(listCampaignSuccess(response.body));
             } catch (error) {
                 dispatch(listCampaignFailure(error.message));

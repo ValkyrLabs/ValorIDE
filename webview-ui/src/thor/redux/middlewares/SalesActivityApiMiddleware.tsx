@@ -5,7 +5,7 @@ import {
     getSalesActivityList , 
     deleteSalesActivity , 
     updateSalesActivity 
-} from '../../api';
+} from '../../api/SalesActivityApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const SalesActivityMiddleware = ({ dispatch }) => (next) => async (action
 
         case LIST_SALESACTIVITY_REQUEST:
             try {
-                const response = getSalesActivityList();
+                const response = getSalesActivityList({});
                 dispatch(listSalesActivitySuccess(response.body));
             } catch (error) {
                 dispatch(listSalesActivityFailure(error.message));

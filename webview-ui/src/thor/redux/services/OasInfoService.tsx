@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { OasInfo } from '../../model'
+import { OasInfo } from '@thor/model/OasInfo'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type OasInfoResponse = OasInfo[]
@@ -10,8 +10,13 @@ export const OasInfoService = createApi({
   tagTypes: ['OasInfo'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getOasInfosPaged: build.query<OasInfoResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `OasInfo?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getOasInfosPaged: build.query<OasInfoResponse, { page: number; size?: number; example?: Partial<OasInfo> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasInfo?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const OasInfoService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasInfos: build.query<OasInfoResponse, void>({
-      query: () => `OasInfo`,
+    getOasInfos: build.query<OasInfoResponse, { example?: Partial<OasInfo> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `OasInfo?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `OasInfo`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const OasInfoService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'OasInfo', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'OasInfo', id },
+        { type: 'OasInfo', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

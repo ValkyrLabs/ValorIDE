@@ -16,323 +16,294 @@ Template file: typescript-redux-query/apis.mustache
 Description: PrincipalApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import { Principal, PrincipalFromJSON, PrincipalToJSON } from "../model";
+    Principal,
+    PrincipalFromJSON,
+    PrincipalToJSON,
+} from '../model';
 
 export interface DeletePrincipalRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetPrincipalRequest {
-  id: string;
+    id: string;
+}
+
+export interface GetPrincipalListRequest {
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
 }
 
 export interface PostPrincipalRequest {
-  principal: Principal;
+    principal: Principal;
 }
 
 export interface UpdatePrincipalRequest {
-  id: string;
-  principal: Principal;
+    id: string;
+    principal: Principal;
 }
+
 
 /**
  * Deletes a specific Principal.
  * Delete a Principal.
  */
-function deletePrincipalRaw<T>(
-  requestParameters: DeletePrincipalRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deletePrincipal.",
-    );
-  }
+function deletePrincipalRaw<T>(requestParameters: DeletePrincipalRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deletePrincipal.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Principal/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Principal/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific Principal.
- * Delete a Principal.
- */
-export function deletePrincipal<T>(
-  requestParameters: DeletePrincipalRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deletePrincipalRaw(requestParameters, requestConfig);
+* Deletes a specific Principal.
+* Delete a Principal.
+*/
+export function deletePrincipal<T>(requestParameters: DeletePrincipalRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deletePrincipalRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single Principal for a specific uid.
  * Retrieve a single Principal
  */
-function getPrincipalRaw<T>(
-  requestParameters: GetPrincipalRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Principal> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getPrincipal.",
-    );
-  }
+function getPrincipalRaw<T>(requestParameters: GetPrincipalRequest, requestConfig: runtime.TypedQueryConfig<T, Principal> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getPrincipal.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Principal/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(PrincipalFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Principal/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(PrincipalFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single Principal for a specific uid.
- * Retrieve a single Principal
- */
-export function getPrincipal<T>(
-  requestParameters: GetPrincipalRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Principal>,
-): QueryConfig<T> {
-  return getPrincipalRaw(requestParameters, requestConfig);
+* Retrieves a single Principal for a specific uid.
+* Retrieve a single Principal
+*/
+export function getPrincipal<T>(requestParameters: GetPrincipalRequest, requestConfig?: runtime.TypedQueryConfig<T, Principal>): QueryConfig<T> {
+    return getPrincipalRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Principals.
  * Retrieve a list of Principals
  */
-function getPrincipalListRaw<T>(
-  requestConfig: runtime.TypedQueryConfig<T, Array<Principal>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getPrincipalListRaw<T>(requestParameters: GetPrincipalListRequest, requestConfig: runtime.TypedQueryConfig<T, Array<Principal>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
+    queryParameters = {};
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Principal`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(PrincipalFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
+
+
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Principal`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(PrincipalFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of Principals.
- * Retrieve a list of Principals
- */
-export function getPrincipalList<T>(
-  requestConfig?: runtime.TypedQueryConfig<T, Array<Principal>>,
-): QueryConfig<T> {
-  return getPrincipalListRaw(requestConfig);
-}
-
-/**
- * Creates a new Principal.
- * Create a new Principal
- */
-function postPrincipalRaw<T>(
-  requestParameters: PostPrincipalRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Principal> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.principal === null ||
-    requestParameters.principal === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "principal",
-      "Required parameter requestParameters.principal was null or undefined when calling postPrincipal.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Principal`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || PrincipalToJSON(requestParameters.principal),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(PrincipalFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of Principals.
+* Retrieve a list of Principals
+*/
+export function getPrincipalList<T>(requestParameters: GetPrincipalListRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Principal>>): QueryConfig<T> {
+    return getPrincipalListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new Principal.
  * Create a new Principal
  */
-export function postPrincipal<T>(
-  requestParameters: PostPrincipalRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Principal>,
-): QueryConfig<T> {
-  return postPrincipalRaw(requestParameters, requestConfig);
+function postPrincipalRaw<T>(requestParameters: PostPrincipalRequest, requestConfig: runtime.TypedQueryConfig<T, Principal> = {}): QueryConfig<T> {
+    if (requestParameters.principal === null || requestParameters.principal === undefined) {
+        throw new runtime.RequiredError('principal','Required parameter requestParameters.principal was null or undefined when calling postPrincipal.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Principal`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || PrincipalToJSON(requestParameters.principal),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(PrincipalFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Creates a new Principal.
+* Create a new Principal
+*/
+export function postPrincipal<T>(requestParameters: PostPrincipalRequest, requestConfig?: runtime.TypedQueryConfig<T, Principal>): QueryConfig<T> {
+    return postPrincipalRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Principal.
  * Update an existing Principal
  */
-function updatePrincipalRaw<T>(
-  requestParameters: UpdatePrincipalRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Principal> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updatePrincipal.",
-    );
-  }
+function updatePrincipalRaw<T>(requestParameters: UpdatePrincipalRequest, requestConfig: runtime.TypedQueryConfig<T, Principal> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updatePrincipal.');
+    }
 
-  if (
-    requestParameters.principal === null ||
-    requestParameters.principal === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "principal",
-      "Required parameter requestParameters.principal was null or undefined when calling updatePrincipal.",
-    );
-  }
+    if (requestParameters.principal === null || requestParameters.principal === undefined) {
+        throw new runtime.RequiredError('principal','Required parameter requestParameters.principal was null or undefined when calling updatePrincipal.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Principal/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || PrincipalToJSON(requestParameters.principal),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(PrincipalFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Principal/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || PrincipalToJSON(requestParameters.principal),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(PrincipalFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing Principal.
- * Update an existing Principal
- */
-export function updatePrincipal<T>(
-  requestParameters: UpdatePrincipalRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Principal>,
-): QueryConfig<T> {
-  return updatePrincipalRaw(requestParameters, requestConfig);
+* Updates an existing Principal.
+* Update an existing Principal
+*/
+export function updatePrincipal<T>(requestParameters: UpdatePrincipalRequest, requestConfig?: runtime.TypedQueryConfig<T, Principal>): QueryConfig<T> {
+    return updatePrincipalRaw(requestParameters, requestConfig);
 }
+

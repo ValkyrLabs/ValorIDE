@@ -16,331 +16,294 @@ Template file: typescript-redux-query/apis.mustache
 Description: McpResourceResponseApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import {
-  McpResourceResponse,
-  McpResourceResponseFromJSON,
-  McpResourceResponseToJSON,
-} from "../model";
+    McpResourceResponse,
+    McpResourceResponseFromJSON,
+    McpResourceResponseToJSON,
+} from '../model';
 
 export interface DeleteMcpResourceResponseRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetMcpResourceResponseRequest {
-  id: string;
+    id: string;
+}
+
+export interface GetMcpResourceResponseListRequest {
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
 }
 
 export interface PostMcpResourceResponseRequest {
-  mcpResourceResponse: McpResourceResponse;
+    mcpResourceResponse: McpResourceResponse;
 }
 
 export interface UpdateMcpResourceResponseRequest {
-  id: string;
-  mcpResourceResponse: McpResourceResponse;
+    id: string;
+    mcpResourceResponse: McpResourceResponse;
 }
+
 
 /**
  * Deletes a specific McpResourceResponse.
  * Delete a McpResourceResponse.
  */
-function deleteMcpResourceResponseRaw<T>(
-  requestParameters: DeleteMcpResourceResponseRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteMcpResourceResponse.",
-    );
-  }
+function deleteMcpResourceResponseRaw<T>(requestParameters: DeleteMcpResourceResponseRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteMcpResourceResponse.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/McpResourceResponse/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/McpResourceResponse/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific McpResourceResponse.
- * Delete a McpResourceResponse.
- */
-export function deleteMcpResourceResponse<T>(
-  requestParameters: DeleteMcpResourceResponseRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteMcpResourceResponseRaw(requestParameters, requestConfig);
+* Deletes a specific McpResourceResponse.
+* Delete a McpResourceResponse.
+*/
+export function deleteMcpResourceResponse<T>(requestParameters: DeleteMcpResourceResponseRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteMcpResourceResponseRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single McpResourceResponse for a specific uid.
  * Retrieve a single McpResourceResponse
  */
-function getMcpResourceResponseRaw<T>(
-  requestParameters: GetMcpResourceResponseRequest,
-  requestConfig: runtime.TypedQueryConfig<T, McpResourceResponse> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getMcpResourceResponse.",
-    );
-  }
+function getMcpResourceResponseRaw<T>(requestParameters: GetMcpResourceResponseRequest, requestConfig: runtime.TypedQueryConfig<T, McpResourceResponse> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getMcpResourceResponse.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/McpResourceResponse/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(McpResourceResponseFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/McpResourceResponse/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpResourceResponseFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single McpResourceResponse for a specific uid.
- * Retrieve a single McpResourceResponse
- */
-export function getMcpResourceResponse<T>(
-  requestParameters: GetMcpResourceResponseRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, McpResourceResponse>,
-): QueryConfig<T> {
-  return getMcpResourceResponseRaw(requestParameters, requestConfig);
+* Retrieves a single McpResourceResponse for a specific uid.
+* Retrieve a single McpResourceResponse
+*/
+export function getMcpResourceResponse<T>(requestParameters: GetMcpResourceResponseRequest, requestConfig?: runtime.TypedQueryConfig<T, McpResourceResponse>): QueryConfig<T> {
+    return getMcpResourceResponseRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of McpResourceResponses.
  * Retrieve a list of McpResourceResponses
  */
-function getMcpResourceResponseListRaw<T>(
-  requestConfig: runtime.TypedQueryConfig<T, Array<McpResourceResponse>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getMcpResourceResponseListRaw<T>(requestParameters: GetMcpResourceResponseListRequest, requestConfig: runtime.TypedQueryConfig<T, Array<McpResourceResponse>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
+    queryParameters = {};
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/McpResourceResponse`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(McpResourceResponseFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
+
+
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/McpResourceResponse`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(McpResourceResponseFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of McpResourceResponses.
- * Retrieve a list of McpResourceResponses
- */
-export function getMcpResourceResponseList<T>(
-  requestConfig?: runtime.TypedQueryConfig<T, Array<McpResourceResponse>>,
-): QueryConfig<T> {
-  return getMcpResourceResponseListRaw(requestConfig);
-}
-
-/**
- * Creates a new McpResourceResponse.
- * Create a new McpResourceResponse
- */
-function postMcpResourceResponseRaw<T>(
-  requestParameters: PostMcpResourceResponseRequest,
-  requestConfig: runtime.TypedQueryConfig<T, McpResourceResponse> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.mcpResourceResponse === null ||
-    requestParameters.mcpResourceResponse === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "mcpResourceResponse",
-      "Required parameter requestParameters.mcpResourceResponse was null or undefined when calling postMcpResourceResponse.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/McpResourceResponse`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      McpResourceResponseToJSON(requestParameters.mcpResourceResponse),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(McpResourceResponseFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of McpResourceResponses.
+* Retrieve a list of McpResourceResponses
+*/
+export function getMcpResourceResponseList<T>(requestParameters: GetMcpResourceResponseListRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<McpResourceResponse>>): QueryConfig<T> {
+    return getMcpResourceResponseListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new McpResourceResponse.
  * Create a new McpResourceResponse
  */
-export function postMcpResourceResponse<T>(
-  requestParameters: PostMcpResourceResponseRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, McpResourceResponse>,
-): QueryConfig<T> {
-  return postMcpResourceResponseRaw(requestParameters, requestConfig);
+function postMcpResourceResponseRaw<T>(requestParameters: PostMcpResourceResponseRequest, requestConfig: runtime.TypedQueryConfig<T, McpResourceResponse> = {}): QueryConfig<T> {
+    if (requestParameters.mcpResourceResponse === null || requestParameters.mcpResourceResponse === undefined) {
+        throw new runtime.RequiredError('mcpResourceResponse','Required parameter requestParameters.mcpResourceResponse was null or undefined when calling postMcpResourceResponse.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/McpResourceResponse`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || McpResourceResponseToJSON(requestParameters.mcpResourceResponse),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpResourceResponseFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Creates a new McpResourceResponse.
+* Create a new McpResourceResponse
+*/
+export function postMcpResourceResponse<T>(requestParameters: PostMcpResourceResponseRequest, requestConfig?: runtime.TypedQueryConfig<T, McpResourceResponse>): QueryConfig<T> {
+    return postMcpResourceResponseRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing McpResourceResponse.
  * Update an existing McpResourceResponse
  */
-function updateMcpResourceResponseRaw<T>(
-  requestParameters: UpdateMcpResourceResponseRequest,
-  requestConfig: runtime.TypedQueryConfig<T, McpResourceResponse> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateMcpResourceResponse.",
-    );
-  }
+function updateMcpResourceResponseRaw<T>(requestParameters: UpdateMcpResourceResponseRequest, requestConfig: runtime.TypedQueryConfig<T, McpResourceResponse> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateMcpResourceResponse.');
+    }
 
-  if (
-    requestParameters.mcpResourceResponse === null ||
-    requestParameters.mcpResourceResponse === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "mcpResourceResponse",
-      "Required parameter requestParameters.mcpResourceResponse was null or undefined when calling updateMcpResourceResponse.",
-    );
-  }
+    if (requestParameters.mcpResourceResponse === null || requestParameters.mcpResourceResponse === undefined) {
+        throw new runtime.RequiredError('mcpResourceResponse','Required parameter requestParameters.mcpResourceResponse was null or undefined when calling updateMcpResourceResponse.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/McpResourceResponse/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body:
-      queryParameters ||
-      McpResourceResponseToJSON(requestParameters.mcpResourceResponse),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(McpResourceResponseFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/McpResourceResponse/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || McpResourceResponseToJSON(requestParameters.mcpResourceResponse),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpResourceResponseFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing McpResourceResponse.
- * Update an existing McpResourceResponse
- */
-export function updateMcpResourceResponse<T>(
-  requestParameters: UpdateMcpResourceResponseRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, McpResourceResponse>,
-): QueryConfig<T> {
-  return updateMcpResourceResponseRaw(requestParameters, requestConfig);
+* Updates an existing McpResourceResponse.
+* Update an existing McpResourceResponse
+*/
+export function updateMcpResourceResponse<T>(requestParameters: UpdateMcpResourceResponseRequest, requestConfig?: runtime.TypedQueryConfig<T, McpResourceResponse>): QueryConfig<T> {
+    return updateMcpResourceResponseRaw(requestParameters, requestConfig);
 }
+

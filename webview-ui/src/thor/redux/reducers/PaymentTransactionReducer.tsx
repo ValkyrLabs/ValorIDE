@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PaymentTransaction } from '../../model/PaymentTransaction';
+import { PaymentTransaction } from '@thor/model/PaymentTransaction';
 
 const PaymentTransactionSlice = createSlice({
   name: "PaymentTransactions",

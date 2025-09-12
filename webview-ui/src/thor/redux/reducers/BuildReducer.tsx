@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Build } from '../../model/Build';
+import { Build } from '@thor/model/Build';
 
 const BuildSlice = createSlice({
   name: "Builds",

@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { ThorUXComponent } from '../../model'
+import { ThorUXComponent } from '@thor/model/ThorUXComponent'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type ThorUXComponentResponse = ThorUXComponent[]
@@ -10,8 +10,13 @@ export const ThorUXComponentService = createApi({
   tagTypes: ['ThorUXComponent'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getThorUXComponentsPaged: build.query<ThorUXComponentResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `ThorUXComponent?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getThorUXComponentsPaged: build.query<ThorUXComponentResponse, { page: number; size?: number; example?: Partial<ThorUXComponent> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ThorUXComponent?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const ThorUXComponentService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getThorUXComponents: build.query<ThorUXComponentResponse, void>({
-      query: () => `ThorUXComponent`,
+    getThorUXComponents: build.query<ThorUXComponentResponse, { example?: Partial<ThorUXComponent> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `ThorUXComponent?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `ThorUXComponent`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const ThorUXComponentService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ThorUXComponent', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'ThorUXComponent', id },
+        { type: 'ThorUXComponent', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

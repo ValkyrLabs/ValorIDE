@@ -146,7 +146,7 @@ export type LlmDetails  = {
      * @type {string}
      * @memberof LlmDetails
      */
-    meta?: string;
+    metaData?: string;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -219,7 +219,7 @@ export function LlmDetailsFromJSON(json: any): LlmDetails {
         'description': !exists(json, 'description') ? undefined : json['description'],
         'url': !exists(json, 'url') ? undefined : json['url'],
         'requestParameters': !exists(json, 'requestParameters') ? undefined : json['requestParameters'],
-        'meta': !exists(json, 'meta') ? undefined : json['meta'],
+        'metaData': !exists(json, 'metaData') ? undefined : json['metaData'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -256,7 +256,7 @@ export function LlmDetailsToJSON(value?: LlmDetails): any {
         'description': value.description,
         'url': value.url,
         'requestParameters': value.requestParameters,
-        'meta': value.meta,
+        'metaData': value.metaData,
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { SecureKey } from '../../model'
+import { SecureKey } from '@thor/model/SecureKey'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type SecureKeyResponse = SecureKey[]
@@ -10,8 +10,13 @@ export const SecureKeyService = createApi({
   tagTypes: ['SecureKey'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getSecureKeysPaged: build.query<SecureKeyResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `SecureKey?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getSecureKeysPaged: build.query<SecureKeyResponse, { page: number; size?: number; example?: Partial<SecureKey> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SecureKey?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const SecureKeyService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSecureKeys: build.query<SecureKeyResponse, void>({
-      query: () => `SecureKey`,
+    getSecureKeys: build.query<SecureKeyResponse, { example?: Partial<SecureKey> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `SecureKey?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `SecureKey`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const SecureKeyService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'SecureKey', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'SecureKey', id },
+        { type: 'SecureKey', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { OasObjectSchema } from '../../model'
+import { OasObjectSchema } from '@thor/model/OasObjectSchema'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type OasObjectSchemaResponse = OasObjectSchema[]
@@ -10,8 +10,13 @@ export const OasObjectSchemaService = createApi({
   tagTypes: ['OasObjectSchema'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getOasObjectSchemasPaged: build.query<OasObjectSchemaResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `OasObjectSchema?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getOasObjectSchemasPaged: build.query<OasObjectSchemaResponse, { page: number; size?: number; example?: Partial<OasObjectSchema> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasObjectSchema?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const OasObjectSchemaService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasObjectSchemas: build.query<OasObjectSchemaResponse, void>({
-      query: () => `OasObjectSchema`,
+    getOasObjectSchemas: build.query<OasObjectSchemaResponse, { example?: Partial<OasObjectSchema> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `OasObjectSchema?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `OasObjectSchema`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const OasObjectSchemaService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'OasObjectSchema', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'OasObjectSchema', id },
+        { type: 'OasObjectSchema', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

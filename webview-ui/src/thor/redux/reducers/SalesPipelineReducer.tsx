@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SalesPipeline } from '../../model/SalesPipeline';
+import { SalesPipeline } from '@thor/model/SalesPipeline';
 
 const SalesPipelineSlice = createSlice({
   name: "SalesPipelines",

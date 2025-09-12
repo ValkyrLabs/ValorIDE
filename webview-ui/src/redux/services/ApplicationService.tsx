@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { Application } from "../../model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { Application } from "../../thor/model";
+import customBaseQuery from "../../thor/redux/customBaseQuery"; // Import the custom base query
 
 type ApplicationResponse = Application[];
 
@@ -19,9 +19,9 @@ export const ApplicationService = createApi({
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Application" as const, id })),
-              { type: "Application", id: `PAGE_${page}` },
-            ]
+            ...result.map(({ id }) => ({ type: "Application" as const, id })),
+            { type: "Application", id: `PAGE_${page}` },
+          ]
           : [],
     }),
 
@@ -34,9 +34,9 @@ export const ApplicationService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Application" as const, id })),
-              { type: "Application", id: "LIST" },
-            ]
+            ...result.map(({ id }) => ({ type: "Application" as const, id })),
+            { type: "Application", id: "LIST" },
+          ]
           : [{ type: "Application", id: "LIST" }],
       // Keep data for 5 minutes to retain across tab switches
       keepUnusedDataFor: 300,

@@ -5,7 +5,7 @@ import {
     getOasInfoList , 
     deleteOasInfo , 
     updateOasInfo 
-} from '../../api';
+} from '../../api/OasInfoApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const OasInfoMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_OASINFO_REQUEST:
             try {
-                const response = getOasInfoList();
+                const response = getOasInfoList({});
                 dispatch(listOasInfoSuccess(response.body));
             } catch (error) {
                 dispatch(listOasInfoFailure(error.message));

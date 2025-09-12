@@ -5,7 +5,7 @@ import {
     getWebsocketMessageList , 
     deleteWebsocketMessage , 
     updateWebsocketMessage 
-} from '../../api';
+} from '../../api/WebsocketMessageApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const WebsocketMessageMiddleware = ({ dispatch }) => (next) => async (act
 
         case LIST_WEBSOCKETMESSAGE_REQUEST:
             try {
-                const response = getWebsocketMessageList();
+                const response = getWebsocketMessageList({});
                 dispatch(listWebsocketMessageSuccess(response.body));
             } catch (error) {
                 dispatch(listWebsocketMessageFailure(error.message));

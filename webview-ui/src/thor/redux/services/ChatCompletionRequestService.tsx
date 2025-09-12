@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { ChatCompletionRequest } from '../../model'
+import { ChatCompletionRequest } from '@thor/model/ChatCompletionRequest'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type ChatCompletionRequestResponse = ChatCompletionRequest[]
@@ -10,8 +10,13 @@ export const ChatCompletionRequestService = createApi({
   tagTypes: ['ChatCompletionRequest'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getChatCompletionRequestsPaged: build.query<ChatCompletionRequestResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `ChatCompletionRequest?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getChatCompletionRequestsPaged: build.query<ChatCompletionRequestResponse, { page: number; size?: number; example?: Partial<ChatCompletionRequest> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ChatCompletionRequest?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const ChatCompletionRequestService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getChatCompletionRequests: build.query<ChatCompletionRequestResponse, void>({
-      query: () => `ChatCompletionRequest`,
+    getChatCompletionRequests: build.query<ChatCompletionRequestResponse, { example?: Partial<ChatCompletionRequest> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `ChatCompletionRequest?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `ChatCompletionRequest`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const ChatCompletionRequestService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ChatCompletionRequest', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'ChatCompletionRequest', id },
+        { type: 'ChatCompletionRequest', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

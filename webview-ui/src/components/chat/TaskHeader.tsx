@@ -10,7 +10,7 @@ import { vscode } from "@/utils/vscode";
 import Thumbnails from "@/components/common/Thumbnails";
 import { normalizeApiConfiguration } from "@/components/settings/ApiOptions";
 import { validateSlashCommand } from "@/utils/slash-commands";
-import { FaArrowUp, FaArrowDown, FaDatabase, FaArrowRight, FaTrash, FaChevronDown, FaChevronRight, FaTimes, FaExclamationTriangle, FaCopy, FaCheck } from "react-icons/fa";
+import { FaArrowUp, FaArrowDown, FaDatabase, FaArrowRight, FaTrash, FaChevronDown, FaChevronRight, FaTimes, FaExclamationTriangle, FaCopy, FaCheck, FaDollarSign, FaClock } from "react-icons/fa";
 import StatusBadge from "../common/StatusBadge";
 
 interface TaskHeaderProps {
@@ -38,6 +38,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 }) => {
   const { apiConfiguration, currentTaskItem, checkpointTrackerErrorMessage } =
     useExtensionState();
+  const { chatSettings } = useExtensionState();
   const [isTaskExpanded, setIsTaskExpanded] = useState(false);
   const [isTextExpanded, setIsTextExpanded] = useState(false);
   const [copyToastVisible, setCopyToastVisible] = useState(false);
@@ -186,6 +187,16 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
     </>
   );
 
+  const setBudgetLimit = () => {
+    // Ask the extension to show an input box and persist the value
+    vscode.postMessage({ type: "requestSetBudgetLimit" });
+  };
+
+  const setApiThrottle = () => {
+    // Ask the extension to show an input box and persist the value
+    vscode.postMessage({ type: "requestSetApiThrottle" });
+  };
+
   return (
     <div style={{ padding: "10px 13px 10px 13px" }}>
       <div
@@ -298,14 +309,44 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
           )}
 
           {!isTaskExpanded && isCostAvailable && (
-
-            <StatusBadge
-              label="Cost:"
-              value={`$${totalCost?.toFixed(4)}`}
-              title="API Cost for this task"
-              style={{ fontSize: 14, padding: "2px 6px" }}
-            />
-
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <StatusBadge
+                label="Cost:"
+                value={`$${totalCost?.toFixed(4)}`}
+                title="API Cost for this task"
+                style={{ fontSize: 14, padding: "2px 6px" }}
+              />
+              <VSCodeButton
+                appearance="icon"
+                title={
+                  chatSettings?.budgetLimit != null
+                    ? `Budget limit: $${chatSettings.budgetLimit}`
+                    : "Set budget limit"
+                }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setBudgetLimit();
+                }}
+                style={{ marginLeft: 2 }}
+              >
+                <FaDollarSign />
+              </VSCodeButton>
+              <VSCodeButton
+                appearance="icon"
+                title={
+                  chatSettings?.apiThrottleMs != null
+                    ? `Throttle: ${chatSettings.apiThrottleMs} ms`
+                    : "Set API throttle"
+                }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setApiThrottle();
+                }}
+                style={{ marginLeft: 2 }}
+              >
+                <FaClock />
+              </VSCodeButton>
+            </div>
           )}
           <VSCodeButton
             appearance="icon"
@@ -537,15 +578,41 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                     height: 17,
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                    }}
-                  >
-                    <span style={{ fontWeight: "bold" }}>API Cost:</span>
-                    <span>${totalCost?.toFixed(4)}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                      }}
+                    >
+                      <span style={{ fontWeight: "bold" }}>API Cost:</span>
+                      <span>${totalCost?.toFixed(4)}</span>
+                    </div>
+                    <VSCodeButton
+                      appearance="icon"
+                      title={
+                        chatSettings?.budgetLimit != null
+                          ? `Budget limit: $${chatSettings.budgetLimit}`
+                          : "Set budget limit"
+                      }
+                      onClick={setBudgetLimit}
+                      style={{ marginLeft: 2 }}
+                    >
+                      <FaDollarSign />
+                    </VSCodeButton>
+                    <VSCodeButton
+                      appearance="icon"
+                      title={
+                        chatSettings?.apiThrottleMs != null
+                          ? `Throttle: ${chatSettings.apiThrottleMs} ms`
+                          : "Set API throttle"
+                      }
+                      onClick={setApiThrottle}
+                      style={{ marginLeft: 2 }}
+                    >
+                      <FaClock />
+                    </VSCodeButton>
                   </div>
                   <DeleteButton
                     taskSize={formatSize(currentTaskItem?.size)}

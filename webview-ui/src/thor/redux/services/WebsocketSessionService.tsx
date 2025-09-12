@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { WebsocketSession } from '../../model'
+import { WebsocketSession } from '@thor/model/WebsocketSession'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type WebsocketSessionResponse = WebsocketSession[]
@@ -10,8 +10,13 @@ export const WebsocketSessionService = createApi({
   tagTypes: ['WebsocketSession'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getWebsocketSessionsPaged: build.query<WebsocketSessionResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `WebsocketSession?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getWebsocketSessionsPaged: build.query<WebsocketSessionResponse, { page: number; size?: number; example?: Partial<WebsocketSession> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WebsocketSession?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const WebsocketSessionService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWebsocketSessions: build.query<WebsocketSessionResponse, void>({
-      query: () => `WebsocketSession`,
+    getWebsocketSessions: build.query<WebsocketSessionResponse, { example?: Partial<WebsocketSession> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `WebsocketSession?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `WebsocketSession`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const WebsocketSessionService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'WebsocketSession', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'WebsocketSession', id },
+        { type: 'WebsocketSession', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

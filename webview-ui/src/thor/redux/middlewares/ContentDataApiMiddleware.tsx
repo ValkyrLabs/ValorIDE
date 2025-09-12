@@ -5,7 +5,7 @@ import {
     getContentDataList , 
     deleteContentData , 
     updateContentData 
-} from '../../api';
+} from '../../api/ContentDataApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const ContentDataMiddleware = ({ dispatch }) => (next) => async (action) 
 
         case LIST_CONTENTDATA_REQUEST:
             try {
-                const response = getContentDataList();
+                const response = getContentDataList({});
                 dispatch(listContentDataSuccess(response.body));
             } catch (error) {
                 dispatch(listContentDataFailure(error.message));

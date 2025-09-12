@@ -4,21 +4,23 @@ import {
   Form as BSForm,
   Accordion,
   Col,
-  Nav,
   Row,
   Spinner
 } from 'react-bootstrap';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
-import CoolButton from '../../../../components/CoolButton';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
 import * as Yup from 'yup';
-import PermissionDialog from '../../../../components/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
 
 
 import {
   IntegrationAccount,
   IntegrationAccountStatusEnum,
-} from '../../../model';
+} from '@thor/model';
 
 import { useAddIntegrationAccountMutation } from '../../services/IntegrationAccountService';
 
@@ -30,7 +32,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -54,84 +56,26 @@ const StatusValidation = () => {
 };
 
 /* -----------------------------------------------------
-   YUP VALIDATION SCHEMA
-   (Skip read-only fields and container types)
+   YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
+const asNumber = (schema: Yup.NumberSchema) =>
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+
 const validationSchema = Yup.object().shape({
-    
-        execModuleId: Yup.string()
-          
-          
-          ,
-    
-        accountName: Yup.string()
-          
-          
-          ,
-    
-        username: Yup.string()
-          
-          
-          ,
-    
-        password: Yup.string()
-          
-          
-          ,
-    
-        accountId: Yup.string()
-          
-          
-          ,
-    
+        execModuleId: Yup.string(),
+        accountName: Yup.string(),
+        username: Yup.string(),
+        password: Yup.string(),
+        accountId: Yup.string(),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
-        
-        .notRequired(),
-    
-        verified: Yup.boolean()
-          
-          .notRequired(),
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
-        createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
-        lastModifiedDate: Yup.date()
-          
-          
-          ,
+        ,
+        verified: Yup.boolean(),
+        id: Yup.string(),
+        ownerId: Yup.string(),
+        keyHash: Yup.string(),
+        lastAccessedById: Yup.string(),
+        lastModifiedById: Yup.string(),
 });
 
 /* -----------------------------------------------------
@@ -139,138 +83,38 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const IntegrationAccountForm: React.FC = () => {
   const [addIntegrationAccount, addIntegrationAccountResult] = useAddIntegrationAccountMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user', // This should come from authentication context
+    username: 'current_user',
     permissions: {
-      isOwner: true, // This should be determined by checking object ownership
-      isAdmin: true, // This should come from user roles
+      isOwner: true,
+      isAdmin: true,
       canGrantPermissions: true,
       permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
-  /* INITIAL VALUES - skip read-only fields */
+  /* -----------------------------------------------------
+     INITIAL VALUES - only NON read-only fields
+  -------------------------------------------------------- */
   const initialValues: Partial<IntegrationAccount> = {
-          
-
-            execModuleId: 'null',
-
-
-
-
-
-          
-
-            accountName: 'STRIPE, Shopify, Gmail, X.com',
-
-
-
-
-
-          
-
-            username: 'STRIPE, Shopify, Gmail, X.com',
-
-
-
-
-
-          
-
-            password: 'null',
-
-
-
-
-
-          
-
-            accountId: 'null',
-
-
-
-
-
-          
-          status:
-            IntegrationAccountStatusEnum[
-              Object.keys(IntegrationAccountStatusEnum)[0]
-            ],
-          
-            verified: false, 
-
-
-
-
-
-
-          
-
-            id: 'bf9d20ec-2c98-4f49-9d79-c0d7e071fb10',
-
-
-
-
-
-          
-
-            ownerId: 'daec45f3-963b-441a-b3c8-f14fcbe9e3b9',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            keyHash: 'null',
-
-
-
-
-
-          
-
-            lastAccessedById: '210fdf00-1783-4bbe-8df2-b26723ff7722',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            lastModifiedById: '7132c626-29df-4235-a3ca-3f592d279795',
-
-
-
-
-
-          
-
-
-
-
-
-
+          execModuleId: '',
+          accountName: '',
+          username: '',
+          password: '',
+          accountId: '',
+        status: undefined,
+          verified: false,
+          id: '',
+          ownerId: '',
+          keyHash: '',
+          lastAccessedById: '',
+          lastModifiedById: '',
   };
 
   // Permission Management Handlers
@@ -286,16 +130,16 @@ const IntegrationAccountForm: React.FC = () => {
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
     console.log('Permissions saved for new IntegrationAccount:', grants);
-    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<IntegrationAccount>) => {
     try {
       console.log("IntegrationAccount form values:", values);
-      const result = await addIntegrationAccount(values).unwrap();
-      
-      // If object was created successfully and has an ID, offer to set permissions
+
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addIntegrationAccount(values as any).unwrap();
+
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
           `IntegrationAccount created successfully! Would you like to set permissions for this object?`
@@ -304,7 +148,7 @@ const IntegrationAccountForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create IntegrationAccount:', error);
@@ -324,6 +168,7 @@ const IntegrationAccountForm: React.FC = () => {
           isSubmitting,
           isValid,
           errors,
+          values,
           setFieldValue,
           touched,
           setFieldTouched,
@@ -331,27 +176,13 @@ const IntegrationAccountForm: React.FC = () => {
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={36} />
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  touched: {JSON.stringify(touched)}
-                  <br />
-                  addIntegrationAccountResult: {JSON.stringify(addIntegrationAccountResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-              {/* Editable Fields (NON-read-only) */}
+              
+              {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                  <FaRegPlusSquare size={36} /> Add New IntegrationAccount
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New IntegrationAccount
                 </Accordion.Header>
                 <Accordion.Body>
-                    
                     <label htmlFor="execModuleId" className="nice-form-control">
                       <b>
                         Exec Module Id:
@@ -363,15 +194,13 @@ const IntegrationAccountForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="execModuleId"
-                            type="text"
-                            className={
-                              errors.execModuleId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.execModuleId}
+                            placeholder="Exec Module Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -386,7 +215,6 @@ const IntegrationAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="accountName" className="nice-form-control">
                       <b>
                         Account Name:
@@ -398,15 +226,13 @@ const IntegrationAccountForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="accountName"
-                            type="text"
-                            className={
-                              errors.accountName
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.accountName}
+                            placeholder="Account Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -421,7 +247,6 @@ const IntegrationAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="username" className="nice-form-control">
                       <b>
                         Username:
@@ -433,15 +258,13 @@ const IntegrationAccountForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="username"
-                            type="text"
-                            className={
-                              errors.username
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.username}
+                            placeholder="Username"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -456,7 +279,6 @@ const IntegrationAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="password" className="nice-form-control">
                       <b>
                         Password:
@@ -468,15 +290,13 @@ const IntegrationAccountForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="password"
-                            type="text"
-                            className={
-                              errors.password
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.password}
+                            placeholder="Password"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -491,7 +311,6 @@ const IntegrationAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="accountId" className="nice-form-control">
                       <b>
                         Account Id:
@@ -503,15 +322,13 @@ const IntegrationAccountForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="accountId"
-                            type="text"
-                            className={
-                              errors.accountId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.accountId}
+                            placeholder="Account Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -526,7 +343,6 @@ const IntegrationAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
@@ -546,7 +362,7 @@ const IntegrationAccountForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value);
+                            setFieldValue('status', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Status" />
@@ -561,7 +377,6 @@ const IntegrationAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="verified" className="nice-form-control">
                       <b>
                         Verified:
@@ -574,7 +389,6 @@ const IntegrationAccountForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="verified"
                             name="verified"
                             onChange={(e) => {
@@ -582,9 +396,7 @@ const IntegrationAccountForm: React.FC = () => {
                               setFieldValue('verified', e.target.checked);
                             }}
                             isInvalid={!!errors.verified}
-                            className={
-                              errors.verified ? 'error' : ''
-                            }
+                            className={errors.verified ? 'error' : ''}
                           />
 
 
@@ -600,7 +412,6 @@ const IntegrationAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="id" className="nice-form-control">
                       <b>
                         Id:
@@ -612,15 +423,13 @@ const IntegrationAccountForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.id}
+                            placeholder="Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -635,7 +444,6 @@ const IntegrationAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
@@ -647,15 +455,13 @@ const IntegrationAccountForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -670,7 +476,6 @@ const IntegrationAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
@@ -695,7 +500,6 @@ const IntegrationAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
@@ -707,15 +511,13 @@ const IntegrationAccountForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -730,7 +532,6 @@ const IntegrationAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedById" className="nice-form-control">
                       <b>
                         Last Accessed By Id:
@@ -742,15 +543,13 @@ const IntegrationAccountForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastAccessedById}
+                            placeholder="Last Accessed By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -765,7 +564,6 @@ const IntegrationAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedDate" className="nice-form-control">
                       <b>
                         Last Accessed Date:
@@ -790,7 +588,6 @@ const IntegrationAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedById" className="nice-form-control">
                       <b>
                         Last Modified By Id:
@@ -802,15 +599,13 @@ const IntegrationAccountForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastModifiedById}
+                            placeholder="Last Modified By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -825,7 +620,6 @@ const IntegrationAccountForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedDate" className="nice-form-control">
                       <b>
                         Last Modified Date:
@@ -853,31 +647,34 @@ const IntegrationAccountForm: React.FC = () => {
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
+                    disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (
-                      <Spinner
-                        style={ { float: 'left' } }
-                        as="span"
-                        animation="grow"
-                        variant="light"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FaCheckCircle size={30} /> Create New IntegrationAccount
+                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New IntegrationAccount
                   </CoolButton>
+
+                  {addIntegrationAccountResult.error && (
+                    <div className="error" style={ { marginTop: 12 }}>
+                      {JSON.stringify('data' in (addIntegrationAccountResult as any).error ? (addIntegrationAccountResult as any).error.data : (addIntegrationAccountResult as any).error)}
+                    </div>
+                  )}
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Read-Only System Fields */}
-              <Accordion.Item eventKey="2">
-                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                  </Row>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addIntegrationAccountResult: {JSON.stringify(addIntegrationAccountResult)}
                 </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
           </form>
         )}

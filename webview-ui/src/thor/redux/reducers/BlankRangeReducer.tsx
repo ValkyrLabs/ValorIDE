@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { BlankRange } from '../../model/BlankRange';
+import { BlankRange } from '@thor/model/BlankRange';
 
 const BlankRangeSlice = createSlice({
   name: "BlankRanges",

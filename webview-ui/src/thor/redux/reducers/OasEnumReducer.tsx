@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasEnum } from '../../model/OasEnum';
+import { OasEnum } from '@thor/model/OasEnum';
 
 const OasEnumSlice = createSlice({
   name: "OasEnums",

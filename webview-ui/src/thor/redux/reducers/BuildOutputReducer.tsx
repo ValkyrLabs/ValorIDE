@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { BuildOutput } from '../../model/BuildOutput';
+import { BuildOutput } from '@thor/model/BuildOutput';
 
 const BuildOutputSlice = createSlice({
   name: "BuildOutputs",

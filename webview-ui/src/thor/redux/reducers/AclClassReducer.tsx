@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AclClass } from '../../model/AclClass';
+import { AclClass } from '@thor/model/AclClass';
 
 const AclClassSlice = createSlice({
   name: "AclClasss",

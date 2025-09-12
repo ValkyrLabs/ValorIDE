@@ -5,7 +5,7 @@ import {
     getOrganizationList , 
     deleteOrganization , 
     updateOrganization 
-} from '../../api';
+} from '../../api/OrganizationApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const OrganizationMiddleware = ({ dispatch }) => (next) => async (action)
 
         case LIST_ORGANIZATION_REQUEST:
             try {
-                const response = getOrganizationList();
+                const response = getOrganizationList({});
                 dispatch(listOrganizationSuccess(response.body));
             } catch (error) {
                 dispatch(listOrganizationFailure(error.message));

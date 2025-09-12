@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { DefaultResponse } from '../../model'
+import { DefaultResponse } from '@thor/model/DefaultResponse'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type DefaultResponseResponse = DefaultResponse[]
@@ -10,8 +10,13 @@ export const DefaultResponseService = createApi({
   tagTypes: ['DefaultResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getDefaultResponsesPaged: build.query<DefaultResponseResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `DefaultResponse?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getDefaultResponsesPaged: build.query<DefaultResponseResponse, { page: number; size?: number; example?: Partial<DefaultResponse> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `DefaultResponse?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const DefaultResponseService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getDefaultResponses: build.query<DefaultResponseResponse, void>({
-      query: () => `DefaultResponse`,
+    getDefaultResponses: build.query<DefaultResponseResponse, { example?: Partial<DefaultResponse> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `DefaultResponse?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `DefaultResponse`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const DefaultResponseService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'DefaultResponse', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'DefaultResponse', id },
+        { type: 'DefaultResponse', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

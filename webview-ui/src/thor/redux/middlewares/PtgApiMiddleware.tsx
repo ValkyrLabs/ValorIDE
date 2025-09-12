@@ -5,7 +5,7 @@ import {
     getPtgList , 
     deletePtg , 
     updatePtg 
-} from '../../api';
+} from '../../api/PtgApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const PtgMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_PTG_REQUEST:
             try {
-                const response = getPtgList();
+                const response = getPtgList({});
                 dispatch(listPtgSuccess(response.body));
             } catch (error) {
                 dispatch(listPtgFailure(error.message));

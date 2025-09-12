@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasRequired } from '../../model/OasRequired';
+import { OasRequired } from '@thor/model/OasRequired';
 
 const OasRequiredSlice = createSlice({
   name: "OasRequireds",

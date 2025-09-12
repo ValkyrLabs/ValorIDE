@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpResourceResponse } from '../../model/McpResourceResponse';
+import { McpResourceResponse } from '@thor/model/McpResourceResponse';
 
 const McpResourceResponseSlice = createSlice({
   name: "McpResourceResponses",

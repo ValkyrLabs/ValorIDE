@@ -31,12 +31,6 @@ import {
 export type Invoice  = {
     /**
      * 
-     * @type {string}
-     * @memberof Invoice
-     */
-    invoiceId: string;
-    /**
-     * 
      * @type {Date}
      * @memberof Invoice
      */
@@ -65,12 +59,6 @@ export type Invoice  = {
      * @memberof Invoice
      */
     salesOrder?: SalesOrder;
-    /**
-     * 
-     * @type {string}
-     * @memberof Invoice
-     */
-    salesOrderId?: string;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -123,13 +111,11 @@ export type Invoice  = {
 
 export function InvoiceFromJSON(json: any): Invoice {
     return {
-        'invoiceId': json['invoiceId'],
         'invoiceDate': new Date(json['invoiceDate']),
         'dueDate': new Date(json['dueDate']),
         'amount': json['amount'],
         'status': json['status'],
         'salesOrder': !exists(json, 'salesOrder') ? undefined : SalesOrderFromJSON(json['salesOrder']),
-        'salesOrderId': !exists(json, 'salesOrderId') ? undefined : json['salesOrderId'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -146,13 +132,11 @@ export function InvoiceToJSON(value?: Invoice): any {
         return undefined;
     }
     return {
-        'invoiceId': value.invoiceId,
         'invoiceDate': value.invoiceDate.toISOString(),
         'dueDate': value.dueDate.toISOString(),
         'amount': value.amount,
         'status': value.status,
         'salesOrder': SalesOrderToJSON(value.salesOrder),
-        'salesOrderId': value.salesOrderId,
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

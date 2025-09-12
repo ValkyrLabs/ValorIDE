@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { ProductFeature } from '../../model'
+import { ProductFeature } from '@thor/model/ProductFeature'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type ProductFeatureResponse = ProductFeature[]
@@ -10,8 +10,13 @@ export const ProductFeatureService = createApi({
   tagTypes: ['ProductFeature'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getProductFeaturesPaged: build.query<ProductFeatureResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `ProductFeature?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getProductFeaturesPaged: build.query<ProductFeatureResponse, { page: number; size?: number; example?: Partial<ProductFeature> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ProductFeature?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const ProductFeatureService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getProductFeatures: build.query<ProductFeatureResponse, void>({
-      query: () => `ProductFeature`,
+    getProductFeatures: build.query<ProductFeatureResponse, { example?: Partial<ProductFeature> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `ProductFeature?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `ProductFeature`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const ProductFeatureService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ProductFeature', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'ProductFeature', id },
+        { type: 'ProductFeature', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

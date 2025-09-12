@@ -30,12 +30,6 @@ import {
  */
 export type Customer  = {
     /**
-     * Associated user
-     * @type {string}
-     * @memberof Customer
-     */
-    principalId: string;
-    /**
      * 
      * @type {Principal}
      * @memberof Customer
@@ -105,7 +99,6 @@ export type Customer  = {
 
 export function CustomerFromJSON(json: any): Customer {
     return {
-        'principalId': json['principalId'],
         'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
         'status': !exists(json, 'status') ? undefined : json['status'],
         'role': !exists(json, 'role') ? undefined : json['role'],
@@ -125,7 +118,6 @@ export function CustomerToJSON(value?: Customer): any {
         return undefined;
     }
     return {
-        'principalId': value.principalId,
         'principal': PrincipalToJSON(value.principal),
         'status': value.status,
         'role': value.role,

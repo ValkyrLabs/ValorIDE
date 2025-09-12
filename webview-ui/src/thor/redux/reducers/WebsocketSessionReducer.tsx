@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { WebsocketSession } from '../../model/WebsocketSession';
+import { WebsocketSession } from '@thor/model/WebsocketSession';
 
 const WebsocketSessionSlice = createSlice({
   name: "WebsocketSessions",

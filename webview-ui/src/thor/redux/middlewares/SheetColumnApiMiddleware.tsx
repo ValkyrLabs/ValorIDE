@@ -5,7 +5,7 @@ import {
     getSheetColumnList , 
     deleteSheetColumn , 
     updateSheetColumn 
-} from '../../api';
+} from '../../api/SheetColumnApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const SheetColumnMiddleware = ({ dispatch }) => (next) => async (action) 
 
         case LIST_SHEETCOLUMN_REQUEST:
             try {
-                const response = getSheetColumnList();
+                const response = getSheetColumnList({});
                 dispatch(listSheetColumnSuccess(response.body));
             } catch (error) {
                 dispatch(listSheetColumnFailure(error.message));

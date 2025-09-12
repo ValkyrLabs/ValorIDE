@@ -75,12 +75,6 @@ export type Application  = {
      */
     contentMedia?: Array<ContentMediaLink>;
     /**
-     * the OpenAPI spec UUID
-     * @type {string}
-     * @memberof Application
-     */
-    openAPISpecId?: string;
-    /**
      * 
      * @type {OasOpenAPISpec}
      * @memberof Application
@@ -145,7 +139,6 @@ export function ApplicationFromJSON(json: any): Application {
         'status': !exists(json, 'status') ? undefined : json['status'],
         'entrypointUrl': !exists(json, 'entrypointUrl') ? undefined : json['entrypointUrl'],
         'contentMedia': !exists(json, 'contentMedia') ? undefined : (json['contentMedia'] as Array<any>).map(ContentMediaLinkFromJSON),
-        'openAPISpecId': !exists(json, 'openAPISpecId') ? undefined : json['openAPISpecId'],
         'openAPISpec': !exists(json, 'openAPISpec') ? undefined : OasOpenAPISpecFromJSON(json['openAPISpec']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -170,7 +163,6 @@ export function ApplicationToJSON(value?: Application): any {
         'status': value.status,
         'entrypointUrl': value.entrypointUrl,
         'contentMedia': value.contentMedia === undefined ? undefined : (value.contentMedia as Array<any>).map(ContentMediaLinkToJSON),
-        'openAPISpecId': value.openAPISpecId,
         'openAPISpec': OasOpenAPISpecToJSON(value.openAPISpec),
         'id': value.id,
         'ownerId': value.ownerId,

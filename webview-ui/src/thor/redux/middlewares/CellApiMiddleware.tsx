@@ -5,7 +5,7 @@ import {
     getCellList , 
     deleteCell , 
     updateCell 
-} from '../../api';
+} from '../../api/CellApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const CellMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_CELL_REQUEST:
             try {
-                const response = getCellList();
+                const response = getCellList({});
                 dispatch(listCellSuccess(response.body));
             } catch (error) {
                 dispatch(listCellFailure(error.message));

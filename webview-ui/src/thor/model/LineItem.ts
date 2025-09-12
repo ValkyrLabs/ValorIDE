@@ -37,12 +37,6 @@ export type LineItem  = {
     salesOrderId?: string;
     /**
      * 
-     * @type {string}
-     * @memberof LineItem
-     */
-    productId?: string;
-    /**
-     * 
      * @type {Product}
      * @memberof LineItem
      */
@@ -124,7 +118,6 @@ export type LineItem  = {
 export function LineItemFromJSON(json: any): LineItem {
     return {
         'salesOrderId': !exists(json, 'salesOrderId') ? undefined : json['salesOrderId'],
-        'productId': !exists(json, 'productId') ? undefined : json['productId'],
         'product': !exists(json, 'product') ? undefined : ProductFromJSON(json['product']),
         'lineItemAmount': !exists(json, 'lineItemAmount') ? undefined : json['lineItemAmount'],
         'code': !exists(json, 'code') ? undefined : json['code'],
@@ -147,7 +140,6 @@ export function LineItemToJSON(value?: LineItem): any {
     }
     return {
         'salesOrderId': value.salesOrderId,
-        'productId': value.productId,
         'product': ProductToJSON(value.product),
         'lineItemAmount': value.lineItemAmount,
         'code': value.code,

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasOperation } from '../../model/OasOperation';
+import { OasOperation } from '@thor/model/OasOperation';
 
 const OasOperationSlice = createSlice({
   name: "OasOperations",

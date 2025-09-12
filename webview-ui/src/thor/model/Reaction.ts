@@ -26,7 +26,7 @@ export type Reaction  = {
      * @type {string}
      * @memberof Reaction
      */
-    targetObject?: string;
+    targetObject: string;
     /**
      * the reaction to the item
      * @type {string}
@@ -85,7 +85,7 @@ export type Reaction  = {
 
 export function ReactionFromJSON(json: any): Reaction {
     return {
-        'targetObject': !exists(json, 'targetObject') ? undefined : json['targetObject'],
+        'targetObject': json['targetObject'],
         'reaction': !exists(json, 'reaction') ? undefined : json['reaction'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],

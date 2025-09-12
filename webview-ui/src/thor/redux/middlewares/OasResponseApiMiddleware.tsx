@@ -5,7 +5,7 @@ import {
     getOasResponseList , 
     deleteOasResponse , 
     updateOasResponse 
-} from '../../api';
+} from '../../api/OasResponseApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const OasResponseMiddleware = ({ dispatch }) => (next) => async (action) 
 
         case LIST_OASRESPONSE_REQUEST:
             try {
-                const response = getOasResponseList();
+                const response = getOasResponseList({});
                 dispatch(listOasResponseSuccess(response.body));
             } catch (error) {
                 dispatch(listOasResponseFailure(error.message));

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { AclEntry } from '../../model/AclEntry';
+import { AclEntry } from '@thor/model/AclEntry';
 
 const AclEntrySlice = createSlice({
   name: "AclEntrys",

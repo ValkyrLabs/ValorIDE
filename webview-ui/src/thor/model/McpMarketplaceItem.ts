@@ -28,7 +28,7 @@ import {
  * @export
  * @interface McpMarketplaceItem
  */
-export type McpMarketplaceItem = {
+export type McpMarketplaceItem  = {
     /**
      * 
      * @type {string}
@@ -58,72 +58,6 @@ export type McpMarketplaceItem = {
      * @type {string}
      * @memberof McpMarketplaceItem
      */
-    icon: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    logoUrl: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
-    category: string;
-    /**
-     * 
-     * @type {Array<McpMarketplaceItemTag>}
-     * @memberof McpMarketplaceItem
-     */
-    tags: Array<McpMarketplaceItemTag>;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof McpMarketplaceItem
-     */
-    requiresApiKey: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof McpMarketplaceItem
-     */
-    isRecommended: boolean;
-    /**
-     * 
-     * @type {number}
-     * @memberof McpMarketplaceItem
-     */
-    githubStars: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof McpMarketplaceItem
-     */
-    downloadCount: number;
-    /**
-     * 
-     * @type {Date}
-     * @memberof McpMarketplaceItem
-     */
-    createdAt: Date;
-    /**
-     * 
-     * @type {Date}
-     * @memberof McpMarketplaceItem
-     */
-    updatedAt: Date;
-    /**
-     * 
-     * @type {Date}
-     * @memberof McpMarketplaceItem
-     */
-    lastGithubSync: Date;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpMarketplaceItem
-     */
     mcpMarketplaceCatalogId?: string;
     /**
      * 
@@ -136,6 +70,36 @@ export type McpMarketplaceItem = {
      * @type {string}
      * @memberof McpMarketplaceItem
      */
+    icon?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpMarketplaceItem
+     */
+    logoUrl?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpMarketplaceItem
+     */
+    category?: string;
+    /**
+     * 
+     * @type {Array<McpMarketplaceItemTag>}
+     * @memberof McpMarketplaceItem
+     */
+    tags?: Array<McpMarketplaceItemTag>;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof McpMarketplaceItem
+     */
+    requiresApiKey?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpMarketplaceItem
+     */
     readmeContent?: string;
     /**
      * 
@@ -143,6 +107,42 @@ export type McpMarketplaceItem = {
      * @memberof McpMarketplaceItem
      */
     llmsInstallationContent?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof McpMarketplaceItem
+     */
+    isRecommended?: boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof McpMarketplaceItem
+     */
+    githubStars?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof McpMarketplaceItem
+     */
+    downloadCount?: number;
+    /**
+     * 
+     * @type {Date}
+     * @memberof McpMarketplaceItem
+     */
+    createdAt?: Date;
+    /**
+     * 
+     * @type {Date}
+     * @memberof McpMarketplaceItem
+     */
+    updatedAt?: Date;
+    /**
+     * 
+     * @type {Date}
+     * @memberof McpMarketplaceItem
+     */
+    lastGithubSync?: Date;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -199,21 +199,21 @@ export function McpMarketplaceItemFromJSON(json: any): McpMarketplaceItem {
         'name': json['name'],
         'author': json['author'],
         'description': json['description'],
-        'icon': json['icon'],
-        'logoUrl': json['logoUrl'],
-        'category': json['category'],
-        'tags': (json['tags'] as Array<any>).map(McpMarketplaceItemTagFromJSON),
-        'requiresApiKey': json['requiresApiKey'],
-        'isRecommended': json['isRecommended'],
-        'githubStars': json['githubStars'],
-        'downloadCount': json['downloadCount'],
-        'createdAt': new Date(json['createdAt']),
-        'updatedAt': new Date(json['updatedAt']),
-        'lastGithubSync': new Date(json['lastGithubSync']),
         'mcpMarketplaceCatalogId': !exists(json, 'mcpMarketplaceCatalogId') ? undefined : json['mcpMarketplaceCatalogId'],
         'mcpServerId': !exists(json, 'mcpServerId') ? undefined : json['mcpServerId'],
+        'icon': !exists(json, 'icon') ? undefined : json['icon'],
+        'logoUrl': !exists(json, 'logoUrl') ? undefined : json['logoUrl'],
+        'category': !exists(json, 'category') ? undefined : json['category'],
+        'tags': !exists(json, 'tags') ? undefined : (json['tags'] as Array<any>).map(McpMarketplaceItemTagFromJSON),
+        'requiresApiKey': !exists(json, 'requiresApiKey') ? undefined : json['requiresApiKey'],
         'readmeContent': !exists(json, 'readmeContent') ? undefined : json['readmeContent'],
         'llmsInstallationContent': !exists(json, 'llmsInstallationContent') ? undefined : json['llmsInstallationContent'],
+        'isRecommended': !exists(json, 'isRecommended') ? undefined : json['isRecommended'],
+        'githubStars': !exists(json, 'githubStars') ? undefined : json['githubStars'],
+        'downloadCount': !exists(json, 'downloadCount') ? undefined : json['downloadCount'],
+        'createdAt': !exists(json, 'createdAt') ? undefined : new Date(json['createdAt']),
+        'updatedAt': !exists(json, 'updatedAt') ? undefined : new Date(json['updatedAt']),
+        'lastGithubSync': !exists(json, 'lastGithubSync') ? undefined : new Date(json['lastGithubSync']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -234,21 +234,21 @@ export function McpMarketplaceItemToJSON(value?: McpMarketplaceItem): any {
         'name': value.name,
         'author': value.author,
         'description': value.description,
+        'mcpMarketplaceCatalogId': value.mcpMarketplaceCatalogId,
+        'mcpServerId': value.mcpServerId,
         'icon': value.icon,
         'logoUrl': value.logoUrl,
         'category': value.category,
-        'tags': (value.tags as Array<any>).map(McpMarketplaceItemTagToJSON),
+        'tags': value.tags === undefined ? undefined : (value.tags as Array<any>).map(McpMarketplaceItemTagToJSON),
         'requiresApiKey': value.requiresApiKey,
+        'readmeContent': value.readmeContent,
+        'llmsInstallationContent': value.llmsInstallationContent,
         'isRecommended': value.isRecommended,
         'githubStars': value.githubStars,
         'downloadCount': value.downloadCount,
-        'createdAt': value.createdAt.toISOString(),
-        'updatedAt': value.updatedAt.toISOString(),
-        'lastGithubSync': value.lastGithubSync.toISOString(),
-        'mcpMarketplaceCatalogId': value.mcpMarketplaceCatalogId,
-        'mcpServerId': value.mcpServerId,
-        'readmeContent': value.readmeContent,
-        'llmsInstallationContent': value.llmsInstallationContent,
+        'createdAt': value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
+        'updatedAt': value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
+        'lastGithubSync': value.lastGithubSync === undefined ? undefined : value.lastGithubSync.toISOString(),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

@@ -4,15 +4,17 @@ import {
   Form as BSForm,
   Accordion,
   Col,
-  Nav,
   Row,
   Spinner
 } from 'react-bootstrap';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
-import CoolButton from '../../../../components/CoolButton';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
 import * as Yup from 'yup';
-import PermissionDialog from '../../../../components/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
 
 
 import {
@@ -21,7 +23,7 @@ import {
   StackLanguageEnum,
   StackTemplateRepoEnum,
   StackStatusEnum,
-} from '../../../model';
+} from '@thor/model';
 
 import { useAddStackMutation } from '../../services/StackService';
 
@@ -33,7 +35,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -81,185 +83,53 @@ const StatusValidation = () => {
 };
 
 /* -----------------------------------------------------
-   YUP VALIDATION SCHEMA
-   (Skip read-only fields and container types)
+   YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
+const asNumber = (schema: Yup.NumberSchema) =>
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+
 const validationSchema = Yup.object().shape({
-    
-        name: Yup.string()
-          
-          .required("name is required.")
-          ,
-    
-        schemaData: Yup.string()
-          
-          .required("schemaData is required.")
-          ,
-    
-        execModuleId: Yup.string()
-          
-          
-          ,
-    
+        name: Yup.string().required("name is required."),
+        schemaData: Yup.string().required("schemaData is required."),
+        execModuleId: Yup.string(),
       category: Yup.mixed()
         .oneOf(CategoryValidation(), "Invalid value for category")
-        
-        .notRequired(),
-    
-        artifactId: Yup.string()
-          
-          
-          ,
-    
-        applicationId: Yup.string()
-          
-          
-          ,
-    
-        adminServerHost: Yup.string()
-          
-          
-          ,
-    
-        adminServerPort: Yup.string()
-          
-          
-          ,
-    
-        hostName: Yup.string()
-          
-          
-          ,
-    
-        hostPort: Yup.string()
-          
-          
-          ,
-    
-        orgName: Yup.string()
-          
-          
-          ,
-    
-        gitUser: Yup.string()
-          
-          
-          ,
-    
-        gitRepo: Yup.string()
-          
-          
-          ,
-    
-        skipSwaggerGen: Yup.boolean()
-          
-          .notRequired(),
-    
-        skipJavaGen: Yup.boolean()
-          
-          .notRequired(),
-    
-        skipDbGen: Yup.boolean()
-          
-          .notRequired(),
-    
-        skipReactGen: Yup.boolean()
-          
-          .notRequired(),
-    
-        dbGenDropTable: Yup.boolean()
-          
-          .notRequired(),
-    
-        thorApiSecureKey: Yup.string()
-          
-          
-          ,
-    
-        dbUrl: Yup.string()
-          
-          
-          ,
-    
-        dbName: Yup.string()
-          
-          
-          ,
-    
-        dbUser: Yup.string()
-          
-          
-          ,
-    
-        dbPassword: Yup.string()
-          
-          
-          ,
-    
-        schemaName: Yup.string()
-          
-          
-          ,
-    
+        ,
+        artifactId: Yup.string(),
+        applicationId: Yup.string(),
+        adminServerHost: Yup.string(),
+        adminServerPort: Yup.string(),
+        hostName: Yup.string(),
+        hostPort: Yup.string(),
+        orgName: Yup.string(),
+        gitUser: Yup.string(),
+        gitRepo: Yup.string(),
+        skipSwaggerGen: Yup.boolean(),
+        skipJavaGen: Yup.boolean(),
+        skipDbGen: Yup.boolean(),
+        skipReactGen: Yup.boolean(),
+        dbGenDropTable: Yup.boolean(),
+        thorApiSecureKey: Yup.string(),
+        dbUrl: Yup.string(),
+        dbName: Yup.string(),
+        dbUser: Yup.string(),
+        dbPassword: Yup.string(),
+        schemaName: Yup.string(),
       language: Yup.mixed()
         .oneOf(LanguageValidation(), "Invalid value for language")
-        
-        .notRequired(),
-    
+        ,
       templateRepo: Yup.mixed()
         .oneOf(TemplateRepoValidation(), "Invalid value for templateRepo")
-        
-        .notRequired(),
-    
-        schemaFileName: Yup.string()
-          
-          
-          ,
-    
+        ,
+        schemaFileName: Yup.string(),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
-        
-        .notRequired(),
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
-        createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
-        lastModifiedDate: Yup.date()
-          
-          
-          ,
+        ,
+        id: Yup.string(),
+        ownerId: Yup.string(),
+        keyHash: Yup.string(),
+        lastAccessedById: Yup.string(),
+        lastModifiedById: Yup.string(),
 });
 
 /* -----------------------------------------------------
@@ -267,297 +137,59 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const StackForm: React.FC = () => {
   const [addStack, addStackResult] = useAddStackMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user', // This should come from authentication context
+    username: 'current_user',
     permissions: {
-      isOwner: true, // This should be determined by checking object ownership
-      isAdmin: true, // This should come from user roles
+      isOwner: true,
+      isAdmin: true,
       canGrantPermissions: true,
       permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
-  /* INITIAL VALUES - skip read-only fields */
+  /* -----------------------------------------------------
+     INITIAL VALUES - only NON read-only fields
+  -------------------------------------------------------- */
   const initialValues: Partial<Stack> = {
-          
-
-            name: 'My New Stack',
-
-
-
-
-
-          
-
-            schemaData: '&lt;your schema here&gt;',
-
-
-
-
-
-          
-
-            execModuleId: 'null',
-
-
-
-
-
-          
-          category:
-            StackCategoryEnum[
-              Object.keys(StackCategoryEnum)[0]
-            ],
-          
-
-            artifactId: 'valkyrai',
-
-
-
-
-
-          
-
-            applicationId: 'null',
-
-
-
-
-
-          
-
-            adminServerHost: 'www.mycompany.com',
-
-
-
-
-
-          
-
-            adminServerPort: '8009',
-
-
-
-
-
-          
-
-            hostName: 'localhost',
-
-
-
-
-
-          
-
-            hostPort: '8099',
-
-
-
-
-
-          
-
-            orgName: 'Valkyr Labs Inc.',
-
-
-
-
-
-          
-
-            gitUser: 'Valkyr Labs Inc',
-
-
-
-
-
-          
-
-            gitRepo: 'MyValkyrAIApp',
-
-
-
-
-
-          
-            skipSwaggerGen: false, 
-
-
-
-
-
-
-          
-            skipJavaGen: false, 
-
-
-
-
-
-
-          
-            skipDbGen: false, 
-
-
-
-
-
-
-          
-            skipReactGen: false, 
-
-
-
-
-
-
-          
-            dbGenDropTable: true, 
-
-
-
-
-
-
-          
-
-            thorApiSecureKey: '&#x3D;W34sdcwdsfwC34W34sdcwdsfwC34W34sdcwdsfw&#x3D;',
-
-
-
-
-
-          
-
-            dbUrl: 'jdbc:mysql//db.myco.com',
-
-
-
-
-
-          
-
-            dbName: 'ValkyrAIApp1',
-
-
-
-
-
-          
-
-            dbUser: 'igniteuser',
-
-
-
-
-
-          
-
-            dbPassword: 'hard2Gu3ss',
-
-
-
-
-
-          
-
-            schemaName: 'starter',
-
-
-
-
-
-          
-          language:
-            StackLanguageEnum[
-              Object.keys(StackLanguageEnum)[0]
-            ],
-          
-          templateRepo:
-            StackTemplateRepoEnum[
-              Object.keys(StackTemplateRepoEnum)[0]
-            ],
-          
-
-            schemaFileName: 'ignite_commerce.yml',
-
-
-
-
-
-          
-          status:
-            StackStatusEnum[
-              Object.keys(StackStatusEnum)[0]
-            ],
-          
-
-            id: 'c361e0da-9b5c-4f3a-9540-271b29eedf10',
-
-
-
-
-
-          
-
-            ownerId: '9e21d8bf-e52d-4d88-989f-7c079f473bd2',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            keyHash: 'null',
-
-
-
-
-
-          
-
-            lastAccessedById: 'a5950486-8c14-44b9-9c4d-2c20f2fae940',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            lastModifiedById: '1c9b4249-5f64-44ac-ad87-04847d6e1f0a',
-
-
-
-
-
-          
-
-
-
-
-
-
+          name: '',
+          schemaData: '',
+          execModuleId: '',
+        category: undefined,
+          artifactId: '',
+          applicationId: '',
+          adminServerHost: '',
+          adminServerPort: '',
+          hostName: '',
+          hostPort: '',
+          orgName: '',
+          gitUser: '',
+          gitRepo: '',
+          skipSwaggerGen: false,
+          skipJavaGen: false,
+          skipDbGen: false,
+          skipReactGen: false,
+          dbGenDropTable: false,
+          thorApiSecureKey: '',
+          dbUrl: '',
+          dbName: '',
+          dbUser: '',
+          dbPassword: '',
+          schemaName: '',
+        language: undefined,
+        templateRepo: undefined,
+          schemaFileName: '',
+        status: undefined,
+          id: '',
+          ownerId: '',
+          keyHash: '',
+          lastAccessedById: '',
+          lastModifiedById: '',
   };
 
   // Permission Management Handlers
@@ -573,16 +205,16 @@ const StackForm: React.FC = () => {
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
     console.log('Permissions saved for new Stack:', grants);
-    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Stack>) => {
     try {
       console.log("Stack form values:", values);
-      const result = await addStack(values).unwrap();
-      
-      // If object was created successfully and has an ID, offer to set permissions
+
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addStack(values as any).unwrap();
+
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
           `Stack created successfully! Would you like to set permissions for this object?`
@@ -591,7 +223,7 @@ const StackForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create Stack:', error);
@@ -611,6 +243,7 @@ const StackForm: React.FC = () => {
           isSubmitting,
           isValid,
           errors,
+          values,
           setFieldValue,
           touched,
           setFieldTouched,
@@ -618,27 +251,13 @@ const StackForm: React.FC = () => {
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={36} />
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  touched: {JSON.stringify(touched)}
-                  <br />
-                  addStackResult: {JSON.stringify(addStackResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-              {/* Editable Fields (NON-read-only) */}
+              
+              {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                  <FaRegPlusSquare size={36} /> Add New Stack
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New Stack
                 </Accordion.Header>
                 <Accordion.Body>
-                    
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
@@ -650,15 +269,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="name"
-                            type="text"
-                            className={
-                              errors.name
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -673,7 +290,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="schemaData" className="nice-form-control">
                       <b>
                         Schema Data:
@@ -685,15 +301,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="schemaData"
-                            type="text"
-                            className={
-                              errors.schemaData
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.schemaData}
+                            placeholder="Schema Data"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -708,7 +322,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="execModuleId" className="nice-form-control">
                       <b>
                         Exec Module Id:
@@ -720,15 +333,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="execModuleId"
-                            type="text"
-                            className={
-                              errors.execModuleId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.execModuleId}
+                            placeholder="Exec Module Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -743,7 +354,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="category" className="nice-form-control">
                       <b>
                         Category:
@@ -763,7 +373,7 @@ const StackForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('category', true);
-                            setFieldValue('category', e.target.value);
+                            setFieldValue('category', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Category" />
@@ -778,7 +388,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="artifactId" className="nice-form-control">
                       <b>
                         Artifact Id:
@@ -790,15 +399,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="artifactId"
-                            type="text"
-                            className={
-                              errors.artifactId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.artifactId}
+                            placeholder="Artifact Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -813,7 +420,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="applicationId" className="nice-form-control">
                       <b>
                         Application Id:
@@ -825,15 +431,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="applicationId"
-                            type="text"
-                            className={
-                              errors.applicationId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.applicationId}
+                            placeholder="Application Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -848,7 +452,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="adminServerHost" className="nice-form-control">
                       <b>
                         Admin Server Host:
@@ -860,15 +463,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="adminServerHost"
-                            type="text"
-                            className={
-                              errors.adminServerHost
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.adminServerHost}
+                            placeholder="Admin Server Host"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -883,7 +484,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="adminServerPort" className="nice-form-control">
                       <b>
                         Admin Server Port:
@@ -895,15 +495,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="adminServerPort"
-                            type="text"
-                            className={
-                              errors.adminServerPort
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.adminServerPort}
+                            placeholder="Admin Server Port"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -918,7 +516,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="hostName" className="nice-form-control">
                       <b>
                         Host Name:
@@ -930,15 +527,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="hostName"
-                            type="text"
-                            className={
-                              errors.hostName
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.hostName}
+                            placeholder="Host Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -953,7 +548,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="hostPort" className="nice-form-control">
                       <b>
                         Host Port:
@@ -965,15 +559,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="hostPort"
-                            type="text"
-                            className={
-                              errors.hostPort
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.hostPort}
+                            placeholder="Host Port"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -988,7 +580,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="orgName" className="nice-form-control">
                       <b>
                         Org Name:
@@ -1000,15 +591,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="orgName"
-                            type="text"
-                            className={
-                              errors.orgName
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.orgName}
+                            placeholder="Org Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1023,7 +612,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="gitUser" className="nice-form-control">
                       <b>
                         Git User:
@@ -1035,15 +623,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="gitUser"
-                            type="text"
-                            className={
-                              errors.gitUser
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.gitUser}
+                            placeholder="Git User"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1058,7 +644,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="gitRepo" className="nice-form-control">
                       <b>
                         Git Repo:
@@ -1070,15 +655,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="gitRepo"
-                            type="text"
-                            className={
-                              errors.gitRepo
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.gitRepo}
+                            placeholder="Git Repo"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1093,7 +676,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="skipSwaggerGen" className="nice-form-control">
                       <b>
                         Skip Swagger Gen:
@@ -1106,7 +688,6 @@ const StackForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="skipSwaggerGen"
                             name="skipSwaggerGen"
                             onChange={(e) => {
@@ -1114,9 +695,7 @@ const StackForm: React.FC = () => {
                               setFieldValue('skipSwaggerGen', e.target.checked);
                             }}
                             isInvalid={!!errors.skipSwaggerGen}
-                            className={
-                              errors.skipSwaggerGen ? 'error' : ''
-                            }
+                            className={errors.skipSwaggerGen ? 'error' : ''}
                           />
 
 
@@ -1132,7 +711,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="skipJavaGen" className="nice-form-control">
                       <b>
                         Skip Java Gen:
@@ -1145,7 +723,6 @@ const StackForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="skipJavaGen"
                             name="skipJavaGen"
                             onChange={(e) => {
@@ -1153,9 +730,7 @@ const StackForm: React.FC = () => {
                               setFieldValue('skipJavaGen', e.target.checked);
                             }}
                             isInvalid={!!errors.skipJavaGen}
-                            className={
-                              errors.skipJavaGen ? 'error' : ''
-                            }
+                            className={errors.skipJavaGen ? 'error' : ''}
                           />
 
 
@@ -1171,7 +746,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="skipDbGen" className="nice-form-control">
                       <b>
                         Skip Db Gen:
@@ -1184,7 +758,6 @@ const StackForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="skipDbGen"
                             name="skipDbGen"
                             onChange={(e) => {
@@ -1192,9 +765,7 @@ const StackForm: React.FC = () => {
                               setFieldValue('skipDbGen', e.target.checked);
                             }}
                             isInvalid={!!errors.skipDbGen}
-                            className={
-                              errors.skipDbGen ? 'error' : ''
-                            }
+                            className={errors.skipDbGen ? 'error' : ''}
                           />
 
 
@@ -1210,7 +781,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="skipReactGen" className="nice-form-control">
                       <b>
                         Skip React Gen:
@@ -1223,7 +793,6 @@ const StackForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="skipReactGen"
                             name="skipReactGen"
                             onChange={(e) => {
@@ -1231,9 +800,7 @@ const StackForm: React.FC = () => {
                               setFieldValue('skipReactGen', e.target.checked);
                             }}
                             isInvalid={!!errors.skipReactGen}
-                            className={
-                              errors.skipReactGen ? 'error' : ''
-                            }
+                            className={errors.skipReactGen ? 'error' : ''}
                           />
 
 
@@ -1249,7 +816,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="dbGenDropTable" className="nice-form-control">
                       <b>
                         Db Gen Drop Table:
@@ -1262,7 +828,6 @@ const StackForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="dbGenDropTable"
                             name="dbGenDropTable"
                             onChange={(e) => {
@@ -1270,9 +835,7 @@ const StackForm: React.FC = () => {
                               setFieldValue('dbGenDropTable', e.target.checked);
                             }}
                             isInvalid={!!errors.dbGenDropTable}
-                            className={
-                              errors.dbGenDropTable ? 'error' : ''
-                            }
+                            className={errors.dbGenDropTable ? 'error' : ''}
                           />
 
 
@@ -1288,7 +851,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="thorApiSecureKey" className="nice-form-control">
                       <b>
                         Thor Api Secure Key:
@@ -1300,15 +862,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="thorApiSecureKey"
-                            type="text"
-                            className={
-                              errors.thorApiSecureKey
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.thorApiSecureKey}
+                            placeholder="Thor Api Secure Key"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1323,7 +883,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="dbUrl" className="nice-form-control">
                       <b>
                         Db Url:
@@ -1335,15 +894,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="dbUrl"
-                            type="text"
-                            className={
-                              errors.dbUrl
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.dbUrl}
+                            placeholder="Db Url"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1358,7 +915,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="dbName" className="nice-form-control">
                       <b>
                         Db Name:
@@ -1370,15 +926,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="dbName"
-                            type="text"
-                            className={
-                              errors.dbName
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.dbName}
+                            placeholder="Db Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1393,7 +947,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="dbUser" className="nice-form-control">
                       <b>
                         Db User:
@@ -1405,15 +958,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="dbUser"
-                            type="text"
-                            className={
-                              errors.dbUser
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.dbUser}
+                            placeholder="Db User"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1428,7 +979,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="dbPassword" className="nice-form-control">
                       <b>
                         Db Password:
@@ -1440,15 +990,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="dbPassword"
-                            type="text"
-                            className={
-                              errors.dbPassword
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.dbPassword}
+                            placeholder="Db Password"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1463,7 +1011,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="schemaName" className="nice-form-control">
                       <b>
                         Schema Name:
@@ -1475,15 +1022,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="schemaName"
-                            type="text"
-                            className={
-                              errors.schemaName
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.schemaName}
+                            placeholder="Schema Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1498,7 +1043,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="language" className="nice-form-control">
                       <b>
                         Language:
@@ -1518,7 +1062,7 @@ const StackForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('language', true);
-                            setFieldValue('language', e.target.value);
+                            setFieldValue('language', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Language" />
@@ -1533,7 +1077,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="templateRepo" className="nice-form-control">
                       <b>
                         Template Repo:
@@ -1553,7 +1096,7 @@ const StackForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('templateRepo', true);
-                            setFieldValue('templateRepo', e.target.value);
+                            setFieldValue('templateRepo', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Template Repo" />
@@ -1568,7 +1111,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="schemaFileName" className="nice-form-control">
                       <b>
                         Schema File Name:
@@ -1580,15 +1122,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="schemaFileName"
-                            type="text"
-                            className={
-                              errors.schemaFileName
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.schemaFileName}
+                            placeholder="Schema File Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1603,7 +1143,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
@@ -1623,7 +1162,7 @@ const StackForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value);
+                            setFieldValue('status', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Status" />
@@ -1638,7 +1177,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="id" className="nice-form-control">
                       <b>
                         Id:
@@ -1650,15 +1188,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.id}
+                            placeholder="Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1673,7 +1209,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
@@ -1685,15 +1220,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1708,7 +1241,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
@@ -1733,7 +1265,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
@@ -1745,15 +1276,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1768,7 +1297,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedById" className="nice-form-control">
                       <b>
                         Last Accessed By Id:
@@ -1780,15 +1308,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastAccessedById}
+                            placeholder="Last Accessed By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1803,7 +1329,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedDate" className="nice-form-control">
                       <b>
                         Last Accessed Date:
@@ -1828,7 +1353,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedById" className="nice-form-control">
                       <b>
                         Last Modified By Id:
@@ -1840,15 +1364,13 @@ const StackForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastModifiedById}
+                            placeholder="Last Modified By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -1863,7 +1385,6 @@ const StackForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedDate" className="nice-form-control">
                       <b>
                         Last Modified Date:
@@ -1891,31 +1412,34 @@ const StackForm: React.FC = () => {
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
+                    disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (
-                      <Spinner
-                        style={ { float: 'left' } }
-                        as="span"
-                        animation="grow"
-                        variant="light"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FaCheckCircle size={30} /> Create New Stack
+                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New Stack
                   </CoolButton>
+
+                  {addStackResult.error && (
+                    <div className="error" style={ { marginTop: 12 }}>
+                      {JSON.stringify('data' in (addStackResult as any).error ? (addStackResult as any).error.data : (addStackResult as any).error)}
+                    </div>
+                  )}
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Read-Only System Fields */}
-              <Accordion.Item eventKey="2">
-                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                  </Row>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addStackResult: {JSON.stringify(addStackResult)}
                 </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
           </form>
         )}

@@ -5,7 +5,7 @@ import {
     getSalesPipelineList , 
     deleteSalesPipeline , 
     updateSalesPipeline 
-} from '../../api';
+} from '../../api/SalesPipelineApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const SalesPipelineMiddleware = ({ dispatch }) => (next) => async (action
 
         case LIST_SALESPIPELINE_REQUEST:
             try {
-                const response = getSalesPipelineList();
+                const response = getSalesPipelineList({});
                 dispatch(listSalesPipelineSuccess(response.body));
             } catch (error) {
                 dispatch(listSalesPipelineFailure(error.message));

@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Workbook } from '../../model'
+import { Workbook } from '@thor/model/Workbook'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type WorkbookResponse = Workbook[]
@@ -10,8 +10,13 @@ export const WorkbookService = createApi({
   tagTypes: ['Workbook'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getWorkbooksPaged: build.query<WorkbookResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Workbook?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getWorkbooksPaged: build.query<WorkbookResponse, { page: number; size?: number; example?: Partial<Workbook> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Workbook?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const WorkbookService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWorkbooks: build.query<WorkbookResponse, void>({
-      query: () => `Workbook`,
+    getWorkbooks: build.query<WorkbookResponse, { example?: Partial<Workbook> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Workbook?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Workbook`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const WorkbookService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Workbook', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Workbook', id },
+        { type: 'Workbook', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

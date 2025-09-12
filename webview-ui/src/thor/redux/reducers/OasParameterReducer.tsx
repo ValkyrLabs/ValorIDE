@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasParameter } from '../../model/OasParameter';
+import { OasParameter } from '@thor/model/OasParameter';
 
 const OasParameterSlice = createSlice({
   name: "OasParameters",

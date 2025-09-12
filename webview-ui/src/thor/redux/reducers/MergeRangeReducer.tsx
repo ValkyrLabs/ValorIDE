@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { MergeRange } from '../../model/MergeRange';
+import { MergeRange } from '@thor/model/MergeRange';
 
 const MergeRangeSlice = createSlice({
   name: "MergeRanges",

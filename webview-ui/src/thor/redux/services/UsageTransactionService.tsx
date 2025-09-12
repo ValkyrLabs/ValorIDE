@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { UsageTransaction } from '../../model'
+import { UsageTransaction } from '@thor/model/UsageTransaction'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type UsageTransactionResponse = UsageTransaction[]
@@ -10,8 +10,13 @@ export const UsageTransactionService = createApi({
   tagTypes: ['UsageTransaction'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getUsageTransactionsPaged: build.query<UsageTransactionResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `UsageTransaction?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getUsageTransactionsPaged: build.query<UsageTransactionResponse, { page: number; size?: number; example?: Partial<UsageTransaction> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `UsageTransaction?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const UsageTransactionService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getUsageTransactions: build.query<UsageTransactionResponse, void>({
-      query: () => `UsageTransaction`,
+    getUsageTransactions: build.query<UsageTransactionResponse, { example?: Partial<UsageTransaction> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `UsageTransaction?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `UsageTransaction`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const UsageTransactionService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'UsageTransaction', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'UsageTransaction', id },
+        { type: 'UsageTransaction', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

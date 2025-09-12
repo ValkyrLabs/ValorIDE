@@ -5,7 +5,7 @@ import {
     getEventLogList , 
     deleteEventLog , 
     updateEventLog 
-} from '../../api';
+} from '../../api/EventLogApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const EventLogMiddleware = ({ dispatch }) => (next) => async (action) => 
 
         case LIST_EVENTLOG_REQUEST:
             try {
-                const response = getEventLogList();
+                const response = getEventLogList({});
                 dispatch(listEventLogSuccess(response.body));
             } catch (error) {
                 dispatch(listEventLogFailure(error.message));

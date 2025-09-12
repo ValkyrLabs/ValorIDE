@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpToolCallResponse } from '../../model/McpToolCallResponse';
+import { McpToolCallResponse } from '@thor/model/McpToolCallResponse';
 
 const McpToolCallResponseSlice = createSlice({
   name: "McpToolCallResponses",

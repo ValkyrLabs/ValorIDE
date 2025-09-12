@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ExecModule } from '../../model/ExecModule';
+import { ExecModule } from '@thor/model/ExecModule';
 
 const ExecModuleSlice = createSlice({
   name: "ExecModules",

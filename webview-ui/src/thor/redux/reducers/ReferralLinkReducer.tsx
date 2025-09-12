@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ReferralLink } from '../../model/ReferralLink';
+import { ReferralLink } from '@thor/model/ReferralLink';
 
 const ReferralLinkSlice = createSlice({
   name: "ReferralLinks",

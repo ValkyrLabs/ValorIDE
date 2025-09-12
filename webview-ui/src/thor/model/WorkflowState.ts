@@ -12,14 +12,6 @@
  */
 
 import { exists, mapValues } from '../src/runtime';
-import {
-
-
-    DataObject,
-    DataObjectFromJSON,
-    DataObjectToJSON,
-} from './';
-
 
 // thorapi
 
@@ -43,10 +35,10 @@ export type WorkflowState  = {
     name?: string;
     /**
      * value of the property
-     * @type {Array<DataObject>}
+     * @type {string}
      * @memberof WorkflowState
      */
-    value?: Array<DataObject>;
+    stateValue?: string;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -101,7 +93,7 @@ export function WorkflowStateFromJSON(json: any): WorkflowState {
     return {
         'workflowId': !exists(json, 'workflowId') ? undefined : json['workflowId'],
         'name': !exists(json, 'name') ? undefined : json['name'],
-        'value': !exists(json, 'value') ? undefined : (json['value'] as Array<any>).map(DataObjectFromJSON),
+        'stateValue': !exists(json, 'state_value') ? undefined : json['state_value'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -120,7 +112,7 @@ export function WorkflowStateToJSON(value?: WorkflowState): any {
     return {
         'workflowId': value.workflowId,
         'name': value.name,
-        'value': value.value === undefined ? undefined : (value.value as Array<any>).map(DataObjectToJSON),
+        'state_value': value.stateValue,
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

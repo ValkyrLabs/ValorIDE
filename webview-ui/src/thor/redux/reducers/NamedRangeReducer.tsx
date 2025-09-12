@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { NamedRange } from '../../model/NamedRange';
+import { NamedRange } from '@thor/model/NamedRange';
 
 const NamedRangeSlice = createSlice({
   name: "NamedRanges",

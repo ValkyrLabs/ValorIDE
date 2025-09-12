@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Authority } from '../../model'
+import { Authority } from '@thor/model/Authority'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type AuthorityResponse = Authority[]
@@ -10,8 +10,13 @@ export const AuthorityService = createApi({
   tagTypes: ['Authority'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getAuthoritysPaged: build.query<AuthorityResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Authority?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getAuthoritysPaged: build.query<AuthorityResponse, { page: number; size?: number; example?: Partial<Authority> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Authority?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const AuthorityService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getAuthoritys: build.query<AuthorityResponse, void>({
-      query: () => `Authority`,
+    getAuthoritys: build.query<AuthorityResponse, { example?: Partial<Authority> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Authority?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Authority`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const AuthorityService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Authority', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Authority', id },
+        { type: 'Authority', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

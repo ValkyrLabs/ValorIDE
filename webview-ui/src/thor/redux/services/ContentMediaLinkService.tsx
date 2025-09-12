@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { ContentMediaLink } from '../../model'
+import { ContentMediaLink } from '@thor/model/ContentMediaLink'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type ContentMediaLinkResponse = ContentMediaLink[]
@@ -10,8 +10,13 @@ export const ContentMediaLinkService = createApi({
   tagTypes: ['ContentMediaLink'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getContentMediaLinksPaged: build.query<ContentMediaLinkResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `ContentMediaLink?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getContentMediaLinksPaged: build.query<ContentMediaLinkResponse, { page: number; size?: number; example?: Partial<ContentMediaLink> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ContentMediaLink?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const ContentMediaLinkService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getContentMediaLinks: build.query<ContentMediaLinkResponse, void>({
-      query: () => `ContentMediaLink`,
+    getContentMediaLinks: build.query<ContentMediaLinkResponse, { example?: Partial<ContentMediaLink> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `ContentMediaLink?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `ContentMediaLink`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const ContentMediaLinkService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ContentMediaLink', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'ContentMediaLink', id },
+        { type: 'ContentMediaLink', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

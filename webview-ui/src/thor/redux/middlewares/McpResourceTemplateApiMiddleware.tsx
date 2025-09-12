@@ -5,7 +5,7 @@ import {
     getMcpResourceTemplateList , 
     deleteMcpResourceTemplate , 
     updateMcpResourceTemplate 
-} from '../../api';
+} from '../../api/McpResourceTemplateApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const McpResourceTemplateMiddleware = ({ dispatch }) => (next) => async (
 
         case LIST_MCPRESOURCETEMPLATE_REQUEST:
             try {
-                const response = getMcpResourceTemplateList();
+                const response = getMcpResourceTemplateList({});
                 dispatch(listMcpResourceTemplateSuccess(response.body));
             } catch (error) {
                 dispatch(listMcpResourceTemplateFailure(error.message));

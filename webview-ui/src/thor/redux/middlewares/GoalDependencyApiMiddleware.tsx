@@ -5,7 +5,7 @@ import {
     getGoalDependencyList , 
     deleteGoalDependency , 
     updateGoalDependency 
-} from '../../api';
+} from '../../api/GoalDependencyApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const GoalDependencyMiddleware = ({ dispatch }) => (next) => async (actio
 
         case LIST_GOALDEPENDENCY_REQUEST:
             try {
-                const response = getGoalDependencyList();
+                const response = getGoalDependencyList({});
                 dispatch(listGoalDependencySuccess(response.body));
             } catch (error) {
                 dispatch(listGoalDependencyFailure(error.message));

@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { SalesPipeline } from '../../model'
+import { SalesPipeline } from '@thor/model/SalesPipeline'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type SalesPipelineResponse = SalesPipeline[]
@@ -10,8 +10,13 @@ export const SalesPipelineService = createApi({
   tagTypes: ['SalesPipeline'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getSalesPipelinesPaged: build.query<SalesPipelineResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `SalesPipeline?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getSalesPipelinesPaged: build.query<SalesPipelineResponse, { page: number; size?: number; example?: Partial<SalesPipeline> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SalesPipeline?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const SalesPipelineService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSalesPipelines: build.query<SalesPipelineResponse, void>({
-      query: () => `SalesPipeline`,
+    getSalesPipelines: build.query<SalesPipelineResponse, { example?: Partial<SalesPipeline> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `SalesPipeline?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `SalesPipeline`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const SalesPipelineService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'SalesPipeline', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'SalesPipeline', id },
+        { type: 'SalesPipeline', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

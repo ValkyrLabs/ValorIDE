@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { EventLog } from '../../model/EventLog';
+import { EventLog } from '@thor/model/EventLog';
 
 const EventLogSlice = createSlice({
   name: "EventLogs",

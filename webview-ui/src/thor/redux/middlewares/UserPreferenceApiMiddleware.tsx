@@ -5,7 +5,7 @@ import {
     getUserPreferenceList , 
     deleteUserPreference , 
     updateUserPreference 
-} from '../../api';
+} from '../../api/UserPreferenceApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const UserPreferenceMiddleware = ({ dispatch }) => (next) => async (actio
 
         case LIST_USERPREFERENCE_REQUEST:
             try {
-                const response = getUserPreferenceList();
+                const response = getUserPreferenceList({});
                 dispatch(listUserPreferenceSuccess(response.body));
             } catch (error) {
                 dispatch(listUserPreferenceFailure(error.message));

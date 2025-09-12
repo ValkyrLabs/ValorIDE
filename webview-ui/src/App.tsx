@@ -9,7 +9,7 @@ import WelcomeView from "./components/welcome/WelcomeView";
 import AccountView from "./components/account/AccountView";
 import FileExplorer from "./components/FileExplorer/FileExplorer";
 import ApplicationProgress from "./components/ApplicationProgress/ApplicationProgress";
-import ServerConsole from "./components/ServerConsole";
+import ServerConsole from "./components/ServerConsole/index";
 import SplitPane, {
   SplitPaneLeft,
   SplitPaneRight,
@@ -19,6 +19,9 @@ import {
   ExtensionStateContextProvider,
   useExtensionState,
 } from "./context/ExtensionStateContext";
+import { MothershipProvider } from "./context/MothershipContext";
+import { ChatMothershipProvider } from "./components/chat/ChatMothershipProvider";
+import { UsageTrackingHandler } from "./components/usage-tracking/UsageTrackingHandler";
 
 import { vscode } from "./utils/vscode";
 import McpView from "./components/mcp/configuration/McpConfigurationView";
@@ -250,7 +253,7 @@ const AppContent = () => {
                 showAnnouncement={showAnnouncement}
                 hideAnnouncement={() => {
                   setShowAnnouncement(false);
-              }}
+                }}
               />
             </ChatErrorBoundary>
           )}
@@ -263,7 +266,13 @@ const AppContent = () => {
 const App = () => {
   return (
     <ExtensionStateContextProvider>
-      <AppContent />
+      <MothershipProvider>
+        <ChatMothershipProvider>
+          {/* Process usage tracking messages invisibly */}
+          <UsageTrackingHandler />
+          <AppContent />
+        </ChatMothershipProvider>
+      </MothershipProvider>
     </ExtensionStateContextProvider>
   );
 };

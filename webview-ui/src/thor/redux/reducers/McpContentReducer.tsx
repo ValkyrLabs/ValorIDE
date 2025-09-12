@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpContent } from '../../model/McpContent';
+import { McpContent } from '@thor/model/McpContent';
 
 const McpContentSlice = createSlice({
   name: "McpContents",

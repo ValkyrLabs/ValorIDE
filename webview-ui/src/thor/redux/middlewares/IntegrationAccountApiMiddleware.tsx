@@ -5,7 +5,7 @@ import {
     getIntegrationAccountList , 
     deleteIntegrationAccount , 
     updateIntegrationAccount 
-} from '../../api';
+} from '../../api/IntegrationAccountApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const IntegrationAccountMiddleware = ({ dispatch }) => (next) => async (a
 
         case LIST_INTEGRATIONACCOUNT_REQUEST:
             try {
-                const response = getIntegrationAccountList();
+                const response = getIntegrationAccountList({});
                 dispatch(listIntegrationAccountSuccess(response.body));
             } catch (error) {
                 dispatch(listIntegrationAccountFailure(error.message));

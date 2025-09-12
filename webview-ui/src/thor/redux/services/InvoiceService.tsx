@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Invoice } from '../../model'
+import { Invoice } from '@thor/model/Invoice'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type InvoiceResponse = Invoice[]
@@ -10,8 +10,13 @@ export const InvoiceService = createApi({
   tagTypes: ['Invoice'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getInvoicesPaged: build.query<InvoiceResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Invoice?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getInvoicesPaged: build.query<InvoiceResponse, { page: number; size?: number; example?: Partial<Invoice> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Invoice?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const InvoiceService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getInvoices: build.query<InvoiceResponse, void>({
-      query: () => `Invoice`,
+    getInvoices: build.query<InvoiceResponse, { example?: Partial<Invoice> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Invoice?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Invoice`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const InvoiceService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Invoice', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Invoice', id },
+        { type: 'Invoice', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

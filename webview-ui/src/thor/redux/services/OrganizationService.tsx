@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Organization } from '../../model'
+import { Organization } from '@thor/model/Organization'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type OrganizationResponse = Organization[]
@@ -10,8 +10,13 @@ export const OrganizationService = createApi({
   tagTypes: ['Organization'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getOrganizationsPaged: build.query<OrganizationResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Organization?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getOrganizationsPaged: build.query<OrganizationResponse, { page: number; size?: number; example?: Partial<Organization> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Organization?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const OrganizationService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOrganizations: build.query<OrganizationResponse, void>({
-      query: () => `Organization`,
+    getOrganizations: build.query<OrganizationResponse, { example?: Partial<Organization> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Organization?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Organization`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const OrganizationService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Organization', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Organization', id },
+        { type: 'Organization', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

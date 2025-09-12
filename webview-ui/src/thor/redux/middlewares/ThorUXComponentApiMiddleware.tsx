@@ -5,7 +5,7 @@ import {
     getThorUXComponentList , 
     deleteThorUXComponent , 
     updateThorUXComponent 
-} from '../../api';
+} from '../../api/ThorUXComponentApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const ThorUXComponentMiddleware = ({ dispatch }) => (next) => async (acti
 
         case LIST_THORUXCOMPONENT_REQUEST:
             try {
-                const response = getThorUXComponentList();
+                const response = getThorUXComponentList({});
                 dispatch(listThorUXComponentSuccess(response.body));
             } catch (error) {
                 dispatch(listThorUXComponentFailure(error.message));

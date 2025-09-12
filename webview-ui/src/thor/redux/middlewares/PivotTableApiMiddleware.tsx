@@ -5,7 +5,7 @@ import {
     getPivotTableList , 
     deletePivotTable , 
     updatePivotTable 
-} from '../../api';
+} from '../../api/PivotTableApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const PivotTableMiddleware = ({ dispatch }) => (next) => async (action) =
 
         case LIST_PIVOTTABLE_REQUEST:
             try {
-                const response = getPivotTableList();
+                const response = getPivotTableList({});
                 dispatch(listPivotTableSuccess(response.body));
             } catch (error) {
                 dispatch(listPivotTableFailure(error.message));

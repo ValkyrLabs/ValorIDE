@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { KeyMetric } from '../../model/KeyMetric';
+import { KeyMetric } from '@thor/model/KeyMetric';
 
 const KeyMetricSlice = createSlice({
   name: "KeyMetrics",

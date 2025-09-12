@@ -26,12 +26,6 @@ export type McpDownloadResponse  = {
      * @type {string}
      * @memberof McpDownloadResponse
      */
-    mcpId: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
     githubUrl: string;
     /**
      * 
@@ -53,22 +47,28 @@ export type McpDownloadResponse  = {
     description: string;
     /**
      * 
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    readmeContent: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpDownloadResponse
-     */
-    llmsInstallationContent: string;
-    /**
-     * 
      * @type {boolean}
      * @memberof McpDownloadResponse
      */
     requiresApiKey: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpDownloadResponse
+     */
+    mcpId?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpDownloadResponse
+     */
+    readmeContent?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof McpDownloadResponse
+     */
+    llmsInstallationContent?: string;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -121,14 +121,14 @@ export type McpDownloadResponse  = {
 
 export function McpDownloadResponseFromJSON(json: any): McpDownloadResponse {
     return {
-        'mcpId': json['mcpId'],
         'githubUrl': json['githubUrl'],
         'name': json['name'],
         'author': json['author'],
         'description': json['description'],
-        'readmeContent': json['readmeContent'],
-        'llmsInstallationContent': json['llmsInstallationContent'],
         'requiresApiKey': json['requiresApiKey'],
+        'mcpId': !exists(json, 'mcpId') ? undefined : json['mcpId'],
+        'readmeContent': !exists(json, 'readmeContent') ? undefined : json['readmeContent'],
+        'llmsInstallationContent': !exists(json, 'llmsInstallationContent') ? undefined : json['llmsInstallationContent'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -145,14 +145,14 @@ export function McpDownloadResponseToJSON(value?: McpDownloadResponse): any {
         return undefined;
     }
     return {
-        'mcpId': value.mcpId,
         'githubUrl': value.githubUrl,
         'name': value.name,
         'author': value.author,
         'description': value.description,
+        'requiresApiKey': value.requiresApiKey,
+        'mcpId': value.mcpId,
         'readmeContent': value.readmeContent,
         'llmsInstallationContent': value.llmsInstallationContent,
-        'requiresApiKey': value.requiresApiKey,
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

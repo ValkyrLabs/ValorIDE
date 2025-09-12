@@ -5,7 +5,7 @@ import {
     getApplicationList , 
     deleteApplication , 
     updateApplication 
-} from '../../api';
+} from '../../api/ApplicationApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const ApplicationMiddleware = ({ dispatch }) => (next) => async (action) 
 
         case LIST_APPLICATION_REQUEST:
             try {
-                const response = getApplicationList();
+                const response = getApplicationList({});
                 dispatch(listApplicationSuccess(response.body));
             } catch (error) {
                 dispatch(listApplicationFailure(error.message));

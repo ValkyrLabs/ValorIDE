@@ -5,7 +5,7 @@ import {
     getMcpMarketplaceCatalogList , 
     deleteMcpMarketplaceCatalog , 
     updateMcpMarketplaceCatalog 
-} from '../../api';
+} from '../../api/McpMarketplaceCatalogApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const McpMarketplaceCatalogMiddleware = ({ dispatch }) => (next) => async
 
         case LIST_MCPMARKETPLACECATALOG_REQUEST:
             try {
-                const response = getMcpMarketplaceCatalogList();
+                const response = getMcpMarketplaceCatalogList({});
                 dispatch(listMcpMarketplaceCatalogSuccess(response.body));
             } catch (error) {
                 dispatch(listMcpMarketplaceCatalogFailure(error.message));

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { PersistentLogin } from '../../model/PersistentLogin';
+import { PersistentLogin } from '@thor/model/PersistentLogin';
 
 const PersistentLoginSlice = createSlice({
   name: "PersistentLogins",

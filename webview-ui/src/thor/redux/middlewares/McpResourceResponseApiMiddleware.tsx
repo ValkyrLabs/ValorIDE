@@ -5,7 +5,7 @@ import {
     getMcpResourceResponseList , 
     deleteMcpResourceResponse , 
     updateMcpResourceResponse 
-} from '../../api';
+} from '../../api/McpResourceResponseApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const McpResourceResponseMiddleware = ({ dispatch }) => (next) => async (
 
         case LIST_MCPRESOURCERESPONSE_REQUEST:
             try {
-                const response = getMcpResourceResponseList();
+                const response = getMcpResourceResponseList({});
                 dispatch(listMcpResourceResponseSuccess(response.body));
             } catch (error) {
                 dispatch(listMcpResourceResponseFailure(error.message));

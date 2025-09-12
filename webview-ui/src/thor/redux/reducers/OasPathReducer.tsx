@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasPath } from '../../model/OasPath';
+import { OasPath } from '@thor/model/OasPath';
 
 const OasPathSlice = createSlice({
   name: "OasPaths",

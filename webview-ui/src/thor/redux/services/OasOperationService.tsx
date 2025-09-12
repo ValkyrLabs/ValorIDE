@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { OasOperation } from '../../model'
+import { OasOperation } from '@thor/model/OasOperation'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type OasOperationResponse = OasOperation[]
@@ -10,8 +10,13 @@ export const OasOperationService = createApi({
   tagTypes: ['OasOperation'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getOasOperationsPaged: build.query<OasOperationResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `OasOperation?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getOasOperationsPaged: build.query<OasOperationResponse, { page: number; size?: number; example?: Partial<OasOperation> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasOperation?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const OasOperationService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasOperations: build.query<OasOperationResponse, void>({
-      query: () => `OasOperation`,
+    getOasOperations: build.query<OasOperationResponse, { example?: Partial<OasOperation> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `OasOperation?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `OasOperation`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const OasOperationService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'OasOperation', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'OasOperation', id },
+        { type: 'OasOperation', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

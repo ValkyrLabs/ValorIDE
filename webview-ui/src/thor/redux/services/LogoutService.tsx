@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Logout } from '../../model'
+import { Logout } from '@thor/model/Logout'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type LogoutResponse = Logout[]
@@ -10,8 +10,13 @@ export const LogoutService = createApi({
   tagTypes: ['Logout'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getLogoutsPaged: build.query<LogoutResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Logout?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getLogoutsPaged: build.query<LogoutResponse, { page: number; size?: number; example?: Partial<Logout> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Logout?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const LogoutService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getLogouts: build.query<LogoutResponse, void>({
-      query: () => `Logout`,
+    getLogouts: build.query<LogoutResponse, { example?: Partial<Logout> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Logout?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Logout`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const LogoutService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Logout', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Logout', id },
+        { type: 'Logout', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

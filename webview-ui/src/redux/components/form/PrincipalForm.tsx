@@ -135,8 +135,6 @@ const PrincipalForm: React.FC = () => {
 
     avatarUrl: "https://img.com/mypic.png",
 
-    organizationId: "null",
-
     acceptedCookies: false,
 
     acceptedTos: false,
@@ -1108,7 +1106,7 @@ const PrincipalForm: React.FC = () => {
                 )
               }
               type="submit"
-              onClick={() => {}}
+              onClick={() => { }}
             >
               {isSubmitting && (
                 <Spinner

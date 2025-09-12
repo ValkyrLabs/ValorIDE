@@ -5,7 +5,7 @@ import {
     getBuildList , 
     deleteBuild , 
     updateBuild 
-} from '../../api';
+} from '../../api/BuildApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const BuildMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_BUILD_REQUEST:
             try {
-                const response = getBuildList();
+                const response = getBuildList({});
                 dispatch(listBuildSuccess(response.body));
             } catch (error) {
                 dispatch(listBuildFailure(error.message));

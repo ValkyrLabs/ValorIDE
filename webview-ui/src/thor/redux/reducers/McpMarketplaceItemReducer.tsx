@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpMarketplaceItem } from '../../model/McpMarketplaceItem';
+import { McpMarketplaceItem } from '@thor/model/McpMarketplaceItem';
 
 const McpMarketplaceItemSlice = createSlice({
   name: "McpMarketplaceItems",

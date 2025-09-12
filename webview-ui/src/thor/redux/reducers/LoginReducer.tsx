@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Login } from '../../model/Login';
+import { Login } from '@thor/model/Login';
 
 const LoginSlice = createSlice({
   name: "Logins",

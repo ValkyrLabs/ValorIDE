@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SalesActivity } from '../../model/SalesActivity';
+import { SalesActivity } from '@thor/model/SalesActivity';
 
 const SalesActivitySlice = createSlice({
   name: "SalesActivitys",

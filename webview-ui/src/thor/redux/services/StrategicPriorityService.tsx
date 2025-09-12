@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { StrategicPriority } from '../../model'
+import { StrategicPriority } from '@thor/model/StrategicPriority'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type StrategicPriorityResponse = StrategicPriority[]
@@ -10,8 +10,13 @@ export const StrategicPriorityService = createApi({
   tagTypes: ['StrategicPriority'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getStrategicPrioritysPaged: build.query<StrategicPriorityResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `StrategicPriority?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getStrategicPrioritysPaged: build.query<StrategicPriorityResponse, { page: number; size?: number; example?: Partial<StrategicPriority> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `StrategicPriority?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const StrategicPriorityService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getStrategicPrioritys: build.query<StrategicPriorityResponse, void>({
-      query: () => `StrategicPriority`,
+    getStrategicPrioritys: build.query<StrategicPriorityResponse, { example?: Partial<StrategicPriority> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `StrategicPriority?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `StrategicPriority`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const StrategicPriorityService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'StrategicPriority', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'StrategicPriority', id },
+        { type: 'StrategicPriority', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

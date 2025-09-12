@@ -5,7 +5,7 @@ import {
     getOasOperationList , 
     deleteOasOperation , 
     updateOasOperation 
-} from '../../api';
+} from '../../api/OasOperationApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const OasOperationMiddleware = ({ dispatch }) => (next) => async (action)
 
         case LIST_OASOPERATION_REQUEST:
             try {
-                const response = getOasOperationList();
+                const response = getOasOperationList({});
                 dispatch(listOasOperationSuccess(response.body));
             } catch (error) {
                 dispatch(listOasOperationFailure(error.message));

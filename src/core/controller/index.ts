@@ -946,6 +946,80 @@ export class Controller {
         await this.postMessageToWebview({ type: "didUpdateSettings" });
         break;
       }
+      case "requestSetBudgetLimit": {
+        // Prompt user for USD budget limit and persist without toggling mode
+        const { chatSettings: currentChatSettings } = await getAllExtensionState(
+          this.context,
+        );
+        const valueStr = await vscode.window.showInputBox({
+          title: "Set budget limit",
+          prompt: "Set budget limit (USD) for this task",
+          value:
+            currentChatSettings?.budgetLimit != null
+              ? String(currentChatSettings.budgetLimit)
+              : "",
+          validateInput: (v) => {
+            if (v.trim() === "") return null;
+            const n = Number(v);
+            return isFinite(n) && n >= 0 ? null : "Enter a non-negative number";
+          },
+        });
+        if (valueStr === undefined) break; // cancelled
+        const nextBudget = valueStr.trim() === "" ? undefined : Number(valueStr);
+        const nextSettings = {
+          ...(currentChatSettings ?? { mode: "act" as const }),
+          budgetLimit: nextBudget,
+        };
+        await updateGlobalState(this.context, "chatSettings", nextSettings);
+        if (this.task) this.task.chatSettings = nextSettings;
+        await this.postStateToWebview();
+        if (nextBudget != null) {
+          vscode.window.showInformationMessage(
+            `Budget limit set to $${nextBudget.toFixed(2)}`,
+          );
+        } else {
+          vscode.window.showInformationMessage("Budget limit cleared");
+        }
+        break;
+      }
+      case "requestSetApiThrottle": {
+        // Prompt user for delay between API calls (ms) and persist
+        const { chatSettings: currentChatSettings } = await getAllExtensionState(
+          this.context,
+        );
+        const valueStr = await vscode.window.showInputBox({
+          title: "Set API throttle",
+          prompt: "Set delay between API calls (ms)",
+          value:
+            currentChatSettings?.apiThrottleMs != null
+              ? String(currentChatSettings.apiThrottleMs)
+              : "",
+          validateInput: (v) => {
+            if (v.trim() === "") return null;
+            const n = Number(v);
+            return Number.isInteger(n) && n >= 0
+              ? null
+              : "Enter a non-negative integer";
+          },
+        });
+        if (valueStr === undefined) break; // cancelled
+        const nextDelay = valueStr.trim() === "" ? undefined : Number(valueStr);
+        const nextSettings = {
+          ...(currentChatSettings ?? { mode: "act" as const }),
+          apiThrottleMs: nextDelay,
+        };
+        await updateGlobalState(this.context, "chatSettings", nextSettings);
+        if (this.task) this.task.chatSettings = nextSettings;
+        await this.postStateToWebview();
+        if (nextDelay != null) {
+          vscode.window.showInformationMessage(
+            `API throttle set to ${nextDelay} ms`,
+          );
+        } else {
+          vscode.window.showInformationMessage("API throttle cleared");
+        }
+        break;
+      }
       case "clearAllTaskHistory": {
         await this.deleteAllTaskHistory();
         await this.postStateToWebview();

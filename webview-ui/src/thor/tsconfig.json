@@ -1,11 +1,19 @@
 {
-  "exclude": ["node_modules"],
+  "exclude": [
+    "node_modules"
+  ],
   "compilerOptions": {
     "target": "ES2022",
     "useDefineForClassFields": true,
-    "typeRoots": ["node_modules/@types", "./types"],
-
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "typeRoots": [
+      "node_modules/@types",
+      "./types"
+    ],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2022"
+    ],
     "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -17,12 +25,23 @@
     "resolveJsonModule": true,
     "isolatedModules": false,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@thor/*": [
+        "./src/thor/*"
+      ],
+      "@valkyr/component-library/*": [
+        "./src/components/*"
+      ],
+      "@thor/redux/services/*": [
+        "./src/thor/redux/services/*"
+      ]
+    }
   },
   "include": [
     "src",
-    "types/vite-env.d.ts",
-    "types/index.d.ts",
+    "src/@types/vite-env.d.ts",
+    "src/@types/index.d.ts",
     "vite.config.ts"
   ]
 }

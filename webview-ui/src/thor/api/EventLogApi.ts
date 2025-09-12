@@ -16,323 +16,294 @@ Template file: typescript-redux-query/apis.mustache
 Description: EventLogApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import { EventLog, EventLogFromJSON, EventLogToJSON } from "../model";
+    EventLog,
+    EventLogFromJSON,
+    EventLogToJSON,
+} from '../model';
 
 export interface DeleteEventLogRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetEventLogRequest {
-  id: string;
+    id: string;
+}
+
+export interface GetEventLogListRequest {
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
 }
 
 export interface PostEventLogRequest {
-  eventLog: EventLog;
+    eventLog: EventLog;
 }
 
 export interface UpdateEventLogRequest {
-  id: string;
-  eventLog: EventLog;
+    id: string;
+    eventLog: EventLog;
 }
+
 
 /**
  * Deletes a specific EventLog.
  * Delete a EventLog.
  */
-function deleteEventLogRaw<T>(
-  requestParameters: DeleteEventLogRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteEventLog.",
-    );
-  }
+function deleteEventLogRaw<T>(requestParameters: DeleteEventLogRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteEventLog.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/EventLog/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/EventLog/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific EventLog.
- * Delete a EventLog.
- */
-export function deleteEventLog<T>(
-  requestParameters: DeleteEventLogRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteEventLogRaw(requestParameters, requestConfig);
+* Deletes a specific EventLog.
+* Delete a EventLog.
+*/
+export function deleteEventLog<T>(requestParameters: DeleteEventLogRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteEventLogRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single EventLog for a specific uid.
  * Retrieve a single EventLog
  */
-function getEventLogRaw<T>(
-  requestParameters: GetEventLogRequest,
-  requestConfig: runtime.TypedQueryConfig<T, EventLog> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getEventLog.",
-    );
-  }
+function getEventLogRaw<T>(requestParameters: GetEventLogRequest, requestConfig: runtime.TypedQueryConfig<T, EventLog> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getEventLog.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/EventLog/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(EventLogFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/EventLog/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(EventLogFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single EventLog for a specific uid.
- * Retrieve a single EventLog
- */
-export function getEventLog<T>(
-  requestParameters: GetEventLogRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, EventLog>,
-): QueryConfig<T> {
-  return getEventLogRaw(requestParameters, requestConfig);
+* Retrieves a single EventLog for a specific uid.
+* Retrieve a single EventLog
+*/
+export function getEventLog<T>(requestParameters: GetEventLogRequest, requestConfig?: runtime.TypedQueryConfig<T, EventLog>): QueryConfig<T> {
+    return getEventLogRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of EventLogs.
  * Retrieve a list of EventLogs
  */
-function getEventLogListRaw<T>(
-  requestConfig: runtime.TypedQueryConfig<T, Array<EventLog>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getEventLogListRaw<T>(requestParameters: GetEventLogListRequest, requestConfig: runtime.TypedQueryConfig<T, Array<EventLog>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
+    queryParameters = {};
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/EventLog`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(EventLogFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
+
+
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/EventLog`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(EventLogFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of EventLogs.
- * Retrieve a list of EventLogs
- */
-export function getEventLogList<T>(
-  requestConfig?: runtime.TypedQueryConfig<T, Array<EventLog>>,
-): QueryConfig<T> {
-  return getEventLogListRaw(requestConfig);
-}
-
-/**
- * Creates a new EventLog.
- * Create a new EventLog
- */
-function postEventLogRaw<T>(
-  requestParameters: PostEventLogRequest,
-  requestConfig: runtime.TypedQueryConfig<T, EventLog> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.eventLog === null ||
-    requestParameters.eventLog === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "eventLog",
-      "Required parameter requestParameters.eventLog was null or undefined when calling postEventLog.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/EventLog`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || EventLogToJSON(requestParameters.eventLog),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(EventLogFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of EventLogs.
+* Retrieve a list of EventLogs
+*/
+export function getEventLogList<T>(requestParameters: GetEventLogListRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<EventLog>>): QueryConfig<T> {
+    return getEventLogListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new EventLog.
  * Create a new EventLog
  */
-export function postEventLog<T>(
-  requestParameters: PostEventLogRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, EventLog>,
-): QueryConfig<T> {
-  return postEventLogRaw(requestParameters, requestConfig);
+function postEventLogRaw<T>(requestParameters: PostEventLogRequest, requestConfig: runtime.TypedQueryConfig<T, EventLog> = {}): QueryConfig<T> {
+    if (requestParameters.eventLog === null || requestParameters.eventLog === undefined) {
+        throw new runtime.RequiredError('eventLog','Required parameter requestParameters.eventLog was null or undefined when calling postEventLog.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/EventLog`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || EventLogToJSON(requestParameters.eventLog),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(EventLogFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Creates a new EventLog.
+* Create a new EventLog
+*/
+export function postEventLog<T>(requestParameters: PostEventLogRequest, requestConfig?: runtime.TypedQueryConfig<T, EventLog>): QueryConfig<T> {
+    return postEventLogRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing EventLog.
  * Update an existing EventLog
  */
-function updateEventLogRaw<T>(
-  requestParameters: UpdateEventLogRequest,
-  requestConfig: runtime.TypedQueryConfig<T, EventLog> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateEventLog.",
-    );
-  }
+function updateEventLogRaw<T>(requestParameters: UpdateEventLogRequest, requestConfig: runtime.TypedQueryConfig<T, EventLog> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateEventLog.');
+    }
 
-  if (
-    requestParameters.eventLog === null ||
-    requestParameters.eventLog === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "eventLog",
-      "Required parameter requestParameters.eventLog was null or undefined when calling updateEventLog.",
-    );
-  }
+    if (requestParameters.eventLog === null || requestParameters.eventLog === undefined) {
+        throw new runtime.RequiredError('eventLog','Required parameter requestParameters.eventLog was null or undefined when calling updateEventLog.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/EventLog/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || EventLogToJSON(requestParameters.eventLog),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(EventLogFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/EventLog/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || EventLogToJSON(requestParameters.eventLog),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(EventLogFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing EventLog.
- * Update an existing EventLog
- */
-export function updateEventLog<T>(
-  requestParameters: UpdateEventLogRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, EventLog>,
-): QueryConfig<T> {
-  return updateEventLogRaw(requestParameters, requestConfig);
+* Updates an existing EventLog.
+* Update an existing EventLog
+*/
+export function updateEventLog<T>(requestParameters: UpdateEventLogRequest, requestConfig?: runtime.TypedQueryConfig<T, EventLog>): QueryConfig<T> {
+    return updateEventLogRaw(requestParameters, requestConfig);
 }
+

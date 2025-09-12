@@ -16,323 +16,294 @@ Template file: typescript-redux-query/apis.mustache
 Description: SheetColumnApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import { SheetColumn, SheetColumnFromJSON, SheetColumnToJSON } from "../model";
+    SheetColumn,
+    SheetColumnFromJSON,
+    SheetColumnToJSON,
+} from '../model';
 
 export interface DeleteSheetColumnRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetSheetColumnRequest {
-  id: string;
+    id: string;
+}
+
+export interface GetSheetColumnListRequest {
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
 }
 
 export interface PostSheetColumnRequest {
-  sheetColumn: SheetColumn;
+    sheetColumn: SheetColumn;
 }
 
 export interface UpdateSheetColumnRequest {
-  id: string;
-  sheetColumn: SheetColumn;
+    id: string;
+    sheetColumn: SheetColumn;
 }
+
 
 /**
  * Deletes a specific SheetColumn.
  * Delete a SheetColumn.
  */
-function deleteSheetColumnRaw<T>(
-  requestParameters: DeleteSheetColumnRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteSheetColumn.",
-    );
-  }
+function deleteSheetColumnRaw<T>(requestParameters: DeleteSheetColumnRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteSheetColumn.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/SheetColumn/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/SheetColumn/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific SheetColumn.
- * Delete a SheetColumn.
- */
-export function deleteSheetColumn<T>(
-  requestParameters: DeleteSheetColumnRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteSheetColumnRaw(requestParameters, requestConfig);
+* Deletes a specific SheetColumn.
+* Delete a SheetColumn.
+*/
+export function deleteSheetColumn<T>(requestParameters: DeleteSheetColumnRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteSheetColumnRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single SheetColumn for a specific uid.
  * Retrieve a single SheetColumn
  */
-function getSheetColumnRaw<T>(
-  requestParameters: GetSheetColumnRequest,
-  requestConfig: runtime.TypedQueryConfig<T, SheetColumn> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getSheetColumn.",
-    );
-  }
+function getSheetColumnRaw<T>(requestParameters: GetSheetColumnRequest, requestConfig: runtime.TypedQueryConfig<T, SheetColumn> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getSheetColumn.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/SheetColumn/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(SheetColumnFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/SheetColumn/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SheetColumnFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single SheetColumn for a specific uid.
- * Retrieve a single SheetColumn
- */
-export function getSheetColumn<T>(
-  requestParameters: GetSheetColumnRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, SheetColumn>,
-): QueryConfig<T> {
-  return getSheetColumnRaw(requestParameters, requestConfig);
+* Retrieves a single SheetColumn for a specific uid.
+* Retrieve a single SheetColumn
+*/
+export function getSheetColumn<T>(requestParameters: GetSheetColumnRequest, requestConfig?: runtime.TypedQueryConfig<T, SheetColumn>): QueryConfig<T> {
+    return getSheetColumnRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of SheetColumns.
  * Retrieve a list of SheetColumns
  */
-function getSheetColumnListRaw<T>(
-  requestConfig: runtime.TypedQueryConfig<T, Array<SheetColumn>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getSheetColumnListRaw<T>(requestParameters: GetSheetColumnListRequest, requestConfig: runtime.TypedQueryConfig<T, Array<SheetColumn>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
+    queryParameters = {};
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/SheetColumn`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(SheetColumnFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
+
+
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/SheetColumn`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(SheetColumnFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of SheetColumns.
- * Retrieve a list of SheetColumns
- */
-export function getSheetColumnList<T>(
-  requestConfig?: runtime.TypedQueryConfig<T, Array<SheetColumn>>,
-): QueryConfig<T> {
-  return getSheetColumnListRaw(requestConfig);
-}
-
-/**
- * Creates a new SheetColumn.
- * Create a new SheetColumn
- */
-function postSheetColumnRaw<T>(
-  requestParameters: PostSheetColumnRequest,
-  requestConfig: runtime.TypedQueryConfig<T, SheetColumn> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.sheetColumn === null ||
-    requestParameters.sheetColumn === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "sheetColumn",
-      "Required parameter requestParameters.sheetColumn was null or undefined when calling postSheetColumn.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/SheetColumn`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || SheetColumnToJSON(requestParameters.sheetColumn),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(SheetColumnFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of SheetColumns.
+* Retrieve a list of SheetColumns
+*/
+export function getSheetColumnList<T>(requestParameters: GetSheetColumnListRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<SheetColumn>>): QueryConfig<T> {
+    return getSheetColumnListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new SheetColumn.
  * Create a new SheetColumn
  */
-export function postSheetColumn<T>(
-  requestParameters: PostSheetColumnRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, SheetColumn>,
-): QueryConfig<T> {
-  return postSheetColumnRaw(requestParameters, requestConfig);
+function postSheetColumnRaw<T>(requestParameters: PostSheetColumnRequest, requestConfig: runtime.TypedQueryConfig<T, SheetColumn> = {}): QueryConfig<T> {
+    if (requestParameters.sheetColumn === null || requestParameters.sheetColumn === undefined) {
+        throw new runtime.RequiredError('sheetColumn','Required parameter requestParameters.sheetColumn was null or undefined when calling postSheetColumn.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/SheetColumn`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || SheetColumnToJSON(requestParameters.sheetColumn),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SheetColumnFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Creates a new SheetColumn.
+* Create a new SheetColumn
+*/
+export function postSheetColumn<T>(requestParameters: PostSheetColumnRequest, requestConfig?: runtime.TypedQueryConfig<T, SheetColumn>): QueryConfig<T> {
+    return postSheetColumnRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing SheetColumn.
  * Update an existing SheetColumn
  */
-function updateSheetColumnRaw<T>(
-  requestParameters: UpdateSheetColumnRequest,
-  requestConfig: runtime.TypedQueryConfig<T, SheetColumn> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateSheetColumn.",
-    );
-  }
+function updateSheetColumnRaw<T>(requestParameters: UpdateSheetColumnRequest, requestConfig: runtime.TypedQueryConfig<T, SheetColumn> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateSheetColumn.');
+    }
 
-  if (
-    requestParameters.sheetColumn === null ||
-    requestParameters.sheetColumn === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "sheetColumn",
-      "Required parameter requestParameters.sheetColumn was null or undefined when calling updateSheetColumn.",
-    );
-  }
+    if (requestParameters.sheetColumn === null || requestParameters.sheetColumn === undefined) {
+        throw new runtime.RequiredError('sheetColumn','Required parameter requestParameters.sheetColumn was null or undefined when calling updateSheetColumn.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/SheetColumn/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || SheetColumnToJSON(requestParameters.sheetColumn),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(SheetColumnFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/SheetColumn/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || SheetColumnToJSON(requestParameters.sheetColumn),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SheetColumnFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing SheetColumn.
- * Update an existing SheetColumn
- */
-export function updateSheetColumn<T>(
-  requestParameters: UpdateSheetColumnRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, SheetColumn>,
-): QueryConfig<T> {
-  return updateSheetColumnRaw(requestParameters, requestConfig);
+* Updates an existing SheetColumn.
+* Update an existing SheetColumn
+*/
+export function updateSheetColumn<T>(requestParameters: UpdateSheetColumnRequest, requestConfig?: runtime.TypedQueryConfig<T, SheetColumn>): QueryConfig<T> {
+    return updateSheetColumnRaw(requestParameters, requestConfig);
 }
+

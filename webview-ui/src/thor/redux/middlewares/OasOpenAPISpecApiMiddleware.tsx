@@ -5,7 +5,7 @@ import {
     getOasOpenAPISpecList , 
     deleteOasOpenAPISpec , 
     updateOasOpenAPISpec 
-} from '../../api';
+} from '../../api/OasOpenAPISpecApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const OasOpenAPISpecMiddleware = ({ dispatch }) => (next) => async (actio
 
         case LIST_OASOPENAPISPEC_REQUEST:
             try {
-                const response = getOasOpenAPISpecList();
+                const response = getOasOpenAPISpecList({});
                 dispatch(listOasOpenAPISpecSuccess(response.body));
             } catch (error) {
                 dispatch(listOasOpenAPISpecFailure(error.message));

@@ -5,7 +5,7 @@ import {
     getSalesOrderList , 
     deleteSalesOrder , 
     updateSalesOrder 
-} from '../../api';
+} from '../../api/SalesOrderApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const SalesOrderMiddleware = ({ dispatch }) => (next) => async (action) =
 
         case LIST_SALESORDER_REQUEST:
             try {
-                const response = getSalesOrderList();
+                const response = getSalesOrderList({});
                 dispatch(listSalesOrderSuccess(response.body));
             } catch (error) {
                 dispatch(listSalesOrderFailure(error.message));

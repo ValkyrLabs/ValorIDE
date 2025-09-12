@@ -400,7 +400,9 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     const path = uri.path;
-    const query = new URLSearchParams(uri.query.replace(/\+/g, "%2B"));
+    // Guard against missing query to avoid calling replace on undefined
+    const rawQuery = uri.query || "";
+    const query = new URLSearchParams(rawQuery.replace(/\+/g, "%2B"));
     const visibleWebview = WebviewProvider.getVisibleInstance();
     if (!visibleWebview) {
       return;

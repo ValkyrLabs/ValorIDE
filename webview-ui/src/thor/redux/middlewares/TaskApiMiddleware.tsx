@@ -5,7 +5,7 @@ import {
     getTaskList , 
     deleteTask , 
     updateTask 
-} from '../../api';
+} from '../../api/TaskApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const TaskMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_TASK_REQUEST:
             try {
-                const response = getTaskList();
+                const response = getTaskList({});
                 dispatch(listTaskSuccess(response.body));
             } catch (error) {
                 dispatch(listTaskFailure(error.message));

@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { WorkflowState } from '../../model'
+import { WorkflowState } from '@thor/model/WorkflowState'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type WorkflowStateResponse = WorkflowState[]
@@ -10,8 +10,13 @@ export const WorkflowStateService = createApi({
   tagTypes: ['WorkflowState'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getWorkflowStatesPaged: build.query<WorkflowStateResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `WorkflowState?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getWorkflowStatesPaged: build.query<WorkflowStateResponse, { page: number; size?: number; example?: Partial<WorkflowState> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WorkflowState?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const WorkflowStateService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getWorkflowStates: build.query<WorkflowStateResponse, void>({
-      query: () => `WorkflowState`,
+    getWorkflowStates: build.query<WorkflowStateResponse, { example?: Partial<WorkflowState> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `WorkflowState?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `WorkflowState`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const WorkflowStateService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'WorkflowState', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'WorkflowState', id },
+        { type: 'WorkflowState', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

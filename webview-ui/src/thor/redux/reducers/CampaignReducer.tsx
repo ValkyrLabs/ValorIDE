@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Campaign } from '../../model/Campaign';
+import { Campaign } from '@thor/model/Campaign';
 
 const CampaignSlice = createSlice({
   name: "Campaigns",

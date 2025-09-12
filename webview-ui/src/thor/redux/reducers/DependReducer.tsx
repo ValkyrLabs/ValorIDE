@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Depend } from '../../model/Depend';
+import { Depend } from '@thor/model/Depend';
 
 const DependSlice = createSlice({
   name: "Depends",

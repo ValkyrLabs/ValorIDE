@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { SheetRow } from '../../model'
+import { SheetRow } from '@thor/model/SheetRow'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type SheetRowResponse = SheetRow[]
@@ -10,8 +10,13 @@ export const SheetRowService = createApi({
   tagTypes: ['SheetRow'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getSheetRowsPaged: build.query<SheetRowResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `SheetRow?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getSheetRowsPaged: build.query<SheetRowResponse, { page: number; size?: number; example?: Partial<SheetRow> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SheetRow?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const SheetRowService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSheetRows: build.query<SheetRowResponse, void>({
-      query: () => `SheetRow`,
+    getSheetRows: build.query<SheetRowResponse, { example?: Partial<SheetRow> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `SheetRow?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `SheetRow`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const SheetRowService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'SheetRow', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'SheetRow', id },
+        { type: 'SheetRow', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

@@ -5,7 +5,7 @@ import {
     getOasRequiredList , 
     deleteOasRequired , 
     updateOasRequired 
-} from '../../api';
+} from '../../api/OasRequiredApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const OasRequiredMiddleware = ({ dispatch }) => (next) => async (action) 
 
         case LIST_OASREQUIRED_REQUEST:
             try {
-                const response = getOasRequiredList();
+                const response = getOasRequiredList({});
                 dispatch(listOasRequiredSuccess(response.body));
             } catch (error) {
                 dispatch(listOasRequiredFailure(error.message));

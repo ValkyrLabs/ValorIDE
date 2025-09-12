@@ -16,327 +16,294 @@ Template file: typescript-redux-query/apis.mustache
 Description: BackupConfigApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import {
-  BackupConfig,
-  BackupConfigFromJSON,
-  BackupConfigToJSON,
-} from "../model";
+    BackupConfig,
+    BackupConfigFromJSON,
+    BackupConfigToJSON,
+} from '../model';
 
 export interface DeleteBackupConfigRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetBackupConfigRequest {
-  id: string;
+    id: string;
+}
+
+export interface GetBackupConfigListRequest {
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
 }
 
 export interface PostBackupConfigRequest {
-  backupConfig: BackupConfig;
+    backupConfig: BackupConfig;
 }
 
 export interface UpdateBackupConfigRequest {
-  id: string;
-  backupConfig: BackupConfig;
+    id: string;
+    backupConfig: BackupConfig;
 }
+
 
 /**
  * Deletes a specific BackupConfig.
  * Delete a BackupConfig.
  */
-function deleteBackupConfigRaw<T>(
-  requestParameters: DeleteBackupConfigRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteBackupConfig.",
-    );
-  }
+function deleteBackupConfigRaw<T>(requestParameters: DeleteBackupConfigRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteBackupConfig.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/BackupConfig/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BackupConfig/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific BackupConfig.
- * Delete a BackupConfig.
- */
-export function deleteBackupConfig<T>(
-  requestParameters: DeleteBackupConfigRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteBackupConfigRaw(requestParameters, requestConfig);
+* Deletes a specific BackupConfig.
+* Delete a BackupConfig.
+*/
+export function deleteBackupConfig<T>(requestParameters: DeleteBackupConfigRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteBackupConfigRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single BackupConfig for a specific uid.
  * Retrieve a single BackupConfig
  */
-function getBackupConfigRaw<T>(
-  requestParameters: GetBackupConfigRequest,
-  requestConfig: runtime.TypedQueryConfig<T, BackupConfig> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getBackupConfig.",
-    );
-  }
+function getBackupConfigRaw<T>(requestParameters: GetBackupConfigRequest, requestConfig: runtime.TypedQueryConfig<T, BackupConfig> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getBackupConfig.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/BackupConfig/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(BackupConfigFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BackupConfig/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BackupConfigFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single BackupConfig for a specific uid.
- * Retrieve a single BackupConfig
- */
-export function getBackupConfig<T>(
-  requestParameters: GetBackupConfigRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, BackupConfig>,
-): QueryConfig<T> {
-  return getBackupConfigRaw(requestParameters, requestConfig);
+* Retrieves a single BackupConfig for a specific uid.
+* Retrieve a single BackupConfig
+*/
+export function getBackupConfig<T>(requestParameters: GetBackupConfigRequest, requestConfig?: runtime.TypedQueryConfig<T, BackupConfig>): QueryConfig<T> {
+    return getBackupConfigRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of BackupConfigs.
  * Retrieve a list of BackupConfigs
  */
-function getBackupConfigListRaw<T>(
-  requestConfig: runtime.TypedQueryConfig<T, Array<BackupConfig>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getBackupConfigListRaw<T>(requestParameters: GetBackupConfigListRequest, requestConfig: runtime.TypedQueryConfig<T, Array<BackupConfig>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
+    queryParameters = {};
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/BackupConfig`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(BackupConfigFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
+
+
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BackupConfig`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(BackupConfigFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of BackupConfigs.
- * Retrieve a list of BackupConfigs
- */
-export function getBackupConfigList<T>(
-  requestConfig?: runtime.TypedQueryConfig<T, Array<BackupConfig>>,
-): QueryConfig<T> {
-  return getBackupConfigListRaw(requestConfig);
-}
-
-/**
- * Creates a new BackupConfig.
- * Create a new BackupConfig
- */
-function postBackupConfigRaw<T>(
-  requestParameters: PostBackupConfigRequest,
-  requestConfig: runtime.TypedQueryConfig<T, BackupConfig> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.backupConfig === null ||
-    requestParameters.backupConfig === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "backupConfig",
-      "Required parameter requestParameters.backupConfig was null or undefined when calling postBackupConfig.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/BackupConfig`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || BackupConfigToJSON(requestParameters.backupConfig),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(BackupConfigFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of BackupConfigs.
+* Retrieve a list of BackupConfigs
+*/
+export function getBackupConfigList<T>(requestParameters: GetBackupConfigListRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<BackupConfig>>): QueryConfig<T> {
+    return getBackupConfigListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new BackupConfig.
  * Create a new BackupConfig
  */
-export function postBackupConfig<T>(
-  requestParameters: PostBackupConfigRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, BackupConfig>,
-): QueryConfig<T> {
-  return postBackupConfigRaw(requestParameters, requestConfig);
+function postBackupConfigRaw<T>(requestParameters: PostBackupConfigRequest, requestConfig: runtime.TypedQueryConfig<T, BackupConfig> = {}): QueryConfig<T> {
+    if (requestParameters.backupConfig === null || requestParameters.backupConfig === undefined) {
+        throw new runtime.RequiredError('backupConfig','Required parameter requestParameters.backupConfig was null or undefined when calling postBackupConfig.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BackupConfig`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || BackupConfigToJSON(requestParameters.backupConfig),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BackupConfigFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Creates a new BackupConfig.
+* Create a new BackupConfig
+*/
+export function postBackupConfig<T>(requestParameters: PostBackupConfigRequest, requestConfig?: runtime.TypedQueryConfig<T, BackupConfig>): QueryConfig<T> {
+    return postBackupConfigRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing BackupConfig.
  * Update an existing BackupConfig
  */
-function updateBackupConfigRaw<T>(
-  requestParameters: UpdateBackupConfigRequest,
-  requestConfig: runtime.TypedQueryConfig<T, BackupConfig> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateBackupConfig.",
-    );
-  }
+function updateBackupConfigRaw<T>(requestParameters: UpdateBackupConfigRequest, requestConfig: runtime.TypedQueryConfig<T, BackupConfig> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateBackupConfig.');
+    }
 
-  if (
-    requestParameters.backupConfig === null ||
-    requestParameters.backupConfig === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "backupConfig",
-      "Required parameter requestParameters.backupConfig was null or undefined when calling updateBackupConfig.",
-    );
-  }
+    if (requestParameters.backupConfig === null || requestParameters.backupConfig === undefined) {
+        throw new runtime.RequiredError('backupConfig','Required parameter requestParameters.backupConfig was null or undefined when calling updateBackupConfig.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/BackupConfig/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || BackupConfigToJSON(requestParameters.backupConfig),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(BackupConfigFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/BackupConfig/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || BackupConfigToJSON(requestParameters.backupConfig),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BackupConfigFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing BackupConfig.
- * Update an existing BackupConfig
- */
-export function updateBackupConfig<T>(
-  requestParameters: UpdateBackupConfigRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, BackupConfig>,
-): QueryConfig<T> {
-  return updateBackupConfigRaw(requestParameters, requestConfig);
+* Updates an existing BackupConfig.
+* Update an existing BackupConfig
+*/
+export function updateBackupConfig<T>(requestParameters: UpdateBackupConfigRequest, requestConfig?: runtime.TypedQueryConfig<T, BackupConfig>): QueryConfig<T> {
+    return updateBackupConfigRaw(requestParameters, requestConfig);
 }
+

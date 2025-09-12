@@ -5,7 +5,7 @@ import {
     getBlankRangeList , 
     deleteBlankRange , 
     updateBlankRange 
-} from '../../api';
+} from '../../api/BlankRangeApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const BlankRangeMiddleware = ({ dispatch }) => (next) => async (action) =
 
         case LIST_BLANKRANGE_REQUEST:
             try {
-                const response = getBlankRangeList();
+                const response = getBlankRangeList({});
                 dispatch(listBlankRangeSuccess(response.body));
             } catch (error) {
                 dispatch(listBlankRangeFailure(error.message));

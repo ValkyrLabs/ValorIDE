@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { EventLog } from '../../model'
+import { EventLog } from '@thor/model/EventLog'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type EventLogResponse = EventLog[]
@@ -10,8 +10,13 @@ export const EventLogService = createApi({
   tagTypes: ['EventLog'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getEventLogsPaged: build.query<EventLogResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `EventLog?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getEventLogsPaged: build.query<EventLogResponse, { page: number; size?: number; example?: Partial<EventLog> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `EventLog?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const EventLogService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getEventLogs: build.query<EventLogResponse, void>({
-      query: () => `EventLog`,
+    getEventLogs: build.query<EventLogResponse, { example?: Partial<EventLog> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `EventLog?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `EventLog`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const EventLogService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'EventLog', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'EventLog', id },
+        { type: 'EventLog', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

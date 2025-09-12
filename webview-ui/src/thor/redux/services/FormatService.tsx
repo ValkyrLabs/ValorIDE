@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Format } from '../../model'
+import { Format } from '@thor/model/Format'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type FormatResponse = Format[]
@@ -10,8 +10,13 @@ export const FormatService = createApi({
   tagTypes: ['Format'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getFormatsPaged: build.query<FormatResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Format?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getFormatsPaged: build.query<FormatResponse, { page: number; size?: number; example?: Partial<Format> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Format?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const FormatService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getFormats: build.query<FormatResponse, void>({
-      query: () => `Format`,
+    getFormats: build.query<FormatResponse, { example?: Partial<Format> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Format?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Format`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const FormatService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Format', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Format', id },
+        { type: 'Format', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

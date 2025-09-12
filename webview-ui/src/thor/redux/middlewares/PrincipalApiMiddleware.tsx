@@ -5,7 +5,7 @@ import {
     getPrincipalList , 
     deletePrincipal , 
     updatePrincipal 
-} from '../../api';
+} from '../../api/PrincipalApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const PrincipalMiddleware = ({ dispatch }) => (next) => async (action) =>
 
         case LIST_PRINCIPAL_REQUEST:
             try {
-                const response = getPrincipalList();
+                const response = getPrincipalList({});
                 dispatch(listPrincipalSuccess(response.body));
             } catch (error) {
                 dispatch(listPrincipalFailure(error.message));

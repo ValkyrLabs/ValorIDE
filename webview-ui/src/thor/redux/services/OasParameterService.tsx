@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { OasParameter } from '../../model'
+import { OasParameter } from '@thor/model/OasParameter'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type OasParameterResponse = OasParameter[]
@@ -10,8 +10,13 @@ export const OasParameterService = createApi({
   tagTypes: ['OasParameter'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getOasParametersPaged: build.query<OasParameterResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `OasParameter?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getOasParametersPaged: build.query<OasParameterResponse, { page: number; size?: number; example?: Partial<OasParameter> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasParameter?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const OasParameterService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasParameters: build.query<OasParameterResponse, void>({
-      query: () => `OasParameter`,
+    getOasParameters: build.query<OasParameterResponse, { example?: Partial<OasParameter> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `OasParameter?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `OasParameter`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const OasParameterService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'OasParameter', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'OasParameter', id },
+        { type: 'OasParameter', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

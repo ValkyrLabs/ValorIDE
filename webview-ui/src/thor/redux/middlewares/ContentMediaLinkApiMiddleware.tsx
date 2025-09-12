@@ -5,7 +5,7 @@ import {
     getContentMediaLinkList , 
     deleteContentMediaLink , 
     updateContentMediaLink 
-} from '../../api';
+} from '../../api/ContentMediaLinkApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const ContentMediaLinkMiddleware = ({ dispatch }) => (next) => async (act
 
         case LIST_CONTENTMEDIALINK_REQUEST:
             try {
-                const response = getContentMediaLinkList();
+                const response = getContentMediaLinkList({});
                 dispatch(listContentMediaLinkSuccess(response.body));
             } catch (error) {
                 dispatch(listContentMediaLinkFailure(error.message));

@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { ContentData } from '../../model'
+import { ContentData } from '@thor/model/ContentData'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type ContentDataResponse = ContentData[]
@@ -10,8 +10,13 @@ export const ContentDataService = createApi({
   tagTypes: ['ContentData'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getContentDatasPaged: build.query<ContentDataResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `ContentData?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getContentDatasPaged: build.query<ContentDataResponse, { page: number; size?: number; example?: Partial<ContentData> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ContentData?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const ContentDataService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getContentDatas: build.query<ContentDataResponse, void>({
-      query: () => `ContentData`,
+    getContentDatas: build.query<ContentDataResponse, { example?: Partial<ContentData> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `ContentData?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `ContentData`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const ContentDataService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ContentData', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'ContentData', id },
+        { type: 'ContentData', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

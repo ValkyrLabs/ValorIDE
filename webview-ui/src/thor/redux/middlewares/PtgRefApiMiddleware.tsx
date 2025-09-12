@@ -5,7 +5,7 @@ import {
     getPtgRefList , 
     deletePtgRef , 
     updatePtgRef 
-} from '../../api';
+} from '../../api/PtgRefApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const PtgRefMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_PTGREF_REQUEST:
             try {
-                const response = getPtgRefList();
+                const response = getPtgRefList({});
                 dispatch(listPtgRefSuccess(response.body));
             } catch (error) {
                 dispatch(listPtgRefFailure(error.message));

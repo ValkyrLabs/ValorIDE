@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ProductFeature } from '../../model/ProductFeature';
+import { ProductFeature } from '@thor/model/ProductFeature';
 
 const ProductFeatureSlice = createSlice({
   name: "ProductFeatures",

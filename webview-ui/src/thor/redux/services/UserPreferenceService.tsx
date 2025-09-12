@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { UserPreference } from '../../model'
+import { UserPreference } from '@thor/model/UserPreference'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type UserPreferenceResponse = UserPreference[]
@@ -10,8 +10,13 @@ export const UserPreferenceService = createApi({
   tagTypes: ['UserPreference'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getUserPreferencesPaged: build.query<UserPreferenceResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `UserPreference?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getUserPreferencesPaged: build.query<UserPreferenceResponse, { page: number; size?: number; example?: Partial<UserPreference> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `UserPreference?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const UserPreferenceService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getUserPreferences: build.query<UserPreferenceResponse, void>({
-      query: () => `UserPreference`,
+    getUserPreferences: build.query<UserPreferenceResponse, { example?: Partial<UserPreference> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `UserPreference?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `UserPreference`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const UserPreferenceService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'UserPreference', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'UserPreference', id },
+        { type: 'UserPreference', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

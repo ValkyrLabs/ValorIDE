@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { GoalDependency } from '../../model'
+import { GoalDependency } from '@thor/model/GoalDependency'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type GoalDependencyResponse = GoalDependency[]
@@ -10,8 +10,13 @@ export const GoalDependencyService = createApi({
   tagTypes: ['GoalDependency'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getGoalDependencysPaged: build.query<GoalDependencyResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `GoalDependency?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getGoalDependencysPaged: build.query<GoalDependencyResponse, { page: number; size?: number; example?: Partial<GoalDependency> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `GoalDependency?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const GoalDependencyService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getGoalDependencys: build.query<GoalDependencyResponse, void>({
-      query: () => `GoalDependency`,
+    getGoalDependencys: build.query<GoalDependencyResponse, { example?: Partial<GoalDependency> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `GoalDependency?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `GoalDependency`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const GoalDependencyService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'GoalDependency', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'GoalDependency', id },
+        { type: 'GoalDependency', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ChatCompletionRequest } from '../../model/ChatCompletionRequest';
+import { ChatCompletionRequest } from '@thor/model/ChatCompletionRequest';
 
 const ChatCompletionRequestSlice = createSlice({
   name: "ChatCompletionRequests",

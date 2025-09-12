@@ -5,7 +5,7 @@ import {
     getOasComponentList , 
     deleteOasComponent , 
     updateOasComponent 
-} from '../../api';
+} from '../../api/OasComponentApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const OasComponentMiddleware = ({ dispatch }) => (next) => async (action)
 
         case LIST_OASCOMPONENT_REQUEST:
             try {
-                const response = getOasComponentList();
+                const response = getOasComponentList({});
                 dispatch(listOasComponentSuccess(response.body));
             } catch (error) {
                 dispatch(listOasComponentFailure(error.message));

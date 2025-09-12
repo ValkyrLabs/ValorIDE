@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Principal } from '../../model/Principal';
+import { Principal } from '@thor/model/Principal';
 
 const PrincipalSlice = createSlice({
   name: "Principals",

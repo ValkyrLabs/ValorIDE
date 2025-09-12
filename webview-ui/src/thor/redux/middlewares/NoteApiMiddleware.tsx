@@ -5,7 +5,7 @@ import {
     getNoteList , 
     deleteNote , 
     updateNote 
-} from '../../api';
+} from '../../api/NoteApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const NoteMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_NOTE_REQUEST:
             try {
-                const response = getNoteList();
+                const response = getNoteList({});
                 dispatch(listNoteSuccess(response.body));
             } catch (error) {
                 dispatch(listNoteFailure(error.message));

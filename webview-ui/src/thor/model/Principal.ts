@@ -24,9 +24,9 @@ import {
     Organization,
     OrganizationFromJSON,
     OrganizationToJSON,
-    PrincipalRoles,
-    PrincipalRolesFromJSON,
-    PrincipalRolesToJSON,
+    Role,
+    RoleFromJSON,
+    RoleToJSON,
     UserPreference,
     UserPreferenceFromJSON,
     UserPreferenceToJSON,
@@ -54,7 +54,7 @@ export type Principal  = {
      */
     password: string;
     /**
-     * The main email address for the user (encrypted)
+     * The main email address
      * @type {string}
      * @memberof Principal
      */
@@ -108,6 +108,12 @@ export type Principal  = {
      */
     residenceState?: string;
     /**
+     * The main phone number
+     * @type {string}
+     * @memberof Principal
+     */
+    phone?: string;
+    /**
      * The username for your primary social account (if any)
      * @type {string}
      * @memberof Principal
@@ -131,12 +137,6 @@ export type Principal  = {
      * @memberof Principal
      */
     avatarUrl?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Principal
-     */
-    organizationId?: string;
     /**
      * 
      * @type {Organization}
@@ -193,10 +193,10 @@ export type Principal  = {
     accountNonExpired?: boolean;
     /**
      * the roles the the Principal is a member of
-     * @type {Array<PrincipalRoles>}
+     * @type {Array<Role>}
      * @memberof Principal
      */
-    roles?: Array<PrincipalRoles>;
+    roleList?: Array<Role>;
     /**
      * the granted authorities (or null if the granted authority cannot be expressed as a String with sufficient precision).
      * @type {Array<Authority>}
@@ -272,11 +272,11 @@ export function PrincipalFromJSON(json: any): Principal {
         'residenceCountry': !exists(json, 'residenceCountry') ? undefined : json['residenceCountry'],
         'stateIdentification': !exists(json, 'stateIdentification') ? undefined : json['stateIdentification'],
         'residenceState': !exists(json, 'residenceState') ? undefined : json['residenceState'],
+        'phone': !exists(json, 'phone') ? undefined : json['phone'],
         'social': !exists(json, 'social') ? undefined : json['social'],
         'bio': !exists(json, 'bio') ? undefined : json['bio'],
         'notes': !exists(json, 'notes') ? undefined : json['notes'],
         'avatarUrl': !exists(json, 'avatarUrl') ? undefined : json['avatarUrl'],
-        'organizationId': !exists(json, 'organizationId') ? undefined : json['organizationId'],
         'organization': !exists(json, 'organization') ? undefined : OrganizationFromJSON(json['organization']),
         'addresses': !exists(json, 'addresses') ? undefined : (json['addresses'] as Array<any>).map(AddressFromJSON),
         'acceptedCookies': !exists(json, 'acceptedCookies') ? undefined : json['acceptedCookies'],
@@ -286,7 +286,7 @@ export function PrincipalFromJSON(json: any): Principal {
         'accountEnabled': !exists(json, 'accountEnabled') ? undefined : json['accountEnabled'],
         'accountNonLocked': !exists(json, 'accountNonLocked') ? undefined : json['accountNonLocked'],
         'accountNonExpired': !exists(json, 'accountNonExpired') ? undefined : json['accountNonExpired'],
-        'roles': !exists(json, 'roles') ? undefined : (json['roles'] as Array<any>).map(PrincipalRolesFromJSON),
+        'roleList': !exists(json, 'roleList') ? undefined : (json['roleList'] as Array<any>).map(RoleFromJSON),
         'authorityList': !exists(json, 'authorityList') ? undefined : (json['authorityList'] as Array<any>).map(AuthorityFromJSON),
         'userPreferences': !exists(json, 'userPreferences') ? undefined : (json['userPreferences'] as Array<any>).map(UserPreferenceFromJSON),
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -315,11 +315,11 @@ export function PrincipalToJSON(value?: Principal): any {
         'residenceCountry': value.residenceCountry,
         'stateIdentification': value.stateIdentification,
         'residenceState': value.residenceState,
+        'phone': value.phone,
         'social': value.social,
         'bio': value.bio,
         'notes': value.notes,
         'avatarUrl': value.avatarUrl,
-        'organizationId': value.organizationId,
         'organization': OrganizationToJSON(value.organization),
         'addresses': value.addresses === undefined ? undefined : (value.addresses as Array<any>).map(AddressToJSON),
         'acceptedCookies': value.acceptedCookies,
@@ -329,7 +329,7 @@ export function PrincipalToJSON(value?: Principal): any {
         'accountEnabled': value.accountEnabled,
         'accountNonLocked': value.accountNonLocked,
         'accountNonExpired': value.accountNonExpired,
-        'roles': value.roles === undefined ? undefined : (value.roles as Array<any>).map(PrincipalRolesToJSON),
+        'roleList': value.roleList === undefined ? undefined : (value.roleList as Array<any>).map(RoleToJSON),
         'authorityList': value.authorityList === undefined ? undefined : (value.authorityList as Array<any>).map(AuthorityToJSON),
         'userPreferences': value.userPreferences === undefined ? undefined : (value.userPreferences as Array<any>).map(UserPreferenceToJSON),
         'id': value.id,

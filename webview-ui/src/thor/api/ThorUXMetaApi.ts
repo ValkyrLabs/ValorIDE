@@ -16,323 +16,294 @@ Template file: typescript-redux-query/apis.mustache
 Description: ThorUXMetaApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import { ThorUXMeta, ThorUXMetaFromJSON, ThorUXMetaToJSON } from "../model";
+    ThorUXMeta,
+    ThorUXMetaFromJSON,
+    ThorUXMetaToJSON,
+} from '../model';
 
 export interface DeleteThorUXMetaRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetThorUXMetaRequest {
-  id: string;
+    id: string;
+}
+
+export interface GetThorUXMetaListRequest {
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
 }
 
 export interface PostThorUXMetaRequest {
-  thorUXMeta: ThorUXMeta;
+    thorUXMeta: ThorUXMeta;
 }
 
 export interface UpdateThorUXMetaRequest {
-  id: string;
-  thorUXMeta: ThorUXMeta;
+    id: string;
+    thorUXMeta: ThorUXMeta;
 }
+
 
 /**
  * Deletes a specific ThorUXMeta.
  * Delete a ThorUXMeta.
  */
-function deleteThorUXMetaRaw<T>(
-  requestParameters: DeleteThorUXMetaRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteThorUXMeta.",
-    );
-  }
+function deleteThorUXMetaRaw<T>(requestParameters: DeleteThorUXMetaRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteThorUXMeta.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ThorUXMeta/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ThorUXMeta/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific ThorUXMeta.
- * Delete a ThorUXMeta.
- */
-export function deleteThorUXMeta<T>(
-  requestParameters: DeleteThorUXMetaRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteThorUXMetaRaw(requestParameters, requestConfig);
+* Deletes a specific ThorUXMeta.
+* Delete a ThorUXMeta.
+*/
+export function deleteThorUXMeta<T>(requestParameters: DeleteThorUXMetaRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteThorUXMetaRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single ThorUXMeta for a specific uid.
  * Retrieve a single ThorUXMeta
  */
-function getThorUXMetaRaw<T>(
-  requestParameters: GetThorUXMetaRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ThorUXMeta> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getThorUXMeta.",
-    );
-  }
+function getThorUXMetaRaw<T>(requestParameters: GetThorUXMetaRequest, requestConfig: runtime.TypedQueryConfig<T, ThorUXMeta> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getThorUXMeta.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ThorUXMeta/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ThorUXMetaFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ThorUXMeta/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ThorUXMetaFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single ThorUXMeta for a specific uid.
- * Retrieve a single ThorUXMeta
- */
-export function getThorUXMeta<T>(
-  requestParameters: GetThorUXMetaRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ThorUXMeta>,
-): QueryConfig<T> {
-  return getThorUXMetaRaw(requestParameters, requestConfig);
+* Retrieves a single ThorUXMeta for a specific uid.
+* Retrieve a single ThorUXMeta
+*/
+export function getThorUXMeta<T>(requestParameters: GetThorUXMetaRequest, requestConfig?: runtime.TypedQueryConfig<T, ThorUXMeta>): QueryConfig<T> {
+    return getThorUXMetaRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of ThorUXMetas.
  * Retrieve a list of ThorUXMetas
  */
-function getThorUXMetaListRaw<T>(
-  requestConfig: runtime.TypedQueryConfig<T, Array<ThorUXMeta>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getThorUXMetaListRaw<T>(requestParameters: GetThorUXMetaListRequest, requestConfig: runtime.TypedQueryConfig<T, Array<ThorUXMeta>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
+    queryParameters = {};
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ThorUXMeta`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(ThorUXMetaFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
+
+
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ThorUXMeta`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(ThorUXMetaFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of ThorUXMetas.
- * Retrieve a list of ThorUXMetas
- */
-export function getThorUXMetaList<T>(
-  requestConfig?: runtime.TypedQueryConfig<T, Array<ThorUXMeta>>,
-): QueryConfig<T> {
-  return getThorUXMetaListRaw(requestConfig);
-}
-
-/**
- * Creates a new ThorUXMeta.
- * Create a new ThorUXMeta
- */
-function postThorUXMetaRaw<T>(
-  requestParameters: PostThorUXMetaRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ThorUXMeta> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.thorUXMeta === null ||
-    requestParameters.thorUXMeta === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "thorUXMeta",
-      "Required parameter requestParameters.thorUXMeta was null or undefined when calling postThorUXMeta.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ThorUXMeta`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || ThorUXMetaToJSON(requestParameters.thorUXMeta),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ThorUXMetaFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of ThorUXMetas.
+* Retrieve a list of ThorUXMetas
+*/
+export function getThorUXMetaList<T>(requestParameters: GetThorUXMetaListRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<ThorUXMeta>>): QueryConfig<T> {
+    return getThorUXMetaListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new ThorUXMeta.
  * Create a new ThorUXMeta
  */
-export function postThorUXMeta<T>(
-  requestParameters: PostThorUXMetaRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ThorUXMeta>,
-): QueryConfig<T> {
-  return postThorUXMetaRaw(requestParameters, requestConfig);
+function postThorUXMetaRaw<T>(requestParameters: PostThorUXMetaRequest, requestConfig: runtime.TypedQueryConfig<T, ThorUXMeta> = {}): QueryConfig<T> {
+    if (requestParameters.thorUXMeta === null || requestParameters.thorUXMeta === undefined) {
+        throw new runtime.RequiredError('thorUXMeta','Required parameter requestParameters.thorUXMeta was null or undefined when calling postThorUXMeta.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ThorUXMeta`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || ThorUXMetaToJSON(requestParameters.thorUXMeta),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ThorUXMetaFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Creates a new ThorUXMeta.
+* Create a new ThorUXMeta
+*/
+export function postThorUXMeta<T>(requestParameters: PostThorUXMetaRequest, requestConfig?: runtime.TypedQueryConfig<T, ThorUXMeta>): QueryConfig<T> {
+    return postThorUXMetaRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing ThorUXMeta.
  * Update an existing ThorUXMeta
  */
-function updateThorUXMetaRaw<T>(
-  requestParameters: UpdateThorUXMetaRequest,
-  requestConfig: runtime.TypedQueryConfig<T, ThorUXMeta> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateThorUXMeta.",
-    );
-  }
+function updateThorUXMetaRaw<T>(requestParameters: UpdateThorUXMetaRequest, requestConfig: runtime.TypedQueryConfig<T, ThorUXMeta> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateThorUXMeta.');
+    }
 
-  if (
-    requestParameters.thorUXMeta === null ||
-    requestParameters.thorUXMeta === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "thorUXMeta",
-      "Required parameter requestParameters.thorUXMeta was null or undefined when calling updateThorUXMeta.",
-    );
-  }
+    if (requestParameters.thorUXMeta === null || requestParameters.thorUXMeta === undefined) {
+        throw new runtime.RequiredError('thorUXMeta','Required parameter requestParameters.thorUXMeta was null or undefined when calling updateThorUXMeta.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/ThorUXMeta/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || ThorUXMetaToJSON(requestParameters.thorUXMeta),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(ThorUXMetaFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/ThorUXMeta/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || ThorUXMetaToJSON(requestParameters.thorUXMeta),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ThorUXMetaFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing ThorUXMeta.
- * Update an existing ThorUXMeta
- */
-export function updateThorUXMeta<T>(
-  requestParameters: UpdateThorUXMetaRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, ThorUXMeta>,
-): QueryConfig<T> {
-  return updateThorUXMetaRaw(requestParameters, requestConfig);
+* Updates an existing ThorUXMeta.
+* Update an existing ThorUXMeta
+*/
+export function updateThorUXMeta<T>(requestParameters: UpdateThorUXMetaRequest, requestConfig?: runtime.TypedQueryConfig<T, ThorUXMeta>): QueryConfig<T> {
+    return updateThorUXMetaRaw(requestParameters, requestConfig);
 }
+

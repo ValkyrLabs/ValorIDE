@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { LlmDetails } from '../../model/LlmDetails';
+import { LlmDetails } from '@thor/model/LlmDetails';
 
 const LlmDetailsSlice = createSlice({
   name: "LlmDetailss",

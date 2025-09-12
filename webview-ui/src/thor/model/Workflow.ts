@@ -73,7 +73,7 @@ export type Workflow  = {
      * @type {Array<WorkflowState>}
      * @memberof Workflow
      */
-    state?: Array<WorkflowState>;
+    workflowState?: Array<WorkflowState>;
     /**
      * last known status of the workflow
      * @type {string}
@@ -138,7 +138,7 @@ export function WorkflowFromJSON(json: any): Workflow {
         'schedule': !exists(json, 'schedule') ? undefined : json['schedule'],
         'meta': !exists(json, 'meta') ? undefined : json['meta'],
         'tasks': !exists(json, 'tasks') ? undefined : (json['tasks'] as Array<any>).map(TaskFromJSON),
-        'state': !exists(json, 'state') ? undefined : (json['state'] as Array<any>).map(WorkflowStateFromJSON),
+        'workflowState': !exists(json, 'workflow_state') ? undefined : (json['workflow_state'] as Array<any>).map(WorkflowStateFromJSON),
         'status': !exists(json, 'status') ? undefined : json['status'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -162,7 +162,7 @@ export function WorkflowToJSON(value?: Workflow): any {
         'schedule': value.schedule,
         'meta': value.meta,
         'tasks': value.tasks === undefined ? undefined : (value.tasks as Array<any>).map(TaskToJSON),
-        'state': value.state === undefined ? undefined : (value.state as Array<any>).map(WorkflowStateToJSON),
+        'workflow_state': value.workflowState === undefined ? undefined : (value.workflowState as Array<any>).map(WorkflowStateToJSON),
         'status': value.status,
         'id': value.id,
         'ownerId': value.ownerId,

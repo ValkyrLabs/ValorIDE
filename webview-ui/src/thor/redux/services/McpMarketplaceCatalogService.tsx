@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { McpMarketplaceCatalog } from '../../model'
+import { McpMarketplaceCatalog } from '@thor/model/McpMarketplaceCatalog'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type McpMarketplaceCatalogResponse = McpMarketplaceCatalog[]
@@ -10,8 +10,13 @@ export const McpMarketplaceCatalogService = createApi({
   tagTypes: ['McpMarketplaceCatalog'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getMcpMarketplaceCatalogsPaged: build.query<McpMarketplaceCatalogResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `McpMarketplaceCatalog?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getMcpMarketplaceCatalogsPaged: build.query<McpMarketplaceCatalogResponse, { page: number; size?: number; example?: Partial<McpMarketplaceCatalog> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `McpMarketplaceCatalog?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const McpMarketplaceCatalogService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getMcpMarketplaceCatalogs: build.query<McpMarketplaceCatalogResponse, void>({
-      query: () => `McpMarketplaceCatalog`,
+    getMcpMarketplaceCatalogs: build.query<McpMarketplaceCatalogResponse, { example?: Partial<McpMarketplaceCatalog> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `McpMarketplaceCatalog?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `McpMarketplaceCatalog`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const McpMarketplaceCatalogService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'McpMarketplaceCatalog', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'McpMarketplaceCatalog', id },
+        { type: 'McpMarketplaceCatalog', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

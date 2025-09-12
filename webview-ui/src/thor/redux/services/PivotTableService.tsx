@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { PivotTable } from '../../model'
+import { PivotTable } from '@thor/model/PivotTable'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type PivotTableResponse = PivotTable[]
@@ -10,8 +10,13 @@ export const PivotTableService = createApi({
   tagTypes: ['PivotTable'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getPivotTablesPaged: build.query<PivotTableResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `PivotTable?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getPivotTablesPaged: build.query<PivotTableResponse, { page: number; size?: number; example?: Partial<PivotTable> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `PivotTable?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const PivotTableService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getPivotTables: build.query<PivotTableResponse, void>({
-      query: () => `PivotTable`,
+    getPivotTables: build.query<PivotTableResponse, { example?: Partial<PivotTable> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `PivotTable?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `PivotTable`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const PivotTableService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'PivotTable', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'PivotTable', id },
+        { type: 'PivotTable', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

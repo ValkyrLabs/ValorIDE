@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { ChatCompletionResponse } from '../../model'
+import { ChatCompletionResponse } from '@thor/model/ChatCompletionResponse'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type ChatCompletionResponseResponse = ChatCompletionResponse[]
@@ -10,8 +10,13 @@ export const ChatCompletionResponseService = createApi({
   tagTypes: ['ChatCompletionResponse'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getChatCompletionResponsesPaged: build.query<ChatCompletionResponseResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `ChatCompletionResponse?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getChatCompletionResponsesPaged: build.query<ChatCompletionResponseResponse, { page: number; size?: number; example?: Partial<ChatCompletionResponse> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ChatCompletionResponse?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const ChatCompletionResponseService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getChatCompletionResponses: build.query<ChatCompletionResponseResponse, void>({
-      query: () => `ChatCompletionResponse`,
+    getChatCompletionResponses: build.query<ChatCompletionResponseResponse, { example?: Partial<ChatCompletionResponse> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `ChatCompletionResponse?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `ChatCompletionResponse`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const ChatCompletionResponseService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ChatCompletionResponse', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'ChatCompletionResponse', id },
+        { type: 'ChatCompletionResponse', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ContentMediaLink } from '../../model/ContentMediaLink';
+import { ContentMediaLink } from '@thor/model/ContentMediaLink';
 
 const ContentMediaLinkSlice = createSlice({
   name: "ContentMediaLinks",

@@ -5,7 +5,7 @@ import {
     getOasServerList , 
     deleteOasServer , 
     updateOasServer 
-} from '../../api';
+} from '../../api/OasServerApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const OasServerMiddleware = ({ dispatch }) => (next) => async (action) =>
 
         case LIST_OASSERVER_REQUEST:
             try {
-                const response = getOasServerList();
+                const response = getOasServerList({});
                 dispatch(listOasServerSuccess(response.body));
             } catch (error) {
                 dispatch(listOasServerFailure(error.message));

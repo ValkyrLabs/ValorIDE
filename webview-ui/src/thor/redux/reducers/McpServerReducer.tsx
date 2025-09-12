@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpServer } from '../../model/McpServer';
+import { McpServer } from '@thor/model/McpServer';
 
 const McpServerSlice = createSlice({
   name: "McpServers",

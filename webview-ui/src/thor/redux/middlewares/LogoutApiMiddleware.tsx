@@ -5,7 +5,7 @@ import {
     getLogoutList , 
     deleteLogout , 
     updateLogout 
-} from '../../api';
+} from '../../api/LogoutApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const LogoutMiddleware = ({ dispatch }) => (next) => async (action) => {
 
         case LIST_LOGOUT_REQUEST:
             try {
-                const response = getLogoutList();
+                const response = getLogoutList({});
                 dispatch(listLogoutSuccess(response.body));
             } catch (error) {
                 dispatch(listLogoutFailure(error.message));

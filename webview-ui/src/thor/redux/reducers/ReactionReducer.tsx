@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Reaction } from '../../model/Reaction';
+import { Reaction } from '@thor/model/Reaction';
 
 const ReactionSlice = createSlice({
   name: "Reactions",

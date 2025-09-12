@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ContentData } from '../../model/ContentData';
+import { ContentData } from '@thor/model/ContentData';
 
 const ContentDataSlice = createSlice({
   name: "ContentDatas",

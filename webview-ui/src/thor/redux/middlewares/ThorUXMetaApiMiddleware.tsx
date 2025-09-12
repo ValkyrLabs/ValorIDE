@@ -5,7 +5,7 @@ import {
     getThorUXMetaList , 
     deleteThorUXMeta , 
     updateThorUXMeta 
-} from '../../api';
+} from '../../api/ThorUXMetaApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const ThorUXMetaMiddleware = ({ dispatch }) => (next) => async (action) =
 
         case LIST_THORUXMETA_REQUEST:
             try {
-                const response = getThorUXMetaList();
+                const response = getThorUXMetaList({});
                 dispatch(listThorUXMetaSuccess(response.body));
             } catch (error) {
                 dispatch(listThorUXMetaFailure(error.message));

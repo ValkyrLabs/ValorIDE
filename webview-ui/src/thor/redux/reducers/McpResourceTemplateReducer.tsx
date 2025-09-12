@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpResourceTemplate } from '../../model/McpResourceTemplate';
+import { McpResourceTemplate } from '@thor/model/McpResourceTemplate';
 
 const McpResourceTemplateSlice = createSlice({
   name: "McpResourceTemplates",

@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Product } from '../../model'
+import { Product } from '@thor/model/Product'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type ProductResponse = Product[]
@@ -10,8 +10,13 @@ export const ProductService = createApi({
   tagTypes: ['Product'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getProductsPaged: build.query<ProductResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Product?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getProductsPaged: build.query<ProductResponse, { page: number; size?: number; example?: Partial<Product> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Product?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const ProductService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getProducts: build.query<ProductResponse, void>({
-      query: () => `Product`,
+    getProducts: build.query<ProductResponse, { example?: Partial<Product> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Product?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Product`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const ProductService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Product', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Product', id },
+        { type: 'Product', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

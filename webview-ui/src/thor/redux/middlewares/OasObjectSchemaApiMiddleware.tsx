@@ -5,7 +5,7 @@ import {
     getOasObjectSchemaList , 
     deleteOasObjectSchema , 
     updateOasObjectSchema 
-} from '../../api';
+} from '../../api/OasObjectSchemaApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const OasObjectSchemaMiddleware = ({ dispatch }) => (next) => async (acti
 
         case LIST_OASOBJECTSCHEMA_REQUEST:
             try {
-                const response = getOasObjectSchemaList();
+                const response = getOasObjectSchemaList({});
                 dispatch(listOasObjectSchemaSuccess(response.body));
             } catch (error) {
                 dispatch(listOasObjectSchemaFailure(error.message));

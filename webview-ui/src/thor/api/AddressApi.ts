@@ -16,323 +16,294 @@ Template file: typescript-redux-query/apis.mustache
 Description: AddressApi
 */
 
+import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
+import * as runtime from '../src/runtime';
 import {
-  HttpMethods,
-  QueryConfig,
-  ResponseBody,
-  ResponseText,
-} from "redux-query";
-import * as runtime from "../src/runtime";
-import { Address, AddressFromJSON, AddressToJSON } from "../model";
+    Address,
+    AddressFromJSON,
+    AddressToJSON,
+} from '../model';
 
 export interface DeleteAddressRequest {
-  id: string;
+    id: string;
 }
 
 export interface GetAddressRequest {
-  id: string;
+    id: string;
+}
+
+export interface GetAddressListRequest {
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
 }
 
 export interface PostAddressRequest {
-  address: Address;
+    address: Address;
 }
 
 export interface UpdateAddressRequest {
-  id: string;
-  address: Address;
+    id: string;
+    address: Address;
 }
+
 
 /**
  * Deletes a specific Address.
  * Delete a Address.
  */
-function deleteAddressRaw<T>(
-  requestParameters: DeleteAddressRequest,
-  requestConfig: runtime.TypedQueryConfig<T, void> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling deleteAddress.",
-    );
-  }
+function deleteAddressRaw<T>(requestParameters: DeleteAddressRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteAddress.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Address/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "DELETE",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Address/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'DELETE',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+    }
+
+    return config;
 }
 
 /**
- * Deletes a specific Address.
- * Delete a Address.
- */
-export function deleteAddress<T>(
-  requestParameters: DeleteAddressRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, void>,
-): QueryConfig<T> {
-  return deleteAddressRaw(requestParameters, requestConfig);
+* Deletes a specific Address.
+* Delete a Address.
+*/
+export function deleteAddress<T>(requestParameters: DeleteAddressRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
+    return deleteAddressRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single Address for a specific uid.
  * Retrieve a single Address
  */
-function getAddressRaw<T>(
-  requestParameters: GetAddressRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Address> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling getAddress.",
-    );
-  }
+function getAddressRaw<T>(requestParameters: GetAddressRequest, requestConfig: runtime.TypedQueryConfig<T, Address> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getAddress.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Address/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(AddressFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Address/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AddressFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a single Address for a specific uid.
- * Retrieve a single Address
- */
-export function getAddress<T>(
-  requestParameters: GetAddressRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Address>,
-): QueryConfig<T> {
-  return getAddressRaw(requestParameters, requestConfig);
+* Retrieves a single Address for a specific uid.
+* Retrieve a single Address
+*/
+export function getAddress<T>(requestParameters: GetAddressRequest, requestConfig?: runtime.TypedQueryConfig<T, Address>): QueryConfig<T> {
+    return getAddressRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Addresss.
  * Retrieve a list of Addresss
  */
-function getAddressListRaw<T>(
-  requestConfig: runtime.TypedQueryConfig<T, Array<Address>> = {},
-): QueryConfig<T> {
-  let queryParameters = null;
+function getAddressListRaw<T>(requestParameters: GetAddressListRequest, requestConfig: runtime.TypedQueryConfig<T, Array<Address>> = {}): QueryConfig<T> {
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
+    queryParameters = {};
 
-  const { meta = {} } = requestConfig;
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Address`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "GET",
-      headers: headerParameters,
-    },
-    body: queryParameters,
-  };
+    if (requestParameters.page !== undefined) {
+        queryParameters['page'] = requestParameters.page;
+    }
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(body.map(AddressFromJSON), text);
-  }
 
-  return config;
+    if (requestParameters.size !== undefined) {
+        queryParameters['size'] = requestParameters.size;
+    }
+
+
+    if (requestParameters.sort) {
+        queryParameters['sort'] = requestParameters.sort;
+    }
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Address`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'GET',
+            headers: headerParameters,
+        },
+        body: queryParameters,
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(AddressFromJSON), text);
+    }
+
+    return config;
 }
 
 /**
- * Retrieves a list of Addresss.
- * Retrieve a list of Addresss
- */
-export function getAddressList<T>(
-  requestConfig?: runtime.TypedQueryConfig<T, Array<Address>>,
-): QueryConfig<T> {
-  return getAddressListRaw(requestConfig);
-}
-
-/**
- * Creates a new Address.
- * Create a new Address
- */
-function postAddressRaw<T>(
-  requestParameters: PostAddressRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Address> = {},
-): QueryConfig<T> {
-  if (
-    requestParameters.address === null ||
-    requestParameters.address === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "address",
-      "Required parameter requestParameters.address was null or undefined when calling postAddress.",
-    );
-  }
-
-  let queryParameters = null;
-
-  const headerParameters: runtime.HttpHeaders = {};
-
-  headerParameters["Content-Type"] = "application/json";
-
-  const { meta = {} } = requestConfig;
-
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Address`,
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "POST",
-      headers: headerParameters,
-    },
-    body: queryParameters || AddressToJSON(requestParameters.address),
-  };
-
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(AddressFromJSON(body), text);
-  }
-
-  return config;
+* Retrieves a list of Addresss.
+* Retrieve a list of Addresss
+*/
+export function getAddressList<T>(requestParameters: GetAddressListRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Address>>): QueryConfig<T> {
+    return getAddressListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new Address.
  * Create a new Address
  */
-export function postAddress<T>(
-  requestParameters: PostAddressRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Address>,
-): QueryConfig<T> {
-  return postAddressRaw(requestParameters, requestConfig);
+function postAddressRaw<T>(requestParameters: PostAddressRequest, requestConfig: runtime.TypedQueryConfig<T, Address> = {}): QueryConfig<T> {
+    if (requestParameters.address === null || requestParameters.address === undefined) {
+        throw new runtime.RequiredError('address','Required parameter requestParameters.address was null or undefined when calling postAddress.');
+    }
+
+    let queryParameters = null;
+
+
+    const headerParameters : runtime.HttpHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+
+    const { meta = {} } = requestConfig;
+
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Address`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'POST',
+            headers: headerParameters,
+        },
+        body: queryParameters || AddressToJSON(requestParameters.address),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AddressFromJSON(body), text);
+    }
+
+    return config;
+}
+
+/**
+* Creates a new Address.
+* Create a new Address
+*/
+export function postAddress<T>(requestParameters: PostAddressRequest, requestConfig?: runtime.TypedQueryConfig<T, Address>): QueryConfig<T> {
+    return postAddressRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Address.
  * Update an existing Address
  */
-function updateAddressRaw<T>(
-  requestParameters: UpdateAddressRequest,
-  requestConfig: runtime.TypedQueryConfig<T, Address> = {},
-): QueryConfig<T> {
-  if (requestParameters.id === null || requestParameters.id === undefined) {
-    throw new runtime.RequiredError(
-      "id",
-      "Required parameter requestParameters.id was null or undefined when calling updateAddress.",
-    );
-  }
+function updateAddressRaw<T>(requestParameters: UpdateAddressRequest, requestConfig: runtime.TypedQueryConfig<T, Address> = {}): QueryConfig<T> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateAddress.');
+    }
 
-  if (
-    requestParameters.address === null ||
-    requestParameters.address === undefined
-  ) {
-    throw new runtime.RequiredError(
-      "address",
-      "Required parameter requestParameters.address was null or undefined when calling updateAddress.",
-    );
-  }
+    if (requestParameters.address === null || requestParameters.address === undefined) {
+        throw new runtime.RequiredError('address','Required parameter requestParameters.address was null or undefined when calling updateAddress.');
+    }
 
-  let queryParameters = null;
+    let queryParameters = null;
 
-  const headerParameters: runtime.HttpHeaders = {};
 
-  headerParameters["Content-Type"] = "application/json";
+    const headerParameters : runtime.HttpHeaders = {};
 
-  const { meta = {} } = requestConfig;
+    headerParameters['Content-Type'] = 'application/json';
 
-  const config: QueryConfig<T> = {
-    url: `${runtime.Configuration.basePath}/Address/{id}`.replace(
-      `{${"id"}}`,
-      encodeURIComponent(String(requestParameters.id)),
-    ),
-    meta,
-    update: requestConfig.update,
-    queryKey: requestConfig.queryKey,
-    optimisticUpdate: requestConfig.optimisticUpdate,
-    force: requestConfig.force,
-    rollback: requestConfig.rollback,
-    options: {
-      method: "PUT",
-      headers: headerParameters,
-    },
-    body: queryParameters || AddressToJSON(requestParameters.address),
-  };
 
-  const { transform: requestTransform } = requestConfig;
-  if (requestTransform) {
-    config.transform = (body: ResponseBody, text: ResponseBody) =>
-      requestTransform(AddressFromJSON(body), text);
-  }
+    const { meta = {} } = requestConfig;
 
-  return config;
+    const config: QueryConfig<T> = {
+        url: `${runtime.Configuration.basePath}/Address/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: 'PUT',
+            headers: headerParameters,
+        },
+        body: queryParameters || AddressToJSON(requestParameters.address),
+    };
+
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AddressFromJSON(body), text);
+    }
+
+    return config;
 }
 
 /**
- * Updates an existing Address.
- * Update an existing Address
- */
-export function updateAddress<T>(
-  requestParameters: UpdateAddressRequest,
-  requestConfig?: runtime.TypedQueryConfig<T, Address>,
-): QueryConfig<T> {
-  return updateAddressRaw(requestParameters, requestConfig);
+* Updates an existing Address.
+* Update an existing Address
+*/
+export function updateAddress<T>(requestParameters: UpdateAddressRequest, requestConfig?: runtime.TypedQueryConfig<T, Address>): QueryConfig<T> {
+    return updateAddressRaw(requestParameters, requestConfig);
 }
+

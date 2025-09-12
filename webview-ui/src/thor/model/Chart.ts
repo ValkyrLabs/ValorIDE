@@ -76,7 +76,7 @@ export type Chart  = {
      * @type {Array<ChartSeries>}
      * @memberof Chart
      */
-    series?: Array<ChartSeries>;
+    dataSeries?: Array<ChartSeries>;
     /**
      * Whether chart is embedded in the sheet or is a separate chart sheet.
      * @type {boolean}
@@ -172,7 +172,7 @@ export function ChartFromJSON(json: any): Chart {
         'axisLabelX': !exists(json, 'axisLabelX') ? undefined : json['axisLabelX'],
         'axisLabelY': !exists(json, 'axisLabelY') ? undefined : json['axisLabelY'],
         'categoryRange': !exists(json, 'categoryRange') ? undefined : json['categoryRange'],
-        'series': !exists(json, 'series') ? undefined : (json['series'] as Array<any>).map(ChartSeriesFromJSON),
+        'dataSeries': !exists(json, 'dataSeries') ? undefined : (json['dataSeries'] as Array<any>).map(ChartSeriesFromJSON),
         'embedded': !exists(json, 'embedded') ? undefined : json['embedded'],
         'anchorCell': !exists(json, 'anchorCell') ? undefined : json['anchorCell'],
         'anchorOffsetX': !exists(json, 'anchorOffsetX') ? undefined : json['anchorOffsetX'],
@@ -202,7 +202,7 @@ export function ChartToJSON(value?: Chart): any {
         'axisLabelX': value.axisLabelX,
         'axisLabelY': value.axisLabelY,
         'categoryRange': value.categoryRange,
-        'series': value.series === undefined ? undefined : (value.series as Array<any>).map(ChartSeriesToJSON),
+        'dataSeries': value.dataSeries === undefined ? undefined : (value.dataSeries as Array<any>).map(ChartSeriesToJSON),
         'embedded': value.embedded,
         'anchorCell': value.anchorCell,
         'anchorOffsetX': value.anchorOffsetX,

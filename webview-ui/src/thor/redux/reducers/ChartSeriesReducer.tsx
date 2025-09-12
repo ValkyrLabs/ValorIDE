@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ChartSeries } from '../../model/ChartSeries';
+import { ChartSeries } from '@thor/model/ChartSeries';
 
 const ChartSeriesSlice = createSlice({
   name: "ChartSeriess",

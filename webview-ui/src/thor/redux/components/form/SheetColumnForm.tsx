@@ -4,20 +4,22 @@ import {
   Form as BSForm,
   Accordion,
   Col,
-  Nav,
   Row,
   Spinner
 } from 'react-bootstrap';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
-import CoolButton from '../../../../components/CoolButton';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
 import * as Yup from 'yup';
-import PermissionDialog from '../../../../components/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
 
 
 import {
   SheetColumn,
-} from '../../../model';
+} from '@thor/model';
 
 import { useAddSheetColumnMutation } from '../../services/SheetColumnService';
 
@@ -29,7 +31,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -45,73 +47,22 @@ GridHeim Spreadsheet Column
 -------------------------------------------------------- */
 
 /* -----------------------------------------------------
-   YUP VALIDATION SCHEMA
-   (Skip read-only fields and container types)
+   YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
+const asNumber = (schema: Yup.NumberSchema) =>
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+
 const validationSchema = Yup.object().shape({
-    
-        sheetId: Yup.string()
-          
-          
-          ,
-    
-        colIndex: Yup.number()
-          
-          
-          ,
-    
-        hidden: Yup.boolean()
-          
-          .notRequired(),
-    
-        collapsed: Yup.boolean()
-          
-          .notRequired(),
-    
-        outlineLevel: Yup.number()
-          
-          
-          ,
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
-        createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
-        lastModifiedDate: Yup.date()
-          
-          
-          ,
+        sheetId: Yup.string(),
+        colIndex: asNumber(Yup.number().integer()),
+        hidden: Yup.boolean(),
+        collapsed: Yup.boolean(),
+        outlineLevel: asNumber(Yup.number().integer()),
+        id: Yup.string(),
+        ownerId: Yup.string(),
+        keyHash: Yup.string(),
+        lastAccessedById: Yup.string(),
+        lastModifiedById: Yup.string(),
 });
 
 /* -----------------------------------------------------
@@ -119,125 +70,36 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const SheetColumnForm: React.FC = () => {
   const [addSheetColumn, addSheetColumnResult] = useAddSheetColumnMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user', // This should come from authentication context
+    username: 'current_user',
     permissions: {
-      isOwner: true, // This should be determined by checking object ownership
-      isAdmin: true, // This should come from user roles
+      isOwner: true,
+      isAdmin: true,
       canGrantPermissions: true,
       permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
-  /* INITIAL VALUES - skip read-only fields */
+  /* -----------------------------------------------------
+     INITIAL VALUES - only NON read-only fields
+  -------------------------------------------------------- */
   const initialValues: Partial<SheetColumn> = {
-          
-
-            sheetId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-
-
-
-
-
-          
-
-
-
-            colIndex: 0,
-
-
-
-          
-            hidden: undefined, 
-
-
-
-
-
-
-          
-            collapsed: undefined, 
-
-
-
-
-
-
-          
-
-
-
-            outlineLevel: 0,
-
-
-
-          
-
-            id: 'a91d8654-acb9-4fbc-b1f0-1e1a1a7def0d',
-
-
-
-
-
-          
-
-            ownerId: '85b9bfc7-17bd-488b-903a-da4780cef554',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            keyHash: 'null',
-
-
-
-
-
-          
-
-            lastAccessedById: 'e6d3feb2-d72f-4329-9bae-1446a7677306',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            lastModifiedById: 'b5bbe390-6339-4901-b4c6-0efe55278187',
-
-
-
-
-
-          
-
-
-
-
-
-
+          sheetId: '',
+          colIndex: undefined,
+          hidden: false,
+          collapsed: false,
+          outlineLevel: undefined,
+          id: '',
+          ownerId: '',
+          keyHash: '',
+          lastAccessedById: '',
+          lastModifiedById: '',
   };
 
   // Permission Management Handlers
@@ -253,16 +115,16 @@ const SheetColumnForm: React.FC = () => {
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
     console.log('Permissions saved for new SheetColumn:', grants);
-    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<SheetColumn>) => {
     try {
       console.log("SheetColumn form values:", values);
-      const result = await addSheetColumn(values).unwrap();
-      
-      // If object was created successfully and has an ID, offer to set permissions
+
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addSheetColumn(values as any).unwrap();
+
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
           `SheetColumn created successfully! Would you like to set permissions for this object?`
@@ -271,7 +133,7 @@ const SheetColumnForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create SheetColumn:', error);
@@ -291,6 +153,7 @@ const SheetColumnForm: React.FC = () => {
           isSubmitting,
           isValid,
           errors,
+          values,
           setFieldValue,
           touched,
           setFieldTouched,
@@ -298,27 +161,13 @@ const SheetColumnForm: React.FC = () => {
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={36} />
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  touched: {JSON.stringify(touched)}
-                  <br />
-                  addSheetColumnResult: {JSON.stringify(addSheetColumnResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-              {/* Editable Fields (NON-read-only) */}
+              
+              {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                  <FaRegPlusSquare size={36} /> Add New SheetColumn
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New SheetColumn
                 </Accordion.Header>
                 <Accordion.Body>
-                    
                     <label htmlFor="sheetId" className="nice-form-control">
                       <b>
                         Sheet Id:
@@ -330,15 +179,13 @@ const SheetColumnForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="sheetId"
-                            type="text"
-                            className={
-                              errors.sheetId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.sheetId}
+                            placeholder="Sheet Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -353,7 +200,6 @@ const SheetColumnForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="colIndex" className="nice-form-control">
                       <b>
                         Col Index:
@@ -369,7 +215,12 @@ const SheetColumnForm: React.FC = () => {
                           {/* INTEGER FIELD */}
                           <Field
                             name="colIndex"
-                            type="text"
+                            type="number"
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('colIndex', true);
+                              const v = e.target.value;
+                              setFieldValue('colIndex', v === '' ? undefined : Number(v));
+                            }}
                             className={
                               errors.colIndex
                                 ? 'form-control field-error'
@@ -388,7 +239,6 @@ const SheetColumnForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="hidden" className="nice-form-control">
                       <b>
                         Hidden:
@@ -401,7 +251,6 @@ const SheetColumnForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="hidden"
                             name="hidden"
                             onChange={(e) => {
@@ -409,9 +258,7 @@ const SheetColumnForm: React.FC = () => {
                               setFieldValue('hidden', e.target.checked);
                             }}
                             isInvalid={!!errors.hidden}
-                            className={
-                              errors.hidden ? 'error' : ''
-                            }
+                            className={errors.hidden ? 'error' : ''}
                           />
 
 
@@ -427,7 +274,6 @@ const SheetColumnForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="collapsed" className="nice-form-control">
                       <b>
                         Collapsed:
@@ -440,7 +286,6 @@ const SheetColumnForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="collapsed"
                             name="collapsed"
                             onChange={(e) => {
@@ -448,9 +293,7 @@ const SheetColumnForm: React.FC = () => {
                               setFieldValue('collapsed', e.target.checked);
                             }}
                             isInvalid={!!errors.collapsed}
-                            className={
-                              errors.collapsed ? 'error' : ''
-                            }
+                            className={errors.collapsed ? 'error' : ''}
                           />
 
 
@@ -466,7 +309,6 @@ const SheetColumnForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="outlineLevel" className="nice-form-control">
                       <b>
                         Outline Level:
@@ -482,7 +324,12 @@ const SheetColumnForm: React.FC = () => {
                           {/* INTEGER FIELD */}
                           <Field
                             name="outlineLevel"
-                            type="text"
+                            type="number"
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('outlineLevel', true);
+                              const v = e.target.value;
+                              setFieldValue('outlineLevel', v === '' ? undefined : Number(v));
+                            }}
                             className={
                               errors.outlineLevel
                                 ? 'form-control field-error'
@@ -501,7 +348,6 @@ const SheetColumnForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="id" className="nice-form-control">
                       <b>
                         Id:
@@ -513,15 +359,13 @@ const SheetColumnForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.id}
+                            placeholder="Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -536,7 +380,6 @@ const SheetColumnForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
@@ -548,15 +391,13 @@ const SheetColumnForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -571,7 +412,6 @@ const SheetColumnForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
@@ -596,7 +436,6 @@ const SheetColumnForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
@@ -608,15 +447,13 @@ const SheetColumnForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -631,7 +468,6 @@ const SheetColumnForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedById" className="nice-form-control">
                       <b>
                         Last Accessed By Id:
@@ -643,15 +479,13 @@ const SheetColumnForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastAccessedById}
+                            placeholder="Last Accessed By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -666,7 +500,6 @@ const SheetColumnForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedDate" className="nice-form-control">
                       <b>
                         Last Accessed Date:
@@ -691,7 +524,6 @@ const SheetColumnForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedById" className="nice-form-control">
                       <b>
                         Last Modified By Id:
@@ -703,15 +535,13 @@ const SheetColumnForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastModifiedById}
+                            placeholder="Last Modified By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
 
 
@@ -726,7 +556,6 @@ const SheetColumnForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedDate" className="nice-form-control">
                       <b>
                         Last Modified Date:
@@ -754,31 +583,34 @@ const SheetColumnForm: React.FC = () => {
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
+                    disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (
-                      <Spinner
-                        style={ { float: 'left' } }
-                        as="span"
-                        animation="grow"
-                        variant="light"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FaCheckCircle size={30} /> Create New SheetColumn
+                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New SheetColumn
                   </CoolButton>
+
+                  {addSheetColumnResult.error && (
+                    <div className="error" style={ { marginTop: 12 }}>
+                      {JSON.stringify('data' in (addSheetColumnResult as any).error ? (addSheetColumnResult as any).error.data : (addSheetColumnResult as any).error)}
+                    </div>
+                  )}
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Read-Only System Fields */}
-              <Accordion.Item eventKey="2">
-                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                  </Row>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addSheetColumnResult: {JSON.stringify(addSheetColumnResult)}
                 </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
           </form>
         )}

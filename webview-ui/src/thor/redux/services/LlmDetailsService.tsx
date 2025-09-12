@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { LlmDetails } from '../../model'
+import { LlmDetails } from '@thor/model/LlmDetails'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type LlmDetailsResponse = LlmDetails[]
@@ -10,8 +10,13 @@ export const LlmDetailsService = createApi({
   tagTypes: ['LlmDetails'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getLlmDetailssPaged: build.query<LlmDetailsResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `LlmDetails?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getLlmDetailssPaged: build.query<LlmDetailsResponse, { page: number; size?: number; example?: Partial<LlmDetails> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `LlmDetails?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const LlmDetailsService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getLlmDetailss: build.query<LlmDetailsResponse, void>({
-      query: () => `LlmDetails`,
+    getLlmDetailss: build.query<LlmDetailsResponse, { example?: Partial<LlmDetails> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `LlmDetails?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `LlmDetails`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const LlmDetailsService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'LlmDetails', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'LlmDetails', id },
+        { type: 'LlmDetails', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

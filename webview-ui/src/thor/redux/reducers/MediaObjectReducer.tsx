@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { MediaObject } from '../../model/MediaObject';
+import { MediaObject } from '@thor/model/MediaObject';
 
 const MediaObjectSlice = createSlice({
   name: "MediaObjects",

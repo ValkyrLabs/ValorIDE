@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Ptg } from '../../model'
+import { Ptg } from '@thor/model/Ptg'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type PtgResponse = Ptg[]
@@ -10,8 +10,13 @@ export const PtgService = createApi({
   tagTypes: ['Ptg'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getPtgsPaged: build.query<PtgResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `Ptg?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getPtgsPaged: build.query<PtgResponse, { page: number; size?: number; example?: Partial<Ptg> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `Ptg?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const PtgService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getPtgs: build.query<PtgResponse, void>({
-      query: () => `Ptg`,
+    getPtgs: build.query<PtgResponse, { example?: Partial<Ptg> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `Ptg?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `Ptg`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const PtgService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'Ptg', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'Ptg', id },
+        { type: 'Ptg', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

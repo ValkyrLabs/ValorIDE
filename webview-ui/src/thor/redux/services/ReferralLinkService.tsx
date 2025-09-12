@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { ReferralLink } from '../../model'
+import { ReferralLink } from '@thor/model/ReferralLink'
 import customBaseQuery from '../customBaseQuery'; // Import the custom base query
 
 type ReferralLinkResponse = ReferralLink[]
@@ -10,8 +10,13 @@ export const ReferralLinkService = createApi({
   tagTypes: ['ReferralLink'],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
-    getReferralLinksPaged: build.query<ReferralLinkResponse, { page: number; limit?: number }>({
-      query: ({ page, limit = 20 }) => `ReferralLink?page=${page}&limit=${limit}`,
+    // Standardized pagination: page (0-based), size (page size)
+    getReferralLinksPaged: build.query<ReferralLinkResponse, { page: number; size?: number; example?: Partial<ReferralLink> }>({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ReferralLink?${q.join('&')}`;
+      },
       providesTags: (result, error, { page }) =>
         result
           ? [
@@ -22,8 +27,14 @@ export const ReferralLinkService = createApi({
     }),
 
     // 2) Simple "get all" Query (optional)
-    getReferralLinks: build.query<ReferralLinkResponse, void>({
-      query: () => `ReferralLink`,
+    getReferralLinks: build.query<ReferralLinkResponse, { example?: Partial<ReferralLink> } | void>({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `ReferralLink?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `ReferralLink`;
+      },
       providesTags: (result) =>
         result
           ? [
@@ -70,7 +81,10 @@ export const ReferralLinkService = createApi({
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [{ type: 'ReferralLink', id }],
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'ReferralLink', id },
+        { type: 'ReferralLink', id: 'LIST' },
+      ],
     }),
 
     // 6) Delete

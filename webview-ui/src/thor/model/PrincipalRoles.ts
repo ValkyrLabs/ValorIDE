@@ -15,6 +15,9 @@ import { exists, mapValues } from '../src/runtime';
 import {
 
 
+    Principal,
+    PrincipalFromJSON,
+    PrincipalToJSON,
     Role,
     RoleFromJSON,
     RoleToJSON,
@@ -24,29 +27,35 @@ import {
 // thorapi
 
 /**
- * link for one-to-many
+ * An organization such as a company
  * @export
  * @interface PrincipalRoles
  */
 export type PrincipalRoles  = {
     /**
-     * the id of the principal
+     * UUID of the Principal this role belongs to
      * @type {string}
      * @memberof PrincipalRoles
      */
-    principalId: string;
+    principalId?: string;
     /**
-     * the id of the role
+     * UUID of the Role this Principal belongs to
      * @type {string}
      * @memberof PrincipalRoles
      */
-    roleId: string;
+    roleId?: string;
     /**
      * 
      * @type {Role}
      * @memberof PrincipalRoles
      */
     role?: Role;
+    /**
+     * 
+     * @type {Principal}
+     * @memberof PrincipalRoles
+     */
+    principal?: Principal;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -99,9 +108,10 @@ export type PrincipalRoles  = {
 
 export function PrincipalRolesFromJSON(json: any): PrincipalRoles {
     return {
-        'principalId': json['principalId'],
-        'roleId': json['roleId'],
+        'principalId': !exists(json, 'principal_id') ? undefined : json['principal_id'],
+        'roleId': !exists(json, 'role_id') ? undefined : json['role_id'],
         'role': !exists(json, 'role') ? undefined : RoleFromJSON(json['role']),
+        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
@@ -118,9 +128,10 @@ export function PrincipalRolesToJSON(value?: PrincipalRoles): any {
         return undefined;
     }
     return {
-        'principalId': value.principalId,
-        'roleId': value.roleId,
+        'principal_id': value.principalId,
+        'role_id': value.roleId,
         'role': RoleToJSON(value.role),
+        'principal': PrincipalToJSON(value.principal),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

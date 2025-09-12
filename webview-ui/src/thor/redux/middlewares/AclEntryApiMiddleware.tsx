@@ -5,7 +5,7 @@ import {
     getAclEntryList , 
     deleteAclEntry , 
     updateAclEntry 
-} from '../../api';
+} from '../../api/AclEntryApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const AclEntryMiddleware = ({ dispatch }) => (next) => async (action) => 
 
         case LIST_ACLENTRY_REQUEST:
             try {
-                const response = getAclEntryList();
+                const response = getAclEntryList({});
                 dispatch(listAclEntrySuccess(response.body));
             } catch (error) {
                 dispatch(listAclEntryFailure(error.message));

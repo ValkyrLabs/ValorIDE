@@ -49,12 +49,6 @@ export type Login  = {
     token?: string;
     /**
      * 
-     * @type {string}
-     * @memberof Login
-     */
-    authenticatedPrincipalId?: string;
-    /**
-     * 
      * @type {Principal}
      * @memberof Login
      */
@@ -120,7 +114,6 @@ export function LoginFromJSON(json: any): Login {
         'username': !exists(json, 'username') ? undefined : json['username'],
         'password': !exists(json, 'password') ? undefined : json['password'],
         'token': !exists(json, 'token') ? undefined : json['token'],
-        'authenticatedPrincipalId': !exists(json, 'authenticatedPrincipalId') ? undefined : json['authenticatedPrincipalId'],
         'authenticatedPrincipal': !exists(json, 'authenticatedPrincipal') ? undefined : PrincipalFromJSON(json['authenticatedPrincipal']),
         'description': !exists(json, 'description') ? undefined : json['description'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -142,7 +135,6 @@ export function LoginToJSON(value?: Login): any {
         'username': value.username,
         'password': value.password,
         'token': value.token,
-        'authenticatedPrincipalId': value.authenticatedPrincipalId,
         'authenticatedPrincipal': PrincipalToJSON(value.authenticatedPrincipal),
         'description': value.description,
         'id': value.id,

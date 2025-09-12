@@ -5,7 +5,7 @@ import {
     getMcpContentList , 
     deleteMcpContent , 
     updateMcpContent 
-} from '../../api';
+} from '../../api/McpContentApi';
 
 import {
 
@@ -65,7 +65,7 @@ export const McpContentMiddleware = ({ dispatch }) => (next) => async (action) =
 
         case LIST_MCPCONTENT_REQUEST:
             try {
-                const response = getMcpContentList();
+                const response = getMcpContentList({});
                 dispatch(listMcpContentSuccess(response.body));
             } catch (error) {
                 dispatch(listMcpContentFailure(error.message));

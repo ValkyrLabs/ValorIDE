@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Organization } from '../../model/Organization';
+import { Organization } from '@thor/model/Organization';
 
 const OrganizationSlice = createSlice({
   name: "Organizations",
