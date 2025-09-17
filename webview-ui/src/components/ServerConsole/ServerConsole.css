@@ -2,24 +2,30 @@
 
 .server-console {
   width: 100%;
-  border-radius: 12px;
+  margin: 1em;
+  border-radius: 10px;
   overflow: hidden;
   transition: all 0.3s ease;
   position: relative;
 }
 
 .server-console.connection-happy {
+  margin: 1em;
   --glow-color: #61dafb;
   --glow-rgb: 97, 218, 251;
   border: 2px solid var(--glow-color);
-  box-shadow: 0 0 8px var(--glow-color), inset 0 0 8px rgba(var(--glow-rgb), 0.1);
+  box-shadow:
+    0 0 8px var(--glow-color),
+    inset 0 0 8px rgba(var(--glow-rgb), 0.1);
 }
 
 .server-console.connection-waiting {
   --glow-color: #ff9900;
   --glow-rgb: 255, 153, 0;
   border: 2px solid var(--glow-color);
-  box-shadow: 0 0 8px var(--glow-color), inset 0 0 8px rgba(var(--glow-rgb), 0.1);
+  box-shadow:
+    0 0 8px var(--glow-color),
+    inset 0 0 8px rgba(var(--glow-rgb), 0.1);
   animation: glowPulse 2s ease-in-out infinite;
 }
 
@@ -27,25 +33,33 @@
   --glow-color: #ff0000;
   --glow-rgb: 255, 0, 0;
   border: 2px solid var(--glow-color);
-  box-shadow: 0 0 8px var(--glow-color), inset 0 0 8px rgba(var(--glow-rgb), 0.1);
+  box-shadow:
+    0 0 8px var(--glow-color),
+    inset 0 0 8px rgba(var(--glow-rgb), 0.1);
   animation: glowPulse 2s ease-in-out infinite;
 }
 
 .server-console::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--glow-color), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--glow-color),
+    transparent
+  );
   animation: shimmer 3s ease-in-out infinite;
   z-index: 1;
 }
 
 .console-header {
-  background: linear-gradient(135deg, 
-    rgba(var(--glow-rgb), 0.15) 0%, 
+  background: linear-gradient(
+    135deg,
+    rgba(var(--glow-rgb), 0.15) 0%,
     rgba(var(--glow-rgb), 0.05) 100%
   );
   border-bottom: 1px solid rgba(var(--glow-rgb), 0.3);
@@ -205,9 +219,8 @@
 
 .message-time {
   color: rgba(var(--glow-rgb), 0.6);
-  font-size: 10px;
-  font-family: 'Monaco', 'Menlo', monospace;
-  min-width: 60px;
+  font-size: 8px;
+  font-family: "Monaco", "Menlo", monospace;
 }
 
 .message-user {
@@ -221,11 +234,15 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--glow-color), rgba(var(--glow-rgb), 0.5));
+  background: linear-gradient(
+    135deg,
+    var(--glow-color),
+    rgba(var(--glow-rgb), 0.5)
+  );
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 8px;
   font-weight: bold;
   color: white;
   text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
@@ -257,6 +274,25 @@
 }
 
 .input-container {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: transparent;
+  color: var(--vscode-input-foreground);
+  border-radius: 10;
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-editor-font-size);
+  line-height: var(--vscode-editor-line-height);
+  resize: none;
+  overflow-X: hidden;
+  overflow-Y: scroll;
+  scrollbar-width: none;
+  padding: 9px 28px 3px 9px;
+  cursor: textAreaDisabled ? not-allowed : undefined;
+  flex: 1;
+  z-index: 1;
+  outline: isTextAreaFocused
+    ? `1px solid ${chatSettings.mode === plan ? PLAN_MODE_COLOR : var(--vscode-focusBorder)}`
+    : none;
   padding: 16px;
   border-top: 1px solid rgba(var(--glow-rgb), 0.3);
   background: rgba(var(--glow-rgb), 0.05);
@@ -285,7 +321,11 @@
 }
 
 .send-btn {
-  background: linear-gradient(135deg, var(--glow-color), rgba(var(--glow-rgb), 0.8)) !important;
+  background: linear-gradient(
+    135deg,
+    var(--glow-color),
+    rgba(var(--glow-rgb), 0.8)
+  ) !important;
   border: none !important;
   color: white !important;
   width: 40px;
@@ -300,7 +340,11 @@
 .send-btn:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(var(--glow-rgb), 0.5);
-  background: linear-gradient(135deg, var(--glow-color), rgba(var(--glow-rgb), 0.8)) !important;
+  background: linear-gradient(
+    135deg,
+    var(--glow-color),
+    rgba(var(--glow-rgb), 0.8)
+  ) !important;
   color: white !important;
 }
 
@@ -317,15 +361,21 @@
 /* Keyframe animations */
 @keyframes glowPulse {
   0% {
-    box-shadow: 0 0 8px var(--glow-color), inset 0 0 8px rgba(var(--glow-rgb), 0.1);
+    box-shadow:
+      0 0 8px var(--glow-color),
+      inset 0 0 8px rgba(var(--glow-rgb), 0.1);
     border-color: var(--glow-color);
   }
   50% {
-    box-shadow: 0 0 20px var(--glow-color), inset 0 0 20px rgba(var(--glow-rgb), 0.2);
+    box-shadow:
+      0 0 20px var(--glow-color),
+      inset 0 0 20px rgba(var(--glow-rgb), 0.2);
     border-color: var(--glow-color);
   }
   100% {
-    box-shadow: 0 0 8px var(--glow-color), inset 0 0 8px rgba(var(--glow-rgb), 0.1);
+    box-shadow:
+      0 0 8px var(--glow-color),
+      inset 0 0 8px rgba(var(--glow-rgb), 0.1);
     border-color: var(--glow-color);
   }
 }

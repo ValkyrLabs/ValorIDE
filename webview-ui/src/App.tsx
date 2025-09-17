@@ -7,7 +7,6 @@ import HistoryView from "./components/history/HistoryView";
 import SettingsView from "./components/settings/SettingsView";
 import WelcomeView from "./components/welcome/WelcomeView";
 import AccountView from "./components/account/AccountView";
-import FileExplorer from "./components/FileExplorer/FileExplorer";
 import ApplicationProgress from "./components/ApplicationProgress/ApplicationProgress";
 import ServerConsole from "./components/ServerConsole/index";
 import SplitPane, {
@@ -22,6 +21,8 @@ import {
 import { MothershipProvider } from "./context/MothershipContext";
 import { ChatMothershipProvider } from "./components/chat/ChatMothershipProvider";
 import { UsageTrackingHandler } from "./components/usage-tracking/UsageTrackingHandler";
+import StartupDebit from "./components/usage-tracking/StartupDebit";
+import useValorIDEMothership from "./hooks/useValorIDEMothership";
 
 import { vscode } from "./utils/vscode";
 import McpView from "./components/mcp/configuration/McpConfigurationView";
@@ -51,8 +52,25 @@ const AppContent = () => {
     string | undefined
   >(undefined);
 
+  // Use the Mothership integration hook
+  const {
+    isConnected: mothershipConnected,
+    instanceId,
+    trackChatMessage,
+    trackToolUse,
+    trackFileEdit,
+    trackCommandExecute,
+    trackTaskStart,
+    trackTaskComplete,
+    sendChatAction,
+  } = useValorIDEMothership();
+
+  console.log(`🚀 ValorIDE Mothership Status: Connected=${mothershipConnected}, InstanceId=${instanceId}`);
+
   const handleMessage = useCallback((e: MessageEvent) => {
     const message: ExtensionMessage = e.data;
+
+    // Track different message types to mothership
     switch (message.type) {
       case "loginSuccess":
         // After successful login, show the Account view and keep File Explorer visible
@@ -63,7 +81,11 @@ const AppContent = () => {
         setShowGeneratedFiles(false);
         setShowApplicationProgress(false);
         setShowFileExplorer(true);
+        
+        // Track login success as a task start
+        trackTaskStart("user-session", "User logged in successfully");
         break;
+
       case "action":
         switch (message.action!) {
           case "settingsButtonClicked":
@@ -74,7 +96,6 @@ const AppContent = () => {
             setShowGeneratedFiles(false);
             setShowServerConsole(false);
             setShowApplicationProgress(false);
-            // Keep file explorer visible
             break;
           case "historyButtonClicked":
             setShowSettings(false);
@@ -84,7 +105,6 @@ const AppContent = () => {
             setShowGeneratedFiles(false);
             setShowServerConsole(false);
             setShowApplicationProgress(false);
-            // Keep file explorer visible
             break;
           case "mcpButtonClicked":
             setShowSettings(false);
@@ -97,7 +117,6 @@ const AppContent = () => {
             setShowGeneratedFiles(false);
             setShowServerConsole(false);
             setShowApplicationProgress(false);
-            // Keep file explorer visible
             break;
           case "accountButtonClicked":
             setShowSettings(false);
@@ -107,7 +126,6 @@ const AppContent = () => {
             setShowGeneratedFiles(false);
             setShowServerConsole(false);
             setShowApplicationProgress(false);
-            // Keep file explorer visible
             break;
           case "chatButtonClicked":
             setShowSettings(false);
@@ -117,7 +135,6 @@ const AppContent = () => {
             setShowGeneratedFiles(false);
             setShowServerConsole(false);
             setShowApplicationProgress(false);
-            // Keep file explorer visible
             break;
           case "generatedFilesButtonClicked":
             setShowSettings(false);
@@ -127,7 +144,6 @@ const AppContent = () => {
             setShowGeneratedFiles(true);
             setShowServerConsole(false);
             setShowApplicationProgress(false);
-            // Keep file explorer visible
             break;
           case "serverConsoleButtonClicked":
             setShowSettings(false);
@@ -137,10 +153,10 @@ const AppContent = () => {
             setShowGeneratedFiles(false);
             setShowServerConsole(true);
             setShowApplicationProgress(false);
-            // Keep file explorer visible
             break;
         }
         break;
+
       case "streamToThorapiResult":
         // Handle application generation progress
         if (message.streamToThorapiResult) {
@@ -159,19 +175,44 @@ const AppContent = () => {
           }
         }
         break;
+
+      // Track other extension messages as generic actions
+      case "invoke":
+        // Track tool invocations
+        sendChatAction({
+          type: 'tool_use',
+          metadata: {
+            action: 'invoke',
+            timestamp: Date.now(),
+          },
+        });
+        break;
+
+      case "partialMessage":
+        // Track partial messages (streaming)
+        sendChatAction({
+          type: 'api_data',
+          metadata: {
+            action: 'partial_message',
+            timestamp: Date.now(),
+          },
+        });
+        break;
+
+      default:
+        // Track any other message types as generic activity
+        sendChatAction({
+          type: 'api_data',
+          metadata: {
+            messageType: message.type,
+            timestamp: Date.now(),
+          },
+        });
+        break;
     }
-  }, []);
+  }, [trackTaskStart, sendChatAction]);
 
   useEvent("message", handleMessage);
-
-  // useEffect(() => {
-  //  if (telemetrySetting === "enabled") {
-  //   posthog.identify(vscMachineId)
-  //   posthog.opt_in_capturing()
-  //  } else {
-  //   posthog.opt_out_capturing()
-  //  }
-  // }, [telemetrySetting, vscMachineId])
 
   useEffect(() => {
     if (shouldShowAnnouncement) {
@@ -270,6 +311,8 @@ const App = () => {
         <ChatMothershipProvider>
           {/* Process usage tracking messages invisibly */}
           <UsageTrackingHandler />
+          {/* Auto-debit for auto-login sessions */}
+          <StartupDebit />
           <AppContent />
         </ChatMothershipProvider>
       </MothershipProvider>

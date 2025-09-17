@@ -6,7 +6,7 @@ import { getTheme } from "@integrations/theme/getTheme";
 import { Controller } from "@core/controller/index";
 import { findLast } from "@shared/array";
 import { UsageTrackingService } from "../../services/usage-tracking/UsageTrackingService";
-import { TelecomHub } from "@services/telecom/TelecomHub";
+import { TelecomHub } from "@services/P2P/TelecomHub";
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
 https://github.com/KumarVariable/vscode-extension-sidebar-html/blob/master/src/customSidebarViewProvider.ts
@@ -115,8 +115,14 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
         ? await this.getHMRHtmlContent(webviewView.webview)
         : this.getHtmlContent(webviewView.webview);
 
-    // Initialize usage tracking service with webview panel
-    this.usageTrackingService.setWebviewPanel(webviewView as vscode.WebviewPanel);
+    // Initialize bridge services with the active webview
+    this.usageTrackingService.setWebview(webviewView);
+    try {
+      const { ContentDataBridge } = await import('../../services/content-data/ContentDataBridge');
+      ContentDataBridge.getInstance().setWebviewPanel(webviewView as vscode.WebviewPanel);
+    } catch (e) {
+      console.warn('ContentDataBridge not initialized:', e);
+    }
 
     // Sets up an event listener to listen for messages passed from the webview view context
     // and executes code based on the message that is received
@@ -261,9 +267,9 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
     // Tip: Install the es6-string-html VS Code extension to enable code highlighting below
     const cfg = vscode.workspace.getConfiguration("valoride");
     const telecomConfig = {
-      turnServers: cfg.get<any[]>("telecom.turnServers", ["stun:stun.l.google.com:19302"]),
-      bonjour: cfg.get<boolean>("telecom.discovery.bonjour", false),
-      p2pEnabled: cfg.get<boolean>("telecom.p2pEnabled", true),
+      turnServers: cfg.get<any[]>("P2P.turnServers", ["stun:stun.l.google.com:19302"]),
+      bonjour: cfg.get<boolean>("P2P.discovery.bonjour", false),
+      p2pEnabled: cfg.get<boolean>("P2P.p2pEnabled", true),
     };
     return /*html*/ `
         <!DOCTYPE html>
@@ -342,9 +348,9 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
 
     const cfg = vscode.workspace.getConfiguration("valoride");
     const telecomConfig = {
-      turnServers: cfg.get<any[]>("telecom.turnServers", ["stun:stun.l.google.com:19302"]),
-      bonjour: cfg.get<boolean>("telecom.discovery.bonjour", false),
-      p2pEnabled: cfg.get<boolean>("telecom.p2pEnabled", true),
+      turnServers: cfg.get<any[]>("P2P.turnServers", ["stun:stun.l.google.com:19302"]),
+      bonjour: cfg.get<boolean>("P2P.discovery.bonjour", false),
+      p2pEnabled: cfg.get<boolean>("P2P.p2pEnabled", true),
     };
     return /*html*/ `
 			<!DOCTYPE html>

@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.221",
+  "version": "3.20.322",
   "icon": "assets/icons/icon.png",
   "galleryBanner": {
     "color": "#617A91",
@@ -330,7 +330,48 @@
     "configuration": {
       "title": "ValorIDE",
       "properties": {
-        "valoride.telecom.turnServers": {
+        "valoride.advanced.fileProcessing.warnLargeFiles": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show warnings for large files in DiffViewProvider."
+        },
+        "valoride.advanced.fileProcessing.largeFileThreshold": {
+          "type": "number",
+          "default": 20480,
+          "markdownDescription": "Bytes threshold to show informational warning for large files.",
+          "minimum": 1024
+        },
+        "valoride.advanced.fileProcessing.maxFileSize": {
+          "type": "number",
+          "default": 512000,
+          "markdownDescription": "Maximum file size in bytes before showing blocking warning in DiffViewProvider.",
+          "minimum": 1024
+        },
+        "valoride.advanced.budgetAlerts.depletedThreshold": {
+          "type": "number",
+          "default": 0,
+          "markdownDescription": "Effective balance (USD) at or below which 'Budget Depleted' alert shows.",
+          "minimum": 0
+        },
+        "valoride.advanced.budgetAlerts.criticalThreshold": {
+          "type": "number",
+          "default": 1,
+          "markdownDescription": "Effective balance (USD) at or below which 'Critical Budget Alert' shows.",
+          "minimum": 0
+        },
+        "valoride.advanced.budgetAlerts.lowThreshold": {
+          "type": "number",
+          "default": 5,
+          "markdownDescription": "Effective balance (USD) at or below which 'Low Budget Warning' shows.",
+          "minimum": 0
+        },
+        "valoride.advanced.budgetAlerts.alertThreshold": {
+          "type": "number",
+          "default": 10,
+          "markdownDescription": "Effective balance (USD) at or below which 'Budget Alert' shows.",
+          "minimum": 0
+        },
+        "valoride.P2P.turnServers": {
           "type": "array",
           "markdownDescription": "List of ICE/TURN servers for P2P (RTCConfiguration. Each entry may be a string URL or an object with { urls, username, credential }).",
           "items": {
@@ -366,7 +407,7 @@
             "stun:stun.l.google.com:19302"
           ]
         },
-        "valoride.telecom.discovery.bonjour": {
+        "valoride.P2P.discovery.bonjour": {
           "type": "boolean",
           "markdownDescription": "Enable experimental Bonjour/mDNS peer discovery for local network rendezvous (requires reload).",
           "default": false

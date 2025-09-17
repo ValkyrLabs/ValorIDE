@@ -4,6 +4,7 @@ import { GitCommit } from "../utils/git";
 import { ApiConfiguration, ModelInfo } from "./api";
 import { AutoApprovalSettings } from "./AutoApprovalSettings";
 import { BrowserSettings } from "./BrowserSettings";
+import { ValorIDEAdvancedSettings } from "./AdvancedSettings";
 import { ChatSettings } from "./ChatSettings";
 import { HistoryItem } from "./HistoryItem";
 import {
@@ -204,6 +205,7 @@ export interface ExtensionState {
   apiConfiguration?: ApiConfiguration;
   autoApprovalSettings: AutoApprovalSettings;
   browserSettings: BrowserSettings;
+  advancedSettings?: ValorIDEAdvancedSettings;
   remoteBrowserHost?: string;
   chatSettings: ChatSettings;
   checkpointTrackerErrorMessage?: string;
@@ -285,7 +287,8 @@ export type ValorIDESay =
   | "deleted_api_reqs"
   | "valorideignore_error"
   | "checkpoint_created"
-  | "load_mcp_documentation";
+  | "load_mcp_documentation"
+  | "p2p_chat_message";
 
 export interface ValorIDESayTool {
   tool:
@@ -350,6 +353,14 @@ export interface ValorIDEAskQuestion {
 
 export interface ValorIDEAskNewTask {
   context: string;
+}
+
+export interface ValorIDEP2PChatMessage {
+  fromHandle: string;
+  toHandle?: string; // If undefined, it's a broadcast message
+  message: string;
+  timestamp: number;
+  messageId: string;
 }
 
 export interface ValorIDEApiReqInfo {

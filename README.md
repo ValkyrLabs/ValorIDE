@@ -71,7 +71,7 @@ Valor IDE integrates with ValkyrAI models that you can customize and configure f
 
 Adjust the initial prompt with technical details specific to your project(s) and business(es) to save time and maximize efficiency and effectiveness.
 
-Using Valor Telecom you can configure a management Model and a work execution Model and run a supervised project right within your IDE.
+Using Valor P2P you can configure a management Model and a work execution Model and run a supervised project right within your IDE.
 
 ---
 
@@ -90,9 +90,9 @@ ValkyrAI can be run as a service in your generated application stack, providing 
 
 Agentic reporting tracks **token usage and costs** across entire task loops, so you always know your spend and monetization features of the ValkyrLabs.com
 
-### 🛠️ Valor Telecom
+### 🛠️ Valor P2P
 
-Telecom allows multiple Valor instances to communicate and orchestrate tasks together.
+P2P allows multiple Valor instances to communicate and orchestrate tasks together.
 
 It's an innovative and fun way to increase the power of Valor in your IDE.
 
@@ -271,8 +271,8 @@ Push → Open PR → CI runs → Changesetbot handles versioning + release.
 ### 🚀 Latest Developments
 
 - **ThorAPI Enhancements**: Continued development and integration with ThorAPI, including work on the Engager project and the TelecomP2P component.
-    - **TelecomP2P Component**: Development of a new TelecomP2P component for peer-to-peer communication.
-    - **Engager Project**: Ongoing work on the Typescript client for the Engager project.
+  - **TelecomP2P Component**: Development of a new TelecomP2P component for peer-to-peer communication.
+  - **Engager Project**: Ongoing work on the Typescript client for the Engager project.
 - **Communication Service**: Improvements and testing of the CommunicationService.
 - **State Management**: Updates to core state management functionalities.
 - **MCP and Valhalla Suite**: Ongoing work on the Model Context Protocol (MCP) and the broader Valhalla Suite, enhancing agentic capabilities and integration with other Valkyr Labs products.

@@ -1041,8 +1041,7 @@ export const ChatRowContent = ({
                           marginBottom: "4px",
                         }}
                       >
-                        Thinking
-                        <FaBrain />
+                        <FaBrain className="chatTextArea" color="red" size={32} /> Thinking
                       </span>
                       {message.text}
                     </div>

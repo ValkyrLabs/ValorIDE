@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import customBaseQuery from "../customBaseQuery";
+import customBaseQuery from "../../thor/redux/customBaseQuery";
 
 export type CreateCheckoutSessionArgs = {
   orderId: string; // UUID

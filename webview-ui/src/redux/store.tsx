@@ -10,7 +10,7 @@ import { PaymentTransactionService } from "../thor/redux/services/PaymentTransac
 
 // cool!
 import { websocketMiddleware } from "./middleware/websocketMiddleware";
-import websocketReducer from "./services/websocketSlice";
+import websocketReducer from "../components/ServerConsole/websocketSlice";
 
 // import the thorapi generated reducers and middleware
 import middlewares from "../redux/middlewares";

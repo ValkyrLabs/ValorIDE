@@ -101,7 +101,7 @@ const CreditsHistoryTable = ({
                         }}
                       >
                         <VSCodeDataGridCell grid-column="1">
-                          {row.spentAt.toISOString()}
+                          {row.spentAt ? formatTimestamp(String(row.spentAt)) : ""}
                         </VSCodeDataGridCell>
                         <VSCodeDataGridCell grid-column="2">{`${row.modelProvider}/${row.model}`}</VSCodeDataGridCell>
                         {/* <VSCodeDataGridCell grid-column="3">{`${row.promptTokens} → ${row.completionTokens}`}</VSCodeDataGridCell> */}
@@ -154,7 +154,7 @@ const CreditsHistoryTable = ({
                         }}
                       >
                         <VSCodeDataGridCell grid-column="1">
-                          {row.paidAt && row.paidAt.toISOString()}
+                          {row.paidAt ? formatTimestamp(String(row.paidAt)) : ""}
                         </VSCodeDataGridCell>
                         <VSCodeDataGridCell grid-column="2">{`$${formatDollars(row.amountCents)}`}</VSCodeDataGridCell>
                         <VSCodeDataGridCell grid-column="3">{`${row.credits}`}</VSCodeDataGridCell>

@@ -4,6 +4,22 @@ import { convertToR1Format } from "@api/transform/r1-format";
 import { Anthropic } from "@anthropic-ai/sdk";
 import OpenAI from "openai";
 
+// Function to send API data to websocket if available
+function sendApiDataToWebsocket(type: 'request' | 'response' | 'stream_chunk', data: any) {
+  try {
+    // Check if we're in browser environment and have websocket dispatch available
+    if (typeof window !== 'undefined' && (window as any).valorideDispatchChatAction) {
+      (window as any).valorideDispatchChatAction('api-data', {
+        type,
+        data,
+        timestamp: Date.now()
+      });
+    }
+  } catch (error) {
+    console.debug('Failed to send API data to websocket:', error);
+  }
+}
+
 export async function createOpenRouterStream(
   client: OpenAI,
   systemPrompt: string,
@@ -139,8 +155,8 @@ export async function createOpenRouterStream(
     shouldApplyMiddleOutTransform = true;
   }
 
-  // @ts-ignore-next-line
-  const stream = await client.chat.completions.create({
+  // Construct the API request payload
+  const apiRequest = {
     model: model.id,
     max_tokens: maxTokens,
     temperature: temperature,
@@ -157,7 +173,35 @@ export async function createOpenRouterStream(
     ...(openRouterProviderSorting
       ? { provider: { sort: openRouterProviderSorting } }
       : {}),
+  };
+
+  // Send API request data to websocket
+  sendApiDataToWebsocket('request', {
+    url: client.baseURL,
+    method: 'POST',
+    body: apiRequest
   });
 
-  return stream;
+  // @ts-ignore-next-line
+  const stream = await client.chat.completions.create(apiRequest);
+
+  // Create a new async generator that intercepts stream chunks
+  async function* interceptedStream() {
+    try {
+      for await (const chunk of stream) {
+        // Send each stream chunk to websocket
+        sendApiDataToWebsocket('stream_chunk', chunk);
+        yield chunk;
+      }
+    } catch (error) {
+      // Send error to websocket
+      sendApiDataToWebsocket('response', {
+        error: error,
+        timestamp: Date.now()
+      });
+      throw error;
+    }
+  }
+
+  return interceptedStream();
 }

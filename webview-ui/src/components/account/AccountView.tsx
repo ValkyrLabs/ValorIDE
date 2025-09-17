@@ -2,7 +2,7 @@ import { memo, useState, useCallback, useEffect, useMemo } from "react";
 
 import { UsageTransaction, PaymentTransaction } from "@/thor/model";
 import { useGetBalanceResponsesQuery } from "@/thor/redux/services/BalanceResponseService";
-import { useGetUsageTransactionsQuery } from "@/thor/redux/services/UsageTransactionService";
+import { useAddUsageTransactionMutation, useGetUsageTransactionsQuery } from "@/thor/redux/services/UsageTransactionService";
 import { useGetPaymentTransactionsQuery } from "@/thor/redux/services/PaymentTransactionService";
 import VSCodeButtonLink from "../common/VSCodeButtonLink";
 import ValorIDELogoWhite from "../../assets/ValorIDELogoWhite";
@@ -29,6 +29,8 @@ import { FormikHelpers } from "formik";
 import { useLoginUserMutation } from "../../redux/services/AuthService";
 import StatusBadge from "@/components/common/StatusBadge";
 import OfflineBanner from "@/components/common/OfflineBanner";
+import SystemAlerts from "@/components/SystemAlerts";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { useCommunicationService } from "@/context/CommunicationServiceContext";
 
 type AccountViewProps = {
@@ -48,9 +50,22 @@ const AccountView = ({ onDone }: AccountViewProps) => {
     isLoggedIn || authenticatedUser || userInfo || jwtToken,
   );
 
+  // Also consider presence of a stored JWT to avoid timing gaps
+  const hasStoredJwt = useMemo(() => {
+    try {
+      return Boolean(
+        sessionStorage.getItem("jwtToken") ||
+        localStorage.getItem("jwtToken") ||
+        localStorage.getItem("authToken")
+      );
+    } catch {
+      return false;
+    }
+  }, [jwtToken]);
+
   // Local immediate login flag to reveal tabs before context updates
   const [didLogin, setDidLogin] = useState(false);
-  const authed = isAuthenticated || didLogin;
+  const authed = isAuthenticated || didLogin || hasStoredJwt;
 
   // Default to login tab when unauthenticated, otherwise account
   const [activeTab, setActiveTab] = useState<
@@ -77,20 +92,23 @@ const AccountView = ({ onDone }: AccountViewProps) => {
 
   const { data: usageData, isLoading: isUsageLoading, refetch: refetchUsage } =
     useGetUsageTransactionsQuery(undefined, {
-      skip: !isAuthenticated,
+      // Use broader auth signal so queries mount as soon as a token exists
+      skip: !authed,
     });
   const {
     data: paymentsData,
     isLoading: isPaymentsLoading,
     refetch: refetchPayments,
   } = useGetPaymentTransactionsQuery(undefined, {
-    skip: !isAuthenticated,
+    // Use broader auth signal so queries mount as soon as a token exists
+    skip: !authed,
   });
 
   // Combined loading state
   const loading = isBalanceLoading || isUsageLoading || isPaymentsLoading;
 
   const [loginUser] = useLoginUserMutation();
+  const [addUsageTransaction] = useAddUsageTransactionMutation();
 
   const handleLogin = async (
     values: Login,
@@ -100,22 +118,77 @@ const AccountView = ({ onDone }: AccountViewProps) => {
       const result = await loginUser(values).unwrap();
       if (result.token) {
         sessionStorage.setItem("jwtToken", result.token);
+        // Persist to localStorage if enabled (default true)
+        try {
+          const persist = (() => {
+            try { const v = localStorage.getItem("valoride.persistJwt"); return v === null ? true : v === "true"; } catch { return true; }
+          })();
+          if (persist) {
+            localStorage.setItem("jwtToken", result.token);
+          }
+        } catch { /* ignore */ }
         try {
           window.dispatchEvent(
             new CustomEvent("jwt-token-updated", {
               detail: { token: result.token, timestamp: Date.now(), source: "account-login" },
             }),
           );
-        } catch {}
+        } catch { }
         sessionStorage.setItem(
           "authenticatedUser",
           JSON.stringify(result.user),
         );
+        // Announce presence + login ACK over websocket
+        try {
+          const instanceId = (() => {
+            try { return localStorage.getItem("valoride.instanceId") || (() => { const id = `valoride-${Math.random().toString(36).substring(2, 12)}`; localStorage.setItem("valoride.instanceId", id); return id; })(); } catch { return `valoride-${Math.random().toString(36).substring(2, 12)}`; }
+          })();
+          const send = (type: string, payload: any) => {
+            const appMessage = {
+              type,
+              payload,
+              senderId: instanceId,
+              messageId: Math.random().toString(36).slice(2, 12),
+              timestamp: Date.now(),
+            };
+            window.dispatchEvent(new CustomEvent("websocket-send", { detail: appMessage }));
+          };
+          send("presence:join", { id: instanceId });
+          send("auth:ack", { id: instanceId });
+          // Optional roll call broadcast
+          send("presence:rollcall", { id: instanceId });
+        } catch { /* ignore */ }
         setDidLogin(true);
         setActiveTab("account");
+
+        // Bill a $0.01 "connect" debit once login is established
+        try {
+          const debit = {
+            spentAt: new Date(),
+            credits: 0.01,
+            modelProvider: "valoride",
+            model: "login-connect",
+            promptTokens: 0,
+            completionTokens: 0,
+          } as any;
+          await addUsageTransaction(debit).unwrap();
+        } catch (e) {
+          console.warn("Usage debit failed post-login:", e);
+        }
       }
     } catch (error) {
       console.error("Login failed:", error);
+      try {
+        const instanceId = localStorage.getItem("valoride.instanceId") || "";
+        const appMessage = {
+          type: "auth:nack",
+          payload: { id: instanceId },
+          senderId: instanceId || "",
+          messageId: Math.random().toString(36).slice(2, 12),
+          timestamp: Date.now(),
+        } as any;
+        window.dispatchEvent(new CustomEvent("websocket-send", { detail: appMessage }));
+      } catch { /* ignore */ }
     } finally {
       setSubmitting(false);
     }
@@ -174,11 +247,13 @@ const AccountView = ({ onDone }: AccountViewProps) => {
         flexDirection: "column",
         margin: "1em",
         padding: ".5em",
+        position: "relative",
       }}
     >
+      <SystemAlerts />
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
         <div style={{ color: "var(--vscode-foreground)" }}>Account</div>
-        <StatusBadge label="Telecom" value={value} kind={kind as any} title={hasError ? String(communicationService.error) : undefined} />
+        <StatusBadge label="P2P" value={value} kind={kind as any} title={hasError ? String(communicationService.error) : undefined} />
       </div>
       {peers.length > 0 && (
         <div className="border border-solid border-[var(--vscode-panel-border)] rounded-md p-[10px] mb-3 bg-[var(--vscode-panel-background)] text-[var(--vscode-foreground)]">
@@ -200,15 +275,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
       {/* Tab navigation */}
       <div className="scroll-tabs-container">
         <div className="nav-tabs scroll-tabs">
-          {!authed && (
-            <div
-              className={`nav-link ${activeTab === "login" ? "active" : ""}`}
-              onClick={() => setActiveTab("login")}
-              style={{ cursor: "pointer" }}
-            >
-              Login
-            </div>
-          )}
+          {/* Removed Login tab button as requested */}
           {authed && (
             <>
               <div
@@ -242,9 +309,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
         <div className="flex justify-center">
           {!authed && (
             <Card>
-              <Card.Header>
-                <h3>Login to Access Your Account</h3>
-              </Card.Header>
+              {/* Removed "Login to Access Your Account" header as requested */}
               <Card.Body>
                 <Form onSubmit={handleLogin} isLoggedIn={false} />
               </Card.Body>
@@ -254,7 +319,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                 >
                   Don't have an account?{" "}
                   <VSCodeLink
-                    href="https://valkyrlabs.com/signup"
+                    href="https://valkyrlabs.com/sign-up"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -276,13 +341,23 @@ const AccountView = ({ onDone }: AccountViewProps) => {
         </div>
       ) : activeTab === "applications" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
+          {loading && (
+            <div style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "200px"
+            }}>
+              <LoadingSpinner label="Loading applications..." size={32} />
+            </div>
+          )}
           {/* Applications List */}
-          <div style={{ marginBottom: "32px" }}>
+          <div style={{ marginBottom: "1em" }}>
+            <ApplicationsList showTitle={true} title="Available Applications" />
             {/* OpenAPI File Picker */}
-            <div style={{ marginBottom: "32px" }}>
+            <div style={{ marginBottom: "1em" }}>
               <OpenAPIFilePicker onFileSelected={handleOpenAPIFileSelected} />
             </div>
-            <ApplicationsList showTitle={true} title="Available Applications" />
           </div>
         </div>
       ) : activeTab === "generatedFiles" ? (
@@ -326,9 +401,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
 
               <div className="text-4xl font-bold text-[var(--vscode-foreground)] mb-6 flex items-center gap-2">
                 {loading ? (
-                  <div className="text-[var(--vscode-descriptionForeground)]">
-                    Loading...
-                  </div>
+                  <LoadingSpinner label="Loading balance..." size={28} />
                 ) : (
                   <>
                     {(() => {
@@ -346,7 +419,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                       className="mt-1"
                       onClick={() => {
                         refetchBalance();
-                        if (isAuthenticated) {
+                        if (authed) {
                           refetchUsage();
                           refetchPayments();
                         }

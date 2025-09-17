@@ -10,7 +10,9 @@ import { isValidWsUrl } from "../../websocket/websocket";
 import { useMothership } from "../../context/MothershipContext";
 import { addMessage, setConnected } from "./websocketSlice";
 import { WSS_BASE_PATH } from "@/thor/src";
+import SystemAlerts from "@/components/SystemAlerts";
 import "./ServerConsole.css";
+import { FaPaperPlane } from "react-icons/fa";
 
 const { Client } = StompJs;
 
@@ -33,18 +35,18 @@ const stompClient = new Client({
 });
 
 const ServerConsole = () => {
-  const [isMaximized, setIsMaximized] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(true);
   const [chatText, setChatText] = useState("");
   const [isConnecting, setIsConnecting] = useState(false);
-  
+
   const connected = useAppSelector((state: RootState) => state.websocket.connected);
   const messages = useAppSelector((state: RootState) => state.websocket.messages);
   const { isConnected: mothershipConnected } = useMothership();
-  
+
   const dispatch = useAppDispatch();
 
   // Determine connection state for styling
-  const connectionState: 'happy' | 'sad' | 'waiting' = isConnecting ? 'waiting' : 
+  const connectionState: 'happy' | 'sad' | 'waiting' = isConnecting ? 'waiting' :
     (connected && mothershipConnected) ? 'happy' : 'sad';
 
   useEffect(() => {
@@ -61,19 +63,19 @@ const ServerConsole = () => {
     }
 
     setIsConnecting(true);
-    
+
     stompClient.configure({
       brokerURL: socketUrl,
       reconnectDelay: 5000,
       onConnect: () => {
         setIsConnecting(false);
         dispatch(setConnected(true));
-        
+
         stompClient.subscribe("/topic/statuses", (message) => {
           const parsedMessage = WebsocketMessageFromJSON(JSON.parse(message.body));
           dispatch(addMessage(parsedMessage));
         });
-        
+
         stompClient.subscribe("/topic/messages", (message) => {
           const parsedMessage = WebsocketMessageFromJSON(JSON.parse(message.body));
           dispatch(addMessage(parsedMessage));
@@ -139,122 +141,126 @@ const ServerConsole = () => {
   };
 
   return (
-    <Card className={`server-console connection-${connectionState}`}>
-      <Card.Header className="console-header p-3">
-        <Row className="align-items-center">
-          <Col>
-            <h6 className="console-title d-flex align-items-center mb-0">
-              <FiTerminal className="icon" size={18} />
-              ValkyrAI Mothership Console
-            </h6>
-          </Col>
-          <Col xs="auto">
-            <div className="connection-status d-flex align-items-center">
-              <div className={`status-icon ${isConnecting ? 'connecting' : ''}`}>
-                {getStatusIcon()}
-              </div>
-              {getStatusText()}
-            </div>
-          </Col>
-          <Col xs="auto">
-            <Button 
-              size="sm"
-              className="control-btn"
-              onClick={() => setIsMaximized(!isMaximized)}
-              title={isMaximized ? 'Minimize' : 'Maximize'}
-            >
-              {isMaximized ? <FiMinimize2 size={14} /> : <FiMaximize2 size={14} />}
-            </Button>
-          </Col>
-        </Row>
-      </Card.Header>
-
-      <Card.Body className={`messages-container ${isMaximized ? 'maximized' : ''} p-0`}>
-        {Array.isArray(messages) && messages.length > 0 ? (
-          messages.map((message: WebsocketMessage, index: number) => {
-            const { payload, time, type } = message;
-            const typeMap = {
-              error: "danger",
-              warn: "warning", 
-              success: "success",
-              agent: "info",
-              broadcast: "info",
-              console: "info",
-              debug: "info",
-              info: "info",
-              private: "info",
-              room: "info",
-              secure: "info",
-              service: "info",
-              user: "info",
-            };
-
-            const variant = typeMap[type as keyof typeof typeMap] || "secondary";
-
-            return (
-              <div key={index} className="message-row">
-                <Badge className={`message-badge badge-${variant}`}>
-                  {type || 'msg'}
-                </Badge>
-                
-                <div className="message-time">
-                  {time ? new Date(time).toLocaleTimeString() : 'now'}
+    <>
+      <SystemAlerts />
+      <Card className={`server-console connection-${connectionState}`}>
+        <Card.Header className="console-header p-3">
+          <Row className="align-items-center">
+            <Col>
+              <h6 className="console-title d-flex align-items-center mb-0">
+                <FiTerminal className="icon" size={18} />
+                ValkyrAI Chat
+              </h6>
+            </Col>
+            <Col xs="auto">
+              <div className="connection-status d-flex align-items-center">
+                <div className={`status-icon ${isConnecting ? 'connecting' : ''}`}>
+                  {getStatusIcon()}
                 </div>
-                
-                <div className="message-user">
-                  <div className="user-avatar">
-                    {message.user?.username?.charAt(0)?.toUpperCase() || '?'}
+                {getStatusText()}
+              </div>
+            </Col>
+            <Col xs="auto">
+              <Button
+                size="sm"
+                className="control-btn"
+                onClick={() => setIsMaximized(!isMaximized)}
+                title={isMaximized ? 'Minimize' : 'Maximize'}
+              >
+                {isMaximized ? <FiMinimize2 size={14} /> : <FiMaximize2 size={14} />}
+              </Button>
+            </Col>
+          </Row>
+        </Card.Header>
+
+        <Card.Body className={`messages-container ${isMaximized ? 'maximized' : ''} p-0`}>
+          {Array.isArray(messages) && messages.length > 0 ? (
+            messages.map((message: WebsocketMessage, index: number) => {
+              const { payload, time, type } = message;
+              const typeMap = {
+                error: "danger",
+                warn: "warning",
+                success: "success",
+                agent: "info",
+                broadcast: "info",
+                console: "info",
+                debug: "info",
+                info: "info",
+                private: "info",
+                room: "info",
+                secure: "info",
+                service: "info",
+                user: "info",
+              };
+
+              const variant = typeMap[type as keyof typeof typeMap] || "secondary";
+
+              return (
+                <div key={index} className="message-row">
+                  <Badge className={`message-badge badge-${variant}`}>
+                    {type || 'msg'}
+                  </Badge>
+
+                  <div className="message-time">
+                    {time ? new Date(time).toLocaleTimeString() : 'now'}
                   </div>
-                  <span style={{ fontSize: '12px', fontWeight: 600 }}>
-                    {message.user?.username || 'Anonymous'}
-                  </span>
-                </div>
-                
-                <div className="message-content">
-                  {payload || 'Empty message'}
-                </div>
-              </div>
-            );
-          })
-        ) : (
-          <div className="empty-state">
-            <div className="empty-icon">
-              <FiActivity />
-            </div>
-            <div>
-              Waiting for mothership communications...
-              <br />
-              <span style={{ fontSize: '12px', opacity: 0.6 }}>
-                Connect to start receiving real-time updates
-              </span>
-            </div>
-          </div>
-        )}
-      </Card.Body>
 
-      <Card.Footer className="input-container">
-        <InputGroup>
-          <Form.Control
-            className="message-input"
-            type="text"
-            value={chatText}
-            onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
-            placeholder={connected ? "Send message to mothership..." : "Connecting..."}
-            disabled={!connected}
-          />
-          
-          <Button
-            className="send-btn"
-            onClick={sendMessage}
-            disabled={!connected || !chatText.trim()}
-            title="Send Message"
-          >
-            <FiSend />
-          </Button>
-        </InputGroup>
-      </Card.Footer>
-    </Card>
+                  <div className="message-user">
+                    <div className="user-avatar">
+                      {message.user?.username?.charAt(0)?.toUpperCase() || '?'}
+                    </div>
+                    <span style={{ fontSize: '10px', fontWeight: 800 }}>
+                      {message.user?.username || 'anon'}
+                    </span>
+                  </div>
+
+                  <div className="message-content">
+                    {payload || 'Empty message'}
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className="empty-state">
+              <div className="empty-icon">
+                <FiActivity />
+              </div>
+              <div>
+                Waiting for mothership communications...
+                <br />
+                <span style={{ fontSize: '12px', opacity: 0.6 }}>
+                  Connect to start receiving real-time updates
+                </span>
+              </div>
+            </div>
+          )}
+        </Card.Body>
+
+        <Card.Footer className="input-container">
+          <InputGroup>
+            <Form.Control
+              className="message-input"
+              type="text"
+              value={chatText}
+              onChange={handleInputChange}
+              onKeyPress={handleKeyPress}
+              placeholder={connected ? "Send message to mothership..." : "Connecting..."}
+              disabled={!connected}
+            />
+
+            <button
+              style={{ cursor: "pointer", padding: "3px", width: "28px", height: "28px", backgroundColor: "darkblue", borderRadius: "14px" }}
+              className="send-btn"
+              onClick={sendMessage}
+              disabled={!connected || !chatText.trim()}
+              title="Send Message"
+            >
+              <FaPaperPlane />
+            </button>
+          </InputGroup>
+        </Card.Footer>
+      </Card>
+    </>
   );
 };
 

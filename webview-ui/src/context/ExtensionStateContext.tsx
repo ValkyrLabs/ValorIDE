@@ -159,6 +159,15 @@ export const ExtensionStateContextProvider: React.FC<{
           if (incoming.jwtToken) {
             setJwtToken(incoming.jwtToken);
             sessionStorage.setItem("jwtToken", incoming.jwtToken);
+            // persist if enabled
+            try {
+              const persist = (() => {
+                try { const v = localStorage.getItem("valoride.persistJwt"); return v === null ? true : v === "true"; } catch { return true; }
+              })();
+              if (persist) {
+                localStorage.setItem("jwtToken", incoming.jwtToken);
+              }
+            } catch { /* ignore */ }
             try {
               window.dispatchEvent(
                 new CustomEvent("jwt-token-updated", {
@@ -169,6 +178,7 @@ export const ExtensionStateContextProvider: React.FC<{
           } else if (incoming.isLoggedIn === false) {
             setJwtToken(undefined);
             sessionStorage.removeItem("jwtToken");
+            try { localStorage.removeItem("jwtToken"); } catch { /* ignore */ }
             try {
               window.dispatchEvent(
                 new CustomEvent("jwt-token-updated", {
@@ -357,6 +367,22 @@ export const ExtensionStateContextProvider: React.FC<{
   }, []);
 
   useEvent("message", handleMessage);
+
+  // On initial mount, if JWT exists in localStorage but not sessionStorage, mirror & notify so bridges can connect
+  useEffect(() => {
+    try {
+      const inSession = sessionStorage.getItem("jwtToken");
+      if (!inSession) {
+        const persisted = localStorage.getItem("jwtToken") || localStorage.getItem("authToken");
+        if (persisted) {
+          sessionStorage.setItem("jwtToken", persisted);
+          try {
+            window.dispatchEvent(new CustomEvent("jwt-token-updated", { detail: { token: persisted, timestamp: Date.now(), source: "extension-init" } }));
+          } catch {}
+        }
+      }
+    } catch { /* ignore */ }
+  }, []);
 
   useEffect(() => {
     vscode.postMessage({ type: "webviewDidLaunch" });

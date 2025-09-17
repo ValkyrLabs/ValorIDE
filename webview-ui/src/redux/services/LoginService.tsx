@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { Login } from "@thor/model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import customBaseQuery from "../../thor/redux/customBaseQuery"; // Use Thor base query
 
 type LoginResponse = Login[];
 

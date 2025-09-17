@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { Login, Principal } from "../../thor/model";
-import customBaseQuery from "../customBaseQuery";
+import customBaseQuery from "../../thor/redux/customBaseQuery";
 
 type NormalizedLoginResponse = { token: string; user?: Principal };
 
@@ -103,4 +103,3 @@ export const {
   useUpdateLoginMutation,
   useDeleteLoginMutation,
 } = AuthService;
-

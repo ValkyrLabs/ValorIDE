@@ -25,6 +25,7 @@ export const toolUseNames = [
   "attempt_completion",
   "new_task",
   "condense",
+  "send_p2p_message",
 ] as const;
 
 // Converts array of tool call names into a union type ("execute_command" | "read_file" | ...)
@@ -52,6 +53,8 @@ export const toolParamNames = [
   "response",
   "result",
   "context",
+  "to_handle",
+  "message",
 ] as const;
 
 export type ToolParamName = (typeof toolParamNames)[number];

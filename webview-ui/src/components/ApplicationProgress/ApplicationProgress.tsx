@@ -4,6 +4,7 @@ import {
   VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
 import { useExtensionState } from "@/context/ExtensionStateContext";
+import SystemAlerts from "@/components/SystemAlerts";
 import "./ApplicationProgress.css";
 
 interface ProgressStep {
@@ -177,91 +178,94 @@ const ApplicationProgress: React.FC<ApplicationProgressProps> = ({
   };
 
   return (
-    <div className="application-progress">
-      <div className="application-progress-header">
-        <h2>Application Generation</h2>
-        {applicationId && (
-          <div className="application-id">
-            <span>{applicationName}</span>
-            <span>ID: {applicationId}</span>
-          </div>
-        )}
-      </div>
-
-      <div className="application-progress-content">
-        {hasError ? (
-          <div className="application-progress-error">
-            <div className="error-icon">❌</div>
-            <h3>Generation Failed</h3>
-            <p>{errorMessage}</p>
-            <VSCodeButton onClick={onClose}>Close</VSCodeButton>
-          </div>
-        ) : isComplete ? (
-          <div className="application-progress-success">
-            <div className="success-icon">🎉</div>
-            <h3>Application Generated Successfully!</h3>
-            <p>
-              Your application has been created and is ready for development.
-            </p>
-
-            <div className="result-actions">
-              {resultDetails.extractedPath && (
-                <VSCodeButton appearance="primary" onClick={handleOpenFolder}>
-                  Open Project Folder
-                </VSCodeButton>
-              )}
-              {resultDetails.readmePath && (
-                <VSCodeButton onClick={handleOpenReadme}>
-                  View Documentation
-                </VSCodeButton>
-              )}
-              <VSCodeButton appearance="secondary" onClick={onClose}>
-                Close
-              </VSCodeButton>
+    <>
+      <SystemAlerts />
+      <div className="application-progress">
+        <div className="application-progress-header">
+          <h2>Application Generation</h2>
+          {applicationId && (
+            <div className="application-id">
+              <span>{applicationName}</span>
+              <span>ID: {applicationId}</span>
             </div>
+          )}
+        </div>
 
-            {resultDetails.extractedPath && (
-              <div className="result-details">
-                <h4>Project Details:</h4>
-                <ul>
-                  <li>
-                    <strong>Location:</strong> {resultDetails.extractedPath}
-                  </li>
-                  {resultDetails.readmePath && (
-                    <li>
-                      <strong>Documentation:</strong> {resultDetails.readmePath}
-                    </li>
-                  )}
-                </ul>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="application-progress-steps">
-            {steps.map((step, index) => (
-              <div key={step.id} className={`progress-step ${step.status}`}>
-                <div className="step-icon">{getStepIcon(step.status)}</div>
-                <div className="step-content">
-                  <h4>{step.title}</h4>
-                  <p>{step.details || step.description}</p>
-                </div>
-                {index < steps.length - 1 && (
-                  <div
-                    className={`step-connector ${step.status === "completed" ? "completed" : ""}`}
-                  />
+        <div className="application-progress-content">
+          {hasError ? (
+            <div className="application-progress-error">
+              <div className="error-icon">❌</div>
+              <h3>Generation Failed</h3>
+              <p>{errorMessage}</p>
+              <VSCodeButton onClick={onClose}>Close</VSCodeButton>
+            </div>
+          ) : isComplete ? (
+            <div className="application-progress-success">
+              <div className="success-icon">🎉</div>
+              <h3>Application Generated Successfully!</h3>
+              <p>
+                Your application has been created and is ready for development.
+              </p>
+
+              <div className="result-actions">
+                {resultDetails.extractedPath && (
+                  <VSCodeButton appearance="primary" onClick={handleOpenFolder}>
+                    Open Project Folder
+                  </VSCodeButton>
                 )}
+                {resultDetails.readmePath && (
+                  <VSCodeButton onClick={handleOpenReadme}>
+                    View Documentation
+                  </VSCodeButton>
+                )}
+                <VSCodeButton appearance="secondary" onClick={onClose}>
+                  Close
+                </VSCodeButton>
               </div>
-            ))}
+
+              {resultDetails.extractedPath && (
+                <div className="result-details">
+                  <h4>Project Details:</h4>
+                  <ul>
+                    <li>
+                      <strong>Location:</strong> {resultDetails.extractedPath}
+                    </li>
+                    {resultDetails.readmePath && (
+                      <li>
+                        <strong>Documentation:</strong> {resultDetails.readmePath}
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="application-progress-steps">
+              {steps.map((step, index) => (
+                <div key={step.id} className={`progress-step ${step.status}`}>
+                  <div className="step-icon">{getStepIcon(step.status)}</div>
+                  <div className="step-content">
+                    <h4>{step.title}</h4>
+                    <p>{step.details || step.description}</p>
+                  </div>
+                  {index < steps.length - 1 && (
+                    <div
+                      className={`step-connector ${step.status === "completed" ? "completed" : ""}`}
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {!isComplete && !hasError && (
+          <div className="application-progress-footer">
+            <p>Please wait while your application is being generated...</p>
           </div>
         )}
       </div>
-
-      {!isComplete && !hasError && (
-        <div className="application-progress-footer">
-          <p>Please wait while your application is being generated...</p>
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 

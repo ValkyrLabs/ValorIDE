@@ -78,7 +78,7 @@ const Announcement = ({ version, hideAnnouncement }: AnnouncementProps) => {
       <ul style={ulStyle}>
         <li>
           <b>Model Favorites:</b> You can now mark your favorite models when
-          using ValorIDE & OpenRouter providers for quick access!
+          using ValorIDE providers for quick access!
         </li>
         <li>
           <b>Faster Diff Editing:</b> Improved animation performance for large

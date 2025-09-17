@@ -11,7 +11,7 @@ type AppMessage = {
 
 /**
  * TelecomHub: extension-side fan-in/fan-out hub for ValorIDE instances.
- * - Receives telecom messages from any webview via onDidReceiveMessage.
+ * - Receives P2P messages from any webview via onDidReceiveMessage.
  * - Broadcasts them to all other registered webviews via postMessage.
  * - Optionally, can be extended to bridge to a server socket.
  */
@@ -24,7 +24,7 @@ export class TelecomHub {
     return this.instance;
   }
 
-  /** Register a WebviewProvider to participate in local telecom. */
+  /** Register a WebviewProvider to participate in local P2P. */
   registerProvider(provider: WebviewProvider) {
     if (this.providers.has(provider)) return;
     const id = Math.random().toString(36).slice(2);
@@ -36,7 +36,7 @@ export class TelecomHub {
     const subscription = webview.onDidReceiveMessage((message: any) => {
       if (!message || typeof message !== "object") return;
       // Explicit connect request from webview: re-send presence snapshot and rebroadcast join
-      if (message.type === "telecom:connect") {
+      if (message.type === "P2P:connect") {
         const selfMeta = this.providers.get(provider);
         if (!selfMeta) return;
         // Send snapshot to requester
@@ -52,7 +52,7 @@ export class TelecomHub {
         this.broadcast(join, provider);
         return;
       }
-      if (message.type === "telecom:send") {
+      if (message.type === "P2P:send") {
         const msg: AppMessage | undefined = message.message;
         if (!msg) return;
         // Fan-out to all other providers
@@ -97,7 +97,7 @@ export class TelecomHub {
     for (const [prov] of this.providers) {
       if (origin && prov === origin) continue;
       try {
-        prov.view?.webview.postMessage({ type: "telecom:message", message });
+        prov.view?.webview.postMessage({ type: "P2P:message", message });
       } catch (err) {
         // ignore individual postMessage failures
       }
@@ -110,7 +110,7 @@ export class TelecomHub {
       .map(([, meta]) => meta.id);
     try {
       provider.view?.webview.postMessage({
-        type: "telecom:message",
+        type: "P2P:message",
         message: {
           type: "presence:state",
           payload: { ids: others },

@@ -51,7 +51,7 @@ export class CommunicationService extends EventEmitter {
     this.senderId = options.senderId ?? this.generateSenderId();
     // Prevent uncaught 'error' crashes
     if (this.listenerCount("error") === 0) {
-      this.on("error", () => {});
+      this.on("error", () => { });
     }
   }
 
@@ -126,7 +126,7 @@ export class CommunicationService extends EventEmitter {
       // Listen for VSCode extension hub messages
       window.addEventListener("message", (evt: MessageEvent) => {
         const data = evt.data;
-        if (data?.type === "telecom:message" && data.message) {
+        if (data?.type === "P2P:message" && data.message) {
           const appMsg = data.message as HubAppMessage;
           if (appMsg.senderId !== this.senderId) {
             // Handle presence and WebRTC signaling first
@@ -174,7 +174,7 @@ export class CommunicationService extends EventEmitter {
       this.hubConnected = !!this.vscodeApi;
 
       // Listen for STOMP connection status events
-      window.addEventListener("telecom-status", (evt: Event) => {
+      window.addEventListener("P2P-status", (evt: Event) => {
         const ce = evt as CustomEvent<{ thorConnected: boolean; phase: string }>;
         this.thorConnected = !!ce.detail?.thorConnected;
         this.ready = this.hubConnected || this.thorConnected;
@@ -195,7 +195,7 @@ export class CommunicationService extends EventEmitter {
         try {
           this.connectToVsCodePeers();
           this.reconnectPeers();
-        } catch {/* ignore */}
+        } catch {/* ignore */ }
       };
       // Immediate kick to engage hub promptly
       kick();
@@ -222,8 +222,8 @@ export class CommunicationService extends EventEmitter {
   public disconnect() {
     if (!this.connected || !CommunicationService.isSupported()) return;
     try {
-      window.removeEventListener("websocket-message", () => {});
-      window.removeEventListener("message", () => {});
+      window.removeEventListener("websocket-message", () => { });
+      window.removeEventListener("message", () => { });
       this.connected = false;
       this.ready = false;
     } catch (err: any) {
@@ -247,7 +247,7 @@ export class CommunicationService extends EventEmitter {
     window.dispatchEvent(new CustomEvent("websocket-send", { detail: appMsg }));
     if (this.vscodeApi) {
       try {
-        this.vscodeApi.postMessage({ type: "telecom:send", message: appMsg });
+        this.vscodeApi.postMessage({ type: "P2P:send", message: appMsg });
       } catch (err) {
         // Ignore failures when VS Code host is not available
         void err;
@@ -271,7 +271,7 @@ export class CommunicationService extends EventEmitter {
   public connectToVsCodePeers() {
     if (!this.vscodeApi) return;
     try {
-      this.vscodeApi.postMessage({ type: "telecom:connect" });
+      this.vscodeApi.postMessage({ type: "P2P:connect" });
     } catch (e) {
       // ignore
     }
@@ -297,7 +297,7 @@ export class CommunicationService extends EventEmitter {
     }
     this.emit("p2p-status", this.getP2PStatus());
     try {
-      window.dispatchEvent(new CustomEvent("telecom-p2p", { detail: this.getP2PStatus() }));
+      window.dispatchEvent(new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }));
     } catch { /* ignore */ }
   }
 
@@ -344,7 +344,7 @@ export class CommunicationService extends EventEmitter {
       this.p2pOpenCount = this.countOpenChannels();
       this.emit("p2p-status", this.getP2PStatus());
       try {
-        window.dispatchEvent(new CustomEvent("telecom-p2p", { detail: this.getP2PStatus() }));
+        window.dispatchEvent(new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }));
       } catch (e) { void e; }
     };
     ch.onclose = () => {
@@ -352,7 +352,7 @@ export class CommunicationService extends EventEmitter {
       this.p2pOpenCount = this.countOpenChannels();
       this.emit("p2p-status", this.getP2PStatus());
       try {
-        window.dispatchEvent(new CustomEvent("telecom-p2p", { detail: this.getP2PStatus() }));
+        window.dispatchEvent(new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }));
       } catch (e) { void e; }
     };
     ch.onerror = () => {
@@ -360,7 +360,7 @@ export class CommunicationService extends EventEmitter {
       this.p2pOpenCount = this.countOpenChannels();
       this.emit("p2p-status", this.getP2PStatus());
       try {
-        window.dispatchEvent(new CustomEvent("telecom-p2p", { detail: this.getP2PStatus() }));
+        window.dispatchEvent(new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }));
       } catch (e) { void e; }
     };
     ch.onmessage = (ev) => {
@@ -396,7 +396,7 @@ export class CommunicationService extends EventEmitter {
     this.p2pOpenCount = this.countOpenChannels();
     this.emit("p2p-status", this.getP2PStatus());
     try {
-      window.dispatchEvent(new CustomEvent("telecom-p2p", { detail: this.getP2PStatus() }));
+      window.dispatchEvent(new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }));
     } catch (e) { void e; }
   }
 

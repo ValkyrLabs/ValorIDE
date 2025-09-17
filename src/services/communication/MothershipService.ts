@@ -35,6 +35,8 @@ export class MothershipService extends EventEmitter {
   private reconnectDelay = 1000;
   private pingInterval: NodeJS.Timeout | null = null;
   private instanceId: string;
+  // Simple guard to avoid ack loops
+  private suppressAckTopics = new Set<string>(['ack', 'nack']);
 
   constructor(options: MothershipConnectionOptions) {
     super();
@@ -81,6 +83,15 @@ export class MothershipService extends EventEmitter {
           time: new Date().toISOString(),
           user: { id: this.options.userId || 'anonymous' } as any,
         });
+
+        // Announce presence and request roll call using BROADCAST payload envelope
+        try {
+          this.sendAppTopic('presence:join', { id: this.instanceId });
+          this.sendAppTopic('auth:ack', { id: this.instanceId });
+          this.sendAppTopic('presence:rollcall', { id: this.instanceId });
+        } catch (e) {
+          console.warn('Failed to send presence/rollcall on connect:', e);
+        }
       };
 
       this.websocket.onmessage = (event) => {
@@ -192,6 +203,28 @@ export class MothershipService extends EventEmitter {
           console.log('Received mothership message:', message);
           this.emit('message', message);
       }
+
+      // Handle ack/nack and roll-call using the BROADCAST-style payload envelope
+      // Payload convention: { topic, payload, senderId, messageId, timestamp }
+      try {
+        const topic = payload?.topic as string | undefined;
+        const senderId = payload?.senderId as string | undefined;
+        const messageId = payload?.messageId as string | undefined;
+
+        if (topic && typeof topic === 'string') {
+          // Respond to roll call requests from other instances
+          if (topic === 'presence:rollcall' && senderId && senderId !== this.instanceId) {
+            this.sendAppTopic('presence:here', { id: this.instanceId });
+          }
+
+          // Avoid acknowledging acks to prevent loops
+          if (!this.suppressAckTopics.has(topic) && messageId && (senderId || '') !== this.instanceId) {
+            this.sendAppTopic('ack', { messageId, to: senderId, from: this.instanceId });
+          }
+        }
+      } catch (e) {
+        // Non-fatal if payload shape doesn't match
+      }
     } catch (error) {
       console.error('Error handling mothership message:', error);
     }
@@ -264,6 +297,25 @@ export class MothershipService extends EventEmitter {
         sourceInstanceId: this.instanceId,
         timestamp: Date.now(),
       }),
+    });
+  }
+
+  /**
+   * Helper to send an application-level topic message wrapped in a WebsocketMessage payload
+   * that other bridges (e.g., thorBridge) also understand.
+   */
+  public sendAppTopic(topic: string, data: any, type: WebsocketMessageTypeEnum = WebsocketMessageTypeEnum.BROADCAST): void {
+    const envelope = {
+      topic,
+      payload: data,
+      senderId: this.instanceId,
+      messageId: Math.random().toString(36).slice(2, 12),
+      timestamp: Date.now(),
+    };
+    this.sendMessage({
+      type,
+      payload: JSON.stringify(envelope),
+      time: new Date().toISOString(),
     });
   }
 

@@ -123,6 +123,23 @@ import { ValorIDEAdvancedSettings, DEFAULT_ADVANCED_SETTINGS } from "@shared/Adv
 import { ToolRelayService } from "@services/communication/ToolRelayService";
 import { CommunicationService } from "@services/communication/CommunicationService";
 import { WebsocketMessageTypeEnum } from "@thor/model";
+import { ToolManager, ToolContext } from "./tools";
+import { MessageHandler } from "./MessageHandler";
+import { StreamingHandler } from "./StreamingHandler";
+import { CheckpointHandler } from "./CheckpointHandler";
+import {
+  ToolDescriptionService,
+  AutoApprovalService,
+  EnvironmentService,
+  ToolResultProcessor,
+  NotificationService,
+  type ToolResultContext
+} from "./services";
+import { ToolDescriptionHelper } from "./ToolDescriptionHelper";
+import { TagProcessingUtils } from "./TagProcessingUtils";
+import { ErrorHandlingUtils } from "./ErrorHandlingUtils";
+import { ToolApprovalManager } from "./ToolApprovalManager";
+import { ToolExecutionEngine } from "./ToolExecutionEngine";
 
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -199,6 +216,11 @@ export class Task {
   private didAlreadyUseTool = false;
   private didCompleteReadingStream = false;
   private didAutomaticallyRetryFailedApiRequest = false;
+
+  // Handler instances for better code organization
+  private messageHandler: MessageHandler;
+  private streamingHandler: StreamingHandler;
+  private checkpointHandler: CheckpointHandler;
 
   /**
    * Relays tool commands to remote ValorIDE instances via websocket mothership.
@@ -284,6 +306,29 @@ export class Task {
 
     // Set taskId on browserSession for telemetry tracking
     this.browserSession.setTaskId(this.taskId);
+
+    // Initialize handlers for better code organization
+    this.messageHandler = new MessageHandler(
+      this.saveValorIDEMessagesAndUpdateHistory.bind(this),
+      this.postStateToWebview,
+      this.postMessageToWebview
+    );
+
+    this.streamingHandler = new StreamingHandler(
+      this.messageHandler
+    );
+
+    this.checkpointHandler = new CheckpointHandler(
+      this.taskId,
+      context,
+      this.messageHandler,
+      this.updateTaskHistory,
+      this.postStateToWebview,
+      this.postMessageToWebview,
+      this.reinitExistingTaskFromId,
+      this.cancelTask,
+      this.saveValorIDEMessagesAndUpdateHistory.bind(this)
+    );
 
     // Continue with task initialization
     if (historyItem) {
@@ -1684,17 +1729,7 @@ export class Task {
   }
 
   private formatErrorWithStatusCode(error: any): string {
-    const statusCode =
-      error.status ||
-      error.statusCode ||
-      (error.response && error.response.status);
-    const message =
-      error.message ?? JSON.stringify(serializeError(error), null, 2);
-
-    // Only prepend the statusCode if it's not already part of the message
-    return statusCode && !message.includes(statusCode.toString())
-      ? `${statusCode} - ${message}`
-      : message;
+    return ErrorHandlingUtils.formatErrorWithStatusCode(error);
   }
 
   async *attemptApiRequest(previousApiReqIndex: number): ApiStream {
@@ -1971,46 +2006,7 @@ export class Task {
         break;
       }
       case "tool_use":
-        const toolDescription = () => {
-          switch (block.name) {
-            case "execute_command":
-              return `[${block.name} for '${block.params.command}']`;
-            case "read_file":
-              return `[${block.name} for '${block.params.path}']`;
-            case "write_to_file":
-              return `[${block.name} for '${block.params.path}']`;
-            case "replace_in_file":
-              return `[${block.name} for '${block.params.path}']`;
-            case "search_files":
-              return `[${block.name} for '${block.params.regex}'${
-                block.params.file_pattern
-                  ? ` in '${block.params.file_pattern}'`
-                  : ""
-              }]`;
-            case "list_files":
-              return `[${block.name} for '${block.params.path}']`;
-            case "list_code_definition_names":
-              return `[${block.name} for '${block.params.path}']`;
-            case "browser_action":
-              return `[${block.name} for '${block.params.action}']`;
-            case "use_mcp_tool":
-              return `[${block.name} for '${block.params.server_name}']`;
-            case "access_mcp_resource":
-              return `[${block.name} for '${block.params.server_name}']`;
-            case "ask_followup_question":
-              return `[${block.name} for '${block.params.question}']`;
-            case "plan_mode_respond":
-              return `[${block.name}]`;
-            case "load_mcp_documentation":
-              return `[${block.name}]`;
-            case "attempt_completion":
-              return `[${block.name}]`;
-            case "new_task":
-              return `[${block.name} for creating a new task]`;
-            case "condense":
-              return `[${block.name}]`;
-          }
-        };
+        const toolDescription = () => ToolDescriptionHelper.getToolDescription(block.name, block.params);
 
         if (this.didRejectTool) {
           // ignore any tool content after user has rejected tool once
@@ -2140,30 +2136,32 @@ export class Task {
         };
 
         // If block is partial, remove partial closing tag so its not presented to user
-        const removeClosingTag = (tag: ToolParamName, text?: string) => {
-          if (!block.partial) {
-            return text || "";
-          }
-          if (!text) {
-            return "";
-          }
-          // This regex dynamically constructs a pattern to match the closing tag:
-          // - Optionally matches whitespace before the tag
-          // - Matches '<' or '</' optionally followed by any subset of characters from the tag name
-          const tagRegex = new RegExp(
-            `\\s?<\/?${tag
-              .split("")
-              .map((char) => `(?:${char})?`)
-              .join("")}$`,
-            "g",
-          );
-          return text.replace(tagRegex, "");
-        };
+        const removeClosingTag = (tag: ToolParamName, text?: string) => 
+          TagProcessingUtils.removeClosingTag(tag, text, block.partial);
 
         if (block.name !== "browser_action") {
           await this.browserSession.closeBrowser();
         }
 
+        // Use the ToolExecutionEngine for consistent tool handling (delegates to legacy implementations)
+        const toolEngine = new (await import('./ToolExecutionEngine')).ToolExecutionEngine(this, cwd);
+        const engineResult = await toolEngine.executeToolBlock(
+          block,
+          toolDescription,
+          this.userMessageContent,
+          this.didRejectTool,
+          this.didAlreadyUseTool,
+          removeClosingTag
+        );
+        
+        this.didRejectTool = engineResult.didRejectTool;
+        this.didAlreadyUseTool = engineResult.didAlreadyUseTool;
+        
+        if (!engineResult.shouldContinue) {
+          break;
+        }
+
+        // Legacy tool implementations (ToolExecutionEngine delegates to these for now)
         switch (block.name) {
           case "write_to_file":
           case "replace_in_file": {

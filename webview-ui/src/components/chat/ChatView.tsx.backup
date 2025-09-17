@@ -1,0 +1,725 @@
+import { VSCodeButton, VSCodeLink } from "@vscode/webview-ui-toolkit/react"
+import { VscChevronDown } from "react-icons/vsc"
+import { FaRobot, FaSpinner, FaPlug, FaTimes } from "react-icons/fa"
+import debounce from "debounce"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useDeepCompareEffect, useEvent, useMount } from "react-use"
+import { Virtuoso, type VirtuosoHandle } from "react-virtuoso"
+import styled from "styled-components"
+import { Image } from "react-bootstrap";
+import bannerImage from "../../assets/valorIde-horizontal.png";
+import {
+	ValorIDEApiReqInfo,
+	ValorIDEAsk,
+	ValorIDEMessage,
+	ValorIDESayBrowserAction,
+	ValorIDESayTool,
+	ExtensionMessage,
+} from "@shared/ExtensionMessage"
+import { findLast } from "@shared/array"
+import { combineApiRequests } from "@shared/combineApiRequests"
+import { combineCommandSequences } from "@shared/combineCommandSequences"
+import { getApiMetrics } from "@shared/getApiMetrics"
+import { useExtensionState } from "@/context/ExtensionStateContext"
+import { useCommunicationService } from "@/context/CommunicationServiceContext"
+import StatusBadge from "@/components/common/StatusBadge"
+import { useGetBalanceResponsesQuery } from "@/thor/redux/services/BalanceResponseService";
+import OfflineBanner from "@/components/common/OfflineBanner"
+import { vscode } from "@/utils/vscode"
+import { TaskServiceClient } from "@/services/grpc-client"
+import HistoryPreview from "@/components/history/HistoryPreview"
+import { normalizeApiConfiguration } from "@/components/settings/ApiOptions"
+import { useChatInputPersistence } from "@/utils/useSessionStorage"
+import Announcement from "@/components/chat/Announcement"
+import AutoApproveMenu from "@/components/chat/AutoApproveMenu"
+import BrowserSessionRow from "@/components/chat/BrowserSessionRow"
+import ChatRow from "@/components/chat/ChatRow"
+import ChatTextArea from "@/components/chat/ChatTextArea"
+import TaskHeader from "@/components/chat/TaskHeader"
+import TelemetryBanner from "@/components/common/TelemetryBanner"
+import SystemAlerts from "@/components/SystemAlerts"
+import LoadingSpinner from "@/components/LoadingSpinner"
+import RobotIcon from "./RobotIcon"
+import { WebsocketMessage, WebsocketMessageFromJSON, WebsocketMessageTypeEnum } from "@/thor/model"
+
+interface ChatViewProps {
+	isHidden: boolean
+	showAnnouncement: boolean
+	hideAnnouncement: () => void
+	showHistoryView: () => void
+}
+
+export const MAX_IMAGES_PER_MESSAGE = 20 // Anthropic limits to 20 images
+
+const ScrollToBottomButton = styled.div`
+	background-color: color-mix(in srgb, var(--vscode-toolbar-hoverBackground) 55%, transparent);
+	border-radius: 3px;
+	overflow: hidden;
+	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex: 1;
+	height: 25px;
+
+	&:hover {
+		background-color: color-mix(in srgb, var(--vscode-toolbar-hoverBackground) 90%, transparent);
+	}
+
+	&:active {
+		background-color: color-mix(in srgb, var(--vscode-toolbar-hoverBackground) 70%, transparent);
+	}
+`
+
+const ActionButtonsContainer = styled.div`
+	display: flex;
+	gap: 8px;
+	padding: 8px 15px;
+	border-top: 1px solid var(--vscode-editorGroup-border);
+	background-color: var(--vscode-editor-background);
+`
+
+const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryView }: ChatViewProps) => {
+	const { version, valorideMessages: messages, taskHistory, apiConfiguration, telemetrySetting, mcpServers, chatSettings, jwtToken } = useExtensionState()
+	const communicationService = useCommunicationService();
+	const [peerCount, setPeerCount] = useState(0);
+	const [p2pOpen, setP2pOpen] = useState(0);
+	const [isConnectingPeers, setIsConnectingPeers] = useState(false);
+
+	// WebSocket Mothership state
+	const [wsConnected, setWsConnected] = useState(false);
+	const [wsInstanceCount, setWsInstanceCount] = useState(0);
+	const [wsRollCallComplete, setWsRollCallComplete] = useState(false);
+	const [isConnectingMothership, setIsConnectingMothership] = useState(false);
+
+	// ValorIDE P2P Chat state
+	const [peerMessages, setPeerMessages] = useState<Array<{senderId: string, message: string, timestamp: number}>>([]);
+	const [lastLLMResponse, setLastLLMResponse] = useState<string>("");
+
+	// Get our own senderId for comparison
+	const ourSenderId = useMemo(() => (communicationService as any).senderId || "unknown", [communicationService]);
+
+	// Helper function to detect @valoride mentions
+	const containsValorIDEMention = (payload: string): boolean => {
+		return payload.toLowerCase().includes("@valoride");
+	};
+
+	// Helper function to broadcast LLM responses to peers
+	const broadcastLLMResponse = useCallback((response: string) => {
+		try {
+			const wsMessage: WebsocketMessage = {
+				type: WebsocketMessageTypeEnum.USER,
+				payload: `@valorone ValorIDE response: ${response}`,
+				time: new Date().toISOString(),
+				user: { 
+					id: ourSenderId,
+					username: `ValorIDE-${ourSenderId.slice(-4)}`
+				} as any
+			};
+
+			// Send via STOMP websocket
+			window.dispatchEvent(new CustomEvent("websocket-send", {
+				detail: wsMessage
+			}));
+
+			console.log("Broadcasted LLM response:", wsMessage);
+		} catch (e) {
+			console.warn("Failed to broadcast LLM response:", e);
+		}
+	}, [ourSenderId]);
+
+	useEffect(() => {
+		const handlePresence = (list: string[] | number) => setPeerCount(Array.isArray(list) ? list.length : (typeof list === 'number' ? list : 0));
+		const handleP2PStatus = (s: any) => setP2pOpen(typeof s?.open === 'number' ? s.open : 0);
+
+		// WebSocket Mothership event listeners
+		const handleWebSocketConnect = () => {
+			setWsConnected(true);
+			setIsConnectingMothership(false);
+			// Send initial BROADCAST for rollcall when connecting to mothership
+			const broadcastMessage = {
+				type: "BROADCAST",
+				action: "rollcall_request",
+				senderId: (communicationService as any).senderId || "unknown",
+				timestamp: Date.now(),
+				payload: {
+					instanceId: (communicationService as any).senderId || "unknown",
+					role: "valoride-client",
+					requestType: "ack_nack_rollcall"
+				}
+			};
+
+			try {
+				window.dispatchEvent(new CustomEvent("websocket-send", {
+					detail: broadcastMessage
+				}));
+				console.log("Sent mothership rollcall BROADCAST:", broadcastMessage);
+			} catch (e) {
+				console.warn("Failed to send rollcall broadcast:", e);
+			}
+		};
+
+		const handleWebSocketDisconnect = () => {
+			setWsConnected(false);
+			setWsInstanceCount(0);
+			setWsRollCallComplete(false);
+		};
+
+		const handleWebSocketMessage = (event: any) => {
+			const message = event.detail;
+			
+			// Handle standard rollcall and instance management
+			if (message?.type === "BROADCAST") {
+				if (message.action === "rollcall_request" && message.senderId !== (communicationService as any).senderId) {
+					// Respond to rollcall with ack
+					const ackMessage = {
+						type: "BROADCAST",
+						action: "rollcall_ack",
+						senderId: (communicationService as any).senderId || "unknown",
+						timestamp: Date.now(),
+						payload: {
+							instanceId: (communicationService as any).senderId || "unknown",
+							role: "valoride-client"
+						}
+					};
+
+					try {
+						window.dispatchEvent(new CustomEvent("websocket-send", {
+							detail: ackMessage
+						}));
+					} catch (e) {
+						console.warn("Failed to send rollcall ack:", e);
+					}
+				} else if (message.action === "rollcall_ack") {
+					// Count rollcall responses
+					setWsInstanceCount(prev => prev + 1);
+					setWsRollCallComplete(true);
+				} else if (message.action === "instance_count") {
+					setWsInstanceCount(message.payload?.count || 0);
+				}
+			}
+
+			// CRITICAL: Handle @valoride mentions for peer-to-peer chat
+			if (message?.payload && typeof message.payload === 'string' && containsValorIDEMention(message.payload)) {
+				// Don't respond to our own messages
+				const senderId = message.user?.id || message.senderId || "unknown";
+				if (senderId !== ourSenderId) {
+					console.log("🤖 Received @valoride mention from:", senderId, "Message:", message.payload);
+					
+					// Track peer message
+					setPeerMessages(prev => [...prev, {
+						senderId,
+						message: message.payload,
+						timestamp: Date.now()
+					}]);
+
+					// Extract the actual question/command (remove @valoride prefix)
+					const cleanedMessage = message.payload.replace(/@valoride\s*/gi, '').trim();
+					
+					if (cleanedMessage) {
+						// Add visual indicator in VS Code
+						vscode.postMessage({ 
+							type: "displayVSCodeInfo", 
+							text: `🤖 Peer message from ${senderId.slice(-4)}: ${cleanedMessage.slice(0, 50)}...` 
+						});
+
+						// Inject the peer message into our chat as if user typed it
+						// Add a delay to ensure the UI is ready
+						setTimeout(async () => {
+							try {
+								// If no task exists, create a new one
+								if (messages.length === 0) {
+									await TaskServiceClient.newTask({ 
+										text: `[From peer ${senderId.slice(-4)}] ${cleanedMessage}`,
+										images: []
+									});
+								} else {
+									// If task exists, inject as user response
+									vscode.postMessage({
+										type: "askResponse",
+										askResponse: "messageResponse",
+										text: `[From peer ${senderId.slice(-4)}] ${cleanedMessage}`,
+										images: [],
+									});
+								}
+							} catch (error) {
+								console.warn("Failed to inject peer message:", error);
+								vscode.postMessage({ 
+									type: "displayVSCodeInfo", 
+									text: `❌ Failed to process peer message: ${error}` 
+								});
+							}
+						}, 100);
+					}
+				}
+			}
+		};
+
+		communicationService.on("presence", handlePresence);
+		communicationService.on("p2p-status", handleP2PStatus);
+
+		// Listen for websocket events
+		window.addEventListener("websocket-connected", handleWebSocketConnect);
+		window.addEventListener("websocket-disconnected", handleWebSocketDisconnect);
+		window.addEventListener("websocket-message", handleWebSocketMessage);
+
+		return () => {
+			communicationService.off("presence", handlePresence);
+			communicationService.off("p2p-status", handleP2PStatus);
+			window.removeEventListener("websocket-connected", handleWebSocketConnect);
+			window.removeEventListener("websocket-disconnected", handleWebSocketDisconnect);
+			window.removeEventListener("websocket-message", handleWebSocketMessage);
+		};
+	}, [communicationService, ourSenderId, messages.length]);
+
+	// Monitor LLM responses to broadcast them to peers
+	useEffect(() => {
+		const lastMsg = messages.at(-1);
+		if (lastMsg?.type === "say" && lastMsg?.say === "text" && lastMsg?.text && lastMsg.text !== lastLLMResponse) {
+			// This is a new LLM response, broadcast it
+			setLastLLMResponse(lastMsg.text);
+			broadcastLLMResponse(lastMsg.text);
+		}
+	}, [messages, lastLLMResponse, broadcastLLMResponse]);
+
+	// Connect to the Thor/STOMP broker the same way ServerConsole does
+	useEffect(() => {
+		try {
+			const jwt = sessionStorage.getItem("jwtToken");
+			if (jwt) {
+				window.dispatchEvent(
+					new CustomEvent("P2P-connect-broker", {
+						detail: { reason: "chatview-mount", timestamp: Date.now() },
+					}),
+				);
+			}
+		} catch {
+			// ignore if sessionStorage unavailable
+		}
+	}, []);
+
+	const task = useMemo(() => messages.at(0), [messages])
+	const modifiedMessages = useMemo(() => combineApiRequests(combineCommandSequences(messages.slice(1))), [messages])
+	const apiMetrics = useMemo(() => getApiMetrics(modifiedMessages), [modifiedMessages])
+
+	// Global balance fetch for status strip; skip until JWT is present
+	const { data: balanceData } = useGetBalanceResponsesQuery(undefined as any, { skip: !jwtToken });
+	const netBalance = useMemo(() => {
+		const raw = balanceData?.[0]?.currentBalance || 0;
+		const net = Math.max(0, raw - (apiMetrics.totalCost || 0));
+		return net;
+	}, [balanceData, apiMetrics.totalCost]);
+
+	const lastApiReqTotalTokens = useMemo(() => {
+		const getTotalTokensFromApiReqMessage = (msg: ValorIDEMessage) => {
+			if (!msg.text) return 0
+			const { tokensIn, tokensOut, cacheWrites, cacheReads }: ValorIDEApiReqInfo = JSON.parse(msg.text)
+			return (tokensIn || 0) + (tokensOut || 0) + (cacheWrites || 0) + (cacheReads || 0)
+		}
+		const lastApiReqMessage = findLast(modifiedMessages, (msg) => {
+			if (msg.say !== "api_req_started") return false
+			return getTotalTokensFromApiReqMessage(msg) > 0
+		})
+		if (!lastApiReqMessage) return undefined
+		return getTotalTokensFromApiReqMessage(lastApiReqMessage)
+	}, [modifiedMessages])
+
+	const { inputValue, setInputValue, selectedImages, setSelectedImages, clearChatInput } = useChatInputPersistence()
+	const textAreaRef = useRef<HTMLTextAreaElement>(null)
+	const [textAreaDisabled, setTextAreaDisabled] = useState(false)
+
+	const [valorideAsk, setValorIDEAsk] = useState<ValorIDEAsk | undefined>(undefined)
+	const [enableButtons, setEnableButtons] = useState<boolean>(false)
+	const [primaryButtonText, setPrimaryButtonText] = useState<string | undefined>("Approve")
+	const [secondaryButtonText, setSecondaryButtonText] = useState<string | undefined>("Reject")
+	const [didClickCancel, setDidClickCancel] = useState(false)
+	const virtuosoRef = useRef<VirtuosoHandle>(null)
+	const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({})
+	const scrollContainerRef = useRef<HTMLDivElement>(null)
+	const disableAutoScrollRef = useRef(false)
+	const [showScrollToBottom, setShowScrollToBottom] = useState(false)
+	const [isAtBottom, setIsAtBottom] = useState(false)
+	const [isLoggingIn, setIsLoggingIn] = useState(false)
+	const [isChatLoading, setIsChatLoading] = useState(false)
+
+	const lastMessage = useMemo(() => messages.at(-1), [messages])
+	const secondLastMessage = useMemo(() => messages.at(-2), [messages])
+
+	// Define handleSendMessage early so it can be used in itemContent
+	const handleSendMessage = useCallback(
+		async (text: string, images: string[]) => {
+			text = text.trim()
+			if (text || images.length > 0) {
+				if (messages.length === 0) {
+					await TaskServiceClient.newTask({ text, images })
+				} else if (valorideAsk) {
+					switch (valorideAsk) {
+						case "followup":
+						case "plan_mode_respond":
+						case "tool":
+						case "browser_action_launch":
+						case "command":
+						case "command_output":
+						case "use_mcp_server":
+						case "completion_result":
+						case "resume_task":
+						case "resume_completed_task":
+						case "mistake_limit_reached":
+						case "new_task":
+							vscode.postMessage({
+								type: "askResponse",
+								askResponse: "messageResponse",
+								text,
+								images,
+							})
+							break
+						case "condense":
+							vscode.postMessage({
+								type: "askResponse",
+								askResponse: "messageResponse",
+								text,
+								images,
+							})
+							break
+					}
+				}
+				clearChatInput()
+				setTextAreaDisabled(true)
+				setValorIDEAsk(undefined)
+				setEnableButtons(false)
+				disableAutoScrollRef.current = false
+			}
+		},
+		[messages.length, valorideAsk, clearChatInput]
+	)
+
+	useDeepCompareEffect(() => {
+		if (lastMessage) {
+			switch (lastMessage.type) {
+				case "ask":
+					const isPartial = lastMessage.partial === true
+					switch (lastMessage.ask) {
+						case "api_req_failed":
+							setTextAreaDisabled(true)
+							setValorIDEAsk("api_req_failed")
+							setEnableButtons(true)
+							setPrimaryButtonText("Retry")
+							setSecondaryButtonText("Start New Task")
+							break
+						case "mistake_limit_reached":
+							setTextAreaDisabled(false)
+							setValorIDEAsk("mistake_limit_reached")
+							setEnableButtons(true)
+							setPrimaryButtonText("Proceed Anyways")
+							setSecondaryButtonText("Start New Task")
+							break
+						case "auto_approval_max_req_reached":
+							setTextAreaDisabled(true)
+							setValorIDEAsk("auto_approval_max_req_reached")
+							setEnableButtons(true)
+							setPrimaryButtonText("Proceed")
+							setSecondaryButtonText("Start New Task")
+							break
+						case "followup":
+							setTextAreaDisabled(isPartial)
+							setValorIDEAsk("followup")
+							setEnableButtons(false)
+							break
+						case "plan_mode_respond":
+							setTextAreaDisabled(isPartial)
+							setValorIDEAsk("plan_mode_respond")
+							setEnableButtons(false)
+							break
+						case "tool":
+							setTextAreaDisabled(isPartial)
+							setValorIDEAsk("tool")
+							setEnableButtons(!isPartial)
+							const tool = JSON.parse(lastMessage.text || "{}") as ValorIDESayTool
+							switch (tool.tool) {
+								case "editedExistingFile":
+								case "newFileCreated":
+									setPrimaryButtonText("Save")
+									setSecondaryButtonText("Reject")
+									break
+								default:
+									setPrimaryButtonText("Approve")
+									setSecondaryButtonText("Reject")
+									break
+							}
+							break
+						case "browser_action_launch":
+							setTextAreaDisabled(isPartial)
+							setValorIDEAsk("browser_action_launch")
+							setEnableButtons(!isPartial)
+							setPrimaryButtonText("Approve")
+							setSecondaryButtonText("Reject")
+							break
+						case "command":
+							setTextAreaDisabled(isPartial)
+							setValorIDEAsk("command")
+							setEnableButtons(!isPartial)
+							setPrimaryButtonText("Run Command")
+							setSecondaryButtonText("Reject")
+							break
+						case "command_output":
+							setTextAreaDisabled(false)
+							setValorIDEAsk("command_output")
+							setEnableButtons(true)
+							setPrimaryButtonText("Proceed While Running")
+							setSecondaryButtonText(undefined)
+							break
+						case "use_mcp_server":
+							setTextAreaDisabled(isPartial)
+							setValorIDEAsk("use_mcp_server")
+							setEnableButtons(!isPartial)
+							setPrimaryButtonText("Approve")
+							setSecondaryButtonText("Reject")
+							break
+						case "completion_result":
+							setTextAreaDisabled(isPartial)
+							setValorIDEAsk("completion_result")
+							setEnableButtons(!isPartial)
+							setPrimaryButtonText("Start New Task")
+							setSecondaryButtonText(undefined)
+							// Stubborn Mode: when completion result arrives, auto-ask the assistant to double-check
+							// Use a direct askResponse post to avoid race conditions with state/closures
+							if (!isPartial && chatSettings?.stubbornMode) {
+								const followup = "Are you sure you completed all of the tasks requested? Please double-check and continue if anything remains.";
+								const sendFollowup = () => {
+									vscode.postMessage({
+										type: "askResponse",
+										askResponse: "messageResponse",
+										text: followup,
+										images: [],
+									});
+								};
+								// Kick once after a short delay to let UI settle, then one quick retry
+								setTimeout(sendFollowup, 150);
+								setTimeout(sendFollowup, 450);
+							}
+							break
+						case "resume_task":
+							setTextAreaDisabled(false)
+							setValorIDEAsk("resume_task")
+							setEnableButtons(true)
+							setPrimaryButtonText("Resume Task")
+							setSecondaryButtonText(undefined)
+							setDidClickCancel(false)
+							break
+						case "resume_completed_task":
+							setTextAreaDisabled(false)
+							setValorIDEAsk("resume_completed_task")
+							setEnableButtons(true)
+							setPrimaryButtonText("Start New Task")
+							setSecondaryButtonText(undefined)
+							setDidClickCancel(false)
+							break
+						case "new_task":
+							setTextAreaDisabled(isPartial)
+							setValorIDEAsk("new_task")
+							setEnableButtons(!isPartial)
+							setPrimaryButtonText("Start New Task with Context")
+							setSecondaryButtonText(undefined)
+							break
+						case "condense":
+							setTextAreaDisabled(isPartial)
+							setValorIDEAsk("condense")
+							setEnableButtons(!isPartial)
+							setPrimaryButtonText("Condense Conversation")
+							setSecondaryButtonText(undefined)
+							break
+					}
+					break
+				case "say":
+					switch (lastMessage.say) {
+						case "api_req_started":
+							if (secondLastMessage?.ask === "command_output") {
+								clearChatInput()
+								setTextAreaDisabled(true)
+								setValorIDEAsk(undefined)
+								setEnableButtons(false)
+							}
+							break
+						case "task":
+						case "error":
+						case "api_req_finished":
+						case "text":
+						case "browser_action":
+						case "browser_action_result":
+						case "browser_action_launch":
+						case "command":
+						case "use_mcp_server":
+						case "command_output":
+						case "mcp_server_request_started":
+						case "mcp_server_response":
+						case "completion_result":
+						case "tool":
+						case "load_mcp_documentation":
+							break
+					}
+					break
+			}
+		} else {
+		}
+	}, [lastMessage, secondLastMessage])
+
+	// Add state for multiple instances detection and handshake messages
+	const [multipleInstances, setMultipleInstances] = useState(false)
+	const [handshakeMessages, setHandshakeMessages] = useState<string[]>([])
+
+	// Compute multi-instance status from peer count (more accurate than MCP servers)
+	useEffect(() => {
+		setMultipleInstances(peerCount > 0)
+	}, [peerCount])
+
+	// Always listen for inter-instance messages to surface handshake feedback
+	useEffect(() => {
+		const handleCommMessage = (message: any) => {
+			if (!message || !message.type) return
+			if (message.type === "ping") {
+				communicationService.sendMessage("ack", { receivedAt: Date.now() })
+				setHandshakeMessages((msgs) => [...msgs, `Received ping at ${new Date().toLocaleTimeString()}`])
+			} else if (message.type === "ack") {
+				setHandshakeMessages((msgs) => [...msgs, `Received ack at ${new Date().toLocaleTimeString()}`])
+			} else if (message.type === "nack") {
+				setHandshakeMessages((msgs) => [...msgs, `Received nack at ${new Date().toLocaleTimeString()}`])
+			}
+		}
+		communicationService.on("message", handleCommMessage)
+		return () => {
+			communicationService.off("message", handleCommMessage)
+		}
+	}, [communicationService])
+
+	const handleRobotIconClick = () => {
+		// Test @valoride peer communication
+		const testMessage: WebsocketMessage = {
+			type: WebsocketMessageTypeEnum.USER,
+			payload: `@valoride Hello from ${ourSenderId.slice(-4)}! Can you help me with a test task?`,
+			time: new Date().toISOString(),
+			user: { 
+				id: ourSenderId,
+				username: `ValorIDE-${ourSenderId.slice(-4)}`
+			} as any
+		};
+
+		try {
+			window.dispatchEvent(new CustomEvent("websocket-send", {
+				detail: testMessage
+			}));
+			vscode.postMessage({ type: "displayVSCodeInfo", text: `🤖 Sent test @valoride message to peers` });
+		} catch (e) {
+			console.warn("Failed to send test message:", e);
+		}
+
+		// Also send legacy ping
+		communicationService.sendMessage("ping", { sentAt: Date.now() })
+		setHandshakeMessages((msgs) => [...msgs, `Sent ping at ${new Date().toLocaleTimeString()}`])
+	}
+
+	// Render RobotIcon conditionally with enhanced tooltip
+	const RobotIconComponent = () => (
+		<div
+			style={{
+				cursor: "pointer",
+				color: wsConnected ? "#61dafb" : "#888",
+				fontSize: "24px",
+				marginLeft: "10px",
+				alignSelf: "center",
+			}}
+			title={`@valoride P2P Chat ${wsConnected ? 'Active' : 'Offline'} - ${peerMessages.length} peer messages received`}
+			onClick={handleRobotIconClick}
+		>
+			<FaRobot />
+		</div>
+	)
+
+	// Restore groupedMessages, itemContent, scrollToBottomSmooth, handleSendMessage, handleTaskCloseButtonClick, selectedModelInfo
+	const visibleMessages = useMemo(() => {
+		return modifiedMessages.filter((message) => {
+			switch (message.ask) {
+				case "completion_result":
+					if (message.text === "") {
+						return false
+					}
+					break
+				case "api_req_failed":
+				case "resume_task":
+				case "resume_completed_task":
+					return false
+			}
+			switch (message.say) {
+				case "api_req_finished":
+				case "api_req_retried":
+				case "deleted_api_reqs":
+					return false
+				case "text":
+					if ((message.text ?? "") === "" && (message.images?.length ?? 0) === 0) {
+						return false
+					}
+					break
+				case "mcp_server_request_started":
+					return false
+			}
+			return true
+		})
+	}, [modifiedMessages])
+
+	const groupedMessages = useMemo(() => {
+		const result: (ValorIDEMessage | ValorIDEMessage[])[] = []
+		let currentGroup: ValorIDEMessage[] = []
+		let isInBrowserSession = false
+
+		const endBrowserSession = () => {
+			if (currentGroup.length > 0) {
+				result.push([...currentGroup])
+				currentGroup = []
+				isInBrowserSession = false
+			}
+		}
+
+		const isBrowserSessionMessage = (message: ValorIDEMessage): boolean => {
+			if (message.type === "ask") {
+				return ["browser_action_launch"].includes(message.ask!)
+			}
+			if (message.type === "say") {
+				return [
+					"browser_action_launch",
+					"api_req_started",
+					"text",
+					"browser_action",
+					"browser_action_result",
+					"checkpoint_created",
+					"reasoning",
+				].includes(message.say!)
+			}
+			return false
+		}
+
+		visibleMessages.forEach((message) => {
+			if (message.ask === "browser_action_launch" || message.say === "browser_action_launch") {
+				endBrowserSession()
+				isInBrowserSession = true
+				currentGroup.push(message)
+			} else if (isInBrowserSession) {
+				if (message.say === "api_req_started") {
+					const lastApiReqStarted = [...currentGroup].reverse().find((m) => m.say === "api_req_started")
+					if (lastApiReqStarted?.text != null) {
+						const info = JSON.parse(lastApiReqStarted.text)
+						const isCancelled = info.cancelReason != null
+						if (isCancelled) {
+							endBrowserSession()
+							result.push(message)
+							return
+						}
+					}
+				}
+
+				if (isBrowserSessionMessage(message)) {
+					currentGroup.push(message)
+					if (message.say === "browser_action") {
+						const browserAction = JSON.parse(message.text || "{}") as ValorIDESayBrowserAction
+						if (browserAction.action === "close") {
+							endBrowserSession()
+						}
+					}

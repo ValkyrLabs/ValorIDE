@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { useDispatch } from "react-redux";
-import { addMessage } from "../redux/services/websocketSlice";
+import { addMessage } from "../components/ServerConsole/websocketSlice";
 import { WebsocketMessage, WebsocketMessageTypeEnum } from "../thor/model";
 
 const useWebSocket = (url: string) => {

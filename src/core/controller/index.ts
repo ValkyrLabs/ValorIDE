@@ -42,6 +42,7 @@ import {
   McpServer,
 } from "@shared/mcp";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
+import { validateAdvancedSettings, DEFAULT_ADVANCED_SETTINGS } from "@shared/AdvancedSettings";
 import {
   ValorIDECheckpointRestore,
   WebviewMessage,
@@ -2606,6 +2607,39 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       authenticatedPrincipal,
       isLoggedIn,
     } = await getAllExtensionState(this.context);
+
+    // Build advanced settings from VS Code configuration
+    const cfg = vscode.workspace.getConfiguration("valoride");
+    const advancedSettings = validateAdvancedSettings({
+      fileProcessing: {
+        maxFileSize:
+          (cfg.get<number>("advanced.fileProcessing.maxFileSize") as number | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.fileProcessing.maxFileSize,
+        warnLargeFiles:
+          (cfg.get<boolean>("advanced.fileProcessing.warnLargeFiles") as boolean | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.fileProcessing.warnLargeFiles,
+        largeFileThreshold:
+          (cfg.get<number>("advanced.fileProcessing.largeFileThreshold") as number | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.fileProcessing.largeFileThreshold,
+        chunkSize: DEFAULT_ADVANCED_SETTINGS.fileProcessing.chunkSize,
+        streamingDelay: DEFAULT_ADVANCED_SETTINGS.fileProcessing.streamingDelay,
+        enableProgressiveLoading: DEFAULT_ADVANCED_SETTINGS.fileProcessing.enableProgressiveLoading,
+      },
+      budgetAlerts: {
+        depletedThreshold:
+          (cfg.get<number>("advanced.budgetAlerts.depletedThreshold") as number | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.budgetAlerts.depletedThreshold,
+        criticalThreshold:
+          (cfg.get<number>("advanced.budgetAlerts.criticalThreshold") as number | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.budgetAlerts.criticalThreshold,
+        lowThreshold:
+          (cfg.get<number>("advanced.budgetAlerts.lowThreshold") as number | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.budgetAlerts.lowThreshold,
+        alertThreshold:
+          (cfg.get<number>("advanced.budgetAlerts.alertThreshold") as number | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.budgetAlerts.alertThreshold,
+      },
+    });
 
     // Get JWT token from secrets
     const jwtToken = await getSecret(this.context, "jwtToken");

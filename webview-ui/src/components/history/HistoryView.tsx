@@ -17,6 +17,7 @@ import DangerButton from "@/components/common/DangerButton";
 import { FaSearch, FaTimes, FaTrash, FaArrowUp, FaArrowDown, FaDatabase, FaArrowRight, FaRobot } from "react-icons/fa";
 import StatusBadge from "@/components/common/StatusBadge";
 import OfflineBanner from "@/components/common/OfflineBanner";
+import SystemAlerts from "@/components/SystemAlerts";
 import { useCommunicationService } from "@/context/CommunicationServiceContext";
 
 type HistoryViewProps = {
@@ -145,6 +146,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 
   return (
     <>
+      <SystemAlerts />
       <div
         style={{
           borderRadius: "10px",
@@ -175,7 +177,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
             History
           </h3>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <StatusBadge label="Telecom" value={value} kind={kind as any} title={hasError ? String(communicationService.error) : undefined} />
+            <StatusBadge label="P2P" value={value} kind={kind as any} title={hasError ? String(communicationService.error) : undefined} />
             <VSCodeButton onClick={onDone}>Done</VSCodeButton>
           </div>
         </div>

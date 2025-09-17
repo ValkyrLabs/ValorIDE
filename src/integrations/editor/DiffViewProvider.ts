@@ -51,21 +51,43 @@ export class DiffViewProvider {
           
           const result = await vscode.window.showWarningMessage(
             `File "${path.basename(relPath)}" is ${fileSizeMB}MB, which exceeds the maximum size limit of ${maxSizeMB}MB. This may cause performance issues or truncation. Do you want to continue?`,
-            { modal: true },
+            { modal: true, detail: "Select 'Continue and don't warn again' to remember this preference." },
             "Continue",
-            "Cancel"
+            "Continue and don't warn again",
+            "Cancel",
           );
           
-          if (result !== "Continue") {
+          if (result === "Continue and don't warn again") {
+            try {
+              const config = vscode.workspace.getConfiguration('valoride');
+              await config.update('advanced.fileProcessing.warnLargeFiles', false, true);
+              this.fileProcessingConfig.warnLargeFiles = false;
+            } catch (e) {
+              // Non-fatal: user preference might not persist (permissions/workspace scope)
+              console.debug('Failed to persist warnLargeFiles=false', e);
+            }
+          } else if (result !== "Continue") {
             throw new Error(`File operation cancelled: File size (${fileSizeMB}MB) exceeds limit (${maxSizeMB}MB)`);
           }
         } else if (fileSizeBytes > this.fileProcessingConfig.largeFileThreshold) {
           const fileSizeMB = (fileSizeBytes / (1024 * 1024)).toFixed(2);
           
-          vscode.window.showInformationMessage(
+          const result = await vscode.window.showInformationMessage(
             `File "${path.basename(relPath)}" is ${fileSizeMB}MB. Large file processing may take longer than usual.`,
-            { modal: false }
+            { modal: false, detail: "Select 'OK and don't warn again' to remember this preference." },
+            "OK",
+            "OK and don't warn again",
           );
+          if (result === "OK and don't warn again") {
+            try {
+              const config = vscode.workspace.getConfiguration('valoride');
+              await config.update('advanced.fileProcessing.warnLargeFiles', false, true);
+              this.fileProcessingConfig.warnLargeFiles = false;
+            } catch (e) {
+              // Non-fatal: user preference might not persist (permissions/workspace scope)
+              console.debug('Failed to persist warnLargeFiles=false', e);
+            }
+          }
         }
       } catch (error) {
         // If we can't check file size, continue anyway but log the error

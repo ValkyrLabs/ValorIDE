@@ -307,11 +307,29 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
     const { width: viewportWidth, height: viewportHeight } = useWindowSize();
     const buttonRef = useRef<HTMLDivElement>(null);
     const [arrowPosition, setArrowPosition] = useState(0);
-    const [menuPosition, setMenuPosition] = useState(0);
+  const [menuPosition, setMenuPosition] = useState(0);
     const [shownTooltipMode, setShownTooltipMode] = useState<
       ChatSettings["mode"] | null
     >(null);
-    const [pendingInsertions, setPendingInsertions] = useState<string[]>([]);
+  const [pendingInsertions, setPendingInsertions] = useState<string[]>([]);
+
+    // Small toast when images are added
+    const [imagesToastVisible, setImagesToastVisible] = useState(false);
+    const [imagesToastText, setImagesToastText] = useState("");
+    const prevImagesCountRef = useRef<number>(selectedImages.length);
+    useEffect(() => {
+      const prev = prevImagesCountRef.current;
+      const curr = selectedImages.length;
+      if (curr > prev) {
+        const added = curr - prev;
+        setImagesToastText(`${added} image${added === 1 ? "" : "s"} added`);
+        setImagesToastVisible(true);
+        const t = setTimeout(() => setImagesToastVisible(false), 1600);
+        prevImagesCountRef.current = curr;
+        return () => clearTimeout(t);
+      }
+      prevImagesCountRef.current = curr;
+    }, [selectedImages]);
 
     const [fileSearchResults, setFileSearchResults] = useState<SearchResult[]>(
       [],
@@ -1569,6 +1587,8 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
                   if (!textAreaDisabled) {
                     setIsTextAreaFocused(false);
                     onSend(inputValue, selectedImages);
+                    // Ensure images clear immediately after sending
+                    try { setSelectedImages([]); } catch {}
                   }
                 }}
               >
@@ -1580,6 +1600,27 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
         </div>
 
         <ControlsContainer>
+          {imagesToastVisible && (
+            <div
+              style={{
+                position: "absolute",
+                bottom: 42,
+                left: 20,
+                background: "var(--vscode-badge-background)",
+                color: "var(--vscode-badge-foreground)",
+                border: "1px solid var(--vscode-badge-foreground)",
+                borderRadius: 6,
+                padding: "3px 8px",
+                fontSize: 12,
+                boxShadow: "0 0 6px rgba(0,0,0,0.2)",
+                pointerEvents: "none",
+                zIndex: 10,
+              }}
+              aria-live="polite"
+            >
+              {imagesToastText}
+            </div>
+          )}
           <ButtonGroup>
             <Tooltip tipText="Add Context" style={{ left: 0 }}>
               <VSCodeButton

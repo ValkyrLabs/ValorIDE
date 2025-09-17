@@ -17,16 +17,55 @@ if (typeof window !== "undefined") {
     let isConnecting = false;
     let lastConnectRequestedAt = 0;
     let currentSendListener: ((ev: Event) => void) | null = null;
-    // Get JWT token from sessionStorage for authentication
+    // Simple local flag: default to true to persist JWT in localStorage
+    const shouldPersistJwt = (): boolean => {
+      try {
+        const v = localStorage.getItem("valoride.persistJwt");
+        return v === null ? true : v === "true";
+      } catch {
+        return true;
+      }
+    };
+
+    const getOrCreateInstanceId = (): string => {
+      try {
+        let id = localStorage.getItem("valoride.instanceId");
+        if (!id) {
+          id = `valoride-${Math.random().toString(36).substring(2, 12)}`;
+          localStorage.setItem("valoride.instanceId", id);
+        }
+        return id;
+      } catch {
+        return `valoride-${Math.random().toString(36).substring(2, 12)}`;
+      }
+    };
+
+    // Get JWT token from storage for authentication
     const getAuthenticatedBrokerURL = (): string | null => {
       const baseURL = isValidWsUrl(WEBSOCKET_URL) ? WEBSOCKET_URL : WSS_BASE_PATH;
-      const jwtToken = sessionStorage.getItem("jwtToken");
-      
+      let jwtToken: string | null = null;
+      try {
+        jwtToken = sessionStorage.getItem("jwtToken");
+        if (!jwtToken) {
+          // Fall back to localStorage for persisted sessions
+          jwtToken = localStorage.getItem("jwtToken") || localStorage.getItem("authToken");
+          if (jwtToken) {
+            // Mirror into sessionStorage and notify listeners
+            sessionStorage.setItem("jwtToken", jwtToken);
+            try {
+              window.dispatchEvent(new CustomEvent("jwt-token-updated", { detail: { token: jwtToken, timestamp: Date.now(), source: "thorBridge-localStorage" } }));
+            } catch { }
+          }
+        }
+      } catch {
+        // ignore storage access issues
+      }
+
       if (!jwtToken) {
-        console.warn("thorBridge: No JWT token found in sessionStorage");
+        console.warn("thorBridge: No JWT token found in storage");
         return null;
       }
-      
+
       // Append token as query parameter for authentication
       const separator = baseURL.includes('?') ? '&' : '?';
       return `${baseURL}${separator}token=${jwtToken}`;
@@ -106,9 +145,9 @@ if (typeof window !== "undefined") {
 
     const postStatus = (phase: "connecting" | "connected" | "disconnected" | "error") => {
       try {
-        const evt = new CustomEvent("telecom-status", { detail: { thorConnected: phase === "connected", phase } });
+        const evt = new CustomEvent("P2P-status", { detail: { thorConnected: phase === "connected", phase } });
         window.dispatchEvent(evt);
-      } catch {}
+      } catch { }
     };
 
     let stompClient: Client | null = null;
@@ -121,11 +160,11 @@ if (typeof window !== "undefined") {
       }
       lastConnectRequestedAt = now;
       const authenticatedURL = getAuthenticatedBrokerURL();
-      
+
       if (!authenticatedURL) {
         console.warn("thorBridge: Cannot connect without JWT token, will retry...");
         postStatus("error");
-        
+
         // Retry every 2 seconds until token is available
         if (!connectionRetryInterval) {
           connectionRetryInterval = setInterval(() => {
@@ -147,7 +186,7 @@ if (typeof window !== "undefined") {
       }
 
       console.log("thorBridge: Connecting to authenticated websocket:", authenticatedURL);
-      
+
       stompClient = new Client({
         brokerURL: authenticatedURL,
         reconnectDelay: 5000,
@@ -175,6 +214,22 @@ if (typeof window !== "undefined") {
               window.dispatchEvent(evt);
             }
           });
+          // Immediately announce presence and login ACK so peers can tally/roll-call
+          try {
+            const instanceId = getOrCreateInstanceId();
+            const announce = (type: string, payload: any) => {
+              const app: AppMessage = {
+                type,
+                payload,
+                senderId: instanceId,
+                messageId: Math.random().toString(36).slice(2, 12),
+                timestamp: Date.now(),
+              };
+              stompClient!.publish({ destination: "/app/chat", body: toThorBody(app) });
+            };
+            announce("presence:join", { id: instanceId });
+            announce("auth:ack", { id: instanceId });
+          } catch { }
         } catch (e) {
           console.error("thorBridge subscribe error", e);
         }
@@ -185,7 +240,7 @@ if (typeof window !== "undefined") {
         postStatus("error");
         isConnecting = false;
       };
-      
+
       stompClient.onWebSocketClose = () => {
         console.warn("thorBridge websocket closed");
         postStatus("disconnected");
@@ -225,7 +280,7 @@ if (typeof window !== "undefined") {
             currentSendListener = null;
           }
           // Remove explicit connect-broker listener if present
-          window.removeEventListener("telecom-connect-broker", connectBrokerListener as EventListener);
+          window.removeEventListener("P2P-connect-broker", connectBrokerListener as EventListener);
           window.removeEventListener("jwt-token-updated", jwtUpdatedListener as EventListener);
           if (stompClient) {
             stompClient.deactivate();
@@ -239,11 +294,11 @@ if (typeof window !== "undefined") {
       });
     };
 
-	    // Start the connection process
-	    initializeConnection();
+    // Start the connection process
+    initializeConnection();
 
-	    // Allow other views/components to explicitly (re)connect the broker
-	    // ChatView triggers this via a CustomEvent("telecom-connect-broker", ...)
+    // Allow other views/components to explicitly (re)connect the broker
+    // ChatView triggers this via a CustomEvent("P2P-connect-broker", ...)
     const connectBrokerListener = () => {
       try {
         console.log("thorBridge: connect-broker requested");
@@ -259,7 +314,7 @@ if (typeof window !== "undefined") {
         console.warn("thorBridge: connect-broker failed:", e);
       }
     };
-	    window.addEventListener("telecom-connect-broker", connectBrokerListener as EventListener);
+    window.addEventListener("P2P-connect-broker", connectBrokerListener as EventListener);
 
     // Also listen for JWT token changes in sessionStorage to reconnect
     window.addEventListener("storage", (event) => {

@@ -46,7 +46,7 @@ const ServerConsole: React.FC = () => {
       addLog(`Received message: ${message.type} from ${message.senderId}`);
     };
 
-    window.addEventListener("telecom-status", handleTelecomStatus as EventListener);
+    window.addEventListener("P2P-status", handleTelecomStatus as EventListener);
     window.addEventListener("websocket-message", handleWebsocketMessage as EventListener);
 
     // Check current JWT token status
@@ -61,7 +61,7 @@ const ServerConsole: React.FC = () => {
     addLog("ServerConsole initialized");
 
     return () => {
-      window.removeEventListener("telecom-status", handleTelecomStatus as EventListener);
+      window.removeEventListener("P2P-status", handleTelecomStatus as EventListener);
       window.removeEventListener("websocket-message", handleWebsocketMessage as EventListener);
     };
   }, []);
@@ -78,7 +78,7 @@ const ServerConsole: React.FC = () => {
       addLog("ERROR: Cannot connect - No JWT token in sessionStorage");
       return;
     }
-    
+
     // Trigger a storage event to force reconnection
     window.dispatchEvent(
       new StorageEvent("storage", {

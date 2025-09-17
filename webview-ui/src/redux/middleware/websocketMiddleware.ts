@@ -6,8 +6,6 @@ import {
 } from "../../components/ServerConsole/websocketSlice";
 import { WEBSOCKET_URL, isValidWsUrl } from "../../websocket/websocket";
 
-import WebSocketState from "../services/websocketSlice";
-
 const socketUrl = WEBSOCKET_URL;
 
 // Initialize client without brokerURL; validate and configure on connect
@@ -25,13 +23,7 @@ const stompClient = new StompJs.Client({
   },
 });
 
-interface RootStateWithWebsocket {
-  websocket: typeof WebSocketState;
-}
-
-type AppMiddleware = Middleware<{}, RootStateWithWebsocket>;
-
-export const websocketMiddleware: AppMiddleware =
+export const websocketMiddleware: Middleware =
   (store) => (next) => (action: any) => {
     switch (action.type) {
       case "WEBSOCKET_CONNECT":

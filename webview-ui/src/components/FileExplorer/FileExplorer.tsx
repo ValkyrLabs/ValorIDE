@@ -6,6 +6,7 @@ import {
 import { vscode } from "@/utils/vscode";
 import AddToProjectModal from "./AddToProjectModal";
 import StartServerModal from "./StartServerModal";
+import SystemAlerts from "@/components/SystemAlerts";
 import "./FileExplorer.css";
 
 interface FileItem {
@@ -309,24 +310,31 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
 
   if (loading && files.length === 0) {
     return (
-      <div className="file-explorer-loading">
-        <VSCodeProgressRing />
-        <span>Loading workspace files...</span>
-      </div>
+      <>
+        <SystemAlerts />
+        <div className="file-explorer-loading">
+          <VSCodeProgressRing />
+          <span>Loading workspace files...</span>
+        </div>
+      </>
     );
   }
 
   if (error) {
     return (
-      <div className="file-explorer-error">
-        <p>Error loading files: {error}</p>
-        <VSCodeButton onClick={fetchFiles}>Retry</VSCodeButton>
-      </div>
+      <>
+        <SystemAlerts />
+        <div className="file-explorer-error">
+          <p>Error loading files: {error}</p>
+          <VSCodeButton onClick={fetchFiles}>Retry</VSCodeButton>
+        </div>
+      </>
     );
   }
 
   return (
     <>
+      <SystemAlerts />
       <div className="file-explorer">
         <div className="file-explorer-header">
           <h3>ThorAPI Generated Files</h3>

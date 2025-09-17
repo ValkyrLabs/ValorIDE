@@ -17,7 +17,10 @@ import { Meta, OptimisticUpdate, QueryKey, QueryOptions, Rollback, TransformStra
 // un-comment for Vite apps
 // Guard against missing env var to avoid calling replace on undefined
 const rawBasePath = (import.meta as any)?.env?.VITE_basePath || "";
-export const BASE_PATH = String(rawBasePath);
+// export const BASE_PATH = String(rawBasePath);
+
+export const BASE_PATH = import.meta.env.VITE_basePath || "http://localhost:8080/v1";
+
 // WebSocket base path for Vite apps
 export const WSS_BASE_PATH = import.meta.env.VITE_wssBasePath || "ws://localhost:8080/chat";
 

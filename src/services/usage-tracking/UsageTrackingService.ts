@@ -7,10 +7,10 @@ import { UsageTrackingData } from '../../shared/UsageTransaction';
  */
 export class UsageTrackingService {
   private static instance: UsageTrackingService;
-  private webviewPanel: vscode.WebviewPanel | undefined;
+  private webview: vscode.WebviewView | vscode.WebviewPanel | undefined;
   private pendingTransactions = new Map<string, { resolve: (value: boolean) => void; reject: (reason?: any) => void; timeout: NodeJS.Timeout }>();
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): UsageTrackingService {
     if (!UsageTrackingService.instance) {
@@ -20,23 +20,31 @@ export class UsageTrackingService {
   }
 
   /**
-   * Set the webview panel for communication
+   * Set the webview for communication (supports both WebviewView and WebviewPanel)
    */
-  public setWebviewPanel(panel: vscode.WebviewPanel): void {
-    this.webviewPanel = panel;
-    
+  public setWebview(webview: vscode.WebviewView | vscode.WebviewPanel): void {
+    this.webview = webview;
+
     // Set up message listener for responses from webview
-    panel.webview.onDidReceiveMessage((message) => {
+    webview.webview.onDidReceiveMessage((message) => {
       this.handleWebviewResponse(message);
     });
+  }
+
+  /**
+   * Set the webview panel for communication
+   * @deprecated Use setWebview instead for broader compatibility
+   */
+  public setWebviewPanel(panel: vscode.WebviewPanel): void {
+    this.setWebview(panel);
   }
 
   /**
    * Track API usage by sending a usage transaction to the backend
    */
   public async trackUsage(usageData: UsageTrackingData): Promise<boolean> {
-    if (!this.webviewPanel) {
-      console.warn('UsageTrackingService: No webview panel available for tracking usage');
+    if (!this.webview) {
+      console.warn('UsageTrackingService: No webview available for tracking usage');
       return false;
     }
 
@@ -52,7 +60,7 @@ export class UsageTrackingService {
 
     try {
       // Send message to webview to submit via RTQ
-      this.webviewPanel.webview.postMessage({
+      this.webview.webview.postMessage({
         type: 'usage_tracking',
         action: 'track_usage',
         data: {
@@ -73,13 +81,13 @@ export class UsageTrackingService {
    * Request current balance from the backend
    */
   public async requestBalance(): Promise<void> {
-    if (!this.webviewPanel) {
-      console.warn('UsageTrackingService: No webview panel available for balance request');
+    if (!this.webview) {
+      console.warn('UsageTrackingService: No webview available for balance request');
       return;
     }
 
     try {
-      this.webviewPanel.webview.postMessage({
+      this.webview.webview.postMessage({
         type: 'usage_tracking',
         action: 'request_balance'
       });
@@ -99,7 +107,7 @@ export class UsageTrackingService {
     costPerCompletionToken: number = 0.00002
   ): Promise<boolean> {
     const credits = (promptTokens * costPerPromptToken) + (completionTokens * costPerCompletionToken);
-    
+
     return this.trackUsage({
       modelProvider: 'openai',
       model,
@@ -120,7 +128,7 @@ export class UsageTrackingService {
     costPerCompletionToken: number = 0.000024
   ): Promise<boolean> {
     const credits = (promptTokens * costPerPromptToken) + (completionTokens * costPerCompletionToken);
-    
+
     return this.trackUsage({
       modelProvider: 'anthropic',
       model,
@@ -198,7 +206,7 @@ export class UsageTrackingService {
     if (pending) {
       clearTimeout(pending.timeout);
       this.pendingTransactions.delete(data.transactionId);
-      
+
       if (data.success) {
         pending.resolve(true);
       } else {
@@ -213,7 +221,7 @@ export class UsageTrackingService {
   private handleBalanceUpdate(balanceData: any): void {
     // Emit event or update UI as needed
     console.log('Balance updated:', balanceData);
-    
+
     // Could emit a VSCode event here for other parts of the extension to listen to
     vscode.commands.executeCommand('valoride.balanceUpdated', balanceData);
   }

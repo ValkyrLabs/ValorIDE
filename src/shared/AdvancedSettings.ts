@@ -49,6 +49,15 @@ export interface DebuggingConfig {
   logOutputFiltering: boolean;       // Default: false
 }
 
+export interface BudgetAlertConfig {
+  // Dollar thresholds for budget alerts
+  // When effective balance <= threshold, corresponding alert triggers
+  depletedThreshold: number;   // Default: 0 (always show when <= 0)
+  criticalThreshold: number;   // Default: 1
+  lowThreshold: number;        // Default: 5
+  alertThreshold: number;      // Default: 10
+}
+
 export interface ValorIDEAdvancedSettings {
   version: number;
   fileProcessing: FileProcessingConfig;
@@ -56,15 +65,23 @@ export interface ValorIDEAdvancedSettings {
   outputFilter: OutputFilterConfig;
   performance: PerformanceConfig;
   debugging: DebuggingConfig;
+  budgetAlerts: BudgetAlertConfig;
 }
 
 export const DEFAULT_FILE_PROCESSING_CONFIG: FileProcessingConfig = {
-  maxFileSize: 51200,        // 50KB
+  maxFileSize: 512000,        // 500KB
   chunkSize: 5120,           // 5KB
   streamingDelay: 16,        // 60fps
   enableProgressiveLoading: true,
   warnLargeFiles: true,
   largeFileThreshold: 20480, // 20KB
+};
+
+export const DEFAULT_BUDGET_ALERT_CONFIG: BudgetAlertConfig = {
+  depletedThreshold: 0,
+  criticalThreshold: 1,
+  lowThreshold: 5,
+  alertThreshold: 10,
 };
 
 export const DEFAULT_MATCHING_CONFIG: MatchingConfig = {
@@ -108,6 +125,7 @@ export const DEFAULT_ADVANCED_SETTINGS: ValorIDEAdvancedSettings = {
   outputFilter: DEFAULT_OUTPUT_FILTER_CONFIG,
   performance: DEFAULT_PERFORMANCE_CONFIG,
   debugging: DEFAULT_DEBUGGING_CONFIG,
+  budgetAlerts: DEFAULT_BUDGET_ALERT_CONFIG,
 };
 
 // Validation functions
@@ -137,7 +155,7 @@ export function validateOutputFilterConfig(config: Partial<OutputFilterConfig>):
   return {
     maxOutputLength: Math.max(100, config.maxOutputLength ?? DEFAULT_OUTPUT_FILTER_CONFIG.maxOutputLength),
     enableSmartSummarization: config.enableSmartSummarization ?? DEFAULT_OUTPUT_FILTER_CONFIG.enableSmartSummarization,
-    verbosityLevel: ['minimal', 'normal', 'verbose'].includes(config.verbosityLevel ?? '') 
+    verbosityLevel: ['minimal', 'normal', 'verbose'].includes(config.verbosityLevel ?? '')
       ? config.verbosityLevel as 'minimal' | 'normal' | 'verbose'
       : DEFAULT_OUTPUT_FILTER_CONFIG.verbosityLevel,
     enableProgressFiltering: config.enableProgressFiltering ?? DEFAULT_OUTPUT_FILTER_CONFIG.enableProgressFiltering,
@@ -165,6 +183,12 @@ export function validateAdvancedSettings(settings: Partial<ValorIDEAdvancedSetti
       saveFailedMatches: settings.debugging?.saveFailedMatches ?? DEFAULT_DEBUGGING_CONFIG.saveFailedMatches,
       enablePerformanceMetrics: settings.debugging?.enablePerformanceMetrics ?? DEFAULT_DEBUGGING_CONFIG.enablePerformanceMetrics,
       logOutputFiltering: settings.debugging?.logOutputFiltering ?? DEFAULT_DEBUGGING_CONFIG.logOutputFiltering,
+    },
+    budgetAlerts: {
+      depletedThreshold: Math.max(0, settings.budgetAlerts?.depletedThreshold ?? DEFAULT_BUDGET_ALERT_CONFIG.depletedThreshold),
+      criticalThreshold: Math.max(0, settings.budgetAlerts?.criticalThreshold ?? DEFAULT_BUDGET_ALERT_CONFIG.criticalThreshold),
+      lowThreshold: Math.max(0, settings.budgetAlerts?.lowThreshold ?? DEFAULT_BUDGET_ALERT_CONFIG.lowThreshold),
+      alertThreshold: Math.max(0, settings.budgetAlerts?.alertThreshold ?? DEFAULT_BUDGET_ALERT_CONFIG.alertThreshold),
     },
   };
 }
