@@ -73,16 +73,36 @@ export class PathAccess {
   }
 }
 
-// Minimal glob support for **, *, and trailing /**
+// Minimal glob support for **, *, and /** sequences used in deny lists
 function matchGlob(relPath: string, pattern: string): boolean {
-  const esc = (s: string) => s.replace(/[.+^${}()|[\]\\]/g, "\\$&");
-  const rx = new RegExp(
-    "^" +
-    esc(pattern)
-      .replace(/\\\\\\*\\\\\\*\//g, "(?:.+/)?") // **/
-      .replace(/\\\\\\*\\\\\\*/g, ".*")        // **
-      .replace(/\\\\\\*/g, "[^/]*") +                // *
-    "$"
-  );
-  return rx.test(relPath);
+  const escapeRegexChar = (ch: string) => (/[\\^$+?.()|[\]{}]/.test(ch) ? `\\${ch}` : ch);
+  const toRegexSource = (glob: string) => {
+    let src = "";
+    for (let i = 0; i < glob.length; i++) {
+      const ch = glob[i];
+      if (ch === "*") {
+        const next = glob[i + 1];
+        if (next === "*") {
+          const after = glob[i + 2];
+          if (after === "/") {
+            src += "(?:.*/)?";
+            i += 2; // Skip the second *; loop increments past '/'
+            continue;
+          }
+          src += ".*";
+          i += 1; // Skip the second *
+          continue;
+        }
+        src += "[^/]*";
+        continue;
+      }
+      src += escapeRegexChar(ch);
+    }
+    return src;
+  };
+
+  const normalizedPattern = pattern.replace(/\\/g, "/");
+  const normalizedPath = relPath.replace(/\\/g, "/");
+  const regex = new RegExp(`^${toRegexSource(normalizedPattern)}$`);
+  return regex.test(normalizedPath);
 }
