@@ -21,7 +21,7 @@ import {
   VSCodeLink,
 } from "@vscode/webview-ui-toolkit/react";
 import { vscode } from "@/utils/vscode";
-import { FaBackward, FaRecycle } from "react-icons/fa";
+import { FaAppStore, FaBackward, FaFileArchive, FaRecycle, FaUserEdit } from "react-icons/fa";
 import CoolButton from "../CoolButton";
 import { Card } from "react-bootstrap";
 import { Login } from "@thor/model";
@@ -32,6 +32,7 @@ import OfflineBanner from "@/components/common/OfflineBanner";
 import SystemAlerts from "@/components/SystemAlerts";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useCommunicationService } from "@/context/CommunicationServiceContext";
+import UserPreferences from "./UserPreferences";
 
 type AccountViewProps = {
   onDone: () => void;
@@ -69,7 +70,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
 
   // Default to login tab when unauthenticated, otherwise account
   const [activeTab, setActiveTab] = useState<
-    "login" | "account" | "applications" | "generatedFiles"
+    "login" | "account" | "applications" | "generatedFiles" | "userPreferences"
   >(authed ? "account" : "login");
 
   // Keep active tab in sync with authentication state
@@ -251,10 +252,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
       }}
     >
       <SystemAlerts />
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-        <div style={{ color: "var(--vscode-foreground)" }}>Account</div>
-        <StatusBadge label="P2P" value={value} kind={kind as any} title={hasError ? String(communicationService.error) : undefined} />
-      </div>
+
       {peers.length > 0 && (
         <div className="border border-solid border-[var(--vscode-panel-border)] rounded-md p-[10px] mb-3 bg-[var(--vscode-panel-background)] text-[var(--vscode-foreground)]">
           <div className="mb-2 font-semibold">Active instances</div>
@@ -283,21 +281,28 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                 onClick={() => setActiveTab("account")}
                 style={{ cursor: "pointer" }}
               >
-                Account
+                <FaUserEdit /> Account
               </div>
               <div
                 className={`nav-link ${activeTab === "applications" ? "active" : ""}`}
                 onClick={() => setActiveTab("applications")}
                 style={{ cursor: "pointer" }}
               >
-                Applications
+                <FaAppStore /> Applications
               </div>
               <div
                 className={`nav-link ${activeTab === "generatedFiles" ? "active" : ""}`}
                 onClick={() => setActiveTab("generatedFiles")}
                 style={{ cursor: "pointer" }}
               >
-                Generated Files
+                <FaFileArchive /> Files
+              </div>
+              <div
+                className={`nav-link ${activeTab === "userPreferences" ? "active" : ""}`}
+                onClick={() => setActiveTab("userPreferences")}
+                style={{ cursor: "pointer" }}
+              >
+                User Preferences
               </div>
             </>
           )}
@@ -325,6 +330,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                   >
                     Signup Now
                   </VSCodeLink>
+                  <br />
                   Forgot your username or password?{" "}
                   <VSCodeLink
                     href="https://valkyrlabs.com/restore-access"
@@ -440,7 +446,8 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                 </VSCodeButtonLink>
               </div>
             </div>
-
+            <VSCodeDivider className="mt-6 mb-3 w-full" />
+            <UserPreferences />
             <VSCodeDivider className="mt-6 mb-3 w-full" />
 
             <div className="flex-grow flex flex-col min-h-0 pb-[0px]">
@@ -450,6 +457,8 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                 paymentsData={paymentsData || []}
               />
             </div>
+
+
           </div>
         </>
       )}

@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.322",
+  "version": "3.20.335",
   "icon": "assets/icons/icon.png",
   "galleryBanner": {
     "color": "#617A91",
@@ -620,6 +620,7 @@
     "strip-ansi": "^7.1.0",
     "styled-components": "^6.1.16",
     "tree-sitter-wasms": "^0.1.11",
+    "ts-morph": "^27.0.0",
     "turndown": "^7.2.0",
     "typescript-eslint": "^8.39.0",
     "unist-util-visit": "^5.0.0",

@@ -1,12 +1,11 @@
 /* ServerConsole CSS with amazing glow effects */
 
 .server-console {
-  width: 100%;
+  width: 90%;
   margin: 1em;
   border-radius: 10px;
   overflow: hidden;
   transition: all 0.3s ease;
-  position: relative;
 }
 
 .server-console.connection-happy {
@@ -278,24 +277,31 @@
   box-sizing: border-box;
   background-color: transparent;
   color: var(--vscode-input-foreground);
-  border-radius: 10;
+  border-radius: 10px;
   font-family: var(--vscode-font-family);
   font-size: var(--vscode-editor-font-size);
   line-height: var(--vscode-editor-line-height);
   resize: none;
-  overflow-X: hidden;
-  overflow-Y: scroll;
+  overflow-x: hidden;
+  overflow-y: scroll;
   scrollbar-width: none;
-  padding: 9px 28px 3px 9px;
-  cursor: textAreaDisabled ? not-allowed : undefined;
+  padding: 16px;
+  cursor: text;
   flex: 1;
   z-index: 1;
-  outline: isTextAreaFocused
-    ? `1px solid ${chatSettings.mode === plan ? PLAN_MODE_COLOR : var(--vscode-focusBorder)}`
-    : none;
-  padding: 16px;
+  outline: none;
   border-top: 1px solid rgba(var(--glow-rgb), 0.3);
   background: rgba(var(--glow-rgb), 0.05);
+  transition: outline 0.2s ease;
+}
+
+.input-container:focus {
+  outline: 1px solid var(--vscode-focusBorder);
+}
+
+.input-container:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .message-input {

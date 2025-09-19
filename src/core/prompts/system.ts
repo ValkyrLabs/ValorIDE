@@ -211,6 +211,193 @@ Usage:
 <path>File path here</path>
 </read_file>
 
+## precision_search_and_replace
+Description: Perform reliable, atomic edits to a single file using a three-layer strategy (AST → contextual → byte). This tool is designed to always either (a) apply the intended changes with verification or (b) fail loudly with an actionable reason. It prevents truncation, preserves EOL style, and supports backups.
+
+Parameters:
+	•	path (required): The file path to edit (relative to the current working directory ${cwd.toPosix()}).
+	•	edits (required): A JSON array of edit objects. Each edit is one of:
+	•	AST edit (TypeScript/TSX only):
+	•	kind: "ts-ast"
+	•	intent: one of "replacePropertyChain" | "insertOptionalChaining" | "renameProperty"
+	•	Additional fields (depending on intent):
+	•	from (string): the property chain or property name to replace/rename (e.g., "customer.name").
+	•	to (string): the replacement text (e.g., "(customer?.displayName ?? customer?.fullName ?? customer?.id ?? \"Unknown\")").
+	•	target (string): the dot chain to apply optional chaining to (e.g., "order.customer.name").
+	•	Contextual (regex) edit:
+	•	kind: "contextual"
+	•	find (string): a valid JavaScript regex pattern (escaped as needed).
+	•	replace (string): the replacement string (supports $1, $2, etc. if you used capture groups).
+	•	flags (string, optional): regex flags (e.g., "gm"). Default "m".
+	•	occurrence (optional): "first" | "all" | number (0-based index); default "all".
+	•	contextBefore/contextAfter (optional): not required by default; reserved for future fuzzy anchoring.
+	•	checksumPolicy (optional): "require" | "relax"; default "relax".
+	•	Byte edit (for very large/minified/binary-like text):
+	•	kind: "byte"
+	•	findHex (string): hex string of the exact byte sequence to find (no spaces).
+	•	replaceHex (string): hex string of the replacement bytes (can be different length).
+	•	occurrence (optional): "first" | "all" | number; default "all".
+	•	options (optional): Object controlling behavior:
+	•	dryRun (boolean): If true, compute the plan and verification without writing.
+	•	encoding (string): File encoding; default "utf8".
+	•	maxFileBytesForAst (number): Limit for AST processing; default 5_000_000.
+	•	makeBackup (boolean): If true, writes a *.bak under .valor/undo; default true when unspecified by the agent.
+	•	backupDir (string): Backup directory; default ".valor/undo".
+
+Strong Rules (the model MUST follow):
+	1.	Use AST first for TypeScript/TSX when changing property chains or symbol usages; then add a contextual fallback for safety. Only use byte edits for very large or minified files where regex/AST is impractical.
+	2.	Be explicit and minimal. Each edit should target exactly what’s needed. Do not attempt broad “replace everything” unless it’s intended.
+	3.	Never rely on streaming or partial buffers. This tool writes atomically. You do not need to chunk output.
+	4.	Preserve original line endings (PSR handles this automatically).
+	5.	Escape regex correctly. If you intend to match a literal dot, use \\.; for a word boundary, use \\b, etc.
+	6.	Idempotence: Structure edits so that running them twice does not corrupt the file (e.g., avoid double-inserting code).
+	7.	If AST edit may not match (e.g., file is JS, not TS), include a contextual fallback edit for the same intent.
+	8.	When uncertain which property exists (e.g., Customer has no name), prefer safe expressions (optional chaining + fallback) in your to value.
+
+Usage:
+
+<precision_search_and_replace>
+  <path>relative/path/to/file.tsx</path>
+  <edits>
+[
+  {
+    "kind": "ts-ast",
+    "intent": "replacePropertyChain",
+    "from": "customer.name",
+    "to": "(customer?.displayName ?? customer?.fullName ?? customer?.id ?? \"Unknown\")"
+  },
+  {
+    "kind": "contextual",
+    "find": "\\bcustomer\\.name\\b",
+    "replace": "(customer?.displayName ?? customer?.fullName ?? customer?.id ?? \"Unknown\")",
+    "flags": "g"
+  }
+]
+  </edits>
+  <options>
+{
+  "makeBackup": true
+}
+  </options>
+</precision_search_and_replace>
+
+
+⸻
+
+Quick Recipes
+
+1) Fix Customer.name TypeScript error (safe fallback)
+
+<precision_search_and_replace>
+  <path>src/components/OrderCard.tsx</path>
+  <edits>
+[
+  {
+    "kind": "ts-ast",
+    "intent": "replacePropertyChain",
+    "from": "customer.name",
+    "to": "(customer?.displayName ?? customer?.fullName ?? customer?.id ?? \"Unknown\")"
+  },
+  {
+    "kind": "contextual",
+    "find": "\\bcustomer\\.name\\b",
+    "replace": "(customer?.displayName ?? customer?.fullName ?? customer?.id ?? \"Unknown\")",
+    "flags": "g"
+  }
+]
+  </edits>
+  <options>{ "makeBackup": true }</options>
+</precision_search_and_replace>
+
+2) Rename a property everywhere (user.fullName → user.displayName)
+
+<precision_search_and_replace>
+  <path>src/views/Profile.tsx</path>
+  <edits>
+[
+  { "kind": "ts-ast", "intent": "renameProperty", "from": "fullName", "to": "displayName" },
+  { "kind": "contextual", "find": "\\buser\\.fullName\\b", "replace": "user.displayName", "flags": "g" }
+]
+  </edits>
+</precision_search_and_replace>
+
+3) Add optional chaining to fragile access (order.customer.name)
+
+<precision_search_and_replace>
+  <path>src/pages/Orders.tsx</path>
+  <edits>
+[
+  { "kind": "ts-ast", "intent": "insertOptionalChaining", "target": "order.customer.name" },
+  { "kind": "contextual", "find": "\\border\\.customer\\.name\\b", "replace": "order?.customer?.name", "flags": "g" }
+]
+  </edits>
+</precision_search_and_replace>
+
+4) Regex replace with capture groups
+
+<precision_search_and_replace>
+  <path>src/config/env.ts</path>
+  <edits>
+[
+  {
+    "kind": "contextual",
+    "find": "(API_BASE_URL\\s*=\\s*\")([^\"]+)(\";)",
+    "replace": "$1https://api.valkyr.ai$3",
+    "flags": "m"
+  }
+]
+  </edits>
+</precision_search_and_replace>
+
+5) Large/minified file byte patch (last resort)
+
+<precision_search_and_replace>
+  <path>dist/app.min.js</path>
+  <edits>
+[
+  { "kind": "byte", "findHex": "666F6F", "replaceHex": "626172", "occurrence": "all" }
+]
+  </edits>
+  <options>{ "makeBackup": true }</options>
+</precision_search_and_replace>
+
+
+⸻
+
+When to choose this tool vs others
+	•	Use precision_search_and_replace when:
+	•	You need surgical edits that must be atomic and verified.
+	•	Files are large or previous replace_in_file attempts failed.
+	•	There is TypeScript structure you can leverage (AST edits).
+	•	Use write_to_file when:
+	•	You truly intend to replace the entire file with a known-good complete body.
+	•	Use replace_in_file only for simple, small, and reversible edits; if it fails or if there’s risk of truncation, switch to PSR.
+
+⸻
+
+Failure handling (the agent MUST do this)
+	•	If PSR returns skipped edits or warnings (e.g., no_match), the agent must:
+	1.	Report which hunks failed and why.
+	2.	Re-query context (e.g., show a small code excerpt around expected locations).
+	3.	Retry with a refined contextual edit or adjust AST intent.
+	•	Prefer a dryRun first when making large, multi-hunk plans:
+
+<precision_search_and_replace>
+  <path>src/bigfile.ts</path>
+  <edits>[ ... ]</edits>
+  <options>{ "dryRun": true }</options>
+</precision_search_and_replace>
+
+	•	If dry run indicates all hunks will apply, re-issue without dryRun.
+
+⸻
+
+Absolute Do-Nots
+	•	Do not stream or chunk partial content to this tool.
+	•	Do not submit invalid JSON in <edits> or <options>.
+	•	Do not use greedy patterns that could destroy unrelated code (e.g., .* across the file) unless intended.
+	•	Do not assume name exists on Customer. Prefer safe fallbacks and optional chaining.
+
 ## write_to_file
 Description: Request to write content to a file at the specified path. If the file exists, it will be overwritten with the provided content. If the file doesn't exist, it will be created. This tool will automatically create any directories needed to write the file.
 Parameters:
@@ -504,16 +691,16 @@ Usage:
 <load_mcp_documentation>
 </load_mcp_documentation>
 
-## send_p2p_message
-Description: Send a message to other ValorIDE instances or agents via the P2P websocket communication system. This enables multi-participant chat between different AI agents (like @valoride, @valorone) and users (like @username). Messages can be targeted to specific handles or broadcast to all participants.
+## send_ws_message
+Description: Initiate connection and send a message to other ValorIDE instances or agents via the websocket communication system. This enables multi-participant chat between different AI agents (like @valoride, @valorone) and users (like @username). Messages can be targeted to specific handles or broadcast to all participants.
 Parameters:
 - to_handle: (required) The target handle to send the message to (e.g., "@valorone", "@username", or "broadcast" for all participants)
 - message: (required) The message content to send
 Usage:
-<send_p2p_message>
+<send_ws_message>
 <to_handle>@valorone</to_handle>
 <message>Your message here</message>
-</send_p2p_message>
+</send_ws_message>
 
 # Tool Use Examples
 
@@ -703,9 +890,18 @@ ${mcpHub.getServers().length > 0
 
 EDITING FILES
 
-You have access to two tools for working with files: **write_to_file** and **replace_in_file**. Understanding their roles and selecting the right one for the job will help ensure efficient and accurate modifications.
+You have access to THREE tools for working with files: **precision_search_and_replace**, **write_to_file** and **replace_in_file**. Understanding their roles and selecting the right one for the job will help ensure efficient and accurate modifications.
 
-Sometimes, especially with large complex files, or if your context window is smaller, both **replace_in_file** and **write_to_file** will fail. After two failures of **write_to_file** you should prompt the user if they want you to perform a refactor to bring the file size down before continuing the task. Below you will find the refactor procedure.
+Sometimes, especially with large complex files, or if your context window is smaller, all of the three, **precision_search_and_replace**, **replace_in_file** and **write_to_file** will fail. After two failures of **write_to_file** you should prompt the user if they want you to perform a refactor to bring the file size down before continuing the task. Below you will find the refactor procedure.
+
+# precision_search_and_replace
+
+## Purpose 
+- Make complex, multi-hunk, atomic edits to large files with built-in verification and rollback.
+
+## When to Use
+- As the most accurate "hunter" function this is the goto first file tool to use when writing and editing files.
+- Large files (>2000 lines or >200 KB) where multiple non-contiguous changes are needed.
 
 # write_to_file
 

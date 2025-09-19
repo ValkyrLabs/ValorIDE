@@ -20,3 +20,12 @@ export function fixModelHtmlEscaping(text: string): string {
 export function removeInvalidChars(text: string): string {
   return text.replace(/\uFFFD/g, "");
 }
+
+/**
+ * Normalises end-of-line characters to a single representation.
+ * Useful when diff algorithms need consistent newlines before rewriting.
+ */
+export function normalizeEol(text: string, newline: string): string {
+  const replacement = newline || "\n";
+  return text.replace(/\r\n|\r|\n/g, replacement);
+}

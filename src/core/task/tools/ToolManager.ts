@@ -14,6 +14,7 @@ export class ToolManager {
     const fileHandler = new FileToolHandler(context);
     this.handlers.set("write_to_file", fileHandler);
     this.handlers.set("replace_in_file", fileHandler);
+    this.handlers.set("precision_search_and_replace", fileHandler);
     this.handlers.set("read_file", fileHandler);
     this.handlers.set("list_files", fileHandler);
     this.handlers.set("list_code_definition_names", fileHandler);

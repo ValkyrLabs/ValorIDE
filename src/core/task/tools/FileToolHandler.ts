@@ -7,21 +7,35 @@ import { regexSearchFiles } from "@services/ripgrep";
 import { parseSourceCodeForDefinitionsTopLevel } from "@services/tree-sitter";
 import { formatResponse } from "@core/prompts/responses";
 import { telemetryService } from "@services/telemetry/TelemetryService";
-import { getReadablePath, isLocatedInWorkspace } from "@utils/path";
+
 import { fileExistsAtPath } from "@utils/fs";
 import { fixModelHtmlEscaping, removeInvalidChars } from "@utils/string";
 import { ValorIDESayTool } from "@shared/ExtensionMessage";
 import { showSystemNotification } from "@integrations/notifications";
 import { setTimeout as setTimeoutPromise } from "node:timers/promises";
+
+import { getReadablePath, isLocatedInWorkspace } from "@utils/path";
+import { PathAccess } from "@services/access/PathAccess";
 import * as path from "path";
+import { precisionSearchAndReplace, PSREdit, PSROptions } from "@services/psr";
 
 export class FileToolHandler extends BaseToolHandler {
+
+  private pathAccess?: PathAccess;
+  private getPathAccess() {
+    if (!this.pathAccess) {
+      this.pathAccess = new PathAccess({ workspaceRoot: this.context.cwd });
+    }
+    return this.pathAccess;
+  }
   async execute(block: AssistantMessageContent, partial: boolean): Promise<ToolExecutionResult> {
     if (block.type !== "tool_use") {
       return { shouldContinue: false };
     }
 
     switch (block.name) {
+      case "precision_search_and_replace":
+        return this.handlePrecisionSearchAndReplace(block, partial);
       case "write_to_file":
       case "replace_in_file":
         return this.handleFileWrite(block, partial);
@@ -38,6 +52,131 @@ export class FileToolHandler extends BaseToolHandler {
     }
   }
 
+  private async handlePrecisionSearchAndReplace(block: AssistantMessageContent, partial: boolean) {
+    if (partial) return { shouldContinue: false };
+
+    const relPath = block.params.path?.trim();
+    const editsRaw = block.params?.edits;
+    const optionsRaw = block.params?.options;
+
+    if (!relPath || !editsRaw || (typeof editsRaw === "string" && editsRaw.trim().length === 0)) {
+      this.context.consecutiveMistakeCount++;
+      return {
+        shouldContinue: true,
+        toolResponse: await this.context.sayAndCreateMissingParamError(
+          "precision_search_and_replace",
+          relPath ? "edits" : "path",
+        ),
+      };
+    }
+
+    let edits: PSREdit[];
+    try {
+      const parsed = typeof editsRaw === "string" ? JSON.parse(editsRaw) : editsRaw;
+      if (!Array.isArray(parsed)) {
+        throw new Error("Expected an array of edits");
+      }
+      edits = parsed as PSREdit[];
+    } catch (error) {
+      this.context.consecutiveMistakeCount++;
+      const message = error instanceof Error ? error.message : String(error);
+      return {
+        shouldContinue: true,
+        toolResponse: formatResponse.toolError(`Invalid JSON for 'edits' parameter: ${message}`),
+      };
+    }
+
+    if (edits.length === 0) {
+      this.context.consecutiveMistakeCount++;
+      return {
+        shouldContinue: true,
+        toolResponse: await this.context.sayAndCreateMissingParamError(
+          "precision_search_and_replace",
+          "edits",
+        ),
+      };
+    }
+
+    let options: PSROptions | undefined;
+    if (optionsRaw && (!(typeof optionsRaw === "string" && optionsRaw.trim().length === 0))) {
+      try {
+        options =
+          typeof optionsRaw === "string"
+            ? (JSON.parse(optionsRaw) as PSROptions)
+            : (optionsRaw as PSROptions);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        return {
+          shouldContinue: true,
+          toolResponse: formatResponse.toolError(`Invalid JSON for 'options' parameter: ${message}`),
+        };
+      }
+    }
+
+    const pathAccess = this.getPathAccess();
+    if (!pathAccess.validateAccess(relPath)) {
+      await this.context.say("valorideignore_error", relPath);
+      return {
+        shouldContinue: true,
+        toolResponse: formatResponse.toolError(
+          formatResponse.valorideIgnoreError(relPath),
+        ),
+      };
+    }
+
+    // approval UX mirrors other tools
+    const msgProps = {
+      tool: "precisionSearchAndReplace",
+      path: getReadablePath(this.context.cwd, relPath),
+      content: JSON.stringify({ edits, options }),
+    };
+    const message = JSON.stringify(msgProps);
+    const didApprove = await this.askApproval("tool", message);
+    if (!didApprove) return { shouldContinue: true, userRejected: true };
+
+    try {
+      const result = await precisionSearchAndReplace(
+        this.context.cwd,
+        relPath,
+        edits,
+        pathAccess,
+        { makeBackup: true, backupDir: ".valor/undo", ...(options ?? {}) },
+      );
+
+      // mark, checkpoint, telemetry
+      this.context.fileContextTracker.markFileAsEditedByValorIDE(relPath);
+      await this.context.fileContextTracker.trackFileContext(
+        relPath,
+        "valoride_edited",
+      );
+      await this.context.saveCheckpoint();
+      telemetryService.captureToolUsage(
+        this.context.taskId,
+        "precision_search_and_replace",
+        this.context.shouldAutoApproveToolWithPath(
+          "precision_search_and_replace",
+          relPath,
+        ),
+        true,
+      );
+
+      return {
+        shouldContinue: true,
+        toolResponse: formatResponse.toolResult(
+          `PSR applied: ${result.editsApplied}/${result.editsRequested} hunks. Δbytes=${result.bytesDelta}. Warnings: ${result.warnings.join("; ") || "none"}`,
+        ),
+      };
+    } catch (err) {
+      return {
+        shouldContinue: true,
+        toolResponse: await this.handleError(
+          "precision search & replace",
+          err as Error,
+        ),
+      };
+    }
+  }
+
   private async handleFileWrite(block: AssistantMessageContent, partial: boolean): Promise<ToolExecutionResult> {
     if (block.type !== "tool_use") {
       return { shouldContinue: false };
@@ -46,12 +185,12 @@ export class FileToolHandler extends BaseToolHandler {
     const relPath: string | undefined = block.params.path;
     let content: string | undefined = block.params.content; // for write_to_file
     let diff: string | undefined = block.params.diff; // for replace_in_file
-    
+
     if (!relPath || (!content && !diff)) {
       return { shouldContinue: false }; // wait for more data
     }
 
-    const accessAllowed = this.context.valorideIgnoreController.validateAccess(relPath);
+    const accessAllowed = this.getPathAccess().validateAccess(relPath);
     if (!accessAllowed) {
       await this.context.say("valorideignore_error", relPath);
       return {
@@ -107,7 +246,7 @@ export class FileToolHandler extends BaseToolHandler {
             `${(error as Error)?.message}\n\n` +
             formatResponse.diffError(relPath, this.context.diffViewProvider.originalContent)
           );
-          
+
           await this.context.diffViewProvider.revertChanges();
           await this.context.diffViewProvider.reset();
           return { shouldContinue: true, toolResponse };
@@ -149,7 +288,7 @@ export class FileToolHandler extends BaseToolHandler {
           await this.context.say("tool", partialMessage, undefined, partial);
         } else {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-          await this.context.ask("tool", partialMessage, partial).catch(() => {});
+          await this.context.ask("tool", partialMessage, partial).catch(() => { });
         }
         // update editor
         if (!this.context.diffViewProvider.isEditing) {
@@ -186,7 +325,7 @@ export class FileToolHandler extends BaseToolHandler {
         // Handle the complete file operation
         if (!this.context.diffViewProvider.isEditing) {
           const partialMessage = JSON.stringify(sharedMessageProps);
-          await this.context.ask("tool", partialMessage, true).catch(() => {}); // sending true for partial even though it's not
+          await this.context.ask("tool", partialMessage, true).catch(() => { }); // sending true for partial even though it's not
           await this.context.diffViewProvider.open(relPath);
         }
         await this.context.diffViewProvider.update(newContent, true);
@@ -223,11 +362,11 @@ export class FileToolHandler extends BaseToolHandler {
             const fileDeniedNote = fileExists
               ? "The file was not updated, and maintains its original contents."
               : "The file was not created.";
-            
+
             if (text || images?.length) {
               await this.context.say("user_feedback", text, images);
             }
-            
+
             telemetryService.captureToolUsage(this.context.taskId, block.name, false, false);
             await this.context.diffViewProvider.revertChanges();
             return {
@@ -326,7 +465,7 @@ export class FileToolHandler extends BaseToolHandler {
           await this.context.say("tool", partialMessage, undefined, partial);
         } else {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-          await this.context.ask("tool", partialMessage, partial).catch(() => {});
+          await this.context.ask("tool", partialMessage, partial).catch(() => { });
         }
         return { shouldContinue: false };
       } else {
@@ -338,7 +477,7 @@ export class FileToolHandler extends BaseToolHandler {
           };
         }
 
-        const accessAllowed = this.context.valorideIgnoreController.validateAccess(relPath);
+        const accessAllowed = this.getPathAccess().validateAccess(relPath);
         if (!accessAllowed) {
           await this.context.say("valorideignore_error", relPath);
           return {
@@ -418,7 +557,7 @@ export class FileToolHandler extends BaseToolHandler {
           await this.context.say("tool", partialMessage, undefined, partial);
         } else {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-          await this.context.ask("tool", partialMessage, partial).catch(() => {});
+          await this.context.ask("tool", partialMessage, partial).catch(() => { });
         }
         return { shouldContinue: false };
       } else {
@@ -431,11 +570,25 @@ export class FileToolHandler extends BaseToolHandler {
         }
         this.context.consecutiveMistakeCount = 0;
 
-        const absolutePath = path.resolve(this.context.cwd, relDirPath);
+        const pathAccess = this.getPathAccess();
+        const normalizedRelDirPath = relDirPath.trim();
+        if (!pathAccess.validateAccess(normalizedRelDirPath)) {
+          await this.context.say("valorideignore_error", relDirPath);
+          return {
+            shouldContinue: true,
+            toolResponse: formatResponse.toolError(
+              formatResponse.valorideIgnoreError(relDirPath),
+            ),
+          };
+        }
+
+        const absolutePath = path.resolve(this.context.cwd, normalizedRelDirPath);
         const [files, didHitLimit] = await listFiles(absolutePath, recursive, 200);
+        const accessibleFiles = files.filter((file) => pathAccess.validateAccess(file));
+
         const result = formatResponse.formatFilesList(
           absolutePath,
-          files,
+          accessibleFiles,
           didHitLimit,
           this.context.valorideIgnoreController
         );
@@ -501,7 +654,7 @@ export class FileToolHandler extends BaseToolHandler {
           await this.context.say("tool", partialMessage, undefined, partial);
         } else {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-          await this.context.ask("tool", partialMessage, partial).catch(() => {});
+          await this.context.ask("tool", partialMessage, partial).catch(() => { });
         }
         return { shouldContinue: false };
       } else {
@@ -515,10 +668,22 @@ export class FileToolHandler extends BaseToolHandler {
 
         this.context.consecutiveMistakeCount = 0;
 
-        const absolutePath = path.resolve(this.context.cwd, relDirPath);
+        const pathAccess = this.getPathAccess();
+        const normalizedRelDirPath = relDirPath.trim();
+        if (!pathAccess.validateAccess(normalizedRelDirPath)) {
+          await this.context.say("valorideignore_error", relDirPath);
+          return {
+            shouldContinue: true,
+            toolResponse: formatResponse.toolError(
+              formatResponse.valorideIgnoreError(relDirPath),
+            ),
+          };
+        }
+
+        const absolutePath = path.resolve(this.context.cwd, normalizedRelDirPath);
         const result = await parseSourceCodeForDefinitionsTopLevel(
           absolutePath,
-          this.context.valorideIgnoreController
+          this.context.valorideIgnoreController,
         );
 
         const completeMessage = JSON.stringify({
@@ -586,7 +751,7 @@ export class FileToolHandler extends BaseToolHandler {
           await this.context.say("tool", partialMessage, undefined, partial);
         } else {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-          await this.context.ask("tool", partialMessage, partial).catch(() => {});
+          await this.context.ask("tool", partialMessage, partial).catch(() => { });
         }
         return { shouldContinue: false };
       } else {
@@ -606,13 +771,25 @@ export class FileToolHandler extends BaseToolHandler {
         }
         this.context.consecutiveMistakeCount = 0;
 
-        const absolutePath = path.resolve(this.context.cwd, relDirPath);
+        const pathAccess = this.getPathAccess();
+        const normalizedRelDirPath = relDirPath.trim();
+        if (!pathAccess.validateAccess(normalizedRelDirPath)) {
+          await this.context.say("valorideignore_error", relDirPath);
+          return {
+            shouldContinue: true,
+            toolResponse: formatResponse.toolError(
+              formatResponse.valorideIgnoreError(relDirPath),
+            ),
+          };
+        }
+
+        const absolutePath = path.resolve(this.context.cwd, normalizedRelDirPath);
         const results = await regexSearchFiles(
           this.context.cwd,
           absolutePath,
           regex,
           filePattern,
-          this.context.valorideIgnoreController
+          this.context.valorideIgnoreController,
         );
 
         const completeMessage = JSON.stringify({

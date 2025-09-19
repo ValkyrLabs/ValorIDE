@@ -4092,7 +4092,7 @@ export class Task {
               break;
             }
           }
-          case "send_p2p_message": {
+          case "send_ws_message": {
             const toHandle: string | undefined = block.params.to_handle;
             const message: string | undefined = block.params.message;
             
@@ -4109,7 +4109,7 @@ export class Task {
                   this.consecutiveMistakeCount++;
                   pushToolResult(
                     await this.sayAndCreateMissingParamError(
-                      "send_p2p_message",
+                      "send_ws_message",
                       "to_handle",
                     ),
                   );
@@ -4119,7 +4119,7 @@ export class Task {
                   this.consecutiveMistakeCount++;
                   pushToolResult(
                     await this.sayAndCreateMissingParamError(
-                      "send_p2p_message", 
+                      "send_ws_message", 
                       "message",
                     ),
                   );

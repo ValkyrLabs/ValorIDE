@@ -6,7 +6,10 @@
 .DS_Store
 .valoride
 ValorIDE_docs/
-
+# ignore caches and build outputs
+**/dist/**
+**/.cache/**
+**/*.log
 # Exclude source, tests, docs, configs, and build scripts
 src/
 test/
