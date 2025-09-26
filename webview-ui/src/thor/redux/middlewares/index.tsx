@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generator version: (7.5.0)
 
-Template file: typescript-redux-query/store.mustache
+Template file: typescript-redux-query/middleweares.index.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 
@@ -18,11 +18,12 @@ Description:
 import { Middleware, combineReducers, configureStore } from "@reduxjs/toolkit";
 
 // IMPORTant
+import { AccountBalanceService } from '../services/AccountBalanceService';
 import { AclEntryService } from '../services/AclEntryService';
 import { AddressService } from '../services/AddressService';
 import { AgentService } from '../services/AgentService';
 import { AgentEventTriggerService } from '../services/AgentEventTriggerService';
-import { ApplicationService } from '../../../redux/services/ApplicationService';
+import { ApplicationService } from '../services/ApplicationService';
 import { BackupConfigService } from '../services/BackupConfigService';
 import { BalanceResponseService } from '../services/BalanceResponseService';
 import { BlankRangeService } from '../services/BlankRangeService';
@@ -40,6 +41,7 @@ import { ChatResponseService } from '../services/ChatResponseService';
 import { ContentDataService } from '../services/ContentDataService';
 import { ContentMediaLinkService } from '../services/ContentMediaLinkService';
 import { CustomerService } from '../services/CustomerService';
+import { DiscountService } from '../services/DiscountService';
 import { EventLogService } from '../services/EventLogService';
 import { ExecModuleService } from '../services/ExecModuleService';
 import { FormatService } from '../services/FormatService';
@@ -50,6 +52,7 @@ import { HostInstanceService } from '../services/HostInstanceService';
 import { IntegrationAccountService } from '../services/IntegrationAccountService';
 import { InvoiceService } from '../services/InvoiceService';
 import { KeyMetricService } from '../services/KeyMetricService';
+import { LineItemService } from '../services/LineItemService';
 import { LlmDetailsService } from '../services/LlmDetailsService';
 import { LoginService } from '../services/LoginService';
 import { LogoutService } from '../services/LogoutService';
@@ -85,6 +88,7 @@ import { PaymentTransactionService } from '../services/PaymentTransactionService
 import { PivotTableService } from '../services/PivotTableService';
 import { PrincipalService } from '../services/PrincipalService';
 import { ProductService } from '../services/ProductService';
+import { ProductFeatureService } from '../services/ProductFeatureService';
 import { PtgService } from '../services/PtgService';
 import { PtgRefService } from '../services/PtgRefService';
 import { RatingService } from '../services/RatingService';
@@ -100,8 +104,6 @@ import { SheetRowService } from '../services/SheetRowService';
 import { SolutionService } from '../services/SolutionService';
 import { StrategicPriorityService } from '../services/StrategicPriorityService';
 import { TaskService } from '../services/TaskService';
-import { ThorUXComponentService } from '../services/ThorUXComponentService';
-import { ThorUXMetaService } from '../services/ThorUXMetaService';
 import { UsageTransactionService } from '../services/UsageTransactionService';
 import { UserPreferenceService } from '../services/UserPreferenceService';
 import { WebsocketMessageService } from '../services/WebsocketMessageService';
@@ -111,7 +113,8 @@ import { WorkflowService } from '../services/WorkflowService';
 import { WorkflowStateService } from '../services/WorkflowStateService';
 
 // use to populate external store
-export const middlewares: Middleware[] = [
+export const middlewares : Middleware[] = [
+    AccountBalanceService.middleware as Middleware,
     AclEntryService.middleware as Middleware,
     AddressService.middleware as Middleware,
     AgentService.middleware as Middleware,
@@ -134,6 +137,7 @@ export const middlewares: Middleware[] = [
     ContentDataService.middleware as Middleware,
     ContentMediaLinkService.middleware as Middleware,
     CustomerService.middleware as Middleware,
+    DiscountService.middleware as Middleware,
     EventLogService.middleware as Middleware,
     ExecModuleService.middleware as Middleware,
     FormatService.middleware as Middleware,
@@ -144,6 +148,7 @@ export const middlewares: Middleware[] = [
     IntegrationAccountService.middleware as Middleware,
     InvoiceService.middleware as Middleware,
     KeyMetricService.middleware as Middleware,
+    LineItemService.middleware as Middleware,
     LlmDetailsService.middleware as Middleware,
     LoginService.middleware as Middleware,
     LogoutService.middleware as Middleware,
@@ -179,6 +184,7 @@ export const middlewares: Middleware[] = [
     PivotTableService.middleware as Middleware,
     PrincipalService.middleware as Middleware,
     ProductService.middleware as Middleware,
+    ProductFeatureService.middleware as Middleware,
     PtgService.middleware as Middleware,
     PtgRefService.middleware as Middleware,
     RatingService.middleware as Middleware,
@@ -194,8 +200,6 @@ export const middlewares: Middleware[] = [
     SolutionService.middleware as Middleware,
     StrategicPriorityService.middleware as Middleware,
     TaskService.middleware as Middleware,
-    ThorUXComponentService.middleware as Middleware,
-    ThorUXMetaService.middleware as Middleware,
     UsageTransactionService.middleware as Middleware,
     UserPreferenceService.middleware as Middleware,
     WebsocketMessageService.middleware as Middleware,

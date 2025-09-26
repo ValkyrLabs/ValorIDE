@@ -32,7 +32,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -78,15 +78,39 @@ const validationSchema = Yup.object().shape({
         categoryRange: Yup.string(),
         embedded: Yup.boolean(),
         anchorCell: Yup.string(),
-        anchorOffsetX: asNumber(Yup.number().integer()),
-        anchorOffsetY: asNumber(Yup.number().integer()),
-        width: asNumber(Yup.number().integer()),
-        height: asNumber(Yup.number().integer()),
+        anchorOffsetX: asNumber(Yup.number().integer().typeError("anchorOffsetX must be a number")),
+        anchorOffsetY: asNumber(Yup.number().integer().typeError("anchorOffsetY must be a number")),
+        width: asNumber(Yup.number().integer().typeError("width must be a number")),
+        height: asNumber(Yup.number().integer().typeError("height must be a number")),
         id: Yup.string(),
         ownerId: Yup.string(),
+        createdDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
         keyHash: Yup.string(),
         lastAccessedById: Yup.string(),
+        lastAccessedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
         lastModifiedById: Yup.string(),
+        lastModifiedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -123,15 +147,18 @@ const ChartForm: React.FC = () => {
           categoryRange: '',
           embedded: false,
           anchorCell: '',
-          anchorOffsetX: undefined,
-          anchorOffsetY: undefined,
-          width: undefined,
-          height: undefined,
+          anchorOffsetX: 0,
+          anchorOffsetY: 0,
+          width: 0,
+          height: 0,
           id: '',
           ownerId: '',
+          createdDate: new Date(),
           keyHash: '',
           lastAccessedById: '',
+          lastAccessedDate: new Date(),
           lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -225,6 +252,7 @@ const ChartForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="sheetId"
@@ -257,6 +285,7 @@ const ChartForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="name"
@@ -276,6 +305,7 @@ const ChartForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="chartType"
+                          value={values.chartType || ''}
                           className={
                             errors.chartType
                               ? 'form-control field-error'
@@ -323,6 +353,7 @@ const ChartForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="title"
@@ -349,6 +380,7 @@ const ChartForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -387,6 +419,7 @@ const ChartForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="axisLabelY"
@@ -419,6 +452,7 @@ const ChartForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="categoryRange"
@@ -440,6 +474,7 @@ const ChartForm: React.FC = () => {
                           <BSForm.Check
                             id="embedded"
                             name="embedded"
+                            checked={values.embedded || false}
                             onChange={(e) => {
                               setFieldTouched('embedded', true);
                               setFieldValue('embedded', e.target.checked);
@@ -447,6 +482,7 @@ const ChartForm: React.FC = () => {
                             isInvalid={!!errors.embedded}
                             className={errors.embedded ? 'error' : ''}
                           />
+
 
 
 
@@ -486,6 +522,7 @@ const ChartForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="anchorCell"
@@ -509,6 +546,7 @@ const ChartForm: React.FC = () => {
                           <Field
                             name="anchorOffsetX"
                             type="number"
+                            value={values.anchorOffsetX || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('anchorOffsetX', true);
                               const v = e.target.value;
@@ -520,6 +558,7 @@ const ChartForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -548,6 +587,7 @@ const ChartForm: React.FC = () => {
                           <Field
                             name="anchorOffsetY"
                             type="number"
+                            value={values.anchorOffsetY || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('anchorOffsetY', true);
                               const v = e.target.value;
@@ -559,6 +599,7 @@ const ChartForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -587,6 +628,7 @@ const ChartForm: React.FC = () => {
                           <Field
                             name="width"
                             type="number"
+                            value={values.width || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('width', true);
                               const v = e.target.value;
@@ -598,6 +640,7 @@ const ChartForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -626,6 +669,7 @@ const ChartForm: React.FC = () => {
                           <Field
                             name="height"
                             type="number"
+                            value={values.height || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('height', true);
                               const v = e.target.value;
@@ -637,6 +681,7 @@ const ChartForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -668,6 +713,7 @@ const ChartForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -706,6 +752,7 @@ const ChartForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="ownerId"
@@ -729,6 +776,25 @@ const ChartForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -756,6 +822,7 @@ const ChartForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -794,6 +861,7 @@ const ChartForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedById"
@@ -817,6 +885,25 @@ const ChartForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -850,6 +937,7 @@ const ChartForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedById"
@@ -873,6 +961,25 @@ const ChartForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"

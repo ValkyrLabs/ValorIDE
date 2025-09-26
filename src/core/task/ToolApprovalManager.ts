@@ -43,8 +43,14 @@ export class ToolApprovalManager {
       partialMessage,
       false,
     );
-    
-    if (response !== "yesButtonClicked") {
+
+    const normalizedText = text?.trim().toLowerCase();
+    const approved =
+      response === "yesButtonClicked" ||
+      (response === "messageResponse" &&
+        (normalizedText === "yes" || normalizedText === "approve"));
+
+    if (!approved) {
       // User pressed reject button or responded with a message, which we treat as a rejection
       return {
         approved: false,

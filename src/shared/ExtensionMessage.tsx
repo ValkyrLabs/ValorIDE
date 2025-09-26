@@ -206,6 +206,7 @@ export interface ExtensionState {
   autoApprovalSettings: AutoApprovalSettings;
   browserSettings: BrowserSettings;
   advancedSettings?: ValorIDEAdvancedSettings;
+  thorapiFolderPath?: string;
   remoteBrowserHost?: string;
   chatSettings: ChatSettings;
   checkpointTrackerErrorMessage?: string;
@@ -298,7 +299,8 @@ export interface ValorIDESayTool {
     | "listFilesTopLevel"
     | "listFilesRecursive"
     | "listCodeDefinitionNames"
-    | "searchFiles";
+    | "searchFiles"
+    | "precisionSearchAndReplace";
   path?: string;
   diff?: string;
   content?: string;

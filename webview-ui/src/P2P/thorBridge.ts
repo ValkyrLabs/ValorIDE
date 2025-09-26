@@ -1,7 +1,27 @@
 import { Client, IMessage } from "@stomp/stompjs";
 import { WEBSOCKET_URL, isValidWsUrl } from "@/websocket/websocket";
 import { WebsocketMessageTypeEnum } from "@/thor/model";
-import { WSS_BASE_PATH } from "@/thor/src/runtime";
+import { BASE_PATH } from "@/thor/src/runtime";
+
+const deriveWsBase = (input?: string): string | undefined => {
+  if (!input) return undefined;
+  const trimmed = input.trim();
+  if (!trimmed) return undefined;
+  if (/^wss?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+  try {
+    const url = new URL(trimmed);
+    if (url.protocol === "https:" || url.protocol === "http:") {
+      url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+    }
+    return url.toString();
+  } catch {
+    return undefined;
+  }
+};
+
+const FALLBACK_WS_BASE = deriveWsBase(BASE_PATH) ?? "ws://localhost:8080";
 
 type AppMessage = {
   type: string;
@@ -42,7 +62,7 @@ if (typeof window !== "undefined") {
 
     // Get JWT token from storage for authentication
     const getAuthenticatedBrokerURL = (): string | null => {
-      const baseURL = isValidWsUrl(WEBSOCKET_URL) ? WEBSOCKET_URL : WSS_BASE_PATH;
+      const baseURL = isValidWsUrl(WEBSOCKET_URL) ? WEBSOCKET_URL : FALLBACK_WS_BASE;
       let jwtToken: string | null = null;
       try {
         jwtToken = sessionStorage.getItem("jwtToken");

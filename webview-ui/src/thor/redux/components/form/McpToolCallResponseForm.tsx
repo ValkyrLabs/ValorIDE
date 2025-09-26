@@ -31,7 +31,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -56,9 +56,33 @@ const validationSchema = Yup.object().shape({
         isError: Yup.boolean(),
         id: Yup.string(),
         ownerId: Yup.string(),
+        createdDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
         keyHash: Yup.string(),
         lastAccessedById: Yup.string(),
+        lastAccessedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
         lastModifiedById: Yup.string(),
+        lastModifiedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -89,9 +113,12 @@ const McpToolCallResponseForm: React.FC = () => {
           isError: false,
           id: '',
           ownerId: '',
+          createdDate: new Date(),
           keyHash: '',
           lastAccessedById: '',
+          lastAccessedDate: new Date(),
           lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -174,6 +201,7 @@ const McpToolCallResponseForm: React.FC = () => {
                           <BSForm.Check
                             id="isError"
                             name="isError"
+                            checked={values.isError || false}
                             onChange={(e) => {
                               setFieldTouched('isError', true);
                               setFieldValue('isError', e.target.checked);
@@ -181,6 +209,7 @@ const McpToolCallResponseForm: React.FC = () => {
                             isInvalid={!!errors.isError}
                             className={errors.isError ? 'error' : ''}
                           />
+
 
 
 
@@ -220,6 +249,7 @@ const McpToolCallResponseForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="id"
@@ -252,6 +282,7 @@ const McpToolCallResponseForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="ownerId"
@@ -275,6 +306,25 @@ const McpToolCallResponseForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -302,6 +352,7 @@ const McpToolCallResponseForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -340,6 +391,7 @@ const McpToolCallResponseForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedById"
@@ -363,6 +415,25 @@ const McpToolCallResponseForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -396,6 +467,7 @@ const McpToolCallResponseForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedById"
@@ -419,6 +491,25 @@ const McpToolCallResponseForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"

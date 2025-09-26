@@ -1,6 +1,7 @@
 /* ThorAPI builtins */
 export * from './DataObject';
 
+export * from './AccountBalance';
 export * from './AclClass';
 export * from './AclEntry';
 export * from './AclObjectIdentity';
@@ -30,6 +31,7 @@ export * from './ContentMediaLink';
 export * from './Customer';
 export * from './DefaultResponse';
 export * from './Depend';
+export * from './Discount';
 export * from './EventLog';
 export * from './ExecModule';
 export * from './Format';
@@ -98,8 +100,6 @@ export * from './Solution';
 export * from './Stack';
 export * from './StrategicPriority';
 export * from './Task';
-export * from './ThorUXComponent';
-export * from './ThorUXMeta';
 export * from './UsageTransaction';
 export * from './UserPreference';
 export * from './WebsocketMessage';

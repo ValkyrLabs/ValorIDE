@@ -15,6 +15,9 @@ import { exists, mapValues } from '../src/runtime';
 import {
 
 
+    Discount,
+    DiscountFromJSON,
+    DiscountToJSON,
     Product,
     ProductFromJSON,
     ProductToJSON,
@@ -48,11 +51,11 @@ export type LineItem  = {
      */
     lineItemAmount?: number;
     /**
-     * the code required to unlock the item/discount
-     * @type {string}
+     * 
+     * @type {Discount}
      * @memberof LineItem
      */
-    code?: string;
+    discount?: Discount;
     /**
      * the quantity of the item in the order
      * @type {number}
@@ -120,7 +123,7 @@ export function LineItemFromJSON(json: any): LineItem {
         'salesOrderId': !exists(json, 'salesOrderId') ? undefined : json['salesOrderId'],
         'product': !exists(json, 'product') ? undefined : ProductFromJSON(json['product']),
         'lineItemAmount': !exists(json, 'lineItemAmount') ? undefined : json['lineItemAmount'],
-        'code': !exists(json, 'code') ? undefined : json['code'],
+        'discount': !exists(json, 'discount') ? undefined : DiscountFromJSON(json['discount']),
         'quantity': !exists(json, 'quantity') ? undefined : json['quantity'],
         'type': !exists(json, 'type') ? undefined : json['type'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -142,7 +145,7 @@ export function LineItemToJSON(value?: LineItem): any {
         'salesOrderId': value.salesOrderId,
         'product': ProductToJSON(value.product),
         'lineItemAmount': value.lineItemAmount,
-        'code': value.code,
+        'discount': DiscountToJSON(value.discount),
         'quantity': value.quantity,
         'type': value.type,
         'id': value.id,

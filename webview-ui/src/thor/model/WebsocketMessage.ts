@@ -153,6 +153,7 @@ export function WebsocketMessageToJSON(value?: WebsocketMessage): any {
 * @enum {string}
 */
 export enum WebsocketMessageTypeEnum {
+    COMMAND = 'command',
     SERVICE = 'service',
     AGENT = 'agent',
     USER = 'user',

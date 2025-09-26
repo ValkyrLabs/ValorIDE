@@ -1,0 +1,320 @@
+/**
+ * VALKYR DESIGN SYSTEM - COMPONENT OVERRIDES
+ * Light/Dark mode aware component styling with Bootstrap variables
+ */
+
+/* ====== Z-INDEX MANAGEMENT ====== */
+
+/* Fix dropdown z-index issues */
+.dropdown-menu {
+  z-index: 9999 !important;
+  position: absolute !important;
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  color: var(--bs-body-color);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-toggle {
+  z-index: 1000;
+  background: transparent;
+  border-color: var(--bs-border-color);
+  color: var(--bs-body-color);
+}
+
+.dropdown {
+  z-index: 1000;
+}
+
+/* Navbar dropdown overrides */
+.navbar .dropdown-menu {
+  z-index: 9999 !important;
+  background: var(--bs-body-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--bs-border-color);
+}
+
+/* Bootstrap dropdown menu positioning */
+.dropdown-menu.show {
+  z-index: 9999 !important;
+  position: absolute !important;
+}
+
+/* Theme switcher specific fixes */
+.theme-switcher-dropdown .dropdown-menu {
+  z-index: 10000 !important;
+  min-width: 200px;
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  box-shadow: 0 0.5rem 1rem rgba(var(--bs-body-color-rgb), 0.15);
+}
+
+.theme-switcher-dropdown .dropdown-toggle {
+  z-index: 1001;
+  color: var(--bs-body-color);
+  border-color: var(--bs-border-color);
+}
+
+/* LCARS dropdown styling */
+.lcars-dropdown .dropdown-menu {
+  z-index: 9999 !important;
+  background: var(--bs-body-bg);
+  border: 2px solid var(--bs-primary);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+/* Ensure popovers and tooltips also have proper z-index */
+.popover {
+  z-index: 10001 !important;
+  background: var(--bs-body-bg);
+  border-color: var(--bs-border-color);
+  color: var(--bs-body-color);
+}
+
+.popover .popover-arrow::before {
+  border-top-color: var(--bs-border-color);
+  border-bottom-color: var(--bs-border-color);
+}
+
+.popover .popover-arrow::after {
+  border-top-color: var(--bs-body-bg);
+  border-bottom-color: var(--bs-body-bg);
+}
+
+.tooltip {
+  z-index: 10002 !important;
+}
+
+.tooltip-inner {
+  background: var(--bs-dark);
+  color: var(--bs-light);
+}
+
+.tooltip .tooltip-arrow::before {
+  border-top-color: var(--bs-dark);
+  border-bottom-color: var(--bs-dark);
+}
+
+/* Modal z-index should be higher than dropdowns */
+.modal {
+  z-index: 10500 !important;
+}
+
+.modal-backdrop {
+  z-index: 10499 !important;
+  background: rgba(var(--bs-dark-rgb), 0.5);
+}
+
+/* ====== GRID AND TABLE COMPONENT SUPPORT ====== */
+
+/* Sheet table formatting support */
+.sheet-table {
+  background: var(--bs-table-bg);
+  color: var(--bs-table-color);
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid var(--bs-table-border-color);
+}
+
+.sheet-table th,
+.sheet-table td {
+  border: 1px solid var(--bs-table-border-color);
+  padding: 0.5rem;
+  text-align: left;
+  vertical-align: top;
+  background: var(--bs-table-bg);
+  color: var(--bs-table-color);
+}
+
+.sheet-table thead th {
+  background: var(--bs-table-accent-bg);
+  color: var(--bs-emphasis-color);
+  font-weight: 600;
+}
+
+.sheet-table tbody tr:nth-child(odd) {
+  background: var(--bs-table-striped-bg);
+}
+
+.sheet-table tbody tr:hover {
+  background: var(--bs-table-hover-bg);
+  color: var(--bs-table-hover-color);
+}
+
+/* Grid cell formatting */
+.sheet-cell {
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  color: var(--bs-body-color);
+  padding: 0.25rem 0.5rem;
+  min-height: 1.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sheet-cell:focus {
+  outline: 2px solid var(--bs-primary);
+  background: var(--bs-primary-bg-subtle);
+}
+
+.sheet-cell.selected {
+  background: var(--bs-primary-bg-subtle);
+  border-color: var(--bs-primary);
+}
+
+/* ====== THEME-AWARE COMPONENT ENHANCEMENTS ====== */
+
+/* Buttons with theme awareness */
+.btn {
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.15s ease-in-out;
+}
+
+.btn:focus {
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Cards with theme awareness */
+.card {
+  background: var(--bs-body-bg);
+  border-color: var(--bs-border-color);
+  color: var(--bs-body-color);
+}
+
+.card-header {
+  background: var(--bs-secondary-bg);
+  border-bottom-color: var(--bs-border-color);
+  color: var(--bs-emphasis-color);
+}
+
+.card-footer {
+  background: var(--bs-tertiary-bg);
+  border-top-color: var(--bs-border-color);
+  color: var(--bs-secondary-color);
+}
+
+/* Form controls with theme awareness */
+.form-control {
+  background: var(--bs-body-bg);
+  border-color: var(--bs-border-color);
+  color: var(--bs-body-color);
+}
+
+.form-control:focus {
+  background: var(--bs-body-bg);
+  border-color: var(--bs-primary);
+  color: var(--bs-body-color);
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+.form-control::placeholder {
+  color: var(--bs-secondary-color);
+}
+
+/* Nav tabs with theme awareness */
+.nav-tabs {
+  border-bottom-color: var(--bs-border-color);
+}
+
+.nav-tabs .nav-link {
+  color: var(--bs-secondary-color);
+  border-color: transparent;
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--bs-primary);
+  border-color: var(--bs-border-color);
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--bs-emphasis-color);
+  background: var(--bs-body-bg);
+  border-color: var(--bs-border-color) var(--bs-border-color) var(--bs-body-bg);
+}
+
+/* Accordion with theme awareness */
+.accordion-item {
+  background: var(--bs-body-bg);
+  border-color: var(--bs-border-color);
+}
+
+.accordion-button {
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  border-bottom-color: var(--bs-border-color);
+}
+
+.accordion-button:not(.collapsed) {
+  background: var(--bs-primary-bg-subtle);
+  color: var(--bs-primary-text-emphasis);
+}
+
+.accordion-button:focus {
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* ====== DARK MODE SPECIFIC OVERRIDES ====== */
+[data-bs-theme="dark"] .dropdown-menu {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+[data-bs-theme="dark"] .popover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
+}
+
+[data-bs-theme="dark"] .modal-backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+[data-bs-theme="dark"] .sheet-table {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="dark"] .sheet-cell:focus {
+  box-shadow: 0 0 0 2px var(--bs-primary), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* ====== ACCESSIBILITY IMPROVEMENTS ====== */
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .form-control,
+  .dropdown-menu,
+  .sheet-cell {
+    transition: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .sheet-table th,
+  .sheet-table td {
+    border-width: 2px;
+  }
+  
+  .sheet-cell:focus {
+    outline-width: 3px;
+  }
+  
+  .btn:focus {
+    outline: 3px solid var(--bs-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* ====== RESPONSIVE DESIGN ====== */
+@media (max-width: 768px) {
+  .dropdown-menu {
+    max-width: 90vw;
+  }
+  
+  .sheet-table {
+    font-size: 0.875rem;
+  }
+  
+  .sheet-cell {
+    padding: 0.125rem 0.25rem;
+    min-height: 1.25rem;
+  }
+}

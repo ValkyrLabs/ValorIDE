@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as path from "path";
+import { resolveThorapiFolderPath, thorapiSettingChanged } from "@utils/thorapi";
 
 type Project = {
   name: string;
@@ -41,7 +42,8 @@ export class ProjectsTreeDataProvider
 
     for (const folder of folders) {
       try {
-        const thorapi = vscode.Uri.joinPath(folder.uri, "thorapi");
+        const thorapiPath = resolveThorapiFolderPath(folder.uri.fsPath);
+        const thorapi = vscode.Uri.file(thorapiPath);
         const entries = await vscode.workspace.fs.readDirectory(thorapi);
         for (const [name, fileType] of entries) {
           if (fileType !== vscode.FileType.Directory) continue;
@@ -81,6 +83,13 @@ export function registerProjectsView(
     showCollapseAll: false,
   });
   context.subscriptions.push(view);
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration((event) => {
+      if (thorapiSettingChanged(event)) {
+        provider.refresh();
+      }
+    }),
+  );
 
   const getUriArg = (arg?: vscode.Uri) => {
     if (arg) return arg;

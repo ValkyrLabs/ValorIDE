@@ -341,7 +341,7 @@ const ApiOptions = ({
             style={{ width: "100%" }}
             type="url"
             onInput={handleInputChange("valkyraiHost")}
-            placeholder="http://localhost:8080/v1"
+            placeholder="https://api-0.valkyrlabs.com/v1"
           >
             <span style={{ fontWeight: 500 }}>Valkyrai Host</span>
           </VSCodeTextField>

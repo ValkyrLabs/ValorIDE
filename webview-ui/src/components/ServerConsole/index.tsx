@@ -6,15 +6,35 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 import type { AppDispatch, RootState } from "../../redux/store";
 import { WebsocketMessage, WebsocketMessageFromJSON, WebsocketMessageToJSON, WebsocketMessageTypeEnum } from "../../thor/model";
-import { isValidWsUrl } from "../../websocket/websocket";
+import { WEBSOCKET_URL, isValidWsUrl } from "../../websocket/websocket";
 import { useMothership } from "../../context/MothershipContext";
 import { addMessage, setConnected } from "./websocketSlice";
-import { WSS_BASE_PATH } from "@/thor/src";
+import { BASE_PATH } from "@/thor/src";
 import SystemAlerts from "@/components/SystemAlerts";
 import "./ServerConsole.css";
 import { FaPaperPlane } from "react-icons/fa";
 
 const { Client } = StompJs;
+
+const deriveWsBase = (input?: string): string | undefined => {
+  if (!input) return undefined;
+  const trimmed = input.trim();
+  if (!trimmed) return undefined;
+  if (/^wss?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+  try {
+    const url = new URL(trimmed);
+    if (url.protocol === "https:" || url.protocol === "http:") {
+      url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+    }
+    return url.toString();
+  } catch {
+    return undefined;
+  }
+};
+
+const FALLBACK_WS_BASE = deriveWsBase(BASE_PATH) ?? "ws://localhost:8080";
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -50,13 +70,13 @@ const ServerConsole = () => {
     (connected && mothershipConnected) ? 'happy' : 'sad';
 
   useEffect(() => {
-    const socketUrl = WSS_BASE_PATH;
+    const socketUrl = isValidWsUrl(WEBSOCKET_URL) ? WEBSOCKET_URL : FALLBACK_WS_BASE;
     if (!isValidWsUrl(socketUrl)) {
-      console.warn("ServerConsole: WebSocket disabled (missing or invalid REACT_APP_WS_BASE_PATH).");
+      console.warn("ServerConsole: WebSocket disabled (missing or invalid VITE_wssBasePath/base path).");
       dispatch(setConnected(false));
       dispatch(addMessage({
         type: "console",
-        payload: "WebSocket disabled: set REACT_APP_WS_BASE_PATH to ws(s)://host:port.",
+        payload: "WebSocket disabled: configure VITE_wssBasePath or ensure VITE_basePath is an http(s) URL.",
         createdDate: new Date(),
       } as any));
       return;

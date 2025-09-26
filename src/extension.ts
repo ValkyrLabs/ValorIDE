@@ -14,6 +14,7 @@ import { ErrorService } from "./services/error/ErrorService";
 import { initializeTestMode, cleanupTestMode } from "./services/test/TestMode";
 import { registerUrlCommands } from "./commands/urlCommands";
 import { registerAliasCommands } from "./commands/aliasCommands";
+import { StartupAuthService } from "./services/auth/StartupAuthService";
 
 /*
 Built using https://github.com/microsoft/vscode-webview-ui-toolkit
@@ -52,6 +53,28 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   Logger.log("ValorIDE extension activated");
+
+  // Initialize startup authentication restoration in background
+  void (async () => {
+    try {
+      const startupAuthService = StartupAuthService.getInstance(context);
+      const authResult = await startupAuthService.restoreAuthentication();
+      
+      if (authResult.success) {
+        Logger.log("Successfully restored authentication from stored tokens");
+        // Notify the webview that authentication was restored
+        sidebarWebview.controller.postMessageToWebview({
+          type: "loginSuccess",
+          token: authResult.tokens?.jwtToken,
+          authenticatedPrincipal: authResult.user ? JSON.stringify(authResult.user) : undefined,
+        });
+      } else {
+        Logger.log(`Authentication restoration failed: ${authResult.error || "Unknown error"}`);
+      }
+    } catch (error) {
+      Logger.log(`Error during startup authentication restoration: ${error}`);
+    }
+  })();
 
   // Register utility commands
   registerUrlCommands(context);
@@ -419,11 +442,13 @@ export function activate(context: vscode.ExtensionContext) {
         const token = query.get("token");
         const state = query.get("state");
         const apiKey = query.get("apiKey");
+        const authenticatedPrincipal = query.get("authenticatedPrincipal");
 
         console.log("Auth callback received:", {
           token: token,
           state: state,
           apiKey: apiKey,
+          authenticatedPrincipal: authenticatedPrincipal,
         });
 
         // Validate state parameter
@@ -433,7 +458,21 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         if (token && apiKey) {
-          await visibleWebview?.controller.handleAuthCallback(token, apiKey);
+          let parsedUser;
+          try {
+            parsedUser = authenticatedPrincipal ? JSON.parse(decodeURIComponent(authenticatedPrincipal)) : undefined;
+          } catch (error) {
+            console.warn("Failed to parse authenticatedPrincipal:", error);
+          }
+
+          // Use StartupAuthService to handle login persistently
+          const startupAuthService = StartupAuthService.getInstance(context);
+          await startupAuthService.handleSuccessfulLogin(
+            { jwtToken: token, apiKey },
+            parsedUser
+          );
+
+          await visibleWebview?.controller.handleAuthCallback(token, apiKey, parsedUser);
         }
         break;
       }

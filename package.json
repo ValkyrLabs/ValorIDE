@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.336",
+  "version": "3.20.376",
   "icon": "assets/icons/icon.png",
   "galleryBanner": {
     "color": "#617A91",
@@ -294,7 +294,7 @@
           "group": "navigation@9"
         },
         {
-          "when": "explorerResourceIsFolder == true && resourceFilename =~ /^v\\d+\\./ && resourceDirname =~ /thorapi/",
+          "when": "explorerResourceIsFolder == true && resourceFilename =~ /^v\\d+\\./",
           "command": "valoride.projectActions",
           "group": "navigation@1"
         }
@@ -370,6 +370,16 @@
           "default": 10,
           "markdownDescription": "Effective balance (USD) at or below which 'Budget Alert' shows.",
           "minimum": 0
+        },
+        "valoride.advanced.thorapi.outputFolder": {
+          "type": "string",
+          "default": "thorapi",
+          "markdownDescription": "Relative (workspace) or absolute path where ThorAPI downloads and generated projects are stored."
+        },
+        "valoride.advanced.debugging.showPsrResultsReport": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "When enabled, ValorIDE prints the full precision_search_and_replace result report after each edit."
         },
         "valoride.P2P.turnServers": {
           "type": "array",

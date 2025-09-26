@@ -1,6 +1,6 @@
 ![ValorIDE Logo](https://valkyrlabs.com/assets/valorIde-horizontal-DyPXHpke.png)
 
-## Agentic Coder, Powered by ThorAPI ⚡
+## Agentic Coder, Powered by ThorAPI ⚡ (Precision PSR Verified)
 
 [English Documentation](https://valkyrlabs.com/v1/docs/Products/ValorIDE/valoride-documentation)
 
@@ -270,17 +270,42 @@ Push → Open PR → CI runs → Changesetbot handles versioning + release.
 
 ### 🚀 Latest Developments
 
-- **ThorAPI Enhancements**: Continued development and integration with ThorAPI, including work on the Engager project and the TelecomP2P component.
-  - **TelecomP2P Component**: Development of a new TelecomP2P component for peer-to-peer communication.
-  - **Engager Project**: Ongoing work on the Typescript client for the Engager project.
-- **Communication Service**: Improvements and testing of the CommunicationService.
-- **State Management**: Updates to core state management functionalities.
-- **MCP and Valhalla Suite**: Ongoing work on the Model Context Protocol (MCP) and the broader Valhalla Suite, enhancing agentic capabilities and integration with other Valkyr Labs products.
+**Updated: September 24, 2025 (PSR Test Successful)**
+
+#### Core Tool Enhancements
+- **Precision Search and Replace Tool**: Advanced file editing capability featuring a three-layer strategy (AST → contextual → byte). This tool ensures reliable, atomic edits with built-in verification and rollback support. It prevents file truncation, preserves original line endings, and maintains comprehensive backup systems for maximum safety during code modifications. ✅ **Test Status: Verified** - Successfully tested with 1/1 hunks applied, no warnings, and proper delta tracking.
+
+- **Enhanced File Editing Pipeline**: Improved safety protocols with automatic backup creation, verification steps, and error recovery for all file modifications.
+
+#### ThorAPI Integration Advances
+- **Full Stack Code Generation**: Seamless integration with ThorAPI for generating complete Spring Boot backends and React frontends from OpenAPI specifications.
+
+- **TelecomP2P Component**: New peer-to-peer communication component for enhanced collaboration between Valor instances.
+
+- **Engager Project**: Active development of TypeScript client libraries with improved error handling and state management.
+
+#### Platform & Architecture
+- **Communication Service**: Enhanced inter-service communication with improved reliability and testing coverage.
+
+- **State Management**: Core state management improvements for better performance and consistency across the extension.
+
+- **MCP Ecosystem**: Continued expansion of Model Context Protocol integration, enabling dynamic tool creation and enhanced agentic capabilities throughout the Valhalla Suite.
+
+#### Agent Telemetry & UX
+- **Session Analytics Dashboard**: New in-editor insights view surfaces token usage, tool calls, and error trends for each ValorIDE session.
+
+- **Task Timeline Visualization**: Enhanced checkpoint diff viewer highlights plan/act transitions and makes rollbacks clearer for reviewers.
+
+- **Failure Diagnostics**: Automatic aggregation of skipped edit reasons and PSR telemetry to speed up debugging during long-running tasks.
 
 ---
 
 ## Additional Resources
 
 - **ValorIDE GitHub Repository:** [https://github.com/valkyrlabs/valoride](https://github.com/valkyrlabs/valoride)
+
+- **ThorAPI Documentation:** [https://valkyrlabs.com/v1/docs/Products/ThorAPI/thorapi-documentation](https://valkyrlabs.com/v1/docs/Products/ThorAPI/thorapi-documentation)
+
 - **MCP Documentation:** [https://modelcontextprotocol.org/docs](https://modelcontextprotocol.org/docs)
+
 - **ValorIDE Documentation:** [docs/README.md](docs/README.md)

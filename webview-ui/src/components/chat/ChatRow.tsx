@@ -44,6 +44,7 @@ import {
   FaFileAlt,
   FaBrain,
   FaCarCrash,
+  FaMagic,
   FaFileUpload
 } from "react-icons/fa";
 import { VscError, VscCheck } from "react-icons/vsc";
@@ -448,7 +449,12 @@ export const ChatRowContent = ({
 
   const tool = useMemo(() => {
     if (message.ask === "tool" || message.say === "tool") {
-      return JSON.parse(message.text || "{}") as ValorIDESayTool;
+      try {
+        return JSON.parse(message.text || "{}") as ValorIDESayTool;
+      } catch (error) {
+        console.warn("Failed to parse tool payload", error, message.text);
+        return null;
+      }
     }
     return null;
   }, [message.ask, message.say, message.text]);
@@ -528,6 +534,82 @@ export const ChatRowContent = ({
             />
           </>
         );
+      case "precisionSearchAndReplace": {
+        let prettyContent = tool.content ?? "{}";
+        let parsedContent: any;
+
+        try {
+          parsedContent = tool.content ? JSON.parse(tool.content) : undefined;
+          if (parsedContent) {
+            prettyContent = JSON.stringify(parsedContent, null, 2);
+          }
+        } catch (error) {
+          // If parsing fails, fall back to raw content
+        }
+
+        let editSummary: string | undefined;
+        if (Array.isArray(parsedContent?.edits) && parsedContent.edits.length > 0) {
+          const counts = parsedContent.edits.reduce(
+            (acc: Record<string, number>, edit: { kind?: string }) => {
+              const kind = typeof edit?.kind === "string" ? edit.kind : "contextual";
+              acc[kind] = (acc[kind] ?? 0) + 1;
+              return acc;
+            },
+            {} as Record<string, number>,
+          );
+          editSummary = Object.entries(counts)
+            .map(([kind, count]) => `${kind}×${count}`)
+            .join(", ");
+        }
+
+        const summaryParts: string[] = [];
+        if (editSummary) {
+          summaryParts.push(`Edits: ${editSummary}`);
+        }
+        if (parsedContent?.options && Object.keys(parsedContent.options).length > 0) {
+          summaryParts.push("Options provided");
+        }
+
+        const summary = summaryParts.join(" • ");
+        const titleText =
+          message.type === "ask"
+            ? "ValorIDE wants to run precision search & replace on this file:"
+            : "ValorIDE ran precision search & replace on this file:";
+
+        return (
+          <>
+            <div style={headerStyle}>
+              {toolIcon(FaMagic)}
+              {tool.operationIsLocatedInWorkspace === false &&
+                toolIcon(
+                  FaSignOutAlt,
+                  "yellow",
+                  -90,
+                  "This file is outside of your workspace",
+                )}
+              <span style={{ fontWeight: "bold" }}>{titleText}</span>
+            </div>
+            {summary && (
+              <div
+                style={{
+                  marginBottom: "8px",
+                  fontSize: "12px",
+                  color: "var(--vscode-descriptionForeground)",
+                }}
+              >
+                {summary}
+              </div>
+            )}
+            <CodeAccordian
+              code={prettyContent}
+              path={tool.path ?? ""}
+              language="json"
+              isExpanded={isExpanded}
+              onToggleExpand={onToggleExpand}
+            />
+          </>
+        );
+      }
       case "readFile":
         return (
           <>
@@ -1457,7 +1539,7 @@ export const ChatRowContent = ({
                 <OptionsButtons
                   options={options}
                   selected={selected}
-                  isActive={isLast && lastModifiedMessage?.ask === "followup"}
+                  isActive={isLast && message.ask === "followup"}
                   inputValue={inputValue}
                 />
               </div>
@@ -1509,7 +1591,7 @@ export const ChatRowContent = ({
                 options={options}
                 selected={selected}
                 isActive={
-                  isLast && lastModifiedMessage?.ask === "plan_mode_respond"
+                  isLast && message.ask === "plan_mode_respond"
                 }
                 inputValue={inputValue}
               />

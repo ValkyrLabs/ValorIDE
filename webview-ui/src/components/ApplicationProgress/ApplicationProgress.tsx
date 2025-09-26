@@ -30,14 +30,14 @@ const ApplicationProgress: React.FC<ApplicationProgressProps> = ({
   const [steps, setSteps] = useState<ProgressStep[]>([
     {
       id: "receiving",
-      title: "Receiving Application",
-      description: "Downloading application payload...",
+      title: "Generating Application",
+      description: "Generating application payload...",
       status: "pending",
     },
     {
       id: "processing",
-      title: "Processing Data",
-      description: "Analyzing application structure...",
+      title: "Receiving Data",
+      description: "Receiving application payload...",
       status: "pending",
     },
     {

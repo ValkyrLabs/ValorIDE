@@ -104,7 +104,13 @@ export abstract class BaseToolHandler {
       partialMessage,
       false,
     );
-    if (response !== "yesButtonClicked") {
+    const normalizedText = text?.trim().toLowerCase();
+    const approved =
+      response === "yesButtonClicked" ||
+      (response === "messageResponse" &&
+        (normalizedText === "yes" || normalizedText === "approve"));
+
+    if (!approved) {
       // User pressed reject button or responded with a message
       if (text || images?.length) {
         await this.context.say("user_feedback", text, images);

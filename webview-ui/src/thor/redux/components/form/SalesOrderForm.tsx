@@ -32,7 +32,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -63,17 +63,58 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        totalAmount: asNumber(Yup.number()).required("totalAmount is required."),
+        totalAmount: asNumber(Yup.number().typeError("totalAmount must be a number")).required("totalAmount is required."),
+        orderDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).required("orderDate is required.").typeError("orderDate must be a valid date"),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
         .required("status is required."),
-        taxAmount: asNumber(Yup.number()),
-        subtotalAmount: asNumber(Yup.number()),
+        customerId: Yup.string(),
+        taxAmount: asNumber(Yup.number().typeError("taxAmount must be a number")),
+        subtotalAmount: asNumber(Yup.number().typeError("subtotalAmount must be a number")),
+        expirationDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("expirationDate must be a valid date"),
         id: Yup.string(),
         ownerId: Yup.string(),
+        createdDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
         keyHash: Yup.string(),
         lastAccessedById: Yup.string(),
+        lastAccessedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
         lastModifiedById: Yup.string(),
+        lastModifiedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -101,15 +142,21 @@ const SalesOrderForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<SalesOrder> = {
-          totalAmount: undefined,
+          totalAmount: 0,
+          orderDate: new Date(),
         status: undefined,
-          taxAmount: undefined,
-          subtotalAmount: undefined,
+          customerId: '',
+          taxAmount: 0,
+          subtotalAmount: 0,
+          expirationDate: new Date(),
           id: '',
           ownerId: '',
+          createdDate: new Date(),
           keyHash: '',
           lastAccessedById: '',
+          lastAccessedDate: new Date(),
           lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -197,6 +244,7 @@ const SalesOrderForm: React.FC = () => {
                             name="totalAmount"
                             type="number"
                             step="any"
+                            value={values.totalAmount || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('totalAmount', true);
                               const v = e.target.value;
@@ -208,6 +256,7 @@ const SalesOrderForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -235,6 +284,25 @@ const SalesOrderForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="orderDate"
+                            type="datetime-local"
+                            value={values.orderDate ? 
+                              new Date(values.orderDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('orderDate', true);
+                              const v = e.target.value;
+                              setFieldValue('orderDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.orderDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="orderDate"
@@ -254,6 +322,7 @@ const SalesOrderForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="status"
+                          value={values.status || ''}
                           className={
                             errors.status
                               ? 'form-control field-error'
@@ -272,6 +341,39 @@ const SalesOrderForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="status"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="customerId" className="nice-form-control">
+                      <b>
+                        Customer Id:
+                        {touched.customerId &&
+                         !errors.customerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="customerId"
+                            value={values?.customerId}
+                            placeholder="Customer Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="customerId"
                         component="span"
                       />
                     </label>
@@ -295,6 +397,7 @@ const SalesOrderForm: React.FC = () => {
                             name="taxAmount"
                             type="number"
                             step="any"
+                            value={values.taxAmount || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('taxAmount', true);
                               const v = e.target.value;
@@ -306,6 +409,7 @@ const SalesOrderForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -335,6 +439,7 @@ const SalesOrderForm: React.FC = () => {
                             name="subtotalAmount"
                             type="number"
                             step="any"
+                            value={values.subtotalAmount || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('subtotalAmount', true);
                               const v = e.target.value;
@@ -346,6 +451,7 @@ const SalesOrderForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -373,6 +479,25 @@ const SalesOrderForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="expirationDate"
+                            type="datetime-local"
+                            value={values.expirationDate ? 
+                              new Date(values.expirationDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('expirationDate', true);
+                              const v = e.target.value;
+                              setFieldValue('expirationDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.expirationDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="expirationDate"
@@ -399,6 +524,7 @@ const SalesOrderForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -437,6 +563,7 @@ const SalesOrderForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="ownerId"
@@ -460,6 +587,25 @@ const SalesOrderForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -487,6 +633,7 @@ const SalesOrderForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -525,6 +672,7 @@ const SalesOrderForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedById"
@@ -548,6 +696,25 @@ const SalesOrderForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -581,6 +748,7 @@ const SalesOrderForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedById"
@@ -604,6 +772,25 @@ const SalesOrderForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"

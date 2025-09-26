@@ -32,7 +32,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -69,15 +69,39 @@ const validationSchema = Yup.object().shape({
         sheetId: Yup.string(),
         formulaId: Yup.string(),
         stringValue: Yup.string(),
-        numberValue: asNumber(Yup.number()),
+        numberValue: asNumber(Yup.number().typeError("numberValue must be a number")),
       type: Yup.mixed()
         .oneOf(TypeValidation(), "Invalid value for type")
         ,
         id: Yup.string(),
         ownerId: Yup.string(),
+        createdDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
         keyHash: Yup.string(),
         lastAccessedById: Yup.string(),
+        lastAccessedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
         lastModifiedById: Yup.string(),
+        lastModifiedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -108,13 +132,16 @@ const PtgForm: React.FC = () => {
           sheetId: '',
           formulaId: '',
           stringValue: '',
-          numberValue: undefined,
+          numberValue: 0,
         type: undefined,
           id: '',
           ownerId: '',
+          createdDate: new Date(),
           keyHash: '',
           lastAccessedById: '',
+          lastAccessedDate: new Date(),
           lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -208,6 +235,7 @@ const PtgForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="sheetId"
@@ -234,6 +262,7 @@ const PtgForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -272,6 +301,7 @@ const PtgForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="stringValue"
@@ -298,6 +328,7 @@ const PtgForm: React.FC = () => {
                             name="numberValue"
                             type="number"
                             step="any"
+                            value={values.numberValue || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('numberValue', true);
                               const v = e.target.value;
@@ -309,6 +340,7 @@ const PtgForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -331,6 +363,7 @@ const PtgForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="type"
+                          value={values.type || ''}
                           className={
                             errors.type
                               ? 'form-control field-error'
@@ -378,6 +411,7 @@ const PtgForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="id"
@@ -410,6 +444,7 @@ const PtgForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="ownerId"
@@ -433,6 +468,25 @@ const PtgForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -460,6 +514,7 @@ const PtgForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -498,6 +553,7 @@ const PtgForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedById"
@@ -521,6 +577,25 @@ const PtgForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -554,6 +629,7 @@ const PtgForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedById"
@@ -577,6 +653,25 @@ const PtgForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"

@@ -32,7 +32,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -77,9 +77,33 @@ const validationSchema = Yup.object().shape({
         country: Yup.string(),
         id: Yup.string(),
         ownerId: Yup.string(),
+        createdDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
         keyHash: Yup.string(),
         lastAccessedById: Yup.string(),
+        lastAccessedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
         lastModifiedById: Yup.string(),
+        lastModifiedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -119,9 +143,12 @@ const AddressForm: React.FC = () => {
           country: '',
           id: '',
           ownerId: '',
+          createdDate: new Date(),
           keyHash: '',
           lastAccessedById: '',
+          lastAccessedDate: new Date(),
           lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -215,6 +242,7 @@ const AddressForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="name"
@@ -241,6 +269,7 @@ const AddressForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -279,6 +308,7 @@ const AddressForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="city"
@@ -305,6 +335,7 @@ const AddressForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -343,6 +374,7 @@ const AddressForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="postalCode"
@@ -364,6 +396,7 @@ const AddressForm: React.FC = () => {
                           <BSForm.Check
                             id="hasWifi"
                             name="hasWifi"
+                            checked={values.hasWifi || false}
                             onChange={(e) => {
                               setFieldTouched('hasWifi', true);
                               setFieldValue('hasWifi', e.target.checked);
@@ -371,6 +404,7 @@ const AddressForm: React.FC = () => {
                             isInvalid={!!errors.hasWifi}
                             className={errors.hasWifi ? 'error' : ''}
                           />
+
 
 
 
@@ -410,6 +444,7 @@ const AddressForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="principalId"
@@ -429,6 +464,7 @@ const AddressForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="addressType"
+                          value={values.addressType || ''}
                           className={
                             errors.addressType
                               ? 'form-control field-error'
@@ -468,6 +504,7 @@ const AddressForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="gpsCoordinateLat"
@@ -483,6 +520,7 @@ const AddressForm: React.FC = () => {
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
+
 
 
 
@@ -524,6 +562,7 @@ const AddressForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="street2"
@@ -550,6 +589,7 @@ const AddressForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -588,6 +628,7 @@ const AddressForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="id"
@@ -620,6 +661,7 @@ const AddressForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="ownerId"
@@ -643,6 +685,25 @@ const AddressForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -670,6 +731,7 @@ const AddressForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -708,6 +770,7 @@ const AddressForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedById"
@@ -731,6 +794,25 @@ const AddressForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -764,6 +846,7 @@ const AddressForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedById"
@@ -787,6 +870,25 @@ const AddressForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"

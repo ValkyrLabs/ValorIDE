@@ -34,7 +34,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -89,7 +89,7 @@ const validationSchema = Yup.object().shape({
         .oneOf(RoleValidation(), "Invalid value for role")
         ,
         name: Yup.string(),
-        moduleOrder: asNumber(Yup.number()),
+        moduleOrder: asNumber(Yup.number().typeError("moduleOrder must be a number")),
         notes: Yup.string(),
         className: Yup.string(),
       moduleType: Yup.mixed()
@@ -101,9 +101,33 @@ const validationSchema = Yup.object().shape({
         ,
         id: Yup.string(),
         ownerId: Yup.string(),
+        createdDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
         keyHash: Yup.string(),
         lastAccessedById: Yup.string(),
+        lastAccessedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
         lastModifiedById: Yup.string(),
+        lastModifiedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -135,7 +159,7 @@ const ExecModuleForm: React.FC = () => {
           taskId: '',
         role: undefined,
           name: '',
-          moduleOrder: undefined,
+          moduleOrder: 0,
           notes: '',
           className: '',
         moduleType: undefined,
@@ -143,9 +167,12 @@ const ExecModuleForm: React.FC = () => {
         status: undefined,
           id: '',
           ownerId: '',
+          createdDate: new Date(),
           keyHash: '',
           lastAccessedById: '',
+          lastAccessedDate: new Date(),
           lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -239,6 +266,7 @@ const ExecModuleForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="systemId"
@@ -271,6 +299,7 @@ const ExecModuleForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="taskId"
@@ -290,6 +319,7 @@ const ExecModuleForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="role"
+                          value={values.role || ''}
                           className={
                             errors.role
                               ? 'form-control field-error'
@@ -337,6 +367,7 @@ const ExecModuleForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="name"
@@ -362,6 +393,7 @@ const ExecModuleForm: React.FC = () => {
                             name="moduleOrder"
                             type="number"
                             step="any"
+                            value={values.moduleOrder || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('moduleOrder', true);
                               const v = e.target.value;
@@ -373,6 +405,7 @@ const ExecModuleForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -403,6 +436,7 @@ const ExecModuleForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -441,6 +475,7 @@ const ExecModuleForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="className"
@@ -460,6 +495,7 @@ const ExecModuleForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="moduleType"
+                          value={values.moduleType || ''}
                           className={
                             errors.moduleType
                               ? 'form-control field-error'
@@ -507,6 +543,7 @@ const ExecModuleForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="moduleData"
@@ -526,6 +563,7 @@ const ExecModuleForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="status"
+                          value={values.status || ''}
                           className={
                             errors.status
                               ? 'form-control field-error'
@@ -573,6 +611,7 @@ const ExecModuleForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="id"
@@ -605,6 +644,7 @@ const ExecModuleForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="ownerId"
@@ -628,6 +668,25 @@ const ExecModuleForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -655,6 +714,7 @@ const ExecModuleForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -693,6 +753,7 @@ const ExecModuleForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedById"
@@ -716,6 +777,25 @@ const ExecModuleForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -749,6 +829,7 @@ const ExecModuleForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedById"
@@ -772,6 +853,25 @@ const ExecModuleForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"

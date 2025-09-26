@@ -35,7 +35,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -127,9 +127,33 @@ const validationSchema = Yup.object().shape({
         ,
         id: Yup.string(),
         ownerId: Yup.string(),
+        createdDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
         keyHash: Yup.string(),
         lastAccessedById: Yup.string(),
+        lastAccessedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
         lastModifiedById: Yup.string(),
+        lastModifiedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -187,9 +211,12 @@ const StackForm: React.FC = () => {
         status: undefined,
           id: '',
           ownerId: '',
+          createdDate: new Date(),
           keyHash: '',
           lastAccessedById: '',
+          lastAccessedDate: new Date(),
           lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -283,6 +310,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="name"
@@ -309,6 +337,7 @@ const StackForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -347,6 +376,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="execModuleId"
@@ -366,6 +396,7 @@ const StackForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="category"
+                          value={values.category || ''}
                           className={
                             errors.category
                               ? 'form-control field-error'
@@ -413,6 +444,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="artifactId"
@@ -439,6 +471,7 @@ const StackForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -477,6 +510,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="adminServerHost"
@@ -503,6 +537,7 @@ const StackForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -541,6 +576,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="hostName"
@@ -567,6 +603,7 @@ const StackForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -605,6 +642,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="orgName"
@@ -631,6 +669,7 @@ const StackForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -669,6 +708,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="gitRepo"
@@ -690,6 +730,7 @@ const StackForm: React.FC = () => {
                           <BSForm.Check
                             id="skipSwaggerGen"
                             name="skipSwaggerGen"
+                            checked={values.skipSwaggerGen || false}
                             onChange={(e) => {
                               setFieldTouched('skipSwaggerGen', true);
                               setFieldValue('skipSwaggerGen', e.target.checked);
@@ -697,6 +738,7 @@ const StackForm: React.FC = () => {
                             isInvalid={!!errors.skipSwaggerGen}
                             className={errors.skipSwaggerGen ? 'error' : ''}
                           />
+
 
 
 
@@ -725,6 +767,7 @@ const StackForm: React.FC = () => {
                           <BSForm.Check
                             id="skipJavaGen"
                             name="skipJavaGen"
+                            checked={values.skipJavaGen || false}
                             onChange={(e) => {
                               setFieldTouched('skipJavaGen', true);
                               setFieldValue('skipJavaGen', e.target.checked);
@@ -732,6 +775,7 @@ const StackForm: React.FC = () => {
                             isInvalid={!!errors.skipJavaGen}
                             className={errors.skipJavaGen ? 'error' : ''}
                           />
+
 
 
 
@@ -760,6 +804,7 @@ const StackForm: React.FC = () => {
                           <BSForm.Check
                             id="skipDbGen"
                             name="skipDbGen"
+                            checked={values.skipDbGen || false}
                             onChange={(e) => {
                               setFieldTouched('skipDbGen', true);
                               setFieldValue('skipDbGen', e.target.checked);
@@ -767,6 +812,7 @@ const StackForm: React.FC = () => {
                             isInvalid={!!errors.skipDbGen}
                             className={errors.skipDbGen ? 'error' : ''}
                           />
+
 
 
 
@@ -795,6 +841,7 @@ const StackForm: React.FC = () => {
                           <BSForm.Check
                             id="skipReactGen"
                             name="skipReactGen"
+                            checked={values.skipReactGen || false}
                             onChange={(e) => {
                               setFieldTouched('skipReactGen', true);
                               setFieldValue('skipReactGen', e.target.checked);
@@ -802,6 +849,7 @@ const StackForm: React.FC = () => {
                             isInvalid={!!errors.skipReactGen}
                             className={errors.skipReactGen ? 'error' : ''}
                           />
+
 
 
 
@@ -830,6 +878,7 @@ const StackForm: React.FC = () => {
                           <BSForm.Check
                             id="dbGenDropTable"
                             name="dbGenDropTable"
+                            checked={values.dbGenDropTable || false}
                             onChange={(e) => {
                               setFieldTouched('dbGenDropTable', true);
                               setFieldValue('dbGenDropTable', e.target.checked);
@@ -837,6 +886,7 @@ const StackForm: React.FC = () => {
                             isInvalid={!!errors.dbGenDropTable}
                             className={errors.dbGenDropTable ? 'error' : ''}
                           />
+
 
 
 
@@ -876,6 +926,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="thorApiSecureKey"
@@ -902,6 +953,7 @@ const StackForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -940,6 +992,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="dbName"
@@ -966,6 +1019,7 @@ const StackForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1004,6 +1058,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="dbPassword"
@@ -1036,6 +1091,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="schemaName"
@@ -1055,6 +1111,7 @@ const StackForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="language"
+                          value={values.language || ''}
                           className={
                             errors.language
                               ? 'form-control field-error'
@@ -1089,6 +1146,7 @@ const StackForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="templateRepo"
+                          value={values.templateRepo || ''}
                           className={
                             errors.templateRepo
                               ? 'form-control field-error'
@@ -1136,6 +1194,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="schemaFileName"
@@ -1155,6 +1214,7 @@ const StackForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="status"
+                          value={values.status || ''}
                           className={
                             errors.status
                               ? 'form-control field-error'
@@ -1202,6 +1262,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="id"
@@ -1234,6 +1295,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="ownerId"
@@ -1257,6 +1319,25 @@ const StackForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -1284,6 +1365,7 @@ const StackForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1322,6 +1404,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedById"
@@ -1345,6 +1428,25 @@ const StackForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -1378,6 +1480,7 @@ const StackForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedById"
@@ -1401,6 +1504,25 @@ const StackForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"

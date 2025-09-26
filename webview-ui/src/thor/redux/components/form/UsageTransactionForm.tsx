@@ -31,7 +31,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -53,15 +53,47 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
+        spentAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).required("spentAt is required.").typeError("spentAt must be a valid date"),
         modelProvider: Yup.string().required("modelProvider is required."),
         model: Yup.string().required("model is required."),
-        promptTokens: asNumber(Yup.number().integer()).required("promptTokens is required."),
-        completionTokens: asNumber(Yup.number().integer()).required("completionTokens is required."),
+        promptTokens: asNumber(Yup.number().integer().typeError("promptTokens must be a number")).required("promptTokens is required."),
+        completionTokens: asNumber(Yup.number().integer().typeError("completionTokens must be a number")).required("completionTokens is required."),
         id: Yup.string(),
         ownerId: Yup.string(),
+        createdDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
         keyHash: Yup.string(),
         lastAccessedById: Yup.string(),
+        lastAccessedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
         lastModifiedById: Yup.string(),
+        lastModifiedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -89,15 +121,19 @@ const UsageTransactionForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<UsageTransaction> = {
+          spentAt: new Date(),
           modelProvider: '',
           model: '',
-          promptTokens: undefined,
-          completionTokens: undefined,
+          promptTokens: 0,
+          completionTokens: 0,
           id: '',
           ownerId: '',
+          createdDate: new Date(),
           keyHash: '',
           lastAccessedById: '',
+          lastAccessedDate: new Date(),
           lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -183,6 +219,25 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="spentAt"
+                            type="datetime-local"
+                            value={values.spentAt ? 
+                              new Date(values.spentAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('spentAt', true);
+                              const v = e.target.value;
+                              setFieldValue('spentAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.spentAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="spentAt"
@@ -198,6 +253,7 @@ const UsageTransactionForm: React.FC = () => {
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
+
 
 
 
@@ -239,6 +295,7 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="modelProvider"
@@ -271,6 +328,7 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="model"
@@ -294,6 +352,7 @@ const UsageTransactionForm: React.FC = () => {
                           <Field
                             name="promptTokens"
                             type="number"
+                            value={values.promptTokens || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('promptTokens', true);
                               const v = e.target.value;
@@ -305,6 +364,7 @@ const UsageTransactionForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -333,6 +393,7 @@ const UsageTransactionForm: React.FC = () => {
                           <Field
                             name="completionTokens"
                             type="number"
+                            value={values.completionTokens || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('completionTokens', true);
                               const v = e.target.value;
@@ -344,6 +405,7 @@ const UsageTransactionForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -375,6 +437,7 @@ const UsageTransactionForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -413,6 +476,7 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="ownerId"
@@ -436,6 +500,25 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -463,6 +546,7 @@ const UsageTransactionForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -501,6 +585,7 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedById"
@@ -524,6 +609,25 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -557,6 +661,7 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedById"
@@ -580,6 +685,25 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"

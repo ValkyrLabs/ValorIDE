@@ -33,6 +33,12 @@ import {
  */
 export type Workflow  = {
     /**
+     * an array of Tasks to be performed
+     * @type {Array<Task>}
+     * @memberof Workflow
+     */
+    tasks: Array<Task>;
+    /**
      * short description of this workflow
      * @type {string}
      * @memberof Workflow
@@ -62,12 +68,6 @@ export type Workflow  = {
      * @memberof Workflow
      */
     meta?: string;
-    /**
-     * an array of Tasks to be performed
-     * @type {Array<Task>}
-     * @memberof Workflow
-     */
-    tasks?: Array<Task>;
     /**
      * an array stateful objects to be used in the workflow
      * @type {Array<WorkflowState>}
@@ -132,12 +132,12 @@ export type Workflow  = {
 
 export function WorkflowFromJSON(json: any): Workflow {
     return {
+        'tasks': (json['tasks'] as Array<any>).map(TaskFromJSON),
         'name': !exists(json, 'name') ? undefined : json['name'],
         'description': !exists(json, 'description') ? undefined : json['description'],
         'role': !exists(json, 'role') ? undefined : json['role'],
         'schedule': !exists(json, 'schedule') ? undefined : json['schedule'],
         'meta': !exists(json, 'meta') ? undefined : json['meta'],
-        'tasks': !exists(json, 'tasks') ? undefined : (json['tasks'] as Array<any>).map(TaskFromJSON),
         'workflowState': !exists(json, 'workflow_state') ? undefined : (json['workflow_state'] as Array<any>).map(WorkflowStateFromJSON),
         'status': !exists(json, 'status') ? undefined : json['status'],
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -156,12 +156,12 @@ export function WorkflowToJSON(value?: Workflow): any {
         return undefined;
     }
     return {
+        'tasks': (value.tasks as Array<any>).map(TaskToJSON),
         'name': value.name,
         'description': value.description,
         'role': value.role,
         'schedule': value.schedule,
         'meta': value.meta,
-        'tasks': value.tasks === undefined ? undefined : (value.tasks as Array<any>).map(TaskToJSON),
         'workflow_state': value.workflowState === undefined ? undefined : (value.workflowState as Array<any>).map(WorkflowStateToJSON),
         'status': value.status,
         'id': value.id,

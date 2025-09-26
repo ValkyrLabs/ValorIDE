@@ -5,7 +5,7 @@ import customBaseQuery from "../../thor/redux/customBaseQuery"; // Import the cu
 type ApplicationResponse = Application[];
 
 export const ApplicationService = createApi({
-  reducerPath: "Application", // This should remain unique
+  reducerPath: "CustomApplication", // Unique path to avoid conflicts with ThorAPI ApplicationService
   baseQuery: customBaseQuery,
   tagTypes: ["Application"],
   endpoints: (build) => ({

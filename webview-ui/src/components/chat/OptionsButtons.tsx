@@ -59,9 +59,9 @@ export const OptionsButtons = ({
         <OptionButton
           key={index}
           isSelected={option === selected}
-          isNotSelectable={hasSelected || !isActive}
+          isNotSelectable={!isActive}
           onClick={() => {
-            if (hasSelected || !isActive) {
+            if (!isActive) {
               return;
             }
             vscode.postMessage({

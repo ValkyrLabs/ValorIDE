@@ -18,6 +18,7 @@ const initialUser: Principal = {
   email: "",
   createdDate: new Date(),
   lastModifiedDate: new Date(),
+  roleList: [],
 };
 
 const Login = (props) => {

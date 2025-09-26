@@ -49,5 +49,6 @@ export default defineConfig({
       "@thor": resolve(__dirname, "./src/thor"),
       "@valkyr/component-library": resolve(__dirname, "./src/components"),
     },
+    extensions: [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".json"],
   },
 });

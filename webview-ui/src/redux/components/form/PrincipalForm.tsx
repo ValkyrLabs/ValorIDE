@@ -113,6 +113,8 @@ const PrincipalForm: React.FC = () => {
 
     email: "wiley.coyote@acme-corp.com",
 
+    roleList: [],
+
     firstName: "Peace",
 
     middleName: "Love",

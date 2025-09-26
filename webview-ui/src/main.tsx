@@ -8,6 +8,7 @@ import App from "./App";
 import "./P2P/thorBridge";
 
 // import reportWebVitals from "./reportWebVitals"
+import "./themes/valkyr/index";
 import "./App.css";
 import "./index.css";
 

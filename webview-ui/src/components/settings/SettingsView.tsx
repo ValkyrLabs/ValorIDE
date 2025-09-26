@@ -15,7 +15,7 @@ import { useEvent } from "react-use";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import BrowserSettingsSection from "./BrowserSettingsSection";
 import { VscSettingsGear } from "react-icons/vsc";
-import { FaStar, FaShareAlt } from "react-icons/fa";
+import { FaStar, FaShareAlt, FaCheck, FaTag } from "react-icons/fa";
 import StatusBadge from "@/components/common/StatusBadge";
 import OfflineBanner from "@/components/common/OfflineBanner";
 import SystemAlerts from "@/components/SystemAlerts";
@@ -236,10 +236,10 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
           <h3 className="text-[var(--vscode-foreground)] m-0">Settings</h3>
           <div className="flex items-center gap-2">
             <VSCodeButton appearance="secondary" onClick={handleStar} title="Star us on GitHub">
-              <span className="flex items-center gap-2"><FaStar /> Star</span>
+              <span className="flex items-center gap-2"><FaStar /> </span>
             </VSCodeButton>
             <VSCodeButton appearance="secondary" onClick={handleShare} title="Copy Marketplace link to clipboard">
-              <span className="flex items-center gap-2"><FaShareAlt /> {copied ? "Copied" : "Share"}</span>
+              <span className="flex items-center gap-2"><FaShareAlt /> {copied ? <FaCheck /> : <FaTag />}</span>
             </VSCodeButton>
             <StatusBadge label="P2P" value={value} kind={kind as any} title={hasError ? String(communicationService.error) : undefined} />
             <div className="flex items-center gap-2" title="Store and load the JWT in local storage to avoid logging in every time">

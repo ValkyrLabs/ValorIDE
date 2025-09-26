@@ -54,7 +54,7 @@ export type WebsocketSession  = {
      */
     connected?: boolean;
     /**
-     * Array of websocket status messages
+     * websocket status messages
      * @type {Array<WebsocketMessage>}
      * @memberof WebsocketSession
      */

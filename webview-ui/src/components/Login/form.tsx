@@ -54,10 +54,10 @@ const Form: React.FC<FormProps> = ({ onSubmit, isLoggedIn, onLogout }) => {
           <>
             {isSubmitting ? (
               // Hide form and show loading spinner during submission
-              <div style={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
-                alignItems: 'center', 
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
                 justifyContent: 'center',
                 padding: '60px 20px',
                 textAlign: 'center'
@@ -65,22 +65,22 @@ const Form: React.FC<FormProps> = ({ onSubmit, isLoggedIn, onLogout }) => {
                 <Spinner
                   animation="border"
                   variant="primary"
-                  style={{ 
-                    width: '48px', 
+                  style={{
+                    width: '48px',
                     height: '48px',
                     marginBottom: '16px'
                   }}
                 />
-                <div style={{ 
-                  fontSize: '16px', 
+                <div style={{
+                  fontSize: '16px',
                   fontWeight: 'bold',
                   color: 'var(--vscode-foreground)',
                   marginBottom: '8px'
                 }}>
                   Signing in...
                 </div>
-                <div style={{ 
-                  fontSize: '14px', 
+                <div style={{
+                  fontSize: '14px',
                   color: 'var(--vscode-descriptionForeground)'
                 }}>
                   Please wait while we authenticate your credentials

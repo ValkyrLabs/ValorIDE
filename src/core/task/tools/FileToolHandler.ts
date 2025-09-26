@@ -1,3 +1,4 @@
+import * as vscode from "vscode";
 import { BaseToolHandler, ToolExecutionResult, ToolResponse } from "./BaseToolHandler";
 import { AssistantMessageContent } from "@core/assistant-message";
 import { constructNewFileContent } from "@core/assistant-message/diff";
@@ -125,14 +126,47 @@ export class FileToolHandler extends BaseToolHandler {
     }
 
     // approval UX mirrors other tools
+    const readablePath = getReadablePath(this.context.cwd, relPath);
     const msgProps = {
       tool: "precisionSearchAndReplace",
-      path: getReadablePath(this.context.cwd, relPath),
+      path: readablePath,
       content: JSON.stringify({ edits, options }),
+      operationIsLocatedInWorkspace: isLocatedInWorkspace(relPath),
     };
     const message = JSON.stringify(msgProps);
-    const didApprove = await this.askApproval("tool", message);
-    if (!didApprove) return { shouldContinue: true, userRejected: true };
+
+    const shouldAutoApprove = this.context.shouldAutoApproveToolWithPath(
+      "precision_search_and_replace",
+      relPath,
+    );
+
+    if (shouldAutoApprove) {
+      this.context.removeLastPartialMessageIfExistsWithType("ask", "tool");
+      await this.context.say("tool", message, undefined, false);
+      this.context.consecutiveAutoApprovedRequestsCount++;
+    } else {
+      if (
+        this.context.autoApprovalSettings.enabled &&
+        this.context.autoApprovalSettings.enableNotifications
+      ) {
+        showSystemNotification({
+          subtitle: "Approval Required",
+          message: `ValorIDE wants to run precision_search_and_replace on ${path.basename(relPath)}`,
+        });
+      }
+
+      this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
+      const didApprove = await this.askApproval("tool", message);
+      if (!didApprove) {
+        telemetryService.captureToolUsage(
+          this.context.taskId,
+          "precision_search_and_replace",
+          false,
+          false,
+        );
+        return { shouldContinue: true, userRejected: true };
+      }
+    }
 
     try {
       const result = await precisionSearchAndReplace(
@@ -143,7 +177,77 @@ export class FileToolHandler extends BaseToolHandler {
         { makeBackup: true, backupDir: ".valor/undo", ...(options ?? {}) },
       );
 
-      // mark, checkpoint, telemetry
+      const showPsrReport =
+        vscode.workspace
+          .getConfiguration("valoride")
+          .get<boolean>("advanced.debugging.showPsrResultsReport") === true;
+      const reportSuffix = showPsrReport
+        ? "\nPSR report:\n" + JSON.stringify(result, null, 2)
+        : "";
+      const withReport = (message: string) =>
+        reportSuffix ? message + reportSuffix : message;
+
+      const autoApproved = shouldAutoApprove;
+      const isDryRun = options?.dryRun === true;
+      const didChange = result.baseHash !== result.postHash;
+      const skippedSummary = result.skipped.length
+        ? result.skipped
+            .map((entry) => `edit ${entry.index}: ${entry.reason}`)
+            .join("; ")
+        : "No edits matched the requested patterns.";
+
+      const handleNoop = () => {
+        telemetryService.captureToolUsage(
+          this.context.taskId,
+          "precision_search_and_replace",
+          autoApproved,
+          false,
+        );
+
+        const failureMessage = [
+          "PSR failed: No edits were applied.",
+          skippedSummary,
+        ]
+          .filter(Boolean)
+          .join("\n");
+
+        return {
+          shouldContinue: true,
+          toolResponse: formatResponse.toolError(withReport(failureMessage)),
+        };
+      };
+
+      if (isDryRun) {
+        telemetryService.captureToolUsage(
+          this.context.taskId,
+          "precision_search_and_replace",
+          autoApproved,
+          false,
+        );
+
+        const dryRunMessage = [
+          `PSR dry-run: ${result.editsApplied}/${result.editsRequested} hunks would apply. Δbytes=${result.bytesDelta}.`,
+          result.warnings.length ? `Warnings: ${result.warnings.join("; ")}` : undefined,
+          result.skipped.length ? `Skipped: ${skippedSummary}` : undefined,
+          "No file was modified.",
+        ]
+          .filter(Boolean)
+          .join("\n");
+
+        return {
+          shouldContinue: true,
+          toolResponse: formatResponse.toolResult(withReport(dryRunMessage)),
+        };
+      }
+
+      if (result.editsApplied === 0 && result.bytesDelta === 0) {
+        return handleNoop();
+      }
+
+      if (!didChange) {
+        return handleNoop();
+      }
+
       this.context.fileContextTracker.markFileAsEditedByValorIDE(relPath);
       await this.context.fileContextTracker.trackFileContext(
         relPath,
@@ -153,17 +257,14 @@ export class FileToolHandler extends BaseToolHandler {
       telemetryService.captureToolUsage(
         this.context.taskId,
         "precision_search_and_replace",
-        this.context.shouldAutoApproveToolWithPath(
-          "precision_search_and_replace",
-          relPath,
-        ),
+        autoApproved,
         true,
       );
 
       return {
         shouldContinue: true,
         toolResponse: formatResponse.toolResult(
-          `PSR applied: ${result.editsApplied}/${result.editsRequested} hunks. Δbytes=${result.bytesDelta}. Warnings: ${result.warnings.join("; ") || "none"}`,
+          withReport(`PSR applied: ${result.editsApplied}/${result.editsRequested} hunks. Δbytes=${result.bytesDelta}. Warnings: ${result.warnings.join("; ") || "none"}`)
         ),
       };
     } catch (err) {

@@ -72,6 +72,22 @@ const ExtensionStateContext = createContext<
   ExtensionStateContextType | undefined
 >(undefined);
 
+const normalizePrincipal = (value: unknown): Principal | undefined => {
+  if (!value || typeof value !== "object") {
+    return undefined;
+  }
+  const candidate = value as Record<string, any>;
+  return {
+    ...candidate,
+    username:
+      typeof candidate.username === "string" ? candidate.username : "",
+    password:
+      typeof candidate.password === "string" ? candidate.password : "",
+    email: typeof candidate.email === "string" ? candidate.email : "",
+    roleList: Array.isArray(candidate.roleList) ? candidate.roleList : [],
+  } as Principal;
+};
+
 export const ExtensionStateContextProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
@@ -145,12 +161,20 @@ export const ExtensionStateContextProvider: React.FC<{
         // 1) Update auth-related local state + sessionStorage OUTSIDE of the setState updater
         try {
           if (incoming.authenticatedPrincipal) {
-            const principal =
+            const principalRaw =
               typeof incoming.authenticatedPrincipal === "string"
                 ? JSON.parse(incoming.authenticatedPrincipal)
                 : incoming.authenticatedPrincipal;
+            const principal = normalizePrincipal(principalRaw);
             setAuthenticatedUser(principal);
-            sessionStorage.setItem("authenticatedUser", JSON.stringify(principal));
+            if (principal) {
+              sessionStorage.setItem(
+                "authenticatedUser",
+                JSON.stringify(principal),
+              );
+            } else {
+              sessionStorage.removeItem("authenticatedUser");
+            }
           } else {
             setAuthenticatedUser(undefined);
             sessionStorage.removeItem("authenticatedUser");
@@ -328,11 +352,13 @@ export const ExtensionStateContextProvider: React.FC<{
 
         // Store authenticated user in sessionStorage
         if (authenticatedPrincipalStr) {
-          sessionStorage.setItem(
-            "authenticatedUser",
-            authenticatedPrincipalStr,
-          );
-          const user = JSON.parse(authenticatedPrincipalStr);
+          const parsed = JSON.parse(authenticatedPrincipalStr);
+          const user = normalizePrincipal(parsed);
+          if (user) {
+            sessionStorage.setItem("authenticatedUser", JSON.stringify(user));
+          } else {
+            sessionStorage.removeItem("authenticatedUser");
+          }
           setAuthenticatedUser(user);
 
           setState((prevState) => ({
@@ -340,7 +366,7 @@ export const ExtensionStateContextProvider: React.FC<{
             // Store the JWT token
             jwtToken: token,
             // Also update userInfo for backward compatibility
-            userInfo: user,
+            userInfo: user ?? prevState.userInfo,
             isLoggedIn: true,
           }));
         } else {
@@ -399,7 +425,7 @@ export const ExtensionStateContextProvider: React.FC<{
     if (existingUser) {
       try {
         const user = JSON.parse(existingUser);
-        setAuthenticatedUser(user);
+        setAuthenticatedUser(normalizePrincipal(user));
       } catch (error) {
         console.error("Failed to parse stored authenticated user:", error);
         sessionStorage.removeItem("authenticatedUser");
@@ -416,8 +442,9 @@ export const ExtensionStateContextProvider: React.FC<{
   // Determine authentication status - prioritize backend state, fallback to local state
   const isAuthenticated =
     state.isLoggedIn ?? !!(jwtToken || authenticatedUser);
-  const currentUser =
-    authenticatedUser || state.userInfo;
+  const normalizedAuthenticatedUser = normalizePrincipal(authenticatedUser);
+  const normalizedStateUser = normalizePrincipal(state.userInfo);
+  const currentUser = normalizedAuthenticatedUser ?? normalizedStateUser;
   const currentToken = state.jwtToken || jwtToken;
 
   const contextValue: ExtensionStateContextType = {
@@ -436,7 +463,7 @@ export const ExtensionStateContextProvider: React.FC<{
     localValorIDERulesToggles: state.localValorIDERulesToggles || {},
     // Use computed authentication state
     jwtToken: currentToken,
-    authenticatedUser: currentUser,
+    authenticatedUser: normalizedAuthenticatedUser,
     userInfo: currentUser,
     isLoggedIn: isAuthenticated,
     // Applications state

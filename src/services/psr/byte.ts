@@ -1,45 +1,109 @@
 // src/services/psr/byte.ts
+import type { PSREdit } from "./PrecisionSearchReplace";
+
+type ByteEdit = Extract<PSREdit, { kind: "byte" }>;
+
+type AnnotatedByteEdit = { edit: ByteEdit; index: number };
+
+type ByteResult = {
+  buffer: Buffer;
+  warnings: string[];
+  skipped: Array<{ index: number; reason: string }>;
+  applied: number[];
+};
+
 export async function applyBytePatches(
-    buffer: Buffer,
-    edits: Array<{ findHex: string; replaceHex: string; occurrence?: "first" | "all" | number }>
-): Promise<{ buffer: Buffer; warnings: string[] }> {
-    const warnings: string[] = [];
-    let b = Buffer.from(buffer); // copy
+  buffer: Buffer,
+  edits: AnnotatedByteEdit[],
+): Promise<ByteResult> {
+  if (!edits.length) {
+    return { buffer: Buffer.from(buffer), warnings: [], skipped: [], applied: [] };
+  }
 
-    function hexToBuf(hex: string) { return Buffer.from(hex.replace(/\s+/g, ""), "hex"); }
+  const warnings: string[] = [];
+  const skipped: Array<{ index: number; reason: string }> = [];
+  const applied = new Set<number>();
+  let b: Buffer = Buffer.from(buffer); // copy
 
-    edits.forEach((e, i) => {
-        const needle = hexToBuf(e.findHex);
-        const repl = hexToBuf(e.replaceHex);
-        let applied = 0;
+  edits.forEach(({ edit, index }, seq) => {
+    let needle: Buffer;
+    let repl: Buffer;
 
-        const positions: number[] = [];
-        // naive scan; O(n*m). For many patterns switch to Aho-Corasick later.
-        for (let pos = 0; pos <= b.length - needle.length;) {
-            const idx = b.indexOf(needle, pos);
-            if (idx === -1) break;
-            positions.push(idx);
-            pos = idx + Math.max(1, needle.length);
-            if (e.occurrence === "first") break;
-        }
+    try {
+      needle = hexToBuf(edit.findHex);
+      repl = hexToBuf(edit.replaceHex);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      warnings.push(`byte edit ${seq}: ${message}`);
+      skipped.push({ index, reason: "invalid_hex" });
+      return;
+    }
 
-        const targetPositions =
-            e.occurrence === "first" ? positions.slice(0, 1) :
-                typeof e.occurrence === "number" ? (positions[e.occurrence] !== undefined ? [positions[e.occurrence]] : []) :
-                    positions;
+    if (!needle.length) {
+      warnings.push(`byte edit ${seq}: empty findHex`);
+      skipped.push({ index, reason: "invalid_hex" });
+      return;
+    }
 
-        if (!targetPositions.length) {
-            warnings.push(`byte edit ${i}: no_match`);
-            return;
-        }
+    const positions: number[] = [];
+    for (let pos = 0; pos <= b.length - needle.length;) {
+      const found = b.indexOf(needle, pos);
+      if (found === -1) break;
+      positions.push(found);
+      pos = found + Math.max(1, needle.length);
+      if (edit.occurrence === "first") break;
+    }
 
-        // Apply back-to-front to preserve offsets
-        for (const p of [...targetPositions].sort((a, b) => b - a)) {
-            b = Buffer.concat([b.subarray(0, p), repl, b.subarray(p + needle.length)]);
-            applied++;
-        }
-        if (applied === 0) warnings.push(`byte edit ${i}: skipped`);
-    });
+    const targetPositions = selectBytePositions(positions, edit.occurrence);
+    if (!positions.length) {
+      warnings.push(`byte edit ${seq}: no_match`);
+      skipped.push({ index, reason: "byte_no_match" });
+      return;
+    }
 
-    return { buffer: b, warnings };
+    if (!targetPositions.length) {
+      warnings.push(`byte edit ${seq}: occurrence_out_of_range`);
+      skipped.push({ index, reason: "occurrence_out_of_range" });
+      return;
+    }
+
+    if (needle.equals(repl)) {
+      warnings.push(`byte edit ${seq}: replacement_identical`);
+      skipped.push({ index, reason: "byte_already_applied" });
+      return;
+    }
+
+    let mutated = false;
+    for (const p of [...targetPositions].sort((a, b) => b - a)) {
+      const before = b.subarray(0, p);
+      const after = b.subarray(p + needle.length);
+      mutated = true;
+      b = Buffer.concat([before, repl, after]);
+    }
+
+    if (mutated) {
+      applied.add(index);
+    } else {
+      skipped.push({ index, reason: "byte_no_change" });
+    }
+  });
+
+  return { buffer: b, warnings, skipped, applied: Array.from(applied).sort((a, b) => a - b) };
+}
+
+function hexToBuf(hex: string) {
+  const cleaned = hex.replace(/\s+/g, "");
+  if (!cleaned.length) throw new Error("hex string is empty");
+  if (cleaned.length % 2 !== 0) throw new Error("hex string must contain an even number of characters");
+  return Buffer.from(cleaned, "hex");
+}
+
+function selectBytePositions(positions: number[], occurrence: ByteEdit["occurrence"]) {
+  if (occurrence === "first") return positions.slice(0, 1);
+  if (typeof occurrence === "number") {
+    const pos = positions[occurrence];
+    return pos !== undefined ? [pos] : [];
+  }
+  // default and "all"
+  return positions;
 }

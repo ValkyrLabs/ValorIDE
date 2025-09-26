@@ -51,7 +51,7 @@ export class TokenStorageService {
     try {
       // Store JWT token in VSCode secrets (primary storage)
       await this.context.secrets.store("jwtToken", tokens.jwtToken);
-      
+
       if (tokens.apiKey) {
         await this.context.secrets.store("valorideApiKey", tokens.apiKey);
       }
@@ -98,7 +98,7 @@ export class TokenStorageService {
       }
 
       const authState: StoredAuthState = JSON.parse(authStateStr);
-      
+
       // Validate token age (optional - tokens may have their own expiration)
       const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
       if (Date.now() - authState.timestamp > maxAge) {
@@ -120,7 +120,7 @@ export class TokenStorageService {
   async validateTokens(tokens: AuthTokens): Promise<{ valid: boolean; user?: AuthenticatedUser }> {
     try {
       // Make a test API call to validate the JWT token
-      const baseUrl = process.env.REACT_APP_BASE_PATH || "http://localhost:8080/v1";
+      const baseUrl = process.env.VITE_basePath || "http://localhost:8080/v1";
       const response = await axios.get(`${baseUrl}/auth/validate`, {
         headers: {
           "Authorization": `Bearer ${tokens.jwtToken}`,
@@ -147,7 +147,7 @@ export class TokenStorageService {
    */
   async refreshTokens(refreshToken: string): Promise<AuthTokens | null> {
     try {
-      const baseUrl = process.env.REACT_APP_BASE_PATH || "http://localhost:8080/v1";
+      const baseUrl = process.env.VITE_basePath || "http://localhost:8080/v1";
       const response = await axios.post(`${baseUrl}/auth/refresh`, {
         refreshToken
       }, {
@@ -182,7 +182,7 @@ export class TokenStorageService {
       await this.context.secrets.delete("refreshToken");
       await this.context.secrets.delete("authState");
       await this.context.globalState.update("authPersistenceEnabled", undefined);
-      
+
       Logger.log("All stored authentication tokens cleared");
     } catch (error) {
       Logger.log(`Error clearing stored tokens: ${error}`);

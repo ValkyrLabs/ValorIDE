@@ -124,6 +124,7 @@ const StatusBar: React.FC<StatusBarProps> = ({
 						}}
 					/>
 				)}
+				{/** TODO: P2P
 				<StatusBadge
 					label="P2P"
 					value={telecomValue}
@@ -137,21 +138,14 @@ const StatusBar: React.FC<StatusBarProps> = ({
 							}
 							: undefined
 					}
-				/>
+				/> 
 				<StatusBadge
 					label="P2P"
 					value={`${p2pOpen}/${peerCount}`}
 					kind={p2pOpen > 0 ? 'ok' as any : 'warn' as any}
 					title="Open peer channels / peers"
 				/>
-				{jwtToken && (
-					<StatusBadge
-						label="Balance"
-						value={`$${netBalance.toFixed(2)}`}
-						kind={netBalance > 0 ? ('ok' as any) : ('error' as any)}
-						title="Current balance minus this session's live API cost"
-					/>
-				)}
+				
 				<VSCodeButton
 					appearance="icon"
 					onClick={onConnectPeers}
@@ -166,6 +160,17 @@ const StatusBar: React.FC<StatusBarProps> = ({
 				{isConnectingPeers && (
 					<span style={{ fontSize: 11, color: "#61dafb" }}>Scanning…</span>
 				)}
+				
+				*/}
+				{true && (
+					<StatusBadge
+						label="Balance"
+						value={`$${netBalance.toFixed(2)}`}
+						kind={netBalance > 0 ? ('ok' as any) : ('error' as any)}
+						title="Current balance minus this session's live API cost"
+					/>
+				)}
+
 			</div>
 		</div>
 	)

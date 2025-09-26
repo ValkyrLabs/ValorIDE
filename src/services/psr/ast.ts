@@ -1,60 +1,94 @@
 // src/services/psr/ast.ts
 import { Project, SyntaxKind } from "ts-morph";
+import type { PSREdit, PSRWorkingContext } from "./PrecisionSearchReplace";
 
-type AstEdit =
-    | { kind: "ts-ast"; intent: "replacePropertyChain"; from: string; to: string }
-    | { kind: "ts-ast"; intent: "insertOptionalChaining"; target: string }
-    | { kind: "ts-ast"; intent: "renameProperty"; from: string; to: string };
+type AstEdit = Extract<PSREdit, { kind: "ts-ast" }>;
 
 export async function applyAstEdits(
-    ctx: { text: string; skipped: Array<{ index: number; reason: string }>; warnings: string[] },
-    edits: AstEdit[]
-) {
-    const proj = new Project({ useInMemoryFileSystem: true, skipAddingFilesFromTsConfig: true });
-    const file = proj.createSourceFile("f.tsx", ctx.text, { overwrite: true });
+  ctx: PSRWorkingContext,
+  edits: Array<{ edit: AstEdit; index: number }>
+): Promise<PSRWorkingContext> {
+  if (!edits.length) return ctx;
 
-    edits.forEach((e, i) => {
-        switch (e.intent) {
-            case "replacePropertyChain": {
-                // Example: from "customer.name" to "(customer?.displayName ?? customer?.fullName ?? customer?.id ?? \"Unknown\")"
-                file.forEachDescendant((node) => {
-                    if (node.getKind() === SyntaxKind.PropertyAccessExpression) {
-                        const pae = node.asKind(SyntaxKind.PropertyAccessExpression)!;
-                        const expr = pae.getExpression().getText();
-                        const full = `${expr}.${pae.getName()}`;
-                        if (full.endsWith(e.from)) {
-                            pae.replaceWithText(e.to);
-                        }
-                    }
-                });
-                break;
+  const proj = new Project({ useInMemoryFileSystem: true, skipAddingFilesFromTsConfig: true });
+  const file = proj.createSourceFile("f.tsx", ctx.text, { overwrite: true });
+
+  for (const { edit, index } of edits) {
+    let applied = false;
+    let touched = false;
+
+    switch (edit.intent) {
+      case "replacePropertyChain": {
+        file.forEachDescendant((node) => {
+          if (node.getKind() !== SyntaxKind.PropertyAccessExpression) return;
+          const pae = node.asKind(SyntaxKind.PropertyAccessExpression)!;
+          const expr = pae.getExpression().getText();
+          const full = `${expr}.${pae.getName()}`;
+          if (full.endsWith(edit.from)) {
+            touched = true;
+            if (pae.getText() === edit.to) {
+              return;
             }
-            case "insertOptionalChaining": {
-                file.forEachDescendant((node) => {
-                    if (node.getKind() === SyntaxKind.PropertyAccessExpression) {
-                        const pae = node.asKind(SyntaxKind.PropertyAccessExpression)!;
-                        const exprText = pae.getExpression().getText();
-                        const chain = `${exprText}.${pae.getName()}`;
-                        if (chain.endsWith(e.target) && !pae.getText().includes("?."))
-                            pae.replaceWithText(chain.replace(/\./g, "?."));
-                    }
-                });
-                break;
-            }
-            case "renameProperty": {
-                file.forEachDescendant((node) => {
-                    if (node.getKind() === SyntaxKind.PropertyAccessExpression) {
-                        const pae = node.asKind(SyntaxKind.PropertyAccessExpression)!;
-                        if (pae.getName() === e.from) pae.rename(e.to);
-                    }
-                });
-                break;
-            }
-            default:
-                ctx.warnings.push(`Unknown AST intent at index ${i}`);
+            pae.replaceWithText(edit.to);
+            applied = true;
+          }
+        });
+        if (applied) {
+          ctx.applied.add(index);
+        } else {
+          ctx.skipped.push({ index, reason: touched ? "already_applied" : "ast_no_match" });
         }
-    });
+        break;
+      }
+      case "insertOptionalChaining": {
+        file.forEachDescendant((node) => {
+          if (node.getKind() !== SyntaxKind.PropertyAccessExpression) return;
+          const pae = node.asKind(SyntaxKind.PropertyAccessExpression)!;
+          const exprText = pae.getExpression().getText();
+          const chain = `${exprText}.${pae.getName()}`;
+          if (!chain.endsWith(edit.target)) return;
+          touched = true;
+          if (pae.getText().includes("?.")) {
+            return;
+          }
+          const replacement = chain.replace(/\./g, "?.");
+          if (pae.getText() === replacement) return;
+          pae.replaceWithText(replacement);
+          applied = true;
+        });
+        if (applied) {
+          ctx.applied.add(index);
+        } else {
+          ctx.skipped.push({ index, reason: touched ? "already_applied" : "ast_no_chain_match" });
+        }
+        break;
+      }
+      case "renameProperty": {
+        file.forEachDescendant((node) => {
+          if (node.getKind() !== SyntaxKind.PropertyAccessExpression) return;
+          const pae = node.asKind(SyntaxKind.PropertyAccessExpression)!;
+          if (pae.getName() === edit.from) {
+            touched = true;
+            if (edit.from === edit.to) {
+              return;
+            }
+            pae.rename(edit.to);
+            applied = true;
+          }
+        });
+        if (applied) {
+          ctx.applied.add(index);
+        } else {
+          ctx.skipped.push({ index, reason: touched ? "already_applied" : "ast_no_property_match" });
+        }
+        break;
+      }
+      default:
+        ctx.warnings.push(`Unknown AST intent at index ${index}`);
+        ctx.skipped.push({ index, reason: "ast_unknown_intent" });
+    }
+  }
 
-    ctx.text = file.getFullText();
-    return ctx;
+  ctx.text = file.getFullText();
+  return ctx;
 }

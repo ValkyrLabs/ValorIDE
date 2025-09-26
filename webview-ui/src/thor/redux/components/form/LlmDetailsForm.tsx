@@ -34,7 +34,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -99,22 +99,46 @@ const validationSchema = Yup.object().shape({
         apiKey: Yup.string(),
         credential: Yup.string(),
         credentialPassword: Yup.string(),
-        temperature: asNumber(Yup.number()),
-        contextWindow: asNumber(Yup.number().integer()),
-        maxTokens: asNumber(Yup.number().integer()),
+        temperature: asNumber(Yup.number().typeError("temperature must be a number")),
+        contextWindow: asNumber(Yup.number().integer().typeError("contextWindow must be a number")),
+        maxTokens: asNumber(Yup.number().integer().typeError("maxTokens must be a number")),
         supportsImages: Yup.boolean(),
         supportsPromptCache: Yup.boolean(),
-        inputPrice: asNumber(Yup.number()),
-        outputPrice: asNumber(Yup.number()),
+        inputPrice: asNumber(Yup.number().typeError("inputPrice must be a number")),
+        outputPrice: asNumber(Yup.number().typeError("outputPrice must be a number")),
         description: Yup.string(),
         url: Yup.string(),
         requestParameters: Yup.string(),
         metaData: Yup.string(),
         id: Yup.string(),
         ownerId: Yup.string(),
+        createdDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
         keyHash: Yup.string(),
         lastAccessedById: Yup.string(),
+        lastAccessedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
         lastModifiedById: Yup.string(),
+        lastModifiedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -152,22 +176,25 @@ const LlmDetailsForm: React.FC = () => {
           apiKey: '',
           credential: '',
           credentialPassword: '',
-          temperature: undefined,
-          contextWindow: undefined,
-          maxTokens: undefined,
+          temperature: 0,
+          contextWindow: 0,
+          maxTokens: 0,
           supportsImages: false,
           supportsPromptCache: false,
-          inputPrice: undefined,
-          outputPrice: undefined,
+          inputPrice: 0,
+          outputPrice: 0,
           description: '',
           url: '',
           requestParameters: '',
           metaData: '',
           id: '',
           ownerId: '',
+          createdDate: new Date(),
           keyHash: '',
           lastAccessedById: '',
+          lastAccessedDate: new Date(),
           lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -261,6 +288,7 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="name"
@@ -280,6 +308,7 @@ const LlmDetailsForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="provider"
+                          value={values.provider || ''}
                           className={
                             errors.provider
                               ? 'form-control field-error'
@@ -314,6 +343,7 @@ const LlmDetailsForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="apiType"
+                          value={values.apiType || ''}
                           className={
                             errors.apiType
                               ? 'form-control field-error'
@@ -361,6 +391,7 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="version"
@@ -393,6 +424,7 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="notes"
@@ -412,6 +444,7 @@ const LlmDetailsForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="role"
+                          value={values.role || ''}
                           className={
                             errors.role
                               ? 'form-control field-error'
@@ -459,6 +492,7 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="initialPrompt"
@@ -485,6 +519,7 @@ const LlmDetailsForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -523,6 +558,7 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="credential"
@@ -555,6 +591,7 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="credentialPassword"
@@ -580,6 +617,7 @@ const LlmDetailsForm: React.FC = () => {
                             name="temperature"
                             type="number"
                             step="any"
+                            value={values.temperature || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('temperature', true);
                               const v = e.target.value;
@@ -591,6 +629,7 @@ const LlmDetailsForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -618,6 +657,7 @@ const LlmDetailsForm: React.FC = () => {
                           <Field
                             name="contextWindow"
                             type="number"
+                            value={values.contextWindow || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('contextWindow', true);
                               const v = e.target.value;
@@ -629,6 +669,7 @@ const LlmDetailsForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -657,6 +698,7 @@ const LlmDetailsForm: React.FC = () => {
                           <Field
                             name="maxTokens"
                             type="number"
+                            value={values.maxTokens || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('maxTokens', true);
                               const v = e.target.value;
@@ -668,6 +710,7 @@ const LlmDetailsForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -694,6 +737,7 @@ const LlmDetailsForm: React.FC = () => {
                           <BSForm.Check
                             id="supportsImages"
                             name="supportsImages"
+                            checked={values.supportsImages || false}
                             onChange={(e) => {
                               setFieldTouched('supportsImages', true);
                               setFieldValue('supportsImages', e.target.checked);
@@ -701,6 +745,7 @@ const LlmDetailsForm: React.FC = () => {
                             isInvalid={!!errors.supportsImages}
                             className={errors.supportsImages ? 'error' : ''}
                           />
+
 
 
 
@@ -729,6 +774,7 @@ const LlmDetailsForm: React.FC = () => {
                           <BSForm.Check
                             id="supportsPromptCache"
                             name="supportsPromptCache"
+                            checked={values.supportsPromptCache || false}
                             onChange={(e) => {
                               setFieldTouched('supportsPromptCache', true);
                               setFieldValue('supportsPromptCache', e.target.checked);
@@ -736,6 +782,7 @@ const LlmDetailsForm: React.FC = () => {
                             isInvalid={!!errors.supportsPromptCache}
                             className={errors.supportsPromptCache ? 'error' : ''}
                           />
+
 
 
 
@@ -768,6 +815,7 @@ const LlmDetailsForm: React.FC = () => {
                             name="inputPrice"
                             type="number"
                             step="any"
+                            value={values.inputPrice || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('inputPrice', true);
                               const v = e.target.value;
@@ -779,6 +827,7 @@ const LlmDetailsForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -808,6 +857,7 @@ const LlmDetailsForm: React.FC = () => {
                             name="outputPrice"
                             type="number"
                             step="any"
+                            value={values.outputPrice || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('outputPrice', true);
                               const v = e.target.value;
@@ -819,6 +869,7 @@ const LlmDetailsForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -849,6 +900,7 @@ const LlmDetailsForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -887,6 +939,7 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="url"
@@ -913,6 +966,7 @@ const LlmDetailsForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -951,6 +1005,7 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="metaData"
@@ -977,6 +1032,7 @@ const LlmDetailsForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1015,6 +1071,7 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="ownerId"
@@ -1038,6 +1095,25 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -1065,6 +1141,7 @@ const LlmDetailsForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1103,6 +1180,7 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedById"
@@ -1126,6 +1204,25 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -1159,6 +1256,7 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedById"
@@ -1182,6 +1280,25 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"

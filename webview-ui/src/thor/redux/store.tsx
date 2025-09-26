@@ -19,11 +19,12 @@ import { Middleware, combineReducers, configureStore } from "@reduxjs/toolkit";
 import { exists, mapValues } from '../src/runtime';
 import middlewares from "./middlewares";
 // IMPORTant
+import { AccountBalanceService } from './services/AccountBalanceService';
 import { AclEntryService } from './services/AclEntryService';
 import { AddressService } from './services/AddressService';
 import { AgentService } from './services/AgentService';
 import { AgentEventTriggerService } from './services/AgentEventTriggerService';
-import { ApplicationService } from '../../redux/services/ApplicationService';
+import { ApplicationService } from './services/ApplicationService';
 import { BackupConfigService } from './services/BackupConfigService';
 import { BalanceResponseService } from './services/BalanceResponseService';
 import { BlankRangeService } from './services/BlankRangeService';
@@ -41,6 +42,7 @@ import { ChatResponseService } from './services/ChatResponseService';
 import { ContentDataService } from './services/ContentDataService';
 import { ContentMediaLinkService } from './services/ContentMediaLinkService';
 import { CustomerService } from './services/CustomerService';
+import { DiscountService } from './services/DiscountService';
 import { EventLogService } from './services/EventLogService';
 import { ExecModuleService } from './services/ExecModuleService';
 import { FormatService } from './services/FormatService';
@@ -51,6 +53,7 @@ import { HostInstanceService } from './services/HostInstanceService';
 import { IntegrationAccountService } from './services/IntegrationAccountService';
 import { InvoiceService } from './services/InvoiceService';
 import { KeyMetricService } from './services/KeyMetricService';
+import { LineItemService } from './services/LineItemService';
 import { LlmDetailsService } from './services/LlmDetailsService';
 import { LoginService } from './services/LoginService';
 import { LogoutService } from './services/LogoutService';
@@ -86,6 +89,7 @@ import { PaymentTransactionService } from './services/PaymentTransactionService'
 import { PivotTableService } from './services/PivotTableService';
 import { PrincipalService } from './services/PrincipalService';
 import { ProductService } from './services/ProductService';
+import { ProductFeatureService } from './services/ProductFeatureService';
 import { PtgService } from './services/PtgService';
 import { PtgRefService } from './services/PtgRefService';
 import { RatingService } from './services/RatingService';
@@ -101,8 +105,6 @@ import { SheetRowService } from './services/SheetRowService';
 import { SolutionService } from './services/SolutionService';
 import { StrategicPriorityService } from './services/StrategicPriorityService';
 import { TaskService } from './services/TaskService';
-import { ThorUXComponentService } from './services/ThorUXComponentService';
-import { ThorUXMetaService } from './services/ThorUXMetaService';
 import { UsageTransactionService } from './services/UsageTransactionService';
 import { UserPreferenceService } from './services/UserPreferenceService';
 import { WebsocketMessageService } from './services/WebsocketMessageService';
@@ -115,6 +117,7 @@ export const getQueries = (state) => state.queries;
 export const getEntities = (state) => state.entities;
 
 export const reducer = {
+  [AccountBalanceService.reducerPath]: AccountBalanceService.reducer,
   [AclEntryService.reducerPath]: AclEntryService.reducer,
   [AddressService.reducerPath]: AddressService.reducer,
   [AgentService.reducerPath]: AgentService.reducer,
@@ -137,6 +140,7 @@ export const reducer = {
   [ContentDataService.reducerPath]: ContentDataService.reducer,
   [ContentMediaLinkService.reducerPath]: ContentMediaLinkService.reducer,
   [CustomerService.reducerPath]: CustomerService.reducer,
+  [DiscountService.reducerPath]: DiscountService.reducer,
   [EventLogService.reducerPath]: EventLogService.reducer,
   [ExecModuleService.reducerPath]: ExecModuleService.reducer,
   [FormatService.reducerPath]: FormatService.reducer,
@@ -147,6 +151,7 @@ export const reducer = {
   [IntegrationAccountService.reducerPath]: IntegrationAccountService.reducer,
   [InvoiceService.reducerPath]: InvoiceService.reducer,
   [KeyMetricService.reducerPath]: KeyMetricService.reducer,
+  [LineItemService.reducerPath]: LineItemService.reducer,
   [LlmDetailsService.reducerPath]: LlmDetailsService.reducer,
   [LoginService.reducerPath]: LoginService.reducer,
   [LogoutService.reducerPath]: LogoutService.reducer,
@@ -182,6 +187,7 @@ export const reducer = {
   [PivotTableService.reducerPath]: PivotTableService.reducer,
   [PrincipalService.reducerPath]: PrincipalService.reducer,
   [ProductService.reducerPath]: ProductService.reducer,
+  [ProductFeatureService.reducerPath]: ProductFeatureService.reducer,
   [PtgService.reducerPath]: PtgService.reducer,
   [PtgRefService.reducerPath]: PtgRefService.reducer,
   [RatingService.reducerPath]: RatingService.reducer,
@@ -197,8 +203,6 @@ export const reducer = {
   [SolutionService.reducerPath]: SolutionService.reducer,
   [StrategicPriorityService.reducerPath]: StrategicPriorityService.reducer,
   [TaskService.reducerPath]: TaskService.reducer,
-  [ThorUXComponentService.reducerPath]: ThorUXComponentService.reducer,
-  [ThorUXMetaService.reducerPath]: ThorUXMetaService.reducer,
   [UsageTransactionService.reducerPath]: UsageTransactionService.reducer,
   [UserPreferenceService.reducerPath]: UserPreferenceService.reducer,
   [WebsocketMessageService.reducerPath]: WebsocketMessageService.reducer,
@@ -209,109 +213,11 @@ export const reducer = {
 };
 
 /* use to populate external store */
-export const getMiddleWare: Middleware = () => {
+export const getMiddleWare : Middleware = () => {
   return () =>
     (middlewares as any)
-      .concat(AclEntryService.middleware as Middleware)
-      .concat(AclEntryService.middleware as Middleware)
-      .concat(AddressService.middleware as Middleware)
-      .concat(AgentService.middleware as Middleware)
-      .concat(AgentEventTriggerService.middleware as Middleware)
-      .concat(ApplicationService.middleware as Middleware)
-      .concat(BackupConfigService.middleware as Middleware)
-      .concat(BalanceResponseService.middleware as Middleware)
-      .concat(BlankRangeService.middleware as Middleware)
-      .concat(BorderService.middleware as Middleware)
-      .concat(BuildService.middleware as Middleware)
-      .concat(BuildOutputService.middleware as Middleware)
-      .concat(CampaignService.middleware as Middleware)
-      .concat(CellService.middleware as Middleware)
-      .concat(ChartService.middleware as Middleware)
-      .concat(ChartSeriesService.middleware as Middleware)
-      .concat(ChatCompletionRequestService.middleware as Middleware)
-      .concat(ChatCompletionResponseService.middleware as Middleware)
-      .concat(ChatMessageService.middleware as Middleware)
-      .concat(ChatResponseService.middleware as Middleware)
-      .concat(ContentDataService.middleware as Middleware)
-      .concat(ContentMediaLinkService.middleware as Middleware)
-      .concat(CustomerService.middleware as Middleware)
-      .concat(EventLogService.middleware as Middleware)
-      .concat(ExecModuleService.middleware as Middleware)
-      .concat(FormatService.middleware as Middleware)
-      .concat(FormulaService.middleware as Middleware)
-      .concat(GoalService.middleware as Middleware)
-      .concat(GoalDependencyService.middleware as Middleware)
-      .concat(HostInstanceService.middleware as Middleware)
-      .concat(IntegrationAccountService.middleware as Middleware)
-      .concat(InvoiceService.middleware as Middleware)
-      .concat(KeyMetricService.middleware as Middleware)
-      .concat(LlmDetailsService.middleware as Middleware)
-      .concat(LoginService.middleware as Middleware)
-      .concat(LogoutService.middleware as Middleware)
-      .concat(McpContentService.middleware as Middleware)
-      .concat(McpDownloadResponseService.middleware as Middleware)
-      .concat(McpMarketplaceCatalogService.middleware as Middleware)
-      .concat(McpMarketplaceItemService.middleware as Middleware)
-      .concat(McpResourceService.middleware as Middleware)
-      .concat(McpResourceResponseService.middleware as Middleware)
-      .concat(McpResourceTemplateService.middleware as Middleware)
-      .concat(McpServerService.middleware as Middleware)
-      .concat(McpToolService.middleware as Middleware)
-      .concat(McpToolCallResponseService.middleware as Middleware)
-      .concat(MediaObjectService.middleware as Middleware)
-      .concat(MergeRangeService.middleware as Middleware)
-      .concat(NamedRangeService.middleware as Middleware)
-      .concat(NoteService.middleware as Middleware)
-      .concat(OasComponentService.middleware as Middleware)
-      .concat(OasEnumService.middleware as Middleware)
-      .concat(OasInfoService.middleware as Middleware)
-      .concat(OasObjectSchemaService.middleware as Middleware)
-      .concat(OasOpenAPISpecService.middleware as Middleware)
-      .concat(OasOperationService.middleware as Middleware)
-      .concat(OasParameterService.middleware as Middleware)
-      .concat(OasPathService.middleware as Middleware)
-      .concat(OasRequiredService.middleware as Middleware)
-      .concat(OasResponseService.middleware as Middleware)
-      .concat(OasSecuritySchemeService.middleware as Middleware)
-      .concat(OasServerService.middleware as Middleware)
-      .concat(OpportunityService.middleware as Middleware)
-      .concat(OrganizationService.middleware as Middleware)
-      .concat(PaymentTransactionService.middleware as Middleware)
-      .concat(PivotTableService.middleware as Middleware)
-      .concat(PrincipalService.middleware as Middleware)
-      .concat(ProductService.middleware as Middleware)
-      .concat(PtgService.middleware as Middleware)
-      .concat(PtgRefService.middleware as Middleware)
-      .concat(RatingService.middleware as Middleware)
-      .concat(ReferralLinkService.middleware as Middleware)
-      .concat(RoleService.middleware as Middleware)
-      .concat(SalesActivityService.middleware as Middleware)
-      .concat(SalesOrderService.middleware as Middleware)
-      .concat(SalesPipelineService.middleware as Middleware)
-      .concat(SecureKeyService.middleware as Middleware)
-      .concat(SheetService.middleware as Middleware)
-      .concat(SheetColumnService.middleware as Middleware)
-      .concat(SheetRowService.middleware as Middleware)
-      .concat(SolutionService.middleware as Middleware)
-      .concat(StrategicPriorityService.middleware as Middleware)
-      .concat(TaskService.middleware as Middleware)
-      .concat(ThorUXComponentService.middleware as Middleware)
-      .concat(ThorUXMetaService.middleware as Middleware)
-      .concat(UsageTransactionService.middleware as Middleware)
-      .concat(UserPreferenceService.middleware as Middleware)
-      .concat(WebsocketMessageService.middleware as Middleware)
-      .concat(WebsocketSessionService.middleware as Middleware)
-      .concat(WorkbookService.middleware as Middleware)
-      .concat(WorkflowService.middleware as Middleware)
-      .concat(WorkflowStateService.middleware as Middleware)
-    ;
-};
-
-/*
-export const store = configureStore({
-  combineReducers(reducer),
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware()
+    .concat(AclEntryService.middleware as Middleware)
+    .concat(AccountBalanceService.middleware as Middleware)
     .concat(AclEntryService.middleware as Middleware)
     .concat(AddressService.middleware as Middleware)
     .concat(AgentService.middleware as Middleware)
@@ -334,6 +240,7 @@ export const store = configureStore({
     .concat(ContentDataService.middleware as Middleware)
     .concat(ContentMediaLinkService.middleware as Middleware)
     .concat(CustomerService.middleware as Middleware)
+    .concat(DiscountService.middleware as Middleware)
     .concat(EventLogService.middleware as Middleware)
     .concat(ExecModuleService.middleware as Middleware)
     .concat(FormatService.middleware as Middleware)
@@ -344,6 +251,7 @@ export const store = configureStore({
     .concat(IntegrationAccountService.middleware as Middleware)
     .concat(InvoiceService.middleware as Middleware)
     .concat(KeyMetricService.middleware as Middleware)
+    .concat(LineItemService.middleware as Middleware)
     .concat(LlmDetailsService.middleware as Middleware)
     .concat(LoginService.middleware as Middleware)
     .concat(LogoutService.middleware as Middleware)
@@ -379,6 +287,7 @@ export const store = configureStore({
     .concat(PivotTableService.middleware as Middleware)
     .concat(PrincipalService.middleware as Middleware)
     .concat(ProductService.middleware as Middleware)
+    .concat(ProductFeatureService.middleware as Middleware)
     .concat(PtgService.middleware as Middleware)
     .concat(PtgRefService.middleware as Middleware)
     .concat(RatingService.middleware as Middleware)
@@ -394,8 +303,107 @@ export const store = configureStore({
     .concat(SolutionService.middleware as Middleware)
     .concat(StrategicPriorityService.middleware as Middleware)
     .concat(TaskService.middleware as Middleware)
-    .concat(ThorUXComponentService.middleware as Middleware)
-    .concat(ThorUXMetaService.middleware as Middleware)
+    .concat(UsageTransactionService.middleware as Middleware)
+    .concat(UserPreferenceService.middleware as Middleware)
+    .concat(WebsocketMessageService.middleware as Middleware)
+    .concat(WebsocketSessionService.middleware as Middleware)
+    .concat(WorkbookService.middleware as Middleware)
+    .concat(WorkflowService.middleware as Middleware)
+    .concat(WorkflowStateService.middleware as Middleware)
+;
+};
+
+/*
+export const store = configureStore({
+  combineReducers(reducer),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware()
+    .concat(AccountBalanceService.middleware as Middleware)
+    .concat(AclEntryService.middleware as Middleware)
+    .concat(AddressService.middleware as Middleware)
+    .concat(AgentService.middleware as Middleware)
+    .concat(AgentEventTriggerService.middleware as Middleware)
+    .concat(ApplicationService.middleware as Middleware)
+    .concat(BackupConfigService.middleware as Middleware)
+    .concat(BalanceResponseService.middleware as Middleware)
+    .concat(BlankRangeService.middleware as Middleware)
+    .concat(BorderService.middleware as Middleware)
+    .concat(BuildService.middleware as Middleware)
+    .concat(BuildOutputService.middleware as Middleware)
+    .concat(CampaignService.middleware as Middleware)
+    .concat(CellService.middleware as Middleware)
+    .concat(ChartService.middleware as Middleware)
+    .concat(ChartSeriesService.middleware as Middleware)
+    .concat(ChatCompletionRequestService.middleware as Middleware)
+    .concat(ChatCompletionResponseService.middleware as Middleware)
+    .concat(ChatMessageService.middleware as Middleware)
+    .concat(ChatResponseService.middleware as Middleware)
+    .concat(ContentDataService.middleware as Middleware)
+    .concat(ContentMediaLinkService.middleware as Middleware)
+    .concat(CustomerService.middleware as Middleware)
+    .concat(DiscountService.middleware as Middleware)
+    .concat(EventLogService.middleware as Middleware)
+    .concat(ExecModuleService.middleware as Middleware)
+    .concat(FormatService.middleware as Middleware)
+    .concat(FormulaService.middleware as Middleware)
+    .concat(GoalService.middleware as Middleware)
+    .concat(GoalDependencyService.middleware as Middleware)
+    .concat(HostInstanceService.middleware as Middleware)
+    .concat(IntegrationAccountService.middleware as Middleware)
+    .concat(InvoiceService.middleware as Middleware)
+    .concat(KeyMetricService.middleware as Middleware)
+    .concat(LineItemService.middleware as Middleware)
+    .concat(LlmDetailsService.middleware as Middleware)
+    .concat(LoginService.middleware as Middleware)
+    .concat(LogoutService.middleware as Middleware)
+    .concat(McpContentService.middleware as Middleware)
+    .concat(McpDownloadResponseService.middleware as Middleware)
+    .concat(McpMarketplaceCatalogService.middleware as Middleware)
+    .concat(McpMarketplaceItemService.middleware as Middleware)
+    .concat(McpResourceService.middleware as Middleware)
+    .concat(McpResourceResponseService.middleware as Middleware)
+    .concat(McpResourceTemplateService.middleware as Middleware)
+    .concat(McpServerService.middleware as Middleware)
+    .concat(McpToolService.middleware as Middleware)
+    .concat(McpToolCallResponseService.middleware as Middleware)
+    .concat(MediaObjectService.middleware as Middleware)
+    .concat(MergeRangeService.middleware as Middleware)
+    .concat(NamedRangeService.middleware as Middleware)
+    .concat(NoteService.middleware as Middleware)
+    .concat(OasComponentService.middleware as Middleware)
+    .concat(OasEnumService.middleware as Middleware)
+    .concat(OasInfoService.middleware as Middleware)
+    .concat(OasObjectSchemaService.middleware as Middleware)
+    .concat(OasOpenAPISpecService.middleware as Middleware)
+    .concat(OasOperationService.middleware as Middleware)
+    .concat(OasParameterService.middleware as Middleware)
+    .concat(OasPathService.middleware as Middleware)
+    .concat(OasRequiredService.middleware as Middleware)
+    .concat(OasResponseService.middleware as Middleware)
+    .concat(OasSecuritySchemeService.middleware as Middleware)
+    .concat(OasServerService.middleware as Middleware)
+    .concat(OpportunityService.middleware as Middleware)
+    .concat(OrganizationService.middleware as Middleware)
+    .concat(PaymentTransactionService.middleware as Middleware)
+    .concat(PivotTableService.middleware as Middleware)
+    .concat(PrincipalService.middleware as Middleware)
+    .concat(ProductService.middleware as Middleware)
+    .concat(ProductFeatureService.middleware as Middleware)
+    .concat(PtgService.middleware as Middleware)
+    .concat(PtgRefService.middleware as Middleware)
+    .concat(RatingService.middleware as Middleware)
+    .concat(ReferralLinkService.middleware as Middleware)
+    .concat(RoleService.middleware as Middleware)
+    .concat(SalesActivityService.middleware as Middleware)
+    .concat(SalesOrderService.middleware as Middleware)
+    .concat(SalesPipelineService.middleware as Middleware)
+    .concat(SecureKeyService.middleware as Middleware)
+    .concat(SheetService.middleware as Middleware)
+    .concat(SheetColumnService.middleware as Middleware)
+    .concat(SheetRowService.middleware as Middleware)
+    .concat(SolutionService.middleware as Middleware)
+    .concat(StrategicPriorityService.middleware as Middleware)
+    .concat(TaskService.middleware as Middleware)
     .concat(UsageTransactionService.middleware as Middleware)
     .concat(UserPreferenceService.middleware as Middleware)
     .concat(WebsocketMessageService.middleware as Middleware)

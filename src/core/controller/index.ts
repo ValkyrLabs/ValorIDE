@@ -50,6 +50,7 @@ import {
 import { fileExistsAtPath } from "@utils/fs";
 import { searchCommits } from "@utils/git";
 import { getWorkspacePath } from "@utils/path";
+import { resolveThorapiFolderPath } from "@utils/thorapi";
 import { getTotalTasksSize } from "@utils/storage";
 import { openMention } from "../mentions";
 import {
@@ -134,7 +135,7 @@ export class Controller {
   */
   async dispose() {
     this.outputChannel.appendLine("Starting ValorIDEProvider disposal...");
-    
+
     try {
       await this.clearTask();
       this.outputChannel.appendLine("Task cleared successfully");
@@ -1175,7 +1176,7 @@ export class Controller {
       case "getThorapiFolderContents": {
         try {
           // Get thorapi folder contents
-          const thorapiFolderPath = path.join(cwd, "thorapi");
+          const thorapiFolderPath = resolveThorapiFolderPath(cwd);
           const files = await this.getThorapiFolderStructure(thorapiFolderPath);
 
           await this.postMessageToWebview({
@@ -1311,7 +1312,7 @@ export class Controller {
             name: `${folderName} Server`,
             cwd: abs,
           });
-          
+
           terminal.show();
           terminal.sendText(command);
 
@@ -1353,7 +1354,7 @@ export class Controller {
           }
 
           // Create thorapi directory if it doesn't exist
-          const thorapiFolderPath = path.join(cwd, "thorapi");
+          const thorapiFolderPath = resolveThorapiFolderPath(cwd);
           await fs.mkdir(thorapiFolderPath, { recursive: true });
 
           // Use provided filename or generate one
@@ -1961,7 +1962,7 @@ export class Controller {
 
       // Fetch server details from marketplace using same URL pattern as ApplicationService
       const response = await axios.post<McpDownloadResponse>(
-        `${process.env.REACT_APP_BASE_PATH || "http://localhost:8080/v1"}/McpServer`,
+        `${process.env.VITE_basePath || "http://localhost:8080/v1"}/McpServer`,
         { mcpId },
         {
           headers,
@@ -2639,7 +2640,30 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
           (cfg.get<number>("advanced.budgetAlerts.alertThreshold") as number | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.budgetAlerts.alertThreshold,
       },
+      debugging: {
+        enableVerboseLogging:
+          (cfg.get<boolean>("advanced.debugging.enableVerboseLogging") as boolean | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.debugging.enableVerboseLogging,
+        saveFailedMatches:
+          (cfg.get<boolean>("advanced.debugging.saveFailedMatches") as boolean | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.debugging.saveFailedMatches,
+        enablePerformanceMetrics:
+          (cfg.get<boolean>("advanced.debugging.enablePerformanceMetrics") as boolean | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.debugging.enablePerformanceMetrics,
+        logOutputFiltering:
+          (cfg.get<boolean>("advanced.debugging.logOutputFiltering") as boolean | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.debugging.logOutputFiltering,
+        showPsrResultsReport:
+          (cfg.get<boolean>("advanced.debugging.showPsrResultsReport") as boolean | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.debugging.showPsrResultsReport,
+      },
+      thorapi: {
+        outputFolder:
+          (cfg.get<string>("advanced.thorapi.outputFolder") as string | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.thorapi.outputFolder,
+      },
     });
+    const thorapiFolderPath = resolveThorapiFolderPath(cwd);
 
     // Get JWT token from secrets
     const jwtToken = await getSecret(this.context, "jwtToken");
@@ -2677,6 +2701,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       vscMachineId: vscode.env.machineId,
       globalValorIDERulesToggles: globalValorIDERulesToggles || {},
       localValorIDERulesToggles: localValorIDERulesToggles || {},
+      thorapiFolderPath,
       // Include authentication state fields
       authenticatedPrincipal,
       isLoggedIn,

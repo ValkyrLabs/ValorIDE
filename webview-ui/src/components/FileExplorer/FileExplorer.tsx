@@ -7,6 +7,7 @@ import { vscode } from "@/utils/vscode";
 import AddToProjectModal from "./AddToProjectModal";
 import StartServerModal from "./StartServerModal";
 import SystemAlerts from "@/components/SystemAlerts";
+import { useExtensionState } from "@/context/ExtensionStateContext";
 import "./FileExplorer.css";
 
 interface FileItem {
@@ -31,6 +32,15 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
   autoRefresh = false,
   refreshInterval = 2000,
 }) => {
+  const { advancedSettings, thorapiFolderPath } = useExtensionState();
+  const configuredThorapiFolder =
+    advancedSettings?.thorapi?.outputFolder?.trim() || "thorapi";
+  const resolvedThorapiFolder = thorapiFolderPath?.trim();
+  const folderDisplayPath = resolvedThorapiFolder || configuredThorapiFolder;
+  const showConfigHint =
+    !!resolvedThorapiFolder &&
+    resolvedThorapiFolder !== configuredThorapiFolder;
+
   const [files, setFiles] = useState<FileItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -341,6 +351,15 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
           <VSCodeButton appearance="icon" onClick={fetchFiles} title="Refresh">
             🔄
           </VSCodeButton>
+        </div>
+        <div className="file-explorer-location">
+          <span>Output folder: </span>
+          <code>{folderDisplayPath}</code>
+          {showConfigHint && (
+            <span className="file-explorer-config-hint">
+              (configured as <code>{configuredThorapiFolder}</code>)
+            </span>
+          )}
         </div>
         <div className="file-explorer-content">
           {files.length === 0 ? (

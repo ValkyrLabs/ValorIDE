@@ -33,7 +33,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -56,21 +56,20 @@ const StatusValidation = () => {
 };
 const RoleValidation = () => {
   return [
-    'CxO',
-    'Engineering',
-    'Project Management',
-    'Management',
-    'Support Staff',
-    'QA',
-    'Self-Employed',
-    'Consultant - Firm',
-    'Consultant - Independent',
-    'Contractor',
-    'Partner',
-    'Associate',
-    'Reseller',
-    'Hobbyist',
-    'Student',
+    'cxo',
+    'engineering',
+    'project mamagement',
+    'management',
+    'support',
+    'qa',
+    'self-employed',
+    'consulting',
+    'contract',
+    'partner',
+    'associate',
+    'reseller',
+    'hobbyist',
+    'student',
     'legal',
     'assessment',
     'regulatory',
@@ -98,9 +97,33 @@ const validationSchema = Yup.object().shape({
         ,
         id: Yup.string(),
         ownerId: Yup.string(),
+        createdDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
         keyHash: Yup.string(),
         lastAccessedById: Yup.string(),
+        lastAccessedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
         lastModifiedById: Yup.string(),
+        lastModifiedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -132,9 +155,12 @@ const CustomerForm: React.FC = () => {
         role: undefined,
           id: '',
           ownerId: '',
+          createdDate: new Date(),
           keyHash: '',
           lastAccessedById: '',
+          lastAccessedDate: new Date(),
           lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -215,6 +241,7 @@ const CustomerForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="status"
+                          value={values.status || ''}
                           className={
                             errors.status
                               ? 'form-control field-error'
@@ -249,6 +276,7 @@ const CustomerForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="role"
+                          value={values.role || ''}
                           className={
                             errors.role
                               ? 'form-control field-error'
@@ -296,6 +324,7 @@ const CustomerForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="id"
@@ -328,6 +357,7 @@ const CustomerForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="ownerId"
@@ -351,6 +381,25 @@ const CustomerForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -378,6 +427,7 @@ const CustomerForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -416,6 +466,7 @@ const CustomerForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedById"
@@ -439,6 +490,25 @@ const CustomerForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -472,6 +542,7 @@ const CustomerForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedById"
@@ -495,6 +566,25 @@ const CustomerForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -585,21 +675,20 @@ kebabcase role-lookup
 const RoleLookup = () => {
   return (
     <>
-      <option value='CxO' label="Cx O" />
-      <option value='Engineering' label="Engineering" />
-      <option value='Project Management' label="Project Management" />
-      <option value='Management' label="Management" />
-      <option value='Support Staff' label="Support Staff" />
-      <option value='QA' label="Qa" />
-      <option value='Self-Employed' label="Self Employed" />
-      <option value='Consultant - Firm' label="Consultant Firm" />
-      <option value='Consultant - Independent' label="Consultant Independent" />
-      <option value='Contractor' label="Contractor" />
-      <option value='Partner' label="Partner" />
-      <option value='Associate' label="Associate" />
-      <option value='Reseller' label="Reseller" />
-      <option value='Hobbyist' label="Hobbyist" />
-      <option value='Student' label="Student" />
+      <option value='cxo' label="Cxo" />
+      <option value='engineering' label="Engineering" />
+      <option value='project mamagement' label="Project Mamagement" />
+      <option value='management' label="Management" />
+      <option value='support' label="Support" />
+      <option value='qa' label="Qa" />
+      <option value='self-employed' label="Self Employed" />
+      <option value='consulting' label="Consulting" />
+      <option value='contract' label="Contract" />
+      <option value='partner' label="Partner" />
+      <option value='associate' label="Associate" />
+      <option value='reseller' label="Reseller" />
+      <option value='hobbyist' label="Hobbyist" />
+      <option value='student' label="Student" />
       <option value='legal' label="Legal" />
       <option value='assessment' label="Assessment" />
       <option value='regulatory' label="Regulatory" />

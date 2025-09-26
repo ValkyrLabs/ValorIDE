@@ -6,7 +6,7 @@ import { ExtensionMessage } from "@shared/ExtensionMessage";
 import type { UsageTransaction, PaymentTransaction } from "@thor/model";
 
 export class ValorIDEAccountService {
-  private readonly baseUrl = process.env.REACT_APP_BASE_PATH || "http://localhost:8080/v1";
+  private readonly baseUrl = process.env.VITE_basePath || "http://localhost:8080/v1";
   private postMessageToWebview: (message: ExtensionMessage) => Promise<void>;
   private getValorIDEApiKey: () => Promise<string | undefined>;
 

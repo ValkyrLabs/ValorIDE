@@ -236,6 +236,8 @@ export enum ContentDataContentTypeEnum {
     AUDIO = 'audio',
     VIDEO = 'video',
     URL = 'url',
+    SPREADSHEET = 'spreadsheet',
+    PDF = 'pdf',
     BINARY = 'binary'
 }
 /**
@@ -244,6 +246,8 @@ export enum ContentDataContentTypeEnum {
 */
 export enum ContentDataCategoryEnum {
     CODEGEN = 'codegen',
+    SLIDES = 'slides',
+    SPREADSHEETS = 'spreadsheets',
     DOCS = 'docs',
     BLOG = 'blog',
     PRODUCT = 'product',

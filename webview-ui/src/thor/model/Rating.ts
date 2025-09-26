@@ -46,7 +46,7 @@ export type Rating  = {
      */
     url?: string;
     /**
-     * 
+     * this is a 0-100 scale you can translate to binary (0/100) or fractional (1-5 / 0/20/40/60/80/100) etc.
      * @type {number}
      * @memberof Rating
      */
@@ -146,7 +146,17 @@ export function RatingToJSON(value?: Rating): any {
 */
 export enum RatingTargetTypeEnum {
     HOMEPAGE = 'homepage',
-    BLOG = 'blog',
+    WEBPAGE = 'webpage',
+    APPLICATION = 'application',
+    FUNCTION = 'function',
+    API = 'api',
+    SERVICE = 'service',
+    CONTENT = 'content',
+    SCHEMA = 'schema',
+    APPLICATION2 = 'application',
+    FEATURE = 'feature',
+    HELPFULNESS = 'helpfulness',
+    SATISFACTION = 'satisfaction',
     PRODUCT = 'product',
     NONE = 'none'
 }

@@ -7,6 +7,7 @@ import { Controller } from "@core/controller/index";
 import { findLast } from "@shared/array";
 import { UsageTrackingService } from "../../services/usage-tracking/UsageTrackingService";
 import { TelecomHub } from "@services/P2P/TelecomHub";
+import { thorapiSettingChanged } from "@utils/thorapi";
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
 https://github.com/KumarVariable/vscode-extension-sidebar-html/blob/master/src/customSidebarViewProvider.ts
@@ -194,6 +195,9 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
             // Update state when marketplace tab setting changes
             await this.controller.postStateToWebview();
           }
+          if (e && thorapiSettingChanged(e)) {
+            await this.controller.postStateToWebview();
+          }
         },
         null,
         this.disposables,
@@ -279,7 +283,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
             <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
             <meta name="theme-color" content="#000000">
             <link rel="stylesheet" type="text/css" href="${stylesUri}">
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${process.env.REACT_APP_BASE_PATH?.replace('/v1', '') || 'http://localhost:8080'} https://*.valkyrlabs.com wss://*.valkyrlabs.com ws://localhost:* https://*.posthog.com https://*.googleapis.com font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} https: data:; script-src 'nonce-${nonce}' 'unsafe-eval';">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${process.env.VITE_basePath?.replace('/v1', '') || 'http://localhost:8080'} https://*.valkyrlabs.com wss://*.valkyrlabs.com ws://localhost:* https://*.posthog.com https://*.googleapis.com font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} https: data:; script-src 'nonce-${nonce}' 'unsafe-eval';">
             <title>ValorIDE</title>
           </head>
           <body>

@@ -17,6 +17,7 @@ const initialPrincipal: Principal = {
   email: "",
   createdDate: new Date(),
   lastModifiedDate: new Date(),
+  roleList: [],
 };
 
 interface SignupProps {}

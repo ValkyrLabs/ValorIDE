@@ -71,6 +71,7 @@ const Form: React.FC = () => {
     firstName: "",
     lastName: "",
     acceptedTos: false,
+    roleList: [],
   };
 
   const handleSubmit = async (

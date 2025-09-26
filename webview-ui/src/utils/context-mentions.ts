@@ -1,6 +1,5 @@
 import { mentionRegex } from "@shared/context-mentions";
 import { Fzf } from "fzf";
-import * as path from "path";
 
 export interface SearchResult {
   path: string;
@@ -230,7 +229,7 @@ export function getContextMenuOptions(
           ? ContextMenuOptionType.Folder
           : ContextMenuOptionType.File,
       value: formattedPath,
-      label: result.label || path.basename(result.path),
+      label: result.label || getBasename(result.path),
       description: formattedPath,
     };
     return item;
@@ -311,3 +310,9 @@ export function shouldShowContextMenu(text: string, position: number): boolean {
   // Show the menu if there's just '@' or '@' followed by some text (but not a URL)
   return true;
 }
+const getBasename = (filePath: string): string => {
+  const normalized = filePath.replace(/\\/g, "/");
+  if (!normalized.length) return "";
+  const segments = normalized.split("/").filter(Boolean);
+  return segments.length ? segments[segments.length - 1] : normalized;
+};

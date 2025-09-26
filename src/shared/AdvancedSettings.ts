@@ -47,6 +47,7 @@ export interface DebuggingConfig {
   saveFailedMatches: boolean;        // Default: false
   enablePerformanceMetrics: boolean; // Default: false
   logOutputFiltering: boolean;       // Default: false
+  showPsrResultsReport: boolean;     // Default: false
 }
 
 export interface BudgetAlertConfig {
@@ -58,6 +59,10 @@ export interface BudgetAlertConfig {
   alertThreshold: number;      // Default: 10
 }
 
+export interface ThorApiConfig {
+  outputFolder: string;        // Default: "thorapi"
+}
+
 export interface ValorIDEAdvancedSettings {
   version: number;
   fileProcessing: FileProcessingConfig;
@@ -66,6 +71,7 @@ export interface ValorIDEAdvancedSettings {
   performance: PerformanceConfig;
   debugging: DebuggingConfig;
   budgetAlerts: BudgetAlertConfig;
+  thorapi: ThorApiConfig;
 }
 
 export const DEFAULT_FILE_PROCESSING_CONFIG: FileProcessingConfig = {
@@ -116,6 +122,11 @@ export const DEFAULT_DEBUGGING_CONFIG: DebuggingConfig = {
   saveFailedMatches: false,
   enablePerformanceMetrics: false,
   logOutputFiltering: false,
+  showPsrResultsReport: false,
+};
+
+export const DEFAULT_THORAPI_CONFIG: ThorApiConfig = {
+  outputFolder: "thorapi",
 };
 
 export const DEFAULT_ADVANCED_SETTINGS: ValorIDEAdvancedSettings = {
@@ -126,6 +137,7 @@ export const DEFAULT_ADVANCED_SETTINGS: ValorIDEAdvancedSettings = {
   performance: DEFAULT_PERFORMANCE_CONFIG,
   debugging: DEFAULT_DEBUGGING_CONFIG,
   budgetAlerts: DEFAULT_BUDGET_ALERT_CONFIG,
+  thorapi: DEFAULT_THORAPI_CONFIG,
 };
 
 // Validation functions
@@ -165,6 +177,12 @@ export function validateOutputFilterConfig(config: Partial<OutputFilterConfig>):
   };
 }
 
+export function validateThorApiConfig(config: Partial<ThorApiConfig>): ThorApiConfig {
+  return {
+    outputFolder: config.outputFolder?.trim() || DEFAULT_THORAPI_CONFIG.outputFolder,
+  };
+}
+
 export function validateAdvancedSettings(settings: Partial<ValorIDEAdvancedSettings>): ValorIDEAdvancedSettings {
   return {
     version: settings.version ?? DEFAULT_ADVANCED_SETTINGS.version,
@@ -183,6 +201,7 @@ export function validateAdvancedSettings(settings: Partial<ValorIDEAdvancedSetti
       saveFailedMatches: settings.debugging?.saveFailedMatches ?? DEFAULT_DEBUGGING_CONFIG.saveFailedMatches,
       enablePerformanceMetrics: settings.debugging?.enablePerformanceMetrics ?? DEFAULT_DEBUGGING_CONFIG.enablePerformanceMetrics,
       logOutputFiltering: settings.debugging?.logOutputFiltering ?? DEFAULT_DEBUGGING_CONFIG.logOutputFiltering,
+      showPsrResultsReport: settings.debugging?.showPsrResultsReport ?? DEFAULT_DEBUGGING_CONFIG.showPsrResultsReport,
     },
     budgetAlerts: {
       depletedThreshold: Math.max(0, settings.budgetAlerts?.depletedThreshold ?? DEFAULT_BUDGET_ALERT_CONFIG.depletedThreshold),
@@ -190,5 +209,6 @@ export function validateAdvancedSettings(settings: Partial<ValorIDEAdvancedSetti
       lowThreshold: Math.max(0, settings.budgetAlerts?.lowThreshold ?? DEFAULT_BUDGET_ALERT_CONFIG.lowThreshold),
       alertThreshold: Math.max(0, settings.budgetAlerts?.alertThreshold ?? DEFAULT_BUDGET_ALERT_CONFIG.alertThreshold),
     },
+    thorapi: validateThorApiConfig(settings.thorapi ?? {}),
   };
 }

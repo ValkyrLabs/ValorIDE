@@ -378,7 +378,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
             />
           </div>
         </div>
-      ) : (
+      ) : activeTab === "account" ? (
         <>
           <div className="h-full flex flex-col pr-3 overflow-y-auto">
             <div className="w-full flex gap-2 flex-col min-[225px]:flex-row mt-4">
@@ -446,8 +446,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                 </VSCodeButtonLink>
               </div>
             </div>
-            <VSCodeDivider className="mt-6 mb-3 w-full" />
-            <UserPreferences />
+
             <VSCodeDivider className="mt-6 mb-3 w-full" />
 
             <div className="flex-grow flex flex-col min-h-0 pb-[0px]">
@@ -458,9 +457,11 @@ const AccountView = ({ onDone }: AccountViewProps) => {
               />
             </div>
 
-
           </div>
         </>
+      ) : (
+
+        <UserPreferences />
       )}
     </div>
   );

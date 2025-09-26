@@ -4,7 +4,7 @@ import {
   WebsocketMessageToJSON,
   WebsocketMessageFromJSON,
 } from "@thor/model";
-import { WSS_BASE_PATH } from "@thor/src/runtime";
+import { BASE_PATH } from "@thor/src/runtime";
 import { EventEmitter } from "events";
 
 export interface MothershipConnectionOptions {
@@ -54,7 +54,7 @@ export class MothershipService extends EventEmitter {
     }
 
     try {
-      const baseUrl = this.options.baseUrl || this.getDefaultWebsocketUrl();
+      const baseUrl = this.normalizeWsUrl(this.options.baseUrl) ?? this.getDefaultWebsocketUrl();
       const wsUrl = new URL('/chat', baseUrl);
       wsUrl.protocol = wsUrl.protocol === 'https:' ? 'wss:' : 'ws:';
 
@@ -129,7 +129,36 @@ export class MothershipService extends EventEmitter {
   }
 
   private getDefaultWebsocketUrl(): string {
-    return WSS_BASE_PATH;
+    const envOverride =
+      this.normalizeWsUrl(
+        (process.env.VALORIDE_WSS_BASE_PATH ?? process.env.VITE_wssBasePath ?? "").trim() || undefined,
+      );
+    if (envOverride) return envOverride;
+
+    const derived = this.normalizeWsUrl(BASE_PATH);
+    if (derived) return derived;
+
+    return "ws://localhost:8080";
+  }
+
+  private normalizeWsUrl(input?: string | null): string | undefined {
+    if (!input) return undefined;
+    const trimmed = input.trim();
+    if (!trimmed) return undefined;
+
+    if (/^wss?:\/\//i.test(trimmed)) {
+      return trimmed;
+    }
+
+    try {
+      const url = new URL(trimmed);
+      if (url.protocol === "https:" || url.protocol === "http:") {
+        url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+      }
+      return url.toString();
+    } catch (error) {
+      return undefined;
+    }
   }
 
   private scheduleReconnect(): void {

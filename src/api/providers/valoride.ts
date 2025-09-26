@@ -20,10 +20,10 @@ export class ValorIDEHandler implements ApiHandler {
   constructor(options: ApiHandlerOptions) {
     this.options = options;
     this.client = new OpenAI({
-      baseURL: `${process.env.REACT_APP_BASE_PATH || "http://localhost:8080/v1"}/llm-details/heimdallm/chat`,
+      baseURL: `${process.env.VITE_basePath || "http://localhost:8080/v1"}/llm-details/heimdallm/chat`,
       apiKey: this.options.valorideApiKey || "",
       defaultHeaders: {
-        "HTTP-Referer": process.env.REACT_APP_BASE_PATH || "http://localhost:8080/v1", // Optional, for including your app on valkyrlabs.com/v1 rankings.
+        "HTTP-Referer": process.env.VITE_basePath || "http://localhost:8080/v1", // Optional, for including your app on valkyrlabs.com/v1 rankings.
         "X-Title": "ValorIDE", // Optional. Shows in rankings on valkyrlabs.com/v1.
         "X-Task-ID": this.options.taskId || "", // Include the task ID in the request headers
       },

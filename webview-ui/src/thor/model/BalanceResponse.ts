@@ -16,7 +16,7 @@ import { exists, mapValues } from '../src/runtime';
 // thorapi
 
 /**
- * Current account balance
+ * Account balance snapshot request by ValorIDE
  * @export
  * @interface BalanceResponse
  */

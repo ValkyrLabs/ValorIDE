@@ -1,17 +1,32 @@
 import * as vscode from "vscode";
 import * as path from "path";
+import { resolveThorapiFolderPath, thorapiSettingChanged } from "@utils/thorapi";
+import { arePathsEqual } from "@utils/path";
 
 function isThorProjectRoot(uri: vscode.Uri): boolean {
   const fsPath = uri.fsPath;
   const base = path.basename(fsPath);
-  const dir = path.basename(path.dirname(fsPath));
-  // Root if parent folder is 'thorapi' and this folder name starts with version prefix like v1., v2., etc.
-  return dir.toLowerCase() === "thorapi" && /^v\d+\./i.test(base);
+
+  if (!/^v\d+\./i.test(base)) {
+    return false;
+  }
+
+  const parentDir = path.dirname(fsPath);
+  const workspaceFolders = vscode.workspace.workspaceFolders || [];
+
+  return workspaceFolders.some((folder) => {
+    const thorapiRoot = resolveThorapiFolderPath(folder.uri.fsPath);
+    return arePathsEqual(parentDir, thorapiRoot);
+  });
 }
 
 class ProjectRootDecorationProvider implements vscode.FileDecorationProvider {
   private _onDidChange = new vscode.EventEmitter<vscode.Uri | vscode.Uri[] | undefined>();
   readonly onDidChangeFileDecorations = this._onDidChange.event;
+
+  refresh(): void {
+    this._onDidChange.fire(undefined);
+  }
 
   provideFileDecoration(
     uri: vscode.Uri,
@@ -41,6 +56,13 @@ export function registerProjectExplorerIntegrations(
   context.subscriptions.push(
     vscode.window.registerFileDecorationProvider(provider),
   );
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration((event) => {
+      if (thorapiSettingChanged(event)) {
+        provider.refresh();
+      }
+    }),
+  );
 
   // Command: Show quick actions for a ThorAPI project root
   const openActions = vscode.commands.registerCommand(
@@ -48,7 +70,7 @@ export function registerProjectExplorerIntegrations(
     async (uri?: vscode.Uri) => {
       if (!uri || !isThorProjectRoot(uri)) {
         vscode.window.showInformationMessage(
-          "Select a ValorIDE ThorAPI project folder under 'thorapi' to use this.",
+          "Select a ValorIDE ThorAPI project folder under the configured ThorAPI output directory to use this.",
         );
         return;
       }
@@ -95,4 +117,3 @@ export function registerProjectExplorerIntegrations(
 
   output.appendLine("ValorIDE Explorer integrations registered");
 }
-

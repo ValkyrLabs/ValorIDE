@@ -15,17 +15,10 @@
 import { Meta, OptimisticUpdate, QueryKey, QueryOptions, Rollback, TransformStrategy, Update } from "redux-query";
 
 // un-comment for Vite apps
-// Guard against missing env var to avoid calling replace on undefined
-const rawBasePath = (import.meta as any)?.env?.VITE_basePath || "";
-// export const BASE_PATH = String(rawBasePath);
-
-export const BASE_PATH = import.meta.env.VITE_basePath || "http://localhost:8080/v1";
-
-// WebSocket base path for Vite apps
-export const WSS_BASE_PATH = import.meta.env.VITE_wssBasePath || "ws://localhost:8080/chat";
+export const BASE_PATH = import.meta.env.VITE_basePath.replace(/\/+$/, "");
 
 // un-comment for Create REact APp apps
-// export const BASE_PATH = process.env.REACT_APP_BASE_PATH.replace(/\/+$/, "");
+// export const BASE_PATH = process.env.VITE_basePath.replace(/\/+$/, "");
 
 
 

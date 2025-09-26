@@ -34,6 +34,12 @@ import {
 export type SalesOrder  = {
     /**
      * 
+     * @type {Customer}
+     * @memberof SalesOrder
+     */
+    customer: Customer;
+    /**
+     * 
      * @type {number}
      * @memberof SalesOrder
      */
@@ -52,10 +58,10 @@ export type SalesOrder  = {
     status: SalesOrderStatusEnum;
     /**
      * 
-     * @type {Customer}
+     * @type {string}
      * @memberof SalesOrder
      */
-    customer?: Customer;
+    customerId?: string;
     /**
      * 
      * @type {Array<LineItem>}
@@ -138,10 +144,11 @@ export type SalesOrder  = {
 
 export function SalesOrderFromJSON(json: any): SalesOrder {
     return {
+        'customer': CustomerFromJSON(json['customer']),
         'totalAmount': json['totalAmount'],
         'orderDate': new Date(json['orderDate']),
         'status': json['status'],
-        'customer': !exists(json, 'customer') ? undefined : CustomerFromJSON(json['customer']),
+        'customerId': !exists(json, 'customerId') ? undefined : json['customerId'],
         'orderItems': !exists(json, 'orderItems') ? undefined : (json['orderItems'] as Array<any>).map(LineItemFromJSON),
         'orderDiscounts': !exists(json, 'orderDiscounts') ? undefined : (json['orderDiscounts'] as Array<any>).map(LineItemFromJSON),
         'taxAmount': !exists(json, 'taxAmount') ? undefined : json['taxAmount'],
@@ -163,10 +170,11 @@ export function SalesOrderToJSON(value?: SalesOrder): any {
         return undefined;
     }
     return {
+        'customer': CustomerToJSON(value.customer),
         'totalAmount': value.totalAmount,
         'orderDate': value.orderDate.toISOString(),
         'status': value.status,
-        'customer': CustomerToJSON(value.customer),
+        'customerId': value.customerId,
         'orderItems': value.orderItems === undefined ? undefined : (value.orderItems as Array<any>).map(LineItemToJSON),
         'orderDiscounts': value.orderDiscounts === undefined ? undefined : (value.orderDiscounts as Array<any>).map(LineItemToJSON),
         'taxAmount': value.taxAmount,

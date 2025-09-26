@@ -31,7 +31,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-10T13:59:56.351525-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -66,13 +66,61 @@ const validationSchema = Yup.object().shape({
         readmeContent: Yup.string(),
         llmsInstallationContent: Yup.string(),
         isRecommended: Yup.boolean(),
-        githubStars: asNumber(Yup.number().integer()),
-        downloadCount: asNumber(Yup.number().integer()),
+        githubStars: asNumber(Yup.number().integer().typeError("githubStars must be a number")),
+        downloadCount: asNumber(Yup.number().integer().typeError("downloadCount must be a number")),
+        createdAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdAt must be a valid date"),
+        updatedAt: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("updatedAt must be a valid date"),
+        lastGithubSync: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastGithubSync must be a valid date"),
         id: Yup.string(),
         ownerId: Yup.string(),
+        createdDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
         keyHash: Yup.string(),
         lastAccessedById: Yup.string(),
+        lastAccessedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
         lastModifiedById: Yup.string(),
+        lastModifiedDate: Yup.date()
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -113,13 +161,19 @@ const McpMarketplaceItemForm: React.FC = () => {
           readmeContent: '',
           llmsInstallationContent: '',
           isRecommended: false,
-          githubStars: undefined,
-          downloadCount: undefined,
+          githubStars: 0,
+          downloadCount: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          lastGithubSync: new Date(),
           id: '',
           ownerId: '',
+          createdDate: new Date(),
           keyHash: '',
           lastAccessedById: '',
+          lastAccessedDate: new Date(),
           lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -213,6 +267,7 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="githubUrl"
@@ -239,6 +294,7 @@ const McpMarketplaceItemForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -277,6 +333,7 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="author"
@@ -303,6 +360,7 @@ const McpMarketplaceItemForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -341,6 +399,7 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="mcpMarketplaceCatalogId"
@@ -367,6 +426,7 @@ const McpMarketplaceItemForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -405,6 +465,7 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="icon"
@@ -431,6 +492,7 @@ const McpMarketplaceItemForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -469,6 +531,7 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="category"
@@ -490,6 +553,7 @@ const McpMarketplaceItemForm: React.FC = () => {
                           <BSForm.Check
                             id="requiresApiKey"
                             name="requiresApiKey"
+                            checked={values.requiresApiKey || false}
                             onChange={(e) => {
                               setFieldTouched('requiresApiKey', true);
                               setFieldValue('requiresApiKey', e.target.checked);
@@ -497,6 +561,7 @@ const McpMarketplaceItemForm: React.FC = () => {
                             isInvalid={!!errors.requiresApiKey}
                             className={errors.requiresApiKey ? 'error' : ''}
                           />
+
 
 
 
@@ -536,6 +601,7 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="readmeContent"
@@ -568,6 +634,7 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="llmsInstallationContent"
@@ -589,6 +656,7 @@ const McpMarketplaceItemForm: React.FC = () => {
                           <BSForm.Check
                             id="isRecommended"
                             name="isRecommended"
+                            checked={values.isRecommended || false}
                             onChange={(e) => {
                               setFieldTouched('isRecommended', true);
                               setFieldValue('isRecommended', e.target.checked);
@@ -596,6 +664,7 @@ const McpMarketplaceItemForm: React.FC = () => {
                             isInvalid={!!errors.isRecommended}
                             className={errors.isRecommended ? 'error' : ''}
                           />
+
 
 
 
@@ -626,6 +695,7 @@ const McpMarketplaceItemForm: React.FC = () => {
                           <Field
                             name="githubStars"
                             type="number"
+                            value={values.githubStars || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('githubStars', true);
                               const v = e.target.value;
@@ -637,6 +707,7 @@ const McpMarketplaceItemForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -665,6 +736,7 @@ const McpMarketplaceItemForm: React.FC = () => {
                           <Field
                             name="downloadCount"
                             type="number"
+                            value={values.downloadCount || ''}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                               setFieldTouched('downloadCount', true);
                               const v = e.target.value;
@@ -676,6 +748,7 @@ const McpMarketplaceItemForm: React.FC = () => {
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -705,6 +778,25 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdAt"
+                            type="datetime-local"
+                            value={values.createdAt ? 
+                              new Date(values.createdAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdAt', true);
+                              const v = e.target.value;
+                              setFieldValue('createdAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="createdAt"
@@ -729,6 +821,25 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="updatedAt"
+                            type="datetime-local"
+                            value={values.updatedAt ? 
+                              new Date(values.updatedAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('updatedAt', true);
+                              const v = e.target.value;
+                              setFieldValue('updatedAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.updatedAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="updatedAt"
@@ -752,6 +863,25 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastGithubSync"
+                            type="datetime-local"
+                            value={values.lastGithubSync ? 
+                              new Date(values.lastGithubSync).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastGithubSync', true);
+                              const v = e.target.value;
+                              setFieldValue('lastGithubSync', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastGithubSync
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -779,6 +909,7 @@ const McpMarketplaceItemForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -817,6 +948,7 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="ownerId"
@@ -840,6 +972,25 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -867,6 +1018,7 @@ const McpMarketplaceItemForm: React.FC = () => {
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -905,6 +1057,7 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedById"
@@ -928,6 +1081,25 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"
@@ -961,6 +1133,7 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedById"
@@ -984,6 +1157,25 @@ const McpMarketplaceItemForm: React.FC = () => {
 
 
 
+
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
 
                       <ErrorMessage
                         className="error"

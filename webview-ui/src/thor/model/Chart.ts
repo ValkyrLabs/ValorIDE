@@ -66,7 +66,7 @@ export type Chart  = {
      */
     axisLabelY?: string;
     /**
-     * Cell range for the category (X) axis labels. Matches e.g. \"Sheet1!A2:A12\"
+     * Cell range for the category (X) axis labels. Matches e.g. Sheet1!A2:A12
      * @type {string}
      * @memberof Chart
      */
