@@ -270,33 +270,46 @@ Push → Open PR → CI runs → Changesetbot handles versioning + release.
 
 ### 🚀 Latest Developments
 
-**Updated: September 24, 2025 (PSR Test Successful)**
+**Updated: January 2, 2025 (P2P & WebSocket Integration Complete)**
+
+#### P2P Communication & WebSocket Integration
+- **WebSocket Mothership Integration**: Complete real-time communication system with Thor/STOMP broker connectivity, featuring bidirectional message routing and auto-reconnect capabilities.
+
+- **P2P Peer Discovery**: VSCode inter-instance communication with real-time peer count tracking, ping/ack/nack protocol, and visual status indicators.
+
+- **Enhanced StatusBadge System**: Dual-panel status display showing WebSocket Mothership connection (left) and P2P peer status (right) with connection counts and visual feedback.
+
+- **BROADCAST Rollcall Protocol**: Automatic instance discovery on connection with rollcall request/response system for tracking connected ValorIDE instances across the network.
+
+#### Latest Features (v3.13.2)
+- **Gemini 2.5 Flash Support**: Added to Vertex and Gemini providers with caching support and thinking budget options.
+
+- **Enhanced .valorideignore**: Added `!include .file` directive support for more flexible file pattern management.
+
+- **Improved Model Support**: Added thinking budget support for Gemini models, fixed Azure API temperature handling, and enhanced DeepSeek model compatibility.
+
+- **Terminal & Output Improvements**: Fixed terminal output formatting issues, improved non-alphanumeric output handling, and enhanced command execution reliability.
+
+- **Browser Tool Enhancements**: Removed computer use restrictions, enabling browser automation through any image-supporting model.
 
 #### Core Tool Enhancements
-- **Precision Search and Replace Tool**: Advanced file editing capability featuring a three-layer strategy (AST → contextual → byte). This tool ensures reliable, atomic edits with built-in verification and rollback support. It prevents file truncation, preserves original line endings, and maintains comprehensive backup systems for maximum safety during code modifications. ✅ **Test Status: Verified** - Successfully tested with 1/1 hunks applied, no warnings, and proper delta tracking.
+- **Precision Search and Replace Tool**: Advanced file editing capability featuring a three-layer strategy (AST → contextual → byte). This tool ensures reliable, atomic edits with built-in verification and rollback support. ✅ **Test Status: Verified** - Successfully tested with comprehensive error handling and delta tracking.
 
 - **Enhanced File Editing Pipeline**: Improved safety protocols with automatic backup creation, verification steps, and error recovery for all file modifications.
 
-#### ThorAPI Integration Advances
-- **Full Stack Code Generation**: Seamless integration with ThorAPI for generating complete Spring Boot backends and React frontends from OpenAPI specifications.
-
-- **TelecomP2P Component**: New peer-to-peer communication component for enhanced collaboration between Valor instances.
-
-- **Engager Project**: Active development of TypeScript client libraries with improved error handling and state management.
-
 #### Platform & Architecture
-- **Communication Service**: Enhanced inter-service communication with improved reliability and testing coverage.
+- **Communication Service**: Enhanced inter-service communication with improved reliability, Redux integration, and comprehensive error handling.
 
-- **State Management**: Core state management improvements for better performance and consistency across the extension.
+- **State Management**: Advanced state management with WebSocket-specific state handling, event listeners, and efficient update mechanisms.
 
 - **MCP Ecosystem**: Continued expansion of Model Context Protocol integration, enabling dynamic tool creation and enhanced agentic capabilities throughout the Valhalla Suite.
 
 #### Agent Telemetry & UX
-- **Session Analytics Dashboard**: New in-editor insights view surfaces token usage, tool calls, and error trends for each ValorIDE session.
+- **Streamlined Login Integration**: Clean, integrated authentication form with username/password handling and remember-me functionality.
 
-- **Task Timeline Visualization**: Enhanced checkpoint diff viewer highlights plan/act transitions and makes rollbacks clearer for reviewers.
+- **Real-time Status Tracking**: Enhanced connection monitoring with spinning indicators, tooltips, and detailed instance information.
 
-- **Failure Diagnostics**: Automatic aggregation of skipped edit reasons and PSR telemetry to speed up debugging during long-running tasks.
+- **Performance Optimization**: Efficient event handling, connection pooling, and improved message routing for better overall performance.
 
 ---
 

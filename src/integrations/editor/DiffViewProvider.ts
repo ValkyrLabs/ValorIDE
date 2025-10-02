@@ -175,7 +175,7 @@ export class DiffViewProvider {
     }
 
     this.newContent = accumulatedContent;
-    const accumulatedLines = accumulatedContent.split("\n");
+    let accumulatedLines = accumulatedContent.split("\n");
     if (!isFinal) {
       accumulatedLines.pop(); // remove the last partial line only if it's not the final update
     }
@@ -199,14 +199,24 @@ export class DiffViewProvider {
     if (currentLine >= 0) {
       // Only proceed if we have new lines
 
-      // Replace all content up to the current line with accumulated lines
-      // This is necessary (as compared to inserting one line at a time) to handle cases where html tags on previous lines are auto closed for example
-      const edit = new vscode.WorkspaceEdit();
-      const rangeToReplace = new vscode.Range(0, 0, currentLine + 1, 0);
-      const contentToReplace =
-        accumulatedLines.slice(0, currentLine + 1).join("\n") + "\n";
-      edit.replace(document.uri, rangeToReplace, contentToReplace);
-      await vscode.workspace.applyEdit(edit);
+      // Decide what snapshot of the content should appear in the editor right now.
+      const upToCurrentLines = accumulatedLines.slice(0, currentLine + 1);
+      let contentSnapshot: string;
+      if (isFinal) {
+        contentSnapshot = accumulatedContent;
+        const originalHadTrailingNewline = this.originalContent?.endsWith("\n") ?? false;
+        if (originalHadTrailingNewline && !contentSnapshot.endsWith("\n")) {
+          contentSnapshot += "\n";
+          accumulatedContent = contentSnapshot;
+        }
+      } else {
+        contentSnapshot = upToCurrentLines.join("\n");
+        if (upToCurrentLines.length > 0) {
+          contentSnapshot += "\n";
+        }
+      }
+
+      await this.replaceDocumentContent(document, contentSnapshot);
 
       // Update decorations for the entire changed section
       this.activeLineController.setActiveLine(currentLine);
@@ -240,8 +250,14 @@ export class DiffViewProvider {
       }
     }
 
-    // Update the streamedLines with the new accumulated content
-    this.streamedLines = accumulatedLines;
+    // Update the streamedLines with the new accumulated content snapshot
+    if (isFinal) {
+      accumulatedLines = accumulatedContent.split("\n");
+      this.streamedLines = accumulatedLines;
+    } else {
+      this.streamedLines = accumulatedLines;
+    }
+    this.newContent = accumulatedContent;
     if (isFinal) {
       // Handle any remaining lines if the new content is shorter than the original
       if (this.streamedLines.length < document.lineCount) {
@@ -416,6 +432,41 @@ export class DiffViewProvider {
 
     // edit is done
     await this.reset();
+  }
+
+  private async replaceDocumentContent(
+    document: vscode.TextDocument,
+    content: string,
+  ): Promise<void> {
+    const fullRange = document.validateRange(
+      new vscode.Range(
+        new vscode.Position(0, 0),
+        new vscode.Position(Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER),
+      ),
+    );
+
+    const edit = new vscode.WorkspaceEdit();
+    edit.replace(document.uri, fullRange, content);
+    const applied = await vscode.workspace.applyEdit(edit);
+    if (applied) {
+      return;
+    }
+
+    const editor = this.activeDiffEditor;
+    if (!editor) {
+      throw new Error("Unable to update diff editor: no active editor");
+    }
+
+    const fallbackApplied = await editor.edit(
+      (editBuilder) => {
+        editBuilder.replace(fullRange, content);
+      },
+      { undoStopBefore: false, undoStopAfter: false },
+    );
+
+    if (!fallbackApplied) {
+      throw new Error("Failed to apply streamed content to diff editor");
+    }
   }
 
   private async closeAllDiffViews() {

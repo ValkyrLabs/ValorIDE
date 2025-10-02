@@ -83,6 +83,7 @@ export function getModelPricing(provider: string, model: string): { inputCost: n
       'o1-mini': { inputCost: 0.000003, outputCost: 0.000012 },
     },
     anthropic: {
+      'claude-sonnet-4-5-20250929': { inputCost: 0.000003, outputCost: 0.000015 }, // Claude Sonnet 4.5
       'claude-3-5-sonnet-20241022': { inputCost: 0.000003, outputCost: 0.000015 },
       'claude-3-5-haiku-20241022': { inputCost: 0.000001, outputCost: 0.000005 },
       'claude-3-opus-20240229': { inputCost: 0.000015, outputCost: 0.000075 },

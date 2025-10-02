@@ -34,32 +34,32 @@ interface ChatViewProps {
 export const MAX_IMAGES_PER_MESSAGE = 20 // Anthropic limits to 20 images
 
 const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryView }: ChatViewProps) => {
-	const { 
-		version, 
-		valorideMessages: messages, 
-		taskHistory, 
-		apiConfiguration, 
-		telemetrySetting, 
-		chatSettings, 
-		jwtToken 
+	const {
+		version,
+		valorideMessages: messages,
+		taskHistory,
+		apiConfiguration,
+		telemetrySetting,
+		chatSettings,
+		jwtToken
 	} = useExtensionState()
-	
-  const communicationService = useCommunicationService()
-  const { inputValue, setInputValue, selectedImages, setSelectedImages, clearChatInput } = useChatInputPersistence()
 
-  // Handle images selected from the VS Code file picker
-  useEffect(() => {
-    const handleMessage = (e: MessageEvent) => {
-      const message: ExtensionMessage = e.data as any
-      if (message?.type === "selectedImages" && Array.isArray(message.images)) {
-        setSelectedImages((prev) =>
-          [...prev, ...message.images!].slice(0, MAX_IMAGES_PER_MESSAGE),
-        )
-      }
-    }
-    window.addEventListener("message", handleMessage)
-    return () => window.removeEventListener("message", handleMessage)
-  }, [setSelectedImages])
+	const communicationService = useCommunicationService()
+	const { inputValue, setInputValue, selectedImages, setSelectedImages, clearChatInput } = useChatInputPersistence()
+
+	// Handle images selected from the VS Code file picker
+	useEffect(() => {
+		const handleMessage = (e: MessageEvent) => {
+			const message: ExtensionMessage = e.data as any
+			if (message?.type === "selectedImages" && Array.isArray(message.images)) {
+				setSelectedImages((prev) =>
+					[...prev, ...message.images!].slice(0, MAX_IMAGES_PER_MESSAGE),
+				)
+			}
+		}
+		window.addEventListener("message", handleMessage)
+		return () => window.removeEventListener("message", handleMessage)
+	}, [setSelectedImages])
 
 	// Initialize hooks
 	const {
@@ -70,10 +70,10 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		pendingRemoteReplyRef,
 		broadcastLLMResponse,
 		connectToMothership
-	} = useWebSocketConnection({ 
-		messages, 
+	} = useWebSocketConnection({
+		messages,
 		containsValorIDEMention: useCallback((text: string) => text?.toLowerCase?.().includes("@valoride") === true, []),
-		clearChatInput 
+		clearChatInput
 	})
 
 	const {
@@ -173,7 +173,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			}}
 		>
 			<SystemAlerts />
-			
+			{/**TODO: get P2P working
 			<StatusBar
 				wsConnected={wsConnected}
 				wsInstanceCount={wsInstanceCount}
@@ -191,7 +191,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			/>
 			
 			<OfflineBanner />
-
+ 			*/}
 			{task ? (
 				<TaskView
 					task={task}

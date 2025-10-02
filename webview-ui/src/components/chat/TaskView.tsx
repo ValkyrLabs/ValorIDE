@@ -41,6 +41,9 @@ const ActionButtonsContainer = styled.div`
 	padding: 8px 15px;
 	border-top: 1px solid var(--vscode-editorGroup-border);
 	background-color: var(--vscode-editor-background);
+	position: relative;
+	z-index: 1;
+	flex-shrink: 0;
 `
 
 interface TaskViewProps {
@@ -50,13 +53,13 @@ interface TaskViewProps {
 	inputValue: string
 	isChatLoading: boolean
 	lastApiReqTotalTokens?: number
-	
+
 	// State
 	valorideAsk: any
 	enableButtons: boolean
 	primaryButtonText?: string
 	secondaryButtonText?: string
-	
+
 	// Handlers
 	onTaskClose: () => void
 	onPrimaryButton: () => void
@@ -313,7 +316,7 @@ const TaskView: React.FC<TaskViewProps> = ({
 						boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
 						zIndex: 1000
 					}}>
-						<LoadingSpinner label="Thinking..." size={24} />
+						<LoadingSpinner label="Working..." size={24} />
 					</div>
 				)}
 				{showScrollToBottom && (

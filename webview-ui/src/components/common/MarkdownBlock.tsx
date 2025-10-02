@@ -179,6 +179,11 @@ const StyledMarkdown = styled.div`
     margin-left: 0;
   }
 
+  li {
+    color: var(--vscode-foreground);
+    margin-bottom: 0.25em;
+  }
+
   p {
     white-space: pre-wrap;
   }

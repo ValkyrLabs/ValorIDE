@@ -326,10 +326,30 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
         setImagesToastVisible(true);
         const t = setTimeout(() => setImagesToastVisible(false), 1600);
         prevImagesCountRef.current = curr;
+        
+        // Add two newlines to provide space for typing when images are added
+        if (textAreaRef.current) {
+          const currentValue = inputValue;
+          const newValue = currentValue + "\n\n";
+          setInputValue(newValue);
+          
+          // Set cursor position at the end
+          const newCursorPosition = newValue.length;
+          setCursorPosition(newCursorPosition);
+          setIntendedCursorPosition(newCursorPosition);
+          
+          // Focus the textarea
+          setTimeout(() => {
+            if (textAreaRef.current) {
+              textAreaRef.current.focus();
+            }
+          }, 0);
+        }
+        
         return () => clearTimeout(t);
       }
       prevImagesCountRef.current = curr;
-    }, [selectedImages]);
+    }, [selectedImages, inputValue, setInputValue]);
 
     const [fileSearchResults, setFileSearchResults] = useState<SearchResult[]>(
       [],

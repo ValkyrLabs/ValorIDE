@@ -302,7 +302,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                 onClick={() => setActiveTab("userPreferences")}
                 style={{ cursor: "pointer" }}
               >
-                User Preferences
+                <FaUserEdit /> Preferences
               </div>
             </>
           )}
@@ -376,6 +376,13 @@ const AccountView = ({ onDone }: AccountViewProps) => {
               autoRefresh={true}
               refreshInterval={5000}
             />
+          </div>
+        </div>
+      ) : activeTab === "userPreferences" ? (
+        <div className="h-full flex flex-col pr-3 overflow-y-auto">
+          <div className="flex-grow flex flex-col min-h-0">
+            <h3 style={{ marginBottom: "16px" }}>User Preferences</h3>
+            <UserPreferences />
           </div>
         </div>
       ) : activeTab === "account" ? (
@@ -461,7 +468,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
         </>
       ) : (
 
-        <UserPreferences />
+        <>nothing selected</>
       )}
     </div>
   );

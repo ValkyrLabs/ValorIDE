@@ -239,7 +239,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
               <span className="flex items-center gap-2"><FaStar /> </span>
             </VSCodeButton>
             <VSCodeButton appearance="secondary" onClick={handleShare} title="Copy Marketplace link to clipboard">
-              <span className="flex items-center gap-2"><FaShareAlt /> {copied ? <FaCheck /> : <FaTag />}</span>
+              <span className="flex items-center gap-2"><FaShareAlt size={18} /> {copied ? <FaCheck size={18} /> : <FaTag />}</span>
             </VSCodeButton>
             <StatusBadge label="P2P" value={value} kind={kind as any} title={hasError ? String(communicationService.error) : undefined} />
             <div className="flex items-center gap-2" title="Store and load the JWT in local storage to avoid logging in every time">
@@ -251,7 +251,10 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
           </div>
         </div>
         <div className="grow overflow-y-scroll pr-2 flex flex-col">
+
+          {/**
           <OfflineBanner />
+           */}
           {peers.length > 0 && (
             <div className="border border-solid border-[var(--vscode-panel-border)] rounded-md p-[10px] mb-3 bg-[var(--vscode-panel-background)] text-[var(--vscode-foreground)]">
               <div className="mb-2 font-semibold">Active instances</div>
@@ -268,6 +271,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
               </div>
             </div>
           )}
+
           {/* Tabs container */}
           {planActSeparateModelsSetting ? (
             <div className="border border-solid border-[var(--vscode-panel-border)] rounded-md p-[10px] mb-5 bg-[var(--vscode-panel-background)]">

@@ -237,6 +237,16 @@ export const bedrockModels = {
     inputPrice: 0.035,
     outputPrice: 0.14,
   },
+  "anthropic.claude-sonnet-4-5-20250929-v1:0": {
+    maxTokens: 64000, // maxOutput
+    contextWindow: 200_000, // maxInput
+    supportsImages: true, // vision
+    supportsPromptCache: true, // assume prompt cache is supported
+    inputPrice: 3.0, //  per million input tokens
+    outputPrice: 15.0, //  per million output tokens
+    description: 'Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)',
+  },
+
   "anthropic.claude-3-7-sonnet-20250219-v1:0": {
     maxTokens: 8192,
     contextWindow: 200_000,
@@ -333,6 +343,16 @@ export const openRouterDefaultModelInfo: ModelInfo = {
 export type VertexModelId = keyof typeof vertexModels;
 export const vertexDefaultModelId: VertexModelId = "claude-3-7-sonnet@20250219";
 export const vertexModels = {
+  "claude-sonnet-4-5@20250929": {
+    maxTokens: 64000, // maxOutput
+    contextWindow: 200_000, // maxInput
+    supportsImages: true, // vision
+    supportsPromptCache: true, // assume prompt cache is supported
+    inputPrice: 3.0, //  per million input tokens
+    outputPrice: 15.0, //  per million output tokens
+    description: 'Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)',
+  },
+
   "claude-3-7-sonnet@20250219": {
     maxTokens: 8192,
     contextWindow: 200_000,
@@ -700,7 +720,7 @@ export const openAiNativeModels = {
     outputPrice: 0,
     cacheReadsPrice: 0,
   },
-  o3: {
+  "o3": {
     maxTokens: 100_000,
     contextWindow: 200_000,
     supportsImages: true,
@@ -755,7 +775,7 @@ export const openAiNativeModels = {
     cacheReadsPrice: 0.55,
   },
   // don't support tool use yet
-  o1: {
+  "o1": {
     maxTokens: 100_000,
     contextWindow: 200_000,
     supportsImages: true,
