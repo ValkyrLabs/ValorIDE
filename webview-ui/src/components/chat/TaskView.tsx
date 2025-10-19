@@ -51,6 +51,7 @@ interface TaskViewProps {
 	messages: ValorIDEMessage[]
 	apiConfiguration: any
 	inputValue: string
+	setInputValue: (value: string) => void
 	isChatLoading: boolean
 	lastApiReqTotalTokens?: number
 
@@ -72,6 +73,7 @@ const TaskView: React.FC<TaskViewProps> = ({
 	messages,
 	apiConfiguration,
 	inputValue,
+	setInputValue,
 	isChatLoading,
 	lastApiReqTotalTokens,
 	valorideAsk,
@@ -232,11 +234,12 @@ const TaskView: React.FC<TaskViewProps> = ({
 					isLast={index === groupedMessages.length - 1}
 					onHeightChange={() => { }}
 					inputValue={inputValue}
+					setInputValue={setInputValue}
 					sendMessageFromChatRow={() => { }}
 				/>
 			)
 		},
-		[expandedRows, modifiedMessages, groupedMessages.length, inputValue]
+		[expandedRows, modifiedMessages, groupedMessages.length, inputValue, setInputValue]
 	)
 
 	const scrollToBottomSmooth = useMemo(

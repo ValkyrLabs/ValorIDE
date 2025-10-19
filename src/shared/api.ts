@@ -129,6 +129,29 @@ export type AnthropicModelId = keyof typeof anthropicModels;
 export const anthropicDefaultModelId: AnthropicModelId =
   "claude-3-7-sonnet-20250219";
 export const anthropicModels = {
+  "claude-sonnet-4-5-20250929": {
+    maxTokens: 64_000,
+    contextWindow: 200_000,
+    supportsImages: true,
+
+    supportsPromptCache: true,
+    inputPrice: 3.0,
+    outputPrice: 15.0,
+    cacheWritesPrice: 3.75,
+    cacheReadsPrice: 0.3,
+    description:
+      "Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)",
+  },
+  "claude-haiku-4-5-20250929": {
+    maxTokens: 8192,
+    contextWindow: 200_000,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 0.8,
+    outputPrice: 4.0,
+    cacheWritesPrice: 1.0,
+    cacheReadsPrice: 0.08,
+  },
   "claude-sonnet-4-20250514": {
     maxTokens: 8192,
     contextWindow: 200_000,
@@ -202,7 +225,17 @@ export const anthropicModels = {
     cacheWritesPrice: 0.3,
     cacheReadsPrice: 0.03,
   },
-} as const satisfies Record<string, ModelInfo>; // as const assertion makes the object deeply readonly
+  "claude-haiku-4-5-20251016": {
+    maxTokens: 4096,
+    contextWindow: 200_000,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 0.3,
+    outputPrice: 1.5,
+    cacheWritesPrice: 0.375,
+    cacheReadsPrice: 0.03,
+  },
+  } as const satisfies Record<string, ModelInfo>; // as const assertion makes the object deeply readonly
 
 // AWS Bedrock
 // https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html
@@ -1743,4 +1776,3 @@ export const requestyDefaultModelInfo: ModelInfo = {
   description:
     "Anthropic's most intelligent model. Highest level of intelligence and capability.",
 };
-

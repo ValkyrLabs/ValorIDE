@@ -213,4 +213,58 @@ describe("precisionSearchAndReplace", () => {
     expect(result.editsApplied).toBe(1);
     expect(result.baseHash).not.toBe(result.postHash);
   });
+
+  it("keeps HTML tag pairs balanced when only the opening tag is renamed", async () => {
+    const relPath = "Component.tsx";
+    const abs = path.join(tmpDir, relPath);
+    await fsp.writeFile(abs, "<Foo>\n  <span>hi</span>\n</Foo>\n", "utf8");
+
+    const result = await precisionSearchAndReplace(
+      tmpDir,
+      relPath,
+      [
+        {
+          kind: "contextual",
+          find: "<Foo>",
+          replace: "<Bar>",
+        },
+      ],
+      access,
+      { makeBackup: false },
+    );
+
+    const updated = await fsp.readFile(abs, "utf8");
+    expect(updated).toContain("<Bar>");
+    expect(updated).toContain("</Bar>");
+    expect(updated).not.toContain("</Foo>");
+    expect(result.editsApplied).toBe(1);
+    expect(result.warnings).toHaveLength(0);
+  });
+
+  it("keeps mustache section tags balanced when only the opening tag is renamed", async () => {
+    const relPath = "template.mustache";
+    const abs = path.join(tmpDir, relPath);
+    await fsp.writeFile(abs, "{{#section}}\n  content\n{{/section}}\n", "utf8");
+
+    const result = await precisionSearchAndReplace(
+      tmpDir,
+      relPath,
+      [
+        {
+          kind: "contextual",
+          find: "{{#section}}",
+          replace: "{{#catalog}}",
+        },
+      ],
+      access,
+      { makeBackup: false },
+    );
+
+    const updated = await fsp.readFile(abs, "utf8");
+    expect(updated).toContain("{{#catalog}}");
+    expect(updated).toContain("{{/catalog}}");
+    expect(updated).not.toContain("{{/section}}");
+    expect(result.editsApplied).toBe(1);
+    expect(result.warnings).toHaveLength(0);
+  });
 });

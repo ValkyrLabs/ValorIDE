@@ -123,6 +123,7 @@ export function RoleToJSON(value?: Role): any {
 export enum RoleRoleEnum {
     ROLE_ANONYMOUS = 'anonymous',
     ROLE_EVERYONE = 'everyone',
+    ROLE_SYSTEM = 'system',
     ROLE_USER = 'user',
     ROLE_STAFF = 'staff',
     ROLE_ADMIN = 'admin',

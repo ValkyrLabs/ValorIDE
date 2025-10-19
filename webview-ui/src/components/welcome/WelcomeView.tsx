@@ -46,7 +46,7 @@ const WelcomeView = memo(() => {
             </div>
             <p>
               <h2>Agentic Coder, Powered by ThorAPI</h2>
-              <VSCodeLink href="https://valkyrlabs.com/v1/docs/Products/ValorIDE/valoride-documentation" style={{ display: "inline" }}>
+              <VSCodeLink href="https://valkyrlabs.com/v1/docs/Products/ValorIDE" style={{ display: "inline" }}>
                 English Documentation
               </VSCodeLink>
               <VSCodeLink href="https://valkyrlabs.com/thorapi" style={{ display: "inline" }}>
@@ -58,11 +58,10 @@ const WelcomeView = memo(() => {
           <p>
             I can do all kinds of tasks thanks to breakthroughs in{" "}
             <VSCodeLink
-              href="https://www.anthropic.com/"
+              href="https://valkyrlabs.com/v1/Products/ValorIDE/getting-started"
               className="inline"
             >
-
-              Claude Sonnet's
+             Help Getting Started
             </VSCodeLink>
             agentic coding capabilities and access to tools that let me create &
             edit files, explore complex projects, use a browser, and execute
@@ -71,8 +70,7 @@ const WelcomeView = memo(() => {
           </p>
 
           <p className="text-[var(--vscode-descriptionForeground)]">
-            Sign up for an account to get started for free, or use an API key that
-            provides access to models like Claude 3.7 Sonnet.
+            Sign up for an account to get started for free
           </p>
 
           <VSCodeButton

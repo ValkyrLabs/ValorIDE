@@ -21,8 +21,8 @@ const SystemAlerts: React.FC = () => {
   const [dismissedAlerts, setDismissedAlerts] = useState<Set<string>>(new Set());
 
   // Get balance data for budget alerts
-  const { data: balanceData } = useGetBalanceResponsesQuery(undefined as any, { 
-    skip: !jwtToken 
+  const { data: balanceData } = useGetBalanceResponsesQuery(undefined as any, {
+    skip: !jwtToken
   });
 
   // Calculate current API metrics
@@ -44,7 +44,7 @@ const SystemAlerts: React.FC = () => {
       { threshold: ba.criticalThreshold, severity: 'danger' as const, title: 'Critical Budget Alert' },
       { threshold: ba.lowThreshold, severity: 'warning' as const, title: 'Low Budget Warning' },
       { threshold: ba.alertThreshold, severity: 'warning' as const, title: 'Budget Alert' }
-    ].sort((a,b) => a.threshold - b.threshold);
+    ].sort((a, b) => a.threshold - b.threshold);
 
     for (const { threshold, severity, title } of budgetThresholds) {
       if (effectiveBalance <= threshold) {
@@ -55,8 +55,8 @@ const SystemAlerts: React.FC = () => {
             type: 'budget',
             severity,
             title,
-            message: effectiveBalance <= 0 
-              ? 'Your account balance has been depleted. Add credits to continue using ValorIDE services.'
+            message: effectiveBalance <= 0
+              ? 'Your account balance has been depleted. Buy credits to continue using ValorIDE services.'
               : `Your account balance is low ($${effectiveBalance.toFixed(2)}). Consider adding credits to avoid service interruption.`,
             timestamp: Date.now()
           };
@@ -79,7 +79,7 @@ const SystemAlerts: React.FC = () => {
     if (!valorideMessages?.length) return;
 
     const lastMessage = valorideMessages[valorideMessages.length - 1];
-    
+
     // Check for API failures or error states
     if (lastMessage?.type === 'ask' && lastMessage.ask === 'api_req_failed') {
       const alertId = `blocker-api-failed-${lastMessage.ts}`;
@@ -137,12 +137,13 @@ const SystemAlerts: React.FC = () => {
   if (activeAlerts.length === 0) return null;
 
   return (
-    <div style={{ 
-      position: 'fixed', 
-      top: '10px', 
-      right: '10px', 
+    <div style={{
+      backgroundColor: 'white',
+      /*position: 'fixed',
+      top: '10px',
+      right: '10px',*/
       zIndex: 9999,
-      maxWidth: '400px',
+      maxWidth: '350px',
       display: 'flex',
       flexDirection: 'column',
       gap: '8px'
@@ -151,11 +152,12 @@ const SystemAlerts: React.FC = () => {
         <Alert
           key={alert.id}
           variant={alert.severity === 'danger' ? 'danger' : 'warning'}
+          /* hate the style, try bare*/
           style={{
             margin: 0,
             boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
             border: `1px solid var(--vscode-${alert.severity === 'danger' ? 'errorForeground' : 'warningForeground'})`,
-            backgroundColor: `color-mix(in srgb, var(--vscode-${alert.severity === 'danger' ? 'errorBackground' : 'warningBackground'}) 90%, transparent)`,
+            backgroundColor: 'white',
             color: `var(--vscode-${alert.severity === 'danger' ? 'errorForeground' : 'warningForeground'})`,
             fontSize: '14px',
             borderRadius: '6px'
@@ -200,7 +202,7 @@ const SystemAlerts: React.FC = () => {
                 e.currentTarget.style.backgroundColor = 'transparent';
               }}
             >
-              <FaTimes size={12} />
+              <FaTimes size={18} />
             </button>
           </div>
         </Alert>

@@ -33,7 +33,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -58,7 +58,7 @@ const RoleValidation = () => {
   return [
     'cxo',
     'engineering',
-    'project mamagement',
+    'project management',
     'management',
     'support',
     'qa',
@@ -677,7 +677,7 @@ const RoleLookup = () => {
     <>
       <option value='cxo' label="Cxo" />
       <option value='engineering' label="Engineering" />
-      <option value='project mamagement' label="Project Mamagement" />
+      <option value='project management' label="Project Management" />
       <option value='management' label="Management" />
       <option value='support' label="Support" />
       <option value='qa' label="Qa" />

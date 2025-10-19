@@ -22,41 +22,47 @@ import { exists, mapValues } from '../src/runtime';
  */
 export type Note  = {
     /**
-     * 
-     * @type {string}
-     * @memberof Note
-     */
-    noteId: string;
-    /**
-     * ID of the entity (Customer, Opportunity, etc.) the note is attached to.
-     * @type {string}
-     * @memberof Note
-     */
-    associatedEntityId: string;
-    /**
-     * Type of the associated entity.
-     * @type {string}
-     * @memberof Note
-     */
-    entityType: NoteEntityTypeEnum;
-    /**
-     * The actual note content.
+     * the note content.
      * @type {string}
      * @memberof Note
      */
     content: string;
     /**
+     * 
+     * @type {string}
+     * @memberof Note
+     */
+    noteId?: string;
+    /**
+     * ID of the entity (Customer, Opportunity, etc.) the note is attached to.
+     * @type {string}
+     * @memberof Note
+     */
+    associatedEntityId?: string;
+    /**
+     * Type of the associated entity.
+     * @type {string}
+     * @memberof Note
+     */
+    entityType?: NoteEntityTypeEnum;
+    /**
+     * describe the note
+     * @type {string}
+     * @memberof Note
+     */
+    name?: string;
+    /**
      * Date of object creation
      * @type {Date}
      * @memberof Note
      */
-    createdDate: Date;
+    createdDate?: Date;
     /**
      * The user who created the note.
      * @type {string}
      * @memberof Note
      */
-    createdBy: string;
+    createdBy?: string;
     /**
      * Unique identifier for object in the system
      * @type {string}
@@ -103,12 +109,13 @@ export type Note  = {
 
 export function NoteFromJSON(json: any): Note {
     return {
-        'noteId': json['noteId'],
-        'associatedEntityId': json['associatedEntityId'],
-        'entityType': json['entityType'],
         'content': json['content'],
-        'createdDate': new Date(json['createdDate']),
-        'createdBy': json['createdBy'],
+        'noteId': !exists(json, 'noteId') ? undefined : json['noteId'],
+        'associatedEntityId': !exists(json, 'associatedEntityId') ? undefined : json['associatedEntityId'],
+        'entityType': !exists(json, 'entityType') ? undefined : json['entityType'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'createdBy': !exists(json, 'createdBy') ? undefined : json['createdBy'],
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
         'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
@@ -124,11 +131,12 @@ export function NoteToJSON(value?: Note): any {
         return undefined;
     }
     return {
+        'content': value.content,
         'noteId': value.noteId,
         'associatedEntityId': value.associatedEntityId,
         'entityType': value.entityType,
-        'content': value.content,
-        'createdDate': value.createdDate.toISOString(),
+        'name': value.name,
+        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
         'createdBy': value.createdBy,
         'id': value.id,
         'ownerId': value.ownerId,

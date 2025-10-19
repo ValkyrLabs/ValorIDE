@@ -10,6 +10,13 @@ export interface PathAccessOptions {
   additionalDenyPaths?: string[];  // absolute or relative to workspace
 }
 
+const DEFAULT_DENY_PATTERNS = [
+  "**/.git/**",
+  "**/node_modules/**",
+  "**/.valor/undo/**",
+  "**/.DS_Store",
+];
+
 /** Very small, dependency‑free path guard.
  *  - Confines edits to workspace by default
  *  - Blocks common deny patterns
@@ -23,26 +30,33 @@ export class PathAccess {
   constructor(opts: PathAccessOptions) {
     this.root = path.resolve(opts.workspaceRoot);
     this.allowOutside = !!opts.allowOutsideWorkspace;
-    this.denies = [
-      "**/.git/**",
-      "**/node_modules/**",
-      "**/.valor/undo/**",
-      "**/.DS_Store",
-      ...(opts.denyGlobs ?? [])
-    ];
 
-    // Optionally load .valorignore (simple contains/startsWith match per line)
-    const ignorePath = path.join(this.root, ".valorignore");
-    if (fs.existsSync(ignorePath)) {
-      const extra = fs
-        .readFileSync(ignorePath, "utf8")
-        .split(/\r?\n/)
-        .map((l) => l.trim())
-        .filter((l) => !!l && !l.startsWith("#"));
-      this.denies.push(...extra);
+    const hasLocalValorideRules = fs.existsSync(
+      path.join(this.root, ".valoriderules"),
+    );
+
+    const denyPatterns: string[] = [];
+
+    if (hasLocalValorideRules) {
+      denyPatterns.push(...DEFAULT_DENY_PATTERNS);
     }
 
-    if (opts.additionalDenyPaths?.length) this.denies.push(...opts.additionalDenyPaths);
+    if (opts.denyGlobs?.length) {
+      denyPatterns.push(...opts.denyGlobs);
+    }
+
+    if (opts.additionalDenyPaths?.length) {
+      denyPatterns.push(...opts.additionalDenyPaths);
+    }
+
+    denyPatterns.push(
+      ...loadIgnorePatterns(path.join(this.root, ".valorignore"), this.root),
+    );
+    denyPatterns.push(
+      ...loadIgnorePatterns(path.join(this.root, ".valorideignore"), this.root),
+    );
+
+    this.denies = Array.from(new Set(denyPatterns));
   }
 
   /** Return absolute, normalized path inside workspace. */
@@ -105,4 +119,102 @@ function matchGlob(relPath: string, pattern: string): boolean {
   const normalizedPath = relPath.replace(/\\/g, "/");
   const regex = new RegExp(`^${toRegexSource(normalizedPattern)}$`);
   return regex.test(normalizedPath);
+}
+
+function loadIgnorePatterns(
+  ignoreFilePath: string,
+  workspaceRoot: string,
+  visited: Set<string> = new Set<string>(),
+): string[] {
+  if (!ignoreFilePath) return [];
+
+  try {
+    if (!fs.existsSync(ignoreFilePath)) {
+      return [];
+    }
+
+    const stat = fs.statSync(ignoreFilePath);
+    if (!stat.isFile()) {
+      return [];
+    }
+  } catch {
+    return [];
+  }
+
+  if (visited.has(ignoreFilePath)) {
+    return [];
+  }
+  visited.add(ignoreFilePath);
+
+  let content: string;
+  try {
+    content = fs.readFileSync(ignoreFilePath, "utf8");
+  } catch {
+    return [];
+  }
+
+  const patterns: string[] = [];
+  const lines = content.split(/\r?\n/);
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) {
+      continue;
+    }
+
+    if (line.startsWith("!include ")) {
+      const includeTarget = line.substring("!include ".length).trim();
+      if (!includeTarget) {
+        continue;
+      }
+      const includePath = path.isAbsolute(includeTarget)
+        ? includeTarget
+        : path.resolve(workspaceRoot, includeTarget);
+      patterns.push(
+        ...loadIgnorePatterns(includePath, workspaceRoot, visited),
+      );
+      continue;
+    }
+
+    if (line.startsWith("!")) {
+      // Respect negation directives by not adding them to the deny list
+      continue;
+    }
+
+    const normalizedPatterns = normalizeIgnorePattern(line);
+    patterns.push(...normalizedPatterns);
+  }
+
+  return patterns;
+}
+
+function normalizeIgnorePattern(rawPattern: string): string[] {
+  let pattern = rawPattern.replace(/\\/g, "/");
+  const results: string[] = [];
+
+  const isDirPattern = pattern.endsWith("/");
+  if (isDirPattern) {
+    pattern = pattern.replace(/\/+$/, "");
+  }
+
+  const anchoredToRoot = pattern.startsWith("/");
+  if (anchoredToRoot) {
+    pattern = pattern.replace(/^\/+/, "");
+  }
+
+  if (!pattern) {
+    return results;
+  }
+
+  const hasSlash = pattern.includes("/");
+  const base =
+    anchoredToRoot || hasSlash ? pattern : `**/${pattern}`;
+
+  results.push(base);
+
+  if (isDirPattern) {
+    results.push(`${base}/**`);
+  }
+
+  return results;
 }

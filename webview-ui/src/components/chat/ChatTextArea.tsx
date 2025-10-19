@@ -307,37 +307,49 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
     const { width: viewportWidth, height: viewportHeight } = useWindowSize();
     const buttonRef = useRef<HTMLDivElement>(null);
     const [arrowPosition, setArrowPosition] = useState(0);
-  const [menuPosition, setMenuPosition] = useState(0);
+    const [menuPosition, setMenuPosition] = useState(0);
     const [shownTooltipMode, setShownTooltipMode] = useState<
       ChatSettings["mode"] | null
     >(null);
-  const [pendingInsertions, setPendingInsertions] = useState<string[]>([]);
+    const [pendingInsertions, setPendingInsertions] = useState<string[]>([]);
 
     // Small toast when images are added
     const [imagesToastVisible, setImagesToastVisible] = useState(false);
     const [imagesToastText, setImagesToastText] = useState("");
     const prevImagesCountRef = useRef<number>(selectedImages.length);
+    const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
     useEffect(() => {
       const prev = prevImagesCountRef.current;
       const curr = selectedImages.length;
+
+      // Clear any existing timeout
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current);
+        toastTimeoutRef.current = null;
+      }
+
       if (curr > prev) {
         const added = curr - prev;
         setImagesToastText(`${added} image${added === 1 ? "" : "s"} added`);
         setImagesToastVisible(true);
-        const t = setTimeout(() => setImagesToastVisible(false), 1600);
+        toastTimeoutRef.current = setTimeout(() => {
+          setImagesToastVisible(false);
+          toastTimeoutRef.current = null;
+        }, 2000);
         prevImagesCountRef.current = curr;
-        
+
         // Add two newlines to provide space for typing when images are added
         if (textAreaRef.current) {
           const currentValue = inputValue;
           const newValue = currentValue + "\n\n";
           setInputValue(newValue);
-          
+
           // Set cursor position at the end
           const newCursorPosition = newValue.length;
           setCursorPosition(newCursorPosition);
           setIntendedCursorPosition(newCursorPosition);
-          
+
           // Focus the textarea
           setTimeout(() => {
             if (textAreaRef.current) {
@@ -345,10 +357,19 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
             }
           }, 0);
         }
-        
-        return () => clearTimeout(t);
+
+      } else if (curr < prev) {
+        // Images were removed, hide toast immediately
+        setImagesToastVisible(false);
+        prevImagesCountRef.current = curr;
       }
-      prevImagesCountRef.current = curr;
+
+      return () => {
+        if (toastTimeoutRef.current) {
+          clearTimeout(toastTimeoutRef.current);
+          toastTimeoutRef.current = null;
+        }
+      };
     }, [selectedImages, inputValue, setInputValue]);
 
     const [fileSearchResults, setFileSearchResults] = useState<SearchResult[]>(
@@ -1608,7 +1629,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
                     setIsTextAreaFocused(false);
                     onSend(inputValue, selectedImages);
                     // Ensure images clear immediately after sending
-                    try { setSelectedImages([]); } catch {}
+                    try { setSelectedImages([]); } catch { }
                   }
                 }}
               >
@@ -1687,7 +1708,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
             </Tooltip>
             <ServersToggleModal />
             <ValorIDERulesToggleModal />
-            <Tooltip tipText="Stubborn Mode: auto follow-up after completion">
+            <Tooltip tipText="Auto Repeat Check">
               <VSCodeButton
                 appearance={chatSettings.stubbornMode ? "primary" : "secondary"}
                 aria-label="Toggle Stubborn Mode"

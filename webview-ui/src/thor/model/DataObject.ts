@@ -7,7 +7,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/dataObject.ts.mustache

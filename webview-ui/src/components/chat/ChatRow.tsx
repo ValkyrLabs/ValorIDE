@@ -106,6 +106,7 @@ interface ChatRowProps {
   isLast: boolean;
   onHeightChange: (isTaller: boolean) => void;
   inputValue?: string;
+  setInputValue?: (value: string) => void;
   sendMessageFromChatRow?: (text: string, images: string[]) => void;
 }
 
@@ -144,8 +145,14 @@ const Markdown = memo(({ markdown }: { markdown?: string }) => {
 
 const ChatRow = memo(
   (props: ChatRowProps) => {
-    const { isLast, onHeightChange, message, lastModifiedMessage, inputValue } =
-      props;
+    const {
+      isLast,
+      onHeightChange,
+      message,
+      lastModifiedMessage,
+      inputValue,
+      setInputValue,
+    } = props;
     // Store the previous height to compare with the current height
     // This allows us to detect changes without causing re-renders
     const prevHeightRef = useRef(0);
@@ -190,6 +197,7 @@ export const ChatRowContent = ({
   lastModifiedMessage,
   isLast,
   inputValue,
+  setInputValue,
   sendMessageFromChatRow,
 }: ChatRowContentProps) => {
   const { mcpServers, mcpMarketplaceCatalog } = useExtensionState();
@@ -1541,6 +1549,7 @@ export const ChatRowContent = ({
                   selected={selected}
                   isActive={isLast && message.ask === "followup"}
                   inputValue={inputValue}
+                  onSelectOption={setInputValue}
                 />
               </div>
             </>
@@ -1594,6 +1603,7 @@ export const ChatRowContent = ({
                   isLast && message.ask === "plan_mode_respond"
                 }
                 inputValue={inputValue}
+                onSelectOption={setInputValue}
               />
             </div>
           );

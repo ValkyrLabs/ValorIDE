@@ -33,7 +33,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -60,6 +60,11 @@ const StatusValidation = () => {
 const TypeValidation = () => {
   return [
     'physical',
+    'subscription',
+    'credits',
+    'bespoke',
+    'consulting',
+    'support',
     'cloud',
     'download',
     'service',
@@ -83,10 +88,12 @@ const validationSchema = Yup.object().shape({
         .required("status is required."),
         description: Yup.string(),
         salePrice: asNumber(Yup.number().typeError("salePrice must be a number")),
+        taxRate: asNumber(Yup.number().typeError("taxRate must be a number")),
         duration: asNumber(Yup.number().typeError("duration must be a number")),
       type: Yup.mixed()
         .oneOf(TypeValidation(), "Invalid value for type")
         ,
+        countryOfOrigin: Yup.string(),
         id: Yup.string(),
         ownerId: Yup.string(),
         createdDate: Yup.date()
@@ -148,8 +155,10 @@ const ProductForm: React.FC = () => {
         status: undefined,
           description: '',
           salePrice: 0,
+          taxRate: 0,
           duration: 0,
         type: undefined,
+          countryOfOrigin: '',
           id: '',
           ownerId: '',
           createdDate: new Date(),
@@ -411,6 +420,48 @@ const ProductForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="taxRate" className="nice-form-control">
+                      <b>
+                        Tax Rate:
+                        {touched.taxRate &&
+                         !errors.taxRate && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="taxRate"
+                            type="number"
+                            step="any"
+                            value={values.taxRate || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('taxRate', true);
+                              const v = e.target.value;
+                              setFieldValue('taxRate', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.taxRate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="taxRate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="duration" className="nice-form-control">
                       <b>
                         Duration:
@@ -484,6 +535,39 @@ const ProductForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="type"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="countryOfOrigin" className="nice-form-control">
+                      <b>
+                        Country Of Origin:
+                        {touched.countryOfOrigin &&
+                         !errors.countryOfOrigin && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="countryOfOrigin"
+                            value={values?.countryOfOrigin}
+                            placeholder="Country Of Origin"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="countryOfOrigin"
                         component="span"
                       />
                     </label>
@@ -868,6 +952,11 @@ const TypeLookup = () => {
   return (
     <>
       <option value='physical' label="Physical" />
+      <option value='subscription' label="Subscription" />
+      <option value='credits' label="Credits" />
+      <option value='bespoke' label="Bespoke" />
+      <option value='consulting' label="Consulting" />
+      <option value='support' label="Support" />
       <option value='cloud' label="Cloud" />
       <option value='download' label="Download" />
       <option value='service' label="Service" />

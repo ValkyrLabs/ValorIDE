@@ -6,16 +6,20 @@ import {
   FormikValues,
 } from "formik";
 import React from "react";
-import { Form as BSForm, Col, Nav, Row, Spinner } from "react-bootstrap";
+import { Form as BSForm, Col, Nav, Row } from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { FaCheckCircle } from "react-icons/fa";
 import { FiUserCheck } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+
 import { useAddPrincipalMutation } from "../../redux/services/PrincipalService";
-import { Login, Principal } from "../../thor/model";
-import CoolButton from "../CoolButton";
+
+import { Login, Principal } from "@thor/model";
+import CoolButton from "@valkyr/component-library/CoolButton";
 import "./index.css";
-import * as vscode from "vscode";
+import ErrorModal from "../ErrorModal";
+import { storeJwtToken, writeStoredPrincipal } from "@/utils/accessControl";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string()
@@ -47,6 +51,7 @@ const validationSchema = Yup.object().shape({
 
 const Form: React.FC = () => {
   const [addPrincipal, addPrincipalResult] = useAddPrincipalMutation();
+  const navigate = useNavigate();
 
   // If we got an error, and the mutation is in "rejected" status,
   // principalExists is basically a quick way to check an error was thrown
@@ -61,17 +66,12 @@ const Form: React.FC = () => {
   if (principalExists) {
     // This means the server rejected the request
     // so store the attempted username in a local variable
-    existingPrincipalName = addPrincipalResult.originalArgs?.username;
+    existingPrincipalName = addPrincipalResult.originalArgs.username;
   }
 
-  const initialValues: Principal = {
+  const initialValues: Login = {
     username: "",
     password: "",
-    email: "",
-    firstName: "",
-    lastName: "",
-    acceptedTos: false,
-    roleList: [],
   };
 
   const handleSubmit = async (
@@ -84,12 +84,28 @@ const Form: React.FC = () => {
       // Attempt to create the Principal
       const response = await addPrincipal(values).unwrap();
 
-      // If the response contains a token, store it
-      if (response && response.username) {
-        vscode.window.showInformationMessage(
-          "Welcome back," + response.username,
-        );
+      // If the response contains auth, persist it for downstream flows
+      const respAny: any = response as any;
+      if (respAny?.token) {
+        storeJwtToken(respAny.token, "signup-form");
       }
+
+      if (respAny?.authenticatedPrincipal) {
+        let principalPayload = respAny.authenticatedPrincipal;
+        if (typeof principalPayload === "string") {
+          try {
+            principalPayload = JSON.parse(principalPayload);
+          } catch {
+            principalPayload = undefined;
+          }
+        }
+        if (principalPayload) {
+          writeStoredPrincipal(principalPayload as any);
+        }
+      }
+
+      // Navigate to Sign In
+      navigate("/login");
     } catch (error) {
       // We can do additional error handling here if needed
       console.error("Error during signup:", error);
@@ -218,14 +234,15 @@ const Form: React.FC = () => {
                     {/* If we know this username was rejected by the server, show an explicit message */}
                     {existingPrincipalName === values.username &&
                       principalExists && (
-                        <div className="error">
-                          &quot;{addPrincipalResult.originalArgs?.username}
-                          &quot; is unavailable.
-                          <br />
-                          {/* Could print the entire error payload for debugging: 
-                        {JSON.stringify(addPrincipalResult.error)}
-                        */}
-                        </div>
+                        <ErrorModal
+                          variant="inline"
+                          severity="warning"
+                          title="Username Unavailable"
+                          errorMessage={`"${addPrincipalResult?.originalArgs?.username}" is unavailable. Try another.`}
+                          callback={() => {
+                            /* user can edit field to dismiss */
+                          }}
+                        />
                       )}
                     <label htmlFor="username" className="nice-form-control">
                       <b>
@@ -336,7 +353,9 @@ const Form: React.FC = () => {
                             setFieldValue("acceptedTos", e.target.checked);
                           }}
                           isInvalid={!!errors.acceptedTos}
-                          className={errors.acceptedTos ? "errorCheck" : ""}
+                          className={
+                            errors.acceptedTos ? "errorCheck" : "okCheck"
+                          }
                         />
                       </h1>
                       <ErrorMessage
@@ -363,18 +382,15 @@ const Form: React.FC = () => {
                       onClick={() => {}}
                     >
                       {isSubmitting && (
-                        <Spinner
-                          style={{ float: "left" }}
-                          as="span"
-                          animation="grow"
-                          variant="light"
-                          aria-hidden="true"
-                        />
+                        <LoadingSpinner size={18} style={{ marginRight: 8 }} />
                       )}
                       <FiUserCheck size={30} /> Register Account
                     </CoolButton>
                   </Col>
                 </Row>
+                {isSubmitting && (
+                  <LoadingSpinner label="Creating your account..." />
+                )}
               </form>
             );
           }}

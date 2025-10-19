@@ -45,6 +45,29 @@ export function parseAssistantMessage(assistantMessage: string) {
       const currentToolValue = accumulator.slice(currentToolUseStartIndex);
       const toolUseClosingTag = `</${currentToolUse.name}>`;
       if (currentToolValue.endsWith(toolUseClosingTag)) {
+        if (
+          currentToolUse.name === "ask_followup_question" &&
+          !currentToolUse.params.question
+        ) {
+          const toolInnerContent = currentToolValue
+            .slice(0, -toolUseClosingTag.length)
+            .trim();
+          if (toolInnerContent) {
+            const paramTagPattern = toolParamNames.join("|");
+            const questionText = toolInnerContent
+              .replace(
+                new RegExp(
+                  `<(${paramTagPattern})>[\\s\\S]*?<\\/\\1>`,
+                  "g",
+                ),
+                "",
+              )
+              .trim();
+            if (questionText) {
+              currentToolUse.params.question = questionText;
+            }
+          }
+        }
         // end of a tool use
         currentToolUse.partial = false;
         contentBlocks.push(currentToolUse);

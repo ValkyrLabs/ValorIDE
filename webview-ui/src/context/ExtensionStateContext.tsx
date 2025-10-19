@@ -30,6 +30,13 @@ import { DEFAULT_CHAT_SETTINGS } from "@shared/ChatSettings";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
 import { Principal } from "@/thor/model";
 import { Application } from "@/thor/model/Application";
+import {
+  clearStoredJwtToken,
+  clearStoredPrincipal,
+  hydrateStoredCredentials,
+  storeJwtToken,
+  writeStoredPrincipal,
+} from "@/utils/accessControl";
 
 interface ExtensionStateContextType extends ExtensionState {
   didHydrateState: boolean;
@@ -168,51 +175,25 @@ export const ExtensionStateContextProvider: React.FC<{
             const principal = normalizePrincipal(principalRaw);
             setAuthenticatedUser(principal);
             if (principal) {
-              sessionStorage.setItem(
-                "authenticatedUser",
-                JSON.stringify(principal),
-              );
+              writeStoredPrincipal(principal as any);
             } else {
-              sessionStorage.removeItem("authenticatedUser");
+              clearStoredPrincipal("extension-state");
             }
           } else {
             setAuthenticatedUser(undefined);
-            sessionStorage.removeItem("authenticatedUser");
+            clearStoredPrincipal("extension-state");
           }
 
           if (incoming.jwtToken) {
             setJwtToken(incoming.jwtToken);
-            sessionStorage.setItem("jwtToken", incoming.jwtToken);
-            // persist if enabled
-            try {
-              const persist = (() => {
-                try { const v = localStorage.getItem("valoride.persistJwt"); return v === null ? true : v === "true"; } catch { return true; }
-              })();
-              if (persist) {
-                localStorage.setItem("jwtToken", incoming.jwtToken);
-              }
-            } catch { /* ignore */ }
-            try {
-              window.dispatchEvent(
-                new CustomEvent("jwt-token-updated", {
-                  detail: { token: incoming.jwtToken, timestamp: Date.now(), source: "extension-state" },
-                }),
-              );
-            } catch {}
+            storeJwtToken(incoming.jwtToken, "extension-state");
           } else if (incoming.isLoggedIn === false) {
             setJwtToken(undefined);
-            sessionStorage.removeItem("jwtToken");
-            try { localStorage.removeItem("jwtToken"); } catch { /* ignore */ }
-            try {
-              window.dispatchEvent(
-                new CustomEvent("jwt-token-updated", {
-                  detail: { token: null, timestamp: Date.now(), source: "extension-state" },
-                }),
-              );
-            } catch {}
+            clearStoredJwtToken("extension-state");
+            clearStoredPrincipal("extension-state");
           }
         } catch {
-          // Ignore sessionStorage errors in webview sandbox
+          // Ignore storage errors in webview sandbox
         }
 
         // 2) Update the main extension state via a PURE updater (no side-effects here)
@@ -339,25 +320,23 @@ export const ExtensionStateContextProvider: React.FC<{
 
         // Store JWT token in sessionStorage for ThorAPI requests
         if (token) {
-          sessionStorage.setItem("jwtToken", token);
+          storeJwtToken(token, "extension-loginSuccess");
           setJwtToken(token);
-          try {
-            window.dispatchEvent(
-              new CustomEvent("jwt-token-updated", {
-                detail: { token, timestamp: Date.now(), source: "extension-loginSuccess" },
-              }),
-            );
-          } catch {}
         }
 
         // Store authenticated user in sessionStorage
         if (authenticatedPrincipalStr) {
-          const parsed = JSON.parse(authenticatedPrincipalStr);
+          let parsed: unknown;
+          try {
+            parsed = JSON.parse(authenticatedPrincipalStr);
+          } catch {
+            parsed = authenticatedPrincipalStr;
+          }
           const user = normalizePrincipal(parsed);
           if (user) {
-            sessionStorage.setItem("authenticatedUser", JSON.stringify(user));
+            writeStoredPrincipal(user as any);
           } else {
-            sessionStorage.removeItem("authenticatedUser");
+            clearStoredPrincipal("extension-loginSuccess");
           }
           setAuthenticatedUser(user);
 
@@ -370,6 +349,7 @@ export const ExtensionStateContextProvider: React.FC<{
             isLoggedIn: true,
           }));
         } else {
+          clearStoredPrincipal("extension-loginSuccess");
           setState((prevState) => ({
             ...prevState,
             // Store the JWT token
@@ -396,18 +376,13 @@ export const ExtensionStateContextProvider: React.FC<{
 
   // On initial mount, if JWT exists in localStorage but not sessionStorage, mirror & notify so bridges can connect
   useEffect(() => {
-    try {
-      const inSession = sessionStorage.getItem("jwtToken");
-      if (!inSession) {
-        const persisted = localStorage.getItem("jwtToken") || localStorage.getItem("authToken");
-        if (persisted) {
-          sessionStorage.setItem("jwtToken", persisted);
-          try {
-            window.dispatchEvent(new CustomEvent("jwt-token-updated", { detail: { token: persisted, timestamp: Date.now(), source: "extension-init" } }));
-          } catch {}
-        }
-      }
-    } catch { /* ignore */ }
+    const { token, principal } = hydrateStoredCredentials("extension-init");
+    if (token) {
+      setJwtToken((prev) => prev ?? token);
+    }
+    if (principal) {
+      setAuthenticatedUser((prev) => prev ?? normalizePrincipal(principal));
+    }
   }, []);
 
   useEffect(() => {

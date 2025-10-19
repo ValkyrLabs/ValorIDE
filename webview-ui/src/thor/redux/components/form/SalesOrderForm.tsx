@@ -32,7 +32,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -77,6 +77,7 @@ const validationSchema = Yup.object().shape({
         .required("status is required."),
         customerId: Yup.string(),
         taxAmount: asNumber(Yup.number().typeError("taxAmount must be a number")),
+        tariffAmount: asNumber(Yup.number().typeError("tariffAmount must be a number")),
         subtotalAmount: asNumber(Yup.number().typeError("subtotalAmount must be a number")),
         expirationDate: Yup.date()
           .transform((value, originalValue) => {
@@ -147,6 +148,7 @@ const SalesOrderForm: React.FC = () => {
         status: undefined,
           customerId: '',
           taxAmount: 0,
+          tariffAmount: 0,
           subtotalAmount: 0,
           expirationDate: new Date(),
           id: '',
@@ -416,6 +418,48 @@ const SalesOrderForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="taxAmount"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="tariffAmount" className="nice-form-control">
+                      <b>
+                        Tariff Amount:
+                        {touched.tariffAmount &&
+                         !errors.tariffAmount && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+
+
+                          {/* DOUBLE FIELD */}
+                          <Field
+                            name="tariffAmount"
+                            type="number"
+                            step="any"
+                            value={values.tariffAmount || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('tariffAmount', true);
+                              const v = e.target.value;
+                              setFieldValue('tariffAmount', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.tariffAmount
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="tariffAmount"
                         component="span"
                       />
                     </label>

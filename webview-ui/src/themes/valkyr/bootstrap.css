@@ -6,7 +6,7 @@
 
 /* ====== ROOT VARIABLES ====== */
 :root {
-  /* Bootstrap Color System - Light Mode */
+  /* Bootstrap Color System - Valkyr Base */
   --bs-primary: #ff9900;
   --bs-primary-rgb: 255, 153, 0;
   --bs-secondary: #1ee5ff;
@@ -24,42 +24,42 @@
   --bs-dark: #212529;
   --bs-dark-rgb: 33, 37, 41;
 
-  /* Bootstrap Semantic Colors - Light Mode */
-  --bs-body-bg: #ffffff;
-  --bs-body-color: #212529;
-  --bs-body-color-rgb: 33, 37, 41;
-  --bs-emphasis-color: #000000;
-  --bs-emphasis-color-rgb: 0, 0, 0;
-  --bs-secondary-color: rgba(33, 37, 41, 0.75);
-  --bs-secondary-color-rgb: 33, 37, 41;
-  --bs-secondary-bg: #e9ecef;
-  --bs-secondary-bg-rgb: 233, 236, 239;
-  --bs-tertiary-color: rgba(33, 37, 41, 0.5);
-  --bs-tertiary-color-rgb: 33, 37, 41;
-  --bs-tertiary-bg: #f8f9fa;
-  --bs-tertiary-bg-rgb: 248, 249, 250;
-  --bs-border-color: #dee2e6;
-  --bs-border-color-rgb: 222, 226, 230;
+  /* Bootstrap Semantic Colors - Dark Mode */
+  --bs-body-bg: #080a0e;
+  --bs-body-color: rgba(255, 255, 255, 0.9);
+  --bs-body-color-rgb: 255, 255, 255;
+  --bs-emphasis-color: #ffffff;
+  --bs-emphasis-color-rgb: 255, 255, 255;
+  --bs-secondary-color: rgba(255, 255, 255, 0.75);
+  --bs-secondary-color-rgb: 255, 255, 255;
+  --bs-secondary-bg: rgba(255, 255, 255, 0.04);
+  --bs-secondary-bg-rgb: 255, 255, 255;
+  --bs-tertiary-color: rgba(255, 255, 255, 0.5);
+  --bs-tertiary-color-rgb: 255, 255, 255;
+  --bs-tertiary-bg: rgba(255, 255, 255, 0.02);
+  --bs-tertiary-bg-rgb: 255, 255, 255;
+  --bs-border-color: rgba(255, 255, 255, 0.12);
+  --bs-border-color-rgb: 255, 255, 255;
 
-  /* Bootstrap Component Backgrounds - Light Mode */
-  --bs-primary-bg-subtle: rgba(255, 153, 0, 0.1);
-  --bs-secondary-bg-subtle: rgba(30, 229, 255, 0.1);
-  --bs-success-bg-subtle: rgba(0, 224, 191, 0.1);
-  --bs-info-bg-subtle: rgba(57, 203, 251, 0.1);
-  --bs-warning-bg-subtle: rgba(255, 193, 7, 0.1);
-  --bs-danger-bg-subtle: rgba(220, 53, 69, 0.1);
-  --bs-light-bg-subtle: #fcfcfd;
-  --bs-dark-bg-subtle: rgba(33, 37, 41, 0.1);
+  /* Bootstrap Component Backgrounds - Dark Mode */
+  --bs-primary-bg-subtle: rgba(255, 153, 0, 0.15);
+  --bs-secondary-bg-subtle: rgba(30, 229, 255, 0.15);
+  --bs-success-bg-subtle: rgba(0, 224, 191, 0.15);
+  --bs-info-bg-subtle: rgba(57, 203, 251, 0.15);
+  --bs-warning-bg-subtle: rgba(255, 193, 7, 0.15);
+  --bs-danger-bg-subtle: rgba(255, 46, 99, 0.15);
+  --bs-light-bg-subtle: rgba(248, 249, 250, 0.05);
+  --bs-dark-bg-subtle: rgba(33, 37, 41, 0.5);
 
-  /* Bootstrap Text Emphasis - Light Mode */
-  --bs-primary-text-emphasis: rgba(255, 153, 0, 0.9);
-  --bs-secondary-text-emphasis: rgba(30, 229, 255, 0.9);
-  --bs-success-text-emphasis: rgba(0, 224, 191, 0.9);
-  --bs-info-text-emphasis: rgba(57, 203, 251, 0.9);
-  --bs-warning-text-emphasis: rgba(255, 193, 7, 0.9);
-  --bs-danger-text-emphasis: rgba(220, 53, 69, 0.9);
-  --bs-light-text-emphasis: rgba(248, 249, 250, 0.9);
-  --bs-dark-text-emphasis: rgba(33, 37, 41, 0.9);
+  /* Bootstrap Text Emphasis - Dark Mode */
+  --bs-primary-text-emphasis: rgba(255, 153, 0, 1);
+  --bs-secondary-text-emphasis: rgba(30, 229, 255, 1);
+  --bs-success-text-emphasis: rgba(0, 224, 191, 1);
+  --bs-info-text-emphasis: rgba(57, 203, 251, 1);
+  --bs-warning-text-emphasis: rgba(255, 193, 7, 1);
+  --bs-danger-text-emphasis: rgba(255, 46, 99, 1);
+  --bs-light-text-emphasis: rgba(248, 249, 250, 1);
+  --bs-dark-text-emphasis: rgba(33, 37, 41, 1);
 
   /* Valkyr Brand Colors - Using CSS Variables */
   --accent-color: var(--bs-primary);
@@ -83,33 +83,30 @@
     var(--bs-danger)
   );
 
-  /* Glass Effects - Light/Dark Aware */
-  --glass-bg: rgba(255, 255, 255, 0.15);
-  --glass-border: rgba(255, 153, 0, 0.3);
+  /* Glass Effects - Dark Forward */
+  --glass-bg: rgba(8, 10, 14, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.12);
   --backdrop-blur: blur(10px);
+  --dark-secondary-bg: rgba(8, 10, 14, 0.95);
 
   /* Valkyr Theme Specific */
   --valkyr-glow: 0 0 20px rgba(255, 153, 0, 0.4);
-  --valkyr-shadow: 0 4px 20px rgba(255, 153, 0, 0.15);
+  --valkyr-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   --valkyr-border-radius: 10px;
 
   /* Grid and Table Variables */
   --bs-table-bg: transparent;
   --bs-table-color: var(--bs-body-color);
-  --bs-table-border-color: var(--bs-border-color);
-  --bs-table-accent-bg: rgba(var(--bs-primary-rgb), 0.05);
-  --bs-table-striped-bg: rgba(var(--bs-secondary-rgb), 0.05);
-  --bs-table-hover-bg: rgba(var(--bs-primary-rgb), 0.075);
+  --bs-table-border-color: rgba(255, 255, 255, 0.08);
+  --bs-table-accent-bg: rgba(var(--bs-primary-rgb), 0.08);
+  --bs-table-striped-bg: rgba(var(--bs-secondary-rgb), 0.08);
+  --bs-table-hover-bg: rgba(var(--bs-primary-rgb), 0.12);
   --bs-table-hover-color: var(--bs-body-color);
 }
 
 /* ====== GLOBAL STYLES ====== */
 body {
-  background: linear-gradient(
-    135deg,
-    var(--bs-tertiary-bg) 0%,
-    var(--bs-secondary-bg) 100%
-  );
+  background: var(--bs-body-bg);
   font-family: "Orbitron", "Segoe UI", sans-serif;
   color: var(--bs-body-color);
   --border-radius: var(--valkyr-border-radius);
@@ -285,17 +282,15 @@ h6 {
 
 .card-body {
   padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(8, 10, 14, 0.4);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .card-footer {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 153, 0, 0.05),
-    rgba(30, 229, 255, 0.05)
-  );
-  border-top: 2px solid var(--glass-border);
+  background: rgba(8, 10, 14, 0.6);
+  border-top: 2px solid rgba(255, 255, 255, 0.12);
   padding: 1rem 1.5rem;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* Card List Styling */
@@ -323,8 +318,8 @@ h6 {
 .navbar {
   background: var(--dark-secondary-bg) !important;
   backdrop-filter: var(--backdrop-blur);
-  border-bottom: 3px solid var(--bs-primary);
-  box-shadow: 0 4px 20px rgba(255, 153, 0, 0.2);
+  border-bottom: 3px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .navbar-brand {
@@ -365,11 +360,11 @@ h6 {
 
 /* ====== MODALS ====== */
 .modal-content {
-  background: rgba(248, 249, 250, 0.95);
+  background: rgba(8, 10, 14, 0.95);
   backdrop-filter: var(--backdrop-blur);
-  border: 2px solid var(--glass-border);
+  border: 2px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--valkyr-border-radius);
-  box-shadow: 0 20px 60px rgba(255, 153, 0, 0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
 
 .modal-header {
@@ -390,17 +385,15 @@ h6 {
 }
 
 .modal-body {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(8, 10, 14, 0.6);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .modal-footer {
-  background: linear-gradient(
-    135deg,
-    rgba(255, 153, 0, 0.05),
-    rgba(30, 229, 255, 0.05)
-  );
-  border-top: 2px solid var(--glass-border);
+  background: rgba(8, 10, 14, 0.6);
+  border-top: 2px solid rgba(255, 255, 255, 0.12);
   border-radius: 0 0 var(--valkyr-border-radius) var(--valkyr-border-radius) !important;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* ====== BADGES ====== */
@@ -412,7 +405,7 @@ h6 {
   border: 2px solid currentColor;
   padding: 0.5rem 0.75rem;
   font-size: 0.75rem;
-  color: #222222;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .badge-primary {
@@ -494,15 +487,16 @@ h6 {
 }
 
 .table tbody tr {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(8, 10, 14, 0.4);
   transition: all 0.3s ease;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .table tbody tr:hover {
   background: linear-gradient(
     90deg,
-    rgba(255, 153, 0, 0.1),
-    rgba(30, 229, 255, 0.1)
+    rgba(255, 153, 0, 0.15),
+    rgba(30, 229, 255, 0.15)
   );
   transform: translateX(4px);
 }
@@ -524,18 +518,19 @@ h6 {
 
 /* ====== FORMS ====== */
 .form-control {
-  background: rgba(255, 255, 255, 0.9);
-  border: 2px solid rgba(255, 153, 0, 0.3);
+  background: rgba(8, 10, 14, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--valkyr-border-radius);
   padding: 0.75rem 1rem;
   font-weight: 500;
   transition: all 0.3s ease;
   margin: 0.5em;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .form-control:focus {
-  background: rgba(255, 255, 255, 1);
-  border-color: var(--bs-primary);
+  background: rgba(8, 10, 14, 0.8);
+  border-color: rgba(255, 153, 0, 0.5);
   box-shadow: 0 0 0 0.25rem rgba(255, 153, 0, 0.25);
 }
 
@@ -545,7 +540,7 @@ h6 {
   letter-spacing: 0.5px;
   color: var(--text-color);
   width: 100%;
-  background-color: var(--bs-error-bg-subtle) !important;
+  background-color: var(--bs-danger-bg-subtle) !important;
 }
 
 .nice-form-control {
@@ -576,12 +571,11 @@ h6 {
   padding: 0.5em;
   font-size: 1em;
   font-weight: bold;
-  color: #222222;
   min-width: 100%;
   border-radius: 5px;
   border-width: 0;
-  color: var(--bs-error-text-emphasis) !important;
-  background-color: var(--bs-error-bg-subtle) !important;
+  color: var(--bs-danger-text-emphasis) !important;
+  background-color: var(--bs-danger-bg-subtle) !important;
 }
 
 /* ====== PAGINATION ====== */
@@ -609,16 +603,16 @@ h6 {
 
 /* ====== DROPDOWN ====== */
 .dropdown-menu {
-  background: rgba(248, 249, 250, 0.95);
+  background: rgba(8, 10, 14, 0.95);
   backdrop-filter: var(--backdrop-blur);
-  border: 2px solid var(--glass-border);
+  border: 2px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--valkyr-border-radius);
-  box-shadow: 0 10px 40px rgba(255, 153, 0, 0.2);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
 .dropdown-item {
   font-weight: 500;
-  color: var(--text-color);
+  color: rgba(255, 255, 255, 0.85);
   transition: all 0.3s ease;
 }
 
@@ -643,7 +637,7 @@ h6 {
 
 /* ====== PROGRESS BARS ====== */
 .progress {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: var(--valkyr-border-radius);
   border: 2px solid var(--glass-border);
   overflow: hidden;
@@ -951,135 +945,4 @@ h6 {
 
 .blockquote-footer::before {
   content: "— ";
-}
-
-/* ====== DARK MODE OVERRIDES ====== */
-/* Respect global data-bs-theme set by the app (ThemeToggle/UserPreferences) */
-[data-bs-theme="dark"] {
-  /* Bootstrap Core Dark Mode Variables */
-  --bs-body-bg: #080a0e;
-  --bs-body-color: rgba(255, 255, 255, 0.9);
-  --bs-body-color-rgb: 255, 255, 255;
-  --bs-emphasis-color: #ffffff;
-  --bs-emphasis-color-rgb: 255, 255, 255;
-  --bs-secondary-color: rgba(255, 255, 255, 0.75);
-  --bs-secondary-color-rgb: 255, 255, 255;
-  --bs-tertiary-color: rgba(255, 255, 255, 0.5);
-  --bs-tertiary-color-rgb: 255, 255, 255;
-  --bs-border-color: rgba(255, 255, 255, 0.12);
-  --bs-border-color-rgb: 255, 255, 255;
-
-  /* Bootstrap Dark Mode Component Backgrounds */
-  --bs-secondary-bg: rgba(255, 255, 255, 0.04);
-  --bs-secondary-bg-rgb: 255, 255, 255;
-  --bs-tertiary-bg: rgba(255, 255, 255, 0.02);
-  --bs-tertiary-bg-rgb: 255, 255, 255;
-
-  /* Bootstrap Dark Mode Subtle Backgrounds */
-  --bs-primary-bg-subtle: rgba(255, 153, 0, 0.15);
-  --bs-secondary-bg-subtle: rgba(30, 229, 255, 0.15);
-  --bs-success-bg-subtle: rgba(0, 224, 191, 0.15);
-  --bs-info-bg-subtle: rgba(57, 203, 251, 0.15);
-  --bs-warning-bg-subtle: rgba(255, 193, 7, 0.15);
-  --bs-danger-bg-subtle: rgba(255, 46, 99, 0.15);
-  --bs-light-bg-subtle: rgba(248, 249, 250, 0.05);
-  --bs-dark-bg-subtle: rgba(33, 37, 41, 0.5);
-
-  /* Bootstrap Dark Mode Text Emphasis */
-  --bs-primary-text-emphasis: rgba(255, 153, 0, 1);
-  --bs-secondary-text-emphasis: rgba(30, 229, 255, 1);
-  --bs-success-text-emphasis: rgba(0, 224, 191, 1);
-  --bs-info-text-emphasis: rgba(57, 203, 251, 1);
-  --bs-warning-text-emphasis: rgba(255, 193, 7, 1);
-  --bs-danger-text-emphasis: rgba(255, 46, 99, 1);
-  --bs-light-text-emphasis: rgba(248, 249, 250, 1);
-  --bs-dark-text-emphasis: rgba(33, 37, 41, 1);
-
-  /* Table Dark Mode Variables */
-  --bs-table-bg: transparent;
-  --bs-table-color: var(--bs-body-color);
-  --bs-table-border-color: rgba(255, 255, 255, 0.08);
-  --bs-table-accent-bg: rgba(var(--bs-primary-rgb), 0.08);
-  --bs-table-striped-bg: rgba(var(--bs-secondary-rgb), 0.08);
-  --bs-table-hover-bg: rgba(var(--bs-primary-rgb), 0.12);
-  --bs-table-hover-color: var(--bs-body-color);
-
-  /* Theme Variables - Dark Mode */
-  --glass-bg: rgba(8, 10, 14, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --accent-color: var(--bs-primary);
-  --text-color: var(--bs-body-color);
-}
-
-[data-bs-theme="dark"] body {
-  background: #080a0e;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-[data-bs-theme="dark"] .navbar {
-  background: rgba(8, 10, 14, 0.95) !important;
-  border-bottom-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-}
-
-[data-bs-theme="dark"] .card {
-  background: rgba(8, 10, 14, 0.6);
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-}
-
-[data-bs-theme="dark"] .card-body {
-  background: rgba(8, 10, 14, 0.4);
-  color: rgba(255, 255, 255, 0.85);
-}
-
-[data-bs-theme="dark"] .card-footer {
-  background: rgba(8, 10, 14, 0.6);
-  color: rgba(255, 255, 255, 0.6);
-  border-top-color: rgba(255, 255, 255, 0.12);
-}
-
-[data-bs-theme="dark"] .dropdown-menu {
-  background: rgba(8, 10, 14, 0.95);
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-}
-
-[data-bs-theme="dark"] .modal-content {
-  background: rgba(8, 10, 14, 0.95);
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-}
-
-[data-bs-theme="dark"] .modal-body {
-  background: rgba(8, 10, 14, 0.6);
-  color: rgba(255, 255, 255, 0.85);
-}
-
-[data-bs-theme="dark"] .form-control {
-  background: rgba(8, 10, 14, 0.6);
-  border-color: rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-[data-bs-theme="dark"] .form-control:focus {
-  background: rgba(8, 10, 14, 0.8);
-  border-color: rgba(255, 153, 0, 0.5);
-  box-shadow: 0 0 0 0.25rem rgba(255, 153, 0, 0.25);
-}
-
-[data-bs-theme="dark"] .table {
-  background: rgba(8, 10, 14, 0.6);
-  border-color: rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.85);
-}
-
-[data-bs-theme="dark"] .progress {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
-[data-bs-theme="dark"] .accordion-item {
-  background: rgba(8, 10, 14, 0.6);
-  border-color: rgba(255, 255, 255, 0.12);
 }

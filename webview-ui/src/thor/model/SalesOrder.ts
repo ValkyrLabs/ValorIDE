@@ -18,6 +18,9 @@ import {
     Customer,
     CustomerFromJSON,
     CustomerToJSON,
+    Discount,
+    DiscountFromJSON,
+    DiscountToJSON,
     LineItem,
     LineItemFromJSON,
     LineItemToJSON,
@@ -45,7 +48,7 @@ export type SalesOrder  = {
      */
     totalAmount: number;
     /**
-     * the date this order was placed
+     * the date this order was place
      * @type {Date}
      * @memberof SalesOrder
      */
@@ -70,16 +73,22 @@ export type SalesOrder  = {
     orderItems?: Array<LineItem>;
     /**
      * 
-     * @type {Array<LineItem>}
+     * @type {Array<Discount>}
      * @memberof SalesOrder
      */
-    orderDiscounts?: Array<LineItem>;
+    orderDiscounts?: Array<Discount>;
     /**
      * 
      * @type {number}
      * @memberof SalesOrder
      */
     taxAmount?: number;
+    /**
+     * the customs fee for the product if any
+     * @type {number}
+     * @memberof SalesOrder
+     */
+    tariffAmount?: number;
     /**
      * 
      * @type {number}
@@ -150,8 +159,9 @@ export function SalesOrderFromJSON(json: any): SalesOrder {
         'status': json['status'],
         'customerId': !exists(json, 'customerId') ? undefined : json['customerId'],
         'orderItems': !exists(json, 'orderItems') ? undefined : (json['orderItems'] as Array<any>).map(LineItemFromJSON),
-        'orderDiscounts': !exists(json, 'orderDiscounts') ? undefined : (json['orderDiscounts'] as Array<any>).map(LineItemFromJSON),
+        'orderDiscounts': !exists(json, 'orderDiscounts') ? undefined : (json['orderDiscounts'] as Array<any>).map(DiscountFromJSON),
         'taxAmount': !exists(json, 'taxAmount') ? undefined : json['taxAmount'],
+        'tariffAmount': !exists(json, 'tariffAmount') ? undefined : json['tariffAmount'],
         'subtotalAmount': !exists(json, 'subtotalAmount') ? undefined : json['subtotalAmount'],
         'expirationDate': !exists(json, 'expirationDate') ? undefined : new Date(json['expirationDate']),
         'id': !exists(json, 'id') ? undefined : json['id'],
@@ -176,8 +186,9 @@ export function SalesOrderToJSON(value?: SalesOrder): any {
         'status': value.status,
         'customerId': value.customerId,
         'orderItems': value.orderItems === undefined ? undefined : (value.orderItems as Array<any>).map(LineItemToJSON),
-        'orderDiscounts': value.orderDiscounts === undefined ? undefined : (value.orderDiscounts as Array<any>).map(LineItemToJSON),
+        'orderDiscounts': value.orderDiscounts === undefined ? undefined : (value.orderDiscounts as Array<any>).map(DiscountToJSON),
         'taxAmount': value.taxAmount,
+        'tariffAmount': value.tariffAmount,
         'subtotalAmount': value.subtotalAmount,
         'expirationDate': value.expirationDate === undefined ? undefined : value.expirationDate.toISOString(),
         'id': value.id,

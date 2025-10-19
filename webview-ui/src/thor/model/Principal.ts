@@ -66,6 +66,12 @@ export type Principal  = {
      */
     roleList: Array<Role>;
     /**
+     * the granted authorities (or null if the granted authority cannot be expressed as a String with sufficient precision).
+     * @type {Array<Authority>}
+     * @memberof Principal
+     */
+    authorityList: Array<Authority>;
+    /**
      * first name of user (encrypted)
      * @type {string}
      * @memberof Principal
@@ -199,12 +205,6 @@ export type Principal  = {
     accountNonExpired?: boolean;
     /**
      * the granted authorities (or null if the granted authority cannot be expressed as a String with sufficient precision).
-     * @type {Array<Authority>}
-     * @memberof Principal
-     */
-    authorityList?: Array<Authority>;
-    /**
-     * the granted authorities (or null if the granted authority cannot be expressed as a String with sufficient precision).
      * @type {Array<UserPreference>}
      * @memberof Principal
      */
@@ -265,6 +265,7 @@ export function PrincipalFromJSON(json: any): Principal {
         'password': json['password'],
         'email': json['email'],
         'roleList': (json['roleList'] as Array<any>).map(RoleFromJSON),
+        'authorityList': (json['authorityList'] as Array<any>).map(AuthorityFromJSON),
         'firstName': !exists(json, 'firstName') ? undefined : json['firstName'],
         'middleName': !exists(json, 'middleName') ? undefined : json['middleName'],
         'lastName': !exists(json, 'lastName') ? undefined : json['lastName'],
@@ -287,7 +288,6 @@ export function PrincipalFromJSON(json: any): Principal {
         'accountEnabled': !exists(json, 'accountEnabled') ? undefined : json['accountEnabled'],
         'accountNonLocked': !exists(json, 'accountNonLocked') ? undefined : json['accountNonLocked'],
         'accountNonExpired': !exists(json, 'accountNonExpired') ? undefined : json['accountNonExpired'],
-        'authorityList': !exists(json, 'authorityList') ? undefined : (json['authorityList'] as Array<any>).map(AuthorityFromJSON),
         'userPreferences': !exists(json, 'userPreferences') ? undefined : (json['userPreferences'] as Array<any>).map(UserPreferenceFromJSON),
         'id': !exists(json, 'id') ? undefined : json['id'],
         'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
@@ -309,6 +309,7 @@ export function PrincipalToJSON(value?: Principal): any {
         'password': value.password,
         'email': value.email,
         'roleList': (value.roleList as Array<any>).map(RoleToJSON),
+        'authorityList': (value.authorityList as Array<any>).map(AuthorityToJSON),
         'firstName': value.firstName,
         'middleName': value.middleName,
         'lastName': value.lastName,
@@ -330,7 +331,6 @@ export function PrincipalToJSON(value?: Principal): any {
         'accountEnabled': value.accountEnabled,
         'accountNonLocked': value.accountNonLocked,
         'accountNonExpired': value.accountNonExpired,
-        'authorityList': value.authorityList === undefined ? undefined : (value.authorityList as Array<any>).map(AuthorityToJSON),
         'userPreferences': value.userPreferences === undefined ? undefined : (value.userPreferences as Array<any>).map(UserPreferenceToJSON),
         'id': value.id,
         'ownerId': value.ownerId,

@@ -198,6 +198,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					messages={messages}
 					apiConfiguration={apiConfiguration}
 					inputValue={inputValue}
+					setInputValue={setInputValue}
 					isChatLoading={isChatLoading}
 					lastApiReqTotalTokens={lastApiReqTotalTokens}
 					valorideAsk={valorideAsk}

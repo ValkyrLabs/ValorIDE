@@ -94,15 +94,22 @@ export class CommandToolHandler extends BaseToolHandler {
             command + (this.context.shouldAutoApproveTool(block.name) && requiresApprovalPerLLM ? COMMAND_REQ_APP_STRING : ""),
             false
           );
-          if (response !== "yesButtonClicked") {
-            if (text || images?.length) {
+          const normalizedText = text?.trim().toLowerCase();
+          const approved =
+            response === "yesButtonClicked" ||
+            (response === "messageResponse" &&
+              (normalizedText === "yes" || normalizedText === "approve"));
+          const hasFeedback = !!text || !!images?.length;
+
+          if (!approved) {
+            if (hasFeedback) {
               await this.context.say("user_feedback", text, images);
             }
             return { shouldContinue: true, userRejected: true };
-          } else {
-            if (text || images?.length) {
-              await this.context.say("user_feedback", text, images);
-            }
+          }
+
+          if (hasFeedback) {
+            await this.context.say("user_feedback", text, images);
           }
         }
 

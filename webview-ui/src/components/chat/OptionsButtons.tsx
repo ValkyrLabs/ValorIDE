@@ -32,15 +32,17 @@ export const OptionsButtons = ({
   selected,
   isActive,
   inputValue,
+  onSelectOption,
 }: {
   options?: string[];
   selected?: string;
   isActive?: boolean;
   inputValue?: string;
+  onSelectOption?: (text: string) => void;
 }) => {
   if (!options?.length) return null;
 
-  const hasSelected = selected !== undefined && options.includes(selected);
+  const canSelect = Boolean(isActive) || Boolean(onSelectOption);
 
   return (
     <div
@@ -59,14 +61,20 @@ export const OptionsButtons = ({
         <OptionButton
           key={index}
           isSelected={option === selected}
-          isNotSelectable={!isActive}
+          isNotSelectable={!canSelect}
           onClick={() => {
-            if (!isActive) {
+            if (!canSelect) {
+              return;
+            }
+            const composedText =
+              option + (inputValue ? `: ${inputValue?.trim()}` : "");
+            if (onSelectOption) {
+              onSelectOption(composedText);
               return;
             }
             vscode.postMessage({
               type: "optionsResponse",
-              text: option + (inputValue ? `: ${inputValue?.trim()}` : ""),
+              text: composedText,
             });
           }}
         >

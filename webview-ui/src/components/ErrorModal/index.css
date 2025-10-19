@@ -1,0 +1,8 @@
+.errorDialog {
+  max-width: 20vw;
+  max-height: 80vh;
+}
+
+.errorDialogMessage {
+  overflow-x: scroll;
+}

@@ -33,6 +33,8 @@ import SystemAlerts from "@/components/SystemAlerts";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useCommunicationService } from "@/context/CommunicationServiceContext";
 import UserPreferences from "./UserPreferences";
+import BuyCredits from "../BuyCredits";
+import { storeJwtToken, writeStoredPrincipal } from "@/utils/accessControl";
 
 type AccountViewProps = {
   onDone: () => void;
@@ -118,64 +120,67 @@ const AccountView = ({ onDone }: AccountViewProps) => {
     try {
       const result = await loginUser(values).unwrap();
       if (result.token) {
-        sessionStorage.setItem("jwtToken", result.token);
-        // Persist to localStorage if enabled (default true)
-        try {
-          const persist = (() => {
-            try { const v = localStorage.getItem("valoride.persistJwt"); return v === null ? true : v === "true"; } catch { return true; }
-          })();
-          if (persist) {
-            localStorage.setItem("jwtToken", result.token);
-          }
-        } catch { /* ignore */ }
-        try {
-          window.dispatchEvent(
-            new CustomEvent("jwt-token-updated", {
-              detail: { token: result.token, timestamp: Date.now(), source: "account-login" },
-            }),
-          );
-        } catch { }
-        sessionStorage.setItem(
-          "authenticatedUser",
-          JSON.stringify(result.user),
-        );
-        // Announce presence + login ACK over websocket
-        try {
-          const instanceId = (() => {
-            try { return localStorage.getItem("valoride.instanceId") || (() => { const id = `valoride-${Math.random().toString(36).substring(2, 12)}`; localStorage.setItem("valoride.instanceId", id); return id; })(); } catch { return `valoride-${Math.random().toString(36).substring(2, 12)}`; }
-          })();
-          const send = (type: string, payload: any) => {
-            const appMessage = {
-              type,
-              payload,
-              senderId: instanceId,
-              messageId: Math.random().toString(36).slice(2, 12),
-              timestamp: Date.now(),
-            };
-            window.dispatchEvent(new CustomEvent("websocket-send", { detail: appMessage }));
-          };
-          send("presence:join", { id: instanceId });
-          send("auth:ack", { id: instanceId });
-          // Optional roll call broadcast
-          send("presence:rollcall", { id: instanceId });
-        } catch { /* ignore */ }
-        setDidLogin(true);
-        setActiveTab("account");
+        storeJwtToken(result.token, "account-login");
+      }
+      if (result.user) {
+        writeStoredPrincipal(result.user as any);
+      }
 
-        // Bill a $0.01 "connect" debit once login is established
-        try {
-          const debit = {
-            spentAt: new Date(),
-            credits: 0.01,
-            modelProvider: "valoride",
-            model: "login-connect",
-            promptTokens: 0,
-            completionTokens: 0,
-          } as any;
-          await addUsageTransaction(debit).unwrap();
-        } catch (e) {
-          console.warn("Usage debit failed post-login:", e);
-        }
+      try {
+        const instanceId = (() => {
+          try {
+            return (
+              localStorage.getItem("valoride.instanceId") ||
+              (() => {
+                const id = `valoride-${Math.random()
+                  .toString(36)
+                  .substring(2, 12)}`;
+                localStorage.setItem("valoride.instanceId", id);
+                return id;
+              })()
+            );
+          } catch {
+            return `valoride-${Math.random()
+              .toString(36)
+              .substring(2, 12)}`;
+          }
+        })();
+
+        const send = (type: string, payload: any) => {
+          const appMessage = {
+            type,
+            payload,
+            senderId: instanceId,
+            messageId: Math.random().toString(36).slice(2, 12),
+            timestamp: Date.now(),
+          };
+          window.dispatchEvent(
+            new CustomEvent("websocket-send", { detail: appMessage }),
+          );
+        };
+
+        send("presence:join", { id: instanceId });
+        send("auth:ack", { id: instanceId });
+        send("presence:rollcall", { id: instanceId });
+      } catch {
+        // ignore transport issues
+      }
+
+      setDidLogin(true);
+      setActiveTab("account");
+
+      try {
+        const debit = {
+          spentAt: new Date(),
+          credits: 0.01,
+          modelProvider: "valoride",
+          model: "login-connect",
+          promptTokens: 0,
+          completionTokens: 0,
+        } as any;
+        await addUsageTransaction(debit).unwrap();
+      } catch (e) {
+        console.warn("Usage debit failed post-login:", e);
       }
     } catch (error) {
       console.error("Login failed:", error);
@@ -188,8 +193,12 @@ const AccountView = ({ onDone }: AccountViewProps) => {
           messageId: Math.random().toString(36).slice(2, 12),
           timestamp: Date.now(),
         } as any;
-        window.dispatchEvent(new CustomEvent("websocket-send", { detail: appMessage }));
-      } catch { /* ignore */ }
+        window.dispatchEvent(
+          new CustomEvent("websocket-send", { detail: appMessage }),
+        );
+      } catch {
+        // ignore transport issues
+      }
     } finally {
       setSubmitting(false);
     }
@@ -331,7 +340,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                     Signup Now
                   </VSCodeLink>
                   <br />
-                  Forgot your username or password?{" "}
+                  Forgot your username?{" "}
                   <VSCodeLink
                     href="https://valkyrlabs.com/restore-access"
                     target="_blank"
@@ -449,8 +458,9 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                   href="https://app.valkyrlabs.com/v1/credits/#buy"
                   className="w-full"
                 >
-                  Add Credits
+                  Buy Credits
                 </VSCodeButtonLink>
+                <BuyCredits />
               </div>
             </div>
 

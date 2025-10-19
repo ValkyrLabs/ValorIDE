@@ -51,6 +51,12 @@ export type LineItem  = {
      */
     lineItemAmount?: number;
     /**
+     * the taxable rate for the lineItem (zero if non-taxable)
+     * @type {number}
+     * @memberof LineItem
+     */
+    taxRate?: number;
+    /**
      * 
      * @type {Discount}
      * @memberof LineItem
@@ -123,6 +129,7 @@ export function LineItemFromJSON(json: any): LineItem {
         'salesOrderId': !exists(json, 'salesOrderId') ? undefined : json['salesOrderId'],
         'product': !exists(json, 'product') ? undefined : ProductFromJSON(json['product']),
         'lineItemAmount': !exists(json, 'lineItemAmount') ? undefined : json['lineItemAmount'],
+        'taxRate': !exists(json, 'taxRate') ? undefined : json['taxRate'],
         'discount': !exists(json, 'discount') ? undefined : DiscountFromJSON(json['discount']),
         'quantity': !exists(json, 'quantity') ? undefined : json['quantity'],
         'type': !exists(json, 'type') ? undefined : json['type'],
@@ -145,6 +152,7 @@ export function LineItemToJSON(value?: LineItem): any {
         'salesOrderId': value.salesOrderId,
         'product': ProductToJSON(value.product),
         'lineItemAmount': value.lineItemAmount,
+        'taxRate': value.taxRate,
         'discount': DiscountToJSON(value.discount),
         'quantity': value.quantity,
         'type': value.type,

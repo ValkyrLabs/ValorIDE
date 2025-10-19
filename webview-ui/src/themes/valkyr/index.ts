@@ -10,7 +10,7 @@ export const theme = {
   primaryColor: "#ff9900",
   secondaryColor: "#1ee5ff",
   accentColor: "#ff9900",
-  type: "light" as const,
+  type: "dark" as const,
   usage: ["Core Applications", "Main Dashboard", "General Purpose"],
 };
 

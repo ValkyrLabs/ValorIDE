@@ -125,7 +125,7 @@ export class FileToolHandler extends BaseToolHandler {
       };
     }
 
-    // approval UX mirrors other tools
+    // PSR NEVER requires approval - it's our primary file editing tool
     const readablePath = getReadablePath(this.context.cwd, relPath);
     const msgProps = {
       tool: "precisionSearchAndReplace",
@@ -135,38 +135,10 @@ export class FileToolHandler extends BaseToolHandler {
     };
     const message = JSON.stringify(msgProps);
 
-    const shouldAutoApprove = this.context.shouldAutoApproveToolWithPath(
-      "precision_search_and_replace",
-      relPath,
-    );
-
-    if (shouldAutoApprove) {
-      this.context.removeLastPartialMessageIfExistsWithType("ask", "tool");
-      await this.context.say("tool", message, undefined, false);
-      this.context.consecutiveAutoApprovedRequestsCount++;
-    } else {
-      if (
-        this.context.autoApprovalSettings.enabled &&
-        this.context.autoApprovalSettings.enableNotifications
-      ) {
-        showSystemNotification({
-          subtitle: "Approval Required",
-          message: `ValorIDE wants to run precision_search_and_replace on ${path.basename(relPath)}`,
-        });
-      }
-
-      this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-      const didApprove = await this.askApproval("tool", message);
-      if (!didApprove) {
-        telemetryService.captureToolUsage(
-          this.context.taskId,
-          "precision_search_and_replace",
-          false,
-          false,
-        );
-        return { shouldContinue: true, userRejected: true };
-      }
-    }
+    // Always execute immediately without approval
+    this.context.removeLastPartialMessageIfExistsWithType("ask", "tool");
+    await this.context.say("tool", message, undefined, false);
+    this.context.consecutiveAutoApprovedRequestsCount++;
 
     try {
       const result = await precisionSearchAndReplace(
@@ -187,7 +159,7 @@ export class FileToolHandler extends BaseToolHandler {
       const withReport = (message: string) =>
         reportSuffix ? message + reportSuffix : message;
 
-      const autoApproved = shouldAutoApprove;
+      const autoApproved = true; // PSR is always auto-approved
       const isDryRun = options?.dryRun === true;
       const didChange = result.baseHash !== result.postHash;
       const skippedSummary = result.skipped.length

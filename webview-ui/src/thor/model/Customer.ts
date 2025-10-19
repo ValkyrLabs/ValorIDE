@@ -148,7 +148,7 @@ export enum CustomerStatusEnum {
 export enum CustomerRoleEnum {
     CXO = 'cxo',
     ENGINEERING = 'engineering',
-    PROJECTMAMAGEMENT = 'project mamagement',
+    PROJECTMANAGEMENT = 'project management',
     MANAGEMENT = 'management',
     SUPPORT = 'support',
     QA = 'qa',

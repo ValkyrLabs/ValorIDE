@@ -10,7 +10,7 @@ export const theme = {
   primaryColor: "#1ee5ff",
   secondaryColor: "#7a5cff",
   accentColor: "#ff9d00",
-  type: "light" as const,
+  type: "dark" as const,
   usage: ["CMS", "Content Management", "Creative Applications"],
 };
 

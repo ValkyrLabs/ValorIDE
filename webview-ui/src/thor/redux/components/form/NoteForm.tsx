@@ -32,7 +32,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-09-19T15:19:30.243687-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -62,12 +62,13 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        noteId: Yup.string().required("noteId is required."),
-        associatedEntityId: Yup.string().required("associatedEntityId is required."),
+        content: Yup.string().required("content is required."),
+        noteId: Yup.string(),
+        associatedEntityId: Yup.string(),
       entityType: Yup.mixed()
         .oneOf(EntityTypeValidation(), "Invalid value for entityType")
-        .required("entityType is required."),
-        content: Yup.string().required("content is required."),
+        ,
+        name: Yup.string(),
         createdDate: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -75,8 +76,8 @@ const validationSchema = Yup.object().shape({
             }
             const parsed = new Date(originalValue);
             return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).required("createdDate is required.").typeError("createdDate must be a valid date"),
-        createdBy: Yup.string().required("createdBy is required."),
+          }).typeError("createdDate must be a valid date"),
+        createdBy: Yup.string(),
         id: Yup.string(),
         ownerId: Yup.string(),
         keyHash: Yup.string(),
@@ -125,10 +126,11 @@ const NoteForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<Note> = {
+          content: '',
           noteId: '',
           associatedEntityId: '',
         entityType: undefined,
-          content: '',
+          name: '',
           createdDate: new Date(),
           createdBy: '',
           id: '',
@@ -206,6 +208,39 @@ const NoteForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New Note
                 </Accordion.Header>
                 <Accordion.Body>
+                    <label htmlFor="content" className="nice-form-control">
+                      <b>
+                        Content:
+                        {touched.content &&
+                         !errors.content && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="content"
+                            value={values?.content}
+                            placeholder="Content"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="content"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="noteId" className="nice-form-control">
                       <b>
                         Note Id:
@@ -307,11 +342,11 @@ const NoteForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="content" className="nice-form-control">
+                    <label htmlFor="name" className="nice-form-control">
                       <b>
-                        Content:
-                        {touched.content &&
-                         !errors.content && (
+                        Name:
+                        {touched.name &&
+                         !errors.name && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
@@ -320,9 +355,9 @@ const NoteForm: React.FC = () => {
 
                           {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
                           <SmartField
-                            name="content"
-                            value={values?.content}
-                            placeholder="Content"
+                            name="name"
+                            value={values?.name}
+                            placeholder="Name"
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
@@ -335,7 +370,7 @@ const NoteForm: React.FC = () => {
 
                       <ErrorMessage
                         className="error"
-                        name="content"
+                        name="name"
                         component="span"
                       />
                     </label>
