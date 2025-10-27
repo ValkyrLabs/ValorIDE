@@ -231,6 +231,8 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
 
       // The filename is already extracted by the ApplicationService responseHandler
       const extractedFilename = result.filename;
+      const mimeType =
+        result.mimeType || result.blob?.type || "application/octet-stream";
       console.log(
         "ApplicationsList: Using filename from service:",
         extractedFilename,
@@ -285,6 +287,7 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
         applicationId: applicationId,
         applicationName: applicationName,
         filename: extractedFilename,
+        mimeType,
       });
 
       // Note: We'll complete the final step when we receive the streamToThorapiResult message
@@ -356,260 +359,263 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({
                     </span>
                   )}
                 </div>
-              </div>
-              {app.id && (
-                <div className="application-buttons">
 
-                  <VSCodeButtonLink
-                    href={"http://localhost:5173/application-detail/" + app.id}
-                    appearance="secondary"
-                    className="w-full"
-                  >
-                    Open
-                  </VSCodeButtonLink>
-                  <VSCodeButton
-                    appearance="primary"
-                    onClick={() => handleGenerate(app.id)}
-                    disabled={loadingStates[app.id]?.generating}
-                  >
-                    {loadingStates[app.id]?.generating
-                      ? "Generating..."
-                      : "Generate"}
-                  </VSCodeButton>
-                  <VSCodeButton
-                    appearance="secondary"
-                    onClick={() => handleDeploy(app.id)}
-                    disabled={loadingStates[app.id]?.deploying}
-                  >
-                    {loadingStates[app.id]?.deploying
-                      ? "Deploying..."
-                      : "Deploy"}
-                  </VSCodeButton>
-                </div>
-              )}
-              {(loadingStates[app.id]?.generating ||
-                loadingStates[app.id]?.steps?.receiving ||
-                loadingStates[app.id]?.steps?.processing ||
-                loadingStates[app.id]?.steps?.extracting ||
-                loadingStates[app.id]?.steps?.finalizing) && (
-                  <div
-                    className="loading-steps"
-                    style={{
-                      marginTop: "16px",
-                      padding: "12px",
-                      border: "1px solid var(--vscode-panel-border)",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    <div
-                      className="loading-step"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        marginBottom: "8px",
-                      }}
+                {app.id && (
+                  <div className="application-buttons">
+
+                    <VSCodeButtonLink
+                      href={"http://localhost:5173/application-detail/" + app.id}
+                      appearance="secondary"
+                      className="w-full"
                     >
-                      {loadingStates[app.id]?.steps?.receiving ? (
-                        <span
-                          style={{
-                            color: "var(--vscode-charts-green)",
-                            marginRight: "8px",
-                          }}
-                        >
-                          ✅
-                        </span>
-                      ) : (
-                        <VSCodeProgressRing
-                          style={{
-                            width: "16px",
-                            height: "16px",
-                            marginRight: "8px",
-                          }}
-                        />
-                      )}
-                      <span>Receiving Application</span>
-                      {!loadingStates[app.id]?.steps?.receiving && (
-                        <span
-                          style={{
-                            marginLeft: "8px",
-                            fontSize: "12px",
-                            opacity: 0.7,
-                          }}
-                        >
-                          Downloading application payload...
-                        </span>
-                      )}
-                    </div>
-                    <div
-                      className="loading-step"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        marginBottom: "8px",
-                      }}
+                      Open
+                    </VSCodeButtonLink>
+                    <VSCodeButton
+                      appearance="primary"
+                      onClick={() => handleGenerate(app.id)}
+                      disabled={loadingStates[app.id]?.generating}
                     >
-                      {loadingStates[app.id]?.steps?.processing ? (
-                        <span
-                          style={{
-                            color: "var(--vscode-charts-green)",
-                            marginRight: "8px",
-                          }}
-                        >
-                          ✅
-                        </span>
-                      ) : loadingStates[app.id]?.steps?.receiving ? (
-                        <VSCodeProgressRing
-                          style={{
-                            width: "16px",
-                            height: "16px",
-                            marginRight: "8px",
-                          }}
-                        />
-                      ) : (
-                        <span
-                          style={{
-                            color: "var(--vscode-descriptionForeground)",
-                            marginRight: "8px",
-                          }}
-                        >
-                          ⏳
-                        </span>
-                      )}
-                      <span>Processing Data</span>
-                      {loadingStates[app.id]?.steps?.receiving &&
-                        !loadingStates[app.id]?.steps?.processing && (
-                          <span
-                            style={{
-                              marginLeft: "8px",
-                              fontSize: "12px",
-                              opacity: 0.7,
-                            }}
-                          >
-                            Analyzing application structure...
-                          </span>
-                        )}
-                    </div>
-                    <div
-                      className="loading-step"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        marginBottom: "8px",
-                      }}
+                      {loadingStates[app.id]?.generating
+                        ? "Generating..."
+                        : "Generate"}
+                    </VSCodeButton>
+                    <VSCodeButton
+                      appearance="secondary"
+                      onClick={() => handleDeploy(app.id)}
+                      disabled={loadingStates[app.id]?.deploying}
                     >
-                      {loadingStates[app.id]?.steps?.extracting ? (
-                        <span
-                          style={{
-                            color: "var(--vscode-charts-green)",
-                            marginRight: "8px",
-                          }}
-                        >
-                          ✅
-                        </span>
-                      ) : loadingStates[app.id]?.steps?.processing ? (
-                        <VSCodeProgressRing
-                          style={{
-                            width: "16px",
-                            height: "16px",
-                            marginRight: "8px",
-                          }}
-                        />
-                      ) : (
-                        <span
-                          style={{
-                            color: "var(--vscode-descriptionForeground)",
-                            marginRight: "8px",
-                          }}
-                        >
-                          ⏳
-                        </span>
-                      )}
-                      <span>Extracting Files</span>
-                      {loadingStates[app.id]?.steps?.processing &&
-                        !loadingStates[app.id]?.steps?.extracting && (
-                          <span
-                            style={{
-                              marginLeft: "8px",
-                              fontSize: "12px",
-                              opacity: 0.7,
-                            }}
-                          >
-                            Creating project structure...
-                          </span>
-                        )}
-                    </div>
-                    <div
-                      className="loading-step"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        marginBottom: "8px",
-                      }}
-                    >
-                      {loadingStates[app.id]?.steps?.finalizing ? (
-                        <span
-                          style={{
-                            color: "var(--vscode-charts-green)",
-                            marginRight: "8px",
-                          }}
-                        >
-                          ✅
-                        </span>
-                      ) : loadingStates[app.id]?.steps?.extracting ? (
-                        <VSCodeProgressRing
-                          style={{
-                            width: "16px",
-                            height: "16px",
-                            marginRight: "8px",
-                          }}
-                        />
-                      ) : (
-                        <span
-                          style={{
-                            color: "var(--vscode-descriptionForeground)",
-                            marginRight: "8px",
-                          }}
-                        >
-                          ⏳
-                        </span>
-                      )}
-                      <span>Finalizing Setup</span>
-                      {loadingStates[app.id]?.steps?.extracting &&
-                        !loadingStates[app.id]?.steps?.finalizing && (
-                          <span
-                            style={{
-                              marginLeft: "8px",
-                              fontSize: "12px",
-                              opacity: 0.7,
-                            }}
-                          >
-                            Preparing development environment...
-                          </span>
-                        )}
-                    </div>
-                    {loadingStates[app.id]?.generating ? (
-                      <div
-                        style={{
-                          marginTop: "12px",
-                          fontSize: "12px",
-                          opacity: 0.8,
-                        }}
-                      >
-                        Please wait while your application is being generated...
-                      </div>
-                    ) : (
-                      <div
-                        style={{
-                          marginTop: "12px",
-                          fontSize: "12px",
-                          color: "var(--vscode-charts-green)",
-                        }}
-                      >
-                        ✅ Application generated successfully!
-                      </div>
-                    )}
+                      {loadingStates[app.id]?.deploying
+                        ? "Deploying..."
+                        : "Deploy"}
+                    </VSCodeButton>
                   </div>
                 )}
+              </div>
+              <div className="application-loading-steps">
+                {(loadingStates[app.id]?.generating ||
+                  loadingStates[app.id]?.steps?.receiving ||
+                  loadingStates[app.id]?.steps?.processing ||
+                  loadingStates[app.id]?.steps?.extracting ||
+                  loadingStates[app.id]?.steps?.finalizing) && (
+                    <div
+                      className="loading-steps"
+                      style={{
+                        marginTop: "16px",
+                        padding: "12px",
+                        border: "1px solid var(--vscode-panel-border)",
+                        borderRadius: "4px",
+                      }}
+                    >
+                      <div
+                        className="loading-step"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "8px",
+                        }}
+                      >
+                        {loadingStates[app.id]?.steps?.receiving ? (
+                          <span
+                            style={{
+                              color: "var(--vscode-charts-green)",
+                              marginRight: "8px",
+                            }}
+                          >
+                            ✅
+                          </span>
+                        ) : (
+                          <VSCodeProgressRing
+                            style={{
+                              width: "16px",
+                              height: "16px",
+                              marginRight: "8px",
+                            }}
+                          />
+                        )}
+                        <span>Receiving Application</span>
+                        {!loadingStates[app.id]?.steps?.receiving && (
+                          <span
+                            style={{
+                              marginLeft: "8px",
+                              fontSize: "12px",
+                              opacity: 0.7,
+                            }}
+                          >
+                            Downloading application payload...
+                          </span>
+                        )}
+                      </div>
+                      <div
+                        className="loading-step"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "8px",
+                        }}
+                      >
+                        {loadingStates[app.id]?.steps?.processing ? (
+                          <span
+                            style={{
+                              color: "var(--vscode-charts-green)",
+                              marginRight: "8px",
+                            }}
+                          >
+                            ✅
+                          </span>
+                        ) : loadingStates[app.id]?.steps?.receiving ? (
+                          <VSCodeProgressRing
+                            style={{
+                              width: "16px",
+                              height: "16px",
+                              marginRight: "8px",
+                            }}
+                          />
+                        ) : (
+                          <span
+                            style={{
+                              color: "var(--vscode-descriptionForeground)",
+                              marginRight: "8px",
+                            }}
+                          >
+                            ⏳
+                          </span>
+                        )}
+                        <span>Processing Data</span>
+                        {loadingStates[app.id]?.steps?.receiving &&
+                          !loadingStates[app.id]?.steps?.processing && (
+                            <span
+                              style={{
+                                marginLeft: "8px",
+                                fontSize: "12px",
+                                opacity: 0.7,
+                              }}
+                            >
+                              Analyzing application structure...
+                            </span>
+                          )}
+                      </div>
+                      <div
+                        className="loading-step"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "8px",
+                        }}
+                      >
+                        {loadingStates[app.id]?.steps?.extracting ? (
+                          <span
+                            style={{
+                              color: "var(--vscode-charts-green)",
+                              marginRight: "8px",
+                            }}
+                          >
+                            ✅
+                          </span>
+                        ) : loadingStates[app.id]?.steps?.processing ? (
+                          <VSCodeProgressRing
+                            style={{
+                              width: "16px",
+                              height: "16px",
+                              marginRight: "8px",
+                            }}
+                          />
+                        ) : (
+                          <span
+                            style={{
+                              color: "var(--vscode-descriptionForeground)",
+                              marginRight: "8px",
+                            }}
+                          >
+                            ⏳
+                          </span>
+                        )}
+                        <span>Extracting Files</span>
+                        {loadingStates[app.id]?.steps?.processing &&
+                          !loadingStates[app.id]?.steps?.extracting && (
+                            <span
+                              style={{
+                                marginLeft: "8px",
+                                fontSize: "12px",
+                                opacity: 0.7,
+                              }}
+                            >
+                              Creating project structure...
+                            </span>
+                          )}
+                      </div>
+                      <div
+                        className="loading-step"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "8px",
+                        }}
+                      >
+                        {loadingStates[app.id]?.steps?.finalizing ? (
+                          <span
+                            style={{
+                              color: "var(--vscode-charts-green)",
+                              marginRight: "8px",
+                            }}
+                          >
+                            ✅
+                          </span>
+                        ) : loadingStates[app.id]?.steps?.extracting ? (
+                          <VSCodeProgressRing
+                            style={{
+                              width: "16px",
+                              height: "16px",
+                              marginRight: "8px",
+                            }}
+                          />
+                        ) : (
+                          <span
+                            style={{
+                              color: "var(--vscode-descriptionForeground)",
+                              marginRight: "8px",
+                            }}
+                          >
+                            ⏳
+                          </span>
+                        )}
+                        <span>Finalizing Setup</span>
+                        {loadingStates[app.id]?.steps?.extracting &&
+                          !loadingStates[app.id]?.steps?.finalizing && (
+                            <span
+                              style={{
+                                marginLeft: "8px",
+                                fontSize: "12px",
+                                opacity: 0.7,
+                              }}
+                            >
+                              Preparing development environment...
+                            </span>
+                          )}
+                      </div>
+                      {loadingStates[app.id]?.generating ? (
+                        <div
+                          style={{
+                            marginTop: "12px",
+                            fontSize: "12px",
+                            opacity: 0.8,
+                          }}
+                        >
+                          Please wait while your application is being generated...
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            marginTop: "12px",
+                            fontSize: "12px",
+                            color: "var(--vscode-charts-green)",
+                          }}
+                        >
+                          ✅ Application generated successfully!
+                        </div>
+                      )}
+                    </div>
+                  )}
+              </div>
             </div>
           </div>
         ))}

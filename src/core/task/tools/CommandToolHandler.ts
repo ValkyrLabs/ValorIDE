@@ -65,6 +65,7 @@ export class CommandToolHandler extends BaseToolHandler {
         }
 
         let didAutoApprove = false;
+        let approvalFeedback: { text?: string; images?: string[] } | undefined;
 
         // If the model says this command is safe and auto approval for safe commands is true, execute the command
         // If the model says the command is risky, but *BOTH* auto approve settings are true, execute the command
@@ -100,16 +101,15 @@ export class CommandToolHandler extends BaseToolHandler {
             (response === "messageResponse" &&
               (normalizedText === "yes" || normalizedText === "approve"));
           const hasFeedback = !!text || !!images?.length;
+          approvalFeedback = hasFeedback ? { text, images } : undefined;
 
           if (!approved) {
-            if (hasFeedback) {
-              await this.context.say("user_feedback", text, images);
-            }
-            return { shouldContinue: true, userRejected: true };
-          }
-
-          if (hasFeedback) {
-            await this.context.say("user_feedback", text, images);
+            return {
+              shouldContinue: true,
+              userRejected: true,
+              toolResponse: formatResponse.toolDenied(),
+              feedback: approvalFeedback
+            };
           }
         }
 
@@ -134,7 +134,13 @@ export class CommandToolHandler extends BaseToolHandler {
 
         await this.context.saveCheckpoint();
 
-        return { shouldContinue: true, toolResponse: result, userRejected };
+        return {
+          shouldContinue: true,
+          toolResponse: result,
+          userRejected,
+          feedback: approvalFeedback,
+          didAlreadyUseTool: true
+        };
       }
     } catch (error) {
       return {

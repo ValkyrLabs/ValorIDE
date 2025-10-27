@@ -11,7 +11,7 @@ import { handleGrpcRequest } from "./grpc-handler";
 import { buildApiHandler } from "@api/index";
 import { cleanupLegacyCheckpoints } from "@integrations/checkpoints/CheckpointMigration";
 import { downloadTask } from "@integrations/misc/export-markdown";
-import { extractLocalZip } from "@utils/zipExtractor";
+import { extractLocalZip, isZipBuffer } from "@utils/zipExtractor";
 import {
   fetchOpenGraphData,
   isImageUrl,
@@ -49,7 +49,7 @@ import {
 } from "@shared/WebviewMessage";
 import { fileExistsAtPath } from "@utils/fs";
 import { searchCommits } from "@utils/git";
-import { getWorkspacePath } from "@utils/path";
+import { getReadablePath, getWorkspacePath } from "@utils/path";
 import { resolveThorapiFolderPath } from "@utils/thorapi";
 import { getTotalTasksSize } from "@utils/storage";
 import { openMention } from "../mentions";
@@ -552,6 +552,9 @@ export class Controller {
       case "refreshRequestyModels":
         await this.refreshRequestyModels();
         break;
+      case "refreshLLMDetails":
+        await this.refreshLLMDetails();
+        break;
       case "refreshOpenAiModels":
         const { apiConfiguration } = await getAllExtensionState(this.context);
         const openAiModels = await this.getOpenAiModels(
@@ -629,6 +632,16 @@ export class Controller {
       case "taskCompletionViewChanges": {
         if (message.number) {
           await this.task?.presentMultifileDiff(message.number, true);
+        }
+        break;
+      }
+      case "taskCompletionOpenFileDiff": {
+        if (message.number && message.relativePath) {
+          await this.task?.presentFileDiff(
+            message.number,
+            message.relativePath,
+            message.seeNewChangesSinceLastTaskCompletion ?? true,
+          );
         }
         break;
       }
@@ -1347,36 +1360,106 @@ export class Controller {
         break;
       }
       case "streamToThorapi": {
+        const {
+          blobData,
+          applicationId,
+          applicationName,
+          filename,
+          mimeType,
+        } = message;
+
+        const sendProgress = async (step: string, progressMessage: string) => {
+          if (!applicationId) {
+            return;
+          }
+          await this.postMessageToWebview({
+            type: "streamToThorapiResult",
+            streamToThorapiResult: {
+              success: true,
+              applicationId,
+              step,
+              message: progressMessage,
+            },
+          });
+        };
+
         try {
-          const { blobData, applicationId, applicationName, filename } = message;
           if (!blobData || !applicationId) {
             throw new Error("Missing required data for streamToThorapi");
           }
 
-          // Create thorapi directory if it doesn't exist
+          await sendProgress("receiving", "Decoding generated archive...");
+
+          const binaryData = Buffer.from(blobData, "base64");
           const thorapiFolderPath = resolveThorapiFolderPath(cwd);
           await fs.mkdir(thorapiFolderPath, { recursive: true });
 
-          // Use provided filename or generate one
-          const finalFilename =
-            filename || `application-${applicationId}-${Date.now()}.zip`;
+          const incomingName =
+            filename?.trim() ||
+            `application-${applicationId}-${Date.now()}`;
+          const sanitizedBaseName = path
+            .basename(incomingName)
+            .replace(/[\\/:*?"<>|]/g, "_")
+            .trim() || `application-${applicationId}-${Date.now()}`;
+
+          const mime = mimeType?.toLowerCase() ?? "";
+          const looksLikeZip = isZipBuffer(binaryData) || mime.includes("zip");
+
+          let finalFilename = sanitizedBaseName;
+          if (looksLikeZip && !/\.zip$/i.test(finalFilename)) {
+            finalFilename = `${finalFilename}.zip`;
+          }
+
           const filePath = path.join(thorapiFolderPath, finalFilename);
-
-          // Convert base64 back to binary and write file
-          const binaryData = Buffer.from(blobData, "base64");
           await fs.writeFile(filePath, binaryData);
+          await sendProgress(
+            "processing",
+            `Saved archive to ${getReadablePath(filePath)}`,
+          );
 
-          // Extract if it's a zip file
           let extractedPath: string | undefined;
-          if (finalFilename.endsWith(".zip")) {
-            // Use applicationName as fallback; prefer versioned folder from filename
-            extractedPath = await extractLocalZip(
-              filePath,
-              thorapiFolderPath,
-              applicationName || applicationId,
+          let readmePath: string | undefined;
+
+          if (looksLikeZip) {
+            await sendProgress("extracting", "Extracting project files...");
+            try {
+              extractedPath = await extractLocalZip(
+                filePath,
+                thorapiFolderPath,
+                applicationName || applicationId,
+              );
+            } catch (extractionError) {
+              throw new Error(
+                `Failed to extract archive: ${
+                  extractionError instanceof Error
+                    ? extractionError.message
+                    : String(extractionError)
+                }`,
+              );
+            }
+
+            if (extractedPath) {
+              readmePath = await this.findReadmeFile(extractedPath);
+              await sendProgress(
+                "finalizing",
+                `Extracted to ${getReadablePath(extractedPath)}`,
+              );
+            }
+
+            await fs.unlink(filePath).catch((unlinkError) => {
+              console.warn(
+                `Failed to delete archive ${filePath}: ${
+                  unlinkError instanceof Error
+                    ? unlinkError.message
+                    : String(unlinkError)
+                }`,
+              );
+            });
+          } else {
+            await sendProgress(
+              "finalizing",
+              `Saved file to ${getReadablePath(filePath)}`,
             );
-            // Delete the zip file after successful extraction
-            await fs.unlink(filePath);
           }
 
           await this.postMessageToWebview({
@@ -1387,6 +1470,11 @@ export class Controller {
               filePath,
               filename: finalFilename,
               extractedPath,
+              readmePath,
+              step: "completed",
+              message: looksLikeZip
+                ? "Application extracted successfully."
+                : "Application saved successfully.",
             },
           });
         } catch (error) {
@@ -1400,6 +1488,7 @@ export class Controller {
                 error instanceof Error
                   ? error.message
                   : "Failed to stream to thorapi",
+              step: "error",
             },
           });
         }
@@ -2286,6 +2375,67 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
     return models;
   }
 
+  async refreshLLMDetails() {
+    let models: Record<string, any> = {};
+    try {
+      const { apiConfiguration } = await getAllExtensionState(this.context);
+
+      // If ValkyrAI is not configured, don't attempt to fetch
+      if (!apiConfiguration?.valkyraiHost) {
+        console.log("ValkyrAI host not configured, skipping LLMDetails fetch");
+        await this.postMessageToWebview({
+          type: "llmDetailsUpdated",
+          models: {},
+        });
+        return {};
+      }
+
+      // Fetch LLM details from ValkyrAI
+      const valkyraiUrl = apiConfiguration.valkyraiHost.replace(/\/$/, ""); // Remove trailing slash
+      const endpoint = `${valkyraiUrl}/v1/llm-details`;
+
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+
+      // Add JWT token if available
+      if (apiConfiguration?.valkyraiJwt) {
+        headers["Authorization"] = `Bearer ${apiConfiguration.valkyraiJwt}`;
+      }
+
+      const response = await axios.get(endpoint, { headers });
+
+      if (Array.isArray(response.data)) {
+        // Transform ValkyrAI LLMDetails to ModelInfo format
+        for (const llmDetail of response.data) {
+          if (llmDetail.id) {
+            const modelInfo: ModelInfo = {
+              maxTokens: llmDetail.maxTokens,
+              contextWindow: llmDetail.contextWindow,
+              supportsImages: llmDetail.supportsImages,
+              supportsPromptCache: llmDetail.supportsPromptCache,
+              inputPrice: llmDetail.inputPrice,
+              outputPrice: llmDetail.outputPrice,
+              description: llmDetail.description || `${llmDetail.provider} ${llmDetail.name}${llmDetail.version ? ` (${llmDetail.version})` : ""}`,
+            };
+            models[llmDetail.id] = modelInfo;
+          }
+        }
+        console.log("LLMDetails fetched from ValkyrAI", models);
+      } else {
+        console.error("Invalid response from ValkyrAI LLMDetails endpoint");
+      }
+    } catch (error) {
+      console.error("Error fetching LLMDetails from ValkyrAI:", error);
+    }
+
+    await this.postMessageToWebview({
+      type: "llmDetailsUpdated",
+      models,
+    });
+    return models;
+  }
+
   // Context menus and code actions
 
   getFileMentionFromPath(filePath: string) {
@@ -2828,6 +2978,58 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
   }
 
   // File system helpers
+
+  private async findReadmeFile(
+    directory: string | undefined,
+  ): Promise<string | undefined> {
+    if (!directory) {
+      return undefined;
+    }
+
+    const readmeRegex = /^readme(\.|$)/i;
+
+    try {
+      const entries = await fs.readdir(directory, { withFileTypes: true });
+
+      for (const entry of entries) {
+        if (entry.isFile() && readmeRegex.test(entry.name)) {
+          return path.join(directory, entry.name);
+        }
+      }
+
+      for (const entry of entries) {
+        if (!entry.isDirectory()) {
+          continue;
+        }
+        const subdir = path.join(directory, entry.name);
+        try {
+          const subEntries = await fs.readdir(subdir, { withFileTypes: true });
+          const readmeEntry = subEntries.find(
+            (subEntry) => subEntry.isFile() && readmeRegex.test(subEntry.name),
+          );
+          if (readmeEntry) {
+            return path.join(subdir, readmeEntry.name);
+          }
+        } catch (subdirError) {
+          console.warn(
+            `findReadmeFile: unable to scan ${subdir}: ${
+              subdirError instanceof Error
+                ? subdirError.message
+                : String(subdirError)
+            }`,
+          );
+        }
+      }
+    } catch (error) {
+      console.warn(
+        `findReadmeFile: unable to scan ${directory}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
+
+    return undefined;
+  }
 
   async getThorapiFolderStructure(folderPath: string): Promise<any[]> {
     try {

@@ -44,7 +44,7 @@ export const ApplicationService = createApi({
 
     // Generate Application Stack
     generateApplication: build.mutation<
-      { blob: Blob; filename: string },
+      { blob: Blob; filename: string; mimeType?: string },
       string
     >({
       query: (applicationId) => ({
@@ -52,6 +52,8 @@ export const ApplicationService = createApi({
         method: "POST",
         responseHandler: async (response) => {
           const blob = await response.blob();
+          const contentType =
+            response.headers.get("content-type") || blob.type || undefined;
 
           // Extract filename from Content-Disposition header
           const contentDisposition = response.headers.get(
@@ -78,7 +80,12 @@ export const ApplicationService = createApi({
             console.log("No Content-Disposition header found");
           }
 
-          return { blob, filename };
+          if (!/\.zip$/i.test(filename) && contentType?.includes("zip")) {
+            filename = `${filename}.zip`;
+            console.log("Normalized filename with .zip extension:", filename);
+          }
+
+          return { blob, filename, mimeType: contentType || undefined };
         },
       }),
       invalidatesTags: (result, error, applicationId) => [

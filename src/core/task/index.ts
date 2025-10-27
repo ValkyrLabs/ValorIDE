@@ -54,6 +54,8 @@ import {
   ValorIDEAskQuestion,
   ValorIDEAskUseMcpServer,
   ValorIDEMessage,
+  ValorIDEChangesSummary,
+  ValorIDEFileChangeStatus,
   ValorIDEPlanModeResponse,
   ValorIDESay,
   ValorIDESayBrowserAction,
@@ -173,6 +175,7 @@ export class Task {
   contextManager: ContextManager;
   private didEditFile: boolean = false;
   customInstructions?: string;
+  thorapi_project?: string;
   autoApprovalSettings: AutoApprovalSettings;
   browserSettings: BrowserSettings;
   chatSettings: ChatSettings;
@@ -241,7 +244,6 @@ export class Task {
       console.warn("Failed to relay tool command to mothership:", error);
     }
   }
-
   constructor(
     context: vscode.ExtensionContext,
     mcpHub: McpHub,
@@ -260,98 +262,98 @@ export class Task {
     images?: string[],
     historyItem?: HistoryItem,
     communicationService?: CommunicationService,
+    thorapi_project?: string,
   ) {
-    this.context = context;
-    this.mcpHub = mcpHub;
-    this.workspaceTracker = workspaceTracker;
-    this.updateTaskHistory = updateTaskHistory;
-    this.postStateToWebview = postStateToWebview;
-    this.postMessageToWebview = postMessageToWebview;
-    this.reinitExistingTaskFromId = reinitExistingTaskFromId;
-    this.cancelTask = cancelTask;
-    this.valorideIgnoreController = new ValorIDEIgnoreController(cwd);
-    this.valorideIgnoreController.initialize().catch((error) => {
-      console.error("Failed to initialize ValorIDEIgnoreController:", error);
-    });
-    this.terminalManager = new TerminalManager();
-    this.urlContentFetcher = new UrlContentFetcher(context);
-    this.browserSession = new BrowserSession(context, browserSettings);
-    this.contextManager = new ContextManager();
-    this.diffViewProvider = new DiffViewProvider(cwd, DEFAULT_ADVANCED_SETTINGS.fileProcessing);
-    this.customInstructions = customInstructions;
-    this.autoApprovalSettings = autoApprovalSettings;
-    this.browserSettings = browserSettings;
-    this.chatSettings = chatSettings;
-    this.communicationService = communicationService;
+      this.context = context;
+      this.mcpHub = mcpHub;
+      this.workspaceTracker = workspaceTracker;
+      this.updateTaskHistory = updateTaskHistory;
+      this.postStateToWebview = postStateToWebview;
+      this.postMessageToWebview = postMessageToWebview;
+      this.reinitExistingTaskFromId = reinitExistingTaskFromId;
+      this.cancelTask = cancelTask;
+      this.valorideIgnoreController = new ValorIDEIgnoreController(cwd);
+      this.valorideIgnoreController.initialize().catch((error) => {
+        console.error("Failed to initialize ValorIDEIgnoreController:", error);
+      });
+      this.terminalManager = new TerminalManager();
+      this.urlContentFetcher = new UrlContentFetcher(context);
+      this.browserSession = new BrowserSession(context, browserSettings);
+      this.customInstructions = customInstructions;
+      this.autoApprovalSettings = autoApprovalSettings;
+      this.browserSettings = browserSettings;
+      this.chatSettings = chatSettings;
+      this.communicationService = communicationService;
+      this.thorapi_project = thorapi_project;
 
-    // Initialize taskId first
-    if (historyItem) {
-      this.taskId = historyItem.id;
-      this.conversationHistoryDeletedRange =
-        historyItem.conversationHistoryDeletedRange;
-    } else if (task || images) {
-      this.taskId = Date.now().toString();
-    } else {
-      throw new Error("Either historyItem or task/images must be provided");
-    }
+      // Initialize taskId first
+      if (historyItem) {
+        this.taskId = historyItem.id;
+        this.conversationHistoryDeletedRange =
+          historyItem.conversationHistoryDeletedRange;
+      } else if (task || images) {
+        this.taskId = Date.now().toString();
+      } else {
+        throw new Error("Either historyItem or task/images must be provided");
+      }
 
-    // Initialize file context tracker
-    this.fileContextTracker = new FileContextTracker(context, this.taskId);
-    this.modelContextTracker = new ModelContextTracker(context, this.taskId);
-    // Now that taskId is initialized, we can build the API handler
-    this.api = buildApiHandler({
-      ...apiConfiguration,
-      taskId: this.taskId,
-    });
+      // Initialize file context tracker
+      this.fileContextTracker = new FileContextTracker(context, this.taskId);
+      this.modelContextTracker = new ModelContextTracker(context, this.taskId);
+      // Now that taskId is initialized, we can build the API handler
+      this.api = buildApiHandler({
+        ...apiConfiguration,
+        taskId: this.taskId,
+      });
 
-    // Set taskId on browserSession for telemetry tracking
-    this.browserSession.setTaskId(this.taskId);
+      // Set taskId on browserSession for telemetry tracking
+      this.browserSession.setTaskId(this.taskId);
 
-    // Initialize handlers for better code organization
-    this.messageHandler = new MessageHandler(
-      this.saveValorIDEMessagesAndUpdateHistory.bind(this),
-      this.postStateToWebview,
-      this.postMessageToWebview
-    );
-
-    this.streamingHandler = new StreamingHandler(
-      this.messageHandler
-    );
-
-    this.checkpointHandler = new CheckpointHandler(
-      this.taskId,
-      context,
-      this.messageHandler,
-      this.updateTaskHistory,
-      this.postStateToWebview,
-      this.postMessageToWebview,
-      this.reinitExistingTaskFromId,
-      this.cancelTask,
-      this.saveValorIDEMessagesAndUpdateHistory.bind(this)
-    );
-
-    // Continue with task initialization
-    if (historyItem) {
-      this.resumeTaskFromHistory();
-    } else if (task || images) {
-      this.startTask(task, images);
-    }
-
-    // initialize telemetry
-    if (historyItem) {
-      // Open task from history
-      telemetryService.captureTaskRestarted(
-        this.taskId,
-        apiConfiguration.apiProvider,
+      // Initialize handlers for better code organization
+      this.messageHandler = new MessageHandler(
+        this.saveValorIDEMessagesAndUpdateHistory.bind(this),
+        this.postStateToWebview,
+        this.postMessageToWebview
       );
-    } else {
-      // New task started
-      telemetryService.captureTaskCreated(
-        this.taskId,
-        apiConfiguration.apiProvider,
+
+      this.streamingHandler = new StreamingHandler(
+        this.messageHandler
       );
+
+      this.checkpointHandler = new CheckpointHandler(
+        this.taskId,
+        context,
+        this.messageHandler,
+        this.updateTaskHistory,
+        this.postStateToWebview,
+        this.postMessageToWebview,
+        this.reinitExistingTaskFromId,
+        this.cancelTask,
+        this.saveValorIDEMessagesAndUpdateHistory.bind(this)
+      );
+
+      // Continue with task initialization
+      if (historyItem) {
+        this.resumeTaskFromHistory();
+      } else if (task || images) {
+        this.startTask(task, images);
+      }
+
+      // initialize telemetry
+      if (historyItem) {
+        // Open task from history
+        telemetryService.captureTaskRestarted(
+          this.taskId,
+          apiConfiguration.apiProvider,
+        );
+      } else {
+        // New task started
+        telemetryService.captureTaskCreated(
+          this.taskId,
+          apiConfiguration.apiProvider,
+        );
+      }
     }
-  }
 
   // While a task is ref'd by a controller, it will always have access to the extension context
   // This error is thrown if the controller derefs the task after e.g., aborting the task
@@ -416,11 +418,11 @@ export class Task {
       const taskMessage = this.valorideMessages[0]; // first message is always the task say
       const lastRelevantMessage =
         this.valorideMessages[
-          findLastIndex(
-            this.valorideMessages,
-            (m) =>
-              !(m.ask === "resume_task" || m.ask === "resume_completed_task"),
-          )
+        findLastIndex(
+          this.valorideMessages,
+          (m) =>
+            !(m.ask === "resume_task" || m.ask === "resume_completed_task"),
+        )
         ];
       const taskDir = await ensureTaskDirectoryExists(
         this.getContext(),
@@ -667,11 +669,11 @@ export class Task {
 
     let changedFiles:
       | {
-          relativePath: string;
-          absolutePath: string;
-          before: string;
-          after: string;
-        }[]
+        relativePath: string;
+        absolutePath: string;
+        before: string;
+        after: string;
+      }[]
       | undefined;
 
     try {
@@ -762,20 +764,29 @@ export class Task {
     relinquishButton();
   }
 
-  async doesLatestTaskCompletionHaveNewChanges() {
-    const messageIndex = findLastIndex(
-      this.valorideMessages,
-      (m) => m.say === "completion_result",
+  async presentFileDiff(
+    messageTs: number,
+    relativePath: string,
+    seeNewChangesSinceLastTaskCompletion: boolean,
+  ) {
+    const relinquishButton = () => {
+      this.postMessageToWebview({ type: "relinquishControl" });
+    };
+
+    const messageIndex = this.valorideMessages.findIndex(
+      (m) => m.ts === messageTs,
     );
     const message = this.valorideMessages[messageIndex];
     if (!message) {
-      console.error("Completion message not found");
-      return false;
+      console.error("Message not found");
+      relinquishButton();
+      return;
     }
     const hash = message.lastCheckpointHash;
     if (!hash) {
       console.error("No checkpoint hash found");
-      return false;
+      relinquishButton();
+      return;
     }
 
     if (!this.checkpointTracker && !this.checkpointTrackerErrorMessage) {
@@ -788,7 +799,161 @@ export class Task {
         const errorMessage =
           error instanceof Error ? error.message : "Unknown error";
         console.error("Failed to initialize checkpoint tracker:", errorMessage);
-        return false;
+        this.checkpointTrackerErrorMessage = errorMessage;
+        await this.postStateToWebview();
+        vscode.window.showErrorMessage(errorMessage);
+        relinquishButton();
+        return;
+      }
+    }
+
+    if (!this.checkpointTracker) {
+      relinquishButton();
+      return;
+    }
+
+    let changedFiles:
+      | {
+          relativePath: string;
+          absolutePath: string;
+          before: string;
+          after: string;
+          insertions: number;
+          deletions: number;
+          status: ValorIDEFileChangeStatus;
+          previousRelativePath?: string;
+          isBinary?: boolean;
+        }[]
+      | undefined;
+
+    try {
+      if (seeNewChangesSinceLastTaskCompletion) {
+        const lastTaskCompletedMessageCheckpointHash = findLast(
+          this.valorideMessages.slice(0, messageIndex),
+          (m) => m.say === "completion_result",
+        )?.lastCheckpointHash;
+
+        const firstCheckpointMessageCheckpointHash = this.valorideMessages.find(
+          (m) => m.say === "checkpoint_created",
+        )?.lastCheckpointHash;
+
+        const previousCheckpointHash =
+          lastTaskCompletedMessageCheckpointHash ||
+          firstCheckpointMessageCheckpointHash;
+
+        if (!previousCheckpointHash) {
+          vscode.window.showErrorMessage(
+            "Unexpected error: No checkpoint hash found",
+          );
+          relinquishButton();
+          return;
+        }
+
+        changedFiles = await this.checkpointTracker.getDiffSet(
+          previousCheckpointHash,
+          hash,
+        );
+      } else {
+        changedFiles = await this.checkpointTracker.getDiffSet(hash);
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      vscode.window.showErrorMessage(
+        "Failed to retrieve diff set: " + errorMessage,
+      );
+      relinquishButton();
+      return;
+    }
+
+    if (!changedFiles?.length) {
+      vscode.window.showInformationMessage("No changes found");
+      relinquishButton();
+      return;
+    }
+
+    const normalize = (value: string) => value.replace(/\\/g, "/");
+    const targetFile = changedFiles.find((file) => {
+      const target = normalize(relativePath);
+      return (
+        normalize(file.relativePath) === target ||
+        (file.previousRelativePath &&
+          normalize(file.previousRelativePath) === target)
+      );
+    });
+
+    if (!targetFile) {
+      vscode.window.showInformationMessage(
+        `No diff available for ${relativePath}`,
+      );
+      relinquishButton();
+      return;
+    }
+
+    if (targetFile.isBinary) {
+      vscode.window.showWarningMessage(
+        `Binary file diffs are not supported for ${targetFile.relativePath}`,
+      );
+      relinquishButton();
+      return;
+    }
+
+    const originalUri = vscode.Uri.parse(
+      `${DIFF_VIEW_URI_SCHEME}:${targetFile.relativePath}`,
+    ).with({
+      query: Buffer.from(targetFile.before ?? "").toString("base64"),
+    });
+
+    let modifiedUri: vscode.Uri;
+    if (await fileExistsAtPath(targetFile.absolutePath)) {
+      modifiedUri = vscode.Uri.file(targetFile.absolutePath);
+    } else {
+      modifiedUri = vscode.Uri.parse(
+        `${DIFF_VIEW_URI_SCHEME}:${targetFile.relativePath}`,
+      ).with({
+        query: Buffer.from(targetFile.after ?? "").toString("base64"),
+        fragment: "after",
+      });
+    }
+
+    await vscode.commands.executeCommand(
+      "vscode.diff",
+      originalUri,
+      modifiedUri,
+      `${targetFile.relativePath} (ValorIDE changes)`,
+    );
+    relinquishButton();
+  }
+
+  private async getLatestTaskCompletionChangesSummary(): Promise<
+    ValorIDEChangesSummary | undefined
+  > {
+    const messageIndex = findLastIndex(
+      this.valorideMessages,
+      (m) => m.say === "completion_result",
+    );
+    const message = this.valorideMessages[messageIndex];
+    if (!message) {
+      console.error("Completion message not found");
+      return undefined;
+    }
+    const hash = message.lastCheckpointHash;
+    if (!hash) {
+      console.error("No checkpoint hash found");
+      return undefined;
+    }
+
+    if (!this.checkpointTracker && !this.checkpointTrackerErrorMessage) {
+      try {
+        this.checkpointTracker = await CheckpointTracker.create(
+          this.taskId,
+          this.context.globalStorageUri.fsPath,
+        );
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
+        console.error("Failed to initialize checkpoint tracker:", errorMessage);
+        return undefined;
       }
     }
 
@@ -817,24 +982,27 @@ export class Task {
         firstCheckpointMessageCheckpointHash; // either use the diff between the first checkpoint and the task completion, or the diff between the latest two task completions
 
       if (!previousCheckpointHash) {
-        return false;
+        return undefined;
       }
 
-      // Get count of changed files between current state and commit
-      const changedFilesCount =
-        (await this.checkpointTracker?.getDiffCount(
-          previousCheckpointHash,
-          hash,
-        )) || 0;
-      if (changedFilesCount > 0) {
-        return true;
+      const summary = await this.checkpointTracker?.getDiffSummary(
+        previousCheckpointHash,
+        hash,
+      );
+      if (summary && summary.totalFiles > 0) {
+        return summary;
       }
     } catch (error) {
-      console.error("Failed to get diff set:", error);
-      return false;
+      console.error("Failed to get diff summary:", error);
+      return undefined;
     }
 
-    return false;
+    return undefined;
+  }
+
+  async doesLatestTaskCompletionHaveNewChanges() {
+    const summary = await this.getLatestTaskCompletionChangesSummary();
+    return !!summary && summary.totalFiles > 0;
   }
 
   // Communicate with webview
@@ -844,6 +1012,7 @@ export class Task {
     type: ValorIDEAsk,
     text?: string,
     partial?: boolean,
+    options?: { changesSummary?: ValorIDEChangesSummary },
   ): Promise<{
     response: ValorIDEAskResponse;
     text?: string;
@@ -853,6 +1022,10 @@ export class Task {
     if (this.abort) {
       throw new Error("ValorIDE instance aborted");
     }
+    const changesSummary = options?.changesSummary;
+    const shouldUpdateChangesSummary = options
+      ? Object.prototype.hasOwnProperty.call(options, "changesSummary")
+      : false;
     let askTs: number;
     if (partial !== undefined) {
       const lastMessage = this.valorideMessages.at(-1);
@@ -866,6 +1039,9 @@ export class Task {
           // existing partial message, so update it
           lastMessage.text = text;
           lastMessage.partial = partial;
+          if (shouldUpdateChangesSummary) {
+            lastMessage.changesSummary = changesSummary;
+          }
           // todo be more efficient about saving and posting only new data or one whole message at a time so ignore partial for saves, and only post parts of partial message instead of whole array in new listener
           // await this.saveValorIDEMessagesAndUpdateHistory()
           // await this.postStateToWebview()
@@ -881,13 +1057,17 @@ export class Task {
           // this.askResponseImages = undefined
           askTs = Date.now();
           this.lastMessageTs = askTs;
-          await this.addToValorIDEMessages({
+          const messageToAdd: ValorIDEMessage = {
             ts: askTs,
             type: "ask",
             ask: type,
             text,
             partial,
-          });
+          };
+          if (shouldUpdateChangesSummary) {
+            messageToAdd.changesSummary = changesSummary;
+          }
+          await this.addToValorIDEMessages(messageToAdd);
           await this.postStateToWebview();
           throw new Error("Current ask promise was ignored 2");
         }
@@ -900,16 +1080,19 @@ export class Task {
           this.askResponseImages = undefined;
 
           /*
-					Bug for the history books:
-					In the webview we use the ts as the chatrow key for the virtuoso list. Since we would update this ts right at the end of streaming, it would cause the view to flicker. The key prop has to be stable otherwise react has trouble reconciling items between renders, causing unmounting and remounting of components (flickering).
-					The lesson here is if you see flickering when rendering lists, it's likely because the key prop is not stable.
-					So in this case we must make sure that the message ts is never altered after first setting it.
-					*/
+          Bug for the history books:
+          In the webview we use the ts as the chatrow key for the virtuoso list. Since we would update this ts right at the end of streaming, it would cause the view to flicker. The key prop has to be stable otherwise react has trouble reconciling items between renders, causing unmounting and remounting of components (flickering).
+          The lesson here is if you see flickering when rendering lists, it's likely because the key prop is not stable.
+          So in this case we must make sure that the message ts is never altered after first setting it.
+          */
           askTs = lastMessage.ts;
           this.lastMessageTs = askTs;
           // lastMessage.ts = askTs
           lastMessage.text = text;
           lastMessage.partial = false;
+          if (shouldUpdateChangesSummary) {
+            lastMessage.changesSummary = changesSummary;
+          }
           await this.saveValorIDEMessagesAndUpdateHistory();
           // await this.postStateToWebview()
           await this.postMessageToWebview({
@@ -923,12 +1106,16 @@ export class Task {
           this.askResponseImages = undefined;
           askTs = Date.now();
           this.lastMessageTs = askTs;
-          await this.addToValorIDEMessages({
+          const messageToAdd: ValorIDEMessage = {
             ts: askTs,
             type: "ask",
             ask: type,
             text,
-          });
+          };
+          if (shouldUpdateChangesSummary) {
+            messageToAdd.changesSummary = changesSummary;
+          }
+          await this.addToValorIDEMessages(messageToAdd);
           await this.postStateToWebview();
         }
       }
@@ -940,12 +1127,16 @@ export class Task {
       this.askResponseImages = undefined;
       askTs = Date.now();
       this.lastMessageTs = askTs;
-      await this.addToValorIDEMessages({
+      const messageToAdd: ValorIDEMessage = {
         ts: askTs,
         type: "ask",
         ask: type,
         text,
-      });
+      };
+      if (shouldUpdateChangesSummary) {
+        messageToAdd.changesSummary = changesSummary;
+      }
+      await this.addToValorIDEMessages(messageToAdd);
       await this.postStateToWebview();
     }
 
@@ -1071,8 +1262,7 @@ export class Task {
   ) {
     await this.say(
       "error",
-      `ValorIDE tried to use ${toolName}${
-        relPath ? ` for '${relPath.toPosix()}'` : ""
+      `ValorIDE tried to use ${toolName}${relPath ? ` for '${relPath.toPosix()}'` : ""
       } without value for required parameter '${paramName}'. Retrying...`,
     );
     return formatResponse.toolError(
@@ -1213,7 +1403,7 @@ export class Task {
     if (existingApiConversationHistory.length > 0) {
       const lastMessage =
         existingApiConversationHistory[
-          existingApiConversationHistory.length - 1
+        existingApiConversationHistory.length - 1
         ];
       if (lastMessage.role === "assistant") {
         modifiedApiConversationHistory = [...existingApiConversationHistory];
@@ -1489,14 +1679,13 @@ export class Task {
 
       // Filter the output to reduce verbosity
       const filteredOutput = OutputFilterService.filterCommandOutput(output, command);
-      
+
       Logger.info(`Command executed in Node: ${command}\nOutput:\n${filteredOutput}`);
 
       // Format the result similar to terminal output
       return [
         false,
-        `Command executed${wasTerminated ? " (terminated after 30s)" : ""} with exit code ${
-          result.exitCode
+        `Command executed${wasTerminated ? " (terminated after 30s)" : ""} with exit code ${result.exitCode
         }.${filteredOutput.length > 0 ? `\nOutput:\n${filteredOutput}` : ""}`,
       ];
     } catch (error) {
@@ -1579,7 +1768,7 @@ export class Task {
 
     let result = "";
     let fullOutput = ""; // Keep track of full output for filtering
-    
+
     process.on("line", (line) => {
       result += line + "\n";
       fullOutput += line + "\n";
@@ -1629,7 +1818,7 @@ export class Task {
 
     // Filter the full output before using it
     const filteredOutput = OutputFilterService.filterCommandOutput(fullOutput, command);
-    
+
     result = result.trim();
 
     if (userFeedback) {
@@ -1637,8 +1826,7 @@ export class Task {
       return [
         true,
         formatResponse.toolResult(
-          `Command is still running in the user's terminal.${
-            filteredOutput.length > 0 ? `\nHere's the output so far:\n${filteredOutput}` : ""
+          `Command is still running in the user's terminal.${filteredOutput.length > 0 ? `\nHere's the output so far:\n${filteredOutput}` : ""
           }\n\nThe user provided the following feedback:\n<feedback>\n${userFeedback.text}\n</feedback>`,
           userFeedback.images,
         ),
@@ -1653,8 +1841,7 @@ export class Task {
     } else {
       return [
         false,
-        `Command is still running in the user's terminal.${
-          filteredOutput.length > 0 ? `\nHere's the output so far:\n${filteredOutput}` : ""
+        `Command is still running in the user's terminal.${filteredOutput.length > 0 ? `\nHere's the output so far:\n${filteredOutput}` : ""
         }\n\nYou will be updated on the terminal status and new output in the future.`,
       ];
     }
@@ -1753,6 +1940,7 @@ export class Task {
     let systemPrompt = await SYSTEM_PROMPT(
       cwd,
       supportsBrowserUse,
+      this.thorapi_project,
       this.mcpHub,
       this.browserSettings,
     );
@@ -2073,6 +2261,18 @@ export class Task {
           }
         };
 
+        const handleToolFeedback = async (feedback?: { text?: string; images?: string[] }) => {
+          if (!feedback) {
+            return;
+          }
+          const { text, images } = feedback;
+          if (!text && (!images || images.length === 0)) {
+            return;
+          }
+          pushAdditionalToolFeedback(text, images);
+          await this.say("user_feedback", text, images);
+        };
+
         const askApproval = async (
           type: ValorIDEAsk,
           partialMessage?: string,
@@ -2136,7 +2336,7 @@ export class Task {
         };
 
         // If block is partial, remove partial closing tag so its not presented to user
-        const removeClosingTag = (tag: ToolParamName, text?: string) => 
+        const removeClosingTag = (tag: ToolParamName, text?: string) =>
           TagProcessingUtils.removeClosingTag(tag, text, block.partial);
 
         if (block.name !== "browser_action") {
@@ -2151,12 +2351,20 @@ export class Task {
           this.userMessageContent,
           this.didRejectTool,
           this.didAlreadyUseTool,
-          removeClosingTag
+          removeClosingTag,
+          handleToolFeedback
         );
-        
+
         this.didRejectTool = engineResult.didRejectTool;
         this.didAlreadyUseTool = engineResult.didAlreadyUseTool;
-        
+
+        if (engineResult.handled) {
+          if (!engineResult.shouldContinue) {
+            break;
+          }
+          break;
+        }
+
         if (!engineResult.shouldContinue) {
           break;
         }
@@ -2225,7 +2433,7 @@ export class Task {
                   // Extract error type from error message if possible, or use a generic type
                   const errorType =
                     error instanceof Error &&
-                    error.message.includes("does not match anything")
+                      error.message.includes("does not match anything")
                       ? "search_not_found"
                       : "other_diff_error";
 
@@ -2238,10 +2446,10 @@ export class Task {
                   pushToolResult(
                     formatResponse.toolError(
                       `${(error as Error)?.message}\n\n` +
-                        formatResponse.diffError(
-                          relPath,
-                          this.diffViewProvider.originalContent,
-                        ),
+                      formatResponse.diffError(
+                        relPath,
+                        this.diffViewProvider.originalContent,
+                      ),
                     ),
                   );
                   await this.diffViewProvider.revertChanges();
@@ -2302,7 +2510,7 @@ export class Task {
                 } else {
                   this.removeLastPartialMessageIfExistsWithType("say", "tool");
                   await this.ask("tool", partialMessage, block.partial).catch(
-                    () => {},
+                    () => { },
                   );
                 }
                 // update editor
@@ -2359,7 +2567,7 @@ export class Task {
                 if (!this.diffViewProvider.isEditing) {
                   // show gui message before showing edit animation
                   const partialMessage = JSON.stringify(sharedMessageProps);
-                  await this.ask("tool", partialMessage, true).catch(() => {}); // sending true for partial even though it's not a partial, this shows the edit row before the content is streamed into the editor
+                  await this.ask("tool", partialMessage, true).catch(() => { }); // sending true for partial even though it's not a partial, this shows the edit row before the content is streamed into the editor
                   await this.diffViewProvider.open(relPath);
                 }
                 await this.diffViewProvider.update(newContent, true);
@@ -2547,7 +2755,7 @@ export class Task {
                 } else {
                   this.removeLastPartialMessageIfExistsWithType("say", "tool");
                   await this.ask("tool", partialMessage, block.partial).catch(
-                    () => {},
+                    () => { },
                   );
                 }
                 break;
@@ -2673,7 +2881,7 @@ export class Task {
                 } else {
                   this.removeLastPartialMessageIfExistsWithType("say", "tool");
                   await this.ask("tool", partialMessage, block.partial).catch(
-                    () => {},
+                    () => { },
                   );
                 }
                 break;
@@ -2790,7 +2998,7 @@ export class Task {
                 } else {
                   this.removeLastPartialMessageIfExistsWithType("say", "tool");
                   await this.ask("tool", partialMessage, block.partial).catch(
-                    () => {},
+                    () => { },
                   );
                 }
                 break;
@@ -2904,7 +3112,7 @@ export class Task {
                 } else {
                   this.removeLastPartialMessageIfExistsWithType("say", "tool");
                   await this.ask("tool", partialMessage, block.partial).catch(
-                    () => {},
+                    () => { },
                   );
                 }
                 break;
@@ -3041,7 +3249,7 @@ export class Task {
                       "browser_action_launch",
                       removeClosingTag("url", url),
                       block.partial,
-                    ).catch(() => {});
+                    ).catch(() => { });
                   }
                 } else {
                   await this.say(
@@ -3199,8 +3407,7 @@ export class Task {
                     );
                     pushToolResult(
                       formatResponse.toolResult(
-                        `The browser action has been executed. The console logs and screenshot have been captured for your analysis.\n\nConsole logs:\n${
-                          browserActionResult.logs || "(No new logs)"
+                        `The browser action has been executed. The console logs and screenshot have been captured for your analysis.\n\nConsole logs:\n${browserActionResult.logs || "(No new logs)"
                         }\n\n(REMEMBER: if you need to proceed to using non-\`browser_action\` tools or launch a new browser, you MUST first close this browser. For example, if after analyzing the logs and screenshot you need to edit a file, you must first close the browser before you can use the write_to_file tool.)`,
                         browserActionResult.screenshot
                           ? [browserActionResult.screenshot]
@@ -3251,7 +3458,7 @@ export class Task {
                     "command",
                     removeClosingTag("command", command),
                     block.partial,
-                  ).catch(() => {});
+                  ).catch(() => { });
                 }
                 break;
               } else {
@@ -3334,7 +3541,7 @@ export class Task {
                   const didApprove = await askApproval(
                     "command",
                     command +
-                      `${this.shouldAutoApproveTool(block.name) && requiresApprovalPerLLM ? COMMAND_REQ_APP_STRING : ""}`, // ugly hack until we refactor combineCommandSequences
+                    `${this.shouldAutoApproveTool(block.name) && requiresApprovalPerLLM ? COMMAND_REQ_APP_STRING : ""}`, // ugly hack until we refactor combineCommandSequences
                   );
                   if (!didApprove) {
                     break;
@@ -3413,7 +3620,7 @@ export class Task {
                     "use_mcp_server",
                     partialMessage,
                     block.partial,
-                  ).catch(() => {});
+                  ).catch(() => { });
                 }
 
                 break;
@@ -3532,19 +3739,19 @@ export class Task {
                     ) || [];
                 let toolResultText =
                   (toolResult?.isError ? "Error:\n" : "") +
-                    toolResult?.content
-                      .map((item) => {
-                        if (item.type === "text") {
-                          return item.text;
-                        }
-                        if (item.type === "resource") {
-                          const { blob, ...rest } = item.resource;
-                          return JSON.stringify(rest, null, 2);
-                        }
-                        return "";
-                      })
-                      .filter(Boolean)
-                      .join("\n\n") || "(No response)";
+                  toolResult?.content
+                    .map((item) => {
+                      if (item.type === "text") {
+                        return item.text;
+                      }
+                      if (item.type === "resource") {
+                        const { blob, ...rest } = item.resource;
+                        return JSON.stringify(rest, null, 2);
+                      }
+                      return "";
+                    })
+                    .filter(Boolean)
+                    .join("\n\n") || "(No response)";
                 // webview extracts images from the text response to display in the UI
                 const toolResultToDisplay =
                   toolResultText +
@@ -3607,7 +3814,7 @@ export class Task {
                     "use_mcp_server",
                     partialMessage,
                     block.partial,
-                  ).catch(() => {});
+                  ).catch(() => { });
                 }
 
                 break;
@@ -3712,7 +3919,7 @@ export class Task {
                   "followup",
                   JSON.stringify(sharedMessage),
                   block.partial,
-                ).catch(() => {});
+                ).catch(() => { });
                 break;
               } else {
                 if (!question) {
@@ -3801,7 +4008,7 @@ export class Task {
                   "new_task",
                   removeClosingTag("context", context),
                   block.partial,
-                ).catch(() => {});
+                ).catch(() => { });
                 break;
               } else {
                 if (!context) {
@@ -3864,7 +4071,7 @@ export class Task {
                   "condense",
                   removeClosingTag("context", context),
                   block.partial,
-                ).catch(() => {});
+                ).catch(() => { });
                 break;
               } else {
                 if (!context) {
@@ -3912,7 +4119,7 @@ export class Task {
 
                   const lastMessage =
                     this.apiConversationHistory[
-                      this.apiConversationHistory.length - 1
+                    this.apiConversationHistory.length - 1
                     ];
                   const summaryAlreadyAppended =
                     lastMessage && lastMessage.role === "assistant";
@@ -3958,7 +4165,7 @@ export class Task {
                   "plan_mode_respond",
                   JSON.stringify(sharedMessage),
                   block.partial,
-                ).catch(() => {});
+                ).catch(() => { });
                 break;
               } else {
                 if (!response) {
@@ -4037,9 +4244,9 @@ export class Task {
                   pushToolResult(
                     formatResponse.toolResult(
                       `[The user has switched to ACT MODE, so you may now proceed with the task.]` +
-                        (text
-                          ? `\n\nThe user also provided the following message when switching to ACT MODE:\n<user_message>\n${text}\n</user_message>`
-                          : ""),
+                      (text
+                        ? `\n\nThe user also provided the following message when switching to ACT MODE:\n<user_message>\n${text}\n</user_message>`
+                        : ""),
                       images,
                     ),
                   );
@@ -4079,49 +4286,86 @@ export class Task {
           }
           case "attempt_completion": {
             /*
-						this.consecutiveMistakeCount = 0
-						let resultToSend = result
-						if (command) {
-							await this.say("completion_result", resultToSend)
-							// TODO: currently we don't handle if this command fails, it could be useful to let valoride know and retry
-							const [didUserReject, commandResult] = await this.executeCommand(command, true)
-							// if we received non-empty string, the command was rejected or failed
-							if (commandResult) {
-								return [didUserReject, commandResult]
-							}
-							resultToSend = ""
-						}
-						const { response, text, images } = await this.ask("completion_result", resultToSend) // this prompts webview to show 'new task' button, and enable text input (which would be the 'text' here)
-						if (response === "yesButtonClicked") {
-							return [false, ""] // signals to recursive loop to stop (for now this never happens since yesButtonClicked will trigger a new task)
-						}
-						await this.say("user_feedback", text ?? "", images)
-						return [
-						*/
+            this.consecutiveMistakeCount = 0
+            let resultToSend = result
+            if (command) {
+              await this.say("completion_result", resultToSend)
+              // TODO: currently we don't handle if this command fails, it could be useful to let valoride know and retry
+              const [didUserReject, commandResult] = await this.executeCommand(command, true)
+              // if we received non-empty string, the command was rejected or failed
+              if (commandResult) {
+                return [didUserReject, commandResult]
+              }
+              resultToSend = ""
+            }
+            const { response, text, images } = await this.ask("completion_result", resultToSend) // this prompts webview to show 'new task' button, and enable text input (which would be the 'text' here)
+            if (response === "yesButtonClicked") {
+              return [false, ""] // signals to recursive loop to stop (for now this never happens since yesButtonClicked will trigger a new task)
+            }
+            await this.say("user_feedback", text ?? "", images)
+            return [
+            */
             const result: string | undefined = block.params.result;
             const command: string | undefined = block.params.command;
 
-            const addNewChangesFlagToLastCompletionResultMessage = async () => {
-              // Add newchanges flag if there are new changes to the workspace
+            let lastCompletionChangesSummary: ValorIDEChangesSummary | undefined;
 
-              const hasNewChanges =
-                await this.doesLatestTaskCompletionHaveNewChanges();
-              const lastCompletionResultMessage = findLast(
-                this.valorideMessages,
-                (m) => m.say === "completion_result",
-              );
-              if (
-                lastCompletionResultMessage &&
-                hasNewChanges &&
-                !lastCompletionResultMessage.text?.endsWith(
+            const addNewChangesFlagToLastCompletionResultMessage =
+              async (): Promise<ValorIDEChangesSummary | undefined> => {
+                const summary =
+                  await this.getLatestTaskCompletionChangesSummary();
+                const lastCompletionResultMessage = findLast(
+                  this.valorideMessages,
+                  (m) => m.say === "completion_result",
+                );
+                if (!lastCompletionResultMessage) {
+                  lastCompletionChangesSummary = summary;
+                  return summary;
+                }
+
+                let didUpdate = false;
+                const existingText = lastCompletionResultMessage.text ?? "";
+                const hasFlag = existingText.endsWith(
                   COMPLETION_RESULT_CHANGES_FLAG,
-                )
-              ) {
-                lastCompletionResultMessage.text +=
-                  COMPLETION_RESULT_CHANGES_FLAG;
-              }
-              await this.saveValorIDEMessagesAndUpdateHistory();
-            };
+                );
+
+                if (summary && summary.totalFiles > 0) {
+                  if (!hasFlag) {
+                    lastCompletionResultMessage.text =
+                      existingText + COMPLETION_RESULT_CHANGES_FLAG;
+                    didUpdate = true;
+                  }
+                  if (
+                    lastCompletionResultMessage.changesSummary?.totalFiles !==
+                      summary.totalFiles ||
+                    lastCompletionResultMessage.changesSummary
+                      ?.totalInsertions !== summary.totalInsertions ||
+                    lastCompletionResultMessage.changesSummary
+                      ?.totalDeletions !== summary.totalDeletions
+                  ) {
+                    lastCompletionResultMessage.changesSummary = summary;
+                    didUpdate = true;
+                  }
+                } else {
+                  if (hasFlag) {
+                    lastCompletionResultMessage.text = existingText.slice(
+                      0,
+                      -COMPLETION_RESULT_CHANGES_FLAG.length,
+                    );
+                    didUpdate = true;
+                  }
+                  if (lastCompletionResultMessage.changesSummary) {
+                    lastCompletionResultMessage.changesSummary = undefined;
+                    didUpdate = true;
+                  }
+                }
+
+                if (didUpdate) {
+                  await this.saveValorIDEMessagesAndUpdateHistory();
+                }
+                lastCompletionChangesSummary = summary;
+                return summary;
+              };
 
             try {
               const lastMessage = this.valorideMessages.at(-1);
@@ -4138,7 +4382,7 @@ export class Task {
                       "command",
                       removeClosingTag("command", command),
                       block.partial,
-                    ).catch(() => {});
+                    ).catch(() => { });
                   } else {
                     // last message is completion_result
                     // we have command string, which means we have the result as well, so finish it (doesn't have to exist yet)
@@ -4149,12 +4393,13 @@ export class Task {
                       false,
                     );
                     await this.saveCheckpoint(true);
-                    await addNewChangesFlagToLastCompletionResultMessage();
+                    lastCompletionChangesSummary =
+                      await addNewChangesFlagToLastCompletionResultMessage();
                     await this.ask(
                       "command",
                       removeClosingTag("command", command),
                       block.partial,
-                    ).catch(() => {});
+                    ).catch(() => { });
                   }
                 } else {
                   // no command, still outputting partial result
@@ -4197,11 +4442,14 @@ export class Task {
                       false,
                     );
                     await this.saveCheckpoint(true);
-                    await addNewChangesFlagToLastCompletionResultMessage();
+                    lastCompletionChangesSummary =
+                      await addNewChangesFlagToLastCompletionResultMessage();
                     telemetryService.captureTaskCompleted(this.taskId);
                   } else {
                     // we already sent a command message, meaning the complete completion message has also been sent
                     await this.saveCheckpoint(true);
+                    lastCompletionChangesSummary =
+                      await addNewChangesFlagToLastCompletionResultMessage();
                   }
 
                   // complete command message
@@ -4221,7 +4469,8 @@ export class Task {
                 } else {
                   await this.say("completion_result", result, undefined, false);
                   await this.saveCheckpoint(true);
-                  await addNewChangesFlagToLastCompletionResultMessage();
+                  lastCompletionChangesSummary =
+                    await addNewChangesFlagToLastCompletionResultMessage();
                   telemetryService.captureTaskCompleted(this.taskId);
                 }
 
@@ -4230,6 +4479,7 @@ export class Task {
                   "completion_result",
                   "",
                   false,
+                  { changesSummary: lastCompletionChangesSummary },
                 );
                 if (response === "yesButtonClicked") {
                   pushToolResult(""); // signals to recursive loop to stop (for now this never happens since yesButtonClicked will trigger a new task)
@@ -4276,9 +4526,9 @@ export class Task {
     }
 
     /*
-		Seeing out of bounds is fine, it means that the next too call is being built up and ready to add to assistantMessageContent to present. 
-		When you see the UI inactive during this, it means that a tool is breaking without presenting any UI. For example the write_to_file tool was breaking when relpath was undefined, and for invalid relpath it never presented UI.
-		*/
+    Seeing out of bounds is fine, it means that the next too call is being built up and ready to add to assistantMessageContent to present. 
+    When you see the UI inactive during this, it means that a tool is breaking without presenting any UI. For example the write_to_file tool was breaking when relpath was undefined, and for invalid relpath it never presented UI.
+    */
     this.presentAssistantMessageLocked = false; // this needs to be placed here, if not then calling this.presentAssistantMessage below would fail (sometimes) since it's locked
     // NOTE: when tool is rejected, iterator stream is interrupted and it waits for userMessageContentReady to be true. Future calls to present will skip execution since didRejectTool and iterate until contentIndex is set to message length and it sets userMessageContentReady to true itself (instead of preemptively doing it in iterator)
     if (!block.partial || this.didRejectTool || this.didAlreadyUseTool) {
@@ -4331,7 +4581,7 @@ export class Task {
           this.api.getModel().id,
           this.chatSettings.mode,
         );
-      } catch {}
+      } catch { }
     }
 
     if (this.consecutiveMistakeCount >= 3) {
@@ -4368,7 +4618,7 @@ export class Task {
     if (
       this.autoApprovalSettings.enabled &&
       this.consecutiveAutoApprovedRequestsCount >=
-        this.autoApprovalSettings.maxRequests
+      this.autoApprovalSettings.maxRequests
     ) {
       if (this.autoApprovalSettings.enableNotifications) {
         showSystemNotification({
@@ -4565,10 +4815,9 @@ export class Task {
               type: "text",
               text:
                 assistantMessage +
-                `\n\n[${
-                  cancelReason === "streaming_failed"
-                    ? "Response interrupted by API Error"
-                    : "Response interrupted by user"
+                `\n\n[${cancelReason === "streaming_failed"
+                  ? "Response interrupted by API Error"
+                  : "Response interrupted by user"
                 }]`,
             },
           ],
@@ -4714,7 +4963,7 @@ export class Task {
           try {
             const { WebviewProvider } = await import("../webview/index");
             WebviewProvider.getVisibleInstance()?.getUsageTrackingService().requestBalance();
-          } catch {}
+          } catch { }
         });
       }
 
@@ -4757,7 +5006,7 @@ export class Task {
       try {
         const { WebviewProvider } = await import("../webview/index");
         WebviewProvider.getVisibleInstance()?.getUsageTrackingService().requestBalance();
-      } catch {}
+      } catch { }
 
       // now add to apiconversationhistory
       // need to save assistant responses to file before proceeding to tool use since user can exit at any moment and we wouldn't be able to save the assistant's response
@@ -4770,27 +5019,27 @@ export class Task {
           "assistant",
         );
 
-    await this.addToApiConversationHistory({
-      role: "assistant",
-      content: [{ type: "text", text: assistantMessage }],
-    });
+        await this.addToApiConversationHistory({
+          role: "assistant",
+          content: [{ type: "text", text: assistantMessage }],
+        });
 
-    // Send websocket message after every API response if communicationService is available
-    if (this.communicationService) {
-      try {
-        this.communicationService.sendMessage(
-          "api_action",
-          {
-            taskId: this.taskId,
-            message: assistantMessage,
-            timestamp: Date.now(),
+        // Send websocket message after every API response if communicationService is available
+        if (this.communicationService) {
+          try {
+            this.communicationService.sendMessage(
+              "api_action",
+              {
+                taskId: this.taskId,
+                message: assistantMessage,
+                timestamp: Date.now(),
+              }
+            );
+          } catch (err) {
+            // Log but do not throw
+            console.warn("Failed to send websocket message for API action:", err);
           }
-        );
-      } catch (err) {
-        // Log but do not throw
-        console.warn("Failed to send websocket message for API action:", err);
-      }
-    }
+        }
 
         // NOTE: this comment is here for future reference - this was a workaround for userMessageContent not getting set to true. It was due to it not recursively calling for partial blocks when didRejectTool, so it would get stuck waiting for a partial block to complete before it could continue.
         // in case the content blocks finished
@@ -4946,26 +5195,26 @@ export class Task {
           interval: 100,
           timeout: 15_000,
         },
-      ).catch(() => {});
+      ).catch(() => { });
     }
 
     // we want to get diagnostics AFTER terminal cools down for a few reasons: terminal could be scaffolding a project, dev servers (compilers like webpack) will first re-compile and then send diagnostics, etc
     /*
-		let diagnosticsDetails = ""
-		const diagnostics = await this.diagnosticsMonitor.getCurrentDiagnostics(this.didEditFile || terminalWasBusy) // if valoride ran a command (ie npm install) or edited the workspace then wait a bit for updated diagnostics
-		for (const [uri, fileDiagnostics] of diagnostics) {
-			const problems = fileDiagnostics.filter((d) => d.severity === vscode.DiagnosticSeverity.Error)
-			if (problems.length > 0) {
-				diagnosticsDetails += `\n## ${path.relative(cwd, uri.fsPath)}`
-				for (const diagnostic of problems) {
-					// let severity = diagnostic.severity === vscode.DiagnosticSeverity.Error ? "Error" : "Warning"
-					const line = diagnostic.range.start.line + 1 // VSCode lines are 0-indexed
-					const source = diagnostic.source ? `[${diagnostic.source}] ` : ""
-					diagnosticsDetails += `\n- ${source}Line ${line}: ${diagnostic.message}`
-				}
-			}
-		}
-		*/
+    let diagnosticsDetails = ""
+    const diagnostics = await this.diagnosticsMonitor.getCurrentDiagnostics(this.didEditFile || terminalWasBusy) // if valoride ran a command (ie npm install) or edited the workspace then wait a bit for updated diagnostics
+    for (const [uri, fileDiagnostics] of diagnostics) {
+      const problems = fileDiagnostics.filter((d) => d.severity === vscode.DiagnosticSeverity.Error)
+      if (problems.length > 0) {
+        diagnosticsDetails += `\n## ${path.relative(cwd, uri.fsPath)}`
+        for (const diagnostic of problems) {
+          // let severity = diagnostic.severity === vscode.DiagnosticSeverity.Error ? "Error" : "Warning"
+          const line = diagnostic.range.start.line + 1 // VSCode lines are 0-indexed
+          const source = diagnostic.source ? `[${diagnostic.source}] ` : ""
+          diagnosticsDetails += `\n- ${source}Line ${line}: ${diagnostic.message}`
+        }
+      }
+    }
+    */
     this.didEditFile = false; // reset, this lets us know when to wait for saved files to update terminals
 
     // waiting for updated diagnostics lets terminal output be the most up-to-date possible

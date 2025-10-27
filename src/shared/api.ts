@@ -142,7 +142,7 @@ export const anthropicModels = {
     description:
       "Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)",
   },
-  "claude-haiku-4-5-20250929": {
+  "claude-haiku-4-5-20251001": {
     maxTokens: 8192,
     contextWindow: 200_000,
     supportsImages: false,
@@ -235,7 +235,7 @@ export const anthropicModels = {
     cacheWritesPrice: 0.375,
     cacheReadsPrice: 0.03,
   },
-  } as const satisfies Record<string, ModelInfo>; // as const assertion makes the object deeply readonly
+} as const satisfies Record<string, ModelInfo>; // as const assertion makes the object deeply readonly
 
 // AWS Bedrock
 // https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html

@@ -43,6 +43,7 @@ import { ToolManager, ToolContext } from "./tools";
 type ToolResponse =
   | string
   | Array<Anthropic.TextBlockParam | Anthropic.ImageBlockParam>;
+type ToolFeedback = { text?: string; images?: string[] };
 
 /**
  * Core tool execution engine that handles all tool implementations
@@ -110,11 +111,13 @@ export class ToolExecutionEngine {
     userMessageContent: (Anthropic.TextBlockParam | Anthropic.ImageBlockParam)[],
     didRejectTool: boolean,
     didAlreadyUseTool: boolean,
-    removeClosingTag: (tag: ToolParamName, text?: string) => string
+    removeClosingTag: (tag: ToolParamName, text?: string) => string,
+    handleFeedback: (feedback?: ToolFeedback) => Promise<void> | void
   ): Promise<{
     shouldContinue: boolean;
     didRejectTool: boolean;
     didAlreadyUseTool: boolean;
+    handled: boolean;
   }> {
     if (didRejectTool) {
       // ignore any tool content after user has rejected tool once
@@ -130,7 +133,12 @@ export class ToolExecutionEngine {
           text: `Tool ${toolDescription()} was interrupted and not executed due to user rejecting a previous tool.`,
         });
       }
-      return { shouldContinue: false, didRejectTool, didAlreadyUseTool };
+      return {
+        shouldContinue: false,
+        didRejectTool,
+        didAlreadyUseTool,
+        handled: true,
+      };
     }
 
     if (didAlreadyUseTool) {
@@ -139,7 +147,12 @@ export class ToolExecutionEngine {
         type: "text",
         text: formatResponse.toolAlreadyUsed(block.name),
       });
-      return { shouldContinue: false, didRejectTool, didAlreadyUseTool };
+      return {
+        shouldContinue: false,
+        didRejectTool,
+        didAlreadyUseTool,
+        handled: true,
+      };
     }
 
     const pushToolResult = (content: ToolResponse) => {
@@ -173,13 +186,15 @@ export class ToolExecutionEngine {
       pushToolResult,
       handleError,
       removeClosingTag,
-      toolDescription
+      toolDescription,
+      handleFeedback
     );
 
     return {
       shouldContinue: result.shouldContinue,
       didRejectTool: result.didRejectTool || didRejectTool,
       didAlreadyUseTool: result.didAlreadyUseTool || didAlreadyUseTool,
+      handled: result.handled ?? false,
     };
   }
 
@@ -192,11 +207,13 @@ export class ToolExecutionEngine {
     pushToolResult: (content: ToolResponse) => void,
     handleError: (action: string, error: Error) => Promise<void>,
     removeClosingTag: (tag: ToolParamName, text?: string) => string,
-    toolDescription: () => string
+    toolDescription: () => string,
+    handleFeedback: (feedback?: ToolFeedback) => Promise<void> | void
   ): Promise<{
     shouldContinue: boolean;
     didRejectTool: boolean;
     didAlreadyUseTool: boolean;
+    handled?: boolean;
   }> {
     try {
       // Try to execute with the refactored ToolManager first
@@ -213,20 +230,34 @@ export class ToolExecutionEngine {
         if (result.toolResponse) {
           pushToolResult(result.toolResponse);
         }
+        if (result.feedback) {
+          await handleFeedback(result.feedback);
+        }
 
         return {
           shouldContinue: true,
-          didRejectTool: result.didRejectTool || false,
+          didRejectTool: result.didRejectTool || result.userRejected || false,
           didAlreadyUseTool: result.didAlreadyUseTool || false,
+          handled: true,
         };
       }
 
       // If ToolManager couldn't handle it, fall back to legacy implementation
-      return { shouldContinue: true, didRejectTool: false, didAlreadyUseTool: false };
+      return {
+        shouldContinue: true,
+        didRejectTool: false,
+        didAlreadyUseTool: false,
+        handled: false,
+      };
       
     } catch (error) {
       await handleError(`executing ${block.name}`, error as Error);
-      return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+      return {
+        shouldContinue: false,
+        didRejectTool: false,
+        didAlreadyUseTool: true,
+        handled: true,
+      };
     }
   }
 

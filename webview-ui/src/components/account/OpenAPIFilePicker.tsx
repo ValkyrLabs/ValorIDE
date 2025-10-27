@@ -102,13 +102,13 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
   return (
     <div className="openapi-file-picker">
       <div className="file-picker-header" style={{ marginBottom: "16px" }}>
-        <h3>Upload OpenAPI Specification</h3>
+        <h3>Import Application from OpenAPI</h3>
         <p style={{
           fontSize: "14px",
           color: "var(--vscode-descriptionForeground)",
           marginTop: "8px"
         }}>
-          Select a local OpenAPI spec file (.yaml, .yml, or .json) to upload to the generator
+          Select a local OpenAPI spec file (.yaml, .yml, or .json) to upload to the generator.
         </p>
       </div>
 

@@ -306,7 +306,6 @@ button {
 
 /* Glowing button styles (inspired by chat text area) */
 .glow-button {
-  
   --glow-color: #61dafb;
   display: inline-block;
   border: 1px solid var(--glow-color);
@@ -314,7 +313,10 @@ button {
   border-radius: 8px;
   background: transparent;
   color: var(--vscode-foreground);
-  transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .glow-button:hover {
@@ -343,9 +345,15 @@ button {
 }
 
 @keyframes glowPulse {
-  0% { box-shadow: 0 0 6px var(--glow-color); }
-  50% { box-shadow: 0 0 16px var(--glow-color); }
-  100% { box-shadow: 0 0 6px var(--glow-color); }
+  0% {
+    box-shadow: 0 0 6px var(--glow-color);
+  }
+  50% {
+    box-shadow: 0 0 16px var(--glow-color);
+  }
+  100% {
+    box-shadow: 0 0 6px var(--glow-color);
+  }
 }
 
 /* Footer styling for dark mode */
@@ -1225,6 +1233,13 @@ label {
   border-radius: 3px;
   background-color: var(--vscode-badge-background);
   color: var(--vscode-badge-foreground);
+}
+
+.application-loading-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
 }
 
 .application-buttons {

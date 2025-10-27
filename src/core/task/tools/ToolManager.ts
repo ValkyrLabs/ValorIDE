@@ -36,6 +36,7 @@ export class ToolManager {
     userRejected?: boolean;
     didRejectTool?: boolean;
     didAlreadyUseTool?: boolean;
+    feedback?: { text?: string; images?: string[] };
   }> {
     if (block.type !== "tool_use") {
       return { shouldContinue: false };
@@ -69,7 +70,9 @@ export class ToolManager {
         toolResponse: result.toolResponse,
         userRejected: result.userRejected,
         didRejectTool: result.userRejected,
-        didAlreadyUseTool: result.shouldContinue && !result.userRejected,
+        didAlreadyUseTool:
+          result.didAlreadyUseTool ?? (result.shouldContinue && !result.userRejected),
+        feedback: result.feedback,
       };
     }
 

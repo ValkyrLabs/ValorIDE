@@ -2,8 +2,9 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.393",
+  "version": "3.20.476",
   "icon": "assets/icons/icon.png",
+  "pricing": "Free",
   "galleryBanner": {
     "color": "#617A91",
     "theme": "dark"
@@ -46,23 +47,7 @@
   ],
   "activationEvents": [
     "onStartupFinished",
-    "onView:valoride-dev.SidebarProvider",
-    "onView:valoride-dev.ProjectsView",
-    "onViewContainer:valoride-activitybar",
-    "onCommand:valoride.openInNewTab",
-    "onCommand:valoride.diagnostics",
-    "onCommand:valoride.fixLayout",
-    "onCommand:valoride.openUrlInEditor",
-    "onCommand:valoride.addThorAliasesFromFolder",
-    "onCommand:valoride.projectActions",
-    "onCommand:valoride.projects.refresh",
-    "onCommand:valoride.projects.build",
-    "onCommand:valoride.projects.run",
-    "onCommand:valoride.projects.openInWindow",
-    "onCommand:valoride.projects.openTerminal",
-    "onCommand:valoride.projects.openReadme",
-    "onCommand:valoride.projects.reveal",
-    "onCommand:valoride.projects.copyPath"
+    "onViewContainer:valoride-activitybar"
   ],
   "main": "./dist/extension.js",
   "extensionKind": [
@@ -84,12 +69,14 @@
         {
           "type": "webview",
           "id": "valoride-dev.SidebarProvider",
-          "name": "ValorIDE"
+          "name": "ValorIDE",
+          "icon": "assets/icons/icon.svg"
         },
         {
           "type": "tree",
           "id": "valoride-dev.ProjectsView",
-          "name": "Projects"
+          "name": "Projects",
+          "icon": "assets/icons/icon.svg"
         }
       ]
     },
@@ -165,6 +152,18 @@
         "title": "Refresh Projects",
         "category": "ValorIDE",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "valoride.projects.build",
+        "title": "Build Project",
+        "category": "ValorIDE",
+        "icon": "$(tools)"
+      },
+      {
+        "command": "valoride.projects.run",
+        "title": "Run Project",
+        "category": "ValorIDE",
+        "icon": "$(play)"
       },
       {
         "command": "valoride.projects.openInWindow",

@@ -379,6 +379,7 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
             </p>
           </div>
 
+
           {/* Browser Settings Section */}
           <BrowserSettingsSection />
 

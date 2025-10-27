@@ -368,11 +368,9 @@ const AccountView = ({ onDone }: AccountViewProps) => {
           )}
           {/* Applications List */}
           <div style={{ marginBottom: "1em" }}>
+            <OpenAPIFilePicker onFileSelected={handleOpenAPIFileSelected} />
             <ApplicationsList showTitle={true} title="Available Applications" />
-            {/* OpenAPI File Picker */}
-            <div style={{ marginBottom: "1em" }}>
-              <OpenAPIFilePicker onFileSelected={handleOpenAPIFileSelected} />
-            </div>
+
           </div>
         </div>
       ) : activeTab === "generatedFiles" ? (

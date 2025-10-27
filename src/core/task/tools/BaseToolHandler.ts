@@ -60,6 +60,11 @@ export interface ToolExecutionResult {
   shouldContinue: boolean;
   toolResponse?: ToolResponse;
   userRejected?: boolean;
+  didAlreadyUseTool?: boolean;
+  feedback?: {
+    text?: string;
+    images?: string[];
+  };
 }
 
 export abstract class BaseToolHandler {

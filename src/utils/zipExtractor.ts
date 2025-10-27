@@ -4,6 +4,12 @@ import * as fs from "fs";
 import fetch from "node-fetch";
 import AdmZip from "adm-zip";
 
+const ZIP_SIGNATURES: Array<readonly [number, number, number, number]> = [
+  [0x50, 0x4b, 0x03, 0x04],
+  [0x50, 0x4b, 0x05, 0x06],
+  [0x50, 0x4b, 0x07, 0x08],
+];
+
 function sanitizeFolderName(name: string): string {
   // Allow spaces and dots; remove path separators and control chars
   return name.replace(/[\n\r\t\\/\0]/g, "").trim();
@@ -40,6 +46,16 @@ function deriveVersionedFolderName(
     name = `v1.${fallback}`;
   }
   return name;
+}
+
+export function isZipBuffer(data: Uint8Array | Buffer | null | undefined): boolean {
+  if (!data || data.length < 4) {
+    return false;
+  }
+
+  return ZIP_SIGNATURES.some((signature) =>
+    signature.every((byte, index) => data[index] === byte),
+  );
 }
 
 /**

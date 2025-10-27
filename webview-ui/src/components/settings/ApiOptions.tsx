@@ -72,6 +72,7 @@ import OpenRouterModelPicker, {
 } from "./OpenRouterModelPicker";
 import { ValorIDEAccountInfoCard } from "./ValorIDEAccountInfoCard";
 import RequestyModelPicker from "./RequestyModelPicker";
+import LlmDetailsModelPicker from "./LlmDetailsModelPicker";
 import { useGetLlmDetailssQuery } from "@/thor/redux/services/LlmDetailsService";
 
 interface ApiOptionsProps {
@@ -221,7 +222,7 @@ const ApiOptions = ({
   }, []);
   useEvent("message", handleMessage);
 
-  // Valkyrai LLMDetails
+  // Valkyrai LlmDetails
   const { data: llmDetailsList } = useGetLlmDetailssQuery();
   // Workaround for VSCodeDropdown dynamic options selection bug:
   // create a stable key based on option ids so the dropdown remounts
@@ -335,63 +336,8 @@ const ApiOptions = ({
       )}
 
       {selectedProvider === "valkyrai" && (
-        <div>
-          <VSCodeTextField
-            value={apiConfiguration?.valkyraiHost || ""}
-            style={{ width: "100%" }}
-            type="url"
-            onInput={handleInputChange("valkyraiHost")}
-            placeholder="https://api-0.valkyrlabs.com/v1"
-          >
-            <span style={{ fontWeight: 500 }}>Valkyrai Host</span>
-          </VSCodeTextField>
-          <VSCodeTextField
-            value={apiConfiguration?.valkyraiJwt || ""}
-            style={{ width: "100%", marginTop: 6 }}
-            type="password"
-            onInput={handleInputChange("valkyraiJwt")}
-            placeholder="Optional JWT Bearer Token"
-          >
-            <span style={{ fontWeight: 500 }}>JWT Token</span>
-          </VSCodeTextField>
-          <div style={{ marginTop: 8 }}>
-            <label htmlFor="valkyrai-model"><span style={{ fontWeight: 500 }}>LLM (from LlmDetails)</span></label>
-            <DropdownContainer>
-              <VSCodeDropdown
-                id="valkyrai-model"
-                key={`valkyrai-${valkyraiOptionsKey}`}
-                value={apiConfiguration?.valkyraiServiceId || ""}
-                onChange={(e: any) => {
-                  const newValue = e.target?.value || "";
-                  setApiConfiguration({
-                    ...apiConfiguration,
-                    apiModelId: newValue,
-                    valkyraiServiceId: newValue,
-                  });
-                  if (saveImmediately) {
-                    const currentFullApiConfig = extensionState.apiConfiguration;
-                    vscode.postMessage({
-                      type: "apiConfiguration",
-                      apiConfiguration: {
-                        ...currentFullApiConfig,
-                        apiProvider: "valkyrai",
-                        apiModelId: newValue,
-                        valkyraiServiceId: newValue,
-                      },
-                    });
-                  }
-                }}
-                style={{ width: "100%" }}
-              >
-                <VSCodeOption value="">Select an LLM...</VSCodeOption>
-                {(llmDetailsList || []).map((m) => (
-                  <VSCodeOption key={m.id || ""} value={m.id || ""}>
-                    {`${m.name || m.version || m.provider}${m.id ? ` [${m.id}]` : ""}`}
-                  </VSCodeOption>
-                ))}
-              </VSCodeDropdown>
-            </DropdownContainer>
-          </div>
+        <div style={{ marginBottom: 14, marginTop: 4 }}>
+          <LlmDetailsModelPicker />
         </div>
       )}
 
