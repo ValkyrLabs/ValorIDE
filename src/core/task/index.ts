@@ -4639,6 +4639,22 @@ export class Task {
                   { changesSummary: lastCompletionChangesSummary },
                 );
                 if (response === "yesButtonClicked") {
+                  // Submit completed task to ContentData
+                  try {
+                    const { TaskCompletionSubmitter } = await import('@services/content-data/TaskCompletionSubmitter');
+                    const submitter = TaskCompletionSubmitter.getInstance();
+                    const taskMessage = this.valorideMessages[0];
+                    await submitter.submitCompletedTask({
+                      taskId: this.taskId,
+                      completionResult: result,
+                      taskDescription: taskMessage.text,
+                      timestamp: new Date(),
+                    });
+                  } catch (error) {
+                    console.error('Failed to submit task completion to ContentData:', error);
+                    // Don't fail the task if ContentData submission fails
+                  }
+                  
                   pushToolResult(""); // signals to recursive loop to stop (for now this never happens since yesButtonClicked will trigger a new task)
                   break;
                 }

@@ -57,6 +57,9 @@ export class ContentDataBridge {
       case 'get_result': {
         this.complete(data.transactionId, data.success, data.item);
         break; }
+      case 'create_result': {
+        this.complete(data.transactionId, data.success, data.item);
+        break; }
       default:
         break;
     }
@@ -75,5 +78,18 @@ export class ContentDataBridge {
     });
     return await this.waitFor<any[]>(transactionId, 15000);
   }
-}
 
+  /**
+   * Create ContentData via webview RTK Query handler.
+   */
+  public async createContentData(contentData: any): Promise<any> {
+    if (!this.webviewPanel) throw new Error('ContentDataBridge: webview not ready');
+    const transactionId = this.genTxnId();
+    this.webviewPanel.webview.postMessage({
+      type: 'content_data',
+      action: 'create',
+      data: { transactionId, contentData },
+    });
+    return await this.waitFor<any>(transactionId, 15000);
+  }
+}
