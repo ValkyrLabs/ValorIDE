@@ -120,12 +120,11 @@ h2 {
 }
 
 h3,
-h4{
+h4 {
   color: var(--text-color);
   font-family: "Orbitron", sans-serif;
   font-weight: 500;
 }
-
 
 h5,
 h6 {
@@ -469,7 +468,7 @@ h6 {
   background: var(--glass-bg);
   backdrop-filter: var(--backdrop-blur);
   border-radius: var(--valkyr-border-radius);
-  overflow: hidden;
+
   border: 2px solid var(--glass-border);
 }
 
@@ -509,6 +508,7 @@ h6 {
 
 /* Table Cell Styling */
 .tableCell {
+  text-overflow: ellipsis;
   overflow: hidden;
   border-width: 1px;
   border-color: var(--bs-primary-bg-subtle);

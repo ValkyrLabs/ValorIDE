@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,23 +11,27 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-export function UserPreferenceFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserPreferencePreferenceTypeEnum = void 0;
+exports.UserPreferenceFromJSON = UserPreferenceFromJSON;
+exports.UserPreferenceToJSON = UserPreferenceToJSON;
+const runtime_1 = require("../src/runtime");
+function UserPreferenceFromJSON(json) {
     return {
-        'principalId': !exists(json, 'principalId') ? undefined : json['principalId'],
-        'preference': !exists(json, 'preference') ? undefined : json['preference'],
-        'preferenceType': !exists(json, 'preferenceType') ? undefined : json['preferenceType'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'principalId': !(0, runtime_1.exists)(json, 'principalId') ? undefined : json['principalId'],
+        'preference': !(0, runtime_1.exists)(json, 'preference') ? undefined : json['preference'],
+        'preferenceType': !(0, runtime_1.exists)(json, 'preferenceType') ? undefined : json['preferenceType'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function UserPreferenceToJSON(value) {
+function UserPreferenceToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -48,11 +53,11 @@ export function UserPreferenceToJSON(value) {
 * @export
 * @enum {string}
 */
-export var UserPreferencePreferenceTypeEnum;
+var UserPreferencePreferenceTypeEnum;
 (function (UserPreferencePreferenceTypeEnum) {
     UserPreferencePreferenceTypeEnum["UXLAYOUT"] = "ux-layout";
     UserPreferencePreferenceTypeEnum["UXMODE"] = "ux-mode";
     UserPreferencePreferenceTypeEnum["UXTHEME"] = "ux-theme";
     UserPreferencePreferenceTypeEnum["MEASUREMENT"] = "measurement";
-})(UserPreferencePreferenceTypeEnum || (UserPreferencePreferenceTypeEnum = {}));
+})(UserPreferencePreferenceTypeEnum || (exports.UserPreferencePreferenceTypeEnum = UserPreferencePreferenceTypeEnum = {}));
 //# sourceMappingURL=UserPreference.js.map

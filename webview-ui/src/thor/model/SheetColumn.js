@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,27 +11,30 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { CellFromJSON, CellToJSON, } from './';
-export function SheetColumnFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SheetColumnFromJSON = SheetColumnFromJSON;
+exports.SheetColumnToJSON = SheetColumnToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function SheetColumnFromJSON(json) {
     return {
-        'sheetId': !exists(json, 'sheetId') ? undefined : json['sheetId'],
-        'colIndex': !exists(json, 'colIndex') ? undefined : json['colIndex'],
-        'hidden': !exists(json, 'hidden') ? undefined : json['hidden'],
-        'collapsed': !exists(json, 'collapsed') ? undefined : json['collapsed'],
-        'outlineLevel': !exists(json, 'outlineLevel') ? undefined : json['outlineLevel'],
-        'cells': !exists(json, 'cells') ? undefined : json['cells'].map(CellFromJSON),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
+        'colIndex': !(0, runtime_1.exists)(json, 'colIndex') ? undefined : json['colIndex'],
+        'hidden': !(0, runtime_1.exists)(json, 'hidden') ? undefined : json['hidden'],
+        'collapsed': !(0, runtime_1.exists)(json, 'collapsed') ? undefined : json['collapsed'],
+        'outlineLevel': !(0, runtime_1.exists)(json, 'outlineLevel') ? undefined : json['outlineLevel'],
+        'cells': !(0, runtime_1.exists)(json, 'cells') ? undefined : json['cells'].map(_1.CellFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function SheetColumnToJSON(value) {
+function SheetColumnToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -40,7 +44,7 @@ export function SheetColumnToJSON(value) {
         'hidden': value.hidden,
         'collapsed': value.collapsed,
         'outlineLevel': value.outlineLevel,
-        'cells': value.cells === undefined ? undefined : value.cells.map(CellToJSON),
+        'cells': value.cells === undefined ? undefined : value.cells.map(_1.CellToJSON),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

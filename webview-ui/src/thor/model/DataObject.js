@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -14,20 +15,23 @@ Template file: typescript-redux-query/dataObject.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists } from '../src/runtime';
-export function DataObjectFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DataObjectFromJSON = DataObjectFromJSON;
+exports.DataObjectToJSON = DataObjectToJSON;
+const runtime_1 = require("../src/runtime");
+function DataObjectFromJSON(json) {
     return {
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function DataObjectToJSON(value) {
+function DataObjectToJSON(value) {
     if (value === undefined) {
         return undefined;
     }

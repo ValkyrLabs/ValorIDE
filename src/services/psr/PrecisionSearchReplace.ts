@@ -11,46 +11,46 @@ import { normalizeEol } from "@utils/string";
 
 export type PSREdit =
   | {
-      kind: "ts-ast";
-      intent: "replacePropertyChain";
-      from: string;
-      to: string;
-      fallback?: string;
-    }
+    kind: "ts-ast";
+    intent: "replacePropertyChain";
+    from: string;
+    to: string;
+    fallback?: string;
+  }
   | {
-      kind: "ts-ast";
-      intent: "insertOptionalChaining";
-      target: string;
-    }
+    kind: "ts-ast";
+    intent: "insertOptionalChaining";
+    target: string;
+  }
   | {
-      kind: "ts-ast";
-      intent: "renameProperty";
-      from: string;
-      to: string;
-    }
+    kind: "ts-ast";
+    intent: "renameProperty";
+    from: string;
+    to: string;
+  }
   | {
-      kind: "contextual";
-      find: string;
-      replace: string;
-      flags?: string;
-      occurrence?: "first" | "all" | number;
-      contextBefore?: number;
-      contextAfter?: number;
-      checksumPolicy?: "require" | "relax";
-    }
+    kind: "contextual";
+    find: string;
+    replace: string;
+    flags?: string;
+    occurrence?: "first" | "all" | number;
+    contextBefore?: number;
+    contextAfter?: number;
+    checksumPolicy?: "require" | "relax";
+  }
   | {
-      kind: "byte";
-      findHex: string;
-      replaceHex: string;
-      occurrence?: "first" | "all" | number;
-    };
+    kind: "byte";
+    findHex: string;
+    replaceHex: string;
+    occurrence?: "first" | "all" | number;
+  };
 
 export interface PSROptions {
   dryRun?: boolean;
   encoding?: BufferEncoding; // "utf8" default
   maxFileBytesForAst?: number; // default 5_000_000
   makeBackup?: boolean;
-  backupDir?: string; // e.g. ".valor/undo"
+  backupDir?: string; // e.g. ".valoride/undo"
 }
 
 export interface PSRResult {
@@ -222,7 +222,7 @@ async function fsyncDir(dir: string) {
 
 function resolveBackupRoot(cwd: string, backupDir?: string) {
   if (!backupDir) {
-    return path.resolve(cwd, ".valor/undo");
+    return path.resolve(cwd, ".valoride/undo");
   }
   return path.isAbsolute(backupDir) ? backupDir : path.resolve(cwd, backupDir);
 }

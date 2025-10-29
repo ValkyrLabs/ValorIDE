@@ -228,7 +228,9 @@ const AccountView = ({ onDone }: AccountViewProps) => {
   const hubConnected = !!communicationService?.hubConnected;
   const thorConnected = !!communicationService?.thorConnected;
   useEffect(() => {
-    if (!communicationService) return;
+    if (!communicationService) {
+      return undefined;
+    }
     const handlePresence = (list: string[]) => setPeers(list);
     const handleStatus = (s: any) => setPhase(s?.phase);
     communicationService.on?.("presence", handlePresence);
@@ -290,28 +292,28 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                 onClick={() => setActiveTab("account")}
                 style={{ cursor: "pointer" }}
               >
-                <FaUserEdit /> Account
+                <FaUserEdit />
               </div>
               <div
                 className={`nav-link ${activeTab === "applications" ? "active" : ""}`}
                 onClick={() => setActiveTab("applications")}
                 style={{ cursor: "pointer" }}
               >
-                <FaAppStore /> Applications
+                <FaAppStore />
               </div>
               <div
                 className={`nav-link ${activeTab === "generatedFiles" ? "active" : ""}`}
                 onClick={() => setActiveTab("generatedFiles")}
                 style={{ cursor: "pointer" }}
               >
-                <FaFileArchive /> Files
+                <FaFileArchive />
               </div>
               <div
                 className={`nav-link ${activeTab === "userPreferences" ? "active" : ""}`}
                 onClick={() => setActiveTab("userPreferences")}
                 style={{ cursor: "pointer" }}
               >
-                <FaUserEdit /> Preferences
+                <FaUserEdit />
               </div>
             </>
           )}

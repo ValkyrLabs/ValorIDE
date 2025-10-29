@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,29 +11,33 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-export function HostInstanceFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HostInstanceStatusEnum = void 0;
+exports.HostInstanceFromJSON = HostInstanceFromJSON;
+exports.HostInstanceToJSON = HostInstanceToJSON;
+const runtime_1 = require("../src/runtime");
+function HostInstanceFromJSON(json) {
     return {
         'name': json['name'],
-        'domain': !exists(json, 'domain') ? undefined : json['domain'],
-        'cluste': !exists(json, 'cluste') ? undefined : json['cluste'],
-        'serviceArn': !exists(json, 'serviceArn') ? undefined : json['serviceArn'],
-        'targetGroupArn': !exists(json, 'targetGroupArn') ? undefined : json['targetGroupArn'],
-        'listenerRuleArn': !exists(json, 'listenerRuleArn') ? undefined : json['listenerRuleArn'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'cpus': !exists(json, 'cpus') ? undefined : json['cpus'],
-        'memory': !exists(json, 'memory') ? undefined : json['memory'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'domain': !(0, runtime_1.exists)(json, 'domain') ? undefined : json['domain'],
+        'cluste': !(0, runtime_1.exists)(json, 'cluste') ? undefined : json['cluste'],
+        'serviceArn': !(0, runtime_1.exists)(json, 'serviceArn') ? undefined : json['serviceArn'],
+        'targetGroupArn': !(0, runtime_1.exists)(json, 'targetGroupArn') ? undefined : json['targetGroupArn'],
+        'listenerRuleArn': !(0, runtime_1.exists)(json, 'listenerRuleArn') ? undefined : json['listenerRuleArn'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'cpus': !(0, runtime_1.exists)(json, 'cpus') ? undefined : json['cpus'],
+        'memory': !(0, runtime_1.exists)(json, 'memory') ? undefined : json['memory'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function HostInstanceToJSON(value) {
+function HostInstanceToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -60,11 +65,11 @@ export function HostInstanceToJSON(value) {
 * @export
 * @enum {string}
 */
-export var HostInstanceStatusEnum;
+var HostInstanceStatusEnum;
 (function (HostInstanceStatusEnum) {
     HostInstanceStatusEnum["STARTING"] = "starting";
     HostInstanceStatusEnum["RUNNING"] = "running";
     HostInstanceStatusEnum["STOPPED"] = "stopped";
     HostInstanceStatusEnum["ERROR"] = "error";
-})(HostInstanceStatusEnum || (HostInstanceStatusEnum = {}));
+})(HostInstanceStatusEnum || (exports.HostInstanceStatusEnum = HostInstanceStatusEnum = {}));
 //# sourceMappingURL=HostInstance.js.map

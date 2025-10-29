@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,8 +11,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-export function UsageTransactionFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UsageTransactionFromJSON = UsageTransactionFromJSON;
+exports.UsageTransactionToJSON = UsageTransactionToJSON;
+const runtime_1 = require("../src/runtime");
+function UsageTransactionFromJSON(json) {
     return {
         'spentAt': new Date(json['spentAt']),
         'credits': json['credits'],
@@ -19,17 +23,17 @@ export function UsageTransactionFromJSON(json) {
         'model': json['model'],
         'promptTokens': json['promptTokens'],
         'completionTokens': json['completionTokens'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function UsageTransactionToJSON(value) {
+function UsageTransactionToJSON(value) {
     if (value === undefined) {
         return undefined;
     }

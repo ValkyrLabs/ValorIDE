@@ -262,7 +262,6 @@ a:hover,
 }
 
 .btnx {
-  min-width: 100%;
   min-height: 3em;
   transition: background-color 1.5s ease;
 }
@@ -752,16 +751,12 @@ footer a:hover {
   overflow-y: scroll;
 }
 
-.tableContainer {
-  background-color: "white";
-  min-height: 100vh;
-}
-
 .table {
   color: rgb(69, 69, 69);
 }
 
 .tableCell {
+  text-overflow: ellipsis;
   overflow: hidden;
   border-width: 1px;
   border-color: rgb(174, 174, 174);

@@ -29,12 +29,12 @@ export class ChatErrorBoundary extends React.Component<
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("Error in ChatErrorBoundary:", error.message);
     console.error("Component stack:", errorInfo.componentStack);
   }
 
-  render() {
+  override render() {
     const { errorTitle, errorBody, height } = this.props;
 
     if (this.state.hasError) {
@@ -92,7 +92,7 @@ export class ErrorAfterDelay extends React.Component<
     };
   }
 
-  componentDidMount() {
+  override componentDidMount() {
     const secondsToWait = this.props.numSecondsToWait ?? 5;
 
     this.intervalID = setInterval(() => {
@@ -113,13 +113,13 @@ export class ErrorAfterDelay extends React.Component<
     }, 1000);
   }
 
-  componentWillUnmount() {
+  override componentWillUnmount() {
     if (this.intervalID) {
       clearInterval(this.intervalID);
     }
   }
 
-  render() {
+  override render() {
     // Add a small visual indicator that this component will cause an error
     return (
       <div

@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,24 +11,27 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-export function KeyMetricFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.KeyMetricFromJSON = KeyMetricFromJSON;
+exports.KeyMetricToJSON = KeyMetricToJSON;
+const runtime_1 = require("../src/runtime");
+function KeyMetricFromJSON(json) {
     return {
-        'goalId': !exists(json, 'goalId') ? undefined : json['goalId'],
-        'metricName': !exists(json, 'metricName') ? undefined : json['metricName'],
-        'metricValue': !exists(json, 'metricValue') ? undefined : json['metricValue'],
-        'targetValue': !exists(json, 'targetValue') ? undefined : json['targetValue'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'goalId': !(0, runtime_1.exists)(json, 'goalId') ? undefined : json['goalId'],
+        'metricName': !(0, runtime_1.exists)(json, 'metricName') ? undefined : json['metricName'],
+        'metricValue': !(0, runtime_1.exists)(json, 'metricValue') ? undefined : json['metricValue'],
+        'targetValue': !(0, runtime_1.exists)(json, 'targetValue') ? undefined : json['targetValue'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function KeyMetricToJSON(value) {
+function KeyMetricToJSON(value) {
     if (value === undefined) {
         return undefined;
     }

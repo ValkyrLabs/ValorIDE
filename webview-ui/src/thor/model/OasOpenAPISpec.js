@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,30 +11,34 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { OasComponentFromJSON, OasComponentToJSON, OasInfoFromJSON, OasInfoToJSON, OasPathFromJSON, OasPathToJSON, OasServerFromJSON, OasServerToJSON, } from './';
-export function OasOpenAPISpecFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.OasOpenAPISpecOpenapiEnum = exports.OasOpenAPISpecSourceTypeEnum = void 0;
+exports.OasOpenAPISpecFromJSON = OasOpenAPISpecFromJSON;
+exports.OasOpenAPISpecToJSON = OasOpenAPISpecToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function OasOpenAPISpecFromJSON(json) {
     return {
         'sourcePath': json['sourcePath'],
         'sourceType': json['sourceType'],
-        'execModuleId': !exists(json, 'execModuleId') ? undefined : json['execModuleId'],
-        'sourceDetails': !exists(json, 'sourceDetails') ? undefined : json['sourceDetails'],
-        'openapi': !exists(json, 'openapi') ? undefined : json['openapi'],
-        'info': !exists(json, 'info') ? undefined : OasInfoFromJSON(json['info']),
-        'servers': !exists(json, 'servers') ? undefined : json['servers'].map(OasServerFromJSON),
-        'paths': !exists(json, 'paths') ? undefined : json['paths'].map(OasPathFromJSON),
-        'components': !exists(json, 'components') ? undefined : OasComponentFromJSON(json['components']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'execModuleId': !(0, runtime_1.exists)(json, 'execModuleId') ? undefined : json['execModuleId'],
+        'sourceDetails': !(0, runtime_1.exists)(json, 'sourceDetails') ? undefined : json['sourceDetails'],
+        'openapi': !(0, runtime_1.exists)(json, 'openapi') ? undefined : json['openapi'],
+        'info': !(0, runtime_1.exists)(json, 'info') ? undefined : (0, _1.OasInfoFromJSON)(json['info']),
+        'servers': !(0, runtime_1.exists)(json, 'servers') ? undefined : json['servers'].map(_1.OasServerFromJSON),
+        'paths': !(0, runtime_1.exists)(json, 'paths') ? undefined : json['paths'].map(_1.OasPathFromJSON),
+        'components': !(0, runtime_1.exists)(json, 'components') ? undefined : (0, _1.OasComponentFromJSON)(json['components']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function OasOpenAPISpecToJSON(value) {
+function OasOpenAPISpecToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -43,10 +48,10 @@ export function OasOpenAPISpecToJSON(value) {
         'execModuleId': value.execModuleId,
         'sourceDetails': value.sourceDetails,
         'openapi': value.openapi,
-        'info': OasInfoToJSON(value.info),
-        'servers': value.servers === undefined ? undefined : value.servers.map(OasServerToJSON),
-        'paths': value.paths === undefined ? undefined : value.paths.map(OasPathToJSON),
-        'components': OasComponentToJSON(value.components),
+        'info': (0, _1.OasInfoToJSON)(value.info),
+        'servers': value.servers === undefined ? undefined : value.servers.map(_1.OasServerToJSON),
+        'paths': value.paths === undefined ? undefined : value.paths.map(_1.OasPathToJSON),
+        'components': (0, _1.OasComponentToJSON)(value.components),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
@@ -61,7 +66,7 @@ export function OasOpenAPISpecToJSON(value) {
 * @export
 * @enum {string}
 */
-export var OasOpenAPISpecSourceTypeEnum;
+var OasOpenAPISpecSourceTypeEnum;
 (function (OasOpenAPISpecSourceTypeEnum) {
     OasOpenAPISpecSourceTypeEnum["VALKYRLABS"] = "valkyrlabs";
     OasOpenAPISpecSourceTypeEnum["GITHUB"] = "github";
@@ -70,12 +75,12 @@ export var OasOpenAPISpecSourceTypeEnum;
     OasOpenAPISpecSourceTypeEnum["BITBUCKET"] = "bitbucket";
     OasOpenAPISpecSourceTypeEnum["VENDOR"] = "vendor";
     OasOpenAPISpecSourceTypeEnum["NOTFOUND"] = "notfound";
-})(OasOpenAPISpecSourceTypeEnum || (OasOpenAPISpecSourceTypeEnum = {}));
+})(OasOpenAPISpecSourceTypeEnum || (exports.OasOpenAPISpecSourceTypeEnum = OasOpenAPISpecSourceTypeEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-export var OasOpenAPISpecOpenapiEnum;
+var OasOpenAPISpecOpenapiEnum;
 (function (OasOpenAPISpecOpenapiEnum) {
     OasOpenAPISpecOpenapiEnum["_00"] = "3.0.0";
     OasOpenAPISpecOpenapiEnum["_01"] = "3.0.1";
@@ -83,5 +88,5 @@ export var OasOpenAPISpecOpenapiEnum;
     OasOpenAPISpecOpenapiEnum["_03"] = "3.0.3";
     OasOpenAPISpecOpenapiEnum["_04"] = "3.0.4";
     OasOpenAPISpecOpenapiEnum["_10"] = "3.1.0";
-})(OasOpenAPISpecOpenapiEnum || (OasOpenAPISpecOpenapiEnum = {}));
+})(OasOpenAPISpecOpenapiEnum || (exports.OasOpenAPISpecOpenapiEnum = OasOpenAPISpecOpenapiEnum = {}));
 //# sourceMappingURL=OasOpenAPISpec.js.map

@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,27 +11,31 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { ExecModuleFromJSON, ExecModuleToJSON, } from './';
-export function TaskFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TaskStatusEnum = exports.TaskRoleEnum = void 0;
+exports.TaskFromJSON = TaskFromJSON;
+exports.TaskToJSON = TaskToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function TaskFromJSON(json) {
     return {
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'workflowId': !exists(json, 'workflowId') ? undefined : json['workflowId'],
-        'role': !exists(json, 'role') ? undefined : json['role'],
-        'taskOrder': !exists(json, 'taskOrder') ? undefined : json['taskOrder'],
-        'modules': !exists(json, 'modules') ? undefined : json['modules'].map(ExecModuleFromJSON),
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'workflowId': !(0, runtime_1.exists)(json, 'workflowId') ? undefined : json['workflowId'],
+        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : json['role'],
+        'taskOrder': !(0, runtime_1.exists)(json, 'taskOrder') ? undefined : json['taskOrder'],
+        'modules': !(0, runtime_1.exists)(json, 'modules') ? undefined : json['modules'].map(_1.ExecModuleFromJSON),
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function TaskToJSON(value) {
+function TaskToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -39,7 +44,7 @@ export function TaskToJSON(value) {
         'workflowId': value.workflowId,
         'role': value.role,
         'taskOrder': value.taskOrder,
-        'modules': value.modules === undefined ? undefined : value.modules.map(ExecModuleToJSON),
+        'modules': value.modules === undefined ? undefined : value.modules.map(_1.ExecModuleToJSON),
         'status': value.status,
         'id': value.id,
         'ownerId': value.ownerId,
@@ -55,16 +60,16 @@ export function TaskToJSON(value) {
 * @export
 * @enum {string}
 */
-export var TaskRoleEnum;
+var TaskRoleEnum;
 (function (TaskRoleEnum) {
     TaskRoleEnum["USER"] = "user";
     TaskRoleEnum["ASSISTANT"] = "assistant";
-})(TaskRoleEnum || (TaskRoleEnum = {}));
+})(TaskRoleEnum || (exports.TaskRoleEnum = TaskRoleEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-export var TaskStatusEnum;
+var TaskStatusEnum;
 (function (TaskStatusEnum) {
     TaskStatusEnum["RUNNING"] = "running";
     TaskStatusEnum["STOPPED"] = "stopped";
@@ -73,5 +78,5 @@ export var TaskStatusEnum;
     TaskStatusEnum["WARNING"] = "warning";
     TaskStatusEnum["ERROR"] = "error";
     TaskStatusEnum["DISABLED"] = "disabled";
-})(TaskStatusEnum || (TaskStatusEnum = {}));
+})(TaskStatusEnum || (exports.TaskStatusEnum = TaskStatusEnum = {}));
 //# sourceMappingURL=Task.js.map

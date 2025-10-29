@@ -146,7 +146,7 @@ export class FileToolHandler extends BaseToolHandler {
         relPath,
         edits,
         pathAccess,
-        { makeBackup: true, backupDir: ".valor/undo", ...(options ?? {}) },
+        { makeBackup: true, backupDir: ".valoride/undo", ...(options ?? {}) },
       );
 
       const showPsrReport =
@@ -164,8 +164,8 @@ export class FileToolHandler extends BaseToolHandler {
       const didChange = result.baseHash !== result.postHash;
       const skippedSummary = result.skipped.length
         ? result.skipped
-            .map((entry) => `edit ${entry.index}: ${entry.reason}`)
-            .join("; ")
+          .map((entry) => `edit ${entry.index}: ${entry.reason}`)
+          .join("; ")
         : "No edits matched the requested patterns.";
 
       const handleNoop = () => {
@@ -424,7 +424,7 @@ export class FileToolHandler extends BaseToolHandler {
           if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
             showSystemNotification({
               subtitle: "Approval Required",
-              message: `ValorIDE wants to ${fileExists ? "edit" : "create"} ${path.basename(relPath)}`
+              message: `${fileExists ? "Editing" : "Creating"}: ${path.basename(relPath)}`
             });
           }
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
@@ -576,7 +576,7 @@ export class FileToolHandler extends BaseToolHandler {
           if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
             showSystemNotification({
               subtitle: "Approval Required",
-              message: `ValorIDE wants to read ${path.basename(absolutePath)}`
+              message: `Reading: ${path.basename(absolutePath)}`
             });
           }
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
@@ -681,7 +681,7 @@ export class FileToolHandler extends BaseToolHandler {
           if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
             showSystemNotification({
               subtitle: "Approval Required",
-              message: `ValorIDE wants to view directory ${path.basename(absolutePath)}/`
+              message: `Browsing: ${path.basename(absolutePath)}/`
             });
           }
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
@@ -774,7 +774,7 @@ export class FileToolHandler extends BaseToolHandler {
           if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
             showSystemNotification({
               subtitle: "Approval Required",
-              message: `ValorIDE wants to view source code definitions in ${path.basename(absolutePath)}/`
+              message: `Analyzing: ${path.basename(absolutePath)}/`
             });
           }
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
@@ -880,7 +880,7 @@ export class FileToolHandler extends BaseToolHandler {
           if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
             showSystemNotification({
               subtitle: "Approval Required",
-              message: `ValorIDE wants to search files in ${path.basename(absolutePath)}/`
+              message: `Searching: ${path.basename(absolutePath)}/`
             });
           }
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");

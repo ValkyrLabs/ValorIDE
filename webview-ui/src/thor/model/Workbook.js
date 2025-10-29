@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,32 +11,36 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { FormatFromJSON, FormatToJSON, SheetFromJSON, SheetToJSON, } from './';
-export function WorkbookFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WorkbookStatusEnum = void 0;
+exports.WorkbookFromJSON = WorkbookFromJSON;
+exports.WorkbookToJSON = WorkbookToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function WorkbookFromJSON(json) {
     return {
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'sheets': !exists(json, 'sheets') ? undefined : json['sheets'].map(SheetFromJSON),
-        'formats': !exists(json, 'formats') ? undefined : json['formats'].map(FormatFromJSON),
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'sheets': !(0, runtime_1.exists)(json, 'sheets') ? undefined : json['sheets'].map(_1.SheetFromJSON),
+        'formats': !(0, runtime_1.exists)(json, 'formats') ? undefined : json['formats'].map(_1.FormatFromJSON),
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function WorkbookToJSON(value) {
+function WorkbookToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
         'name': value.name,
-        'sheets': value.sheets === undefined ? undefined : value.sheets.map(SheetToJSON),
-        'formats': value.formats === undefined ? undefined : value.formats.map(FormatToJSON),
+        'sheets': value.sheets === undefined ? undefined : value.sheets.map(_1.SheetToJSON),
+        'formats': value.formats === undefined ? undefined : value.formats.map(_1.FormatToJSON),
         'status': value.status,
         'id': value.id,
         'ownerId': value.ownerId,
@@ -51,12 +56,12 @@ export function WorkbookToJSON(value) {
 * @export
 * @enum {string}
 */
-export var WorkbookStatusEnum;
+var WorkbookStatusEnum;
 (function (WorkbookStatusEnum) {
     WorkbookStatusEnum["WORKBOOKOPEN"] = "open";
     WorkbookStatusEnum["WORKBOOKCLOSED"] = "closed";
     WorkbookStatusEnum["WORKBOOKARCHIVED"] = "archived";
     WorkbookStatusEnum["WORKBOOKERROR"] = "error";
     WorkbookStatusEnum["WORKBOOKINVALID"] = "invalid";
-})(WorkbookStatusEnum || (WorkbookStatusEnum = {}));
+})(WorkbookStatusEnum || (exports.WorkbookStatusEnum = WorkbookStatusEnum = {}));
 //# sourceMappingURL=Workbook.js.map

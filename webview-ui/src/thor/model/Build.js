@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,29 +11,33 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { BuildOutputFromJSON, BuildOutputToJSON, DependFromJSON, DependToJSON, } from './';
-export function BuildFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BuildTestEnumCodegenEnum = exports.BuildStatusEnum = void 0;
+exports.BuildFromJSON = BuildFromJSON;
+exports.BuildToJSON = BuildToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function BuildFromJSON(json) {
     return {
         'name': json['name'],
         'status': json['status'],
         'projectPath': json['projectPath'],
         'mavenHome': json['mavenHome'],
-        'applicationId': !exists(json, 'applicationId') ? undefined : json['applicationId'],
-        'testEnumCodegen': !exists(json, 'testEnumCodegen') ? undefined : json['testEnumCodegen'],
-        'outputs': !exists(json, 'outputs') ? undefined : json['outputs'].map(BuildOutputFromJSON),
-        'dependencies': !exists(json, 'dependencies') ? undefined : json['dependencies'].map(DependFromJSON),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'applicationId': !(0, runtime_1.exists)(json, 'applicationId') ? undefined : json['applicationId'],
+        'testEnumCodegen': !(0, runtime_1.exists)(json, 'testEnumCodegen') ? undefined : json['testEnumCodegen'],
+        'outputs': !(0, runtime_1.exists)(json, 'outputs') ? undefined : json['outputs'].map(_1.BuildOutputFromJSON),
+        'dependencies': !(0, runtime_1.exists)(json, 'dependencies') ? undefined : json['dependencies'].map(_1.DependFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function BuildToJSON(value) {
+function BuildToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -43,8 +48,8 @@ export function BuildToJSON(value) {
         'mavenHome': value.mavenHome,
         'applicationId': value.applicationId,
         'testEnumCodegen': value.testEnumCodegen,
-        'outputs': value.outputs === undefined ? undefined : value.outputs.map(BuildOutputToJSON),
-        'dependencies': value.dependencies === undefined ? undefined : value.dependencies.map(DependToJSON),
+        'outputs': value.outputs === undefined ? undefined : value.outputs.map(_1.BuildOutputToJSON),
+        'dependencies': value.dependencies === undefined ? undefined : value.dependencies.map(_1.DependToJSON),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
@@ -59,21 +64,21 @@ export function BuildToJSON(value) {
 * @export
 * @enum {string}
 */
-export var BuildStatusEnum;
+var BuildStatusEnum;
 (function (BuildStatusEnum) {
     BuildStatusEnum["PENDING"] = "pending";
     BuildStatusEnum["RUNNING"] = "running";
     BuildStatusEnum["SUCCESS"] = "success";
     BuildStatusEnum["FAILURE"] = "failure";
-})(BuildStatusEnum || (BuildStatusEnum = {}));
+})(BuildStatusEnum || (exports.BuildStatusEnum = BuildStatusEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-export var BuildTestEnumCodegenEnum;
+var BuildTestEnumCodegenEnum;
 (function (BuildTestEnumCodegenEnum) {
     BuildTestEnumCodegenEnum[BuildTestEnumCodegenEnum["BROKE"] = 0] = "BROKE";
     BuildTestEnumCodegenEnum[BuildTestEnumCodegenEnum["POOR"] = 10] = "POOR";
     BuildTestEnumCodegenEnum[BuildTestEnumCodegenEnum["RICH"] = 1000] = "RICH";
-})(BuildTestEnumCodegenEnum || (BuildTestEnumCodegenEnum = {}));
+})(BuildTestEnumCodegenEnum || (exports.BuildTestEnumCodegenEnum = BuildTestEnumCodegenEnum = {}));
 //# sourceMappingURL=Build.js.map

@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,33 +11,36 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { CellFromJSON, CellToJSON, } from './';
-export function NamedRangeFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NamedRangeFromJSON = NamedRangeFromJSON;
+exports.NamedRangeToJSON = NamedRangeToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function NamedRangeFromJSON(json) {
     return {
-        'sheetId': !exists(json, 'sheetId') ? undefined : json['sheetId'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'startCell': !exists(json, 'startCell') ? undefined : CellFromJSON(json['startCell']),
-        'endCell': !exists(json, 'endCell') ? undefined : CellFromJSON(json['endCell']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'startCell': !(0, runtime_1.exists)(json, 'startCell') ? undefined : (0, _1.CellFromJSON)(json['startCell']),
+        'endCell': !(0, runtime_1.exists)(json, 'endCell') ? undefined : (0, _1.CellFromJSON)(json['endCell']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function NamedRangeToJSON(value) {
+function NamedRangeToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
         'sheetId': value.sheetId,
         'name': value.name,
-        'startCell': CellToJSON(value.startCell),
-        'endCell': CellToJSON(value.endCell),
+        'startCell': (0, _1.CellToJSON)(value.startCell),
+        'endCell': (0, _1.CellToJSON)(value.endCell),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

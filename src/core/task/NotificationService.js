@@ -98,7 +98,7 @@ export class NotificationService {
      * Shows notification for command execution
      */
     showCommandExecutionNotification(command) {
-        this.showNotificationForApprovalIfAutoApprovalEnabled(`ValorIDE wants to execute a command: ${command}`);
+        this.this.notifyCommandExecuting(command);
     }
     /**
      * Shows notification for file operations

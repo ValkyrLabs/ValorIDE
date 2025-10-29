@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,49 +11,52 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { AddressFromJSON, AddressToJSON, AuthorityFromJSON, AuthorityToJSON, OrganizationFromJSON, OrganizationToJSON, RoleFromJSON, RoleToJSON, UserPreferenceFromJSON, UserPreferenceToJSON, } from './';
-export function PrincipalFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PrincipalFromJSON = PrincipalFromJSON;
+exports.PrincipalToJSON = PrincipalToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function PrincipalFromJSON(json) {
     return {
         'username': json['username'],
         'password': json['password'],
         'email': json['email'],
-        'roleList': json['roleList'].map(RoleFromJSON),
-        'authorityList': json['authorityList'].map(AuthorityFromJSON),
-        'firstName': !exists(json, 'firstName') ? undefined : json['firstName'],
-        'middleName': !exists(json, 'middleName') ? undefined : json['middleName'],
-        'lastName': !exists(json, 'lastName') ? undefined : json['lastName'],
-        'fingerprint': !exists(json, 'fingerprint') ? undefined : json['fingerprint'],
-        'federalIdentification': !exists(json, 'federalIdentification') ? undefined : json['federalIdentification'],
-        'residenceCountry': !exists(json, 'residenceCountry') ? undefined : json['residenceCountry'],
-        'stateIdentification': !exists(json, 'stateIdentification') ? undefined : json['stateIdentification'],
-        'residenceState': !exists(json, 'residenceState') ? undefined : json['residenceState'],
-        'phone': !exists(json, 'phone') ? undefined : json['phone'],
-        'social': !exists(json, 'social') ? undefined : json['social'],
-        'bio': !exists(json, 'bio') ? undefined : json['bio'],
-        'notes': !exists(json, 'notes') ? undefined : json['notes'],
-        'avatarUrl': !exists(json, 'avatarUrl') ? undefined : json['avatarUrl'],
-        'organization': !exists(json, 'organization') ? undefined : OrganizationFromJSON(json['organization']),
-        'addresses': !exists(json, 'addresses') ? undefined : json['addresses'].map(AddressFromJSON),
-        'acceptedCookies': !exists(json, 'acceptedCookies') ? undefined : json['acceptedCookies'],
-        'acceptedTos': !exists(json, 'acceptedTos') ? undefined : json['acceptedTos'],
-        'enabled': !exists(json, 'enabled') ? undefined : json['enabled'],
-        'credentialNonExpired': !exists(json, 'credentialNonExpired') ? undefined : json['credentialNonExpired'],
-        'accountEnabled': !exists(json, 'accountEnabled') ? undefined : json['accountEnabled'],
-        'accountNonLocked': !exists(json, 'accountNonLocked') ? undefined : json['accountNonLocked'],
-        'accountNonExpired': !exists(json, 'accountNonExpired') ? undefined : json['accountNonExpired'],
-        'userPreferences': !exists(json, 'userPreferences') ? undefined : json['userPreferences'].map(UserPreferenceFromJSON),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'roleList': json['roleList'].map(_1.RoleFromJSON),
+        'authorityList': json['authorityList'].map(_1.AuthorityFromJSON),
+        'firstName': !(0, runtime_1.exists)(json, 'firstName') ? undefined : json['firstName'],
+        'middleName': !(0, runtime_1.exists)(json, 'middleName') ? undefined : json['middleName'],
+        'lastName': !(0, runtime_1.exists)(json, 'lastName') ? undefined : json['lastName'],
+        'fingerprint': !(0, runtime_1.exists)(json, 'fingerprint') ? undefined : json['fingerprint'],
+        'federalIdentification': !(0, runtime_1.exists)(json, 'federalIdentification') ? undefined : json['federalIdentification'],
+        'residenceCountry': !(0, runtime_1.exists)(json, 'residenceCountry') ? undefined : json['residenceCountry'],
+        'stateIdentification': !(0, runtime_1.exists)(json, 'stateIdentification') ? undefined : json['stateIdentification'],
+        'residenceState': !(0, runtime_1.exists)(json, 'residenceState') ? undefined : json['residenceState'],
+        'phone': !(0, runtime_1.exists)(json, 'phone') ? undefined : json['phone'],
+        'social': !(0, runtime_1.exists)(json, 'social') ? undefined : json['social'],
+        'bio': !(0, runtime_1.exists)(json, 'bio') ? undefined : json['bio'],
+        'notes': !(0, runtime_1.exists)(json, 'notes') ? undefined : json['notes'],
+        'avatarUrl': !(0, runtime_1.exists)(json, 'avatarUrl') ? undefined : json['avatarUrl'],
+        'organization': !(0, runtime_1.exists)(json, 'organization') ? undefined : (0, _1.OrganizationFromJSON)(json['organization']),
+        'addresses': !(0, runtime_1.exists)(json, 'addresses') ? undefined : json['addresses'].map(_1.AddressFromJSON),
+        'acceptedCookies': !(0, runtime_1.exists)(json, 'acceptedCookies') ? undefined : json['acceptedCookies'],
+        'acceptedTos': !(0, runtime_1.exists)(json, 'acceptedTos') ? undefined : json['acceptedTos'],
+        'enabled': !(0, runtime_1.exists)(json, 'enabled') ? undefined : json['enabled'],
+        'credentialNonExpired': !(0, runtime_1.exists)(json, 'credentialNonExpired') ? undefined : json['credentialNonExpired'],
+        'accountEnabled': !(0, runtime_1.exists)(json, 'accountEnabled') ? undefined : json['accountEnabled'],
+        'accountNonLocked': !(0, runtime_1.exists)(json, 'accountNonLocked') ? undefined : json['accountNonLocked'],
+        'accountNonExpired': !(0, runtime_1.exists)(json, 'accountNonExpired') ? undefined : json['accountNonExpired'],
+        'userPreferences': !(0, runtime_1.exists)(json, 'userPreferences') ? undefined : json['userPreferences'].map(_1.UserPreferenceFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function PrincipalToJSON(value) {
+function PrincipalToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -60,8 +64,8 @@ export function PrincipalToJSON(value) {
         'username': value.username,
         'password': value.password,
         'email': value.email,
-        'roleList': value.roleList.map(RoleToJSON),
-        'authorityList': value.authorityList.map(AuthorityToJSON),
+        'roleList': value.roleList.map(_1.RoleToJSON),
+        'authorityList': value.authorityList.map(_1.AuthorityToJSON),
         'firstName': value.firstName,
         'middleName': value.middleName,
         'lastName': value.lastName,
@@ -74,8 +78,8 @@ export function PrincipalToJSON(value) {
         'bio': value.bio,
         'notes': value.notes,
         'avatarUrl': value.avatarUrl,
-        'organization': OrganizationToJSON(value.organization),
-        'addresses': value.addresses === undefined ? undefined : value.addresses.map(AddressToJSON),
+        'organization': (0, _1.OrganizationToJSON)(value.organization),
+        'addresses': value.addresses === undefined ? undefined : value.addresses.map(_1.AddressToJSON),
         'acceptedCookies': value.acceptedCookies,
         'acceptedTos': value.acceptedTos,
         'enabled': value.enabled,
@@ -83,7 +87,7 @@ export function PrincipalToJSON(value) {
         'accountEnabled': value.accountEnabled,
         'accountNonLocked': value.accountNonLocked,
         'accountNonExpired': value.accountNonExpired,
-        'userPreferences': value.userPreferences === undefined ? undefined : value.userPreferences.map(UserPreferenceToJSON),
+        'userPreferences': value.userPreferences === undefined ? undefined : value.userPreferences.map(_1.UserPreferenceToJSON),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,25 +11,28 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { AddressFromJSON, AddressToJSON, } from './';
-export function OrganizationFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.OrganizationFromJSON = OrganizationFromJSON;
+exports.OrganizationToJSON = OrganizationToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function OrganizationFromJSON(json) {
     return {
         'name': json['name'],
-        'homePage': !exists(json, 'homePage') ? undefined : json['homePage'],
-        'phone': !exists(json, 'phone') ? undefined : json['phone'],
-        'address': !exists(json, 'address') ? undefined : AddressFromJSON(json['address']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'homePage': !(0, runtime_1.exists)(json, 'homePage') ? undefined : json['homePage'],
+        'phone': !(0, runtime_1.exists)(json, 'phone') ? undefined : json['phone'],
+        'address': !(0, runtime_1.exists)(json, 'address') ? undefined : (0, _1.AddressFromJSON)(json['address']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function OrganizationToJSON(value) {
+function OrganizationToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -36,7 +40,7 @@ export function OrganizationToJSON(value) {
         'name': value.name,
         'homePage': value.homePage,
         'phone': value.phone,
-        'address': AddressToJSON(value.address),
+        'address': (0, _1.AddressToJSON)(value.address),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

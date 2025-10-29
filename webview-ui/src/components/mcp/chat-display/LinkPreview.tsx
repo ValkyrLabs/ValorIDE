@@ -53,19 +53,19 @@ class LinkPreview extends React.Component<LinkPreviewProps, LinkPreviewState> {
     };
   }
 
-  componentDidMount() {
+  override componentDidMount() {
     // Only fetch if we haven't completed a fetch yet
     if (!this.state.hasCompletedFetch) {
       this.fetchOpenGraphData();
     }
   }
 
-  componentWillUnmount() {
+  override componentWillUnmount() {
     this.cleanup();
   }
 
   // Prevent updates if fetch has completed
-  shouldComponentUpdate(
+  override shouldComponentUpdate(
     nextProps: LinkPreviewProps,
     nextState: LinkPreviewState,
   ) {
@@ -165,7 +165,7 @@ class LinkPreview extends React.Component<LinkPreviewProps, LinkPreviewState> {
     }
   }
 
-  render() {
+  override render() {
     const { url } = this.props;
     const { loading, error, errorMessage, ogData, fetchStartTime } = this.state;
 

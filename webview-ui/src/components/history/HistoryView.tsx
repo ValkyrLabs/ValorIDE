@@ -67,7 +67,8 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
 
   const handleHistorySelect = useCallback((id: string) => {
     vscode.postMessage({ type: "showTaskWithId", text: id });
-  }, []);
+    onDone();
+  }, [onDone]);
 
   const handleDeleteHistoryItem = useCallback((id: string) => {
     vscode.postMessage({ type: "deleteTaskWithId", text: id });

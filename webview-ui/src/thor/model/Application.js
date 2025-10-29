@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,29 +11,33 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { ContentMediaLinkFromJSON, ContentMediaLinkToJSON, OasOpenAPISpecFromJSON, OasOpenAPISpecToJSON, } from './';
-export function ApplicationFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ApplicationStatusEnum = exports.ApplicationTypeEnum = void 0;
+exports.ApplicationFromJSON = ApplicationFromJSON;
+exports.ApplicationToJSON = ApplicationToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function ApplicationFromJSON(json) {
     return {
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'isTemplate': !exists(json, 'isTemplate') ? undefined : json['isTemplate'],
-        'type': !exists(json, 'type') ? undefined : json['type'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'entrypointUrl': !exists(json, 'entrypointUrl') ? undefined : json['entrypointUrl'],
-        'contentMedia': !exists(json, 'contentMedia') ? undefined : json['contentMedia'].map(ContentMediaLinkFromJSON),
-        'openAPISpec': !exists(json, 'openAPISpec') ? undefined : OasOpenAPISpecFromJSON(json['openAPISpec']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'isTemplate': !(0, runtime_1.exists)(json, 'isTemplate') ? undefined : json['isTemplate'],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'entrypointUrl': !(0, runtime_1.exists)(json, 'entrypointUrl') ? undefined : json['entrypointUrl'],
+        'contentMedia': !(0, runtime_1.exists)(json, 'contentMedia') ? undefined : json['contentMedia'].map(_1.ContentMediaLinkFromJSON),
+        'openAPISpec': !(0, runtime_1.exists)(json, 'openAPISpec') ? undefined : (0, _1.OasOpenAPISpecFromJSON)(json['openAPISpec']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function ApplicationToJSON(value) {
+function ApplicationToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -43,8 +48,8 @@ export function ApplicationToJSON(value) {
         'type': value.type,
         'status': value.status,
         'entrypointUrl': value.entrypointUrl,
-        'contentMedia': value.contentMedia === undefined ? undefined : value.contentMedia.map(ContentMediaLinkToJSON),
-        'openAPISpec': OasOpenAPISpecToJSON(value.openAPISpec),
+        'contentMedia': value.contentMedia === undefined ? undefined : value.contentMedia.map(_1.ContentMediaLinkToJSON),
+        'openAPISpec': (0, _1.OasOpenAPISpecToJSON)(value.openAPISpec),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
@@ -59,7 +64,7 @@ export function ApplicationToJSON(value) {
 * @export
 * @enum {string}
 */
-export var ApplicationTypeEnum;
+var ApplicationTypeEnum;
 (function (ApplicationTypeEnum) {
     ApplicationTypeEnum["FULLSTACK"] = "full-stack";
     ApplicationTypeEnum["AUTOMATION"] = "automation";
@@ -69,17 +74,17 @@ export var ApplicationTypeEnum;
     ApplicationTypeEnum["MOBILE"] = "mobile";
     ApplicationTypeEnum["CICD"] = "ci-cd";
     ApplicationTypeEnum["LAMBDA"] = "lambda";
-})(ApplicationTypeEnum || (ApplicationTypeEnum = {}));
+})(ApplicationTypeEnum || (exports.ApplicationTypeEnum = ApplicationTypeEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-export var ApplicationStatusEnum;
+var ApplicationStatusEnum;
 (function (ApplicationStatusEnum) {
     ApplicationStatusEnum["READY"] = "ready";
     ApplicationStatusEnum["DEPLOYED"] = "deployed";
     ApplicationStatusEnum["STAGING"] = "staging";
     ApplicationStatusEnum["ERROR"] = "error";
     ApplicationStatusEnum["DISABLED"] = "disabled";
-})(ApplicationStatusEnum || (ApplicationStatusEnum = {}));
+})(ApplicationStatusEnum || (exports.ApplicationStatusEnum = ApplicationStatusEnum = {}));
 //# sourceMappingURL=Application.js.map

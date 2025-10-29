@@ -186,7 +186,9 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
   const hubConnected = !!communicationService?.hubConnected;
   const thorConnected = !!communicationService?.thorConnected;
   useEffect(() => {
-    if (!communicationService) return;
+    if (!communicationService) {
+      return undefined;
+    }
     const handlePresence = (list: string[]) => setPeers(list);
     const handleStatus = (s: any) => setPhase(s?.phase);
     communicationService.on?.("presence", handlePresence);

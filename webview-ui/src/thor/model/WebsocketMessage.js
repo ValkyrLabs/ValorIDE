@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,26 +11,30 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { PrincipalFromJSON, PrincipalToJSON, } from './';
-export function WebsocketMessageFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WebsocketMessageTypeEnum = void 0;
+exports.WebsocketMessageFromJSON = WebsocketMessageFromJSON;
+exports.WebsocketMessageToJSON = WebsocketMessageToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function WebsocketMessageFromJSON(json) {
     return {
-        'websocketSessionId': !exists(json, 'websocketSessionId') ? undefined : json['websocketSessionId'],
-        'type': !exists(json, 'type') ? undefined : json['type'],
-        'payload': !exists(json, 'payload') ? undefined : json['payload'],
-        'time': !exists(json, 'time') ? undefined : json['time'],
-        'user': !exists(json, 'user') ? undefined : PrincipalFromJSON(json['user']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'websocketSessionId': !(0, runtime_1.exists)(json, 'websocketSessionId') ? undefined : json['websocketSessionId'],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'payload': !(0, runtime_1.exists)(json, 'payload') ? undefined : json['payload'],
+        'time': !(0, runtime_1.exists)(json, 'time') ? undefined : json['time'],
+        'user': !(0, runtime_1.exists)(json, 'user') ? undefined : (0, _1.PrincipalFromJSON)(json['user']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function WebsocketMessageToJSON(value) {
+function WebsocketMessageToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -38,7 +43,7 @@ export function WebsocketMessageToJSON(value) {
         'type': value.type,
         'payload': value.payload,
         'time': value.time,
-        'user': PrincipalToJSON(value.user),
+        'user': (0, _1.PrincipalToJSON)(value.user),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
@@ -53,7 +58,7 @@ export function WebsocketMessageToJSON(value) {
 * @export
 * @enum {string}
 */
-export var WebsocketMessageTypeEnum;
+var WebsocketMessageTypeEnum;
 (function (WebsocketMessageTypeEnum) {
     WebsocketMessageTypeEnum["COMMAND"] = "command";
     WebsocketMessageTypeEnum["SERVICE"] = "service";
@@ -68,5 +73,5 @@ export var WebsocketMessageTypeEnum;
     WebsocketMessageTypeEnum["ERROR"] = "error";
     WebsocketMessageTypeEnum["INFO"] = "info";
     WebsocketMessageTypeEnum["DEBUG"] = "debug";
-})(WebsocketMessageTypeEnum || (WebsocketMessageTypeEnum = {}));
+})(WebsocketMessageTypeEnum || (exports.WebsocketMessageTypeEnum = WebsocketMessageTypeEnum = {}));
 //# sourceMappingURL=WebsocketMessage.js.map

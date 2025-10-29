@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,32 +11,35 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { ChatMessageFromJSON, ChatMessageToJSON, } from './';
-export function ChatCompletionRequestFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChatCompletionRequestFromJSON = ChatCompletionRequestFromJSON;
+exports.ChatCompletionRequestToJSON = ChatCompletionRequestToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function ChatCompletionRequestFromJSON(json) {
     return {
         'model': json['model'],
-        'messages': json['messages'].map(ChatMessageFromJSON),
-        'prompt': !exists(json, 'prompt') ? undefined : json['prompt'],
-        'temperature': !exists(json, 'temperature') ? undefined : json['temperature'],
-        'stream': !exists(json, 'stream') ? undefined : json['stream'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'messages': json['messages'].map(_1.ChatMessageFromJSON),
+        'prompt': !(0, runtime_1.exists)(json, 'prompt') ? undefined : json['prompt'],
+        'temperature': !(0, runtime_1.exists)(json, 'temperature') ? undefined : json['temperature'],
+        'stream': !(0, runtime_1.exists)(json, 'stream') ? undefined : json['stream'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function ChatCompletionRequestToJSON(value) {
+function ChatCompletionRequestToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
         'model': value.model,
-        'messages': value.messages.map(ChatMessageToJSON),
+        'messages': value.messages.map(_1.ChatMessageToJSON),
         'prompt': value.prompt,
         'temperature': value.temperature,
         'stream': value.stream,

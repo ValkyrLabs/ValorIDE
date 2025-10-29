@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,27 +11,31 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-export function IntegrationAccountFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.IntegrationAccountStatusEnum = void 0;
+exports.IntegrationAccountFromJSON = IntegrationAccountFromJSON;
+exports.IntegrationAccountToJSON = IntegrationAccountToJSON;
+const runtime_1 = require("../src/runtime");
+function IntegrationAccountFromJSON(json) {
     return {
-        'execModuleId': !exists(json, 'execModuleId') ? undefined : json['execModuleId'],
-        'accountName': !exists(json, 'accountName') ? undefined : json['accountName'],
-        'username': !exists(json, 'username') ? undefined : json['username'],
-        'password': !exists(json, 'password') ? undefined : json['password'],
-        'accountId': !exists(json, 'accountId') ? undefined : json['accountId'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'verified': !exists(json, 'verified') ? undefined : json['verified'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'execModuleId': !(0, runtime_1.exists)(json, 'execModuleId') ? undefined : json['execModuleId'],
+        'accountName': !(0, runtime_1.exists)(json, 'accountName') ? undefined : json['accountName'],
+        'username': !(0, runtime_1.exists)(json, 'username') ? undefined : json['username'],
+        'password': !(0, runtime_1.exists)(json, 'password') ? undefined : json['password'],
+        'accountId': !(0, runtime_1.exists)(json, 'accountId') ? undefined : json['accountId'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'verified': !(0, runtime_1.exists)(json, 'verified') ? undefined : json['verified'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function IntegrationAccountToJSON(value) {
+function IntegrationAccountToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -56,11 +61,11 @@ export function IntegrationAccountToJSON(value) {
 * @export
 * @enum {string}
 */
-export var IntegrationAccountStatusEnum;
+var IntegrationAccountStatusEnum;
 (function (IntegrationAccountStatusEnum) {
     IntegrationAccountStatusEnum["READY"] = "ready";
     IntegrationAccountStatusEnum["CLOSED"] = "closed";
     IntegrationAccountStatusEnum["EXECUTED"] = "executed";
     IntegrationAccountStatusEnum["ERROR"] = "error";
-})(IntegrationAccountStatusEnum || (IntegrationAccountStatusEnum = {}));
+})(IntegrationAccountStatusEnum || (exports.IntegrationAccountStatusEnum = IntegrationAccountStatusEnum = {}));
 //# sourceMappingURL=IntegrationAccount.js.map

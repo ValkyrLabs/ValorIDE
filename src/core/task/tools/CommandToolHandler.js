@@ -72,7 +72,7 @@ export class CommandToolHandler extends BaseToolHandler {
                     if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
                         showSystemNotification({
                             subtitle: "Approval Required",
-                            message: `ValorIDE wants to execute a command: ${command}`
+                            message: `Executing: ${command}`
                         });
                     }
                     const { response, text, images } = await this.context.ask("command", command + (this.context.shouldAutoApproveTool(block.name) && requiresApprovalPerLLM ? COMMAND_REQ_APP_STRING : ""), false);

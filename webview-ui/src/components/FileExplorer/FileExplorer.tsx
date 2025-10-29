@@ -172,6 +172,7 @@ const FileExplorer: React.FC<FileExplorerProps> = ({
       const interval = setInterval(fetchFiles, refreshInterval);
       return () => clearInterval(interval);
     }
+    return undefined;
   }, [autoRefresh, refreshInterval, fetchFiles]);
 
   const getAllFilePaths = (fileItems: FileItem[]): string[] => {

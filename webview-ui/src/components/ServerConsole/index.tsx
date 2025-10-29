@@ -1,7 +1,7 @@
 import * as StompJs from "@stomp/stompjs";
 import { useEffect, useState } from "react";
 import { Badge, Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
-import { FiTerminal, FiWifi, FiWifiOff, FiActivity, FiSend, FiMaximize2, FiMinimize2 } from "react-icons/fi";
+import { FiTerminal, FiWifi, FiWifiOff, FiActivity, FiMaximize2, FiMinimize2, FiList } from "react-icons/fi";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 import type { AppDispatch, RootState } from "../../redux/store";
@@ -13,6 +13,7 @@ import { BASE_PATH } from "@/thor/src";
 import SystemAlerts from "@/components/SystemAlerts";
 import "./ServerConsole.css";
 import { FaPaperPlane } from "react-icons/fa";
+import CoolButton from "../CoolButton";
 
 const { Client } = StompJs;
 
@@ -56,6 +57,7 @@ const stompClient = new Client({
 
 const ServerConsole = () => {
   const [isMaximized, setIsMaximized] = useState(true);
+  const [isCompact, setIsCompact] = useState(false);
   const [chatText, setChatText] = useState("");
   const [isConnecting, setIsConnecting] = useState(false);
 
@@ -66,8 +68,14 @@ const ServerConsole = () => {
   const dispatch = useAppDispatch();
 
   // Determine connection state for styling
-  const connectionState: 'happy' | 'sad' | 'waiting' = isConnecting ? 'waiting' :
-    (connected && mothershipConnected) ? 'happy' : 'sad';
+  const connectionState: 'happy' | 'sad' | 'waiting' =
+    isConnecting
+      ? 'waiting'
+      : connected && mothershipConnected
+        ? 'happy'
+        : connected
+          ? 'waiting'
+          : 'sad';
 
   useEffect(() => {
     const socketUrl = isValidWsUrl(WEBSOCKET_URL) ? WEBSOCKET_URL : FALLBACK_WS_BASE;
@@ -79,7 +87,7 @@ const ServerConsole = () => {
         payload: "WebSocket disabled: configure VITE_wssBasePath or ensure VITE_basePath is an http(s) URL.",
         createdDate: new Date(),
       } as any));
-      return;
+      return undefined;
     }
 
     setIsConnecting(true);
@@ -107,6 +115,7 @@ const ServerConsole = () => {
       },
       onStompError: (frame) => {
         setIsConnecting(false);
+        dispatch(setConnected(false));
         console.error("Broker error: " + frame.headers["message"]);
         console.error("Details: " + frame.body);
       },
@@ -149,21 +158,23 @@ const ServerConsole = () => {
   const getStatusText = () => {
     if (isConnecting) return 'Connecting...';
     if (connected && mothershipConnected) return 'Connected to Mothership';
-    if (connected) return 'Server Connected';
+    if (connected) return 'Awaiting Mothership';
+    if (mothershipConnected) return 'Mothership Connected (console offline)';
     return 'Disconnected';
   };
 
   const getStatusIcon = () => {
     if (isConnecting) return <FiActivity />;
     if (connected && mothershipConnected) return <FiWifi />;
-    if (connected) return <FiTerminal />;
+    if (connected) return <FiActivity />;
+    if (mothershipConnected) return <FiWifi />;
     return <FiWifiOff />;
   };
 
   return (
     <>
       <SystemAlerts />
-      <Card className={`server-console connection-${connectionState}`}>
+      <Card className={`server-console ${isCompact ? 'compact' : ''} ${isMaximized ? 'maximized' : ''} connection-${connectionState}`}>
         <Card.Header className="console-header p-3">
           <Row className="align-items-center">
             <Col>
@@ -181,19 +192,30 @@ const ServerConsole = () => {
               </div>
             </Col>
             <Col xs="auto">
-              <Button
-                size="sm"
-                className="control-btn"
-                onClick={() => setIsMaximized(!isMaximized)}
-                title={isMaximized ? 'Minimize' : 'Maximize'}
-              >
-                {isMaximized ? <FiMinimize2 size={14} /> : <FiMaximize2 size={14} />}
-              </Button>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <CoolButton
+                  size="sm"
+                  className="control-btn"
+                  onClick={() => setIsCompact(!isCompact)}
+                // title={isCompact ? 'Disable compact' : 'Enable compact'}
+                >
+                  <FiList size={14} />
+                </CoolButton>
+
+                <CoolButton
+                  size="sm"
+                  className="control-btn"
+                  onClick={() => setIsMaximized(!isMaximized)}
+                // title={isMaximized ? 'Minimize' : 'Maximize'}
+                >
+                  {isMaximized ? <FiMinimize2 size={14} /> : <FiMaximize2 size={14} />}
+                </CoolButton>
+              </div>
             </Col>
           </Row>
         </Card.Header>
 
-        <Card.Body className={`messages-container ${isMaximized ? 'maximized' : ''} p-0`}>
+        <Card.Body className="messages-container p-0">
           {Array.isArray(messages) && messages.length > 0 ? (
             messages.map((message: WebsocketMessage, index: number) => {
               const { payload, time, type } = message;
@@ -264,15 +286,21 @@ const ServerConsole = () => {
               value={chatText}
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
-              placeholder={connected ? "Send message to mothership..." : "Connecting..."}
-              disabled={!connected}
+              placeholder={
+                connected && mothershipConnected
+                  ? "Send message to mothership..."
+                  : connected
+                    ? "Waiting for mothership..."
+                    : "Connecting..."
+              }
+              disabled={!connected || !mothershipConnected}
             />
 
             <button
               style={{ cursor: "pointer", padding: "3px", width: "28px", height: "28px", backgroundColor: "darkblue", borderRadius: "14px" }}
               className="send-btn"
               onClick={sendMessage}
-              disabled={!connected || !chatText.trim()}
+              disabled={!connected || !mothershipConnected || !chatText.trim()}
               title="Send Message"
             >
               <FaPaperPlane />

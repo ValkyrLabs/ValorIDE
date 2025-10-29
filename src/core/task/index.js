@@ -3,7 +3,7 @@ import { execa } from "execa";
 import getFolderSize from "get-folder-size";
 import { setTimeout as setTimeoutPromise } from "node:timers/promises";
 import os from "os";
-import pTimeout from "p-timeout";
+import pTimeout, { TimeoutError } from "p-timeout";
 import pWaitFor from "p-wait-for";
 import * as path from "path";
 import { serializeError } from "serialize-error";
@@ -58,6 +58,7 @@ import { CheckpointHandler } from "./CheckpointHandler";
 import { ToolDescriptionHelper } from "./ToolDescriptionHelper";
 import { TagProcessingUtils } from "./TagProcessingUtils";
 import { ErrorHandlingUtils } from "./ErrorHandlingUtils";
+import { DEFAULT_CHAT_SETTINGS } from "@shared/ChatSettings";
 export const cwd = vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
     path.join(os.homedir(), "Desktop"); // may or may not exist but fs checking existence would immediately ask for permission which would be bad UX, need to come up with a better solution
 export class Task {
@@ -1415,14 +1416,25 @@ export class Task {
         }
         let stream = this.api.createMessage(systemPrompt, contextManagementMetadata.truncatedConversationHistory);
         const iterator = stream[Symbol.asyncIterator]();
+        const defaultFirstChunkTimeout = (DEFAULT_CHAT_SETTINGS.apiFirstChunkTimeoutMs ?? 45000);
+        const configuredFirstChunkTimeout = typeof (this.chatSettings?.apiFirstChunkTimeoutMs) === "number" &&
+            this.chatSettings.apiFirstChunkTimeoutMs > 0
+            ? this.chatSettings.apiFirstChunkTimeoutMs
+            : undefined;
+        const firstChunkTimeoutMs = configuredFirstChunkTimeout ?? defaultFirstChunkTimeout;
+        let firstChunkResult;
+        this.isWaitingForFirstChunk = true;
         try {
-            // awaiting first chunk to see if it will throw an error
-            this.isWaitingForFirstChunk = true;
-            const firstChunk = await iterator.next();
-            yield firstChunk.value;
-            this.isWaitingForFirstChunk = false;
+            firstChunkResult = await pTimeout(iterator.next(), {
+                milliseconds: firstChunkTimeoutMs,
+                message: "API request timed out before the model started streaming a response.",
+            });
         }
-        catch (error) {
+        catch (rawError) {
+            this.isWaitingForFirstChunk = false;
+            const error = rawError instanceof TimeoutError
+                ? new Error(`Timed out waiting ${Math.round(firstChunkTimeoutMs / 1000)}s for the model to respond.`)
+                : rawError;
             const isOpenRouter = this.api instanceof OpenRouterHandler ||
                 this.api instanceof ValorIDEHandler;
             const isAnthropic = this.api instanceof AnthropicHandler;
@@ -1450,25 +1462,39 @@ export class Task {
                 // request failed after retrying automatically once, ask user if they want to retry again
                 // note that this api_req_failed ask is unique in that we only present this option if the api hasn't streamed any content yet (ie it fails on the first chunk due), as it would allow them to hit a retry button. However if the api failed mid-stream, it could be in any arbitrary state where some tools may have executed, so that error is handled differently and requires cancelling the task entirely.
                 if (isOpenRouterContextWindowError || isAnthropicContextWindowError) {
+                    let normalizedError = error;
                     const truncatedConversationHistory = this.contextManager.getTruncatedMessages(this.apiConversationHistory, this.conversationHistoryDeletedRange);
                     // If the conversation has more than 3 messages, we can truncate again. If not, then the conversation is bricked.
                     // ToDo: Allow the user to change their input if this is the case.
                     if (truncatedConversationHistory.length > 3) {
-                        error = new Error("Context window exceeded. Click retry to truncate the conversation and try again.");
+                        normalizedError = new Error("Context window exceeded. Click retry to truncate the conversation and try again.");
                         this.didAutomaticallyRetryFailedApiRequest = false;
                     }
+                    const errorMessage = this.formatErrorWithStatusCode(normalizedError);
+                    const { response } = await this.ask("api_req_failed", errorMessage);
+                    if (response !== "yesButtonClicked") {
+                        // this will never happen since if noButtonClicked, we will clear current task, aborting this instance
+                        throw new Error("API request failed");
+                    }
+                    await this.say("api_req_retried");
                 }
-                const errorMessage = this.formatErrorWithStatusCode(error);
-                const { response } = await this.ask("api_req_failed", errorMessage);
-                if (response !== "yesButtonClicked") {
-                    // this will never happen since if noButtonClicked, we will clear current task, aborting this instance
-                    throw new Error("API request failed");
+                else {
+                    const errorMessage = this.formatErrorWithStatusCode(error);
+                    const { response } = await this.ask("api_req_failed", errorMessage);
+                    if (response !== "yesButtonClicked") {
+                        // this will never happen since if noButtonClicked, we will clear current task, aborting this instance
+                        throw new Error("API request failed");
+                    }
+                    await this.say("api_req_retried");
                 }
-                await this.say("api_req_retried");
             }
             // delegate generator output from the recursive call
             yield* this.attemptApiRequest(previousApiReqIndex);
             return;
+        }
+        this.isWaitingForFirstChunk = false;
+        if (firstChunkResult && !firstChunkResult.done) {
+            yield firstChunkResult.value;
         }
         // no error, so we can continue to yield all remaining chunks
         // (needs to be placed outside of try/catch since it we want caller to handle errors not with api_req_failed as that is reserved for first chunk failures only)
@@ -2377,7 +2403,7 @@ export class Task {
                                     didAutoApprove = true;
                                 }
                                 else {
-                                    showNotificationForApprovalIfAutoApprovalEnabled(`ValorIDE wants to execute a command: ${command}`);
+                                    this.notifyCommandExecuting(command);
                                     // this.removeLastPartialMessageIfExistsWithType("say", "command")
                                     const didApprove = await askApproval("command", command +
                                         `${this.shouldAutoApproveTool(block.name) && requiresApprovalPerLLM ? COMMAND_REQ_APP_STRING : ""}`);

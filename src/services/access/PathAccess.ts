@@ -13,7 +13,7 @@ export interface PathAccessOptions {
 const DEFAULT_DENY_PATTERNS = [
   "**/.git/**",
   "**/node_modules/**",
-  "**/.valor/undo/**",
+  "**/.valoride/undo/**",
   "**/.DS_Store",
 ];
 

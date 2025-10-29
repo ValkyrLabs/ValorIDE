@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,26 +11,29 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { PtgFromJSON, PtgToJSON, PtgRefFromJSON, PtgRefToJSON, } from './';
-export function FormulaFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FormulaFromJSON = FormulaFromJSON;
+exports.FormulaToJSON = FormulaToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function FormulaFromJSON(json) {
     return {
-        'workbookId': !exists(json, 'workbookId') ? undefined : json['workbookId'],
-        'sheetId': !exists(json, 'sheetId') ? undefined : json['sheetId'],
-        'expression': !exists(json, 'expression') ? undefined : json['expression'],
-        'ptgRefs': !exists(json, 'ptgRefs') ? undefined : json['ptgRefs'].map(PtgRefFromJSON),
-        'calculatingPtgs': !exists(json, 'calculatingPtgs') ? undefined : json['calculatingPtgs'].map(PtgFromJSON),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'workbookId': !(0, runtime_1.exists)(json, 'workbookId') ? undefined : json['workbookId'],
+        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
+        'expression': !(0, runtime_1.exists)(json, 'expression') ? undefined : json['expression'],
+        'ptgRefs': !(0, runtime_1.exists)(json, 'ptgRefs') ? undefined : json['ptgRefs'].map(_1.PtgRefFromJSON),
+        'calculatingPtgs': !(0, runtime_1.exists)(json, 'calculatingPtgs') ? undefined : json['calculatingPtgs'].map(_1.PtgFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function FormulaToJSON(value) {
+function FormulaToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -37,8 +41,8 @@ export function FormulaToJSON(value) {
         'workbookId': value.workbookId,
         'sheetId': value.sheetId,
         'expression': value.expression,
-        'ptgRefs': value.ptgRefs === undefined ? undefined : value.ptgRefs.map(PtgRefToJSON),
-        'calculatingPtgs': value.calculatingPtgs === undefined ? undefined : value.calculatingPtgs.map(PtgToJSON),
+        'ptgRefs': value.ptgRefs === undefined ? undefined : value.ptgRefs.map(_1.PtgRefToJSON),
+        'calculatingPtgs': value.calculatingPtgs === undefined ? undefined : value.calculatingPtgs.map(_1.PtgToJSON),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

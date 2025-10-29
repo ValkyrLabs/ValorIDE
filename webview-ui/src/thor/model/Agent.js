@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,38 +11,41 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { AgentEventTriggerFromJSON, AgentEventTriggerToJSON, ApplicationFromJSON, ApplicationToJSON, RoleFromJSON, RoleToJSON, WorkflowFromJSON, WorkflowToJSON, } from './';
-export function AgentFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentFromJSON = AgentFromJSON;
+exports.AgentToJSON = AgentToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function AgentFromJSON(json) {
     return {
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'application': !exists(json, 'application') ? undefined : ApplicationFromJSON(json['application']),
-        'workflows': !exists(json, 'workflows') ? undefined : json['workflows'].map(WorkflowFromJSON),
-        'role': !exists(json, 'role') ? undefined : RoleFromJSON(json['role']),
-        'cronSchedule': !exists(json, 'cronSchedule') ? undefined : json['cronSchedule'],
-        'eventTriggers': !exists(json, 'eventTriggers') ? undefined : json['eventTriggers'].map(AgentEventTriggerFromJSON),
-        'heartbeatEnabled': !exists(json, 'heartbeatEnabled') ? undefined : json['heartbeatEnabled'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'application': !(0, runtime_1.exists)(json, 'application') ? undefined : (0, _1.ApplicationFromJSON)(json['application']),
+        'workflows': !(0, runtime_1.exists)(json, 'workflows') ? undefined : json['workflows'].map(_1.WorkflowFromJSON),
+        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : (0, _1.RoleFromJSON)(json['role']),
+        'cronSchedule': !(0, runtime_1.exists)(json, 'cronSchedule') ? undefined : json['cronSchedule'],
+        'eventTriggers': !(0, runtime_1.exists)(json, 'eventTriggers') ? undefined : json['eventTriggers'].map(_1.AgentEventTriggerFromJSON),
+        'heartbeatEnabled': !(0, runtime_1.exists)(json, 'heartbeatEnabled') ? undefined : json['heartbeatEnabled'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function AgentToJSON(value) {
+function AgentToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
         'name': value.name,
-        'application': ApplicationToJSON(value.application),
-        'workflows': value.workflows === undefined ? undefined : value.workflows.map(WorkflowToJSON),
-        'role': RoleToJSON(value.role),
+        'application': (0, _1.ApplicationToJSON)(value.application),
+        'workflows': value.workflows === undefined ? undefined : value.workflows.map(_1.WorkflowToJSON),
+        'role': (0, _1.RoleToJSON)(value.role),
         'cronSchedule': value.cronSchedule,
-        'eventTriggers': value.eventTriggers === undefined ? undefined : value.eventTriggers.map(AgentEventTriggerToJSON),
+        'eventTriggers': value.eventTriggers === undefined ? undefined : value.eventTriggers.map(_1.AgentEventTriggerToJSON),
         'heartbeatEnabled': value.heartbeatEnabled,
         'id': value.id,
         'ownerId': value.ownerId,

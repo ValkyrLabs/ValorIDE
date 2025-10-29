@@ -39,6 +39,7 @@ import { ToolDescriptionHelper } from "./ToolDescriptionHelper";
 import { TagProcessingUtils } from "./TagProcessingUtils";
 import { ToolApprovalManager } from "./ToolApprovalManager";
 import { ToolManager, ToolContext } from "./tools";
+import { Logger } from "@services/logging/Logger";
 
 type ToolResponse =
   | string
@@ -119,6 +120,9 @@ export class ToolExecutionEngine {
     didAlreadyUseTool: boolean;
     handled: boolean;
   }> {
+    Logger.info(
+      `[ToolExecutionEngine] executeToolBlock start name=${block.name} partial=${block.partial} didReject=${didRejectTool} didAlreadyUse=${didAlreadyUseTool}`,
+    );
     if (didRejectTool) {
       // ignore any tool content after user has rejected tool once
       if (!block.partial) {
@@ -233,6 +237,9 @@ export class ToolExecutionEngine {
         if (result.feedback) {
           await handleFeedback(result.feedback);
         }
+        Logger.info(
+          `[ToolExecutionEngine] Tool manager handled ${block.name} shouldContinue=${result.shouldContinue} userRejected=${result.userRejected} didAlreadyUse=${result.didAlreadyUseTool}`,
+        );
 
         return {
           shouldContinue: true,
@@ -243,6 +250,9 @@ export class ToolExecutionEngine {
       }
 
       // If ToolManager couldn't handle it, fall back to legacy implementation
+      Logger.info(
+        `[ToolExecutionEngine] Tool manager did not handle ${block.name}; falling back to legacy implementation`,
+      );
       return {
         shouldContinue: true,
         didRejectTool: false,
@@ -252,6 +262,9 @@ export class ToolExecutionEngine {
       
     } catch (error) {
       await handleError(`executing ${block.name}`, error as Error);
+      Logger.error(
+        `[ToolExecutionEngine] Error executing ${block.name}: ${(error as Error).message}`,
+      );
       return {
         shouldContinue: false,
         didRejectTool: false,

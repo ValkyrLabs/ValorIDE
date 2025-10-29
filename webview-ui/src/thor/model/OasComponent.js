@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,31 +11,34 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { OasObjectSchemaFromJSON, OasObjectSchemaToJSON, OasSecuritySchemeFromJSON, OasSecuritySchemeToJSON, } from './';
-export function OasComponentFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.OasComponentFromJSON = OasComponentFromJSON;
+exports.OasComponentToJSON = OasComponentToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function OasComponentFromJSON(json) {
     return {
-        'oasOpenAPISpecId': !exists(json, 'oasOpenAPISpecId') ? undefined : json['oasOpenAPISpecId'],
-        'schemas': !exists(json, 'schemas') ? undefined : json['schemas'].map(OasObjectSchemaFromJSON),
-        'securitySchemes': !exists(json, 'securitySchemes') ? undefined : json['securitySchemes'].map(OasSecuritySchemeFromJSON),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'oasOpenAPISpecId': !(0, runtime_1.exists)(json, 'oasOpenAPISpecId') ? undefined : json['oasOpenAPISpecId'],
+        'schemas': !(0, runtime_1.exists)(json, 'schemas') ? undefined : json['schemas'].map(_1.OasObjectSchemaFromJSON),
+        'securitySchemes': !(0, runtime_1.exists)(json, 'securitySchemes') ? undefined : json['securitySchemes'].map(_1.OasSecuritySchemeFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function OasComponentToJSON(value) {
+function OasComponentToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
         'oasOpenAPISpecId': value.oasOpenAPISpecId,
-        'schemas': value.schemas === undefined ? undefined : value.schemas.map(OasObjectSchemaToJSON),
-        'securitySchemes': value.securitySchemes === undefined ? undefined : value.securitySchemes.map(OasSecuritySchemeToJSON),
+        'schemas': value.schemas === undefined ? undefined : value.schemas.map(_1.OasObjectSchemaToJSON),
+        'securitySchemes': value.securitySchemes === undefined ? undefined : value.securitySchemes.map(_1.OasSecuritySchemeToJSON),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

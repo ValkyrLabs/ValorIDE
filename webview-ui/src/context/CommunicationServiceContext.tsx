@@ -94,7 +94,9 @@ export const CommunicationServiceProvider: React.FC<{ role: CommunicationRole; c
 
   useEffect(() => {
     // Connect once, defensively
-    if (createdRef.current) return;
+    if (createdRef.current) {
+      return undefined;
+    }
     createdRef.current = true;
     try {
       communicationService.connect();

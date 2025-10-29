@@ -288,7 +288,7 @@ const LlmDetailsModelPicker: React.FC<LlmDetailsModelPickerProps> = ({
             </style>
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 <label htmlFor="llm-details-search">
-                    <span style={{ fontWeight: 500 }}>Select Coding Agent (LLM Model)</span>
+                    <span style={{ fontWeight: 500 }}>Select ValkyrAI Coding Agent (LLM Model)</span>
                 </label>
 
                 {/* Featured Models */}

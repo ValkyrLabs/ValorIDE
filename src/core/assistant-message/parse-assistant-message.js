@@ -1,5 +1,29 @@
 import { toolParamNames, toolUseNames, } from ".";
+function normalizeLegacyToolFormat(message) {
+    if (!message.includes("<invoke")) {
+        return message;
+    }
+    const toolNameSet = new Set(toolUseNames);
+    const paramNameSet = new Set(toolParamNames);
+    let normalized = message.replace(/<\/?function_calls>/g, "");
+    normalized = normalized.replace(/<invoke\s+name=(["'])([^"']+)\1>([\s\S]*?)<\/invoke>/g, (match, _quote, rawToolName, inner) => {
+        const toolName = rawToolName.trim();
+        if (!toolNameSet.has(toolName)) {
+            return match;
+        }
+        const convertedInner = inner.replace(/<parameter\s+name=(["'])([^"']+)\1>([\s\S]*?)<\/parameter>/g, (paramMatch, _paramQuote, rawParamName, paramInner) => {
+            const paramName = rawParamName.trim();
+            if (!paramNameSet.has(paramName)) {
+                return paramMatch;
+            }
+            return `<${paramName}>${paramInner}</${paramName}>`;
+        });
+        return `<${toolName}>${convertedInner}</${toolName}>`;
+    });
+    return normalized;
+}
 export function parseAssistantMessage(assistantMessage) {
+    const message = normalizeLegacyToolFormat(assistantMessage);
     const contentBlocks = [];
     let currentTextContent = undefined;
     let currentTextContentStartIndex = 0;
@@ -8,8 +32,8 @@ export function parseAssistantMessage(assistantMessage) {
     let currentParamName = undefined;
     let currentParamValueStartIndex = 0;
     let accumulator = "";
-    for (let i = 0; i < assistantMessage.length; i++) {
-        const char = assistantMessage[i];
+    for (let i = 0; i < message.length; i++) {
+        const char = message[i];
         accumulator += char;
         // there should not be a param without a tool use
         if (currentToolUse && currentParamName) {

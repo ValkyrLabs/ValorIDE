@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,35 +11,39 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { ChartSeriesFromJSON, ChartSeriesToJSON, } from './';
-export function ChartFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChartChartTypeEnum = void 0;
+exports.ChartFromJSON = ChartFromJSON;
+exports.ChartToJSON = ChartToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function ChartFromJSON(json) {
     return {
-        'sheetId': !exists(json, 'sheetId') ? undefined : json['sheetId'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'chartType': !exists(json, 'chartType') ? undefined : json['chartType'],
-        'title': !exists(json, 'title') ? undefined : json['title'],
-        'axisLabelX': !exists(json, 'axisLabelX') ? undefined : json['axisLabelX'],
-        'axisLabelY': !exists(json, 'axisLabelY') ? undefined : json['axisLabelY'],
-        'categoryRange': !exists(json, 'categoryRange') ? undefined : json['categoryRange'],
-        'dataSeries': !exists(json, 'dataSeries') ? undefined : json['dataSeries'].map(ChartSeriesFromJSON),
-        'embedded': !exists(json, 'embedded') ? undefined : json['embedded'],
-        'anchorCell': !exists(json, 'anchorCell') ? undefined : json['anchorCell'],
-        'anchorOffsetX': !exists(json, 'anchorOffsetX') ? undefined : json['anchorOffsetX'],
-        'anchorOffsetY': !exists(json, 'anchorOffsetY') ? undefined : json['anchorOffsetY'],
-        'width': !exists(json, 'width') ? undefined : json['width'],
-        'height': !exists(json, 'height') ? undefined : json['height'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'chartType': !(0, runtime_1.exists)(json, 'chartType') ? undefined : json['chartType'],
+        'title': !(0, runtime_1.exists)(json, 'title') ? undefined : json['title'],
+        'axisLabelX': !(0, runtime_1.exists)(json, 'axisLabelX') ? undefined : json['axisLabelX'],
+        'axisLabelY': !(0, runtime_1.exists)(json, 'axisLabelY') ? undefined : json['axisLabelY'],
+        'categoryRange': !(0, runtime_1.exists)(json, 'categoryRange') ? undefined : json['categoryRange'],
+        'dataSeries': !(0, runtime_1.exists)(json, 'dataSeries') ? undefined : json['dataSeries'].map(_1.ChartSeriesFromJSON),
+        'embedded': !(0, runtime_1.exists)(json, 'embedded') ? undefined : json['embedded'],
+        'anchorCell': !(0, runtime_1.exists)(json, 'anchorCell') ? undefined : json['anchorCell'],
+        'anchorOffsetX': !(0, runtime_1.exists)(json, 'anchorOffsetX') ? undefined : json['anchorOffsetX'],
+        'anchorOffsetY': !(0, runtime_1.exists)(json, 'anchorOffsetY') ? undefined : json['anchorOffsetY'],
+        'width': !(0, runtime_1.exists)(json, 'width') ? undefined : json['width'],
+        'height': !(0, runtime_1.exists)(json, 'height') ? undefined : json['height'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function ChartToJSON(value) {
+function ChartToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -50,7 +55,7 @@ export function ChartToJSON(value) {
         'axisLabelX': value.axisLabelX,
         'axisLabelY': value.axisLabelY,
         'categoryRange': value.categoryRange,
-        'dataSeries': value.dataSeries === undefined ? undefined : value.dataSeries.map(ChartSeriesToJSON),
+        'dataSeries': value.dataSeries === undefined ? undefined : value.dataSeries.map(_1.ChartSeriesToJSON),
         'embedded': value.embedded,
         'anchorCell': value.anchorCell,
         'anchorOffsetX': value.anchorOffsetX,
@@ -71,7 +76,7 @@ export function ChartToJSON(value) {
 * @export
 * @enum {string}
 */
-export var ChartChartTypeEnum;
+var ChartChartTypeEnum;
 (function (ChartChartTypeEnum) {
     ChartChartTypeEnum["AREA"] = "area";
     ChartChartTypeEnum["BAR"] = "bar";
@@ -82,5 +87,5 @@ export var ChartChartTypeEnum;
     ChartChartTypeEnum["RADAR"] = "radar";
     ChartChartTypeEnum["DOUGHNUT"] = "doughnut";
     ChartChartTypeEnum["STOCK"] = "stock";
-})(ChartChartTypeEnum || (ChartChartTypeEnum = {}));
+})(ChartChartTypeEnum || (exports.ChartChartTypeEnum = ChartChartTypeEnum = {}));
 //# sourceMappingURL=Chart.js.map

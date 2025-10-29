@@ -12,7 +12,7 @@ import DynamicTextArea from "react-textarea-autosize";
 import GlowingTextArea from "@/components/chat/GlowingTextArea";
 import { useClickAway, useEvent, useWindowSize } from "react-use";
 import styled from "styled-components";
-import { FaCamera, FaPaperPlane, FaRedoAlt } from "react-icons/fa";
+import { FaAngry, FaCamera, FaPaperPlane, FaRedoAlt } from "react-icons/fa";
 import { mentionRegex, mentionRegexGlobal } from "@shared/context-mentions";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import { useExtensionState } from "@/context/ExtensionStateContext";
@@ -1708,7 +1708,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
             </Tooltip>
             <ServersToggleModal />
             <ValorIDERulesToggleModal />
-            <Tooltip tipText="Auto Repeat Check">
+            <Tooltip tipText="Auto Repeat Check [stubborn mode]">
               <VSCodeButton
                 appearance={chatSettings.stubbornMode ? "primary" : "secondary"}
                 aria-label="Toggle Stubborn Mode"
@@ -1725,8 +1725,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
                 style={{ padding: "0px 6px", height: 20, marginLeft: 4 }}
               >
                 <ButtonContainer>
-                  <FaRedoAlt className="flex items-center" style={{ fontSize: 12, marginBottom: -2 }} />
-                  <span style={{ fontSize: 10, marginLeft: 4 }}>Stubborn</span>
+                  <FaAngry className="flex items-center" style={{ fontSize: 12, marginBottom: -2 }} />
                 </ButtonContainer>
               </VSCodeButton>
             </Tooltip>

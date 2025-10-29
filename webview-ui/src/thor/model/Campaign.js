@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,27 +11,31 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-export function CampaignFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CampaignStatusEnum = void 0;
+exports.CampaignFromJSON = CampaignFromJSON;
+exports.CampaignToJSON = CampaignToJSON;
+const runtime_1 = require("../src/runtime");
+function CampaignFromJSON(json) {
     return {
         'campaignId': json['campaignId'],
         'name': json['name'],
         'startDate': new Date(json['startDate']),
         'endDate': new Date(json['endDate']),
         'status': json['status'],
-        'notes': !exists(json, 'notes') ? undefined : json['notes'],
-        'budget': !exists(json, 'budget') ? undefined : json['budget'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'notes': !(0, runtime_1.exists)(json, 'notes') ? undefined : json['notes'],
+        'budget': !(0, runtime_1.exists)(json, 'budget') ? undefined : json['budget'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function CampaignToJSON(value) {
+function CampaignToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -56,11 +61,11 @@ export function CampaignToJSON(value) {
 * @export
 * @enum {string}
 */
-export var CampaignStatusEnum;
+var CampaignStatusEnum;
 (function (CampaignStatusEnum) {
     CampaignStatusEnum["PLANNED"] = "planned";
     CampaignStatusEnum["ACTIVE"] = "active";
     CampaignStatusEnum["COMPLETED"] = "completed";
     CampaignStatusEnum["CANCELED"] = "canceled";
-})(CampaignStatusEnum || (CampaignStatusEnum = {}));
+})(CampaignStatusEnum || (exports.CampaignStatusEnum = CampaignStatusEnum = {}));
 //# sourceMappingURL=Campaign.js.map

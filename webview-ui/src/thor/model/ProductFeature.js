@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,25 +11,29 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-export function ProductFeatureFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ProductFeatureTypeEnum = void 0;
+exports.ProductFeatureFromJSON = ProductFeatureFromJSON;
+exports.ProductFeatureToJSON = ProductFeatureToJSON;
+const runtime_1 = require("../src/runtime");
+function ProductFeatureFromJSON(json) {
     return {
-        'productId': !exists(json, 'productId') ? undefined : json['productId'],
-        'price': !exists(json, 'price') ? undefined : json['price'],
-        'type': !exists(json, 'type') ? undefined : json['type'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'productId': !(0, runtime_1.exists)(json, 'productId') ? undefined : json['productId'],
+        'price': !(0, runtime_1.exists)(json, 'price') ? undefined : json['price'],
+        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function ProductFeatureToJSON(value) {
+function ProductFeatureToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -52,9 +57,9 @@ export function ProductFeatureToJSON(value) {
 * @export
 * @enum {string}
 */
-export var ProductFeatureTypeEnum;
+var ProductFeatureTypeEnum;
 (function (ProductFeatureTypeEnum) {
     ProductFeatureTypeEnum["PERCENTAGE"] = "percentage";
     ProductFeatureTypeEnum["FIXED"] = "fixed";
-})(ProductFeatureTypeEnum || (ProductFeatureTypeEnum = {}));
+})(ProductFeatureTypeEnum || (exports.ProductFeatureTypeEnum = ProductFeatureTypeEnum = {}));
 //# sourceMappingURL=ProductFeature.js.map

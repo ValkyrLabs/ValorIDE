@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,22 +11,26 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-export function EventLogFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EventLogStatusEnum = void 0;
+exports.EventLogFromJSON = EventLogFromJSON;
+exports.EventLogToJSON = EventLogToJSON;
+const runtime_1 = require("../src/runtime");
+function EventLogFromJSON(json) {
     return {
-        'eventDetails': !exists(json, 'eventDetails') ? undefined : json['eventDetails'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'eventDetails': !(0, runtime_1.exists)(json, 'eventDetails') ? undefined : json['eventDetails'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function EventLogToJSON(value) {
+function EventLogToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -46,10 +51,10 @@ export function EventLogToJSON(value) {
 * @export
 * @enum {string}
 */
-export var EventLogStatusEnum;
+var EventLogStatusEnum;
 (function (EventLogStatusEnum) {
     EventLogStatusEnum["OK"] = "ok";
     EventLogStatusEnum["ERROR"] = "error";
     EventLogStatusEnum["DISABLED"] = "disabled";
-})(EventLogStatusEnum || (EventLogStatusEnum = {}));
+})(EventLogStatusEnum || (exports.EventLogStatusEnum = EventLogStatusEnum = {}));
 //# sourceMappingURL=EventLog.js.map

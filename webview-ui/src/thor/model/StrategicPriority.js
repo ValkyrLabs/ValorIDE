@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,29 +11,33 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { GoalFromJSON, GoalToJSON, } from './';
-export function StrategicPriorityFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StrategicPriorityStatusEnum = exports.StrategicPriorityPriorityLevelEnum = void 0;
+exports.StrategicPriorityFromJSON = StrategicPriorityFromJSON;
+exports.StrategicPriorityToJSON = StrategicPriorityToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function StrategicPriorityFromJSON(json) {
     return {
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'priorityLevel': !exists(json, 'priorityLevel') ? undefined : json['priorityLevel'],
-        'imageUrl': !exists(json, 'imageUrl') ? undefined : json['imageUrl'],
-        'startDate': !exists(json, 'startDate') ? undefined : new Date(json['startDate']),
-        'targetDate': !exists(json, 'targetDate') ? undefined : new Date(json['targetDate']),
-        'goals': !exists(json, 'goals') ? undefined : json['goals'].map(GoalFromJSON),
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'priorityLevel': !(0, runtime_1.exists)(json, 'priorityLevel') ? undefined : json['priorityLevel'],
+        'imageUrl': !(0, runtime_1.exists)(json, 'imageUrl') ? undefined : json['imageUrl'],
+        'startDate': !(0, runtime_1.exists)(json, 'startDate') ? undefined : new Date(json['startDate']),
+        'targetDate': !(0, runtime_1.exists)(json, 'targetDate') ? undefined : new Date(json['targetDate']),
+        'goals': !(0, runtime_1.exists)(json, 'goals') ? undefined : json['goals'].map(_1.GoalFromJSON),
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function StrategicPriorityToJSON(value) {
+function StrategicPriorityToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -43,7 +48,7 @@ export function StrategicPriorityToJSON(value) {
         'imageUrl': value.imageUrl,
         'startDate': value.startDate === undefined ? undefined : value.startDate.toISOString(),
         'targetDate': value.targetDate === undefined ? undefined : value.targetDate.toISOString(),
-        'goals': value.goals === undefined ? undefined : value.goals.map(GoalToJSON),
+        'goals': value.goals === undefined ? undefined : value.goals.map(_1.GoalToJSON),
         'status': value.status,
         'id': value.id,
         'ownerId': value.ownerId,
@@ -59,21 +64,21 @@ export function StrategicPriorityToJSON(value) {
 * @export
 * @enum {string}
 */
-export var StrategicPriorityPriorityLevelEnum;
+var StrategicPriorityPriorityLevelEnum;
 (function (StrategicPriorityPriorityLevelEnum) {
     StrategicPriorityPriorityLevelEnum["LOW"] = "low";
     StrategicPriorityPriorityLevelEnum["MEDIUM"] = "medium";
     StrategicPriorityPriorityLevelEnum["HIGH"] = "high";
     StrategicPriorityPriorityLevelEnum["CRITICAL"] = "critical";
-})(StrategicPriorityPriorityLevelEnum || (StrategicPriorityPriorityLevelEnum = {}));
+})(StrategicPriorityPriorityLevelEnum || (exports.StrategicPriorityPriorityLevelEnum = StrategicPriorityPriorityLevelEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-export var StrategicPriorityStatusEnum;
+var StrategicPriorityStatusEnum;
 (function (StrategicPriorityStatusEnum) {
     StrategicPriorityStatusEnum["NOTSTARTED"] = "not-started";
     StrategicPriorityStatusEnum["INPROGRESS"] = "in-progress";
     StrategicPriorityStatusEnum["COMPLETE"] = "complete";
-})(StrategicPriorityStatusEnum || (StrategicPriorityStatusEnum = {}));
+})(StrategicPriorityStatusEnum || (exports.StrategicPriorityStatusEnum = StrategicPriorityStatusEnum = {}));
 //# sourceMappingURL=StrategicPriority.js.map

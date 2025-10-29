@@ -108,14 +108,14 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
 							setTextAreaDisabled(isPartial)
 							setValorIDEAsk("completion_result")
 							setEnableButtons(!isPartial)
-							
+
 							// Count attempts to limit stubborn mode
 							const maxAttempts = chatSettings?.stubbornModeAttempts || 3
-							const stubbornAttempts = messages.filter(m => 
-								m.type === "ask" && m.ask === "followup" && 
+							const stubbornAttempts = messages.filter(m =>
+								m.type === "ask" && m.ask === "followup" &&
 								m.text?.includes("Are you sure you completed all")
 							).length
-							
+
 							// Update button text with attempt counter during stubborn mode
 							if (chatSettings?.stubbornMode && stubbornAttempts > 0 && stubbornAttempts < maxAttempts) {
 								setPrimaryButtonText(`Stubborn ${stubbornAttempts + 1}/${maxAttempts}`)
@@ -123,7 +123,7 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
 								setPrimaryButtonText("Start New Task")
 							}
 							setSecondaryButtonText(undefined)
-							
+
 							// Re-enabled Stubborn Mode with attempt tracking and delayed notification
 							if (!isPartial && chatSettings?.stubbornMode && stubbornAttempts < maxAttempts) {
 								const followup = "Are you sure you completed all of the tasks requested? Please double-check and continue if anything remains."
@@ -135,7 +135,7 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
 										images: [],
 									})
 								}
-								
+
 								// Send followup after a delay (only after final message is complete)
 								setTimeout(() => {
 									// Only send notification after final stubborn attempt
@@ -190,6 +190,11 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
 								setEnableButtons(false)
 							}
 							break
+						default:
+							if (!lastMessage.partial && lastMessage.say !== "reasoning") {
+								setTextAreaDisabled(false)
+							}
+							break
 					}
 					break
 			}
@@ -210,7 +215,7 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
 		vscode.postMessage({
 			type: "askResponse",
 			askResponse: "messageResponse",
-			text: "yes",
+			text: "continue",
 			images: [],
 		})
 		setEnableButtons(false)

@@ -37,7 +37,7 @@ class ImagePreview extends React.Component<
   // Track aspect ratio for proper display
   private aspectRatio: number = 1;
 
-  componentDidMount() {
+  override componentDidMount() {
     // Set up a timeout to handle cases where the image never loads or errors
     this.timeoutId = setTimeout(() => {
       console.log(`Image load timeout for ${this.props.url}`);
@@ -119,7 +119,7 @@ class ImagePreview extends React.Component<
     testImg.crossOrigin = "anonymous";
   }
 
-  componentWillUnmount() {
+  override componentWillUnmount() {
     this.cleanup();
   }
 
@@ -152,7 +152,7 @@ class ImagePreview extends React.Component<
     this.cleanup();
   };
 
-  render() {
+  override render() {
     const { url } = this.props;
     const { loading, error, fetchStartTime } = this.state;
 

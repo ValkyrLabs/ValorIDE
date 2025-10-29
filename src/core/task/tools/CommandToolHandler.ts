@@ -17,6 +17,12 @@ export class CommandToolHandler extends BaseToolHandler {
       return { shouldContinue: false };
     }
 
+    Logger.info(
+      `[CommandToolHandler] Received execute_command tool partial=${partial} params=${JSON.stringify(
+        block.params,
+      )}`,
+    );
+
     let command: string | undefined = block.params.command;
     const requiresApprovalRaw: string | undefined = block.params.requires_approval;
     const requiresApprovalPerLLM = requiresApprovalRaw?.toLowerCase() === "true";
@@ -86,7 +92,7 @@ export class CommandToolHandler extends BaseToolHandler {
           if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
             showSystemNotification({
               subtitle: "Approval Required",
-              message: `ValorIDE wants to execute a command: ${command}`
+              message: `$ ${command}`
             });
           }
           
@@ -134,6 +140,10 @@ export class CommandToolHandler extends BaseToolHandler {
 
         await this.context.saveCheckpoint();
 
+        Logger.info(
+          `[CommandToolHandler] Command completed userRejected=${userRejected} resultPreview=${typeof result === "string" ? result.slice(0, 120) : "[non-string]"}`,
+        );
+
         return {
           shouldContinue: true,
           toolResponse: result,
@@ -143,6 +153,10 @@ export class CommandToolHandler extends BaseToolHandler {
         };
       }
     } catch (error) {
+      Logger.error(
+        `[CommandToolHandler] Error executing command: ${(error as Error).message}`,
+        error as Error,
+      );
       return {
         shouldContinue: true,
         toolResponse: await this.handleError("executing command", error as Error)

@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,27 +11,31 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { OasObjectSchemaFromJSON, OasObjectSchemaToJSON, } from './';
-export function OasParameterFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.OasParameterLocationEnum = void 0;
+exports.OasParameterFromJSON = OasParameterFromJSON;
+exports.OasParameterToJSON = OasParameterToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function OasParameterFromJSON(json) {
     return {
-        'oasOperationId': !exists(json, 'oasOperationId') ? undefined : json['oasOperationId'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'location': !exists(json, 'location') ? undefined : json['location'],
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'required': !exists(json, 'required') ? undefined : json['required'],
-        'schema': !exists(json, 'schema') ? undefined : OasObjectSchemaFromJSON(json['schema']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'oasOperationId': !(0, runtime_1.exists)(json, 'oasOperationId') ? undefined : json['oasOperationId'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'location': !(0, runtime_1.exists)(json, 'location') ? undefined : json['location'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'required': !(0, runtime_1.exists)(json, 'required') ? undefined : json['required'],
+        'schema': !(0, runtime_1.exists)(json, 'schema') ? undefined : (0, _1.OasObjectSchemaFromJSON)(json['schema']),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function OasParameterToJSON(value) {
+function OasParameterToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -40,7 +45,7 @@ export function OasParameterToJSON(value) {
         'location': value.location,
         'description': value.description,
         'required': value.required,
-        'schema': OasObjectSchemaToJSON(value.schema),
+        'schema': (0, _1.OasObjectSchemaToJSON)(value.schema),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
@@ -55,11 +60,11 @@ export function OasParameterToJSON(value) {
 * @export
 * @enum {string}
 */
-export var OasParameterLocationEnum;
+var OasParameterLocationEnum;
 (function (OasParameterLocationEnum) {
     OasParameterLocationEnum["QUERY"] = "query";
     OasParameterLocationEnum["HEADER"] = "header";
     OasParameterLocationEnum["PATH"] = "path";
     OasParameterLocationEnum["COOKIE"] = "cookie";
-})(OasParameterLocationEnum || (OasParameterLocationEnum = {}));
+})(OasParameterLocationEnum || (exports.OasParameterLocationEnum = OasParameterLocationEnum = {}));
 //# sourceMappingURL=OasParameter.js.map

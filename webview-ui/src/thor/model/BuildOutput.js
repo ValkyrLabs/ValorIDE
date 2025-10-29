@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,27 +11,30 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { SolutionFromJSON, SolutionToJSON, } from './';
-export function BuildOutputFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BuildOutputFromJSON = BuildOutputFromJSON;
+exports.BuildOutputToJSON = BuildOutputToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function BuildOutputFromJSON(json) {
     return {
         'buildId': json['buildId'],
         'success': json['success'],
         'output': json['output'],
-        'applicationId': !exists(json, 'applicationId') ? undefined : json['applicationId'],
-        'lastSuccessfulRun': !exists(json, 'lastSuccessfulRun') ? undefined : new Date(json['lastSuccessfulRun']),
-        'solutions': !exists(json, 'solutions') ? undefined : json['solutions'].map(SolutionFromJSON),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'applicationId': !(0, runtime_1.exists)(json, 'applicationId') ? undefined : json['applicationId'],
+        'lastSuccessfulRun': !(0, runtime_1.exists)(json, 'lastSuccessfulRun') ? undefined : new Date(json['lastSuccessfulRun']),
+        'solutions': !(0, runtime_1.exists)(json, 'solutions') ? undefined : json['solutions'].map(_1.SolutionFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function BuildOutputToJSON(value) {
+function BuildOutputToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -40,7 +44,7 @@ export function BuildOutputToJSON(value) {
         'output': value.output,
         'applicationId': value.applicationId,
         'lastSuccessfulRun': value.lastSuccessfulRun === undefined ? undefined : value.lastSuccessfulRun.toISOString(),
-        'solutions': value.solutions === undefined ? undefined : value.solutions.map(SolutionToJSON),
+        'solutions': value.solutions === undefined ? undefined : value.solutions.map(_1.SolutionToJSON),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,33 +11,37 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { IntegrationAccountFromJSON, IntegrationAccountToJSON, OasOpenAPISpecFromJSON, OasOpenAPISpecToJSON, } from './';
-export function ExecModuleFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ExecModuleStatusEnum = exports.ExecModuleModuleTypeEnum = exports.ExecModuleRoleEnum = void 0;
+exports.ExecModuleFromJSON = ExecModuleFromJSON;
+exports.ExecModuleToJSON = ExecModuleToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function ExecModuleFromJSON(json) {
     return {
-        'systemId': !exists(json, 'systemId') ? undefined : json['systemId'],
-        'taskId': !exists(json, 'taskId') ? undefined : json['taskId'],
-        'role': !exists(json, 'role') ? undefined : json['role'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'moduleOrder': !exists(json, 'moduleOrder') ? undefined : json['moduleOrder'],
-        'notes': !exists(json, 'notes') ? undefined : json['notes'],
-        'integrationAccount': !exists(json, 'integrationAccount') ? undefined : IntegrationAccountFromJSON(json['integrationAccount']),
-        'className': !exists(json, 'className') ? undefined : json['className'],
-        'moduleType': !exists(json, 'moduleType') ? undefined : json['moduleType'],
-        'moduleData': !exists(json, 'moduleData') ? undefined : json['moduleData'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'specs': !exists(json, 'specs') ? undefined : json['specs'].map(OasOpenAPISpecFromJSON),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'systemId': !(0, runtime_1.exists)(json, 'systemId') ? undefined : json['systemId'],
+        'taskId': !(0, runtime_1.exists)(json, 'taskId') ? undefined : json['taskId'],
+        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : json['role'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'moduleOrder': !(0, runtime_1.exists)(json, 'moduleOrder') ? undefined : json['moduleOrder'],
+        'notes': !(0, runtime_1.exists)(json, 'notes') ? undefined : json['notes'],
+        'integrationAccount': !(0, runtime_1.exists)(json, 'integrationAccount') ? undefined : (0, _1.IntegrationAccountFromJSON)(json['integrationAccount']),
+        'className': !(0, runtime_1.exists)(json, 'className') ? undefined : json['className'],
+        'moduleType': !(0, runtime_1.exists)(json, 'moduleType') ? undefined : json['moduleType'],
+        'moduleData': !(0, runtime_1.exists)(json, 'moduleData') ? undefined : json['moduleData'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'specs': !(0, runtime_1.exists)(json, 'specs') ? undefined : json['specs'].map(_1.OasOpenAPISpecFromJSON),
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function ExecModuleToJSON(value) {
+function ExecModuleToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -47,12 +52,12 @@ export function ExecModuleToJSON(value) {
         'name': value.name,
         'moduleOrder': value.moduleOrder,
         'notes': value.notes,
-        'integrationAccount': IntegrationAccountToJSON(value.integrationAccount),
+        'integrationAccount': (0, _1.IntegrationAccountToJSON)(value.integrationAccount),
         'className': value.className,
         'moduleType': value.moduleType,
         'moduleData': value.moduleData,
         'status': value.status,
-        'specs': value.specs === undefined ? undefined : value.specs.map(OasOpenAPISpecToJSON),
+        'specs': value.specs === undefined ? undefined : value.specs.map(_1.OasOpenAPISpecToJSON),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
@@ -67,29 +72,29 @@ export function ExecModuleToJSON(value) {
 * @export
 * @enum {string}
 */
-export var ExecModuleRoleEnum;
+var ExecModuleRoleEnum;
 (function (ExecModuleRoleEnum) {
     ExecModuleRoleEnum["ANONYMOUS"] = "anonymous";
     ExecModuleRoleEnum["USER"] = "user";
     ExecModuleRoleEnum["ADMIN"] = "admin";
-})(ExecModuleRoleEnum || (ExecModuleRoleEnum = {}));
+})(ExecModuleRoleEnum || (exports.ExecModuleRoleEnum = ExecModuleRoleEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-export var ExecModuleModuleTypeEnum;
+var ExecModuleModuleTypeEnum;
 (function (ExecModuleModuleTypeEnum) {
     ExecModuleModuleTypeEnum["BROADCAST"] = "broadcast";
     ExecModuleModuleTypeEnum["IO"] = "io";
     ExecModuleModuleTypeEnum["READER"] = "reader";
     ExecModuleModuleTypeEnum["WRITER"] = "writer";
     ExecModuleModuleTypeEnum["TRANSFORMER"] = "transformer";
-})(ExecModuleModuleTypeEnum || (ExecModuleModuleTypeEnum = {}));
+})(ExecModuleModuleTypeEnum || (exports.ExecModuleModuleTypeEnum = ExecModuleModuleTypeEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-export var ExecModuleStatusEnum;
+var ExecModuleStatusEnum;
 (function (ExecModuleStatusEnum) {
     ExecModuleStatusEnum["RUNNING"] = "running";
     ExecModuleStatusEnum["STOPPED"] = "stopped";
@@ -98,5 +103,5 @@ export var ExecModuleStatusEnum;
     ExecModuleStatusEnum["WARNING"] = "warning";
     ExecModuleStatusEnum["ERROR"] = "error";
     ExecModuleStatusEnum["DISABLED"] = "disabled";
-})(ExecModuleStatusEnum || (ExecModuleStatusEnum = {}));
+})(ExecModuleStatusEnum || (exports.ExecModuleStatusEnum = ExecModuleStatusEnum = {}));
 //# sourceMappingURL=ExecModule.js.map

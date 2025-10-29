@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,29 +11,32 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-import { GoalDependencyFromJSON, GoalDependencyToJSON, KeyMetricFromJSON, KeyMetricToJSON, } from './';
-export function GoalFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GoalFromJSON = GoalFromJSON;
+exports.GoalToJSON = GoalToJSON;
+const runtime_1 = require("../src/runtime");
+const _1 = require("./");
+function GoalFromJSON(json) {
     return {
-        'strategicPriorityId': !exists(json, 'strategicPriorityId') ? undefined : json['strategicPriorityId'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'keyMetrics': !exists(json, 'keyMetrics') ? undefined : json['keyMetrics'].map(KeyMetricFromJSON),
-        'goalDependencies': !exists(json, 'goalDependencies') ? undefined : json['goalDependencies'].map(GoalDependencyFromJSON),
-        'expectedOutcome': !exists(json, 'expectedOutcome') ? undefined : json['expectedOutcome'],
-        'risks': !exists(json, 'risks') ? undefined : json['risks'],
-        'timeline': !exists(json, 'timeline') ? undefined : json['timeline'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'strategicPriorityId': !(0, runtime_1.exists)(json, 'strategicPriorityId') ? undefined : json['strategicPriorityId'],
+        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
+        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
+        'keyMetrics': !(0, runtime_1.exists)(json, 'keyMetrics') ? undefined : json['keyMetrics'].map(_1.KeyMetricFromJSON),
+        'goalDependencies': !(0, runtime_1.exists)(json, 'goalDependencies') ? undefined : json['goalDependencies'].map(_1.GoalDependencyFromJSON),
+        'expectedOutcome': !(0, runtime_1.exists)(json, 'expectedOutcome') ? undefined : json['expectedOutcome'],
+        'risks': !(0, runtime_1.exists)(json, 'risks') ? undefined : json['risks'],
+        'timeline': !(0, runtime_1.exists)(json, 'timeline') ? undefined : json['timeline'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function GoalToJSON(value) {
+function GoalToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -40,8 +44,8 @@ export function GoalToJSON(value) {
         'strategicPriorityId': value.strategicPriorityId,
         'name': value.name,
         'description': value.description,
-        'keyMetrics': value.keyMetrics === undefined ? undefined : value.keyMetrics.map(KeyMetricToJSON),
-        'goalDependencies': value.goalDependencies === undefined ? undefined : value.goalDependencies.map(GoalDependencyToJSON),
+        'keyMetrics': value.keyMetrics === undefined ? undefined : value.keyMetrics.map(_1.KeyMetricToJSON),
+        'goalDependencies': value.goalDependencies === undefined ? undefined : value.goalDependencies.map(_1.GoalDependencyToJSON),
         'expectedOutcome': value.expectedOutcome,
         'risks': value.risks,
         'timeline': value.timeline,

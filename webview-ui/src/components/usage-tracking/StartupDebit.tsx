@@ -13,7 +13,9 @@ const StartupDebit: React.FC = () => {
     const alreadyCharged = (() => {
       try { return sessionStorage.getItem('valoride.startupDebit.sent') === 'true'; } catch { return false; }
     })();
-    if (alreadyCharged) return;
+    if (alreadyCharged) {
+      return undefined;
+    }
 
     // Detect existing token at startup
     let token: string | null = null;
@@ -21,7 +23,9 @@ const StartupDebit: React.FC = () => {
       token = sessionStorage.getItem('jwtToken') || localStorage.getItem('jwtToken') || localStorage.getItem('authToken');
     } catch { /* ignore */ }
 
-    if (!token) return; // No auto-login token; normal login flow will handle debit.
+    if (!token) {
+      return undefined; // No auto-login token; normal login flow will handle debit.
+    }
 
     const sendDebit = async () => {
       try {
@@ -50,4 +54,3 @@ const StartupDebit: React.FC = () => {
 };
 
 export default StartupDebit;
-

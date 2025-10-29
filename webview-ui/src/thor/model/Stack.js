@@ -1,3 +1,4 @@
+"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -10,48 +11,52 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { exists } from '../src/runtime';
-export function StackFromJSON(json) {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StackStatusEnum = exports.StackTemplateRepoEnum = exports.StackLanguageEnum = exports.StackCategoryEnum = void 0;
+exports.StackFromJSON = StackFromJSON;
+exports.StackToJSON = StackToJSON;
+const runtime_1 = require("../src/runtime");
+function StackFromJSON(json) {
     return {
         'name': json['name'],
         'schemaData': json['schemaData'],
-        'execModuleId': !exists(json, 'execModuleId') ? undefined : json['execModuleId'],
-        'category': !exists(json, 'category') ? undefined : json['category'],
-        'artifactId': !exists(json, 'artifactId') ? undefined : json['artifactId'],
-        'applicationId': !exists(json, 'applicationId') ? undefined : json['applicationId'],
-        'adminServerHost': !exists(json, 'adminServerHost') ? undefined : json['adminServerHost'],
-        'adminServerPort': !exists(json, 'adminServerPort') ? undefined : json['adminServerPort'],
-        'hostName': !exists(json, 'hostName') ? undefined : json['hostName'],
-        'hostPort': !exists(json, 'hostPort') ? undefined : json['hostPort'],
-        'orgName': !exists(json, 'orgName') ? undefined : json['orgName'],
-        'gitUser': !exists(json, 'gitUser') ? undefined : json['gitUser'],
-        'gitRepo': !exists(json, 'gitRepo') ? undefined : json['gitRepo'],
-        'skipSwaggerGen': !exists(json, 'skipSwaggerGen') ? undefined : json['skipSwaggerGen'],
-        'skipJavaGen': !exists(json, 'skipJavaGen') ? undefined : json['skipJavaGen'],
-        'skipDbGen': !exists(json, 'skipDbGen') ? undefined : json['skipDbGen'],
-        'skipReactGen': !exists(json, 'skipReactGen') ? undefined : json['skipReactGen'],
-        'dbGenDropTable': !exists(json, 'dbGenDropTable') ? undefined : json['dbGenDropTable'],
-        'thorApiSecureKey': !exists(json, 'thorApiSecureKey') ? undefined : json['thorApiSecureKey'],
-        'dbUrl': !exists(json, 'dbUrl') ? undefined : json['dbUrl'],
-        'dbName': !exists(json, 'dbName') ? undefined : json['dbName'],
-        'dbUser': !exists(json, 'dbUser') ? undefined : json['dbUser'],
-        'dbPassword': !exists(json, 'dbPassword') ? undefined : json['dbPassword'],
-        'schemaName': !exists(json, 'schemaName') ? undefined : json['schemaName'],
-        'language': !exists(json, 'language') ? undefined : json['language'],
-        'templateRepo': !exists(json, 'templateRepo') ? undefined : json['templateRepo'],
-        'schemaFileName': !exists(json, 'schemaFileName') ? undefined : json['schemaFileName'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'execModuleId': !(0, runtime_1.exists)(json, 'execModuleId') ? undefined : json['execModuleId'],
+        'category': !(0, runtime_1.exists)(json, 'category') ? undefined : json['category'],
+        'artifactId': !(0, runtime_1.exists)(json, 'artifactId') ? undefined : json['artifactId'],
+        'applicationId': !(0, runtime_1.exists)(json, 'applicationId') ? undefined : json['applicationId'],
+        'adminServerHost': !(0, runtime_1.exists)(json, 'adminServerHost') ? undefined : json['adminServerHost'],
+        'adminServerPort': !(0, runtime_1.exists)(json, 'adminServerPort') ? undefined : json['adminServerPort'],
+        'hostName': !(0, runtime_1.exists)(json, 'hostName') ? undefined : json['hostName'],
+        'hostPort': !(0, runtime_1.exists)(json, 'hostPort') ? undefined : json['hostPort'],
+        'orgName': !(0, runtime_1.exists)(json, 'orgName') ? undefined : json['orgName'],
+        'gitUser': !(0, runtime_1.exists)(json, 'gitUser') ? undefined : json['gitUser'],
+        'gitRepo': !(0, runtime_1.exists)(json, 'gitRepo') ? undefined : json['gitRepo'],
+        'skipSwaggerGen': !(0, runtime_1.exists)(json, 'skipSwaggerGen') ? undefined : json['skipSwaggerGen'],
+        'skipJavaGen': !(0, runtime_1.exists)(json, 'skipJavaGen') ? undefined : json['skipJavaGen'],
+        'skipDbGen': !(0, runtime_1.exists)(json, 'skipDbGen') ? undefined : json['skipDbGen'],
+        'skipReactGen': !(0, runtime_1.exists)(json, 'skipReactGen') ? undefined : json['skipReactGen'],
+        'dbGenDropTable': !(0, runtime_1.exists)(json, 'dbGenDropTable') ? undefined : json['dbGenDropTable'],
+        'thorApiSecureKey': !(0, runtime_1.exists)(json, 'thorApiSecureKey') ? undefined : json['thorApiSecureKey'],
+        'dbUrl': !(0, runtime_1.exists)(json, 'dbUrl') ? undefined : json['dbUrl'],
+        'dbName': !(0, runtime_1.exists)(json, 'dbName') ? undefined : json['dbName'],
+        'dbUser': !(0, runtime_1.exists)(json, 'dbUser') ? undefined : json['dbUser'],
+        'dbPassword': !(0, runtime_1.exists)(json, 'dbPassword') ? undefined : json['dbPassword'],
+        'schemaName': !(0, runtime_1.exists)(json, 'schemaName') ? undefined : json['schemaName'],
+        'language': !(0, runtime_1.exists)(json, 'language') ? undefined : json['language'],
+        'templateRepo': !(0, runtime_1.exists)(json, 'templateRepo') ? undefined : json['templateRepo'],
+        'schemaFileName': !(0, runtime_1.exists)(json, 'schemaFileName') ? undefined : json['schemaFileName'],
+        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
+        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
+        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-export function StackToJSON(value) {
+function StackToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -98,7 +103,7 @@ export function StackToJSON(value) {
 * @export
 * @enum {string}
 */
-export var StackCategoryEnum;
+var StackCategoryEnum;
 (function (StackCategoryEnum) {
     StackCategoryEnum["FULLSTACK"] = "full stack";
     StackCategoryEnum["FRONTEND"] = "front end";
@@ -106,30 +111,30 @@ export var StackCategoryEnum;
     StackCategoryEnum["DATALIBRARY"] = "data library";
     StackCategoryEnum["INFRASTRUCTURE"] = "infrastructure";
     StackCategoryEnum["DOCUMENTATION"] = "documentation";
-})(StackCategoryEnum || (StackCategoryEnum = {}));
+})(StackCategoryEnum || (exports.StackCategoryEnum = StackCategoryEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-export var StackLanguageEnum;
+var StackLanguageEnum;
 (function (StackLanguageEnum) {
     StackLanguageEnum["JAVASPRING"] = "valkyrai_java_spring";
     StackLanguageEnum["KOTLINSPRING"] = "valkyrai_kotlin_spring";
-})(StackLanguageEnum || (StackLanguageEnum = {}));
+})(StackLanguageEnum || (exports.StackLanguageEnum = StackLanguageEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-export var StackTemplateRepoEnum;
+var StackTemplateRepoEnum;
 (function (StackTemplateRepoEnum) {
     StackTemplateRepoEnum["JAVASPRING"] = "java_spring";
     StackTemplateRepoEnum["TYPESCRIPTRTKBOOTSTRAP"] = "typescript_rtk_bootstrap";
-})(StackTemplateRepoEnum || (StackTemplateRepoEnum = {}));
+})(StackTemplateRepoEnum || (exports.StackTemplateRepoEnum = StackTemplateRepoEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-export var StackStatusEnum;
+var StackStatusEnum;
 (function (StackStatusEnum) {
     StackStatusEnum["AVAILABLE"] = "available";
     StackStatusEnum["SYNTAXERROR"] = "syntax_error";
@@ -137,5 +142,5 @@ export var StackStatusEnum;
     StackStatusEnum["RUNTIMEERROR"] = "runtime_error";
     StackStatusEnum["DATABASEERROR"] = "database_error";
     StackStatusEnum["LOCKED"] = "locked";
-})(StackStatusEnum || (StackStatusEnum = {}));
+})(StackStatusEnum || (exports.StackStatusEnum = StackStatusEnum = {}));
 //# sourceMappingURL=Stack.js.map

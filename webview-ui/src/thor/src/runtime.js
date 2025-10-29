@@ -1,3 +1,4 @@
+"use strict";
 /// <reference types="vite/client" />
 /**
  * ValkyrAI API
@@ -10,33 +11,38 @@
  *
  * Do not edit the class manually.
  */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.COLLECTION_FORMATS = exports.RequiredError = exports.Configuration = exports.BASE_PATH = void 0;
+exports.exists = exists;
+exports.mapValues = mapValues;
 // un-comment for Vite apps
-export const BASE_PATH = import.meta.env.VITE_basePath.replace(/\/+$/, "");
+exports.BASE_PATH = import.meta.env.VITE_basePath.replace(/\/+$/, "");
 // un-comment for Create REact APp apps
 // export const BASE_PATH = process.env.REACT_APP_BASE_PATH.replace(/\/+$/, "");
-export const Configuration = {
-    basePath: BASE_PATH, // This is the value that will be prepended to all endpoints.  For compatibility with
+exports.Configuration = {
+    basePath: exports.BASE_PATH, // This is the value that will be prepended to all endpoints.  For compatibility with
     // previous versions, the default is an empty string.  Other generators typically use
     // BASE_PATH as the default.
 };
-export class RequiredError extends Error {
+class RequiredError extends Error {
     field;
     constructor(field, msg) {
         super(msg);
         this.field = field;
     }
 }
-export const COLLECTION_FORMATS = {
+exports.RequiredError = RequiredError;
+exports.COLLECTION_FORMATS = {
     csv: ",",
     ssv: " ",
     tsv: "\t",
     pipes: "|",
 };
-export function exists(json, key) {
+function exists(json, key) {
     const value = json[key];
     return value !== null && value !== undefined;
 }
-export function mapValues(data, fn) {
+function mapValues(data, fn) {
     return Object.keys(data).reduce((acc, key) => ({ ...acc, [key]: fn(data[key]) }), {});
 }
 //# sourceMappingURL=runtime.js.map
