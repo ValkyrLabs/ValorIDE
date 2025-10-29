@@ -1,97 +1,71 @@
 #!/usr/bin/env node
 
 /**
- * ValorIDE CLI - Agentic coding companion CLI
- * Entry point for valor command
+ * ValorIDE CLI - Autonomous coding agent
  */
 
-import { program } from 'commander';
+import { Command } from 'commander';
 import chalk from 'chalk';
 import { TaskCommand } from './commands/TaskCommand';
 import { InstanceCommand } from './commands/InstanceCommand';
 import { ConfigCommand } from './commands/ConfigCommand';
 import { CheckpointCommand } from './commands/CheckpointCommand';
 
-const VERSION = '0.1.0';
+const program = new Command();
 
-async function main(): Promise<void> {
-  program
-    .name('valor')
-    .description('ValorIDE CLI Agent - Autonomous coding companion')
-    .version(VERSION)
-    .helpOption('-h, --help', 'Display help for command');
+program
+  .name('valor')
+  .description('ValorIDE CLI - Autonomous coding agent')
+  .version('0.1.0');
 
-  // Task commands
-  const taskCmd = new TaskCommand();
-  program
-    .command('task <action>')
-    .description('Manage agentic coding tasks')
-    .option('--plan', 'Run task in plan mode (dry-run)')
-    .option('--act', 'Run task in act mode (execute)')
-    .option('--session <id>', 'Attach to existing session')
-    .option('--model <provider:id>', 'Specify model (e.g., anthropic:claude-3-5-sonnet)')
-    .option('--output <format>', 'Output format (json|text)', 'text')
-    .action(async (action, options) => {
-      try {
-        await taskCmd.execute(action, options);
-      } catch (error) {
-        console.error(chalk.red('Error:'), error instanceof Error ? error.message : error);
-        process.exit(1);
-      }
-    });
+// Task command
+program
+  .command('task <description>')
+  .description('Run an agentic coding task')
+  .option('--plan', 'Plan mode (dry-run)')
+  .option('--act', 'Act mode (execute)')
+  .option('--session <id>', 'Attach to existing session')
+  .action(async (description, options) => {
+    const cmd = new TaskCommand();
+    await cmd.execute(description, options);
+  });
 
-  // Instance commands
-  const instanceCmd = new InstanceCommand();
-  program
-    .command('instance <action>')
-    .description('Manage CLI instances')
-    .option('--session <id>', 'Session ID')
-    .action(async (action, options) => {
-      try {
-        await instanceCmd.execute(action, options);
-      } catch (error) {
-        console.error(chalk.red('Error:'), error instanceof Error ? error.message : error);
-        process.exit(1);
-      }
-    });
+program
+  .command('task-list')
+  .description('List all tasks')
+  .action(() => {
+    console.log(chalk.gray('(Task list: stub)'));
+  });
 
-  // Config commands
-  const configCmd = new ConfigCommand();
-  program
-    .command('config <action>')
-    .description('Manage configuration')
-    .option('--key <key>', 'Config key')
-    .option('--value <value>', 'Config value')
-    .action(async (action, options) => {
-      try {
-        await configCmd.execute(action, options);
-      } catch (error) {
-        console.error(chalk.red('Error:'), error instanceof Error ? error.message : error);
-        process.exit(1);
-      }
-    });
+// Instance command
+program
+  .command('instance <action>')
+  .description('Manage CLI instances/sessions')
+  .option('--session <id>', 'Session ID')
+  .action(async (action, options) => {
+    const cmd = new InstanceCommand();
+    await cmd.execute(action, options);
+  });
 
-  // Checkpoint commands
-  const checkpointCmd = new CheckpointCommand();
-  program
-    .command('checkpoint <action>')
-    .description('Manage workspace checkpoints')
-    .option('--task <id>', 'Task ID')
-    .option('--step <step>', 'Checkpoint step')
-    .option('--message <msg>', 'Checkpoint message')
-    .action(async (action, options) => {
-      try {
-        await checkpointCmd.execute(action, options);
-      } catch (error) {
-        console.error(chalk.red('Error:'), error instanceof Error ? error.message : error);
-        process.exit(1);
-      }
-    });
+// Config command
+program
+  .command('config <action>')
+  .description('Manage configuration')
+  .action(async (action, options) => {
+    const cmd = new ConfigCommand();
+    await cmd.execute(action, options);
+  });
 
-  await program.parseAsync(process.argv);
-}
+// Checkpoint command
+program
+  .command('checkpoint <action>')
+  .description('Manage workspace checkpoints')
+  .option('--task <id>', 'Task ID')
+  .option('--step <n>', 'Step number')
+  .option('--message <msg>', 'Checkpoint message')
+  .action(async (action, options) => {
+    const cmd = new CheckpointCommand();
+    await cmd.execute(action, options);
+  });
 
-main().catch((error) => {
-  console.error(chalk.red('Fatal error:'), error instanceof Error ? error.message : error);
-  process.exit(1);
-});
+program.parse();
