@@ -4,8 +4,8 @@ import { vscode } from "@/utils/vscode";
 import { useExtensionState } from "@/context/ExtensionStateContext";
 
 export const ValorIDEAccountInfoCard = () => {
-  const { userInfo, apiConfiguration } = useExtensionState();
-  let user = apiConfiguration?.valorideApiKey ? userInfo : undefined;
+  const { authenticatedUser } = useExtensionState();
+  const user = authenticatedUser;
 
   const handleLogin = () => {
     vscode.postMessage({ type: "accountLoginClicked" });

@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getBalanceResponse, 
-    postBalanceResponse,
-    getBalanceResponseList , 
-    deleteBalanceResponse , 
-    updateBalanceResponse 
-} from '@thor/api/BalanceResponseApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: BalanceResponse
 */
 
+
+
 export const BalanceResponseMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("BalanceResponse MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_BALANCERESPONSE_REQUEST:
-            try {
-                const response = postBalanceResponse(action.payload);
-                dispatch(addBalanceResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(addBalanceResponseFailure(error.message));
-            }
-            break;
-
-        case LIST_BALANCERESPONSE_REQUEST:
-            try {
-                const response = getBalanceResponseList({});
-                dispatch(listBalanceResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(listBalanceResponseFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_BALANCERESPONSE_REQUEST:
-            try {
-                const response = getBalanceResponse(action.id);
-                dispatch(fetchBalanceResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchBalanceResponseFailure(error.message));
-            }
-            break;
-
-        case UPDATE_BALANCERESPONSE_REQUEST:
-            try {
-                const { id, BalanceResponse } = action.payload;
-                const response = updateBalanceResponse(id);
-                dispatch(updateBalanceResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(updateBalanceResponseFailure(error.message));
-            }
-            break;
-
-        case DELETE_BALANCERESPONSE_REQUEST:
-            try {
-                const { id, BalanceResponse } = action.payload;
-                const response = deleteBalanceResponse(id);
-                dispatch(deleteBalanceResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteBalanceResponseFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

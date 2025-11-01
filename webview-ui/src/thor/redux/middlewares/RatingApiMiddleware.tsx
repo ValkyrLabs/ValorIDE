@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getRating, 
-    postRating,
-    getRatingList , 
-    deleteRating , 
-    updateRating 
-} from '@thor/api/RatingApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Rating
 */
 
+
+
 export const RatingMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("Rating MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_RATING_REQUEST:
-            try {
-                const response = postRating(action.payload);
-                dispatch(addRatingSuccess(response.body));
-            } catch (error) {
-                dispatch(addRatingFailure(error.message));
-            }
-            break;
-
-        case LIST_RATING_REQUEST:
-            try {
-                const response = getRatingList({});
-                dispatch(listRatingSuccess(response.body));
-            } catch (error) {
-                dispatch(listRatingFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_RATING_REQUEST:
-            try {
-                const response = getRating(action.id);
-                dispatch(fetchRatingSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchRatingFailure(error.message));
-            }
-            break;
-
-        case UPDATE_RATING_REQUEST:
-            try {
-                const { id, Rating } = action.payload;
-                const response = updateRating(id);
-                dispatch(updateRatingSuccess(response.body));
-            } catch (error) {
-                dispatch(updateRatingFailure(error.message));
-            }
-            break;
-
-        case DELETE_RATING_REQUEST:
-            try {
-                const { id, Rating } = action.payload;
-                const response = deleteRating(id);
-                dispatch(deleteRatingSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteRatingFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getFormula, 
-    postFormula,
-    getFormulaList , 
-    deleteFormula , 
-    updateFormula 
-} from '@thor/api/FormulaApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Formula
 */
 
+
+
 export const FormulaMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("Formula MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_FORMULA_REQUEST:
-            try {
-                const response = postFormula(action.payload);
-                dispatch(addFormulaSuccess(response.body));
-            } catch (error) {
-                dispatch(addFormulaFailure(error.message));
-            }
-            break;
-
-        case LIST_FORMULA_REQUEST:
-            try {
-                const response = getFormulaList({});
-                dispatch(listFormulaSuccess(response.body));
-            } catch (error) {
-                dispatch(listFormulaFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_FORMULA_REQUEST:
-            try {
-                const response = getFormula(action.id);
-                dispatch(fetchFormulaSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchFormulaFailure(error.message));
-            }
-            break;
-
-        case UPDATE_FORMULA_REQUEST:
-            try {
-                const { id, Formula } = action.payload;
-                const response = updateFormula(id);
-                dispatch(updateFormulaSuccess(response.body));
-            } catch (error) {
-                dispatch(updateFormulaFailure(error.message));
-            }
-            break;
-
-        case DELETE_FORMULA_REQUEST:
-            try {
-                const { id, Formula } = action.payload;
-                const response = deleteFormula(id);
-                dispatch(deleteFormulaSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteFormulaFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

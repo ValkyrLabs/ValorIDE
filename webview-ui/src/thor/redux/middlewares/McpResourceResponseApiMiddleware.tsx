@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getMcpResourceResponse, 
-    postMcpResourceResponse,
-    getMcpResourceResponseList , 
-    deleteMcpResourceResponse , 
-    updateMcpResourceResponse 
-} from '@thor/api/McpResourceResponseApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpResourceResponse
 */
 
+
+
 export const McpResourceResponseMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("McpResourceResponse MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_MCPRESOURCERESPONSE_REQUEST:
-            try {
-                const response = postMcpResourceResponse(action.payload);
-                dispatch(addMcpResourceResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(addMcpResourceResponseFailure(error.message));
-            }
-            break;
-
-        case LIST_MCPRESOURCERESPONSE_REQUEST:
-            try {
-                const response = getMcpResourceResponseList({});
-                dispatch(listMcpResourceResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(listMcpResourceResponseFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_MCPRESOURCERESPONSE_REQUEST:
-            try {
-                const response = getMcpResourceResponse(action.id);
-                dispatch(fetchMcpResourceResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchMcpResourceResponseFailure(error.message));
-            }
-            break;
-
-        case UPDATE_MCPRESOURCERESPONSE_REQUEST:
-            try {
-                const { id, McpResourceResponse } = action.payload;
-                const response = updateMcpResourceResponse(id);
-                dispatch(updateMcpResourceResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(updateMcpResourceResponseFailure(error.message));
-            }
-            break;
-
-        case DELETE_MCPRESOURCERESPONSE_REQUEST:
-            try {
-                const { id, McpResourceResponse } = action.payload;
-                const response = deleteMcpResourceResponse(id);
-                dispatch(deleteMcpResourceResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteMcpResourceResponseFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

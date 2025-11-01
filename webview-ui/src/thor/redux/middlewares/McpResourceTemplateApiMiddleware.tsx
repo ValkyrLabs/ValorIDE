@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getMcpResourceTemplate, 
-    postMcpResourceTemplate,
-    getMcpResourceTemplateList , 
-    deleteMcpResourceTemplate , 
-    updateMcpResourceTemplate 
-} from '@thor/api/McpResourceTemplateApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpResourceTemplate
 */
 
+
+
 export const McpResourceTemplateMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("McpResourceTemplate MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_MCPRESOURCETEMPLATE_REQUEST:
-            try {
-                const response = postMcpResourceTemplate(action.payload);
-                dispatch(addMcpResourceTemplateSuccess(response.body));
-            } catch (error) {
-                dispatch(addMcpResourceTemplateFailure(error.message));
-            }
-            break;
-
-        case LIST_MCPRESOURCETEMPLATE_REQUEST:
-            try {
-                const response = getMcpResourceTemplateList({});
-                dispatch(listMcpResourceTemplateSuccess(response.body));
-            } catch (error) {
-                dispatch(listMcpResourceTemplateFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_MCPRESOURCETEMPLATE_REQUEST:
-            try {
-                const response = getMcpResourceTemplate(action.id);
-                dispatch(fetchMcpResourceTemplateSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchMcpResourceTemplateFailure(error.message));
-            }
-            break;
-
-        case UPDATE_MCPRESOURCETEMPLATE_REQUEST:
-            try {
-                const { id, McpResourceTemplate } = action.payload;
-                const response = updateMcpResourceTemplate(id);
-                dispatch(updateMcpResourceTemplateSuccess(response.body));
-            } catch (error) {
-                dispatch(updateMcpResourceTemplateFailure(error.message));
-            }
-            break;
-
-        case DELETE_MCPRESOURCETEMPLATE_REQUEST:
-            try {
-                const { id, McpResourceTemplate } = action.payload;
-                const response = deleteMcpResourceTemplate(id);
-                dispatch(deleteMcpResourceTemplateSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteMcpResourceTemplateFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

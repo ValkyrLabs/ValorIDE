@@ -75,7 +75,12 @@ export interface ExtensionMessage {
   | "workspaceFiles"
   | "contentData"
   | "LIST_APPLICATION_SUCCESS"
-  | "remoteCommand";
+  | "remoteCommand"
+  | "swarm:task-assignment"
+  | "swarm:task-cancelled"
+  | "swarm:remote-command"
+  | "swarm:broadcast"
+  | "swarm:private-message";
   text?: string;
   path?: string; // Used for openFileExplorerResult
   paths?: (string | null)[]; // Used for relativePathsResponse
@@ -109,6 +114,7 @@ export interface ExtensionMessage {
   openAiModels?: string[];
   requestyModels?: Record<string, ModelInfo>;
   models?: Record<string, any>; // For llmDetailsUpdated
+  payload?: any;
   mcpServers?: McpServer[];
   customToken?: string;
   token?: string; // JWT token for authentication

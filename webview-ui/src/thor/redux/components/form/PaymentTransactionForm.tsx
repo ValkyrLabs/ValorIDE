@@ -31,7 +31,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -62,6 +62,8 @@ const validationSchema = Yup.object().shape({
             return Number.isNaN(parsed.getTime()) ? value : parsed;
           }).required("paidAt is required.").typeError("paidAt must be a valid date"),
         amountCents: asNumber(Yup.number().integer().typeError("amountCents must be a number")).required("amountCents is required."),
+        customerId: Yup.string(),
+        idempotencyKey: Yup.string(),
         id: Yup.string(),
         ownerId: Yup.string(),
         createdDate: Yup.date()
@@ -120,6 +122,8 @@ const PaymentTransactionForm: React.FC = () => {
   const initialValues: Partial<PaymentTransaction> = {
           paidAt: new Date(),
           amountCents: 0,
+          customerId: '',
+          idempotencyKey: '',
           id: '',
           ownerId: '',
           createdDate: new Date(),
@@ -301,6 +305,72 @@ const PaymentTransactionForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="credits"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="customerId" className="nice-form-control">
+                      <b>
+                        Customer Id:
+                        {touched.customerId &&
+                         !errors.customerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="customerId"
+                            value={values?.customerId}
+                            placeholder="Customer Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="customerId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="idempotencyKey" className="nice-form-control">
+                      <b>
+                        Idempotency Key:
+                        {touched.idempotencyKey &&
+                         !errors.idempotencyKey && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="idempotencyKey"
+                            value={values?.idempotencyKey}
+                            placeholder="Idempotency Key"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="idempotencyKey"
                         component="span"
                       />
                     </label>

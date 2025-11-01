@@ -32,7 +32,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -52,6 +52,7 @@ const PreferenceTypeValidation = () => {
     'ux-mode',
     'ux-theme',
     'measurement',
+    'chatmemory',
   ];
 };
 
@@ -62,11 +63,11 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
-        principalId: Yup.string(),
-        preference: Yup.string(),
+        principalId: Yup.string().required("principalId is required."),
+        preference: Yup.string().required("preference is required."),
       preferenceType: Yup.mixed()
         .oneOf(PreferenceTypeValidation(), "Invalid value for preferenceType")
-        ,
+        .required("preferenceType is required."),
         id: Yup.string(),
         ownerId: Yup.string(),
         createdDate: Yup.date()
@@ -664,6 +665,7 @@ const PreferenceTypeLookup = () => {
       <option value='ux-mode' label="Ux Mode" />
       <option value='ux-theme' label="Ux Theme" />
       <option value='measurement' label="Measurement" />
+      <option value='chatmemory' label="Chatmemory" />
     </>
   );
 };

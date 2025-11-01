@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getLogout, 
-    postLogout,
-    getLogoutList , 
-    deleteLogout , 
-    updateLogout 
-} from '@thor/api/LogoutApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Logout
 */
 
+
+
 export const LogoutMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("Logout MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_LOGOUT_REQUEST:
-            try {
-                const response = postLogout(action.payload);
-                dispatch(addLogoutSuccess(response.body));
-            } catch (error) {
-                dispatch(addLogoutFailure(error.message));
-            }
-            break;
-
-        case LIST_LOGOUT_REQUEST:
-            try {
-                const response = getLogoutList({});
-                dispatch(listLogoutSuccess(response.body));
-            } catch (error) {
-                dispatch(listLogoutFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_LOGOUT_REQUEST:
-            try {
-                const response = getLogout(action.id);
-                dispatch(fetchLogoutSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchLogoutFailure(error.message));
-            }
-            break;
-
-        case UPDATE_LOGOUT_REQUEST:
-            try {
-                const { id, Logout } = action.payload;
-                const response = updateLogout(id);
-                dispatch(updateLogoutSuccess(response.body));
-            } catch (error) {
-                dispatch(updateLogoutFailure(error.message));
-            }
-            break;
-
-        case DELETE_LOGOUT_REQUEST:
-            try {
-                const { id, Logout } = action.payload;
-                const response = deleteLogout(id);
-                dispatch(deleteLogoutSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteLogoutFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

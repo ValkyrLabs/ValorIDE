@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getMcpServer, 
-    postMcpServer,
-    getMcpServerList , 
-    deleteMcpServer , 
-    updateMcpServer 
-} from '@thor/api/McpServerApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpServer
 */
 
+
+
 export const McpServerMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("McpServer MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_MCPSERVER_REQUEST:
-            try {
-                const response = postMcpServer(action.payload);
-                dispatch(addMcpServerSuccess(response.body));
-            } catch (error) {
-                dispatch(addMcpServerFailure(error.message));
-            }
-            break;
-
-        case LIST_MCPSERVER_REQUEST:
-            try {
-                const response = getMcpServerList({});
-                dispatch(listMcpServerSuccess(response.body));
-            } catch (error) {
-                dispatch(listMcpServerFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_MCPSERVER_REQUEST:
-            try {
-                const response = getMcpServer(action.id);
-                dispatch(fetchMcpServerSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchMcpServerFailure(error.message));
-            }
-            break;
-
-        case UPDATE_MCPSERVER_REQUEST:
-            try {
-                const { id, McpServer } = action.payload;
-                const response = updateMcpServer(id);
-                dispatch(updateMcpServerSuccess(response.body));
-            } catch (error) {
-                dispatch(updateMcpServerFailure(error.message));
-            }
-            break;
-
-        case DELETE_MCPSERVER_REQUEST:
-            try {
-                const { id, McpServer } = action.payload;
-                const response = deleteMcpServer(id);
-                dispatch(deleteMcpServerSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteMcpServerFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

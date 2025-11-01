@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getBackupConfig, 
-    postBackupConfig,
-    getBackupConfigList , 
-    deleteBackupConfig , 
-    updateBackupConfig 
-} from '@thor/api/BackupConfigApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: BackupConfig
 */
 
+
+
 export const BackupConfigMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("BackupConfig MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_BACKUPCONFIG_REQUEST:
-            try {
-                const response = postBackupConfig(action.payload);
-                dispatch(addBackupConfigSuccess(response.body));
-            } catch (error) {
-                dispatch(addBackupConfigFailure(error.message));
-            }
-            break;
-
-        case LIST_BACKUPCONFIG_REQUEST:
-            try {
-                const response = getBackupConfigList({});
-                dispatch(listBackupConfigSuccess(response.body));
-            } catch (error) {
-                dispatch(listBackupConfigFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_BACKUPCONFIG_REQUEST:
-            try {
-                const response = getBackupConfig(action.id);
-                dispatch(fetchBackupConfigSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchBackupConfigFailure(error.message));
-            }
-            break;
-
-        case UPDATE_BACKUPCONFIG_REQUEST:
-            try {
-                const { id, BackupConfig } = action.payload;
-                const response = updateBackupConfig(id);
-                dispatch(updateBackupConfigSuccess(response.body));
-            } catch (error) {
-                dispatch(updateBackupConfigFailure(error.message));
-            }
-            break;
-
-        case DELETE_BACKUPCONFIG_REQUEST:
-            try {
-                const { id, BackupConfig } = action.payload;
-                const response = deleteBackupConfig(id);
-                dispatch(deleteBackupConfigSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteBackupConfigFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

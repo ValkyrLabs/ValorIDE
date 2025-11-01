@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getChatResponse, 
-    postChatResponse,
-    getChatResponseList , 
-    deleteChatResponse , 
-    updateChatResponse 
-} from '@thor/api/ChatResponseApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ChatResponse
 */
 
+
+
 export const ChatResponseMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("ChatResponse MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_CHATRESPONSE_REQUEST:
-            try {
-                const response = postChatResponse(action.payload);
-                dispatch(addChatResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(addChatResponseFailure(error.message));
-            }
-            break;
-
-        case LIST_CHATRESPONSE_REQUEST:
-            try {
-                const response = getChatResponseList({});
-                dispatch(listChatResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(listChatResponseFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_CHATRESPONSE_REQUEST:
-            try {
-                const response = getChatResponse(action.id);
-                dispatch(fetchChatResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchChatResponseFailure(error.message));
-            }
-            break;
-
-        case UPDATE_CHATRESPONSE_REQUEST:
-            try {
-                const { id, ChatResponse } = action.payload;
-                const response = updateChatResponse(id);
-                dispatch(updateChatResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(updateChatResponseFailure(error.message));
-            }
-            break;
-
-        case DELETE_CHATRESPONSE_REQUEST:
-            try {
-                const { id, ChatResponse } = action.payload;
-                const response = deleteChatResponse(id);
-                dispatch(deleteChatResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteChatResponseFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

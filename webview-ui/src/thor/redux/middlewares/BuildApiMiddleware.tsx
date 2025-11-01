@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getBuild, 
-    postBuild,
-    getBuildList , 
-    deleteBuild , 
-    updateBuild 
-} from '@thor/api/BuildApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Build
 */
 
+
+
 export const BuildMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("Build MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_BUILD_REQUEST:
-            try {
-                const response = postBuild(action.payload);
-                dispatch(addBuildSuccess(response.body));
-            } catch (error) {
-                dispatch(addBuildFailure(error.message));
-            }
-            break;
-
-        case LIST_BUILD_REQUEST:
-            try {
-                const response = getBuildList({});
-                dispatch(listBuildSuccess(response.body));
-            } catch (error) {
-                dispatch(listBuildFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_BUILD_REQUEST:
-            try {
-                const response = getBuild(action.id);
-                dispatch(fetchBuildSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchBuildFailure(error.message));
-            }
-            break;
-
-        case UPDATE_BUILD_REQUEST:
-            try {
-                const { id, Build } = action.payload;
-                const response = updateBuild(id);
-                dispatch(updateBuildSuccess(response.body));
-            } catch (error) {
-                dispatch(updateBuildFailure(error.message));
-            }
-            break;
-
-        case DELETE_BUILD_REQUEST:
-            try {
-                const { id, Build } = action.payload;
-                const response = deleteBuild(id);
-                dispatch(deleteBuildSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteBuildFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

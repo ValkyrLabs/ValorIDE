@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getExecModule, 
-    postExecModule,
-    getExecModuleList , 
-    deleteExecModule , 
-    updateExecModule 
-} from '@thor/api/ExecModuleApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ExecModule
 */
 
+
+
 export const ExecModuleMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("ExecModule MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_EXECMODULE_REQUEST:
-            try {
-                const response = postExecModule(action.payload);
-                dispatch(addExecModuleSuccess(response.body));
-            } catch (error) {
-                dispatch(addExecModuleFailure(error.message));
-            }
-            break;
-
-        case LIST_EXECMODULE_REQUEST:
-            try {
-                const response = getExecModuleList({});
-                dispatch(listExecModuleSuccess(response.body));
-            } catch (error) {
-                dispatch(listExecModuleFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_EXECMODULE_REQUEST:
-            try {
-                const response = getExecModule(action.id);
-                dispatch(fetchExecModuleSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchExecModuleFailure(error.message));
-            }
-            break;
-
-        case UPDATE_EXECMODULE_REQUEST:
-            try {
-                const { id, ExecModule } = action.payload;
-                const response = updateExecModule(id);
-                dispatch(updateExecModuleSuccess(response.body));
-            } catch (error) {
-                dispatch(updateExecModuleFailure(error.message));
-            }
-            break;
-
-        case DELETE_EXECMODULE_REQUEST:
-            try {
-                const { id, ExecModule } = action.payload;
-                const response = deleteExecModule(id);
-                dispatch(deleteExecModuleSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteExecModuleFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

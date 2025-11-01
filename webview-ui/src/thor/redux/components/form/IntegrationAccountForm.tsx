@@ -32,7 +32,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -66,6 +66,7 @@ const validationSchema = Yup.object().shape({
         accountName: Yup.string(),
         username: Yup.string(),
         password: Yup.string(),
+        apiKey: Yup.string(),
         accountId: Yup.string(),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
@@ -131,6 +132,7 @@ const IntegrationAccountForm: React.FC = () => {
           accountName: '',
           username: '',
           password: '',
+          apiKey: '',
           accountId: '',
         status: undefined,
           verified: false,
@@ -338,6 +340,39 @@ const IntegrationAccountForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="password"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="apiKey" className="nice-form-control">
+                      <b>
+                        Api Key:
+                        {touched.apiKey &&
+                         !errors.apiKey && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="apiKey"
+                            value={values?.apiKey}
+                            placeholder="Api Key"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="apiKey"
                         component="span"
                       />
                     </label>

@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getChart, 
-    postChart,
-    getChartList , 
-    deleteChart , 
-    updateChart 
-} from '@thor/api/ChartApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Chart
 */
 
+
+
 export const ChartMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("Chart MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_CHART_REQUEST:
-            try {
-                const response = postChart(action.payload);
-                dispatch(addChartSuccess(response.body));
-            } catch (error) {
-                dispatch(addChartFailure(error.message));
-            }
-            break;
-
-        case LIST_CHART_REQUEST:
-            try {
-                const response = getChartList({});
-                dispatch(listChartSuccess(response.body));
-            } catch (error) {
-                dispatch(listChartFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_CHART_REQUEST:
-            try {
-                const response = getChart(action.id);
-                dispatch(fetchChartSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchChartFailure(error.message));
-            }
-            break;
-
-        case UPDATE_CHART_REQUEST:
-            try {
-                const { id, Chart } = action.payload;
-                const response = updateChart(id);
-                dispatch(updateChartSuccess(response.body));
-            } catch (error) {
-                dispatch(updateChartFailure(error.message));
-            }
-            break;
-
-        case DELETE_CHART_REQUEST:
-            try {
-                const { id, Chart } = action.payload;
-                const response = deleteChart(id);
-                dispatch(deleteChartSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteChartFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

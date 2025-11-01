@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getOasObjectSchema, 
-    postOasObjectSchema,
-    getOasObjectSchemaList , 
-    deleteOasObjectSchema , 
-    updateOasObjectSchema 
-} from '@thor/api/OasObjectSchemaApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: OasObjectSchema
 */
 
+
+
 export const OasObjectSchemaMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("OasObjectSchema MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_OASOBJECTSCHEMA_REQUEST:
-            try {
-                const response = postOasObjectSchema(action.payload);
-                dispatch(addOasObjectSchemaSuccess(response.body));
-            } catch (error) {
-                dispatch(addOasObjectSchemaFailure(error.message));
-            }
-            break;
-
-        case LIST_OASOBJECTSCHEMA_REQUEST:
-            try {
-                const response = getOasObjectSchemaList({});
-                dispatch(listOasObjectSchemaSuccess(response.body));
-            } catch (error) {
-                dispatch(listOasObjectSchemaFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_OASOBJECTSCHEMA_REQUEST:
-            try {
-                const response = getOasObjectSchema(action.id);
-                dispatch(fetchOasObjectSchemaSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchOasObjectSchemaFailure(error.message));
-            }
-            break;
-
-        case UPDATE_OASOBJECTSCHEMA_REQUEST:
-            try {
-                const { id, OasObjectSchema } = action.payload;
-                const response = updateOasObjectSchema(id);
-                dispatch(updateOasObjectSchemaSuccess(response.body));
-            } catch (error) {
-                dispatch(updateOasObjectSchemaFailure(error.message));
-            }
-            break;
-
-        case DELETE_OASOBJECTSCHEMA_REQUEST:
-            try {
-                const { id, OasObjectSchema } = action.payload;
-                const response = deleteOasObjectSchema(id);
-                dispatch(deleteOasObjectSchemaSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteOasObjectSchemaFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

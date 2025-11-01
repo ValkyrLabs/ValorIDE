@@ -20,6 +20,8 @@ import { AclGrantRequest, PermissionType } from '@valkyr/component-library/Permi
 import {
   ContentData,
   ContentDataContentTypeEnum,
+  ContentDataPriceTierEnum,
+  ContentDataDeliveryModeEnum,
   ContentDataCategoryEnum,
   ContentDataStatusEnum,
 } from '@thor/model';
@@ -34,7 +36,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -61,6 +63,28 @@ const ContentTypeValidation = () => {
     'spreadsheet',
     'pdf',
     'binary',
+    'presentation',
+    'image',
+    'document',
+    'ebook',
+    'FUNNEL',
+  ];
+};
+const PriceTierValidation = () => {
+  return [
+    'FREE',
+    'LOW',
+    'MEDIUM',
+    'HIGH',
+    'PREMIUM',
+  ];
+};
+const DeliveryModeValidation = () => {
+  return [
+    'DIGITAL',
+    'PHYSICAL',
+    'HYBRID',
+    'SERVICE',
   ];
 };
 const CategoryValidation = () => {
@@ -73,6 +97,22 @@ const CategoryValidation = () => {
     'Product',
     'SECURITY',
     'Event',
+    'Tutorial',
+    'News',
+    'Announcement',
+    'Guide',
+    'Review',
+    'Case Study',
+    'Whitepaper',
+    'EBOOK',
+    'FUNNEL',
+    'video',
+    'audio',
+    'image',
+    'podcast',
+    'webinar',
+    'course',
+    'other',
   ];
 };
 const StatusValidation = () => {
@@ -80,6 +120,7 @@ const StatusValidation = () => {
     'holding',
     'editing',
     'published',
+    'DRAFT',
   ];
 };
 
@@ -93,12 +134,24 @@ const validationSchema = Yup.object().shape({
         authorName: Yup.string(),
         title: Yup.string(),
         subtitle: Yup.string(),
+        tags: Yup.string(),
         fileName: Yup.string(),
         contentUrl: Yup.string(),
         contentData: Yup.string(),
       contentType: Yup.mixed()
         .oneOf(ContentTypeValidation(), "Invalid value for contentType")
         ,
+        brand: Yup.string(),
+        targetAudience: Yup.string(),
+      priceTier: Yup.mixed()
+        .oneOf(PriceTierValidation(), "Invalid value for priceTier")
+        ,
+      deliveryMode: Yup.mixed()
+        .oneOf(DeliveryModeValidation(), "Invalid value for deliveryMode")
+        ,
+        heroBenefit: Yup.string(),
+        version: asNumber(Yup.number().integer().typeError("version must be a number")),
+        metadata: Yup.string(),
         thumbnailImage: Yup.string(),
         largeImage: Yup.string(),
       category: Yup.mixed()
@@ -115,6 +168,7 @@ const validationSchema = Yup.object().shape({
             const parsed = new Date(originalValue);
             return Number.isNaN(parsed.getTime()) ? value : parsed;
           }).typeError("releaseDate must be a valid date"),
+        slug: Yup.string(),
         id: Yup.string(),
         ownerId: Yup.string(),
         createdDate: Yup.date()
@@ -174,15 +228,24 @@ const ContentDataForm: React.FC = () => {
           authorName: '',
           title: '',
           subtitle: '',
+          tags: '',
           fileName: '',
           contentUrl: '',
           contentData: '',
         contentType: undefined,
+          brand: '',
+          targetAudience: '',
+        priceTier: undefined,
+        deliveryMode: undefined,
+          heroBenefit: '',
+          version: 0,
+          metadata: '',
           thumbnailImage: '',
           largeImage: '',
         category: undefined,
         status: undefined,
           releaseDate: new Date(),
+          slug: '',
           id: '',
           ownerId: '',
           createdDate: new Date(),
@@ -358,6 +421,39 @@ const ContentDataForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="tags" className="nice-form-control">
+                      <b>
+                        Tags:
+                        {touched.tags &&
+                         !errors.tags && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="tags"
+                            value={values?.tags}
+                            placeholder="Tags"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="tags"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="fileName" className="nice-form-control">
                       <b>
                         File Name:
@@ -488,6 +584,249 @@ const ContentDataForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="contentType"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="brand" className="nice-form-control">
+                      <b>
+                        Brand:
+                        {touched.brand &&
+                         !errors.brand && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="brand"
+                            value={values?.brand}
+                            placeholder="Brand"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="brand"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="targetAudience" className="nice-form-control">
+                      <b>
+                        Target Audience:
+                        {touched.targetAudience &&
+                         !errors.targetAudience && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="targetAudience"
+                            value={values?.targetAudience}
+                            placeholder="Target Audience"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="targetAudience"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="priceTier" className="nice-form-control">
+                      <b>
+                        Price Tier:
+                        {touched.priceTier &&
+                         !errors.priceTier && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="priceTier"
+                          value={values.priceTier || ''}
+                          className={
+                            errors.priceTier
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('priceTier', true);
+                            setFieldValue('priceTier', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Price Tier" />
+                          <PriceTierLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="priceTier"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="deliveryMode" className="nice-form-control">
+                      <b>
+                        Delivery Mode:
+                        {touched.deliveryMode &&
+                         !errors.deliveryMode && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="deliveryMode"
+                          value={values.deliveryMode || ''}
+                          className={
+                            errors.deliveryMode
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('deliveryMode', true);
+                            setFieldValue('deliveryMode', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Delivery Mode" />
+                          <DeliveryModeLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="deliveryMode"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="heroBenefit" className="nice-form-control">
+                      <b>
+                        Hero Benefit:
+                        {touched.heroBenefit &&
+                         !errors.heroBenefit && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="heroBenefit"
+                            value={values?.heroBenefit}
+                            placeholder="Hero Benefit"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="heroBenefit"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="version" className="nice-form-control">
+                      <b>
+                        Version:
+                        {touched.version &&
+                         !errors.version && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+
+                          {/* INTEGER FIELD */}
+                          <Field
+                            name="version"
+                            type="number"
+                            value={values.version || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('version', true);
+                              const v = e.target.value;
+                              setFieldValue('version', v === '' ? undefined : Number(v));
+                            }}
+                            className={
+                              errors.version
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="version"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="metadata" className="nice-form-control">
+                      <b>
+                        Metadata:
+                        {touched.metadata &&
+                         !errors.metadata && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="metadata"
+                            value={values?.metadata}
+                            placeholder="Metadata"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="metadata"
                         component="span"
                       />
                     </label>
@@ -667,6 +1006,39 @@ const ContentDataForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="releaseDate"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="slug" className="nice-form-control">
+                      <b>
+                        Slug:
+                        {touched.slug &&
+                         !errors.slug && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="slug"
+                            value={values?.slug}
+                            placeholder="Slug"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="slug"
                         component="span"
                       />
                     </label>
@@ -1039,6 +1411,52 @@ const ContentTypeLookup = () => {
       <option value='spreadsheet' label="Spreadsheet" />
       <option value='pdf' label="Pdf" />
       <option value='binary' label="Binary" />
+      <option value='presentation' label="Presentation" />
+      <option value='image' label="Image" />
+      <option value='document' label="Document" />
+      <option value='ebook' label="Ebook" />
+      <option value='FUNNEL' label="Funnel" />
+    </>
+  );
+};
+
+/*
+lowercase pricetierlookup
+uppercase PRICETIERLOOKUP
+snakecase price_tier_lookup
+pascalcase PriceTierLookup
+camelcase priceTierLookup
+kebabcase price-tier-lookup
+*/
+
+const PriceTierLookup = () => {
+  return (
+    <>
+      <option value='FREE' label="Free" />
+      <option value='LOW' label="Low" />
+      <option value='MEDIUM' label="Medium" />
+      <option value='HIGH' label="High" />
+      <option value='PREMIUM' label="Premium" />
+    </>
+  );
+};
+
+/*
+lowercase deliverymodelookup
+uppercase DELIVERYMODELOOKUP
+snakecase delivery_mode_lookup
+pascalcase DeliveryModeLookup
+camelcase deliveryModeLookup
+kebabcase delivery-mode-lookup
+*/
+
+const DeliveryModeLookup = () => {
+  return (
+    <>
+      <option value='DIGITAL' label="Digital" />
+      <option value='PHYSICAL' label="Physical" />
+      <option value='HYBRID' label="Hybrid" />
+      <option value='SERVICE' label="Service" />
     </>
   );
 };
@@ -1063,6 +1481,22 @@ const CategoryLookup = () => {
       <option value='Product' label="Product" />
       <option value='SECURITY' label="Security" />
       <option value='Event' label="Event" />
+      <option value='Tutorial' label="Tutorial" />
+      <option value='News' label="News" />
+      <option value='Announcement' label="Announcement" />
+      <option value='Guide' label="Guide" />
+      <option value='Review' label="Review" />
+      <option value='Case Study' label="Case Study" />
+      <option value='Whitepaper' label="Whitepaper" />
+      <option value='EBOOK' label="Ebook" />
+      <option value='FUNNEL' label="Funnel" />
+      <option value='video' label="Video" />
+      <option value='audio' label="Audio" />
+      <option value='image' label="Image" />
+      <option value='podcast' label="Podcast" />
+      <option value='webinar' label="Webinar" />
+      <option value='course' label="Course" />
+      <option value='other' label="Other" />
     </>
   );
 };
@@ -1082,6 +1516,7 @@ const StatusLookup = () => {
       <option value='holding' label="Holding" />
       <option value='editing' label="Editing" />
       <option value='published' label="Published" />
+      <option value='DRAFT' label="Draft" />
     </>
   );
 };

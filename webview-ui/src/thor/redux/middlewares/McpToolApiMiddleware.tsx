@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getMcpTool, 
-    postMcpTool,
-    getMcpToolList , 
-    deleteMcpTool , 
-    updateMcpTool 
-} from '@thor/api/McpToolApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpTool
 */
 
+
+
 export const McpToolMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("McpTool MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_MCPTOOL_REQUEST:
-            try {
-                const response = postMcpTool(action.payload);
-                dispatch(addMcpToolSuccess(response.body));
-            } catch (error) {
-                dispatch(addMcpToolFailure(error.message));
-            }
-            break;
-
-        case LIST_MCPTOOL_REQUEST:
-            try {
-                const response = getMcpToolList({});
-                dispatch(listMcpToolSuccess(response.body));
-            } catch (error) {
-                dispatch(listMcpToolFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_MCPTOOL_REQUEST:
-            try {
-                const response = getMcpTool(action.id);
-                dispatch(fetchMcpToolSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchMcpToolFailure(error.message));
-            }
-            break;
-
-        case UPDATE_MCPTOOL_REQUEST:
-            try {
-                const { id, McpTool } = action.payload;
-                const response = updateMcpTool(id);
-                dispatch(updateMcpToolSuccess(response.body));
-            } catch (error) {
-                dispatch(updateMcpToolFailure(error.message));
-            }
-            break;
-
-        case DELETE_MCPTOOL_REQUEST:
-            try {
-                const { id, McpTool } = action.payload;
-                const response = deleteMcpTool(id);
-                dispatch(deleteMcpToolSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteMcpToolFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

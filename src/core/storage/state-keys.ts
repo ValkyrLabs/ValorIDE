@@ -80,6 +80,7 @@ export type GlobalStateKey =
   | "thinkingBudgetTokens"
   | "reasoningEffort"
   | "planActSeparateModelsSetting"
-  | "favoritedModelIds";
+  | "favoritedModelIds"
+  | "valorideSwarmInstanceId";
 
 export type LocalStateKey = "localValorIDERulesToggles";

@@ -42,9 +42,16 @@ import { ChatResponseService } from './services/ChatResponseService';
 import { ContentDataService } from './services/ContentDataService';
 import { ContentMediaLinkService } from './services/ContentMediaLinkService';
 import { CustomerService } from './services/CustomerService';
+import { DeadLetterQueueService } from './services/DeadLetterQueueService';
+import { DefaultService } from './services/DefaultService';
 import { DiscountService } from './services/DiscountService';
 import { EventLogService } from './services/EventLogService';
 import { ExecModuleService } from './services/ExecModuleService';
+import { FileAuditLogService } from './services/FileAuditLogService';
+import { FileDownloadTokenService } from './services/FileDownloadTokenService';
+import { FileRecordService } from './services/FileRecordService';
+import { FileUploadSessionService } from './services/FileUploadSessionService';
+import { FileVersionService } from './services/FileVersionService';
 import { FormatService } from './services/FormatService';
 import { FormulaService } from './services/FormulaService';
 import { GoalService } from './services/GoalService';
@@ -90,11 +97,13 @@ import { PivotTableService } from './services/PivotTableService';
 import { PrincipalService } from './services/PrincipalService';
 import { ProductService } from './services/ProductService';
 import { ProductFeatureService } from './services/ProductFeatureService';
+import { ProductFunnelWizardService } from './services/ProductFunnelWizardService';
 import { PtgService } from './services/PtgService';
 import { PtgRefService } from './services/PtgRefService';
 import { RatingService } from './services/RatingService';
 import { ReferralLinkService } from './services/ReferralLinkService';
 import { RoleService } from './services/RoleService';
+import { RunService } from './services/RunService';
 import { SalesActivityService } from './services/SalesActivityService';
 import { SalesOrderService } from './services/SalesOrderService';
 import { SalesPipelineService } from './services/SalesPipelineService';
@@ -103,7 +112,11 @@ import { SheetService } from './services/SheetService';
 import { SheetColumnService } from './services/SheetColumnService';
 import { SheetRowService } from './services/SheetRowService';
 import { SolutionService } from './services/SolutionService';
+import { SpaceService } from './services/SpaceService';
+import { SpaceFileService } from './services/SpaceFileService';
+import { SpaceMemberService } from './services/SpaceMemberService';
 import { StrategicPriorityService } from './services/StrategicPriorityService';
+import { SwarmService } from './services/SwarmService';
 import { TaskService } from './services/TaskService';
 import { UsageTransactionService } from './services/UsageTransactionService';
 import { UserPreferenceService } from './services/UserPreferenceService';
@@ -111,6 +124,7 @@ import { WebsocketMessageService } from './services/WebsocketMessageService';
 import { WebsocketSessionService } from './services/WebsocketSessionService';
 import { WorkbookService } from './services/WorkbookService';
 import { WorkflowService } from './services/WorkflowService';
+import { WorkflowExecutionService } from './services/WorkflowExecutionService';
 import { WorkflowStateService } from './services/WorkflowStateService';
 
 export const getQueries = (state) => state.queries;
@@ -140,9 +154,16 @@ export const reducer = {
   [ContentDataService.reducerPath]: ContentDataService.reducer,
   [ContentMediaLinkService.reducerPath]: ContentMediaLinkService.reducer,
   [CustomerService.reducerPath]: CustomerService.reducer,
+  [DeadLetterQueueService.reducerPath]: DeadLetterQueueService.reducer,
+  [DefaultService.reducerPath]: DefaultService.reducer,
   [DiscountService.reducerPath]: DiscountService.reducer,
   [EventLogService.reducerPath]: EventLogService.reducer,
   [ExecModuleService.reducerPath]: ExecModuleService.reducer,
+  [FileAuditLogService.reducerPath]: FileAuditLogService.reducer,
+  [FileDownloadTokenService.reducerPath]: FileDownloadTokenService.reducer,
+  [FileRecordService.reducerPath]: FileRecordService.reducer,
+  [FileUploadSessionService.reducerPath]: FileUploadSessionService.reducer,
+  [FileVersionService.reducerPath]: FileVersionService.reducer,
   [FormatService.reducerPath]: FormatService.reducer,
   [FormulaService.reducerPath]: FormulaService.reducer,
   [GoalService.reducerPath]: GoalService.reducer,
@@ -188,11 +209,13 @@ export const reducer = {
   [PrincipalService.reducerPath]: PrincipalService.reducer,
   [ProductService.reducerPath]: ProductService.reducer,
   [ProductFeatureService.reducerPath]: ProductFeatureService.reducer,
+  [ProductFunnelWizardService.reducerPath]: ProductFunnelWizardService.reducer,
   [PtgService.reducerPath]: PtgService.reducer,
   [PtgRefService.reducerPath]: PtgRefService.reducer,
   [RatingService.reducerPath]: RatingService.reducer,
   [ReferralLinkService.reducerPath]: ReferralLinkService.reducer,
   [RoleService.reducerPath]: RoleService.reducer,
+  [RunService.reducerPath]: RunService.reducer,
   [SalesActivityService.reducerPath]: SalesActivityService.reducer,
   [SalesOrderService.reducerPath]: SalesOrderService.reducer,
   [SalesPipelineService.reducerPath]: SalesPipelineService.reducer,
@@ -201,7 +224,11 @@ export const reducer = {
   [SheetColumnService.reducerPath]: SheetColumnService.reducer,
   [SheetRowService.reducerPath]: SheetRowService.reducer,
   [SolutionService.reducerPath]: SolutionService.reducer,
+  [SpaceService.reducerPath]: SpaceService.reducer,
+  [SpaceFileService.reducerPath]: SpaceFileService.reducer,
+  [SpaceMemberService.reducerPath]: SpaceMemberService.reducer,
   [StrategicPriorityService.reducerPath]: StrategicPriorityService.reducer,
+  [SwarmService.reducerPath]: SwarmService.reducer,
   [TaskService.reducerPath]: TaskService.reducer,
   [UsageTransactionService.reducerPath]: UsageTransactionService.reducer,
   [UserPreferenceService.reducerPath]: UserPreferenceService.reducer,
@@ -209,6 +236,7 @@ export const reducer = {
   [WebsocketSessionService.reducerPath]: WebsocketSessionService.reducer,
   [WorkbookService.reducerPath]: WorkbookService.reducer,
   [WorkflowService.reducerPath]: WorkflowService.reducer,
+  [WorkflowExecutionService.reducerPath]: WorkflowExecutionService.reducer,
   [WorkflowStateService.reducerPath]: WorkflowStateService.reducer,
 };
 
@@ -240,9 +268,16 @@ export const getMiddleWare : Middleware = () => {
     .concat(ContentDataService.middleware as Middleware)
     .concat(ContentMediaLinkService.middleware as Middleware)
     .concat(CustomerService.middleware as Middleware)
+    .concat(DeadLetterQueueService.middleware as Middleware)
+    .concat(DefaultService.middleware as Middleware)
     .concat(DiscountService.middleware as Middleware)
     .concat(EventLogService.middleware as Middleware)
     .concat(ExecModuleService.middleware as Middleware)
+    .concat(FileAuditLogService.middleware as Middleware)
+    .concat(FileDownloadTokenService.middleware as Middleware)
+    .concat(FileRecordService.middleware as Middleware)
+    .concat(FileUploadSessionService.middleware as Middleware)
+    .concat(FileVersionService.middleware as Middleware)
     .concat(FormatService.middleware as Middleware)
     .concat(FormulaService.middleware as Middleware)
     .concat(GoalService.middleware as Middleware)
@@ -288,11 +323,13 @@ export const getMiddleWare : Middleware = () => {
     .concat(PrincipalService.middleware as Middleware)
     .concat(ProductService.middleware as Middleware)
     .concat(ProductFeatureService.middleware as Middleware)
+    .concat(ProductFunnelWizardService.middleware as Middleware)
     .concat(PtgService.middleware as Middleware)
     .concat(PtgRefService.middleware as Middleware)
     .concat(RatingService.middleware as Middleware)
     .concat(ReferralLinkService.middleware as Middleware)
     .concat(RoleService.middleware as Middleware)
+    .concat(RunService.middleware as Middleware)
     .concat(SalesActivityService.middleware as Middleware)
     .concat(SalesOrderService.middleware as Middleware)
     .concat(SalesPipelineService.middleware as Middleware)
@@ -301,7 +338,11 @@ export const getMiddleWare : Middleware = () => {
     .concat(SheetColumnService.middleware as Middleware)
     .concat(SheetRowService.middleware as Middleware)
     .concat(SolutionService.middleware as Middleware)
+    .concat(SpaceService.middleware as Middleware)
+    .concat(SpaceFileService.middleware as Middleware)
+    .concat(SpaceMemberService.middleware as Middleware)
     .concat(StrategicPriorityService.middleware as Middleware)
+    .concat(SwarmService.middleware as Middleware)
     .concat(TaskService.middleware as Middleware)
     .concat(UsageTransactionService.middleware as Middleware)
     .concat(UserPreferenceService.middleware as Middleware)
@@ -309,6 +350,7 @@ export const getMiddleWare : Middleware = () => {
     .concat(WebsocketSessionService.middleware as Middleware)
     .concat(WorkbookService.middleware as Middleware)
     .concat(WorkflowService.middleware as Middleware)
+    .concat(WorkflowExecutionService.middleware as Middleware)
     .concat(WorkflowStateService.middleware as Middleware)
 ;
 };
@@ -341,9 +383,16 @@ export const store = configureStore({
     .concat(ContentDataService.middleware as Middleware)
     .concat(ContentMediaLinkService.middleware as Middleware)
     .concat(CustomerService.middleware as Middleware)
+    .concat(DeadLetterQueueService.middleware as Middleware)
+    .concat(DefaultService.middleware as Middleware)
     .concat(DiscountService.middleware as Middleware)
     .concat(EventLogService.middleware as Middleware)
     .concat(ExecModuleService.middleware as Middleware)
+    .concat(FileAuditLogService.middleware as Middleware)
+    .concat(FileDownloadTokenService.middleware as Middleware)
+    .concat(FileRecordService.middleware as Middleware)
+    .concat(FileUploadSessionService.middleware as Middleware)
+    .concat(FileVersionService.middleware as Middleware)
     .concat(FormatService.middleware as Middleware)
     .concat(FormulaService.middleware as Middleware)
     .concat(GoalService.middleware as Middleware)
@@ -389,11 +438,13 @@ export const store = configureStore({
     .concat(PrincipalService.middleware as Middleware)
     .concat(ProductService.middleware as Middleware)
     .concat(ProductFeatureService.middleware as Middleware)
+    .concat(ProductFunnelWizardService.middleware as Middleware)
     .concat(PtgService.middleware as Middleware)
     .concat(PtgRefService.middleware as Middleware)
     .concat(RatingService.middleware as Middleware)
     .concat(ReferralLinkService.middleware as Middleware)
     .concat(RoleService.middleware as Middleware)
+    .concat(RunService.middleware as Middleware)
     .concat(SalesActivityService.middleware as Middleware)
     .concat(SalesOrderService.middleware as Middleware)
     .concat(SalesPipelineService.middleware as Middleware)
@@ -402,7 +453,11 @@ export const store = configureStore({
     .concat(SheetColumnService.middleware as Middleware)
     .concat(SheetRowService.middleware as Middleware)
     .concat(SolutionService.middleware as Middleware)
+    .concat(SpaceService.middleware as Middleware)
+    .concat(SpaceFileService.middleware as Middleware)
+    .concat(SpaceMemberService.middleware as Middleware)
     .concat(StrategicPriorityService.middleware as Middleware)
+    .concat(SwarmService.middleware as Middleware)
     .concat(TaskService.middleware as Middleware)
     .concat(UsageTransactionService.middleware as Middleware)
     .concat(UserPreferenceService.middleware as Middleware)
@@ -410,6 +465,7 @@ export const store = configureStore({
     .concat(WebsocketSessionService.middleware as Middleware)
     .concat(WorkbookService.middleware as Middleware)
     .concat(WorkflowService.middleware as Middleware)
+    .concat(WorkflowExecutionService.middleware as Middleware)
     .concat(WorkflowStateService.middleware as Middleware)
 });
 

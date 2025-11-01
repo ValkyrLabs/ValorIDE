@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getAgent, 
-    postAgent,
-    getAgentList , 
-    deleteAgent , 
-    updateAgent 
-} from '@thor/api/AgentApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Agent
 */
 
+
+
 export const AgentMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("Agent MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_AGENT_REQUEST:
-            try {
-                const response = postAgent(action.payload);
-                dispatch(addAgentSuccess(response.body));
-            } catch (error) {
-                dispatch(addAgentFailure(error.message));
-            }
-            break;
-
-        case LIST_AGENT_REQUEST:
-            try {
-                const response = getAgentList({});
-                dispatch(listAgentSuccess(response.body));
-            } catch (error) {
-                dispatch(listAgentFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_AGENT_REQUEST:
-            try {
-                const response = getAgent(action.id);
-                dispatch(fetchAgentSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchAgentFailure(error.message));
-            }
-            break;
-
-        case UPDATE_AGENT_REQUEST:
-            try {
-                const { id, Agent } = action.payload;
-                const response = updateAgent(id);
-                dispatch(updateAgentSuccess(response.body));
-            } catch (error) {
-                dispatch(updateAgentFailure(error.message));
-            }
-            break;
-
-        case DELETE_AGENT_REQUEST:
-            try {
-                const { id, Agent } = action.payload;
-                const response = deleteAgent(id);
-                dispatch(deleteAgentSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteAgentFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

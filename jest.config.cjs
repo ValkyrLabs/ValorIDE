@@ -14,6 +14,7 @@ module.exports = {
     "^@core/(.*)$": "<rootDir>/src/core/$1",
     "^@integrations/(.*)$": "<rootDir>/src/integrations/$1",
     "^@services/(.*)$": "<rootDir>/src/services/$1",
+    "^@valkyr/component-library/(.*)$": "<rootDir>/webview-ui/src/components/$1",
     "^@shared/(.*)$": "<rootDir>/src/shared/$1",
     "^@utils/(.*)$": "<rootDir>/src/utils/$1",
   },

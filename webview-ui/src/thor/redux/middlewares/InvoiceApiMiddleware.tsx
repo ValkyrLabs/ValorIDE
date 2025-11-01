@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getInvoice, 
-    postInvoice,
-    getInvoiceList , 
-    deleteInvoice , 
-    updateInvoice 
-} from '@thor/api/InvoiceApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Invoice
 */
 
+
+
 export const InvoiceMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("Invoice MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_INVOICE_REQUEST:
-            try {
-                const response = postInvoice(action.payload);
-                dispatch(addInvoiceSuccess(response.body));
-            } catch (error) {
-                dispatch(addInvoiceFailure(error.message));
-            }
-            break;
-
-        case LIST_INVOICE_REQUEST:
-            try {
-                const response = getInvoiceList({});
-                dispatch(listInvoiceSuccess(response.body));
-            } catch (error) {
-                dispatch(listInvoiceFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_INVOICE_REQUEST:
-            try {
-                const response = getInvoice(action.id);
-                dispatch(fetchInvoiceSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchInvoiceFailure(error.message));
-            }
-            break;
-
-        case UPDATE_INVOICE_REQUEST:
-            try {
-                const { id, Invoice } = action.payload;
-                const response = updateInvoice(id);
-                dispatch(updateInvoiceSuccess(response.body));
-            } catch (error) {
-                dispatch(updateInvoiceFailure(error.message));
-            }
-            break;
-
-        case DELETE_INVOICE_REQUEST:
-            try {
-                const { id, Invoice } = action.payload;
-                const response = deleteInvoice(id);
-                dispatch(deleteInvoiceSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteInvoiceFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

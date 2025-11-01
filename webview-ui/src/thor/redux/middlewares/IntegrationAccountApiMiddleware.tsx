@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getIntegrationAccount, 
-    postIntegrationAccount,
-    getIntegrationAccountList , 
-    deleteIntegrationAccount , 
-    updateIntegrationAccount 
-} from '@thor/api/IntegrationAccountApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: IntegrationAccount
 */
 
+
+
 export const IntegrationAccountMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("IntegrationAccount MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_INTEGRATIONACCOUNT_REQUEST:
-            try {
-                const response = postIntegrationAccount(action.payload);
-                dispatch(addIntegrationAccountSuccess(response.body));
-            } catch (error) {
-                dispatch(addIntegrationAccountFailure(error.message));
-            }
-            break;
-
-        case LIST_INTEGRATIONACCOUNT_REQUEST:
-            try {
-                const response = getIntegrationAccountList({});
-                dispatch(listIntegrationAccountSuccess(response.body));
-            } catch (error) {
-                dispatch(listIntegrationAccountFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_INTEGRATIONACCOUNT_REQUEST:
-            try {
-                const response = getIntegrationAccount(action.id);
-                dispatch(fetchIntegrationAccountSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchIntegrationAccountFailure(error.message));
-            }
-            break;
-
-        case UPDATE_INTEGRATIONACCOUNT_REQUEST:
-            try {
-                const { id, IntegrationAccount } = action.payload;
-                const response = updateIntegrationAccount(id);
-                dispatch(updateIntegrationAccountSuccess(response.body));
-            } catch (error) {
-                dispatch(updateIntegrationAccountFailure(error.message));
-            }
-            break;
-
-        case DELETE_INTEGRATIONACCOUNT_REQUEST:
-            try {
-                const { id, IntegrationAccount } = action.payload;
-                const response = deleteIntegrationAccount(id);
-                dispatch(deleteIntegrationAccountSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteIntegrationAccountFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

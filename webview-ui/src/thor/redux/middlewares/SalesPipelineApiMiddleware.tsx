@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getSalesPipeline, 
-    postSalesPipeline,
-    getSalesPipelineList , 
-    deleteSalesPipeline , 
-    updateSalesPipeline 
-} from '@thor/api/SalesPipelineApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: SalesPipeline
 */
 
+
+
 export const SalesPipelineMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("SalesPipeline MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_SALESPIPELINE_REQUEST:
-            try {
-                const response = postSalesPipeline(action.payload);
-                dispatch(addSalesPipelineSuccess(response.body));
-            } catch (error) {
-                dispatch(addSalesPipelineFailure(error.message));
-            }
-            break;
-
-        case LIST_SALESPIPELINE_REQUEST:
-            try {
-                const response = getSalesPipelineList({});
-                dispatch(listSalesPipelineSuccess(response.body));
-            } catch (error) {
-                dispatch(listSalesPipelineFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_SALESPIPELINE_REQUEST:
-            try {
-                const response = getSalesPipeline(action.id);
-                dispatch(fetchSalesPipelineSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchSalesPipelineFailure(error.message));
-            }
-            break;
-
-        case UPDATE_SALESPIPELINE_REQUEST:
-            try {
-                const { id, SalesPipeline } = action.payload;
-                const response = updateSalesPipeline(id);
-                dispatch(updateSalesPipelineSuccess(response.body));
-            } catch (error) {
-                dispatch(updateSalesPipelineFailure(error.message));
-            }
-            break;
-
-        case DELETE_SALESPIPELINE_REQUEST:
-            try {
-                const { id, SalesPipeline } = action.payload;
-                const response = deleteSalesPipeline(id);
-                dispatch(deleteSalesPipelineSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteSalesPipelineFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

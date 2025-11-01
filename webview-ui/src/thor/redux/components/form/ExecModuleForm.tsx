@@ -34,7 +34,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -42,7 +42,7 @@ Template file: typescript-redux-query/modelForm.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 
 Description:
-ExecModule is the execution unit of the ValkyrAI Workflow Engine
+an ExecModule Instance -- an ExecModule is the execution unit of the ValkyrAI Workflow Engine
 */
 
 /* -----------------------------------------------------
@@ -91,11 +91,13 @@ const validationSchema = Yup.object().shape({
         name: Yup.string(),
         moduleOrder: asNumber(Yup.number().typeError("moduleOrder must be a number")),
         notes: Yup.string(),
+        longDescription: Yup.string(),
         className: Yup.string(),
       moduleType: Yup.mixed()
         .oneOf(ModuleTypeValidation(), "Invalid value for moduleType")
         ,
         moduleData: Yup.string(),
+        config: Yup.string(),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
         ,
@@ -161,9 +163,11 @@ const ExecModuleForm: React.FC = () => {
           name: '',
           moduleOrder: 0,
           notes: '',
+          longDescription: '',
           className: '',
         moduleType: undefined,
           moduleData: '',
+          config: '',
         status: undefined,
           id: '',
           ownerId: '',
@@ -450,6 +454,39 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="longDescription" className="nice-form-control">
+                      <b>
+                        Long Description:
+                        {touched.longDescription &&
+                         !errors.longDescription && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="longDescription"
+                            value={values?.longDescription}
+                            placeholder="Long Description"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="longDescription"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="className" className="nice-form-control">
                       <b>
                         Class Name:
@@ -547,6 +584,39 @@ const ExecModuleForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="moduleData"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="config" className="nice-form-control">
+                      <b>
+                        Config:
+                        {touched.config &&
+                         !errors.config && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="config"
+                            value={values?.config}
+                            placeholder="Config"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="config"
                         component="span"
                       />
                     </label>

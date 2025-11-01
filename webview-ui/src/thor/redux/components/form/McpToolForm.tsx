@@ -19,6 +19,8 @@ import { AclGrantRequest, PermissionType } from '@valkyr/component-library/Permi
 
 import {
   McpTool,
+  McpToolCategoryEnum,
+  McpToolInvocationStyleEnum,
 } from '@thor/model';
 
 import { useAddMcpToolMutation } from '../../services/McpToolService';
@@ -31,7 +33,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -45,6 +47,26 @@ McpTool
 /* -----------------------------------------------------
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
+const CategoryValidation = () => {
+  return [
+    'cloud_platform',
+    'devops',
+    'security',
+    'observability',
+    'data_engineering',
+    'ai_assistant',
+    'productivity',
+    'customization',
+  ];
+};
+const InvocationStyleValidation = () => {
+  return [
+    'single_call',
+    'conversational',
+    'streaming',
+    'background',
+  ];
+};
 
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
@@ -55,9 +77,20 @@ const asNumber = (schema: Yup.NumberSchema) =>
 const validationSchema = Yup.object().shape({
         name: Yup.string().required("name is required."),
         mcpServerId: Yup.string(),
+        slug: Yup.string(),
         description: Yup.string(),
-        inputSchema: Yup.string(),
+      category: Yup.mixed()
+        .oneOf(CategoryValidation(), "Invalid value for category")
+        ,
+        capabilities: Yup.string(),
+      invocationStyle: Yup.mixed()
+        .oneOf(InvocationStyleValidation(), "Invalid value for invocationStyle")
+        ,
+        streamingSupported: Yup.boolean(),
         autoApprove: Yup.boolean(),
+        defaultAutoApprove: Yup.boolean(),
+        docsUrl: Yup.string(),
+        inputSchema: Yup.string(),
         id: Yup.string(),
         ownerId: Yup.string(),
         createdDate: Yup.date()
@@ -116,9 +149,16 @@ const McpToolForm: React.FC = () => {
   const initialValues: Partial<McpTool> = {
           name: '',
           mcpServerId: '',
+          slug: '',
           description: '',
-          inputSchema: '',
+        category: undefined,
+          capabilities: '',
+        invocationStyle: undefined,
+          streamingSupported: false,
           autoApprove: false,
+          defaultAutoApprove: false,
+          docsUrl: '',
+          inputSchema: '',
           id: '',
           ownerId: '',
           createdDate: new Date(),
@@ -261,6 +301,39 @@ const McpToolForm: React.FC = () => {
                       />
                     </label>
                     <br />
+                    <label htmlFor="slug" className="nice-form-control">
+                      <b>
+                        Slug:
+                        {touched.slug &&
+                         !errors.slug && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="slug"
+                            value={values?.slug}
+                            placeholder="Slug"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="slug"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
@@ -294,11 +367,46 @@ const McpToolForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    <label htmlFor="inputSchema" className="nice-form-control">
+                    <label htmlFor="category" className="nice-form-control">
                       <b>
-                        Input Schema:
-                        {touched.inputSchema &&
-                         !errors.inputSchema && (
+                        Category:
+                        {touched.category &&
+                         !errors.category && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="category"
+                          value={values.category || ''}
+                          className={
+                            errors.category
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('category', true);
+                            setFieldValue('category', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Category" />
+                          <CategoryLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="category"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="capabilities" className="nice-form-control">
+                      <b>
+                        Capabilities:
+                        {touched.capabilities &&
+                         !errors.capabilities && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
@@ -307,9 +415,9 @@ const McpToolForm: React.FC = () => {
 
                           {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
                           <SmartField
-                            name="inputSchema"
-                            value={values?.inputSchema}
-                            placeholder="Input Schema"
+                            name="capabilities"
+                            value={values?.capabilities}
+                            placeholder="Capabilities"
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}
                           />
@@ -322,7 +430,79 @@ const McpToolForm: React.FC = () => {
 
                       <ErrorMessage
                         className="error"
-                        name="inputSchema"
+                        name="capabilities"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="invocationStyle" className="nice-form-control">
+                      <b>
+                        Invocation Style:
+                        {touched.invocationStyle &&
+                         !errors.invocationStyle && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+                        {/* ENUM DROPDOWN */}
+                        <BSForm.Select
+                          name="invocationStyle"
+                          value={values.invocationStyle || ''}
+                          className={
+                            errors.invocationStyle
+                              ? 'form-control field-error'
+                              : 'nice-form-control form-control'
+                          }
+                          onChange={(e) => {
+                            setFieldTouched('invocationStyle', true);
+                            setFieldValue('invocationStyle', e.target.value || undefined);
+                          }}
+                        >
+                          <option value="" label="Select Invocation Style" />
+                          <InvocationStyleLookup />
+                        </BSForm.Select>
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="invocationStyle"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="streamingSupported" className="nice-form-control">
+                      <b>
+                        Streaming Supported:
+                        {touched.streamingSupported &&
+                         !errors.streamingSupported && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="streamingSupported"
+                            name="streamingSupported"
+                            checked={values.streamingSupported || false}
+                            onChange={(e) => {
+                              setFieldTouched('streamingSupported', true);
+                              setFieldValue('streamingSupported', e.target.checked);
+                            }}
+                            isInvalid={!!errors.streamingSupported}
+                            className={errors.streamingSupported ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="streamingSupported"
                         component="span"
                       />
                     </label>
@@ -360,6 +540,109 @@ const McpToolForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="autoApprove"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="defaultAutoApprove" className="nice-form-control">
+                      <b>
+                        Default Auto Approve:
+                        {touched.defaultAutoApprove &&
+                         !errors.defaultAutoApprove && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+                          {/* CHECKBOX FIELD */}
+                          <BSForm.Check
+                            id="defaultAutoApprove"
+                            name="defaultAutoApprove"
+                            checked={values.defaultAutoApprove || false}
+                            onChange={(e) => {
+                              setFieldTouched('defaultAutoApprove', true);
+                              setFieldValue('defaultAutoApprove', e.target.checked);
+                            }}
+                            isInvalid={!!errors.defaultAutoApprove}
+                            className={errors.defaultAutoApprove ? 'error' : ''}
+                          />
+
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="defaultAutoApprove"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="docsUrl" className="nice-form-control">
+                      <b>
+                        Docs Url:
+                        {touched.docsUrl &&
+                         !errors.docsUrl && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="docsUrl"
+                            value={values?.docsUrl}
+                            placeholder="Docs Url"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="docsUrl"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="inputSchema" className="nice-form-control">
+                      <b>
+                        Input Schema:
+                        {touched.inputSchema &&
+                         !errors.inputSchema && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="inputSchema"
+                            value={values?.inputSchema}
+                            placeholder="Input Schema"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="inputSchema"
                         component="span"
                       />
                     </label>
@@ -706,6 +989,50 @@ const McpToolForm: React.FC = () => {
         />
       )}
     </div>
+  );
+};
+
+/*
+lowercase categorylookup
+uppercase CATEGORYLOOKUP
+snakecase category_lookup
+pascalcase CategoryLookup
+camelcase categoryLookup
+kebabcase category-lookup
+*/
+
+const CategoryLookup = () => {
+  return (
+    <>
+      <option value='cloud_platform' label="Cloud Platform" />
+      <option value='devops' label="Devops" />
+      <option value='security' label="Security" />
+      <option value='observability' label="Observability" />
+      <option value='data_engineering' label="Data Engineering" />
+      <option value='ai_assistant' label="Ai Assistant" />
+      <option value='productivity' label="Productivity" />
+      <option value='customization' label="Customization" />
+    </>
+  );
+};
+
+/*
+lowercase invocationstylelookup
+uppercase INVOCATIONSTYLELOOKUP
+snakecase invocation_style_lookup
+pascalcase InvocationStyleLookup
+camelcase invocationStyleLookup
+kebabcase invocation-style-lookup
+*/
+
+const InvocationStyleLookup = () => {
+  return (
+    <>
+      <option value='single_call' label="Single Call" />
+      <option value='conversational' label="Conversational" />
+      <option value='streaming' label="Streaming" />
+      <option value='background' label="Background" />
+    </>
   );
 };
 

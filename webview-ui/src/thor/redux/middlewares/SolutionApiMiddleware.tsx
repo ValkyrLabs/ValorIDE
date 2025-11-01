@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getSolution, 
-    postSolution,
-    getSolutionList , 
-    deleteSolution , 
-    updateSolution 
-} from '@thor/api/SolutionApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Solution
 */
 
+
+
 export const SolutionMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("Solution MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_SOLUTION_REQUEST:
-            try {
-                const response = postSolution(action.payload);
-                dispatch(addSolutionSuccess(response.body));
-            } catch (error) {
-                dispatch(addSolutionFailure(error.message));
-            }
-            break;
-
-        case LIST_SOLUTION_REQUEST:
-            try {
-                const response = getSolutionList({});
-                dispatch(listSolutionSuccess(response.body));
-            } catch (error) {
-                dispatch(listSolutionFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_SOLUTION_REQUEST:
-            try {
-                const response = getSolution(action.id);
-                dispatch(fetchSolutionSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchSolutionFailure(error.message));
-            }
-            break;
-
-        case UPDATE_SOLUTION_REQUEST:
-            try {
-                const { id, Solution } = action.payload;
-                const response = updateSolution(id);
-                dispatch(updateSolutionSuccess(response.body));
-            } catch (error) {
-                dispatch(updateSolutionFailure(error.message));
-            }
-            break;
-
-        case DELETE_SOLUTION_REQUEST:
-            try {
-                const { id, Solution } = action.payload;
-                const response = deleteSolution(id);
-                dispatch(deleteSolutionSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteSolutionFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

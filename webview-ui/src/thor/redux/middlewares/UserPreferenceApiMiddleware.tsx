@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getUserPreference, 
-    postUserPreference,
-    getUserPreferenceList , 
-    deleteUserPreference , 
-    updateUserPreference 
-} from '@thor/api/UserPreferenceApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: UserPreference
 */
 
+
+
 export const UserPreferenceMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("UserPreference MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_USERPREFERENCE_REQUEST:
-            try {
-                const response = postUserPreference(action.payload);
-                dispatch(addUserPreferenceSuccess(response.body));
-            } catch (error) {
-                dispatch(addUserPreferenceFailure(error.message));
-            }
-            break;
-
-        case LIST_USERPREFERENCE_REQUEST:
-            try {
-                const response = getUserPreferenceList({});
-                dispatch(listUserPreferenceSuccess(response.body));
-            } catch (error) {
-                dispatch(listUserPreferenceFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_USERPREFERENCE_REQUEST:
-            try {
-                const response = getUserPreference(action.id);
-                dispatch(fetchUserPreferenceSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchUserPreferenceFailure(error.message));
-            }
-            break;
-
-        case UPDATE_USERPREFERENCE_REQUEST:
-            try {
-                const { id, UserPreference } = action.payload;
-                const response = updateUserPreference(id);
-                dispatch(updateUserPreferenceSuccess(response.body));
-            } catch (error) {
-                dispatch(updateUserPreferenceFailure(error.message));
-            }
-            break;
-
-        case DELETE_USERPREFERENCE_REQUEST:
-            try {
-                const { id, UserPreference } = action.payload;
-                const response = deleteUserPreference(id);
-                dispatch(deleteUserPreferenceSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteUserPreferenceFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

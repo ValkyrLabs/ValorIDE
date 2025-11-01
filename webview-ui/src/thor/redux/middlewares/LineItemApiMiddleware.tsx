@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getLineItem, 
-    postLineItem,
-    getLineItemList , 
-    deleteLineItem , 
-    updateLineItem 
-} from '@thor/api/LineItemApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: LineItem
 */
 
+
+
 export const LineItemMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("LineItem MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_LINEITEM_REQUEST:
-            try {
-                const response = postLineItem(action.payload);
-                dispatch(addLineItemSuccess(response.body));
-            } catch (error) {
-                dispatch(addLineItemFailure(error.message));
-            }
-            break;
-
-        case LIST_LINEITEM_REQUEST:
-            try {
-                const response = getLineItemList({});
-                dispatch(listLineItemSuccess(response.body));
-            } catch (error) {
-                dispatch(listLineItemFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_LINEITEM_REQUEST:
-            try {
-                const response = getLineItem(action.id);
-                dispatch(fetchLineItemSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchLineItemFailure(error.message));
-            }
-            break;
-
-        case UPDATE_LINEITEM_REQUEST:
-            try {
-                const { id, LineItem } = action.payload;
-                const response = updateLineItem(id);
-                dispatch(updateLineItemSuccess(response.body));
-            } catch (error) {
-                dispatch(updateLineItemFailure(error.message));
-            }
-            break;
-
-        case DELETE_LINEITEM_REQUEST:
-            try {
-                const { id, LineItem } = action.payload;
-                const response = deleteLineItem(id);
-                dispatch(deleteLineItemSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteLineItemFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

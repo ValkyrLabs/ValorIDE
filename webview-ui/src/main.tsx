@@ -1,3 +1,4 @@
+import type { JSXElementConstructor } from "react";
 import ReactDOM from "react-dom/client";
 import { MemoryRouter } from "react-router-dom";
 
@@ -14,21 +15,22 @@ import "./App.css";
 import "./index.css";
 
 
+import type { ProviderProps } from "react-redux";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 
-
+const ReduxProvider = Provider as unknown as JSXElementConstructor<ProviderProps>;
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
 );
 
 root.render(
-  <Provider store={store}>
+  <ReduxProvider store={store}>
     <MemoryRouter>
       <App />
     </MemoryRouter>
-  </Provider>,
+  </ReduxProvider>,
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getOpportunity, 
-    postOpportunity,
-    getOpportunityList , 
-    deleteOpportunity , 
-    updateOpportunity 
-} from '@thor/api/OpportunityApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Opportunity
 */
 
+
+
 export const OpportunityMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("Opportunity MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_OPPORTUNITY_REQUEST:
-            try {
-                const response = postOpportunity(action.payload);
-                dispatch(addOpportunitySuccess(response.body));
-            } catch (error) {
-                dispatch(addOpportunityFailure(error.message));
-            }
-            break;
-
-        case LIST_OPPORTUNITY_REQUEST:
-            try {
-                const response = getOpportunityList({});
-                dispatch(listOpportunitySuccess(response.body));
-            } catch (error) {
-                dispatch(listOpportunityFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_OPPORTUNITY_REQUEST:
-            try {
-                const response = getOpportunity(action.id);
-                dispatch(fetchOpportunitySuccess(response.body));
-            } catch (error) {
-                dispatch(fetchOpportunityFailure(error.message));
-            }
-            break;
-
-        case UPDATE_OPPORTUNITY_REQUEST:
-            try {
-                const { id, Opportunity } = action.payload;
-                const response = updateOpportunity(id);
-                dispatch(updateOpportunitySuccess(response.body));
-            } catch (error) {
-                dispatch(updateOpportunityFailure(error.message));
-            }
-            break;
-
-        case DELETE_OPPORTUNITY_REQUEST:
-            try {
-                const { id, Opportunity } = action.payload;
-                const response = deleteOpportunity(id);
-                dispatch(deleteOpportunitySuccess(response.body));
-            } catch (error) {
-                dispatch(deleteOpportunityFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

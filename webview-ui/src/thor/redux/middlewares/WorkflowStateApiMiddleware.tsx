@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getWorkflowState, 
-    postWorkflowState,
-    getWorkflowStateList , 
-    deleteWorkflowState , 
-    updateWorkflowState 
-} from '@thor/api/WorkflowStateApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: WorkflowState
 */
 
+
+
 export const WorkflowStateMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("WorkflowState MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_WORKFLOWSTATE_REQUEST:
-            try {
-                const response = postWorkflowState(action.payload);
-                dispatch(addWorkflowStateSuccess(response.body));
-            } catch (error) {
-                dispatch(addWorkflowStateFailure(error.message));
-            }
-            break;
-
-        case LIST_WORKFLOWSTATE_REQUEST:
-            try {
-                const response = getWorkflowStateList({});
-                dispatch(listWorkflowStateSuccess(response.body));
-            } catch (error) {
-                dispatch(listWorkflowStateFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_WORKFLOWSTATE_REQUEST:
-            try {
-                const response = getWorkflowState(action.id);
-                dispatch(fetchWorkflowStateSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchWorkflowStateFailure(error.message));
-            }
-            break;
-
-        case UPDATE_WORKFLOWSTATE_REQUEST:
-            try {
-                const { id, WorkflowState } = action.payload;
-                const response = updateWorkflowState(id);
-                dispatch(updateWorkflowStateSuccess(response.body));
-            } catch (error) {
-                dispatch(updateWorkflowStateFailure(error.message));
-            }
-            break;
-
-        case DELETE_WORKFLOWSTATE_REQUEST:
-            try {
-                const { id, WorkflowState } = action.payload;
-                const response = deleteWorkflowState(id);
-                dispatch(deleteWorkflowStateSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteWorkflowStateFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

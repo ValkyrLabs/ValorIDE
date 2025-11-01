@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getMcpDownloadResponse, 
-    postMcpDownloadResponse,
-    getMcpDownloadResponseList , 
-    deleteMcpDownloadResponse , 
-    updateMcpDownloadResponse 
-} from '@thor/api/McpDownloadResponseApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpDownloadResponse
 */
 
+
+
 export const McpDownloadResponseMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("McpDownloadResponse MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_MCPDOWNLOADRESPONSE_REQUEST:
-            try {
-                const response = postMcpDownloadResponse(action.payload);
-                dispatch(addMcpDownloadResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(addMcpDownloadResponseFailure(error.message));
-            }
-            break;
-
-        case LIST_MCPDOWNLOADRESPONSE_REQUEST:
-            try {
-                const response = getMcpDownloadResponseList({});
-                dispatch(listMcpDownloadResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(listMcpDownloadResponseFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_MCPDOWNLOADRESPONSE_REQUEST:
-            try {
-                const response = getMcpDownloadResponse(action.id);
-                dispatch(fetchMcpDownloadResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchMcpDownloadResponseFailure(error.message));
-            }
-            break;
-
-        case UPDATE_MCPDOWNLOADRESPONSE_REQUEST:
-            try {
-                const { id, McpDownloadResponse } = action.payload;
-                const response = updateMcpDownloadResponse(id);
-                dispatch(updateMcpDownloadResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(updateMcpDownloadResponseFailure(error.message));
-            }
-            break;
-
-        case DELETE_MCPDOWNLOADRESPONSE_REQUEST:
-            try {
-                const { id, McpDownloadResponse } = action.payload;
-                const response = deleteMcpDownloadResponse(id);
-                dispatch(deleteMcpDownloadResponseSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteMcpDownloadResponseFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

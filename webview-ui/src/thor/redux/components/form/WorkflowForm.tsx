@@ -33,7 +33,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -58,6 +58,7 @@ const StatusValidation = () => {
   return [
     'running',
     'stopped',
+    'paused',
     'ready',
     'warning',
     'error',
@@ -800,6 +801,7 @@ const StatusLookup = () => {
     <>
       <option value='running' label="Running" />
       <option value='stopped' label="Stopped" />
+      <option value='paused' label="Paused" />
       <option value='ready' label="Ready" />
       <option value='warning' label="Warning" />
       <option value='error' label="Error" />

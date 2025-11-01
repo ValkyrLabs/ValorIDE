@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getFormat, 
-    postFormat,
-    getFormatList , 
-    deleteFormat , 
-    updateFormat 
-} from '@thor/api/FormatApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Format
 */
 
+
+
 export const FormatMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("Format MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_FORMAT_REQUEST:
-            try {
-                const response = postFormat(action.payload);
-                dispatch(addFormatSuccess(response.body));
-            } catch (error) {
-                dispatch(addFormatFailure(error.message));
-            }
-            break;
-
-        case LIST_FORMAT_REQUEST:
-            try {
-                const response = getFormatList({});
-                dispatch(listFormatSuccess(response.body));
-            } catch (error) {
-                dispatch(listFormatFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_FORMAT_REQUEST:
-            try {
-                const response = getFormat(action.id);
-                dispatch(fetchFormatSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchFormatFailure(error.message));
-            }
-            break;
-
-        case UPDATE_FORMAT_REQUEST:
-            try {
-                const { id, Format } = action.payload;
-                const response = updateFormat(id);
-                dispatch(updateFormatSuccess(response.body));
-            } catch (error) {
-                dispatch(updateFormatFailure(error.message));
-            }
-            break;
-
-        case DELETE_FORMAT_REQUEST:
-            try {
-                const { id, Format } = action.payload;
-                const response = deleteFormat(id);
-                dispatch(deleteFormatSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteFormatFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

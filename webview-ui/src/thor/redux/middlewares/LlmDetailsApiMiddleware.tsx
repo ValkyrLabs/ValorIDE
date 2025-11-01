@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getLlmDetails, 
-    postLlmDetails,
-    getLlmDetailsList , 
-    deleteLlmDetails , 
-    updateLlmDetails 
-} from '@thor/api/LlmDetailsApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: LlmDetails
 */
 
+
+
 export const LlmDetailsMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("LlmDetails MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_LLMDETAILS_REQUEST:
-            try {
-                const response = postLlmDetails(action.payload);
-                dispatch(addLlmDetailsSuccess(response.body));
-            } catch (error) {
-                dispatch(addLlmDetailsFailure(error.message));
-            }
-            break;
-
-        case LIST_LLMDETAILS_REQUEST:
-            try {
-                const response = getLlmDetailsList({});
-                dispatch(listLlmDetailsSuccess(response.body));
-            } catch (error) {
-                dispatch(listLlmDetailsFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_LLMDETAILS_REQUEST:
-            try {
-                const response = getLlmDetails(action.id);
-                dispatch(fetchLlmDetailsSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchLlmDetailsFailure(error.message));
-            }
-            break;
-
-        case UPDATE_LLMDETAILS_REQUEST:
-            try {
-                const { id, LlmDetails } = action.payload;
-                const response = updateLlmDetails(id);
-                dispatch(updateLlmDetailsSuccess(response.body));
-            } catch (error) {
-                dispatch(updateLlmDetailsFailure(error.message));
-            }
-            break;
-
-        case DELETE_LLMDETAILS_REQUEST:
-            try {
-                const { id, LlmDetails } = action.payload;
-                const response = deleteLlmDetails(id);
-                dispatch(deleteLlmDetailsSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteLlmDetailsFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

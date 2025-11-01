@@ -31,7 +31,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -53,6 +53,7 @@ const asNumber = (schema: Yup.NumberSchema) =>
   schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
 
 const validationSchema = Yup.object().shape({
+        customerId: Yup.string().required("customerId is required."),
         spentAt: Yup.date()
           .transform((value, originalValue) => {
             if (!originalValue) {
@@ -65,6 +66,7 @@ const validationSchema = Yup.object().shape({
         model: Yup.string().required("model is required."),
         promptTokens: asNumber(Yup.number().integer().typeError("promptTokens must be a number")).required("promptTokens is required."),
         completionTokens: asNumber(Yup.number().integer().typeError("completionTokens must be a number")).required("completionTokens is required."),
+        idempotencyKey: Yup.string(),
         id: Yup.string(),
         ownerId: Yup.string(),
         createdDate: Yup.date()
@@ -121,11 +123,13 @@ const UsageTransactionForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<UsageTransaction> = {
+          customerId: '',
           spentAt: new Date(),
           modelProvider: '',
           model: '',
           promptTokens: 0,
           completionTokens: 0,
+          idempotencyKey: '',
           id: '',
           ownerId: '',
           createdDate: new Date(),
@@ -202,6 +206,39 @@ const UsageTransactionForm: React.FC = () => {
                   <FaRegPlusSquare size={28} /> &nbsp; Add New UsageTransaction
                 </Accordion.Header>
                 <Accordion.Body>
+                    <label htmlFor="customerId" className="nice-form-control">
+                      <b>
+                        Customer Id:
+                        {touched.customerId &&
+                         !errors.customerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="customerId"
+                            value={values?.customerId}
+                            placeholder="Customer Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="customerId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="spentAt" className="nice-form-control">
                       <b>
                         Spent At:
@@ -414,6 +451,39 @@ const UsageTransactionForm: React.FC = () => {
                       <ErrorMessage
                         className="error"
                         name="completionTokens"
+                        component="span"
+                      />
+                    </label>
+                    <br />
+                    <label htmlFor="idempotencyKey" className="nice-form-control">
+                      <b>
+                        Idempotency Key:
+                        {touched.idempotencyKey &&
+                         !errors.idempotencyKey && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="idempotencyKey"
+                            value={values?.idempotencyKey}
+                            placeholder="Idempotency Key"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="idempotencyKey"
                         component="span"
                       />
                     </label>

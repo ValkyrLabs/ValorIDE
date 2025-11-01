@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getOasRequired, 
-    postOasRequired,
-    getOasRequiredList , 
-    deleteOasRequired , 
-    updateOasRequired 
-} from '@thor/api/OasRequiredApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: OasRequired
 */
 
+
+
 export const OasRequiredMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("OasRequired MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_OASREQUIRED_REQUEST:
-            try {
-                const response = postOasRequired(action.payload);
-                dispatch(addOasRequiredSuccess(response.body));
-            } catch (error) {
-                dispatch(addOasRequiredFailure(error.message));
-            }
-            break;
-
-        case LIST_OASREQUIRED_REQUEST:
-            try {
-                const response = getOasRequiredList({});
-                dispatch(listOasRequiredSuccess(response.body));
-            } catch (error) {
-                dispatch(listOasRequiredFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_OASREQUIRED_REQUEST:
-            try {
-                const response = getOasRequired(action.id);
-                dispatch(fetchOasRequiredSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchOasRequiredFailure(error.message));
-            }
-            break;
-
-        case UPDATE_OASREQUIRED_REQUEST:
-            try {
-                const { id, OasRequired } = action.payload;
-                const response = updateOasRequired(id);
-                dispatch(updateOasRequiredSuccess(response.body));
-            } catch (error) {
-                dispatch(updateOasRequiredFailure(error.message));
-            }
-            break;
-
-        case DELETE_OASREQUIRED_REQUEST:
-            try {
-                const { id, OasRequired } = action.payload;
-                const response = deleteOasRequired(id);
-                dispatch(deleteOasRequiredSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteOasRequiredFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

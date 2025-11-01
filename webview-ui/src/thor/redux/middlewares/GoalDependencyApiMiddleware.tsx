@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getGoalDependency, 
-    postGoalDependency,
-    getGoalDependencyList , 
-    deleteGoalDependency , 
-    updateGoalDependency 
-} from '@thor/api/GoalDependencyApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: GoalDependency
 */
 
+
+
 export const GoalDependencyMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("GoalDependency MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_GOALDEPENDENCY_REQUEST:
-            try {
-                const response = postGoalDependency(action.payload);
-                dispatch(addGoalDependencySuccess(response.body));
-            } catch (error) {
-                dispatch(addGoalDependencyFailure(error.message));
-            }
-            break;
-
-        case LIST_GOALDEPENDENCY_REQUEST:
-            try {
-                const response = getGoalDependencyList({});
-                dispatch(listGoalDependencySuccess(response.body));
-            } catch (error) {
-                dispatch(listGoalDependencyFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_GOALDEPENDENCY_REQUEST:
-            try {
-                const response = getGoalDependency(action.id);
-                dispatch(fetchGoalDependencySuccess(response.body));
-            } catch (error) {
-                dispatch(fetchGoalDependencyFailure(error.message));
-            }
-            break;
-
-        case UPDATE_GOALDEPENDENCY_REQUEST:
-            try {
-                const { id, GoalDependency } = action.payload;
-                const response = updateGoalDependency(id);
-                dispatch(updateGoalDependencySuccess(response.body));
-            } catch (error) {
-                dispatch(updateGoalDependencyFailure(error.message));
-            }
-            break;
-
-        case DELETE_GOALDEPENDENCY_REQUEST:
-            try {
-                const { id, GoalDependency } = action.payload;
-                const response = deleteGoalDependency(id);
-                dispatch(deleteGoalDependencySuccess(response.body));
-            } catch (error) {
-                dispatch(deleteGoalDependencyFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

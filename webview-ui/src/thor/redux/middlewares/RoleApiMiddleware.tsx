@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getRole, 
-    postRole,
-    getRoleList , 
-    deleteRole , 
-    updateRole 
-} from '@thor/api/RoleApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Role
 */
 
+
+
 export const RoleMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("Role MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_ROLE_REQUEST:
-            try {
-                const response = postRole(action.payload);
-                dispatch(addRoleSuccess(response.body));
-            } catch (error) {
-                dispatch(addRoleFailure(error.message));
-            }
-            break;
-
-        case LIST_ROLE_REQUEST:
-            try {
-                const response = getRoleList({});
-                dispatch(listRoleSuccess(response.body));
-            } catch (error) {
-                dispatch(listRoleFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_ROLE_REQUEST:
-            try {
-                const response = getRole(action.id);
-                dispatch(fetchRoleSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchRoleFailure(error.message));
-            }
-            break;
-
-        case UPDATE_ROLE_REQUEST:
-            try {
-                const { id, Role } = action.payload;
-                const response = updateRole(id);
-                dispatch(updateRoleSuccess(response.body));
-            } catch (error) {
-                dispatch(updateRoleFailure(error.message));
-            }
-            break;
-
-        case DELETE_ROLE_REQUEST:
-            try {
-                const { id, Role } = action.payload;
-                const response = deleteRole(id);
-                dispatch(deleteRoleSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteRoleFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

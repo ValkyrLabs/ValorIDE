@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getMcpContent, 
-    postMcpContent,
-    getMcpContentList , 
-    deleteMcpContent , 
-    updateMcpContent 
-} from '@thor/api/McpContentApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpContent
 */
 
+
+
 export const McpContentMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("McpContent MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_MCPCONTENT_REQUEST:
-            try {
-                const response = postMcpContent(action.payload);
-                dispatch(addMcpContentSuccess(response.body));
-            } catch (error) {
-                dispatch(addMcpContentFailure(error.message));
-            }
-            break;
-
-        case LIST_MCPCONTENT_REQUEST:
-            try {
-                const response = getMcpContentList({});
-                dispatch(listMcpContentSuccess(response.body));
-            } catch (error) {
-                dispatch(listMcpContentFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_MCPCONTENT_REQUEST:
-            try {
-                const response = getMcpContent(action.id);
-                dispatch(fetchMcpContentSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchMcpContentFailure(error.message));
-            }
-            break;
-
-        case UPDATE_MCPCONTENT_REQUEST:
-            try {
-                const { id, McpContent } = action.payload;
-                const response = updateMcpContent(id);
-                dispatch(updateMcpContentSuccess(response.body));
-            } catch (error) {
-                dispatch(updateMcpContentFailure(error.message));
-            }
-            break;
-
-        case DELETE_MCPCONTENT_REQUEST:
-            try {
-                const { id, McpContent } = action.payload;
-                const response = deleteMcpContent(id);
-                dispatch(deleteMcpContentSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteMcpContentFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

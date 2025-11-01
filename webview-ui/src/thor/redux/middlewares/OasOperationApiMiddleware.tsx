@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getOasOperation, 
-    postOasOperation,
-    getOasOperationList , 
-    deleteOasOperation , 
-    updateOasOperation 
-} from '@thor/api/OasOperationApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: OasOperation
 */
 
+
+
 export const OasOperationMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("OasOperation MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_OASOPERATION_REQUEST:
-            try {
-                const response = postOasOperation(action.payload);
-                dispatch(addOasOperationSuccess(response.body));
-            } catch (error) {
-                dispatch(addOasOperationFailure(error.message));
-            }
-            break;
-
-        case LIST_OASOPERATION_REQUEST:
-            try {
-                const response = getOasOperationList({});
-                dispatch(listOasOperationSuccess(response.body));
-            } catch (error) {
-                dispatch(listOasOperationFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_OASOPERATION_REQUEST:
-            try {
-                const response = getOasOperation(action.id);
-                dispatch(fetchOasOperationSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchOasOperationFailure(error.message));
-            }
-            break;
-
-        case UPDATE_OASOPERATION_REQUEST:
-            try {
-                const { id, OasOperation } = action.payload;
-                const response = updateOasOperation(id);
-                dispatch(updateOasOperationSuccess(response.body));
-            } catch (error) {
-                dispatch(updateOasOperationFailure(error.message));
-            }
-            break;
-
-        case DELETE_OASOPERATION_REQUEST:
-            try {
-                const { id, OasOperation } = action.payload;
-                const response = deleteOasOperation(id);
-                dispatch(deleteOasOperationSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteOasOperationFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }

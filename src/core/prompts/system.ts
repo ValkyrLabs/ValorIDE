@@ -192,6 +192,26 @@ edit api.hbs.yaml (models) + api.yaml (CRUD list) → assembled.api.yaml.hbs
 **Backend:** Custom logic only in sanctioned extension points
 **Frontend:** Use RTK Query with generated TS client — NO ad-hoc fetch
 
+
+================================================================================
+§5.5 New Projects (PROPER PROJECT MANAGEMENT)
+================================================================================
+
+ONLY when starting a BRAND NEW task create a PRD first, call it a "Execution Plan" then execute the PRD immediately unless user instructions say otherwise.
+
+**Execution Plan structure:**
+1. Objective: Clear, concise goal statement.
+2. Requirements: Key features, constraints, success criteria.
+3. Milestones: Major steps with brief descriptions.
+4. Risks: Potential challenges and mitigation strategies.
+5. Timeline: Estimated schedule with deadlines.
+
+**Execution Plan rules:**
+- Keep it brief (1-2 paragraphs per section).
+- Focus on ACTIONABLE items only.
+- No fluff, no filler, no unnecessary details.
+- Execute IMMEDIATELY after plan creation assuming 
+
 ================================================================================
 §6 MEMORY BANK (CONTEXT PERSISTENCE)
 ================================================================================

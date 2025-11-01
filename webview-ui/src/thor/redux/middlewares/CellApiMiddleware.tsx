@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-03T07:35:49.309640-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,13 +14,9 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-import { 
-    getCell, 
-    postCell,
-    getCellList , 
-    deleteCell , 
-    updateCell 
-} from '@thor/api/CellApi';
+
+
+
 
 import {
 
@@ -63,60 +59,13 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Cell
 */
 
+
+
 export const CellMiddleware = ({ dispatch }) => (next) => async (action) => {
     console.log("Cell MIDDLEWARE: " + JSON.stringify(action) )
     next(action);
 
     switch (action.type) {
-
-        case ADD_CELL_REQUEST:
-            try {
-                const response = postCell(action.payload);
-                dispatch(addCellSuccess(response.body));
-            } catch (error) {
-                dispatch(addCellFailure(error.message));
-            }
-            break;
-
-        case LIST_CELL_REQUEST:
-            try {
-                const response = getCellList({});
-                dispatch(listCellSuccess(response.body));
-            } catch (error) {
-                dispatch(listCellFailure(error.message));
-            }
-            break;
-
-
-        case FETCH_CELL_REQUEST:
-            try {
-                const response = getCell(action.id);
-                dispatch(fetchCellSuccess(response.body));
-            } catch (error) {
-                dispatch(fetchCellFailure(error.message));
-            }
-            break;
-
-        case UPDATE_CELL_REQUEST:
-            try {
-                const { id, Cell } = action.payload;
-                const response = updateCell(id);
-                dispatch(updateCellSuccess(response.body));
-            } catch (error) {
-                dispatch(updateCellFailure(error.message));
-            }
-            break;
-
-        case DELETE_CELL_REQUEST:
-            try {
-                const { id, Cell } = action.payload;
-                const response = deleteCell(id);
-                dispatch(deleteCellSuccess(response.body));
-            } catch (error) {
-                dispatch(deleteCellFailure(error.message));
-            }
-            break;
-
         default:
             break;
     }
