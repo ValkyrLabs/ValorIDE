@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.530",
+  "version": "3.20.544",
   "icon": "assets/icons/icon.png",
   "pricing": "Free",
   "galleryBanner": {

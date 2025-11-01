@@ -24,6 +24,7 @@ import { UsageTrackingHandler } from "./components/usage-tracking/UsageTrackingH
 import { ContentDataHandler } from "./components/content-data/ContentDataHandler";
 import StartupDebit from "./components/usage-tracking/StartupDebit";
 import useValorIDEMothership from "./hooks/useValorIDEMothership";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 import { vscode } from "./utils/vscode";
 import McpView from "./components/mcp/configuration/McpConfigurationView";
@@ -236,7 +237,19 @@ const AppContent = () => {
   }, []);
 
   if (!didHydrateState) {
-    return null;
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+          width: "100%",
+        }}
+      >
+        <LoadingSpinner label="Loading ValorIDE…" size={72} />
+      </div>
+    );
   }
 
   const isMainViewHidden =

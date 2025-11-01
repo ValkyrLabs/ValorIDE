@@ -13,6 +13,7 @@ initThemes();
 import "./themes/valkyr/bootstrap.css"
 import "./App.css";
 import "./index.css";
+import "antd/dist/reset.css";
 
 
 import type { ProviderProps } from "react-redux";

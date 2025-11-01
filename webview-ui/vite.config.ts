@@ -49,6 +49,8 @@ export default defineConfig({
       "@thor": resolve(__dirname, "./src/thor"),
       "@valkyr/component-library": resolve(__dirname, "./src/components"),
     },
+    // Ensure all dependencies share the same React singleton (fixes hooks issues)
+    dedupe: ["react", "react-dom", "react-dom/client", "react/jsx-runtime"],
     extensions: [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".json"],
   },
 });

@@ -113,7 +113,15 @@ export const ExtensionStateContextProvider: React.FC<{
     globalValorIDERulesToggles: {},
     localValorIDERulesToggles: {},
   });
-  const [didHydrateState, setDidHydrateState] = useState(false);
+  const [didHydrateState, setDidHydrateState] = useState(() => {
+    if (typeof window === "undefined") {
+      return false;
+    }
+    const maybeVsCodeWindow = window as typeof window & {
+      acquireVsCodeApi?: unknown;
+    };
+    return typeof maybeVsCodeWindow.acquireVsCodeApi !== "function";
+  });
   const [showWelcome, setShowWelcome] = useState(false);
   const [theme, setTheme] = useState<Record<string, string>>();
   const [filePaths, setFilePaths] = useState<string[]>([]);
@@ -163,7 +171,14 @@ export const ExtensionStateContextProvider: React.FC<{
 
     switch (message.type) {
       case "state": {
-        const incoming = message.state!;
+        const incoming = message.state;
+        if (!incoming) {
+          console.warn(
+            "ExtensionStateContext: received state message without payload",
+          );
+          setDidHydrateState(true);
+          break;
+        }
 
         // 1) Update auth-related local state + sessionStorage OUTSIDE of the setState updater
         try {
@@ -215,31 +230,31 @@ export const ExtensionStateContextProvider: React.FC<{
               : prevState.autoApprovalSettings,
           };
         });
-        const config = message.state?.apiConfiguration;
+        const config = incoming.apiConfiguration;
         const hasKey = config
           ? [
-              config.apiKey,
-              config.openRouterApiKey,
-              config.awsRegion,
-              config.vertexProjectId,
-              config.openAiApiKey,
-              config.ollamaModelId,
-              config.lmStudioModelId,
-              config.liteLlmApiKey,
-              config.geminiApiKey,
-              config.openAiNativeApiKey,
-              config.deepSeekApiKey,
-              config.requestyApiKey,
-              config.togetherApiKey,
-              config.qwenApiKey,
-              config.doubaoApiKey,
-              config.mistralApiKey,
-              config.vsCodeLmModelSelector,
-              config.valorideApiKey,
-              config.asksageApiKey,
-              config.xaiApiKey,
-              config.sambanovaApiKey,
-            ].some((key) => key !== undefined)
+            config.apiKey,
+            config.openRouterApiKey,
+            config.awsRegion,
+            config.vertexProjectId,
+            config.openAiApiKey,
+            config.ollamaModelId,
+            config.lmStudioModelId,
+            config.liteLlmApiKey,
+            config.geminiApiKey,
+            config.openAiNativeApiKey,
+            config.deepSeekApiKey,
+            config.requestyApiKey,
+            config.togetherApiKey,
+            config.qwenApiKey,
+            config.doubaoApiKey,
+            config.mistralApiKey,
+            config.vsCodeLmModelSelector,
+            config.valorideApiKey,
+            config.asksageApiKey,
+            config.xaiApiKey,
+            config.sambanovaApiKey,
+          ].some((key) => key !== undefined)
           : false;
         setShowWelcome(!hasKey);
         setDidHydrateState(true);
@@ -407,6 +422,22 @@ export const ExtensionStateContextProvider: React.FC<{
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (didHydrateState) {
+      return null;
+    }
+    if (typeof window === "undefined") {
+      return null;
+    }
+    const timeoutId = window.setTimeout(() => {
+      console.warn(
+        "ExtensionStateContext: timed out waiting for extension state, continuing with local defaults",
+      );
+      setDidHydrateState(true);
+    }, 4000);
+    return () => window.clearTimeout(timeoutId);
+  }, [didHydrateState]);
 
   const refetchMcpData = useCallback(() => {
     setMcpServersLoading(true);

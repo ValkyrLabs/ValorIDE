@@ -618,7 +618,7 @@ export const ChatRowContent = ({
             />
           ),
           <span style={{ color: normalColor, fontWeight: "bold" }}>
-            ValorIDE wants to execute this command:
+            ValorIDE executing command:
           </span>,
         ];
       case "use_mcp_server":
@@ -643,7 +643,7 @@ export const ChatRowContent = ({
               wordBreak: "break-word",
             }}
           >
-            ValorIDE wants to{" "}
+            ValorIDE executing{" "}
             {mcpServerUse.type === "use_mcp_tool"
               ? "use a tool"
               : "access a resource"}{" "}
@@ -828,7 +828,7 @@ export const ChatRowContent = ({
                   "This file is outside of your workspace",
                 )}
               <span style={{ fontWeight: "bold" }}>
-                ValorIDE wants to edit this file:
+                ValorIDE editing:
               </span>
             </div>
             <CodeAccordian
@@ -853,7 +853,7 @@ export const ChatRowContent = ({
                   "This file is outside of your workspace",
                 )}
               <span style={{ fontWeight: "bold" }}>
-                ValorIDE wants to create a new file:
+                ValorIDE creating a new file:
               </span>
             </div>
             <CodeAccordian
@@ -954,8 +954,7 @@ export const ChatRowContent = ({
                   "This file is outside of your workspace",
                 )}
               <span style={{ fontWeight: "bold" }}>
-                {/* {message.type === "ask" ? "" : "ValorIDE read this file:"} */}
-                ValorIDE wants to read this file:
+                ValorIDE reading this file:
               </span>
             </div>
             <div
@@ -1101,7 +1100,7 @@ export const ChatRowContent = ({
                   "This is outside of your workspace",
                 )}
               <span style={{ fontWeight: "bold" }}>
-                ValorIDE wants to search this directory for{" "}
+                ValorIDE searching this directory for{" "}
                 <code>{tool.regex}</code>:
               </span>
             </div>
@@ -1889,7 +1888,7 @@ export const ChatRowContent = ({
               <div style={headerStyle}>
                 <FaFileUpload />
                 <span style={{ color: normalColor, fontWeight: "bold" }}>
-                  ValorIDE wants to start a new task:
+                  ValorIDE starting a new task:
                 </span>
               </div>
               <NewTaskPreview context={message.text || ""} />
@@ -1901,7 +1900,7 @@ export const ChatRowContent = ({
               <div style={headerStyle}>
                 <FaFileUpload />
                 <span style={{ color: normalColor, fontWeight: "bold" }}>
-                  ValorIDE wants to condense your conversation:
+                  ValorIDE condensing your conversation:
                 </span>
               </div>
               <NewTaskPreview context={message.text || ""} />

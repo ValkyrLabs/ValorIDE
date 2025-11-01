@@ -249,6 +249,7 @@ const Form: React.FC<FormProps> = ({
                 <Row>
                   <Col>
                     <CoolButton
+                      customStyle={{ width: "100%" }}
                       variant={
                         touched && isValid
                           ? isSubmitting
@@ -258,7 +259,7 @@ const Form: React.FC<FormProps> = ({
                       }
                       // disabled={!(touched && isValid && (loginUserResult.status == 'uninitialized'))}
                       type="submit"
-                      onClick={() => {}}
+                      onClick={() => { }}
                     >
                       {isSubmitting && (
                         <Spinner
