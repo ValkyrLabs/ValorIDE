@@ -285,22 +285,19 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
               )}
             </div>
           </div>
-          {/* Copy button when collapsed */}
-          {!isTaskExpanded && (
-            <VSCodeButton
-              appearance="icon"
-              title={copied ? "Copied" : "Copy task text"}
-              onClick={async (e) => {
-                e.stopPropagation();
-                try {
-                  await navigator.clipboard.writeText(task.text || "");
-                  setCopied(true);
-                  setCopyToastVisible(true);
-                  setTimeout(() => {
-                    setCopied(false);
-                    setCopyToastVisible(false);
-                  }, 1200);
-                } catch { }
+          {!isTaskExpanded && isCostAvailable && (
+            <div
+              style={{
+                marginLeft: 10,
+                backgroundColor:
+                  "var(--vscode-textCodeBlock-foreground)",
+                padding: "2px 4px",
+                borderRadius: "500px",
+                fontSize: "16px",
+                fontWeight: 800,
+                display: "inline-block",
+                flexShrink: 0,
+                color: "var(--vscode-foreground)",
               }}
               style={{ marginLeft: 6, flexShrink: 0 }}
             >

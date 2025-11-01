@@ -1621,7 +1621,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
               }}
             >
               <button
-                style={{ cursor: "pointer", padding: "3px", width: "28px", height: "28px", backgroundColor: "darkblue", borderRadius: "14px" }}
+                style={{ cursor: "pointer", padding: "4px", width: "30px", height: "28px", backgroundColor: "var(--vscode-textCodeBlock-background)", borderRadius: "15px" }}
                 data-testid="send-button"
                 disabled={textAreaDisabled}
                 onClick={() => {
