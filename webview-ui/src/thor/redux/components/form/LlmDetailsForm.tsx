@@ -4,15 +4,17 @@ import {
   Form as BSForm,
   Accordion,
   Col,
-  Nav,
   Row,
   Spinner
 } from 'react-bootstrap';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
-import CoolButton from '../../../../components/CoolButton';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
 import * as Yup from 'yup';
-import PermissionDialog from '../../../../components/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
 
 
 import {
@@ -20,7 +22,7 @@ import {
   LlmDetailsProviderEnum,
   LlmDetailsApiTypeEnum,
   LlmDetailsRoleEnum,
-} from '../../../model';
+} from '@thor/model';
 
 import { useAddLlmDetailsMutation } from '../../services/LlmDetailsService';
 
@@ -32,7 +34,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -75,153 +77,68 @@ const RoleValidation = () => {
 };
 
 /* -----------------------------------------------------
-   YUP VALIDATION SCHEMA
-   (Skip read-only fields and container types)
+   YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
+const asNumber = (schema: Yup.NumberSchema) =>
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+
 const validationSchema = Yup.object().shape({
-    
-        name: Yup.string()
-          
-          .required("name is required.")
-          ,
-    
+        name: Yup.string().required("name is required."),
       provider: Yup.mixed()
         .oneOf(ProviderValidation(), "Invalid value for provider")
-        .required("provider is required.")
-        ,
-    
+        .required("provider is required."),
       apiType: Yup.mixed()
         .oneOf(ApiTypeValidation(), "Invalid value for apiType")
-        .required("apiType is required.")
-        ,
-    
-        version: Yup.string()
-          
-          
-          ,
-    
-        notes: Yup.string()
-          
-          
-          ,
-    
+        .required("apiType is required."),
+        version: Yup.string(),
+        notes: Yup.string(),
       role: Yup.mixed()
         .oneOf(RoleValidation(), "Invalid value for role")
-        
-        .notRequired(),
-    
-        initialPrompt: Yup.string()
-          
-          
-          ,
-    
-        apiKey: Yup.string()
-          
-          
-          ,
-    
-        credential: Yup.string()
-          
-          
-          ,
-    
-        credentialPassword: Yup.string()
-          
-          
-          ,
-    
-        temperature: Yup.number()
-          
-          
-          ,
-    
-        contextWindow: Yup.number()
-          
-          
-          ,
-    
-        maxTokens: Yup.number()
-          
-          
-          ,
-    
-        supportsImages: Yup.boolean()
-          
-          .notRequired(),
-    
-        supportsPromptCache: Yup.boolean()
-          
-          .notRequired(),
-    
-        inputPrice: Yup.number()
-          
-          
-          ,
-    
-        outputPrice: Yup.number()
-          
-          
-          ,
-    
-        description: Yup.string()
-          
-          
-          ,
-    
-        url: Yup.string()
-          
-          
-          ,
-    
-        requestParameters: Yup.string()
-          
-          
-          ,
-    
-        meta: Yup.string()
-          
-          
-          ,
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
+        ,
+        initialPrompt: Yup.string(),
+        apiKey: Yup.string(),
+        credential: Yup.string(),
+        credentialPassword: Yup.string(),
+        temperature: asNumber(Yup.number().typeError("temperature must be a number")),
+        contextWindow: asNumber(Yup.number().integer().typeError("contextWindow must be a number")),
+        maxTokens: asNumber(Yup.number().integer().typeError("maxTokens must be a number")),
+        supportsImages: Yup.boolean(),
+        supportsPromptCache: Yup.boolean(),
+        inputPrice: asNumber(Yup.number().typeError("inputPrice must be a number")),
+        outputPrice: asNumber(Yup.number().typeError("outputPrice must be a number")),
+        description: Yup.string(),
+        url: Yup.string(),
+        requestParameters: Yup.string(),
+        metaData: Yup.string(),
+        id: Yup.string(),
+        ownerId: Yup.string(),
         createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
+        keyHash: Yup.string(),
+        lastAccessedById: Yup.string(),
         lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
+        lastModifiedById: Yup.string(),
         lastModifiedDate: Yup.date()
-          
-          
-          ,
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -229,244 +146,55 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const LlmDetailsForm: React.FC = () => {
   const [addLlmDetails, addLlmDetailsResult] = useAddLlmDetailsMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user', // This should come from authentication context
+    username: 'current_user',
     permissions: {
-      isOwner: true, // This should be determined by checking object ownership
-      isAdmin: true, // This should come from user roles
+      isOwner: true,
+      isAdmin: true,
       canGrantPermissions: true,
       permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
-  /* INITIAL VALUES - skip read-only fields */
+  /* -----------------------------------------------------
+     INITIAL VALUES - only NON read-only fields
+  -------------------------------------------------------- */
   const initialValues: Partial<LlmDetails> = {
-          
-
-            name: 'gpt-4o-mini',
-
-
-
-
-
-          
-          provider:
-            LlmDetailsProviderEnum[
-              Object.keys(LlmDetailsProviderEnum)[0]
-            ],
-          
-          apiType:
-            LlmDetailsApiTypeEnum[
-              Object.keys(LlmDetailsApiTypeEnum)[0]
-            ],
-          
-
-            version: 'v3.0.3-B8',
-
-
-
-
-
-          
-
-            notes: 'null',
-
-
-
-
-
-          
-          role:
-            LlmDetailsRoleEnum[
-              Object.keys(LlmDetailsRoleEnum)[0]
-            ],
-          
-
-            initialPrompt: 'You are a helpful assistant.',
-
-
-
-
-
-          
-
-            apiKey: 'D6ObBZ599Z3xkuohG3/cogxZYwhxdVyLlIAPanlO35I&#x3D;',
-
-
-
-
-
-          
-
-            credential: 'null',
-
-
-
-
-
-          
-
-            credentialPassword: 'c@nnotBeH@ckd!',
-
-
-
-
-
-          
-
-
-
-
-            temperature: 0.0,
-
-
-          
-
-
-
-            contextWindow: 0,
-
-
-
-          
-
-
-
-            maxTokens: 0,
-
-
-
-          
-            supportsImages: false, 
-
-
-
-
-
-
-          
-            supportsPromptCache: false, 
-
-
-
-
-
-
-          
-
-
-
-
-            inputPrice: 0.0,
-
-
-          
-
-
-
-
-            outputPrice: 0.0,
-
-
-          
-
-            description: 'GPT‑4 Turbo is optimized for instruction following and open-ended generation.',
-
-
-
-
-
-          
-
-            url: 'https://api.openai.com/v1',
-
-
-
-
-
-          
-
-            requestParameters: 'null',
-
-
-
-
-
-          
-
-            meta: 'null',
-
-
-
-
-
-          
-
-            id: 'ae20ff3f-01bc-4fc7-8650-5267dd01ed2d',
-
-
-
-
-
-          
-
-            ownerId: 'bbbbda77-4dec-4bfc-abac-f8b0f01cb677',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            keyHash: 'null',
-
-
-
-
-
-          
-
-            lastAccessedById: '0249dfd0-7e75-4050-93ab-655349eee60a',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            lastModifiedById: '6c4331b2-eb5b-47fe-afbb-94f1f3ed7508',
-
-
-
-
-
-          
-
-
-
-
-
-
+          name: '',
+        provider: undefined,
+        apiType: undefined,
+          version: '',
+          notes: '',
+        role: undefined,
+          initialPrompt: '',
+          apiKey: '',
+          credential: '',
+          credentialPassword: '',
+          temperature: 0,
+          contextWindow: 0,
+          maxTokens: 0,
+          supportsImages: false,
+          supportsPromptCache: false,
+          inputPrice: 0,
+          outputPrice: 0,
+          description: '',
+          url: '',
+          requestParameters: '',
+          metaData: '',
+          id: '',
+          ownerId: '',
+          createdDate: new Date(),
+          keyHash: '',
+          lastAccessedById: '',
+          lastAccessedDate: new Date(),
+          lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -482,16 +210,16 @@ const LlmDetailsForm: React.FC = () => {
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
     console.log('Permissions saved for new LlmDetails:', grants);
-    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<LlmDetails>) => {
     try {
       console.log("LlmDetails form values:", values);
-      const result = await addLlmDetails(values).unwrap();
-      
-      // If object was created successfully and has an ID, offer to set permissions
+
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addLlmDetails(values as any).unwrap();
+
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
           `LlmDetails created successfully! Would you like to set permissions for this object?`
@@ -500,7 +228,7 @@ const LlmDetailsForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create LlmDetails:', error);
@@ -520,6 +248,7 @@ const LlmDetailsForm: React.FC = () => {
           isSubmitting,
           isValid,
           errors,
+          values,
           setFieldValue,
           touched,
           setFieldTouched,
@@ -527,27 +256,13 @@ const LlmDetailsForm: React.FC = () => {
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={36} />
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  touched: {JSON.stringify(touched)}
-                  <br />
-                  addLlmDetailsResult: {JSON.stringify(addLlmDetailsResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-              {/* Editable Fields (NON-read-only) */}
+              
+              {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                  <FaRegPlusSquare size={36} /> Add New LlmDetails
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New LlmDetails
                 </Accordion.Header>
                 <Accordion.Body>
-                    
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
@@ -559,16 +274,15 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="name"
-                            type="text"
-                            className={
-                              errors.name
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -582,7 +296,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="provider" className="nice-form-control">
                       <b>
                         Provider:
@@ -595,6 +308,7 @@ const LlmDetailsForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="provider"
+                          value={values.provider || ''}
                           className={
                             errors.provider
                               ? 'form-control field-error'
@@ -602,7 +316,7 @@ const LlmDetailsForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('provider', true);
-                            setFieldValue('provider', e.target.value);
+                            setFieldValue('provider', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Provider" />
@@ -617,7 +331,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="apiType" className="nice-form-control">
                       <b>
                         Api Type:
@@ -630,6 +343,7 @@ const LlmDetailsForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="apiType"
+                          value={values.apiType || ''}
                           className={
                             errors.apiType
                               ? 'form-control field-error'
@@ -637,7 +351,7 @@ const LlmDetailsForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('apiType', true);
-                            setFieldValue('apiType', e.target.value);
+                            setFieldValue('apiType', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Api Type" />
@@ -652,7 +366,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="version" className="nice-form-control">
                       <b>
                         Version:
@@ -664,16 +377,15 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="version"
-                            type="text"
-                            className={
-                              errors.version
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.version}
+                            placeholder="Version"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -687,7 +399,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="notes" className="nice-form-control">
                       <b>
                         Notes:
@@ -699,16 +410,15 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="notes"
-                            type="text"
-                            className={
-                              errors.notes
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.notes}
+                            placeholder="Notes"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -722,7 +432,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="role" className="nice-form-control">
                       <b>
                         Role:
@@ -735,6 +444,7 @@ const LlmDetailsForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="role"
+                          value={values.role || ''}
                           className={
                             errors.role
                               ? 'form-control field-error'
@@ -742,7 +452,7 @@ const LlmDetailsForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('role', true);
-                            setFieldValue('role', e.target.value);
+                            setFieldValue('role', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Role" />
@@ -757,7 +467,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="initialPrompt" className="nice-form-control">
                       <b>
                         Initial Prompt:
@@ -769,16 +478,15 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="initialPrompt"
-                            type="text"
-                            className={
-                              errors.initialPrompt
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.initialPrompt}
+                            placeholder="Initial Prompt"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -792,7 +500,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="apiKey" className="nice-form-control">
                       <b>
                         Api Key:
@@ -804,16 +511,15 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="apiKey"
-                            type="text"
-                            className={
-                              errors.apiKey
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.apiKey}
+                            placeholder="Api Key"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -827,7 +533,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="credential" className="nice-form-control">
                       <b>
                         Credential:
@@ -839,16 +544,15 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="credential"
-                            type="text"
-                            className={
-                              errors.credential
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.credential}
+                            placeholder="Credential"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -862,7 +566,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="credentialPassword" className="nice-form-control">
                       <b>
                         Credential Password:
@@ -874,16 +577,15 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="credentialPassword"
-                            type="text"
-                            className={
-                              errors.credentialPassword
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.credentialPassword}
+                            placeholder="Credential Password"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -897,7 +599,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="temperature" className="nice-form-control">
                       <b>
                         Temperature:
@@ -914,13 +615,21 @@ const LlmDetailsForm: React.FC = () => {
                           {/* FLOAT FIELD */}
                           <Field
                             name="temperature"
-                            type="text"
+                            type="number"
+                            step="any"
+                            value={values.temperature || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('temperature', true);
+                              const v = e.target.value;
+                              setFieldValue('temperature', v === '' ? undefined : Number(v));
+                            }}
                             className={
                               errors.temperature
                                 ? 'form-control field-error'
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -932,7 +641,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="contextWindow" className="nice-form-control">
                       <b>
                         Context Window:
@@ -948,13 +656,20 @@ const LlmDetailsForm: React.FC = () => {
                           {/* INTEGER FIELD */}
                           <Field
                             name="contextWindow"
-                            type="text"
+                            type="number"
+                            value={values.contextWindow || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('contextWindow', true);
+                              const v = e.target.value;
+                              setFieldValue('contextWindow', v === '' ? undefined : Number(v));
+                            }}
                             className={
                               errors.contextWindow
                                 ? 'form-control field-error'
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -967,7 +682,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="maxTokens" className="nice-form-control">
                       <b>
                         Max Tokens:
@@ -983,13 +697,20 @@ const LlmDetailsForm: React.FC = () => {
                           {/* INTEGER FIELD */}
                           <Field
                             name="maxTokens"
-                            type="text"
+                            type="number"
+                            value={values.maxTokens || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('maxTokens', true);
+                              const v = e.target.value;
+                              setFieldValue('maxTokens', v === '' ? undefined : Number(v));
+                            }}
                             className={
                               errors.maxTokens
                                 ? 'form-control field-error'
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -1002,7 +723,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="supportsImages" className="nice-form-control">
                       <b>
                         Supports Images:
@@ -1015,18 +735,17 @@ const LlmDetailsForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="supportsImages"
                             name="supportsImages"
+                            checked={values.supportsImages || false}
                             onChange={(e) => {
                               setFieldTouched('supportsImages', true);
                               setFieldValue('supportsImages', e.target.checked);
                             }}
                             isInvalid={!!errors.supportsImages}
-                            className={
-                              errors.supportsImages ? 'error' : ''
-                            }
+                            className={errors.supportsImages ? 'error' : ''}
                           />
+
 
 
 
@@ -1041,7 +760,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="supportsPromptCache" className="nice-form-control">
                       <b>
                         Supports Prompt Cache:
@@ -1054,18 +772,17 @@ const LlmDetailsForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="supportsPromptCache"
                             name="supportsPromptCache"
+                            checked={values.supportsPromptCache || false}
                             onChange={(e) => {
                               setFieldTouched('supportsPromptCache', true);
                               setFieldValue('supportsPromptCache', e.target.checked);
                             }}
                             isInvalid={!!errors.supportsPromptCache}
-                            className={
-                              errors.supportsPromptCache ? 'error' : ''
-                            }
+                            className={errors.supportsPromptCache ? 'error' : ''}
                           />
+
 
 
 
@@ -1080,7 +797,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="inputPrice" className="nice-form-control">
                       <b>
                         Input Price:
@@ -1097,13 +813,21 @@ const LlmDetailsForm: React.FC = () => {
                           {/* FLOAT FIELD */}
                           <Field
                             name="inputPrice"
-                            type="text"
+                            type="number"
+                            step="any"
+                            value={values.inputPrice || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('inputPrice', true);
+                              const v = e.target.value;
+                              setFieldValue('inputPrice', v === '' ? undefined : Number(v));
+                            }}
                             className={
                               errors.inputPrice
                                 ? 'form-control field-error'
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -1115,7 +839,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="outputPrice" className="nice-form-control">
                       <b>
                         Output Price:
@@ -1132,13 +855,21 @@ const LlmDetailsForm: React.FC = () => {
                           {/* FLOAT FIELD */}
                           <Field
                             name="outputPrice"
-                            type="text"
+                            type="number"
+                            step="any"
+                            value={values.outputPrice || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('outputPrice', true);
+                              const v = e.target.value;
+                              setFieldValue('outputPrice', v === '' ? undefined : Number(v));
+                            }}
                             className={
                               errors.outputPrice
                                 ? 'form-control field-error'
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -1150,7 +881,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="description" className="nice-form-control">
                       <b>
                         Description:
@@ -1162,16 +892,15 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="description"
-                            type="text"
-                            className={
-                              errors.description
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.description}
+                            placeholder="Description"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1185,7 +914,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="url" className="nice-form-control">
                       <b>
                         Url:
@@ -1197,16 +925,15 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="url"
-                            type="text"
-                            className={
-                              errors.url
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.url}
+                            placeholder="Url"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1220,7 +947,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="requestParameters" className="nice-form-control">
                       <b>
                         Request Parameters:
@@ -1232,16 +958,15 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="requestParameters"
-                            type="text"
-                            className={
-                              errors.requestParameters
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.requestParameters}
+                            placeholder="Request Parameters"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1255,28 +980,26 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
-                    <label htmlFor="meta" className="nice-form-control">
+                    <label htmlFor="metaData" className="nice-form-control">
                       <b>
-                        Meta:
-                        {touched.meta &&
-                         !errors.meta && (
+                        Meta Data:
+                        {touched.metaData &&
+                         !errors.metaData && (
                           <span className="okCheck"><FaCheckCircle /> looks good!</span>
                         )}
                       </b>
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="meta"
-                            type="text"
-                            className={
-                              errors.meta
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="metaData"
+                            value={values?.metaData}
+                            placeholder="Meta Data"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1285,12 +1008,11 @@ const LlmDetailsForm: React.FC = () => {
 
                       <ErrorMessage
                         className="error"
-                        name="meta"
+                        name="metaData"
                         component="span"
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="id" className="nice-form-control">
                       <b>
                         Id:
@@ -1302,16 +1024,15 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.id}
+                            placeholder="Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1325,7 +1046,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
@@ -1337,16 +1057,15 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1360,7 +1079,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
@@ -1378,6 +1096,25 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="createdDate"
@@ -1385,7 +1122,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
@@ -1397,16 +1133,15 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1420,7 +1155,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedById" className="nice-form-control">
                       <b>
                         Last Accessed By Id:
@@ -1432,16 +1166,15 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastAccessedById}
+                            placeholder="Last Accessed By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1455,7 +1188,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedDate" className="nice-form-control">
                       <b>
                         Last Accessed Date:
@@ -1473,6 +1205,25 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedDate"
@@ -1480,7 +1231,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedById" className="nice-form-control">
                       <b>
                         Last Modified By Id:
@@ -1492,16 +1242,15 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastModifiedById}
+                            placeholder="Last Modified By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1515,7 +1264,6 @@ const LlmDetailsForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedDate" className="nice-form-control">
                       <b>
                         Last Modified Date:
@@ -1533,6 +1281,25 @@ const LlmDetailsForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedDate"
@@ -1543,31 +1310,34 @@ const LlmDetailsForm: React.FC = () => {
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
+                    disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (
-                      <Spinner
-                        style={ { float: 'left' } }
-                        as="span"
-                        animation="grow"
-                        variant="light"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FaCheckCircle size={30} /> Create New LlmDetails
+                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New LlmDetails
                   </CoolButton>
+
+                  {addLlmDetailsResult.error && (
+                    <div className="error" style={ { marginTop: 12 }}>
+                      {JSON.stringify('data' in (addLlmDetailsResult as any).error ? (addLlmDetailsResult as any).error.data : (addLlmDetailsResult as any).error)}
+                    </div>
+                  )}
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Read-Only System Fields */}
-              <Accordion.Item eventKey="2">
-                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                  </Row>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addLlmDetailsResult: {JSON.stringify(addLlmDetailsResult)}
                 </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
           </form>
         )}

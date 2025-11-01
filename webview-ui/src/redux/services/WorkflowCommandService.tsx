@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 
-import { Workflow } from "../../thor/model"; // always use the generated when possible!
+import { Workflow } from "@thor/model"; // always use the generated when possible!
 
 import customBaseQuery from "../../thor/redux/customBaseQuery"; // Import the custom base query
 

@@ -37,8 +37,45 @@ export const UsageTrackingHandler: React.FC = () => {
     return () => window.removeEventListener('message', handleMessage);
   }, [addUsageTransaction, refetchBalance]);
 
+  const waitForJwtToken = async (timeoutMs = 3000): Promise<string | null> => {
+    // Try immediate read
+    const read = (): string | null => {
+      try {
+        return sessionStorage.getItem('jwtToken') || localStorage.getItem('jwtToken') || localStorage.getItem('authToken');
+      } catch { return null; }
+    };
+    let token = read();
+    if (token) return token;
+    // Wait for jwt-token-updated event
+    return new Promise((resolve) => {
+      let done = false;
+      const onEvt = (e: Event) => {
+        try {
+          const detail = (e as CustomEvent)?.detail;
+          if (detail?.token) {
+            done = true;
+            window.removeEventListener('jwt-token-updated', onEvt as any);
+            resolve(detail.token as string);
+          }
+        } catch { /* ignore */ }
+      };
+      window.addEventListener('jwt-token-updated', onEvt as any);
+      setTimeout(() => {
+        if (!done) {
+          window.removeEventListener('jwt-token-updated', onEvt as any);
+          resolve(read());
+        }
+      }, timeoutMs);
+    });
+  };
+
   const handleTrackUsage = async (data: { transactionId: string; usageTransaction: Partial<UsageTransaction> }) => {
     try {
+      // Ensure we have a JWT before attempting
+      const token = await waitForJwtToken(3000);
+      if (!token) {
+        throw new Error('Missing JWT token');
+      }
       const result = await addUsageTransaction(data.usageTransaction).unwrap();
       
       // Send success response back to extension

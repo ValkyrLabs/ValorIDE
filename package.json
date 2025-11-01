@@ -2,8 +2,9 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.155",
+  "version": "3.20.530",
   "icon": "assets/icons/icon.png",
+  "pricing": "Free",
   "galleryBanner": {
     "color": "#617A91",
     "theme": "dark"
@@ -46,11 +47,7 @@
   ],
   "activationEvents": [
     "onStartupFinished",
-    "onView:valoride-dev.SidebarProvider",
-    "onViewContainer:valoride-activitybar",
-    "onCommand:valoride.openInNewTab",
-    "onCommand:valoride.diagnostics",
-    "onCommand:valoride.fixLayout"
+    "onViewContainer:valoride-activitybar"
   ],
   "main": "./dist/extension.js",
   "extensionKind": [
@@ -72,7 +69,14 @@
         {
           "type": "webview",
           "id": "valoride-dev.SidebarProvider",
-          "name": "ValorIDE"
+          "name": "ValorIDE",
+          "icon": "assets/icons/icon.svg"
+        },
+        {
+          "type": "tree",
+          "id": "valoride-dev.ProjectsView",
+          "name": "Projects",
+          "icon": "assets/icons/icon.svg"
         }
       ]
     },
@@ -86,6 +90,11 @@
         "command": "valoride.accountButtonClicked",
         "title": "Account Settings",
         "icon": "$(zap)"
+      },
+      {
+        "command": "valoride.serverConsoleButtonClicked",
+        "title": "Server Console",
+        "icon": "$(debug-console)"
       },
       {
         "command": "valoride.mcpButtonClicked",
@@ -119,8 +128,72 @@
       },
       {
         "command": "valoride.fixLayout",
-        "title": "Fix Layout (Reset View Locations)",
+        "title": "Reset Layout",
+        "category": "ValorIDE",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "valoride.openUrlInEditor",
+        "title": "Open URL In Editor",
         "category": "ValorIDE"
+      },
+      {
+        "command": "valoride.addThorAliasesFromFolder",
+        "title": "Add @thor Aliases From Folder",
+        "category": "ValorIDE"
+      },
+      {
+        "command": "valoride.projectActions",
+        "title": "ValorIDE: Project Actions",
+        "category": "ValorIDE"
+      },
+      {
+        "command": "valoride.projects.refresh",
+        "title": "Refresh Projects",
+        "category": "ValorIDE",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "valoride.projects.build",
+        "title": "Build Project",
+        "category": "ValorIDE",
+        "icon": "$(tools)"
+      },
+      {
+        "command": "valoride.projects.run",
+        "title": "Run Project",
+        "category": "ValorIDE",
+        "icon": "$(play)"
+      },
+      {
+        "command": "valoride.projects.openInWindow",
+        "title": "Open in New Window",
+        "category": "ValorIDE",
+        "icon": "$(link-external)"
+      },
+      {
+        "command": "valoride.projects.openTerminal",
+        "title": "Open Terminal Here",
+        "category": "ValorIDE",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "valoride.projects.openReadme",
+        "title": "Open README",
+        "category": "ValorIDE",
+        "icon": "$(book)"
+      },
+      {
+        "command": "valoride.projects.reveal",
+        "title": "Reveal in Explorer",
+        "category": "ValorIDE",
+        "icon": "$(folder)"
+      },
+      {
+        "command": "valoride.projects.copyPath",
+        "title": "Copy Folder Path",
+        "category": "ValorIDE",
+        "icon": "$(clippy)"
       }
     ],
     "menus": {
@@ -156,9 +229,73 @@
           "when": "view == valoride-dev.SidebarProvider"
         },
         {
-          "command": "valoride.fixLayout",
+          "command": "valoride.serverConsoleButtonClicked",
           "group": "navigation@7",
           "when": "view == valoride-dev.SidebarProvider"
+        },
+        {
+          "command": "valoride.fixLayout",
+          "group": "navigation@8",
+          "when": "view == valoride-dev.SidebarProvider"
+        },
+        {
+          "command": "valoride.projects.refresh",
+          "group": "navigation@1",
+          "when": "view == valoride-dev.ProjectsView"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "valoride.projects.openInWindow",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "inline@1"
+        },
+        {
+          "command": "valoride.projects.build",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "inline@2"
+        },
+        {
+          "command": "valoride.projects.run",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "inline@3"
+        },
+        {
+          "command": "valoride.projects.openTerminal",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "inline@4"
+        },
+        {
+          "command": "valoride.projects.openReadme",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "inline@5"
+        },
+        {
+          "command": "valoride.projects.reveal",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "2_navigation@1"
+        },
+        {
+          "command": "valoride.projects.copyPath",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "2_navigation@2"
+        },
+        {
+          "command": "valoride.addThorAliasesFromFolder",
+          "when": "view == valoride-dev.ProjectsView && viewItem == thorProject",
+          "group": "3_edit@1"
+        }
+      ],
+      "explorer/context": [
+        {
+          "when": "explorerResourceIsFolder == true",
+          "command": "valoride.addThorAliasesFromFolder",
+          "group": "navigation@9"
+        },
+        {
+          "when": "explorerResourceIsFolder == true && resourceFilename =~ /^v\\d+\\./",
+          "command": "valoride.projectActions",
+          "group": "navigation@1"
         }
       ],
       "editor/title": [
@@ -192,6 +329,98 @@
     "configuration": {
       "title": "ValorIDE",
       "properties": {
+        "valoride.advanced.fileProcessing.warnLargeFiles": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show warnings for large files in DiffViewProvider."
+        },
+        "valoride.advanced.fileProcessing.largeFileThreshold": {
+          "type": "number",
+          "default": 20480,
+          "markdownDescription": "Bytes threshold to show informational warning for large files.",
+          "minimum": 1024
+        },
+        "valoride.advanced.fileProcessing.maxFileSize": {
+          "type": "number",
+          "default": 512000,
+          "markdownDescription": "Maximum file size in bytes before showing blocking warning in DiffViewProvider.",
+          "minimum": 1024
+        },
+        "valoride.advanced.budgetAlerts.depletedThreshold": {
+          "type": "number",
+          "default": 0,
+          "markdownDescription": "Effective balance (USD) at or below which 'Budget Depleted' alert shows.",
+          "minimum": 0
+        },
+        "valoride.advanced.budgetAlerts.criticalThreshold": {
+          "type": "number",
+          "default": 1,
+          "markdownDescription": "Effective balance (USD) at or below which 'Critical Budget Alert' shows.",
+          "minimum": 0
+        },
+        "valoride.advanced.budgetAlerts.lowThreshold": {
+          "type": "number",
+          "default": 5,
+          "markdownDescription": "Effective balance (USD) at or below which 'Low Budget Warning' shows.",
+          "minimum": 0
+        },
+        "valoride.advanced.budgetAlerts.alertThreshold": {
+          "type": "number",
+          "default": 10,
+          "markdownDescription": "Effective balance (USD) at or below which 'Budget Alert' shows.",
+          "minimum": 0
+        },
+        "valoride.advanced.thorapi.outputFolder": {
+          "type": "string",
+          "default": "thorapi",
+          "markdownDescription": "Relative (workspace) or absolute path where ThorAPI downloads and generated projects are stored."
+        },
+        "valoride.advanced.debugging.showPsrResultsReport": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "When enabled, ValorIDE prints the full precision_search_and_replace result report after each edit."
+        },
+        "valoride.P2P.turnServers": {
+          "type": "array",
+          "markdownDescription": "List of ICE/TURN servers for P2P (RTCConfiguration. Each entry may be a string URL or an object with { urls, username, credential }).",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "stun:example.org or turn:example.org:3478"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "urls": {
+                    "type": [
+                      "string",
+                      "array"
+                    ],
+                    "description": "ICE server URLs"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "credential": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "urls"
+                ]
+              }
+            ]
+          },
+          "default": [
+            "stun:stun.l.google.com:19302"
+          ]
+        },
+        "valoride.P2P.discovery.bonjour": {
+          "type": "boolean",
+          "markdownDescription": "Enable experimental Bonjour/mDNS peer discovery for local network rendezvous (requires reload).",
+          "default": false
+        },
         "valoride.vsCodeLmModelSelector": {
           "type": "object",
           "properties": {
@@ -331,7 +560,8 @@
     "@types/clone-deep": "^4.0.4",
     "@types/get-folder-size": "^3.0.4",
     "@types/pdf-parse": "^1.1.4",
-    "@types/react-dom": "^19.0.4",
+    "@types/react": "^18.2.67",
+    "@types/react-dom": "^18.2.22",
     "@types/turndown": "^5.0.5",
     "@types/vscode-webview": "^1.57.5",
     "@vitejs/plugin-react": "^4.4.1",
@@ -376,12 +606,12 @@
     "posthog-node": "^4.14.0",
     "puppeteer-chromium-resolver": "^23.0.0",
     "puppeteer-core": "^23.4.0",
-    "react": "^19.1.0",
+    "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-bootstrap": "^2.10.9",
     "react-countup": "^6.5.3",
     "react-datepicker": "^8.2.1",
-    "react-dom": "^19.0.0",
+    "react-dom": "^18.2.0",
     "react-draggable": "^4.4.6",
     "react-icons": "^5.5.0",
     "react-remark": "^2.1.0",
@@ -400,6 +630,7 @@
     "strip-ansi": "^7.1.0",
     "styled-components": "^6.1.16",
     "tree-sitter-wasms": "^0.1.11",
+    "ts-morph": "^27.0.0",
     "turndown": "^7.2.0",
     "typescript-eslint": "^8.39.0",
     "unist-util-visit": "^5.0.0",
@@ -408,5 +639,6 @@
     "web-vitals": "^4.2.4",
     "yup": "^1.6.1",
     "zod": "^3.24.2"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

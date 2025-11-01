@@ -6,6 +6,8 @@ import { getTheme } from "@integrations/theme/getTheme";
 import { Controller } from "@core/controller/index";
 import { findLast } from "@shared/array";
 import { UsageTrackingService } from "../../services/usage-tracking/UsageTrackingService";
+import { TelecomHub } from "@services/P2P/TelecomHub";
+import { thorapiSettingChanged } from "@utils/thorapi";
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
 https://github.com/KumarVariable/vscode-extension-sidebar-html/blob/master/src/customSidebarViewProvider.ts
@@ -33,12 +35,13 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
 
   async dispose() {
     console.log("Starting WebviewProvider disposal...");
-    
+
     try {
-      if (this.view && "dispose" in this.view) {
-        this.view.dispose();
-        console.log("Webview disposed successfully");
-      }
+      // Do NOT dispose the webview here.
+      // VS Code owns the lifetime of WebviewView/WebviewPanel and will invoke our onDidDispose handler.
+      // Disposing it again from within our dispose() leads to double-disposal and VS Code internals
+      // (e.g., ContextKeyService) being accessed after disposal, causing errors like
+      // "AbstractContextKeyService has been disposed" when menus/actions resolve.
     } catch (error) {
       console.error("Error disposing webview:", error);
     }
@@ -70,6 +73,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
     }
 
     WebviewProvider.activeInstances.delete(this);
+    this.view = undefined;
     console.log("WebviewProvider disposal completed");
   }
 
@@ -112,12 +116,21 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
         ? await this.getHMRHtmlContent(webviewView.webview)
         : this.getHtmlContent(webviewView.webview);
 
-    // Initialize usage tracking service with webview panel
-    this.usageTrackingService.setWebviewPanel(webviewView as vscode.WebviewPanel);
+    // Initialize bridge services with the active webview
+    this.usageTrackingService.setWebview(webviewView);
+    try {
+      const { ContentDataBridge } = await import('../../services/content-data/ContentDataBridge');
+      ContentDataBridge.getInstance().setWebviewPanel(webviewView as vscode.WebviewPanel);
+    } catch (e) {
+      console.warn('ContentDataBridge not initialized:', e);
+    }
 
     // Sets up an event listener to listen for messages passed from the webview view context
     // and executes code based on the message that is received
     this.setWebviewMessageListener(webviewView.webview);
+
+    // Register this provider with the TelecomHub for local multi-instance comms
+    TelecomHub.getInstance().registerProvider(this);
 
     // Logs show up in bottom panel > Debug Console
     //console.log("registering listener")
@@ -180,6 +193,9 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
           }
           if (e && e.affectsConfiguration("valoride.mcpMarketplace.enabled")) {
             // Update state when marketplace tab setting changes
+            await this.controller.postStateToWebview();
+          }
+          if (e && thorapiSettingChanged(e)) {
             await this.controller.postStateToWebview();
           }
         },
@@ -253,6 +269,12 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
     const nonce = getNonce();
 
     // Tip: Install the es6-string-html VS Code extension to enable code highlighting below
+    const cfg = vscode.workspace.getConfiguration("valoride");
+    const telecomConfig = {
+      turnServers: cfg.get<any[]>("P2P.turnServers", ["stun:stun.l.google.com:19302"]),
+      bonjour: cfg.get<boolean>("P2P.discovery.bonjour", false),
+      p2pEnabled: cfg.get<boolean>("P2P.p2pEnabled", true),
+    };
     return /*html*/ `
         <!DOCTYPE html>
         <html lang="en">
@@ -261,12 +283,15 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
             <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
             <meta name="theme-color" content="#000000">
             <link rel="stylesheet" type="text/css" href="${stylesUri}">
-						<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${process.env.REACT_APP_BASE_PATH?.replace('/v1', '') || 'http://localhost:8080'} https://*.valkyrlabs.com https://*.posthog.com https://*.firebaseauth.com https://*.firebaseio.com https://*.googleapis.com https://*.firebase.com; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} https: data:; script-src 'nonce-${nonce}' 'unsafe-eval';">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${process.env.VITE_basePath?.replace('/v1', '') || 'http://localhost:8080'} https://*.valkyrlabs.com wss://*.valkyrlabs.com ws://localhost:* https://*.posthog.com https://*.googleapis.com font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} https: data:; script-src 'nonce-${nonce}' 'unsafe-eval';">
             <title>ValorIDE</title>
           </head>
           <body>
             <noscript>You need to enable JavaScript to run this app.</noscript>
             <div id="root"></div>
+            <script nonce="${nonce}">
+              try { window.__valorideTelecomConfig = ${JSON.stringify(telecomConfig)}; } catch {}
+            </script>
             <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
           </body>
         </html>
@@ -325,6 +350,12 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
       `connect-src https://* ws://${localServerUrl} ws://0.0.0.0:${localPort} http://${localServerUrl} http://0.0.0.0:${localPort}`,
     ];
 
+    const cfg = vscode.workspace.getConfiguration("valoride");
+    const telecomConfig = {
+      turnServers: cfg.get<any[]>("P2P.turnServers", ["stun:stun.l.google.com:19302"]),
+      bonjour: cfg.get<boolean>("P2P.discovery.bonjour", false),
+      p2pEnabled: cfg.get<boolean>("P2P.p2pEnabled", true),
+    };
     return /*html*/ `
 			<!DOCTYPE html>
 			<html lang="en">
@@ -338,6 +369,9 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
 				<body>
 					<div id="root"></div>
 					${reactRefresh}
+					<script nonce="${nonce}">
+						try { window.__valorideTelecomConfig = ${JSON.stringify(telecomConfig)}; } catch {}
+					</script>
 					<script type="module" src="${scriptUri}"></script>
 				</body>
 			</html>

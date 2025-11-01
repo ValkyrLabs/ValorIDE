@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 
-import { Principal } from "../../thor/model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { Principal } from "@thor/model";
+import customBaseQuery from "../../thor/redux/customBaseQuery"; // Use Thor base query
 
 type PrincipalResponse = Principal[];
 
@@ -23,7 +23,7 @@ export const PrincipalService = createApi({
     // the only thing we need to override. leave the rest for now
     addPrincipal: build.mutation<Principal, Partial<Principal>>({
       query: (body) => ({
-        url: `sign-up`,
+        url: `auth/signup`, // the magic override
         method: "POST",
         body,
       }),

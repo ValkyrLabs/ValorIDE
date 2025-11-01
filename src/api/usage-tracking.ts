@@ -21,10 +21,10 @@ export async function trackApiUsage(
     }
 
     const usageTrackingService = webviewProvider.getUsageTrackingService();
-    
+
     // Calculate credits based on provider and model
     let credits = 0;
-    
+
     switch (provider.toLowerCase()) {
       case 'openai':
         await usageTrackingService.trackOpenAIUsage(
@@ -35,7 +35,7 @@ export async function trackApiUsage(
           costPerOutputToken
         );
         return;
-        
+
       case 'anthropic':
         await usageTrackingService.trackAnthropicUsage(
           model,
@@ -45,13 +45,13 @@ export async function trackApiUsage(
           costPerOutputToken
         );
         return;
-        
+
       default:
         // For other providers, calculate credits manually or use default rates
         const inputCost = costPerInputToken || 0.00001; // Default fallback
         const outputCost = costPerOutputToken || 0.00002; // Default fallback
         credits = (inputTokens * inputCost) + (outputTokens * outputCost);
-        
+
         await usageTrackingService.trackGenericUsage(
           provider,
           model,
@@ -83,6 +83,8 @@ export function getModelPricing(provider: string, model: string): { inputCost: n
       'o1-mini': { inputCost: 0.000003, outputCost: 0.000012 },
     },
     anthropic: {
+      'claude-sonnet-4-5-20250929': { inputCost: 0.000003, outputCost: 0.000015 }, // Claude Sonnet 4.5
+      'claude-haiku-4-5-20251001': { inputCost: 0.000001, outputCost: 0.000005 },
       'claude-3-5-sonnet-20241022': { inputCost: 0.000003, outputCost: 0.000015 },
       'claude-3-5-haiku-20241022': { inputCost: 0.000001, outputCost: 0.000005 },
       'claude-3-opus-20240229': { inputCost: 0.000015, outputCost: 0.000075 },

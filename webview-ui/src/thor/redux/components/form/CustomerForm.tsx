@@ -4,22 +4,24 @@ import {
   Form as BSForm,
   Accordion,
   Col,
-  Nav,
   Row,
   Spinner
 } from 'react-bootstrap';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
-import CoolButton from '../../../../components/CoolButton';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
 import * as Yup from 'yup';
-import PermissionDialog from '../../../../components/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
 
 
 import {
   Customer,
   CustomerStatusEnum,
   CustomerRoleEnum,
-} from '../../../model';
+} from '@thor/model';
 
 import { useAddCustomerMutation } from '../../services/CustomerService';
 
@@ -31,7 +33,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -54,21 +56,20 @@ const StatusValidation = () => {
 };
 const RoleValidation = () => {
   return [
-    'CxO',
-    'Engineering',
-    'Project Management',
-    'Management',
-    'Support Staff',
-    'QA',
-    'Self-Employed',
-    'Consultant - Firm',
-    'Consultant - Independent',
-    'Contractor',
-    'Partner',
-    'Associate',
-    'Reseller',
-    'Hobbyist',
-    'Student',
+    'cxo',
+    'engineering',
+    'project management',
+    'management',
+    'support',
+    'qa',
+    'self-employed',
+    'consulting',
+    'contract',
+    'partner',
+    'associate',
+    'reseller',
+    'hobbyist',
+    'student',
     'legal',
     'assessment',
     'regulatory',
@@ -82,65 +83,47 @@ const RoleValidation = () => {
 };
 
 /* -----------------------------------------------------
-   YUP VALIDATION SCHEMA
-   (Skip read-only fields and container types)
+   YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
+const asNumber = (schema: Yup.NumberSchema) =>
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+
 const validationSchema = Yup.object().shape({
-    
-        principalId: Yup.string()
-          
-          .required("principalId is required.")
-          ,
-    
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
-        
-        .notRequired(),
-    
+        ,
       role: Yup.mixed()
         .oneOf(RoleValidation(), "Invalid value for role")
-        
-        .notRequired(),
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
+        ,
+        id: Yup.string(),
+        ownerId: Yup.string(),
         createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
+        keyHash: Yup.string(),
+        lastAccessedById: Yup.string(),
         lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
+        lastModifiedById: Yup.string(),
         lastModifiedDate: Yup.date()
-          
-          
-          ,
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -148,103 +131,36 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const CustomerForm: React.FC = () => {
   const [addCustomer, addCustomerResult] = useAddCustomerMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user', // This should come from authentication context
+    username: 'current_user',
     permissions: {
-      isOwner: true, // This should be determined by checking object ownership
-      isAdmin: true, // This should come from user roles
+      isOwner: true,
+      isAdmin: true,
       canGrantPermissions: true,
       permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
-  /* INITIAL VALUES - skip read-only fields */
+  /* -----------------------------------------------------
+     INITIAL VALUES - only NON read-only fields
+  -------------------------------------------------------- */
   const initialValues: Partial<Customer> = {
-          
-
-            principalId: 'null',
-
-
-
-
-
-          
-          status:
-            CustomerStatusEnum[
-              Object.keys(CustomerStatusEnum)[0]
-            ],
-          
-          role:
-            CustomerRoleEnum[
-              Object.keys(CustomerRoleEnum)[0]
-            ],
-          
-
-            id: '04cb2c22-60fd-4b78-8429-654426e7919c',
-
-
-
-
-
-          
-
-            ownerId: '2c94b1e0-f35e-4fd8-9822-6720988ebabc',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            keyHash: 'null',
-
-
-
-
-
-          
-
-            lastAccessedById: 'e63170c0-f1c7-447e-b2bc-0651a29e530f',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            lastModifiedById: '98a0faa6-040b-4c86-ad92-0a9c06dccc24',
-
-
-
-
-
-          
-
-
-
-
-
-
+        status: undefined,
+        role: undefined,
+          id: '',
+          ownerId: '',
+          createdDate: new Date(),
+          keyHash: '',
+          lastAccessedById: '',
+          lastAccessedDate: new Date(),
+          lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -260,16 +176,16 @@ const CustomerForm: React.FC = () => {
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
     console.log('Permissions saved for new Customer:', grants);
-    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Customer>) => {
     try {
       console.log("Customer form values:", values);
-      const result = await addCustomer(values).unwrap();
-      
-      // If object was created successfully and has an ID, offer to set permissions
+
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addCustomer(values as any).unwrap();
+
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
           `Customer created successfully! Would you like to set permissions for this object?`
@@ -278,7 +194,7 @@ const CustomerForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create Customer:', error);
@@ -298,6 +214,7 @@ const CustomerForm: React.FC = () => {
           isSubmitting,
           isValid,
           errors,
+          values,
           setFieldValue,
           touched,
           setFieldTouched,
@@ -305,62 +222,13 @@ const CustomerForm: React.FC = () => {
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={36} />
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  touched: {JSON.stringify(touched)}
-                  <br />
-                  addCustomerResult: {JSON.stringify(addCustomerResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-              {/* Editable Fields (NON-read-only) */}
+              
+              {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                  <FaRegPlusSquare size={36} /> Add New Customer
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New Customer
                 </Accordion.Header>
                 <Accordion.Body>
-                    
-                    <label htmlFor="principalId" className="nice-form-control">
-                      <b>
-                        Principal Id:
-                        {touched.principalId &&
-                         !errors.principalId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* TEXT FIELD */}
-                          <Field
-                            name="principalId"
-                            type="text"
-                            className={
-                              errors.principalId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="principalId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
@@ -373,6 +241,7 @@ const CustomerForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="status"
+                          value={values.status || ''}
                           className={
                             errors.status
                               ? 'form-control field-error'
@@ -380,7 +249,7 @@ const CustomerForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value);
+                            setFieldValue('status', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Status" />
@@ -395,7 +264,6 @@ const CustomerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="role" className="nice-form-control">
                       <b>
                         Role:
@@ -408,6 +276,7 @@ const CustomerForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="role"
+                          value={values.role || ''}
                           className={
                             errors.role
                               ? 'form-control field-error'
@@ -415,7 +284,7 @@ const CustomerForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('role', true);
-                            setFieldValue('role', e.target.value);
+                            setFieldValue('role', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Role" />
@@ -430,7 +299,6 @@ const CustomerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="id" className="nice-form-control">
                       <b>
                         Id:
@@ -442,16 +310,15 @@ const CustomerForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.id}
+                            placeholder="Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -465,7 +332,6 @@ const CustomerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
@@ -477,16 +343,15 @@ const CustomerForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -500,7 +365,6 @@ const CustomerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
@@ -518,6 +382,25 @@ const CustomerForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="createdDate"
@@ -525,7 +408,6 @@ const CustomerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
@@ -537,16 +419,15 @@ const CustomerForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -560,7 +441,6 @@ const CustomerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedById" className="nice-form-control">
                       <b>
                         Last Accessed By Id:
@@ -572,16 +452,15 @@ const CustomerForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastAccessedById}
+                            placeholder="Last Accessed By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -595,7 +474,6 @@ const CustomerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedDate" className="nice-form-control">
                       <b>
                         Last Accessed Date:
@@ -613,6 +491,25 @@ const CustomerForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedDate"
@@ -620,7 +517,6 @@ const CustomerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedById" className="nice-form-control">
                       <b>
                         Last Modified By Id:
@@ -632,16 +528,15 @@ const CustomerForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastModifiedById}
+                            placeholder="Last Modified By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -655,7 +550,6 @@ const CustomerForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedDate" className="nice-form-control">
                       <b>
                         Last Modified Date:
@@ -673,6 +567,25 @@ const CustomerForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedDate"
@@ -683,31 +596,34 @@ const CustomerForm: React.FC = () => {
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
+                    disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (
-                      <Spinner
-                        style={ { float: 'left' } }
-                        as="span"
-                        animation="grow"
-                        variant="light"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FaCheckCircle size={30} /> Create New Customer
+                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New Customer
                   </CoolButton>
+
+                  {addCustomerResult.error && (
+                    <div className="error" style={ { marginTop: 12 }}>
+                      {JSON.stringify('data' in (addCustomerResult as any).error ? (addCustomerResult as any).error.data : (addCustomerResult as any).error)}
+                    </div>
+                  )}
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Read-Only System Fields */}
-              <Accordion.Item eventKey="2">
-                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                  </Row>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addCustomerResult: {JSON.stringify(addCustomerResult)}
                 </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
           </form>
         )}
@@ -759,21 +675,20 @@ kebabcase role-lookup
 const RoleLookup = () => {
   return (
     <>
-      <option value='CxO' label="Cx O" />
-      <option value='Engineering' label="Engineering" />
-      <option value='Project Management' label="Project Management" />
-      <option value='Management' label="Management" />
-      <option value='Support Staff' label="Support Staff" />
-      <option value='QA' label="Qa" />
-      <option value='Self-Employed' label="Self Employed" />
-      <option value='Consultant - Firm' label="Consultant Firm" />
-      <option value='Consultant - Independent' label="Consultant Independent" />
-      <option value='Contractor' label="Contractor" />
-      <option value='Partner' label="Partner" />
-      <option value='Associate' label="Associate" />
-      <option value='Reseller' label="Reseller" />
-      <option value='Hobbyist' label="Hobbyist" />
-      <option value='Student' label="Student" />
+      <option value='cxo' label="Cxo" />
+      <option value='engineering' label="Engineering" />
+      <option value='project management' label="Project Management" />
+      <option value='management' label="Management" />
+      <option value='support' label="Support" />
+      <option value='qa' label="Qa" />
+      <option value='self-employed' label="Self Employed" />
+      <option value='consulting' label="Consulting" />
+      <option value='contract' label="Contract" />
+      <option value='partner' label="Partner" />
+      <option value='associate' label="Associate" />
+      <option value='reseller' label="Reseller" />
+      <option value='hobbyist' label="Hobbyist" />
+      <option value='student' label="Student" />
       <option value='legal' label="Legal" />
       <option value='assessment' label="Assessment" />
       <option value='regulatory' label="Regulatory" />

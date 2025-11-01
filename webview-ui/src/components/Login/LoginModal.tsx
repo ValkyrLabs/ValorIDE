@@ -1,7 +1,7 @@
 import React from "react";
 import { CloseButton, Modal } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import Form from "./form";
-import "./index.css";
 
 interface LoginModalProps {
   visible: boolean;
@@ -9,8 +9,10 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ visible, toggle }) => {
+  const navigate = useNavigate();
+
   return (
-    <Modal show={true}>
+    <Modal show={visible}>
       <Modal.Header>
         Sign into your Valkyr Labs user account
         <CloseButton onClick={() => toggle()} />

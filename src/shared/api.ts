@@ -17,6 +17,7 @@ export type ApiProvider =
   | "doubao"
   | "mistral"
   | "vscode-lm"
+  | "valkyrai"
   | "valoride"
   | "litellm"
   | "asksage"
@@ -80,6 +81,10 @@ export interface ApiHandlerOptions {
   thinkingBudgetTokens?: number;
   reasoningEffort?: string;
   sambanovaApiKey?: string;
+  // Valkyrai pass-through settings
+  valkyraiHost?: string; // e.g. http://localhost:8080
+  valkyraiJwt?: string; // optional bearer
+  valkyraiServiceId?: string; // selected LlmDetails.id
 }
 
 export type ApiConfiguration = ApiHandlerOptions & {
@@ -124,6 +129,29 @@ export type AnthropicModelId = keyof typeof anthropicModels;
 export const anthropicDefaultModelId: AnthropicModelId =
   "claude-3-7-sonnet-20250219";
 export const anthropicModels = {
+  "claude-sonnet-4-5-20250929": {
+    maxTokens: 64_000,
+    contextWindow: 200_000,
+    supportsImages: true,
+
+    supportsPromptCache: true,
+    inputPrice: 3.0,
+    outputPrice: 15.0,
+    cacheWritesPrice: 3.75,
+    cacheReadsPrice: 0.3,
+    description:
+      "Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)",
+  },
+  "claude-haiku-4-5-20251001": {
+    maxTokens: 8192,
+    contextWindow: 200_000,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 0.8,
+    outputPrice: 4.0,
+    cacheWritesPrice: 1.0,
+    cacheReadsPrice: 0.08,
+  },
   "claude-sonnet-4-20250514": {
     maxTokens: 8192,
     contextWindow: 200_000,
@@ -197,6 +225,16 @@ export const anthropicModels = {
     cacheWritesPrice: 0.3,
     cacheReadsPrice: 0.03,
   },
+  "claude-haiku-4-5-20251016": {
+    maxTokens: 4096,
+    contextWindow: 200_000,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 0.3,
+    outputPrice: 1.5,
+    cacheWritesPrice: 0.375,
+    cacheReadsPrice: 0.03,
+  },
 } as const satisfies Record<string, ModelInfo>; // as const assertion makes the object deeply readonly
 
 // AWS Bedrock
@@ -232,6 +270,16 @@ export const bedrockModels = {
     inputPrice: 0.035,
     outputPrice: 0.14,
   },
+  "anthropic.claude-sonnet-4-5-20250929-v1:0": {
+    maxTokens: 64000, // maxOutput
+    contextWindow: 200_000, // maxInput
+    supportsImages: true, // vision
+    supportsPromptCache: true, // assume prompt cache is supported
+    inputPrice: 3.0, //  per million input tokens
+    outputPrice: 15.0, //  per million output tokens
+    description: 'Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)',
+  },
+
   "anthropic.claude-3-7-sonnet-20250219-v1:0": {
     maxTokens: 8192,
     contextWindow: 200_000,
@@ -328,6 +376,16 @@ export const openRouterDefaultModelInfo: ModelInfo = {
 export type VertexModelId = keyof typeof vertexModels;
 export const vertexDefaultModelId: VertexModelId = "claude-3-7-sonnet@20250219";
 export const vertexModels = {
+  "claude-sonnet-4-5@20250929": {
+    maxTokens: 64000, // maxOutput
+    contextWindow: 200_000, // maxInput
+    supportsImages: true, // vision
+    supportsPromptCache: true, // assume prompt cache is supported
+    inputPrice: 3.0, //  per million input tokens
+    outputPrice: 15.0, //  per million output tokens
+    description: 'Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)',
+  },
+
   "claude-3-7-sonnet@20250219": {
     maxTokens: 8192,
     contextWindow: 200_000,
@@ -404,7 +462,7 @@ export const vertexModels = {
     inputPrice: 0,
     outputPrice: 0,
   },
-  "gemini-2.0-flash-exp": {
+  "gemini-2.5-flash": {
     maxTokens: 8192,
     contextWindow: 1_048_576,
     supportsImages: true,
@@ -412,7 +470,7 @@ export const vertexModels = {
     inputPrice: 0,
     outputPrice: 0,
   },
-  "gemini-2.5-pro-exp-03-25": {
+  "gemini-2.5-flash-lite": {
     maxTokens: 65536,
     contextWindow: 1_048_576,
     supportsImages: true,
@@ -436,7 +494,7 @@ export const vertexModels = {
       { tokenLimit: Infinity, price: 15.0 }, // Output price for > 200k input tokens
     ],
   },
-  "gemini-2.5-flash-preview-04-17": {
+  "gemini-2.5-pro": {
     maxTokens: 65536,
     contextWindow: 1_048_576,
     supportsImages: true,
@@ -522,7 +580,7 @@ export const openAiModelInfoSaneDefaults: OpenAiCompatibleModelInfo = {
 export type GeminiModelId = keyof typeof geminiModels;
 export const geminiDefaultModelId: GeminiModelId = "gemini-2.0-flash-001";
 export const geminiModels = {
-  "gemini-2.5-pro-exp-03-25": {
+  "gemini-2.5-flash-lite": {
     maxTokens: 65536,
     contextWindow: 1_048_576,
     supportsImages: true,
@@ -544,7 +602,7 @@ export const geminiModels = {
       { tokenLimit: Infinity, price: 15.0 }, // Output price for > 200k input tokens
     ],
   },
-  "gemini-2.5-flash-preview-04-17": {
+  "gemini-2.5-pro": {
     maxTokens: 65536,
     contextWindow: 1_048_576,
     supportsImages: true,
@@ -596,7 +654,7 @@ export const geminiModels = {
     inputPrice: 0,
     outputPrice: 0,
   },
-  "gemini-2.0-flash-exp": {
+  "gemini-2.5-flash": {
     maxTokens: 8192,
     contextWindow: 1_048_576,
     supportsImages: true,
@@ -659,158 +717,158 @@ export const geminiModels = {
 export type OpenAiNativeModelId = keyof typeof openAiNativeModels
 export const openAiNativeDefaultModelId: OpenAiNativeModelId = "gpt-5-2025-08-07"
 export const openAiNativeModels = {
-	"gpt-5-2025-08-07": {
-		maxTokens: 8_192, // 128000 breaks context window truncation
-		contextWindow: 272000,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 1.25,
-		outputPrice: 10.0,
-		cacheReadsPrice: 0.125,
-	},
-	"gpt-5-mini-2025-08-07": {
-		maxTokens: 8_192,
-		contextWindow: 272000,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 0.25,
-		outputPrice: 2.0,
-		cacheReadsPrice: 0.025,
-	},
-	"gpt-5-nano-2025-08-07": {
-		maxTokens: 8_192,
-		contextWindow: 272000,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 0.05,
-		outputPrice: 0.4,
-		cacheReadsPrice: 0.005,
-	},
-	"nectarine-alpha-new-reasoning-effort-2025-07-25": {
-		maxTokens: 8_192,
-		contextWindow: 256000,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 0,
-		outputPrice: 0,
-		cacheReadsPrice: 0,
-	},
-	o3: {
-		maxTokens: 100_000,
-		contextWindow: 200_000,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 2.0,
-		outputPrice: 8.0,
-		cacheReadsPrice: 0.5,
-	},
-	"o4-mini": {
-		maxTokens: 100_000,
-		contextWindow: 200_000,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 1.1,
-		outputPrice: 4.4,
-		cacheReadsPrice: 0.275,
-	},
-	"gpt-4.1": {
-		maxTokens: 32_768,
-		contextWindow: 1_047_576,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 2,
-		outputPrice: 8,
-		cacheReadsPrice: 0.5,
-	},
-	"gpt-4.1-mini": {
-		maxTokens: 32_768,
-		contextWindow: 1_047_576,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 0.4,
-		outputPrice: 1.6,
-		cacheReadsPrice: 0.1,
-	},
-	"gpt-4.1-nano": {
-		maxTokens: 32_768,
-		contextWindow: 1_047_576,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 0.1,
-		outputPrice: 0.4,
-		cacheReadsPrice: 0.025,
-	},
-	"o3-mini": {
-		maxTokens: 100_000,
-		contextWindow: 200_000,
-		supportsImages: false,
-		supportsPromptCache: true,
-		inputPrice: 1.1,
-		outputPrice: 4.4,
-		cacheReadsPrice: 0.55,
-	},
-	// don't support tool use yet
-	o1: {
-		maxTokens: 100_000,
-		contextWindow: 200_000,
-		supportsImages: true,
-		supportsPromptCache: false,
-		inputPrice: 15,
-		outputPrice: 60,
-		cacheReadsPrice: 7.5,
-	},
-	"o1-preview": {
-		maxTokens: 32_768,
-		contextWindow: 128_000,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 15,
-		outputPrice: 60,
-		cacheReadsPrice: 7.5,
-	},
-	"o1-mini": {
-		maxTokens: 65_536,
-		contextWindow: 128_000,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 1.1,
-		outputPrice: 4.4,
-		cacheReadsPrice: 0.55,
-	},
-	"gpt-4o": {
-		maxTokens: 4_096,
-		contextWindow: 128_000,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 2.5,
-		outputPrice: 10,
-		cacheReadsPrice: 1.25,
-	},
-	"gpt-4o-mini": {
-		maxTokens: 16_384,
-		contextWindow: 128_000,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 0.15,
-		outputPrice: 0.6,
-		cacheReadsPrice: 0.075,
-	},
-	"chatgpt-4o-latest": {
-		maxTokens: 16_384,
-		contextWindow: 128_000,
-		supportsImages: true,
-		supportsPromptCache: false,
-		inputPrice: 5,
-		outputPrice: 15,
-	},
-	"gpt-4.5-preview": {
-		maxTokens: 16_384,
-		contextWindow: 128_000,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 75,
-		outputPrice: 150,
-	},
+  "gpt-5-2025-08-07": {
+    maxTokens: 8_192, // 128000 breaks context window truncation
+    contextWindow: 272000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 1.25,
+    outputPrice: 10.0,
+    cacheReadsPrice: 0.125,
+  },
+  "gpt-5-mini-2025-08-07": {
+    maxTokens: 8_192,
+    contextWindow: 272000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.25,
+    outputPrice: 2.0,
+    cacheReadsPrice: 0.025,
+  },
+  "gpt-5-nano-2025-08-07": {
+    maxTokens: 8_192,
+    contextWindow: 272000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.05,
+    outputPrice: 0.4,
+    cacheReadsPrice: 0.005,
+  },
+  "nectarine-alpha-new-reasoning-effort-2025-07-25": {
+    maxTokens: 8_192,
+    contextWindow: 256000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0,
+    outputPrice: 0,
+    cacheReadsPrice: 0,
+  },
+  "o3": {
+    maxTokens: 100_000,
+    contextWindow: 200_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 2.0,
+    outputPrice: 8.0,
+    cacheReadsPrice: 0.5,
+  },
+  "o4-mini": {
+    maxTokens: 100_000,
+    contextWindow: 200_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 1.1,
+    outputPrice: 4.4,
+    cacheReadsPrice: 0.275,
+  },
+  "gpt-4.1": {
+    maxTokens: 32_768,
+    contextWindow: 1_047_576,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 2,
+    outputPrice: 8,
+    cacheReadsPrice: 0.5,
+  },
+  "gpt-4.1-mini": {
+    maxTokens: 32_768,
+    contextWindow: 1_047_576,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.4,
+    outputPrice: 1.6,
+    cacheReadsPrice: 0.1,
+  },
+  "gpt-4.1-nano": {
+    maxTokens: 32_768,
+    contextWindow: 1_047_576,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.1,
+    outputPrice: 0.4,
+    cacheReadsPrice: 0.025,
+  },
+  "o3-mini": {
+    maxTokens: 100_000,
+    contextWindow: 200_000,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 1.1,
+    outputPrice: 4.4,
+    cacheReadsPrice: 0.55,
+  },
+  // don't support tool use yet
+  "o1": {
+    maxTokens: 100_000,
+    contextWindow: 200_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 15,
+    outputPrice: 60,
+    cacheReadsPrice: 7.5,
+  },
+  "o1-preview": {
+    maxTokens: 32_768,
+    contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 15,
+    outputPrice: 60,
+    cacheReadsPrice: 7.5,
+  },
+  "o1-mini": {
+    maxTokens: 65_536,
+    contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 1.1,
+    outputPrice: 4.4,
+    cacheReadsPrice: 0.55,
+  },
+  "gpt-4o": {
+    maxTokens: 4_096,
+    contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 2.5,
+    outputPrice: 10,
+    cacheReadsPrice: 1.25,
+  },
+  "gpt-4o-mini": {
+    maxTokens: 16_384,
+    contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 0.15,
+    outputPrice: 0.6,
+    cacheReadsPrice: 0.075,
+  },
+  "chatgpt-4o-latest": {
+    maxTokens: 16_384,
+    contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPrice: 5,
+    outputPrice: 15,
+  },
+  "gpt-4.5-preview": {
+    maxTokens: 16_384,
+    contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 75,
+    outputPrice: 150,
+  },
 } as const satisfies Record<string, ModelInfo>
 
 
@@ -1718,5 +1776,3 @@ export const requestyDefaultModelInfo: ModelInfo = {
   description:
     "Anthropic's most intelligent model. Highest level of intelligence and capability.",
 };
-
-

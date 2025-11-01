@@ -4,20 +4,22 @@ import {
   Form as BSForm,
   Accordion,
   Col,
-  Nav,
   Row,
   Spinner
 } from 'react-bootstrap';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
-import CoolButton from '../../../../components/CoolButton';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
 import * as Yup from 'yup';
-import PermissionDialog from '../../../../components/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
 
 
 import {
   UsageTransaction,
-} from '../../../model';
+} from '@thor/model';
 
 import { useAddUsageTransactionMutation } from '../../services/UsageTransactionService';
 
@@ -29,7 +31,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -45,80 +47,55 @@ A record of credits spent on a model invocation
 -------------------------------------------------------- */
 
 /* -----------------------------------------------------
-   YUP VALIDATION SCHEMA
-   (Skip read-only fields and container types)
+   YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
+const asNumber = (schema: Yup.NumberSchema) =>
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+
 const validationSchema = Yup.object().shape({
-    
+        customerId: Yup.string().required("customerId is required."),
         spentAt: Yup.date()
-          
-          .required("spentAt is required.")
-          ,
-    
-        credits: Yup.number()
-          
-          .required("credits is required.")
-          ,
-    
-        modelProvider: Yup.string()
-          
-          .required("modelProvider is required.")
-          ,
-    
-        model: Yup.string()
-          
-          .required("model is required.")
-          ,
-    
-        promptTokens: Yup.number()
-          
-          .required("promptTokens is required.")
-          ,
-    
-        completionTokens: Yup.number()
-          
-          .required("completionTokens is required.")
-          ,
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).required("spentAt is required.").typeError("spentAt must be a valid date"),
+        modelProvider: Yup.string().required("modelProvider is required."),
+        model: Yup.string().required("model is required."),
+        promptTokens: asNumber(Yup.number().integer().typeError("promptTokens must be a number")).required("promptTokens is required."),
+        completionTokens: asNumber(Yup.number().integer().typeError("completionTokens must be a number")).required("completionTokens is required."),
+        idempotencyKey: Yup.string(),
+        id: Yup.string(),
+        ownerId: Yup.string(),
         createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
+        keyHash: Yup.string(),
+        lastAccessedById: Yup.string(),
         lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
+        lastModifiedById: Yup.string(),
         lastModifiedDate: Yup.date()
-          
-          
-          ,
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -126,131 +103,41 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const UsageTransactionForm: React.FC = () => {
   const [addUsageTransaction, addUsageTransactionResult] = useAddUsageTransactionMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user', // This should come from authentication context
+    username: 'current_user',
     permissions: {
-      isOwner: true, // This should be determined by checking object ownership
-      isAdmin: true, // This should come from user roles
+      isOwner: true,
+      isAdmin: true,
       canGrantPermissions: true,
       permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
-  /* INITIAL VALUES - skip read-only fields */
+  /* -----------------------------------------------------
+     INITIAL VALUES - only NON read-only fields
+  -------------------------------------------------------- */
   const initialValues: Partial<UsageTransaction> = {
-          
-
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            modelProvider: 'null',
-
-
-
-
-
-          
-
-            model: 'null',
-
-
-
-
-
-          
-
-
-
-            promptTokens: 0,
-
-
-
-          
-
-
-
-            completionTokens: 0,
-
-
-
-          
-
-            id: 'b4c4baa4-007e-4d07-85ad-b6a5f8610395',
-
-
-
-
-
-          
-
-            ownerId: 'a5175a2d-0bc6-4aba-bb04-dfb5e84af2df',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            keyHash: 'null',
-
-
-
-
-
-          
-
-            lastAccessedById: '4309df95-65f9-4217-b7d6-91f8e0108648',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            lastModifiedById: '5fcf6a93-593b-4825-a7ea-75f4c6787c0f',
-
-
-
-
-
-          
-
-
-
-
-
-
+          customerId: '',
+          spentAt: new Date(),
+          modelProvider: '',
+          model: '',
+          promptTokens: 0,
+          completionTokens: 0,
+          idempotencyKey: '',
+          id: '',
+          ownerId: '',
+          createdDate: new Date(),
+          keyHash: '',
+          lastAccessedById: '',
+          lastAccessedDate: new Date(),
+          lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -266,16 +153,16 @@ const UsageTransactionForm: React.FC = () => {
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
     console.log('Permissions saved for new UsageTransaction:', grants);
-    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<UsageTransaction>) => {
     try {
       console.log("UsageTransaction form values:", values);
-      const result = await addUsageTransaction(values).unwrap();
-      
-      // If object was created successfully and has an ID, offer to set permissions
+
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addUsageTransaction(values as any).unwrap();
+
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
           `UsageTransaction created successfully! Would you like to set permissions for this object?`
@@ -284,7 +171,7 @@ const UsageTransactionForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create UsageTransaction:', error);
@@ -304,6 +191,7 @@ const UsageTransactionForm: React.FC = () => {
           isSubmitting,
           isValid,
           errors,
+          values,
           setFieldValue,
           touched,
           setFieldTouched,
@@ -311,27 +199,46 @@ const UsageTransactionForm: React.FC = () => {
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={36} />
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  touched: {JSON.stringify(touched)}
-                  <br />
-                  addUsageTransactionResult: {JSON.stringify(addUsageTransactionResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-              {/* Editable Fields (NON-read-only) */}
+              
+              {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                  <FaRegPlusSquare size={36} /> Add New UsageTransaction
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New UsageTransaction
                 </Accordion.Header>
                 <Accordion.Body>
-                    
+                    <label htmlFor="customerId" className="nice-form-control">
+                      <b>
+                        Customer Id:
+                        {touched.customerId &&
+                         !errors.customerId && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="customerId"
+                            value={values?.customerId}
+                            placeholder="Customer Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="customerId"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="spentAt" className="nice-form-control">
                       <b>
                         Spent At:
@@ -349,6 +256,25 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="spentAt"
+                            type="datetime-local"
+                            value={values.spentAt ? 
+                              new Date(values.spentAt).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('spentAt', true);
+                              const v = e.target.value;
+                              setFieldValue('spentAt', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.spentAt
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="spentAt"
@@ -356,7 +282,6 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="credits" className="nice-form-control">
                       <b>
                         Credits:
@@ -374,6 +299,7 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="credits"
@@ -381,7 +307,6 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="modelProvider" className="nice-form-control">
                       <b>
                         Model Provider:
@@ -393,16 +318,15 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="modelProvider"
-                            type="text"
-                            className={
-                              errors.modelProvider
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.modelProvider}
+                            placeholder="Model Provider"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -416,7 +340,6 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="model" className="nice-form-control">
                       <b>
                         Model:
@@ -428,16 +351,15 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="model"
-                            type="text"
-                            className={
-                              errors.model
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.model}
+                            placeholder="Model"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -451,7 +373,6 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="promptTokens" className="nice-form-control">
                       <b>
                         Prompt Tokens:
@@ -467,13 +388,20 @@ const UsageTransactionForm: React.FC = () => {
                           {/* INTEGER FIELD */}
                           <Field
                             name="promptTokens"
-                            type="text"
+                            type="number"
+                            value={values.promptTokens || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('promptTokens', true);
+                              const v = e.target.value;
+                              setFieldValue('promptTokens', v === '' ? undefined : Number(v));
+                            }}
                             className={
                               errors.promptTokens
                                 ? 'form-control field-error'
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -486,7 +414,6 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="completionTokens" className="nice-form-control">
                       <b>
                         Completion Tokens:
@@ -502,13 +429,20 @@ const UsageTransactionForm: React.FC = () => {
                           {/* INTEGER FIELD */}
                           <Field
                             name="completionTokens"
-                            type="text"
+                            type="number"
+                            value={values.completionTokens || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('completionTokens', true);
+                              const v = e.target.value;
+                              setFieldValue('completionTokens', v === '' ? undefined : Number(v));
+                            }}
                             className={
                               errors.completionTokens
                                 ? 'form-control field-error'
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -521,7 +455,39 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
+                    <label htmlFor="idempotencyKey" className="nice-form-control">
+                      <b>
+                        Idempotency Key:
+                        {touched.idempotencyKey &&
+                         !errors.idempotencyKey && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="idempotencyKey"
+                            value={values?.idempotencyKey}
+                            placeholder="Idempotency Key"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="idempotencyKey"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="id" className="nice-form-control">
                       <b>
                         Id:
@@ -533,16 +499,15 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.id}
+                            placeholder="Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -556,7 +521,6 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
@@ -568,16 +532,15 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -591,7 +554,6 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
@@ -609,6 +571,25 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="createdDate"
@@ -616,7 +597,6 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
@@ -628,16 +608,15 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -651,7 +630,6 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedById" className="nice-form-control">
                       <b>
                         Last Accessed By Id:
@@ -663,16 +641,15 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastAccessedById}
+                            placeholder="Last Accessed By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -686,7 +663,6 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedDate" className="nice-form-control">
                       <b>
                         Last Accessed Date:
@@ -704,6 +680,25 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedDate"
@@ -711,7 +706,6 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedById" className="nice-form-control">
                       <b>
                         Last Modified By Id:
@@ -723,16 +717,15 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastModifiedById}
+                            placeholder="Last Modified By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -746,7 +739,6 @@ const UsageTransactionForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedDate" className="nice-form-control">
                       <b>
                         Last Modified Date:
@@ -764,6 +756,25 @@ const UsageTransactionForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedDate"
@@ -774,31 +785,34 @@ const UsageTransactionForm: React.FC = () => {
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
+                    disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (
-                      <Spinner
-                        style={ { float: 'left' } }
-                        as="span"
-                        animation="grow"
-                        variant="light"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FaCheckCircle size={30} /> Create New UsageTransaction
+                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New UsageTransaction
                   </CoolButton>
+
+                  {addUsageTransactionResult.error && (
+                    <div className="error" style={ { marginTop: 12 }}>
+                      {JSON.stringify('data' in (addUsageTransactionResult as any).error ? (addUsageTransactionResult as any).error.data : (addUsageTransactionResult as any).error)}
+                    </div>
+                  )}
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Read-Only System Fields */}
-              <Accordion.Item eventKey="2">
-                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                  </Row>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addUsageTransactionResult: {JSON.stringify(addUsageTransactionResult)}
                 </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
           </form>
         )}

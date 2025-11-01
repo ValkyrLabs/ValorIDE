@@ -11,7 +11,7 @@ const websocketSlice = createSlice({
   } as WebsocketSession,
   reducers: {
     setConnected: (state, action) => {
-      // state.connected = action.payload;
+      state.connected = !!action.payload;
     },
     addMessage: (state, action) => {
       state.messages = state.messages || [];

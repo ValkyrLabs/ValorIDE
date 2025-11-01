@@ -18,14 +18,14 @@ import { Middleware } from "@reduxjs/toolkit";
 
 // IMPORTant
 
-import { LoginService } from "../services/LoginService";
+import { AuthService } from "../services/AuthService";
 import { LogoutService } from "../services/LogoutService";
 import { PrincipalService } from "../services/PrincipalService";
-import { ApplicationService } from "../../thor/redux/services/ApplicationService";
+import { ApplicationService } from "../services/ApplicationService";
 
 // use to populate external store
 export const middlewares: Middleware[] = [
-  LoginService.middleware as Middleware,
+  AuthService.middleware as Middleware,
   LogoutService.middleware as Middleware,
   PrincipalService.middleware as Middleware,
   ApplicationService.middleware as Middleware,

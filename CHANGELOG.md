@@ -124,7 +124,7 @@
 ## [3.8.5]
 
 - Add support for remote MCP Servers using SSE
-- Add gemini-2.5-pro-exp-03-25 to Vertex AI (thanks @arri-cc!)
+- Add gemini-2.5-flash-lite to Vertex AI (thanks @arri-cc!)
 - Add access to history, mcp, and new task buttons in popout view
 - Add task feedback telemetry (thumbs up/down on task completion)
 - Add toggle disabled for remote servers

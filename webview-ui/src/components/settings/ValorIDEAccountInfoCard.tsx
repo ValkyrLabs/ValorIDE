@@ -4,8 +4,8 @@ import { vscode } from "@/utils/vscode";
 import { useExtensionState } from "@/context/ExtensionStateContext";
 
 export const ValorIDEAccountInfoCard = () => {
-  const { userInfo, apiConfiguration } = useExtensionState();
-  let user = apiConfiguration?.valorideApiKey ? userInfo : undefined;
+  const { authenticatedUser } = useExtensionState();
+  const user = authenticatedUser;
 
   const handleLogin = () => {
     vscode.postMessage({ type: "accountLoginClicked" });
@@ -14,7 +14,7 @@ export const ValorIDEAccountInfoCard = () => {
   const handleLogout = () => {
     // First notify extension to clear API keys and state
     vscode.postMessage({ type: "accountLogoutClicked" });
-    // Then sign out of Firebase
+    // Then sign out of valkyrai
     // handleSignOut()
   };
 

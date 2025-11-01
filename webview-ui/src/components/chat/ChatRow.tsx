@@ -44,19 +44,23 @@ import {
   FaFileAlt,
   FaBrain,
   FaCarCrash,
+  FaMagic,
   FaFileUpload
 } from "react-icons/fa";
 import { VscError, VscCheck } from "react-icons/vsc";
-import {
+import type {
   ValorIDEApiReqInfo,
   ValorIDEAskQuestion,
   ValorIDEAskUseMcpServer,
   ValorIDEMessage,
   ValorIDEPlanModeResponse,
   ValorIDESayTool,
-  COMPLETION_RESULT_CHANGES_FLAG,
+  ValorIDEChangesSummary,
+  ValorIDEFileChangeStatus,
+  ValorIDEFileChangeSummary,
   ExtensionMessage,
 } from "@shared/ExtensionMessage";
+import { COMPLETION_RESULT_CHANGES_FLAG } from "@shared/ExtensionMessage";
 import {
   COMMAND_OUTPUT_STRING,
   COMMAND_REQ_APP_STRING,
@@ -88,6 +92,284 @@ import NewTaskPreview from "./NewTaskPreview";
 import McpResourceRow from "@/components/mcp/configuration/tabs/installed/server-row/McpResourceRow";
 import UserMessage from "./UserMessage";
 
+const statusColorMap: Record<ValorIDEFileChangeStatus, string> = {
+  added: "var(--vscode-charts-green)",
+  modified: "var(--vscode-charts-blue)",
+  deleted: "var(--vscode-charts-red)",
+  renamed: "#c586c0",
+  copied: "#d7ba7d",
+  typechange: "#d7ba7d",
+};
+
+const statusShortLabel: Record<ValorIDEFileChangeStatus, string> = {
+  added: "A",
+  modified: "M",
+  deleted: "D",
+  renamed: "R",
+  copied: "C",
+  typechange: "T",
+};
+
+const ChangesSummaryContainer = styled.div`
+  margin-top: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--vscode-editorWidget-border, rgba(255, 255, 255, 0.08));
+  background: color-mix(
+    in srgb,
+    var(--vscode-editorWidget-background) 82%,
+    transparent
+  );
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const ChangesSummaryHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const ChangesSummaryTitle = styled.span`
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+  flex: 1;
+  min-width: 0;
+`;
+
+const ChangesSummaryTotals = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+`;
+
+const SummaryMetric = styled.span<{ variant: "added" | "removed" }>`
+  color: ${({ variant }) =>
+    variant === "added"
+      ? "var(--vscode-charts-green)"
+      : "var(--vscode-charts-red)"};
+`;
+
+const ChangesSummaryActionButton = styled.button`
+  background: none;
+  border: none;
+  color: var(--vscode-editorLink-activeForeground, var(--vscode-textLink-foreground));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, currentColor 12%, transparent);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+`;
+
+const ChangesSummaryList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+`;
+
+const ChangesSummaryRow = styled.button`
+  all: unset;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  border: 1px solid var(--vscode-editorWidget-border, rgba(255, 255, 255, 0.07));
+  padding: 8px 10px;
+  cursor: pointer;
+  gap: 10px;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--vscode-editorWidget-background) 55%, transparent);
+    border-color: color-mix(in srgb, currentColor 20%, transparent);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+`;
+
+const RowLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+`;
+
+const StatusBadge = styled.span<{ status: ValorIDEFileChangeStatus }>`
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 6px;
+  border-radius: 6px;
+  background: ${({ status }) =>
+    colorMix(statusColorMap[status] ?? "var(--vscode-foreground)", 0.15)};
+  color: ${({ status }) => statusColorMap[status] ?? "var(--vscode-foreground)"};
+  text-transform: uppercase;
+`;
+
+const FileName = styled.span`
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+`;
+
+const RowRight = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+`;
+
+const RowSecondaryText = styled.span`
+  display: block;
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  margin-top: 2px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const RowTextWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+`;
+
+interface CompletionChangesSummaryProps {
+  summary: ValorIDEChangesSummary;
+  disabled: boolean;
+  onOpenAllChanges: () => void;
+  onOpenFileDiff: (relativePath: string) => void;
+}
+
+const CompletionChangesSummary: React.FC<CompletionChangesSummaryProps> = ({
+  summary,
+  disabled,
+  onOpenAllChanges,
+  onOpenFileDiff,
+}) => {
+  if (!summary || summary.totalFiles === 0) {
+    return null;
+  }
+
+  const totalFilesLabel =
+    summary.totalFiles === 1
+      ? "1 file"
+      : `${summary.totalFiles} files`;
+
+  return (
+    <ChangesSummaryContainer>
+      <ChangesSummaryHeader>
+        <ChangesSummaryTitle>Changes Summary</ChangesSummaryTitle>
+        <ChangesSummaryTotals>
+          <SummaryMetric variant="added">
+            +{summary.totalInsertions}
+          </SummaryMetric>
+          <SummaryMetric variant="removed">
+            -{summary.totalDeletions}
+          </SummaryMetric>
+          <span>{totalFilesLabel}</span>
+        </ChangesSummaryTotals>
+        <ChangesSummaryActionButton
+          type="button"
+          disabled={disabled}
+          onClick={() => {
+            if (!disabled) {
+              onOpenAllChanges();
+            }
+          }}
+          title="Open all changes"
+          aria-label="Open all changes"
+        >
+          <FaExternalLinkAlt size={12} />
+        </ChangesSummaryActionButton>
+      </ChangesSummaryHeader>
+      <ChangesSummaryList>
+        {summary.files.map((file: ValorIDEFileChangeSummary, index) => {
+          const isDisabled = disabled || !!file.isBinary;
+          const secondaryText = file.isBinary
+            ? "Binary file"
+            : file.previousRelativePath
+              ? `Renamed from ${file.previousRelativePath}`
+              : undefined;
+          const statusLabel =
+            statusShortLabel[file.status] ??
+            file.status?.slice(0, 1).toUpperCase();
+
+          return (
+            <ChangesSummaryRow
+              key={`${file.relativePath}-${index}`}
+              type="button"
+              disabled={isDisabled}
+              onClick={() => {
+                if (!isDisabled) {
+                  onOpenFileDiff(file.relativePath);
+                }
+              }}
+              title={
+                file.isBinary
+                  ? "Binary files cannot be previewed in the diff viewer"
+                  : undefined
+              }
+            >
+              <RowLeft>
+                <StatusBadge status={file.status}>{statusLabel}</StatusBadge>
+                <RowTextWrapper>
+                  <FileName>{file.relativePath}</FileName>
+                  {secondaryText && (
+                    <RowSecondaryText>{secondaryText}</RowSecondaryText>
+                  )}
+                </RowTextWrapper>
+              </RowLeft>
+              <RowRight>
+                {!file.isBinary && (
+                  <>
+                    <SummaryMetric variant="added">
+                      +{file.insertions}
+                    </SummaryMetric>
+                    <SummaryMetric variant="removed">
+                      -{file.deletions}
+                    </SummaryMetric>
+                  </>
+                )}
+                <FaChevronRight size={12} />
+              </RowRight>
+            </ChangesSummaryRow>
+          );
+        })}
+      </ChangesSummaryList>
+    </ChangesSummaryContainer>
+  );
+};
+
+const colorMix = (hexColor: string, alpha: number) => {
+  return `color-mix(in srgb, ${hexColor} ${alpha * 100}%, transparent)`;
+};
+
 const ChatRowContainer = styled.div`
   padding: 10px 6px 10px 15px;
   position: relative;
@@ -105,6 +387,7 @@ interface ChatRowProps {
   isLast: boolean;
   onHeightChange: (isTaller: boolean) => void;
   inputValue?: string;
+  setInputValue?: (value: string) => void;
   sendMessageFromChatRow?: (text: string, images: string[]) => void;
 }
 
@@ -143,8 +426,14 @@ const Markdown = memo(({ markdown }: { markdown?: string }) => {
 
 const ChatRow = memo(
   (props: ChatRowProps) => {
-    const { isLast, onHeightChange, message, lastModifiedMessage, inputValue } =
-      props;
+    const {
+      isLast,
+      onHeightChange,
+      message,
+      lastModifiedMessage,
+      inputValue,
+      setInputValue,
+    } = props;
     // Store the previous height to compare with the current height
     // This allows us to detect changes without causing re-renders
     const prevHeightRef = useRef(0);
@@ -189,6 +478,7 @@ export const ChatRowContent = ({
   lastModifiedMessage,
   isLast,
   inputValue,
+  setInputValue,
   sendMessageFromChatRow,
 }: ChatRowContentProps) => {
   const { mcpServers, mcpMarketplaceCatalog } = useExtensionState();
@@ -236,6 +526,48 @@ export const ChatRowContent = ({
   }, []);
 
   useEvent("message", handleMessage);
+
+  const seeNewChangesSinceLastCompletion =
+    message.ask === "completion_result" ||
+    message.say === "completion_result";
+
+  const handleOpenAllChanges = useCallback(() => {
+    if (seeNewChangesDisabled) {
+      return;
+    }
+
+    setSeeNewChangesDisabled(true);
+    vscode.postMessage({
+      type: "taskCompletionViewChanges",
+      number: message.ts,
+      seeNewChangesSinceLastTaskCompletion: seeNewChangesSinceLastCompletion,
+    });
+  }, [
+    message.ts,
+    seeNewChangesDisabled,
+    seeNewChangesSinceLastCompletion,
+  ]);
+
+  const handleOpenFileDiff = useCallback(
+    (relativePath: string) => {
+      if (seeNewChangesDisabled || !relativePath) {
+        return;
+      }
+
+      setSeeNewChangesDisabled(true);
+      vscode.postMessage({
+        type: "taskCompletionOpenFileDiff",
+        number: message.ts,
+        relativePath,
+        seeNewChangesSinceLastTaskCompletion: seeNewChangesSinceLastCompletion,
+      });
+    },
+    [
+      message.ts,
+      seeNewChangesDisabled,
+      seeNewChangesSinceLastCompletion,
+    ],
+  );
 
   const [icon, title] = useMemo(() => {
     switch (type) {
@@ -448,7 +780,12 @@ export const ChatRowContent = ({
 
   const tool = useMemo(() => {
     if (message.ask === "tool" || message.say === "tool") {
-      return JSON.parse(message.text || "{}") as ValorIDESayTool;
+      try {
+        return JSON.parse(message.text || "{}") as ValorIDESayTool;
+      } catch (error) {
+        console.warn("Failed to parse tool payload", error, message.text);
+        return null;
+      }
     }
     return null;
   }, [message.ask, message.say, message.text]);
@@ -528,6 +865,82 @@ export const ChatRowContent = ({
             />
           </>
         );
+      case "precisionSearchAndReplace": {
+        let prettyContent = tool.content ?? "{}";
+        let parsedContent: any;
+
+        try {
+          parsedContent = tool.content ? JSON.parse(tool.content) : undefined;
+          if (parsedContent) {
+            prettyContent = JSON.stringify(parsedContent, null, 2);
+          }
+        } catch (error) {
+          // If parsing fails, fall back to raw content
+        }
+
+        let editSummary: string | undefined;
+        if (Array.isArray(parsedContent?.edits) && parsedContent.edits.length > 0) {
+          const counts = parsedContent.edits.reduce(
+            (acc: Record<string, number>, edit: { kind?: string }) => {
+              const kind = typeof edit?.kind === "string" ? edit.kind : "contextual";
+              acc[kind] = (acc[kind] ?? 0) + 1;
+              return acc;
+            },
+            {} as Record<string, number>,
+          );
+          editSummary = Object.entries(counts)
+            .map(([kind, count]) => `${kind}×${count}`)
+            .join(", ");
+        }
+
+        const summaryParts: string[] = [];
+        if (editSummary) {
+          summaryParts.push(`Edits: ${editSummary}`);
+        }
+        if (parsedContent?.options && Object.keys(parsedContent.options).length > 0) {
+          summaryParts.push("Options provided");
+        }
+
+        const summary = summaryParts.join(" • ");
+        const titleText =
+          message.type === "ask"
+            ? "ValorIDE wants to run precision search & replace on this file:"
+            : "ValorIDE ran precision search & replace on this file:";
+
+        return (
+          <>
+            <div style={headerStyle}>
+              {toolIcon(FaMagic)}
+              {tool.operationIsLocatedInWorkspace === false &&
+                toolIcon(
+                  FaSignOutAlt,
+                  "yellow",
+                  -90,
+                  "This file is outside of your workspace",
+                )}
+              <span style={{ fontWeight: "bold" }}>{titleText}</span>
+            </div>
+            {summary && (
+              <div
+                style={{
+                  marginBottom: "8px",
+                  fontSize: "12px",
+                  color: "var(--vscode-descriptionForeground)",
+                }}
+              >
+                {summary}
+              </div>
+            )}
+            <CodeAccordian
+              code={prettyContent}
+              path={tool.path ?? ""}
+              language="json"
+              isExpanded={isExpanded}
+              onToggleExpand={onToggleExpand}
+            />
+          </>
+        );
+      }
       case "readFile":
         return (
           <>
@@ -1041,8 +1454,7 @@ export const ChatRowContent = ({
                           marginBottom: "4px",
                         }}
                       >
-                        Thinking
-                        <FaBrain />
+                        <FaBrain className="chatTextArea" color="red" size={32} /> Thinking
                       </span>
                       {message.text}
                     </div>
@@ -1245,28 +1657,31 @@ export const ChatRowContent = ({
                 }}
               >
                 <Markdown markdown={text} />
+                {message.partial !== true &&
+                  hasChanges &&
+                  (message.changesSummary ? (
+                    <CompletionChangesSummary
+                      summary={message.changesSummary}
+                      disabled={seeNewChangesDisabled}
+                      onOpenAllChanges={handleOpenAllChanges}
+                      onOpenFileDiff={handleOpenFileDiff}
+                    />
+                  ) : (
+                    <div style={{ marginTop: 17 }}>
+                      <SuccessButton
+                        disabled={seeNewChangesDisabled}
+                        onClick={handleOpenAllChanges}
+                        style={{
+                          cursor: seeNewChangesDisabled ? "wait" : "pointer",
+                          width: "100%",
+                        }}
+                      >
+                        <FaFileUpload />
+                        See new changes
+                      </SuccessButton>
+                    </div>
+                  ))}
               </div>
-              {message.partial !== true && hasChanges && (
-                <div style={{ paddingTop: 17 }}>
-                  <SuccessButton
-                    disabled={seeNewChangesDisabled}
-                    onClick={() => {
-                      setSeeNewChangesDisabled(true);
-                      vscode.postMessage({
-                        type: "taskCompletionViewChanges",
-                        number: message.ts,
-                      });
-                    }}
-                    style={{
-                      cursor: seeNewChangesDisabled ? "wait" : "pointer",
-                      width: "100%",
-                    }}
-                  >
-                    <FaFileUpload />
-                    See new changes
-                  </SuccessButton>
-                </div>
-              )}
             </>
           );
         case "shell_integration_warning":
@@ -1405,24 +1820,27 @@ export const ChatRowContent = ({
                   }}
                 >
                   <Markdown markdown={text} />
-                  {message.partial !== true && hasChanges && (
-                    <div style={{ marginTop: 15 }}>
-                      <SuccessButton
-                        appearance="secondary"
+                  {message.partial !== true &&
+                    hasChanges &&
+                    (message.changesSummary ? (
+                      <CompletionChangesSummary
+                        summary={message.changesSummary}
                         disabled={seeNewChangesDisabled}
-                        onClick={() => {
-                          setSeeNewChangesDisabled(true);
-                          vscode.postMessage({
-                            type: "taskCompletionViewChanges",
-                            number: message.ts,
-                          });
-                        }}
-                      >
-                        <FaFile />
-                        See new changes
-                      </SuccessButton>
-                    </div>
-                  )}
+                        onOpenAllChanges={handleOpenAllChanges}
+                        onOpenFileDiff={handleOpenFileDiff}
+                      />
+                    ) : (
+                      <div style={{ marginTop: 15 }}>
+                        <SuccessButton
+                          appearance="secondary"
+                          disabled={seeNewChangesDisabled}
+                          onClick={handleOpenAllChanges}
+                        >
+                          <FaFile />
+                          See new changes
+                        </SuccessButton>
+                      </div>
+                    ))}
                 </div>
               </div>
             );
@@ -1458,8 +1876,9 @@ export const ChatRowContent = ({
                 <OptionsButtons
                   options={options}
                   selected={selected}
-                  isActive={isLast && lastModifiedMessage?.ask === "followup"}
+                  isActive={isLast && message.ask === "followup"}
                   inputValue={inputValue}
+                  onSelectOption={setInputValue}
                 />
               </div>
             </>
@@ -1510,9 +1929,10 @@ export const ChatRowContent = ({
                 options={options}
                 selected={selected}
                 isActive={
-                  isLast && lastModifiedMessage?.ask === "plan_mode_respond"
+                  isLast && message.ask === "plan_mode_respond"
                 }
                 inputValue={inputValue}
+                onSelectOption={setInputValue}
               />
             </div>
           );

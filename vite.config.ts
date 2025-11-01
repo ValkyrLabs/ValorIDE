@@ -9,5 +9,8 @@ export default defineConfig({
   define: {
     "process.env": process.env,
   },
+  resolve: {
+    extensions: [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".json"],
+  },
   // assetsInclude: ["**/*.yaml"],
 });

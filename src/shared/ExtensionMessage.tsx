@@ -4,6 +4,7 @@ import { GitCommit } from "../utils/git";
 import { ApiConfiguration, ModelInfo } from "./api";
 import { AutoApprovalSettings } from "./AutoApprovalSettings";
 import { BrowserSettings } from "./BrowserSettings";
+import { ValorIDEAdvancedSettings } from "./AdvancedSettings";
 import { ChatSettings } from "./ChatSettings";
 import { HistoryItem } from "./HistoryItem";
 import {
@@ -20,65 +21,81 @@ import type {
 } from "./ValorIDEAccount";
 import { ValorIDERulesToggles } from "./valoride-rules";
 
+export interface RemoteCommand {
+  id: string;
+  type: string;
+  payload: any;
+  sourceInstanceId: string;
+  targetInstanceId?: string;
+}
+
 // webview will hold state
 export interface ExtensionMessage {
   type:
-    | "action"
-    | "state"
-    | "selectedImages"
-    | "ollamaModels"
-    | "lmStudioModels"
-    | "theme"
-    | "workspaceUpdated"
-    | "invoke"
-    | "partialMessage"
-    | "openRouterModels"
-    | "openAiModels"
-    | "requestyModels"
-    | "mcpServers"
-    | "relinquishControl"
-    | "vsCodeLmModels"
-    | "requestVsCodeLmModels"
-    | "authCallback"
-    | "mcpMarketplaceCatalog"
-    | "mcpDownloadDetails"
-    | "commitSearchResults"
-    | "openGraphData"
-    | "isImageUrlResult"
-    | "didUpdateSettings"
-    | "addRemoteServerResult"
-    | "userCreditsBalance"
-    | "userCreditsUsage"
-    | "userCreditsPayments"
-    | "totalTasksSize"
-    | "addToInput"
-    | "browserConnectionResult"
-    | "detectedChromePath"
-    | "scrollToSettings"
-    | "browserRelaunchResult"
-    | "relativePathsResponse" // Handles single and multiple path responses
-    | "fileSearchResults"
-    | "grpc_response" // New type for gRPC responses
-    | "loginSuccess"
-    | "streamToThorapiResult"
-    | "openFileExplorerResult"
-    | "workspaceFiles"
-    | "contentData"
-    | "LIST_APPLICATION_SUCCESS";
+  | "action"
+  | "state"
+  | "selectedImages"
+  | "ollamaModels"
+  | "lmStudioModels"
+  | "theme"
+  | "workspaceUpdated"
+  | "invoke"
+  | "partialMessage"
+  | "openRouterModels"
+  | "openAiModels"
+  | "requestyModels"
+  | "llmDetailsUpdated"
+  | "mcpServers"
+  | "relinquishControl"
+  | "vsCodeLmModels"
+  | "requestVsCodeLmModels"
+  | "authCallback"
+  | "mcpMarketplaceCatalog"
+  | "mcpDownloadDetails"
+  | "commitSearchResults"
+  | "openGraphData"
+  | "isImageUrlResult"
+  | "didUpdateSettings"
+  | "addRemoteServerResult"
+  | "userCreditsBalance"
+  | "userCreditsUsage"
+  | "userCreditsPayments"
+  | "totalTasksSize"
+  | "addToInput"
+  | "browserConnectionResult"
+  | "detectedChromePath"
+  | "scrollToSettings"
+  | "browserRelaunchResult"
+  | "relativePathsResponse" // Handles single and multiple path responses
+  | "fileSearchResults"
+  | "grpc_response" // New type for gRPC responses
+  | "loginSuccess"
+  | "streamToThorapiResult"
+  | "openFileExplorerResult"
+  | "workspaceFiles"
+  | "contentData"
+  | "LIST_APPLICATION_SUCCESS"
+  | "remoteCommand"
+  | "swarm:task-assignment"
+  | "swarm:task-cancelled"
+  | "swarm:remote-command"
+  | "swarm:broadcast"
+  | "swarm:private-message";
   text?: string;
   path?: string; // Used for openFileExplorerResult
   paths?: (string | null)[]; // Used for relativePathsResponse
   action?:
-    | "chatButtonClicked"
-    | "mcpButtonClicked"
-    | "settingsButtonClicked"
-    | "historyButtonClicked"
-    | "didBecomeVisible"
-    | "accountLoginClicked"
-    | "accountLogoutClicked"
-    | "accountButtonClicked"
-    | "focusChatInput"
-    | "generatedFilesButtonClicked";
+  | "chatButtonClicked"
+  | "mcpButtonClicked"
+  | "settingsButtonClicked"
+  | "historyButtonClicked"
+  | "didBecomeVisible"
+  | "accountLoginClicked"
+  | "accountLogoutClicked"
+  | "accountButtonClicked"
+  | "focusChatInput"
+  | "generatedFilesButtonClicked"
+  | "serverConsoleButtonClicked";
 
   invoke?: Invoke;
   state?: ExtensionState;
@@ -96,6 +113,8 @@ export interface ExtensionMessage {
   openRouterModels?: Record<string, ModelInfo>;
   openAiModels?: string[];
   requestyModels?: Record<string, ModelInfo>;
+  models?: Record<string, any>; // For llmDetailsUpdated
+  payload?: any;
   mcpServers?: McpServer[];
   customToken?: string;
   token?: string; // JWT token for authentication
@@ -163,6 +182,7 @@ export interface ExtensionMessage {
     }>;
   }>;
   contentData?: any; // Data from the ContentData endpoint
+  command?: RemoteCommand; // Remote command from mothership
 }
 
 export type Invoke =
@@ -193,6 +213,8 @@ export interface ExtensionState {
   apiConfiguration?: ApiConfiguration;
   autoApprovalSettings: AutoApprovalSettings;
   browserSettings: BrowserSettings;
+  advancedSettings?: ValorIDEAdvancedSettings;
+  thorapiFolderPath?: string;
   remoteBrowserHost?: string;
   chatSettings: ChatSettings;
   checkpointTrackerErrorMessage?: string;
@@ -216,6 +238,31 @@ export interface ExtensionState {
   isLoggedIn?: boolean;
 }
 
+export type ValorIDEFileChangeStatus =
+  | "added"
+  | "modified"
+  | "deleted"
+  | "renamed"
+  | "copied"
+  | "typechange";
+
+export interface ValorIDEFileChangeSummary {
+  relativePath: string;
+  absolutePath: string;
+  insertions: number;
+  deletions: number;
+  status: ValorIDEFileChangeStatus;
+  previousRelativePath?: string;
+  isBinary?: boolean;
+}
+
+export interface ValorIDEChangesSummary {
+  totalFiles: number;
+  totalInsertions: number;
+  totalDeletions: number;
+  files: ValorIDEFileChangeSummary[];
+}
+
 export interface ValorIDEMessage {
   ts: number;
   type: "ask" | "say";
@@ -230,6 +277,7 @@ export interface ValorIDEMessage {
   isOperationOutsideWorkspace?: boolean;
   conversationHistoryIndex?: number;
   conversationHistoryDeletedRange?: [number, number]; // for when conversation history is truncated for API requests
+  changesSummary?: ValorIDEChangesSummary;
 }
 
 export type ValorIDEAsk =
@@ -274,17 +322,19 @@ export type ValorIDESay =
   | "deleted_api_reqs"
   | "valorideignore_error"
   | "checkpoint_created"
-  | "load_mcp_documentation";
+  | "load_mcp_documentation"
+  | "p2p_chat_message";
 
 export interface ValorIDESayTool {
   tool:
-    | "editedExistingFile"
-    | "newFileCreated"
-    | "readFile"
-    | "listFilesTopLevel"
-    | "listFilesRecursive"
-    | "listCodeDefinitionNames"
-    | "searchFiles";
+  | "editedExistingFile"
+  | "newFileCreated"
+  | "readFile"
+  | "listFilesTopLevel"
+  | "listFilesRecursive"
+  | "listCodeDefinitionNames"
+  | "searchFiles"
+  | "precisionSearchAndReplace";
   path?: string;
   diff?: string;
   content?: string;
@@ -339,6 +389,14 @@ export interface ValorIDEAskQuestion {
 
 export interface ValorIDEAskNewTask {
   context: string;
+}
+
+export interface ValorIDEP2PChatMessage {
+  fromHandle: string;
+  toHandle?: string; // If undefined, it's a broadcast message
+  message: string;
+  timestamp: number;
+  messageId: string;
 }
 
 export interface ValorIDEApiReqInfo {

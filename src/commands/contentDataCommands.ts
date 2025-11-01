@@ -23,10 +23,10 @@ export async function fetchContentDataCommand(
         cancellable: false,
       },
       async (progress) => {
-        progress.report({ message: `Connecting to ${process.env.REACT_APP_BASE_PATH?.replace('/v1', '') || "http://localhost:8080"}/ContentData...` });
-        
+        progress.report({ message: `Connecting to ${process.env.VITE_basePath?.replace('/v1', '') || "http://localhost:8080"}/ContentData...` });
+
         const contentData = await accountService.fetchContentData();
-        
+
         if (contentData) {
           // Show success message
           const action = await vscode.window.showInformationMessage(
@@ -34,9 +34,9 @@ export async function fetchContentDataCommand(
             "View Data",
             "Copy to Clipboard"
           );
-          
+
           const dataString = JSON.stringify(contentData, null, 2);
-          
+
           if (action === "View Data") {
             // Create a new document to display the data
             const doc = await vscode.workspace.openTextDocument({
@@ -77,12 +77,12 @@ export async function testContentDataConnectionCommand(
       },
       async (progress) => {
         progress.report({ message: "Testing connection..." });
-        
+
         const startTime = Date.now();
         const contentData = await accountService.fetchContentData();
         const endTime = Date.now();
         const responseTime = endTime - startTime;
-        
+
         if (contentData) {
           vscode.window.showInformationMessage(
             `✅ ContentData connection successful! Response time: ${responseTime}ms`
@@ -113,16 +113,16 @@ export function registerContentDataCommands(
     "valoride.fetchContentData",
     () => fetchContentDataCommand(accountService)
   );
-  
+
   // Register the test connection command
   const testCommand = vscode.commands.registerCommand(
     "valoride.testContentDataConnection",
     () => testContentDataConnectionCommand(accountService)
   );
-  
+
   // Add commands to subscriptions for proper cleanup
   context.subscriptions.push(fetchCommand, testCommand);
-  
+
   console.log("ContentData commands registered successfully");
 }
 
@@ -138,19 +138,18 @@ export function createAccountServiceForCommands(
   const defaultPostMessage = async (message: ExtensionMessage): Promise<void> => {
     console.log("ContentData message:", message.type, message.contentData ? "with data" : "no data");
   };
-  
+
   // JWT token retrieval function
   const getValorIDEApiKey = async (): Promise<string | undefined> => {
     try {
-      // Use the ValkyrAI config to get the token
-      const { ValkyrAIAuthConfig } = await import("../services/auth/valkyrai-config");
-      return await ValkyrAIAuthConfig.getToken(context);
+      // Get JWT token from extension secrets storage
+      return await context.secrets.get("jwtToken");
     } catch (error) {
       console.error("Failed to get ValorIDE API key:", error);
       return undefined;
     }
   };
-  
+
   return new ValorIDEAccountService(
     postMessageToWebview || defaultPostMessage,
     getValorIDEApiKey

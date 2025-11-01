@@ -4,21 +4,23 @@ import {
   Form as BSForm,
   Accordion,
   Col,
-  Nav,
   Row,
   Spinner
 } from 'react-bootstrap';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
-import CoolButton from '../../../../components/CoolButton';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
 import * as Yup from 'yup';
-import PermissionDialog from '../../../../components/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
 
 
 import {
   Chart,
   ChartChartTypeEnum,
-} from '../../../model';
+} from '@thor/model';
 
 import { useAddChartMutation } from '../../services/ChartService';
 
@@ -30,7 +32,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -59,114 +61,56 @@ const ChartTypeValidation = () => {
 };
 
 /* -----------------------------------------------------
-   YUP VALIDATION SCHEMA
-   (Skip read-only fields and container types)
+   YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
+const asNumber = (schema: Yup.NumberSchema) =>
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+
 const validationSchema = Yup.object().shape({
-    
-        sheetId: Yup.string()
-          
-          
-          ,
-    
-        name: Yup.string()
-          
-          
-          ,
-    
+        sheetId: Yup.string(),
+        name: Yup.string(),
       chartType: Yup.mixed()
         .oneOf(ChartTypeValidation(), "Invalid value for chartType")
-        
-        .notRequired(),
-    
-        title: Yup.string()
-          
-          
-          ,
-    
-        axisLabelX: Yup.string()
-          
-          
-          ,
-    
-        axisLabelY: Yup.string()
-          
-          
-          ,
-    
-        categoryRange: Yup.string()
-          
-          
-          ,
-    
-        embedded: Yup.boolean()
-          
-          .notRequired(),
-    
-        anchorCell: Yup.string()
-          
-          
-          ,
-    
-        anchorOffsetX: Yup.number()
-          
-          
-          ,
-    
-        anchorOffsetY: Yup.number()
-          
-          
-          ,
-    
-        width: Yup.number()
-          
-          
-          ,
-    
-        height: Yup.number()
-          
-          
-          ,
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
+        ,
+        title: Yup.string(),
+        axisLabelX: Yup.string(),
+        axisLabelY: Yup.string(),
+        categoryRange: Yup.string(),
+        embedded: Yup.boolean(),
+        anchorCell: Yup.string(),
+        anchorOffsetX: asNumber(Yup.number().integer().typeError("anchorOffsetX must be a number")),
+        anchorOffsetY: asNumber(Yup.number().integer().typeError("anchorOffsetY must be a number")),
+        width: asNumber(Yup.number().integer().typeError("width must be a number")),
+        height: asNumber(Yup.number().integer().typeError("height must be a number")),
+        id: Yup.string(),
+        ownerId: Yup.string(),
         createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
+        keyHash: Yup.string(),
+        lastAccessedById: Yup.string(),
         lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
+        lastModifiedById: Yup.string(),
         lastModifiedDate: Yup.date()
-          
-          
-          ,
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -174,186 +118,47 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const ChartForm: React.FC = () => {
   const [addChart, addChartResult] = useAddChartMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user', // This should come from authentication context
+    username: 'current_user',
     permissions: {
-      isOwner: true, // This should be determined by checking object ownership
-      isAdmin: true, // This should come from user roles
+      isOwner: true,
+      isAdmin: true,
       canGrantPermissions: true,
       permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
-  /* INITIAL VALUES - skip read-only fields */
+  /* -----------------------------------------------------
+     INITIAL VALUES - only NON read-only fields
+  -------------------------------------------------------- */
   const initialValues: Partial<Chart> = {
-          
-
-            sheetId: 'null',
-
-
-
-
-
-          
-
-            name: 'SalesPerformanceChart',
-
-
-
-
-
-          
-          chartType:
-            ChartChartTypeEnum[
-              Object.keys(ChartChartTypeEnum)[0]
-            ],
-          
-
-            title: 'Monthly Sales Performance',
-
-
-
-
-
-          
-
-            axisLabelX: 'Months',
-
-
-
-
-
-          
-
-            axisLabelY: 'Revenue (USD)',
-
-
-
-
-
-          
-
-            categoryRange: 'Sheet1!A2:A12',
-
-
-
-
-
-          
-            embedded: true, 
-
-
-
-
-
-
-          
-
-            anchorCell: 'B2',
-
-
-
-
-
-          
-
-
-
-            anchorOffsetX: 0,
-
-
-
-          
-
-
-
-            anchorOffsetY: 0,
-
-
-
-          
-
-
-
-            width: 0,
-
-
-
-          
-
-
-
-            height: 0,
-
-
-
-          
-
-            id: '007ab2b4-2b4c-44fd-a615-39ebe7639d3a',
-
-
-
-
-
-          
-
-            ownerId: 'cead3672-1910-4ce6-94bc-0a7ae3e36d28',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            keyHash: 'null',
-
-
-
-
-
-          
-
-            lastAccessedById: 'a1e69611-895f-4490-9a69-b01ae30f4bb2',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            lastModifiedById: 'c3cc781d-a775-4109-98a8-4a220c023879',
-
-
-
-
-
-          
-
-
-
-
-
-
+          sheetId: '',
+          name: '',
+        chartType: undefined,
+          title: '',
+          axisLabelX: '',
+          axisLabelY: '',
+          categoryRange: '',
+          embedded: false,
+          anchorCell: '',
+          anchorOffsetX: 0,
+          anchorOffsetY: 0,
+          width: 0,
+          height: 0,
+          id: '',
+          ownerId: '',
+          createdDate: new Date(),
+          keyHash: '',
+          lastAccessedById: '',
+          lastAccessedDate: new Date(),
+          lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -369,16 +174,16 @@ const ChartForm: React.FC = () => {
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
     console.log('Permissions saved for new Chart:', grants);
-    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Chart>) => {
     try {
       console.log("Chart form values:", values);
-      const result = await addChart(values).unwrap();
-      
-      // If object was created successfully and has an ID, offer to set permissions
+
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addChart(values as any).unwrap();
+
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
           `Chart created successfully! Would you like to set permissions for this object?`
@@ -387,7 +192,7 @@ const ChartForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create Chart:', error);
@@ -407,6 +212,7 @@ const ChartForm: React.FC = () => {
           isSubmitting,
           isValid,
           errors,
+          values,
           setFieldValue,
           touched,
           setFieldTouched,
@@ -414,27 +220,13 @@ const ChartForm: React.FC = () => {
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={36} />
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  touched: {JSON.stringify(touched)}
-                  <br />
-                  addChartResult: {JSON.stringify(addChartResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-              {/* Editable Fields (NON-read-only) */}
+              
+              {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                  <FaRegPlusSquare size={36} /> Add New Chart
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New Chart
                 </Accordion.Header>
                 <Accordion.Body>
-                    
                     <label htmlFor="sheetId" className="nice-form-control">
                       <b>
                         Sheet Id:
@@ -446,16 +238,15 @@ const ChartForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="sheetId"
-                            type="text"
-                            className={
-                              errors.sheetId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.sheetId}
+                            placeholder="Sheet Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -469,7 +260,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
@@ -481,16 +271,15 @@ const ChartForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="name"
-                            type="text"
-                            className={
-                              errors.name
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -504,7 +293,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="chartType" className="nice-form-control">
                       <b>
                         Chart Type:
@@ -517,6 +305,7 @@ const ChartForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="chartType"
+                          value={values.chartType || ''}
                           className={
                             errors.chartType
                               ? 'form-control field-error'
@@ -524,7 +313,7 @@ const ChartForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('chartType', true);
-                            setFieldValue('chartType', e.target.value);
+                            setFieldValue('chartType', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Chart Type" />
@@ -539,7 +328,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="title" className="nice-form-control">
                       <b>
                         Title:
@@ -551,16 +339,15 @@ const ChartForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="title"
-                            type="text"
-                            className={
-                              errors.title
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.title}
+                            placeholder="Title"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -574,7 +361,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="axisLabelX" className="nice-form-control">
                       <b>
                         Axis Label X:
@@ -586,16 +372,15 @@ const ChartForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="axisLabelX"
-                            type="text"
-                            className={
-                              errors.axisLabelX
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.axisLabelX}
+                            placeholder="Axis Label X"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -609,7 +394,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="axisLabelY" className="nice-form-control">
                       <b>
                         Axis Label Y:
@@ -621,16 +405,15 @@ const ChartForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="axisLabelY"
-                            type="text"
-                            className={
-                              errors.axisLabelY
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.axisLabelY}
+                            placeholder="Axis Label Y"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -644,7 +427,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="categoryRange" className="nice-form-control">
                       <b>
                         Category Range:
@@ -656,16 +438,15 @@ const ChartForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="categoryRange"
-                            type="text"
-                            className={
-                              errors.categoryRange
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.categoryRange}
+                            placeholder="Category Range"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -679,7 +460,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="embedded" className="nice-form-control">
                       <b>
                         Embedded:
@@ -692,18 +472,17 @@ const ChartForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="embedded"
                             name="embedded"
+                            checked={values.embedded || false}
                             onChange={(e) => {
                               setFieldTouched('embedded', true);
                               setFieldValue('embedded', e.target.checked);
                             }}
                             isInvalid={!!errors.embedded}
-                            className={
-                              errors.embedded ? 'error' : ''
-                            }
+                            className={errors.embedded ? 'error' : ''}
                           />
+
 
 
 
@@ -718,7 +497,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="anchorCell" className="nice-form-control">
                       <b>
                         Anchor Cell:
@@ -730,16 +508,15 @@ const ChartForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="anchorCell"
-                            type="text"
-                            className={
-                              errors.anchorCell
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.anchorCell}
+                            placeholder="Anchor Cell"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -753,7 +530,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="anchorOffsetX" className="nice-form-control">
                       <b>
                         Anchor Offset X:
@@ -769,13 +545,20 @@ const ChartForm: React.FC = () => {
                           {/* INTEGER FIELD */}
                           <Field
                             name="anchorOffsetX"
-                            type="text"
+                            type="number"
+                            value={values.anchorOffsetX || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('anchorOffsetX', true);
+                              const v = e.target.value;
+                              setFieldValue('anchorOffsetX', v === '' ? undefined : Number(v));
+                            }}
                             className={
                               errors.anchorOffsetX
                                 ? 'form-control field-error'
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -788,7 +571,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="anchorOffsetY" className="nice-form-control">
                       <b>
                         Anchor Offset Y:
@@ -804,13 +586,20 @@ const ChartForm: React.FC = () => {
                           {/* INTEGER FIELD */}
                           <Field
                             name="anchorOffsetY"
-                            type="text"
+                            type="number"
+                            value={values.anchorOffsetY || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('anchorOffsetY', true);
+                              const v = e.target.value;
+                              setFieldValue('anchorOffsetY', v === '' ? undefined : Number(v));
+                            }}
                             className={
                               errors.anchorOffsetY
                                 ? 'form-control field-error'
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -823,7 +612,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="width" className="nice-form-control">
                       <b>
                         Width:
@@ -839,13 +627,20 @@ const ChartForm: React.FC = () => {
                           {/* INTEGER FIELD */}
                           <Field
                             name="width"
-                            type="text"
+                            type="number"
+                            value={values.width || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('width', true);
+                              const v = e.target.value;
+                              setFieldValue('width', v === '' ? undefined : Number(v));
+                            }}
                             className={
                               errors.width
                                 ? 'form-control field-error'
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -858,7 +653,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="height" className="nice-form-control">
                       <b>
                         Height:
@@ -874,13 +668,20 @@ const ChartForm: React.FC = () => {
                           {/* INTEGER FIELD */}
                           <Field
                             name="height"
-                            type="text"
+                            type="number"
+                            value={values.height || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('height', true);
+                              const v = e.target.value;
+                              setFieldValue('height', v === '' ? undefined : Number(v));
+                            }}
                             className={
                               errors.height
                                 ? 'form-control field-error'
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -893,7 +694,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="id" className="nice-form-control">
                       <b>
                         Id:
@@ -905,16 +705,15 @@ const ChartForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.id}
+                            placeholder="Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -928,7 +727,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
@@ -940,16 +738,15 @@ const ChartForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -963,7 +760,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
@@ -981,6 +777,25 @@ const ChartForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="createdDate"
@@ -988,7 +803,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
@@ -1000,16 +814,15 @@ const ChartForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1023,7 +836,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedById" className="nice-form-control">
                       <b>
                         Last Accessed By Id:
@@ -1035,16 +847,15 @@ const ChartForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastAccessedById}
+                            placeholder="Last Accessed By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1058,7 +869,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedDate" className="nice-form-control">
                       <b>
                         Last Accessed Date:
@@ -1076,6 +886,25 @@ const ChartForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedDate"
@@ -1083,7 +912,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedById" className="nice-form-control">
                       <b>
                         Last Modified By Id:
@@ -1095,16 +923,15 @@ const ChartForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastModifiedById}
+                            placeholder="Last Modified By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1118,7 +945,6 @@ const ChartForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedDate" className="nice-form-control">
                       <b>
                         Last Modified Date:
@@ -1136,6 +962,25 @@ const ChartForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedDate"
@@ -1146,31 +991,34 @@ const ChartForm: React.FC = () => {
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
+                    disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (
-                      <Spinner
-                        style={ { float: 'left' } }
-                        as="span"
-                        animation="grow"
-                        variant="light"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FaCheckCircle size={30} /> Create New Chart
+                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New Chart
                   </CoolButton>
+
+                  {addChartResult.error && (
+                    <div className="error" style={ { marginTop: 12 }}>
+                      {JSON.stringify('data' in (addChartResult as any).error ? (addChartResult as any).error.data : (addChartResult as any).error)}
+                    </div>
+                  )}
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Read-Only System Fields */}
-              <Accordion.Item eventKey="2">
-                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                  </Row>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addChartResult: {JSON.stringify(addChartResult)}
                 </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
           </form>
         )}

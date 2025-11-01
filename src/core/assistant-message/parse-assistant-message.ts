@@ -8,7 +8,44 @@ import {
   ToolUseName,
 } from ".";
 
+function normalizeLegacyToolFormat(message: string): string {
+  if (!message.includes("<invoke")) {
+    return message;
+  }
+
+  const toolNameSet = new Set<string>(toolUseNames as Iterable<string>);
+  const paramNameSet = new Set<string>(toolParamNames as Iterable<string>);
+
+  let normalized = message.replace(/<\/?function_calls>/g, "");
+
+  normalized = normalized.replace(
+    /<invoke\s+name=(["'])([^"']+)\1>([\s\S]*?)<\/invoke>/g,
+    (match, _quote, rawToolName, inner) => {
+      const toolName = rawToolName.trim();
+      if (!toolNameSet.has(toolName)) {
+        return match;
+      }
+
+      const convertedInner = inner.replace(
+        /<parameter\s+name=(["'])([^"']+)\1>([\s\S]*?)<\/parameter>/g,
+        (paramMatch, _paramQuote, rawParamName, paramInner) => {
+          const paramName = rawParamName.trim();
+          if (!paramNameSet.has(paramName)) {
+            return paramMatch;
+          }
+          return `<${paramName}>${paramInner}</${paramName}>`;
+        },
+      );
+
+      return `<${toolName}>${convertedInner}</${toolName}>`;
+    },
+  );
+
+  return normalized;
+}
+
 export function parseAssistantMessage(assistantMessage: string) {
+  const message = normalizeLegacyToolFormat(assistantMessage);
   const contentBlocks: AssistantMessageContent[] = [];
   let currentTextContent: TextContent | undefined = undefined;
   let currentTextContentStartIndex = 0;
@@ -18,8 +55,8 @@ export function parseAssistantMessage(assistantMessage: string) {
   let currentParamValueStartIndex = 0;
   let accumulator = "";
 
-  for (let i = 0; i < assistantMessage.length; i++) {
-    const char = assistantMessage[i];
+  for (let i = 0; i < message.length; i++) {
+    const char = message[i];
     accumulator += char;
 
     // there should not be a param without a tool use
@@ -45,6 +82,29 @@ export function parseAssistantMessage(assistantMessage: string) {
       const currentToolValue = accumulator.slice(currentToolUseStartIndex);
       const toolUseClosingTag = `</${currentToolUse.name}>`;
       if (currentToolValue.endsWith(toolUseClosingTag)) {
+        if (
+          currentToolUse.name === "ask_followup_question" &&
+          !currentToolUse.params.question
+        ) {
+          const toolInnerContent = currentToolValue
+            .slice(0, -toolUseClosingTag.length)
+            .trim();
+          if (toolInnerContent) {
+            const paramTagPattern = toolParamNames.join("|");
+            const questionText = toolInnerContent
+              .replace(
+                new RegExp(
+                  `<(${paramTagPattern})>[\\s\\S]*?<\\/\\1>`,
+                  "g",
+                ),
+                "",
+              )
+              .trim();
+            if (questionText) {
+              currentToolUse.params.question = questionText;
+            }
+          }
+        }
         // end of a tool use
         currentToolUse.partial = false;
         contentBlocks.push(currentToolUse);

@@ -118,10 +118,13 @@ async function handleGenerateApp(
 
     const { downloadAndExtractZip } = await import("../utils/zipExtractor");
     try {
-      const sanitizedAppName =
-        app.name?.replace(/[^a-zA-Z0-9-_]/g, "_") || "unknown-app";
-      await downloadAndExtractZip(url, targetDir, sanitizedAppName);
-      const extractedPath = require("path").join(targetDir, sanitizedAppName);
+      // Let the extractor derive the versioned folder name from response headers/URL.
+      // Provide app.name as fallback when no version info is present.
+      const extractedPath = await downloadAndExtractZip(
+        url,
+        targetDir,
+        app.name || "unknown-app",
+      );
       vscode.window.showInformationMessage(
         `App "${app.name}" downloaded and extracted to ${extractedPath}.`,
       );
@@ -146,18 +149,34 @@ async function handleGenerateApp(
 
 async function handleOpenAppFolder(app: Application) {
   const homeDir = require("os").homedir();
-  const targetDir = require("path").join(
-    homeDir,
-    "valor-projects",
-    app.name.replace(/[^a-zA-Z0-9-_]/g, "_"),
-  );
+  const baseDir = require("path").join(homeDir, "valor-projects");
   const fs = require("fs");
-  if (!fs.existsSync(targetDir)) {
+  if (!fs.existsSync(baseDir)) {
     vscode.window.showErrorMessage(
-      `Folder for "${app.name}" does not exist: ${targetDir}`,
+      `Base folder does not exist: ${baseDir}`,
     );
     return;
   }
+  // Find the most recent versioned folder for this app (pattern: v*.App Name)
+  const suffix = `.${app.name}`;
+  const candidates = fs
+    .readdirSync(baseDir, { withFileTypes: true })
+    .filter((d: any) => d.isDirectory() && d.name.endsWith(suffix))
+    .map((d: any) => d.name);
+  if (candidates.length === 0) {
+    vscode.window.showErrorMessage(
+      `No versioned folder found for "${app.name}" in ${baseDir}`,
+    );
+    return;
+  }
+  // Pick the most recently modified
+  const pathMod = require("path");
+  candidates.sort((a: string, b: string) => {
+    const aTime = fs.statSync(pathMod.join(baseDir, a)).mtimeMs;
+    const bTime = fs.statSync(pathMod.join(baseDir, b)).mtimeMs;
+    return bTime - aTime;
+  });
+  const targetDir = require("path").join(baseDir, candidates[0]);
   vscode.commands.executeCommand(
     "vscode.openFolder",
     vscode.Uri.file(targetDir),
@@ -167,18 +186,32 @@ async function handleOpenAppFolder(app: Application) {
 
 async function handleDeployApp(app: Application) {
   const homeDir = require("os").homedir();
-  const targetDir = require("path").join(
-    homeDir,
-    "valor-projects",
-    app.name.replace(/[^a-zA-Z0-9-_]/g, "_"),
-  );
+  const baseDir = require("path").join(homeDir, "valor-projects");
   const fs = require("fs");
-  if (!fs.existsSync(targetDir)) {
+  if (!fs.existsSync(baseDir)) {
     vscode.window.showErrorMessage(
-      `Folder for "${app.name}" does not exist: ${targetDir}`,
+      `Base folder does not exist: ${baseDir}`,
     );
     return;
   }
+  const suffix = `.${app.name}`;
+  const candidates = fs
+    .readdirSync(baseDir, { withFileTypes: true })
+    .filter((d: any) => d.isDirectory() && d.name.endsWith(suffix))
+    .map((d: any) => d.name);
+  if (candidates.length === 0) {
+    vscode.window.showErrorMessage(
+      `No versioned folder found for "${app.name}" in ${baseDir}`,
+    );
+    return;
+  }
+  const pathMod = require("path");
+  candidates.sort((a: string, b: string) => {
+    const aTime = fs.statSync(pathMod.join(baseDir, a)).mtimeMs;
+    const bTime = fs.statSync(pathMod.join(baseDir, b)).mtimeMs;
+    return bTime - aTime;
+  });
+  const targetDir = require("path").join(baseDir, candidates[0]);
   const terminal = vscode.window.createTerminal({
     name: `Deploy: ${app.name}`,
     cwd: targetDir,

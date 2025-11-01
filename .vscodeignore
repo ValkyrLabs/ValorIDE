@@ -6,7 +6,10 @@
 .DS_Store
 .valoride
 ValorIDE_docs/
-
+# ignore caches and build outputs
+**/dist/**
+**/.cache/**
+**/*.log
 # Exclude source, tests, docs, configs, and build scripts
 src/
 test/
@@ -16,9 +19,7 @@ docs/
 evals/
 *.ts
 *.tsx
-*.js
 *.jsx
-*.map
 *.test.*
 *.spec.*
 tsconfig.json
@@ -30,6 +31,7 @@ eslint.config.*
 *.lock
 *.md
 *.markdown
+*.vsix
 
 # Exclude node_modules except production dependencies (if not bundled)
 node_modules/
@@ -43,6 +45,7 @@ node_modules/
 # Include only the built output and essential files
 !out/
 !dist/
+dist/**/*.map
 !extension.js
 !package.json
 !README.md

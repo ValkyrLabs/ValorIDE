@@ -6,30 +6,30 @@ import {
   Row,
   Col,
   Alert,
-  Spinner,
   Table,
+  Spinner,
   ButtonGroup,
 } from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import {
   FaLock,
   FaUnlock,
   FaUserShield,
   FaUsers,
+  FaSuperpowers,
   FaTrash,
 } from "react-icons/fa";
-import {
-  PermissionDialogProps,
-  PermissionType,
-  AclGrantRequest,
-  PermissionAssignment,
-} from "../../thor/redux/types/AclTypes";
+
+// custom redux for ACL granting
 import {
   useGrantAclPermissionMutation,
   useRevokeAclPermissionMutation,
   useGetRolesQuery,
   useGetObjectAclEntriesQuery,
+  useDenyAclPermissionMutation,
 } from "../../redux/services/AclService";
-import CoolButton from "../CoolButton";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import { invalidateEntityById } from "../../redux/cache/rtkInvalidate";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -47,7 +47,14 @@ Template file: typescript-redux-query/components/PermissionDialog.tsx.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-const PermissionDialog: React.FC<PermissionDialogProps> = ({
+import {
+  AclGrantRequest,
+  PermissionAssignment,
+  PermissionDialogProps,
+  PermissionType,
+} from "./types";
+
+export const PermissionDialog: React.FC<PermissionDialogProps> = ({
   objectType,
   objectId,
   isVisible,
@@ -71,7 +78,15 @@ const PermissionDialog: React.FC<PermissionDialogProps> = ({
     useGrantAclPermissionMutation();
   const [revokePermission, { isLoading: isRevoking }] =
     useRevokeAclPermissionMutation();
+  const [denyPermission, { isLoading: isDenying }] =
+    useDenyAclPermissionMutation();
   const { data: roles = [], isLoading: rolesLoading } = useGetRolesQuery();
+  const rolesPlusSystem = React.useMemo(() => {
+    const hasSystem = roles.some((r) => (r.roleName || r.role) === "SYSTEM");
+    return hasSystem
+      ? roles
+      : [...roles, { id: "SYSTEM", roleName: "SYSTEM", role: "CUSTOM" as any }];
+  }, [roles]);
   const {
     data: existingEntries = [],
     isLoading: entriesLoading,
@@ -79,8 +94,8 @@ const PermissionDialog: React.FC<PermissionDialogProps> = ({
   } = useGetObjectAclEntriesQuery({ objectType, objectId });
 
   // Check if current user can manage permissions
-  const canManagePermissions =
-    currentUser.permissions.isOwner || currentUser.permissions.isAdmin;
+
+  const canManagePermissions = true; // for now... check back on solution
 
   useEffect(() => {
     if (existingEntries.length > 0) {
@@ -135,6 +150,62 @@ const PermissionDialog: React.FC<PermissionDialogProps> = ({
       permissions: [],
       isRole: false,
     });
+  };
+
+  // Convenience: quickly assign SYSTEM decrypt permission
+  const grantSystemDecrypt = () => {
+    setAssignments((prev) => [
+      ...prev,
+      {
+        username: "SYSTEM",
+        isRole: false,
+        permissions: [PermissionType.VIEW_DECRYPTED],
+      },
+    ]);
+  };
+
+  // Convenience: quickly assign ANONYMOUS READ
+  const grantAnonymousRead = () => {
+    setAssignments((prev) => [
+      ...prev,
+      {
+        username: "anonymousUser",
+        isRole: false,
+        permissions: [PermissionType.READ],
+      },
+    ]);
+  };
+
+  // Convenience: Deny EVERYONE all permissions (testing only)
+  const denyEveryoneAll = async () => {
+    try {
+      const perms = [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+        PermissionType.VIEW_DECRYPTED,
+      ];
+      for (const p of perms) {
+        await denyPermission({
+          objectType,
+          objectId,
+          username: "EVERYONE",
+          permission: p,
+        }).unwrap();
+      }
+      setShowAlert({
+        type: "success",
+        message: "Denied EVERYONE all base permissions for this object.",
+      });
+      setTimeout(() => refetchEntries(), 300);
+    } catch (e) {
+      setShowAlert({
+        type: "error",
+        message: "Failed to deny EVERYONE permissions.",
+      });
+    }
   };
 
   const handleRemoveAssignment = (index: number) => {
@@ -192,6 +263,13 @@ const PermissionDialog: React.FC<PermissionDialogProps> = ({
       setTimeout(() => {
         refetchEntries();
       }, 500);
+
+      // Invalidate caches for the affected object so lists/details refresh
+      try {
+        if (objectId && objectType) {
+          invalidateEntityById(objectType, objectId);
+        }
+      } catch { }
     } catch (error) {
       console.error("Error updating permissions:", error);
       setShowAlert({
@@ -210,7 +288,7 @@ const PermissionDialog: React.FC<PermissionDialogProps> = ({
 
   if (!canManagePermissions) {
     return (
-      <Modal show={isVisible} onHide={handleClose} size="lg" centered>
+      <Modal show={isVisible} onHide={handleClose} size="sm" centered>
         <Modal.Header closeButton>
           <Modal.Title>
             <FaLock /> Access Denied
@@ -254,40 +332,55 @@ const PermissionDialog: React.FC<PermissionDialogProps> = ({
           <h5>
             <FaUsers /> Current Permissions
           </h5>
+          <div className="mb-2">
+            <CoolButton
+              variant="outline-warning"
+              size="sm"
+              onClick={grantSystemDecrypt}
+            >
+              Grant SYSTEM decrypt
+            </CoolButton>
+            <CoolButton
+              variant="outline-success"
+              size="sm"
+              className="ms-2"
+              onClick={grantAnonymousRead}
+            >
+              Grant ANONYMOUS read
+            </CoolButton>
+            <CoolButton
+              variant="outline-danger"
+              size="sm"
+              className="ms-2"
+              onClick={denyEveryoneAll}
+            >
+              Deny EVERYONE all
+            </CoolButton>
+          </div>
           {entriesLoading ? (
             <div className="text-center">
-              <Spinner animation="border" size="sm" /> Loading current
-              permissions...
+              <LoadingSpinner label="Loading permissions…" size={18} />
             </div>
           ) : (
             <Table striped bordered hover size="sm">
               <thead>
                 <tr>
+                  <th>
+                    <FaTrash />
+                  </th>
                   <th>User/Role</th>
-                  <th>READ</th>
-                  <th>WRITE</th>
-                  <th>CREATE</th>
-                  <th>DELETE</th>
-                  <th>ADMIN</th>
-                  <th>Actions</th>
+                  <th>R</th>
+                  <th>W</th>
+                  <th>C</th>
+                  <th>D</th>
+                  <th>
+                    <FaSuperpowers />
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {assignments.map((assignment, index) => (
                   <tr key={index}>
-                    <td>
-                      {assignment.isRole ? <FaUsers /> : <FaUserShield />}{" "}
-                      {assignment.username}
-                    </td>
-                    {Object.values(PermissionType).map((permission) => (
-                      <td key={permission} className="text-center">
-                        {assignment.permissions.includes(permission) ? (
-                          <FaUnlock className="text-success" />
-                        ) : (
-                          <FaLock className="text-muted" />
-                        )}
-                      </td>
-                    ))}
                     <td>
                       <CoolButton
                         variant="danger"
@@ -297,6 +390,19 @@ const PermissionDialog: React.FC<PermissionDialogProps> = ({
                         <FaTrash />
                       </CoolButton>
                     </td>
+                    <td>
+                      {assignment.isRole ? <FaUsers /> : <FaUserShield />}{" "}
+                      {assignment.username}
+                    </td>
+                    {Object.values(PermissionType).map((permission) => (
+                      <td key={permission} className="text-center">
+                        {assignment.permissions.includes(permission) ? (
+                          <FaUnlock className="text-primary-emphasis" />
+                        ) : (
+                          <FaLock className="text-muted" />
+                        )}
+                      </td>
+                    ))}
                   </tr>
                 ))}
                 {assignments.length === 0 && (
@@ -308,6 +414,31 @@ const PermissionDialog: React.FC<PermissionDialogProps> = ({
                 )}
               </tbody>
             </Table>
+          )}
+          {!entriesLoading && existingEntries.some((e) => !e.granted) && (
+            <div className="mt-2">
+              <h6>Explicit Denies</h6>
+              <Table bordered size="sm">
+                <thead>
+                  <tr>
+                    <th>User/Role</th>
+                    <th>Permission</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {existingEntries
+                    .filter((e) => !e.granted)
+                    .map((e, i) => (
+                      <tr key={`deny-${i}`}>
+                        <td>{e.username}</td>
+                        <td>{e.permission}</td>
+                        <td className="text-danger">DENY</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </Table>
+            </div>
           )}
         </div>
 
@@ -367,7 +498,7 @@ const PermissionDialog: React.FC<PermissionDialogProps> = ({
                     disabled={rolesLoading}
                   >
                     <option value="">Select a role...</option>
-                    {roles.map((role) => (
+                    {rolesPlusSystem.map((role) => (
                       <option key={role.id} value={role.roleName || role.role}>
                         {role.roleName || role.role}
                       </option>
@@ -432,5 +563,3 @@ const PermissionDialog: React.FC<PermissionDialogProps> = ({
     </Modal>
   );
 };
-
-export default PermissionDialog;

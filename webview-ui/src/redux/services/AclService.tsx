@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import customBaseQuery from "../customBaseQuery";
-import { AclGrantRequest, Role } from "../../redux/types/AclTypes";
+import customBaseQuery from "../../thor/redux/customBaseQuery";
+import { AclGrantRequest, Role } from "../types/AclTypes";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -26,7 +26,7 @@ export const AclService = createApi({
     // Grant ACL permission
     grantAclPermission: build.mutation<void, AclGrantRequest>({
       query: (body) => ({
-        url: "v1/auth/acl/grant",
+        url: "auth/acl/grant",
         method: "POST",
         body,
       }),
@@ -51,16 +51,26 @@ export const AclService = createApi({
       { objectType: string; objectId: string }
     >({
       query: ({ objectType, objectId }) =>
-        `v1/auth/acl/permissions?objectType=${objectType}&objectId=${objectId}`,
+        `auth/acl/permissions?objectType=${objectType}&objectId=${objectId}`,
       providesTags: (result, error, { objectType, objectId }) => [
         { type: "ACL", id: `${objectType}_${objectId}` },
       ],
     }),
 
+    // Deny ACL permission (granting=false)
+    denyAclPermission: build.mutation<void, AclGrantRequest>({
+      query: (body) => ({
+        url: "auth/acl/deny",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "ACL", id: "LIST" }],
+    }),
+
     // Revoke ACL permission
     revokeAclPermission: build.mutation<void, AclGrantRequest>({
       query: (body) => ({
-        url: "v1/auth/acl/revoke",
+        url: "auth/acl/revoke",
         method: "POST",
         body,
       }),
@@ -77,7 +87,7 @@ export const AclService = createApi({
       { objectType: string; objectId: string }
     >({
       query: ({ objectType, objectId }) =>
-        `v1/auth/acl/entries?objectType=${objectType}&objectId=${objectId}`,
+        `auth/acl/entries/${encodeURIComponent(objectType)}/${encodeURIComponent(objectId)}`,
       providesTags: (result, error, { objectType, objectId }) => [
         { type: "ACL", id: `entries_${objectType}_${objectId}` },
       ],
@@ -87,6 +97,7 @@ export const AclService = createApi({
 
 export const {
   useGrantAclPermissionMutation,
+  useDenyAclPermissionMutation,
   useGetRolesQuery,
   useGetObjectPermissionsQuery,
   useRevokeAclPermissionMutation,

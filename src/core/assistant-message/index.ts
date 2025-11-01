@@ -6,6 +6,7 @@ export interface TextContent {
   type: "text";
   content: string;
   partial: boolean;
+  params?: any;
 }
 
 export const toolUseNames = [
@@ -13,6 +14,7 @@ export const toolUseNames = [
   "read_file",
   "write_to_file",
   "replace_in_file",
+  "precision_search_and_replace",
   "search_files",
   "list_files",
   "list_code_definition_names",
@@ -25,6 +27,7 @@ export const toolUseNames = [
   "attempt_completion",
   "new_task",
   "condense",
+  "send_ws_message",
 ] as const;
 
 // Converts array of tool call names into a union type ("execute_command" | "read_file" | ...)
@@ -36,6 +39,7 @@ export const toolParamNames = [
   "path",
   "content",
   "diff",
+  "edits",
   "regex",
   "file_pattern",
   "recursive",
@@ -52,6 +56,8 @@ export const toolParamNames = [
   "response",
   "result",
   "context",
+  "to_handle",
+  "message",
 ] as const;
 
 export type ToolParamName = (typeof toolParamNames)[number];

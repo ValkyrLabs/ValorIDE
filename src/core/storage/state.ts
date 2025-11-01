@@ -143,6 +143,10 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     thinkingBudgetTokens,
     reasoningEffort,
     sambanovaApiKey,
+    // Valkyrai pass-through
+    valkyraiHost,
+    valkyraiServiceId,
+    valkyraiJwt,
     planActSeparateModelsSettingRaw,
     favoritedModelIds,
     globalValorIDERulesToggles,
@@ -268,6 +272,10 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     >,
     getGlobalState(context, "reasoningEffort") as Promise<string | undefined>,
     getSecret(context, "sambanovaApiKey") as Promise<string | undefined>,
+    // Valkyrai pass-through
+    getGlobalState(context, "valkyraiHost") as Promise<string | undefined>,
+    getGlobalState(context, "valkyraiServiceId") as Promise<string | undefined>,
+    getSecret(context, "valkyraiJwt") as Promise<string | undefined>,
     getGlobalState(context, "planActSeparateModelsSetting") as Promise<
       boolean | undefined
     >,
@@ -283,13 +291,15 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     getGlobalState(context, "isLoggedIn") as Promise<boolean | undefined>,
   ]);
 
+  // Advanced settings are computed in controller when posting state to webview
+
   let apiProvider: ApiProvider;
   if (storedApiProvider) {
     apiProvider = storedApiProvider;
   } else {
-    // Either new user or legacy user that doesn't have the apiProvider stored in state
+  // Either new user or legacy user that doesn't have the apiProvider stored in state
     // (If they're using OpenRouter or Bedrock, then apiProvider state will exist)
-    if (apiKey) {
+  if (apiKey) {
       apiProvider = "anthropic";
     } else {
       // New users should default to openrouter, since they've opted to use an API key instead of signing in
@@ -393,6 +403,10 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
       asksageApiUrl,
       xaiApiKey,
       sambanovaApiKey,
+      // Valkyrai pass-through
+      valkyraiHost,
+      valkyraiServiceId,
+      valkyraiJwt,
       favoritedModelIds,
     },
     lastShownAnnouncementId,
@@ -479,6 +493,10 @@ export async function updateApiConfiguration(
     reasoningEffort,
     valorideApiKey,
     sambanovaApiKey,
+    // Valkyrai pass-through
+    valkyraiHost,
+    valkyraiServiceId,
+    valkyraiJwt,
     favoritedModelIds,
   } = apiConfiguration;
   await updateGlobalState(context, "apiProvider", apiProvider);
@@ -564,6 +582,10 @@ export async function updateApiConfiguration(
   await updateGlobalState(context, "reasoningEffort", reasoningEffort);
   await storeSecret(context, "valorideApiKey", valorideApiKey);
   await storeSecret(context, "sambanovaApiKey", sambanovaApiKey);
+  // Valkyrai pass-through
+  await updateGlobalState(context, "valkyraiHost", valkyraiHost);
+  await updateGlobalState(context, "valkyraiServiceId", valkyraiServiceId);
+  await storeSecret(context, "valkyraiJwt", valkyraiJwt);
   await updateGlobalState(context, "favoritedModelIds", favoritedModelIds);
 }
 
@@ -591,6 +613,7 @@ export async function resetExtensionState(context: vscode.ExtensionContext) {
     "asksageApiKey",
     "xaiApiKey",
     "sambanovaApiKey",
+    "valkyraiJwt",
   ];
   for (const key of secretKeys) {
     await storeSecret(context, key, undefined);

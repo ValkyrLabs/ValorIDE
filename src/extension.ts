@@ -12,6 +12,9 @@ import { telemetryService } from "./services/telemetry/TelemetryService";
 import { WebviewProvider } from "./core/webview";
 import { ErrorService } from "./services/error/ErrorService";
 import { initializeTestMode, cleanupTestMode } from "./services/test/TestMode";
+import { registerUrlCommands } from "./commands/urlCommands";
+import { registerAliasCommands } from "./commands/aliasCommands";
+import { StartupAuthService } from "./services/auth/StartupAuthService";
 
 /*
 Built using https://github.com/microsoft/vscode-webview-ui-toolkit
@@ -26,6 +29,11 @@ let outputChannel: vscode.OutputChannel;
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
+// Defer loading of browser-only CommunicationService to avoid pulling Vite/runtime
+// modules into the extension host at activation time.
+let communicationService: any | null = null;
+let toolRelayService: any | null = null;
+
 export function activate(context: vscode.ExtensionContext) {
   outputChannel = vscode.window.createOutputChannel("ValorIDE");
   context.subscriptions.push(outputChannel);
@@ -45,6 +53,99 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   Logger.log("ValorIDE extension activated");
+
+  // Initialize startup authentication restoration in background
+  void (async () => {
+    try {
+      const startupAuthService = StartupAuthService.getInstance(context);
+      const authResult = await startupAuthService.restoreAuthentication();
+      
+      if (authResult.success) {
+        Logger.log("Successfully restored authentication from stored tokens");
+        // Notify the webview that authentication was restored
+        sidebarWebview.controller.postMessageToWebview({
+          type: "loginSuccess",
+          token: authResult.tokens?.jwtToken,
+          authenticatedPrincipal: authResult.user ? JSON.stringify(authResult.user) : undefined,
+        });
+      } else {
+        Logger.log(`Authentication restoration failed: ${authResult.error || "Unknown error"}`);
+      }
+    } catch (error) {
+      Logger.log(`Error during startup authentication restoration: ${error}`);
+    }
+  })();
+
+  // Register utility commands
+  registerUrlCommands(context);
+  registerAliasCommands(context);
+
+  // Initialize CommunicationService only in browser-like contexts (e.g., web UI)
+  // Use dynamic import to avoid loading Vite/webview code in Node extension host.
+  void (async () => {
+    const hasWindow = typeof (globalThis as any).window !== "undefined";
+    if (!hasWindow) {
+      Logger.log(
+        "CommunicationService not supported in this environment; skipping init.",
+      );
+      return;
+    }
+    const mod = await import("./services/communication/CommunicationService");
+    if (!mod?.CommunicationService?.isSupported()) {
+      Logger.log(
+        "CommunicationService not supported in this environment; skipping init.",
+      );
+      return;
+    }
+    const role = process.env.VALORIDE_ROLE === "manager" ? "manager" : "worker";
+    communicationService = new mod.CommunicationService({ role });
+    communicationService.connect();
+
+    communicationService.on("message", (message: any) => {
+      Logger.log(
+        `CommunicationService received message: ${JSON.stringify(message)}`,
+      );
+      // TODO: Add message handling logic here, e.g., dispatch commands or update UI
+    });
+
+    // Optional: surface service errors to output channel (won't crash)
+    communicationService.on("error", (err: any) => {
+      Logger.log(`CommunicationService error: ${String(err)}`);
+    });
+
+    // Initialize ToolRelayService for remote control capabilities
+    try {
+      const toolRelayMod = await import("./services/communication/ToolRelayService");
+      const visibleWebview = WebviewProvider.getVisibleInstance() || sidebarWebview;
+      if (visibleWebview?.controller) {
+        toolRelayService = new toolRelayMod.ToolRelayService(
+          communicationService,
+          visibleWebview.controller
+        );
+        Logger.log("ToolRelayService initialized for remote control");
+      }
+    } catch (error) {
+      Logger.log(`Failed to initialize ToolRelayService: ${error}`);
+    }
+  })();
+
+  // Register Explorer decorations and context actions for downloaded ThorAPI projects
+  void import("./integrations/explorer/ProjectDecorationProvider")
+    .then(({ registerProjectExplorerIntegrations }) => {
+      registerProjectExplorerIntegrations(context, outputChannel);
+    })
+    .catch((e) => {
+      Logger.log(`Explorer integration registration failed: ${String(e)}`);
+    });
+
+  // Register the Projects tree view with inline actions
+  void import("./integrations/explorer/ProjectsView")
+    .then(({ registerProjectsView }) => {
+      registerProjectsView(context, outputChannel);
+    })
+    .catch((e) => {
+      Logger.log(`Projects view registration failed: ${String(e)}`);
+    });
 
   // Initialize test mode and set dev mode context
   context.subscriptions.push(...initializeTestMode(context, sidebarWebview));
@@ -270,6 +371,28 @@ export function activate(context: vscode.ExtensionContext) {
     ),
   );
 
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "valoride.serverConsoleButtonClicked",
+      (webview: any) => {
+        WebviewProvider.getAllInstances().forEach((instance) => {
+          const openServerConsole = async (instance?: WebviewProvider) => {
+            instance?.controller.postMessageToWebview({
+              type: "action",
+              action: "serverConsoleButtonClicked",
+            });
+          };
+          const isSidebar = !webview;
+          if (isSidebar) {
+            openServerConsole(WebviewProvider.getSidebarInstance());
+          } else {
+            WebviewProvider.getTabInstances().forEach(openServerConsole);
+          }
+        });
+      },
+    ),
+  );
+
   /*
 	We use the text document content provider API to show the left side for diff view by creating a virtual document for the original content. This makes it readonly so users know to edit the right side if they want to keep their changes.
 
@@ -300,7 +423,9 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     const path = uri.path;
-    const query = new URLSearchParams(uri.query.replace(/\+/g, "%2B"));
+    // Guard against missing query to avoid calling replace on undefined
+    const rawQuery = uri.query || "";
+    const query = new URLSearchParams(rawQuery.replace(/\+/g, "%2B"));
     const visibleWebview = WebviewProvider.getVisibleInstance();
     if (!visibleWebview) {
       return;
@@ -317,11 +442,13 @@ export function activate(context: vscode.ExtensionContext) {
         const token = query.get("token");
         const state = query.get("state");
         const apiKey = query.get("apiKey");
+        const authenticatedPrincipal = query.get("authenticatedPrincipal");
 
         console.log("Auth callback received:", {
           token: token,
           state: state,
           apiKey: apiKey,
+          authenticatedPrincipal: authenticatedPrincipal,
         });
 
         // Validate state parameter
@@ -331,7 +458,21 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         if (token && apiKey) {
-          await visibleWebview?.controller.handleAuthCallback(token, apiKey);
+          let parsedUser;
+          try {
+            parsedUser = authenticatedPrincipal ? JSON.parse(decodeURIComponent(authenticatedPrincipal)) : undefined;
+          } catch (error) {
+            console.warn("Failed to parse authenticatedPrincipal:", error);
+          }
+
+          // Use StartupAuthService to handle login persistently
+          const startupAuthService = StartupAuthService.getInstance(context);
+          await startupAuthService.handleSuccessfulLogin(
+            { jwtToken: token, apiKey },
+            parsedUser
+          );
+
+          await visibleWebview?.controller.handleAuthCallback(token, apiKey, parsedUser);
         }
         break;
       }

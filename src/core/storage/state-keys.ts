@@ -19,11 +19,14 @@ export type SecretKey =
   | "asksageApiKey"
   | "xaiApiKey"
   | "sambanovaApiKey"
+  | "valkyraiJwt"
   | "jwtToken";
 
 export type GlobalStateKey =
   | "apiProvider"
   | "apiModelId"
+  | "valkyraiHost"
+  | "valkyraiServiceId"
   | "awsRegion"
   | "awsUseCrossRegionInference"
   | "awsBedrockUsePromptCache"
@@ -77,6 +80,7 @@ export type GlobalStateKey =
   | "thinkingBudgetTokens"
   | "reasoningEffort"
   | "planActSeparateModelsSetting"
-  | "favoritedModelIds";
+  | "favoritedModelIds"
+  | "valorideSwarmInstanceId";
 
 export type LocalStateKey = "localValorIDERulesToggles";

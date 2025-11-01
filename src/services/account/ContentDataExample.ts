@@ -15,11 +15,11 @@ export async function exampleFetchContentData(
   accountService: ValorIDEAccountService
 ): Promise<any | undefined> {
   try {
-    console.log(`Fetching content data from ${process.env.REACT_APP_BASE_PATH?.replace('/v1', '') || "http://localhost:8080"}/ContentData...`);
-    
+    console.log(`Fetching content data from ${process.env.VITE_basePath?.replace('/v1', '') || "http://localhost:8080"}/ContentData...`);
+
     // Call the fetchContentData method
     const contentData = await accountService.fetchContentData();
-    
+
     if (contentData) {
       console.log("Successfully fetched content data:", contentData);
       return contentData;
@@ -60,19 +60,19 @@ export function createAccountServiceExample(): ValorIDEAccountService {
  */
 export async function completeContentDataExample(): Promise<void> {
   console.log("=== ContentData API Example ===");
-  
+
   // Create the account service
   const accountService = createAccountServiceExample();
-  
+
   // Fetch content data
   const result = await exampleFetchContentData(accountService);
-  
+
   if (result) {
     console.log("Content data fetched successfully!");
     console.log("Data structure:", JSON.stringify(result, null, 2));
   } else {
     console.log("Failed to fetch content data. Check your JWT token and endpoint availability.");
   }
-  
+
   console.log("=== Example Complete ===");
 }

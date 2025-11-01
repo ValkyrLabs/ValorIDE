@@ -4,21 +4,23 @@ import {
   Form as BSForm,
   Accordion,
   Col,
-  Nav,
   Row,
   Spinner
 } from 'react-bootstrap';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
-import CoolButton from '../../../../components/CoolButton';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
 import * as Yup from 'yup';
-import PermissionDialog from '../../../../components/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
 
 
 import {
   Address,
   AddressAddressTypeEnum,
-} from '../../../model';
+} from '@thor/model';
 
 import { useAddAddressMutation } from '../../services/AddressService';
 
@@ -30,7 +32,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -55,109 +57,53 @@ const AddressTypeValidation = () => {
 };
 
 /* -----------------------------------------------------
-   YUP VALIDATION SCHEMA
-   (Skip read-only fields and container types)
+   YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
+const asNumber = (schema: Yup.NumberSchema) =>
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+
 const validationSchema = Yup.object().shape({
-    
-        name: Yup.string()
-          
-          .required("name is required.")
-          ,
-    
-        street1: Yup.string()
-          
-          .required("street1 is required.")
-          ,
-    
-        city: Yup.string()
-          
-          .required("city is required.")
-          ,
-    
-        state: Yup.string()
-          
-          .required("state is required.")
-          ,
-    
-        postalCode: Yup.string()
-          
-          .required("postalCode is required.")
-          ,
-    
-        hasWifi: Yup.boolean()
-          
-          .notRequired(),
-    
-        principalId: Yup.string()
-          
-          
-          ,
-    
+        name: Yup.string().required("name is required."),
+        street1: Yup.string().required("street1 is required."),
+        city: Yup.string().required("city is required."),
+        state: Yup.string().required("state is required."),
+        postalCode: Yup.string().required("postalCode is required."),
+        hasWifi: Yup.boolean(),
+        principalId: Yup.string(),
       addressType: Yup.mixed()
         .oneOf(AddressTypeValidation(), "Invalid value for addressType")
-        
-        .notRequired(),
-    
-        gpsCoordinateLat: Yup.number()
-          
-          
-          ,
-    
-        gpsCoordinateLong: Yup.number()
-          
-          
-          ,
-    
-        street2: Yup.string()
-          
-          
-          ,
-    
-        country: Yup.string()
-          
-          
-          ,
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
+        ,
+        street2: Yup.string(),
+        country: Yup.string(),
+        id: Yup.string(),
+        ownerId: Yup.string(),
         createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
+        keyHash: Yup.string(),
+        lastAccessedById: Yup.string(),
         lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
+        lastModifiedById: Yup.string(),
         lastModifiedDate: Yup.date()
-          
-          
-          ,
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -165,176 +111,44 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const AddressForm: React.FC = () => {
   const [addAddress, addAddressResult] = useAddAddressMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user', // This should come from authentication context
+    username: 'current_user',
     permissions: {
-      isOwner: true, // This should be determined by checking object ownership
-      isAdmin: true, // This should come from user roles
+      isOwner: true,
+      isAdmin: true,
       canGrantPermissions: true,
       permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
-  /* INITIAL VALUES - skip read-only fields */
+  /* -----------------------------------------------------
+     INITIAL VALUES - only NON read-only fields
+  -------------------------------------------------------- */
   const initialValues: Partial<Address> = {
-          
-
-            name: 'Bing Roo',
-
-
-
-
-
-          
-
-            street1: '123 Daydream Blvd.',
-
-
-
-
-
-          
-
-            city: 'San Francisco',
-
-
-
-
-
-          
-
-            state: 'CA',
-
-
-
-
-
-          
-
-            postalCode: '94210-0000',
-
-
-
-
-
-          
-            hasWifi: undefined, 
-
-
-
-
-
-
-          
-
-            principalId: 'null',
-
-
-
-
-
-          
-          addressType:
-            AddressAddressTypeEnum[
-              Object.keys(AddressAddressTypeEnum)[0]
-            ],
-          
-
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            street2: 'Apt. 73',
-
-
-
-
-
-          
-
-            country: 'USA',
-
-
-
-
-
-          
-
-            id: '6a514606-616d-4ab1-acbe-6391213f6216',
-
-
-
-
-
-          
-
-            ownerId: '09deaecd-ba18-40c0-9e1d-92b61f61663e',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            keyHash: 'null',
-
-
-
-
-
-          
-
-            lastAccessedById: '46728c5d-80c1-4208-97d3-f6ddea65a8e3',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            lastModifiedById: '61f2aa12-3255-4a97-8343-1b9ae95b5081',
-
-
-
-
-
-          
-
-
-
-
-
-
+          name: '',
+          street1: '',
+          city: '',
+          state: '',
+          postalCode: '',
+          hasWifi: false,
+          principalId: '',
+        addressType: undefined,
+          street2: '',
+          country: '',
+          id: '',
+          ownerId: '',
+          createdDate: new Date(),
+          keyHash: '',
+          lastAccessedById: '',
+          lastAccessedDate: new Date(),
+          lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -350,16 +164,16 @@ const AddressForm: React.FC = () => {
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
     console.log('Permissions saved for new Address:', grants);
-    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<Address>) => {
     try {
       console.log("Address form values:", values);
-      const result = await addAddress(values).unwrap();
-      
-      // If object was created successfully and has an ID, offer to set permissions
+
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addAddress(values as any).unwrap();
+
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
           `Address created successfully! Would you like to set permissions for this object?`
@@ -368,7 +182,7 @@ const AddressForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create Address:', error);
@@ -388,6 +202,7 @@ const AddressForm: React.FC = () => {
           isSubmitting,
           isValid,
           errors,
+          values,
           setFieldValue,
           touched,
           setFieldTouched,
@@ -395,27 +210,13 @@ const AddressForm: React.FC = () => {
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={36} />
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  touched: {JSON.stringify(touched)}
-                  <br />
-                  addAddressResult: {JSON.stringify(addAddressResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-              {/* Editable Fields (NON-read-only) */}
+              
+              {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                  <FaRegPlusSquare size={36} /> Add New Address
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New Address
                 </Accordion.Header>
                 <Accordion.Body>
-                    
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
@@ -427,16 +228,15 @@ const AddressForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="name"
-                            type="text"
-                            className={
-                              errors.name
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -450,7 +250,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="street1" className="nice-form-control">
                       <b>
                         Street 1:
@@ -462,16 +261,15 @@ const AddressForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="street1"
-                            type="text"
-                            className={
-                              errors.street1
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.street1}
+                            placeholder="Street 1"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -485,7 +283,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="city" className="nice-form-control">
                       <b>
                         City:
@@ -497,16 +294,15 @@ const AddressForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="city"
-                            type="text"
-                            className={
-                              errors.city
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.city}
+                            placeholder="City"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -520,7 +316,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="state" className="nice-form-control">
                       <b>
                         State:
@@ -532,16 +327,15 @@ const AddressForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="state"
-                            type="text"
-                            className={
-                              errors.state
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.state}
+                            placeholder="State"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -555,8 +349,7 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
-                    <label htmlFor="postal_code" className="nice-form-control">
+                    <label htmlFor="postalCode" className="nice-form-control">
                       <b>
                         Postal _ code:
                         {touched.postalCode &&
@@ -567,16 +360,15 @@ const AddressForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="postalCode"
-                            type="text"
-                            className={
-                              errors.postalCode
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.postalCode}
+                            placeholder="Postal _ code"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -590,7 +382,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="hasWifi" className="nice-form-control">
                       <b>
                         Has Wifi:
@@ -603,18 +394,17 @@ const AddressForm: React.FC = () => {
 
                           {/* CHECKBOX FIELD */}
                           <BSForm.Check
-                            required
                             id="hasWifi"
                             name="hasWifi"
+                            checked={values.hasWifi || false}
                             onChange={(e) => {
                               setFieldTouched('hasWifi', true);
                               setFieldValue('hasWifi', e.target.checked);
                             }}
                             isInvalid={!!errors.hasWifi}
-                            className={
-                              errors.hasWifi ? 'error' : ''
-                            }
+                            className={errors.hasWifi ? 'error' : ''}
                           />
+
 
 
 
@@ -629,7 +419,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="principalId" className="nice-form-control">
                       <b>
                         Principal Id:
@@ -641,16 +430,15 @@ const AddressForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="principalId"
-                            type="text"
-                            className={
-                              errors.principalId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.principalId}
+                            placeholder="Principal Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -664,7 +452,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="addressType" className="nice-form-control">
                       <b>
                         Address Type:
@@ -677,6 +464,7 @@ const AddressForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="addressType"
+                          value={values.addressType || ''}
                           className={
                             errors.addressType
                               ? 'form-control field-error'
@@ -684,7 +472,7 @@ const AddressForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('addressType', true);
-                            setFieldValue('addressType', e.target.value);
+                            setFieldValue('addressType', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Address Type" />
@@ -699,8 +487,7 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
-                    <label htmlFor="gps_coordinate_lat" className="nice-form-control">
+                    <label htmlFor="gpsCoordinateLat" className="nice-form-control">
                       <b>
                         Gps _ coordinate _ lat:
                         {touched.gpsCoordinateLat &&
@@ -717,6 +504,7 @@ const AddressForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="gpsCoordinateLat"
@@ -724,8 +512,7 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
-                    <label htmlFor="gps_coordinate_long" className="nice-form-control">
+                    <label htmlFor="gpsCoordinateLong" className="nice-form-control">
                       <b>
                         Gps _ coordinate _ long:
                         {touched.gpsCoordinateLong &&
@@ -742,6 +529,7 @@ const AddressForm: React.FC = () => {
 
 
 
+
                       <ErrorMessage
                         className="error"
                         name="gpsCoordinateLong"
@@ -749,7 +537,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="street2" className="nice-form-control">
                       <b>
                         Street 2:
@@ -761,16 +548,15 @@ const AddressForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="street2"
-                            type="text"
-                            className={
-                              errors.street2
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.street2}
+                            placeholder="Street 2"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -784,7 +570,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="country" className="nice-form-control">
                       <b>
                         Country:
@@ -796,16 +581,15 @@ const AddressForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="country"
-                            type="text"
-                            className={
-                              errors.country
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.country}
+                            placeholder="Country"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -819,7 +603,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="id" className="nice-form-control">
                       <b>
                         Id:
@@ -831,16 +614,15 @@ const AddressForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.id}
+                            placeholder="Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -854,7 +636,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
@@ -866,16 +647,15 @@ const AddressForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -889,7 +669,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
@@ -907,6 +686,25 @@ const AddressForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="createdDate"
@@ -914,7 +712,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
@@ -926,16 +723,15 @@ const AddressForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -949,7 +745,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedById" className="nice-form-control">
                       <b>
                         Last Accessed By Id:
@@ -961,16 +756,15 @@ const AddressForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastAccessedById}
+                            placeholder="Last Accessed By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -984,7 +778,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedDate" className="nice-form-control">
                       <b>
                         Last Accessed Date:
@@ -1002,6 +795,25 @@ const AddressForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedDate"
@@ -1009,7 +821,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedById" className="nice-form-control">
                       <b>
                         Last Modified By Id:
@@ -1021,16 +832,15 @@ const AddressForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastModifiedById}
+                            placeholder="Last Modified By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -1044,7 +854,6 @@ const AddressForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedDate" className="nice-form-control">
                       <b>
                         Last Modified Date:
@@ -1062,6 +871,25 @@ const AddressForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedDate"
@@ -1072,31 +900,34 @@ const AddressForm: React.FC = () => {
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
+                    disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (
-                      <Spinner
-                        style={ { float: 'left' } }
-                        as="span"
-                        animation="grow"
-                        variant="light"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FaCheckCircle size={30} /> Create New Address
+                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New Address
                   </CoolButton>
+
+                  {addAddressResult.error && (
+                    <div className="error" style={ { marginTop: 12 }}>
+                      {JSON.stringify('data' in (addAddressResult as any).error ? (addAddressResult as any).error.data : (addAddressResult as any).error)}
+                    </div>
+                  )}
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Read-Only System Fields */}
-              <Accordion.Item eventKey="2">
-                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                  </Row>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addAddressResult: {JSON.stringify(addAddressResult)}
                 </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
           </form>
         )}

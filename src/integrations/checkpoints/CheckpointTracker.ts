@@ -9,6 +9,11 @@ import {
   getWorkingDirectory,
   hashWorkingDir,
 } from "./CheckpointUtils";
+import {
+  ValorIDEChangesSummary,
+  ValorIDEFileChangeStatus,
+  ValorIDEFileChangeSummary,
+} from "@shared/ExtensionMessage";
 
 /**
  * CheckpointTracker Module
@@ -337,6 +342,11 @@ class CheckpointTracker {
       absolutePath: string;
       before: string;
       after: string;
+      insertions: number;
+      deletions: number;
+      status: ValorIDEFileChangeStatus;
+      previousRelativePath?: string;
+      isBinary?: boolean;
     }>
   > {
     const startTime = performance.now();
@@ -360,27 +370,29 @@ class CheckpointTracker {
       ? `${this.cleanCommitHash(lhsHash)}..${cleanRhs}`
       : this.cleanCommitHash(lhsHash);
     console.info(`Diff range: ${diffRange}`);
-    const diffSummary = await git.diffSummary([diffRange]);
+    const diffSummary = await this.getDiffSummary(lhsHash, rhsHash);
 
     const result = [];
     for (const file of diffSummary.files) {
-      const filePath = file.file;
-      const absolutePath = path.join(this.cwd, filePath);
+      const absolutePath = file.absolutePath;
+      const beforePath = file.previousRelativePath ?? file.relativePath;
 
       let beforeContent = "";
-      try {
-        beforeContent = await git.show([
-          `${this.cleanCommitHash(lhsHash)}:${filePath}`,
-        ]);
-      } catch (_) {
-        // file didn't exist in older commit => remains empty
+      if (beforePath) {
+        try {
+          beforeContent = await git.show([
+            `${this.cleanCommitHash(lhsHash)}:${beforePath}`,
+          ]);
+        } catch (_) {
+          // file didn't exist in older commit => remains empty
+        }
       }
 
       let afterContent = "";
       if (rhsHash) {
         try {
           afterContent = await git.show([
-            `${this.cleanCommitHash(rhsHash)}:${filePath}`,
+            `${this.cleanCommitHash(rhsHash)}:${file.relativePath}`,
           ]);
         } catch (_) {
           // file didn't exist in newer commit => remains empty
@@ -394,12 +406,84 @@ class CheckpointTracker {
       }
 
       result.push({
-        relativePath: filePath,
+        relativePath: file.relativePath,
         absolutePath,
         before: beforeContent,
         after: afterContent,
+        insertions: file.insertions,
+        deletions: file.deletions,
+        status: file.status,
+        previousRelativePath: file.previousRelativePath,
+        isBinary: file.isBinary,
       });
     }
+
+    return result;
+  }
+
+  public async getDiffSummary(
+    lhsHash: string,
+    rhsHash?: string,
+  ): Promise<ValorIDEChangesSummary> {
+    const startTime = performance.now();
+
+    const gitPath = await getShadowGitPath(
+      this.globalStoragePath,
+      this.taskId,
+      this.cwdHash,
+    );
+    const git = simpleGit(path.dirname(gitPath));
+
+    console.info(
+      `Building diff summary: ${lhsHash || "initial"} -> ${rhsHash || "working directory"}`,
+    );
+
+    await this.gitOperations.addCheckpointFiles(git);
+
+    const cleanRhs = rhsHash ? this.cleanCommitHash(rhsHash) : undefined;
+    const diffRange = cleanRhs
+      ? `${this.cleanCommitHash(lhsHash)}..${cleanRhs}`
+      : this.cleanCommitHash(lhsHash);
+
+    const diffSummary = await git.diffSummary([diffRange]);
+    const nameStatusRaw = await git.diff(["--name-status", diffRange]);
+    const statusMap = this.parseNameStatusOutput(nameStatusRaw);
+
+    const files: ValorIDEFileChangeSummary[] = diffSummary.files.map((file) => {
+      let relativePath = file.file;
+      let statusInfo = statusMap.get(relativePath);
+
+      if (!statusInfo && relativePath.includes(" -> ")) {
+        const parts = relativePath.split(" -> ").map((part) => part.trim());
+        const potentialNewPath = parts.at(-1);
+        if (potentialNewPath) {
+          relativePath = potentialNewPath;
+          statusInfo = statusMap.get(potentialNewPath);
+          if (!statusInfo && parts.length === 2) {
+            statusInfo = { code: "R", previousPath: parts[0] };
+          }
+        }
+      }
+
+      const status = this.mapStatusCodeToSummary(
+        statusInfo?.code,
+        !!file.binary,
+      );
+
+      return {
+        relativePath,
+        absolutePath: path.join(this.cwd, relativePath),
+        insertions: "insertions" in file ? file.insertions : 0,
+        deletions: "deletions" in file ? file.deletions : 0,
+        status,
+        previousRelativePath:
+          statusInfo?.previousPath ??
+          (relativePath !== file.file && file.file.includes(" -> ")
+            ? file.file.split(" -> ")[0]
+            : undefined),
+        isBinary: !!file.binary,
+      };
+    });
 
     const durationMs = Math.round(performance.now() - startTime);
     telemetryService.captureCheckpointUsage(
@@ -408,7 +492,73 @@ class CheckpointTracker {
       durationMs,
     );
 
-    return result;
+    return {
+      totalFiles: diffSummary.files.length,
+      totalInsertions: diffSummary.files.reduce(
+        (sum, file) =>
+          sum + ("insertions" in file && typeof file.insertions === "number"
+            ? file.insertions
+            : 0),
+        0,
+      ),
+      totalDeletions: diffSummary.files.reduce(
+        (sum, file) =>
+          sum + ("deletions" in file && typeof file.deletions === "number"
+            ? file.deletions
+            : 0),
+        0,
+      ),
+      files,
+    };
+  }
+
+  private parseNameStatusOutput(
+    rawOutput: string,
+  ): Map<string, { code: string; previousPath?: string }> {
+    const map = new Map<string, { code: string; previousPath?: string }>();
+    if (!rawOutput) {
+      return map;
+    }
+    const lines = rawOutput.split(/\r?\n/).map((line) => line.trim());
+    for (const line of lines) {
+      if (!line) continue;
+      const [code, ...paths] = line.split(/\t/).filter(Boolean);
+      if (!code || paths.length === 0) {
+        continue;
+      }
+      const primaryCode = code[0];
+      if ((primaryCode === "R" || primaryCode === "C") && paths.length >= 2) {
+        const [from, to] = paths;
+        map.set(to, { code, previousPath: from });
+      } else {
+        const [current] = paths;
+        map.set(current, { code });
+      }
+    }
+    return map;
+  }
+
+  private mapStatusCodeToSummary(
+    code: string | undefined,
+    isBinary: boolean,
+  ): ValorIDEFileChangeStatus {
+    const statusCode = code ? code[0] : undefined;
+    switch (statusCode) {
+      case "A":
+        return "added";
+      case "D":
+        return "deleted";
+      case "R":
+        return "renamed";
+      case "C":
+        return "copied";
+      case "T":
+        return "typechange";
+      case "M":
+        return "modified";
+      default:
+        return isBinary ? "modified" : "modified";
+    }
   }
 
   /**

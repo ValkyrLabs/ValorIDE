@@ -8,6 +8,22 @@ const fadedOverlayDecorationType = vscode.window.createTextEditorDecorationType(
   },
 );
 
+// New frosted glass overlay for blocking user interaction during ValorIDE editing
+const frostedGlassOverlayDecorationType = vscode.window.createTextEditorDecorationType({
+  backgroundColor: "rgba(100, 100, 100, 0.7)",
+  opacity: "0.8",
+  isWholeLine: true,
+  after: {
+    contentText: "",
+    backgroundColor: "rgba(50, 50, 50, 0.9)",
+    border: "2px solid rgba(100, 150, 255, 0.6)",
+  },
+  // Make the overlay more prominent and block-like
+  outline: "1px solid rgba(100, 150, 255, 0.4)",
+  outlineWidth: "1px",
+  outlineStyle: "solid",
+});
+
 const activeLineDecorationType = vscode.window.createTextEditorDecorationType({
   backgroundColor: "rgba(255, 255, 0, 0.3)",
   opacity: "1",
@@ -15,7 +31,7 @@ const activeLineDecorationType = vscode.window.createTextEditorDecorationType({
   border: "1px solid rgba(255, 255, 0, 0.5)",
 });
 
-type DecorationType = "fadedOverlay" | "activeLine";
+type DecorationType = "fadedOverlay" | "activeLine" | "frostedGlassOverlay";
 
 export class DecorationController {
   private decorationType: DecorationType;
@@ -33,6 +49,8 @@ export class DecorationController {
         return fadedOverlayDecorationType;
       case "activeLine":
         return activeLineDecorationType;
+      case "frostedGlassOverlay":
+        return frostedGlassOverlayDecorationType;
     }
   }
 
@@ -84,5 +102,26 @@ export class DecorationController {
   setActiveLine(line: number) {
     this.ranges = [new vscode.Range(line, 0, line, Number.MAX_SAFE_INTEGER)];
     this.editor.setDecorations(this.getDecoration(), this.ranges);
+  }
+
+  /**
+   * Apply frosted glass overlay to the entire document
+   * This creates a visual overlay that discourages user interaction during ValorIDE editing
+   */
+  applyFullDocumentOverlay() {
+    if (this.decorationType !== "frostedGlassOverlay") {
+      return;
+    }
+    
+    const totalLines = this.editor.document.lineCount;
+    if (totalLines > 0) {
+      this.ranges = [
+        new vscode.Range(
+          new vscode.Position(0, 0),
+          new vscode.Position(totalLines - 1, Number.MAX_SAFE_INTEGER),
+        ),
+      ];
+      this.editor.setDecorations(this.getDecoration(), this.ranges);
+    }
   }
 }

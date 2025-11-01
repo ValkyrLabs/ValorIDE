@@ -97,6 +97,7 @@ export const BrowserSettingsSection: React.FC = () => {
       // Clear timeout if component unmounts or relaunchResult changes
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [relaunchResult]);
 
   // Request detected Chrome path on mount
@@ -231,7 +232,7 @@ export const BrowserSettingsSection: React.FC = () => {
     if (!browserSettings.remoteBrowserEnabled) {
       // Make sure we're not showing checking state when disabled
       setIsCheckingConnection(false);
-      return;
+      return undefined;
     }
 
     // Check immediately when enabled

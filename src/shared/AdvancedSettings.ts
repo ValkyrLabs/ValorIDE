@@ -47,6 +47,20 @@ export interface DebuggingConfig {
   saveFailedMatches: boolean;        // Default: false
   enablePerformanceMetrics: boolean; // Default: false
   logOutputFiltering: boolean;       // Default: false
+  showPsrResultsReport: boolean;     // Default: false
+}
+
+export interface BudgetAlertConfig {
+  // Dollar thresholds for budget alerts
+  // When effective balance <= threshold, corresponding alert triggers
+  depletedThreshold: number;   // Default: 0 (always show when <= 0)
+  criticalThreshold: number;   // Default: 1
+  lowThreshold: number;        // Default: 5
+  alertThreshold: number;      // Default: 10
+}
+
+export interface ThorApiConfig {
+  outputFolder: string;        // Default: "thorapi"
 }
 
 export interface ValorIDEAdvancedSettings {
@@ -56,15 +70,24 @@ export interface ValorIDEAdvancedSettings {
   outputFilter: OutputFilterConfig;
   performance: PerformanceConfig;
   debugging: DebuggingConfig;
+  budgetAlerts: BudgetAlertConfig;
+  thorapi: ThorApiConfig;
 }
 
 export const DEFAULT_FILE_PROCESSING_CONFIG: FileProcessingConfig = {
-  maxFileSize: 51200,        // 50KB
+  maxFileSize: 512000,        // 500KB
   chunkSize: 5120,           // 5KB
   streamingDelay: 16,        // 60fps
   enableProgressiveLoading: true,
   warnLargeFiles: true,
   largeFileThreshold: 20480, // 20KB
+};
+
+export const DEFAULT_BUDGET_ALERT_CONFIG: BudgetAlertConfig = {
+  depletedThreshold: 0,
+  criticalThreshold: 1,
+  lowThreshold: 5,
+  alertThreshold: 10,
 };
 
 export const DEFAULT_MATCHING_CONFIG: MatchingConfig = {
@@ -99,6 +122,11 @@ export const DEFAULT_DEBUGGING_CONFIG: DebuggingConfig = {
   saveFailedMatches: false,
   enablePerformanceMetrics: false,
   logOutputFiltering: false,
+  showPsrResultsReport: false,
+};
+
+export const DEFAULT_THORAPI_CONFIG: ThorApiConfig = {
+  outputFolder: "thorapi",
 };
 
 export const DEFAULT_ADVANCED_SETTINGS: ValorIDEAdvancedSettings = {
@@ -108,6 +136,8 @@ export const DEFAULT_ADVANCED_SETTINGS: ValorIDEAdvancedSettings = {
   outputFilter: DEFAULT_OUTPUT_FILTER_CONFIG,
   performance: DEFAULT_PERFORMANCE_CONFIG,
   debugging: DEFAULT_DEBUGGING_CONFIG,
+  budgetAlerts: DEFAULT_BUDGET_ALERT_CONFIG,
+  thorapi: DEFAULT_THORAPI_CONFIG,
 };
 
 // Validation functions
@@ -137,13 +167,19 @@ export function validateOutputFilterConfig(config: Partial<OutputFilterConfig>):
   return {
     maxOutputLength: Math.max(100, config.maxOutputLength ?? DEFAULT_OUTPUT_FILTER_CONFIG.maxOutputLength),
     enableSmartSummarization: config.enableSmartSummarization ?? DEFAULT_OUTPUT_FILTER_CONFIG.enableSmartSummarization,
-    verbosityLevel: ['minimal', 'normal', 'verbose'].includes(config.verbosityLevel ?? '') 
+    verbosityLevel: ['minimal', 'normal', 'verbose'].includes(config.verbosityLevel ?? '')
       ? config.verbosityLevel as 'minimal' | 'normal' | 'verbose'
       : DEFAULT_OUTPUT_FILTER_CONFIG.verbosityLevel,
     enableProgressFiltering: config.enableProgressFiltering ?? DEFAULT_OUTPUT_FILTER_CONFIG.enableProgressFiltering,
     enableStackTraceFiltering: config.enableStackTraceFiltering ?? DEFAULT_OUTPUT_FILTER_CONFIG.enableStackTraceFiltering,
     customPatterns: Array.isArray(config.customPatterns) ? config.customPatterns : DEFAULT_OUTPUT_FILTER_CONFIG.customPatterns,
     enableCommandSpecificFiltering: config.enableCommandSpecificFiltering ?? DEFAULT_OUTPUT_FILTER_CONFIG.enableCommandSpecificFiltering,
+  };
+}
+
+export function validateThorApiConfig(config: Partial<ThorApiConfig>): ThorApiConfig {
+  return {
+    outputFolder: config.outputFolder?.trim() || DEFAULT_THORAPI_CONFIG.outputFolder,
   };
 }
 
@@ -165,6 +201,14 @@ export function validateAdvancedSettings(settings: Partial<ValorIDEAdvancedSetti
       saveFailedMatches: settings.debugging?.saveFailedMatches ?? DEFAULT_DEBUGGING_CONFIG.saveFailedMatches,
       enablePerformanceMetrics: settings.debugging?.enablePerformanceMetrics ?? DEFAULT_DEBUGGING_CONFIG.enablePerformanceMetrics,
       logOutputFiltering: settings.debugging?.logOutputFiltering ?? DEFAULT_DEBUGGING_CONFIG.logOutputFiltering,
+      showPsrResultsReport: settings.debugging?.showPsrResultsReport ?? DEFAULT_DEBUGGING_CONFIG.showPsrResultsReport,
     },
+    budgetAlerts: {
+      depletedThreshold: Math.max(0, settings.budgetAlerts?.depletedThreshold ?? DEFAULT_BUDGET_ALERT_CONFIG.depletedThreshold),
+      criticalThreshold: Math.max(0, settings.budgetAlerts?.criticalThreshold ?? DEFAULT_BUDGET_ALERT_CONFIG.criticalThreshold),
+      lowThreshold: Math.max(0, settings.budgetAlerts?.lowThreshold ?? DEFAULT_BUDGET_ALERT_CONFIG.lowThreshold),
+      alertThreshold: Math.max(0, settings.budgetAlerts?.alertThreshold ?? DEFAULT_BUDGET_ALERT_CONFIG.alertThreshold),
+    },
+    thorapi: validateThorApiConfig(settings.thorapi ?? {}),
   };
 }

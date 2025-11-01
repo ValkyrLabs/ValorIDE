@@ -72,6 +72,8 @@ import OpenRouterModelPicker, {
 } from "./OpenRouterModelPicker";
 import { ValorIDEAccountInfoCard } from "./ValorIDEAccountInfoCard";
 import RequestyModelPicker from "./RequestyModelPicker";
+import LlmDetailsModelPicker from "./LlmDetailsModelPicker";
+import { useGetLlmDetailssQuery } from "@/thor/redux/services/LlmDetailsService";
 
 interface ApiOptionsProps {
   showModelOptions: boolean;
@@ -220,14 +222,40 @@ const ApiOptions = ({
   }, []);
   useEvent("message", handleMessage);
 
+  // Valkyrai LlmDetails
+  const { data: llmDetailsList } = useGetLlmDetailssQuery();
+  // Workaround for VSCodeDropdown dynamic options selection bug:
+  // create a stable key based on option ids so the dropdown remounts
+  // when the available options change, preserving the selected value.
+  const valkyraiOptionsKey = useMemo(
+    () => JSON.stringify((llmDetailsList || []).map((m) => m.id || "")),
+    [llmDetailsList],
+  );
+  const valkyraiModels: Record<string, ModelInfo> = useMemo(() => {
+    const models: Record<string, ModelInfo> = {};
+    (llmDetailsList || []).forEach((m) => {
+      if (!m.id) return;
+      models[m.id] = {
+        maxTokens: m.maxTokens,
+        contextWindow: m.contextWindow,
+        supportsImages: m.supportsImages,
+        supportsPromptCache: !!m.supportsPromptCache,
+        inputPrice: m.inputPrice,
+        outputPrice: m.outputPrice,
+        description: m.description || `${m.provider} ${m.name}${m.version ? ` (${m.version})` : ""}`,
+      } as ModelInfo;
+    });
+    return models;
+  }, [llmDetailsList]);
+
   /*
-	VSCodeDropdown has an open bug where dynamically rendered options don't auto select the provided value prop. You can see this for yourself by comparing  it with normal select/option elements, which work as expected.
-	https://github.com/microsoft/vscode-webview-ui-toolkit/issues/433
+  VSCodeDropdown has an open bug where dynamically rendered options don't auto select the provided value prop. You can see this for yourself by comparing  it with normal select/option elements, which work as expected.
+  https://github.com/microsoft/vscode-webview-ui-toolkit/issues/433
 
-	In our case, when the user switches between providers, we recalculate the selectedModelId depending on the provider, the default model for that provider, and a modelId that the user may have selected. Unfortunately, the VSCodeDropdown component wouldn't select this calculated value, and would default to the first "Select a model..." option instead, which makes it seem like the model was cleared out when it wasn't.
+  In our case, when the user switches between providers, we recalculate the selectedModelId depending on the provider, the default model for that provider, and a modelId that the user may have selected. Unfortunately, the VSCodeDropdown component wouldn't select this calculated value, and would default to the first "Select a model..." option instead, which makes it seem like the model was cleared out when it wasn't.
 
-	As a workaround, we create separate instances of the dropdown for each provider, and then conditionally render the one that matches the current provider.
-	*/
+  As a workaround, we create separate instances of the dropdown for each provider, and then conditionally render the one that matches the current provider.
+  */
   const createDropdown = (models: Record<string, ModelInfo>) => {
     return (
       <VSCodeDropdown
@@ -276,6 +304,7 @@ const ApiOptions = ({
             position: "relative",
           }}
         >
+          <VSCodeOption value="valkyrai">Valkyrai (LLM Details)</VSCodeOption>
           <VSCodeOption value="valoride">ValorIDE</VSCodeOption>
           <VSCodeOption value="openrouter">OpenRouter</VSCodeOption>
           <VSCodeOption value="anthropic">Anthropic</VSCodeOption>
@@ -303,6 +332,12 @@ const ApiOptions = ({
       {selectedProvider === "valoride" && (
         <div style={{ marginBottom: 14, marginTop: 4 }}>
           <ValorIDEAccountInfoCard />
+        </div>
+      )}
+
+      {selectedProvider === "valkyrai" && (
+        <div style={{ marginBottom: 14, marginTop: 4 }}>
+          <LlmDetailsModelPicker />
         </div>
       )}
 
@@ -964,9 +999,9 @@ const ApiOptions = ({
             )}
           </p>
 
-          {/* Add Thinking Budget Slider specifically for gemini-2.5-flash-preview-04-17 */}
+          {/* Add Thinking Budget Slider specifically for gemini-2.5-pro */}
           {selectedProvider === "gemini" &&
-            selectedModelId === "gemini-2.5-flash-preview-04-17" && (
+            selectedModelId === "gemini-2.5-pro" && (
               <ThinkingBudgetSlider
                 apiConfiguration={apiConfiguration}
                 setApiConfiguration={setApiConfiguration}
@@ -1134,11 +1169,11 @@ const ApiOptions = ({
             }}
             onClick={() => setModelConfigurationSelected((val) => !val)}
           >
-              {modelConfigurationSelected ? (
-                <FaChevronDown style={{ marginRight: "4px" }} />
-              ) : (
-                <FaChevronRight style={{ marginRight: "4px" }} />
-              )}
+            {modelConfigurationSelected ? (
+              <FaChevronDown style={{ marginRight: "4px" }} />
+            ) : (
+              <FaChevronRight style={{ marginRight: "4px" }} />
+            )}
             <span
               style={{
                 fontWeight: 700,
@@ -1935,14 +1970,14 @@ const ApiOptions = ({
               selectedModelId === "claude-3-7-sonnet-20250219") ||
               (selectedProvider === "bedrock" &&
                 selectedModelId ===
-                  "anthropic.claude-3-7-sonnet-20250219-v1:0") ||
+                "anthropic.claude-3-7-sonnet-20250219-v1:0") ||
               (selectedProvider === "vertex" &&
                 selectedModelId === "claude-3-7-sonnet@20250219")) && (
-              <ThinkingBudgetSlider
-                apiConfiguration={apiConfiguration}
-                setApiConfiguration={setApiConfiguration}
-              />
-            )}
+                <ThinkingBudgetSlider
+                  apiConfiguration={apiConfiguration}
+                  setApiConfiguration={setApiConfiguration}
+                />
+              )}
 
             {selectedProvider === "xai" &&
               selectedModelId.includes("3-mini") && (
@@ -2036,7 +2071,7 @@ const ApiOptions = ({
 };
 
 export function getOpenRouterAuthUrl(uriScheme?: string) {
-  return `https://openrouter.ai/auth?callback_url=${uriScheme || "vscode"}://valkyrlabs.claude-dev/openrouter`;
+  return `https://openrouter.ai/auth?callback_url=${uriScheme || "vscode"}://valkyrlabsinc.valoride-dev/openrouter`;
 }
 
 export const formatPrice = (price: number) => {
@@ -2304,6 +2339,12 @@ export function normalizeApiConfiguration(
     };
   };
   switch (provider) {
+    case "valkyrai":
+      return {
+        selectedProvider: provider,
+        selectedModelId: apiConfiguration?.valkyraiServiceId || "",
+        selectedModelInfo: openAiModelInfoSaneDefaults,
+      };
     case "anthropic":
       return getProviderData(anthropicModels, anthropicDefaultModelId);
     case "bedrock":

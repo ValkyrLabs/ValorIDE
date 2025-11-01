@@ -1,11 +1,11 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { Login } from "../../thor/model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { Login } from "@thor/model";
+import customBaseQuery from "../../thor/redux/customBaseQuery"; // Use Thor base query
 
 type LoginResponse = Login[];
 
 export const LoginService = createApi({
-  reducerPath: "Login", // This should remain unique
+  reducerPath: "LoginCustom", // make unique to avoid collisions with generated slice
   baseQuery: customBaseQuery,
   tagTypes: ["Login"],
   endpoints: (build) => ({
@@ -31,7 +31,7 @@ export const LoginService = createApi({
 
     loginUser: build.mutation<Login, Partial<Login>>({
       query: (body) => ({
-        url: `${import.meta.env.VITE_basePath || "http://localhost:8080/v1"}/auth/login`,
+        url: `/auth/login`,
         method: "POST",
         body,
       }),
@@ -70,6 +70,39 @@ export const LoginService = createApi({
       },
       invalidatesTags: (result, error, id) => [{ type: "Login", id }],
     }),
+    // Initiate password reset via email or phone
+    passwordResetRequest: build.mutation<
+      { status?: string; error?: string },
+      { email?: string; phoneNumber?: string }
+    >({
+      query: (body) => ({
+        url: `/auth/password-reset`,
+        method: "POST",
+        body,
+      }),
+    }),
+    // Confirm password reset with token and new password
+    passwordResetConfirm: build.mutation<
+      { status?: string; error?: string },
+      { token: string; newPassword: string }
+    >({
+      query: (body) => ({
+        url: `/auth/password-reset-confirm`,
+        method: "POST",
+        body,
+      }),
+    }),
+    // Optional helper: lookup username by email or phone
+    lookupUsername: build.mutation<
+      { username?: string; error?: string },
+      { email?: string; phoneNumber?: string }
+    >({
+      query: (body) => ({
+        url: `/auth/lookup-username`,
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -80,4 +113,7 @@ export const {
   useAddLoginMutation,
   useUpdateLoginMutation,
   useDeleteLoginMutation,
+  usePasswordResetRequestMutation,
+  usePasswordResetConfirmMutation,
+  useLookupUsernameMutation,
 } = LoginService;

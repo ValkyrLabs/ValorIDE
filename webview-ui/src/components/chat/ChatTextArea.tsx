@@ -9,9 +9,10 @@ import React, {
   useState,
 } from "react";
 import DynamicTextArea from "react-textarea-autosize";
+import GlowingTextArea from "@/components/chat/GlowingTextArea";
 import { useClickAway, useEvent, useWindowSize } from "react-use";
 import styled from "styled-components";
-import { FaCamera, FaPaperPlane } from "react-icons/fa";
+import { FaAngry, FaCamera, FaPaperPlane, FaRedoAlt } from "react-icons/fa";
 import { mentionRegex, mentionRegexGlobal } from "@shared/context-mentions";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import { useExtensionState } from "@/context/ExtensionStateContext";
@@ -57,7 +58,7 @@ interface ChatTextAreaProps {
   placeholderText: string;
   selectedImages: string[];
   setSelectedImages: React.Dispatch<React.SetStateAction<string[]>>;
-  onSend: () => void;
+  onSend: (text: string, images: string[]) => void;
   onSelectImages: () => void;
   shouldDisableImages: boolean;
   onHeightChange?: (height: number) => void;
@@ -267,6 +268,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
       apiConfiguration,
       openRouterModels,
       platform,
+      valorideMessages,
     } = useExtensionState();
     const [isTextAreaFocused, setIsTextAreaFocused] = useState(false);
     const [gitCommits, setGitCommits] = useState<GitCommit[]>([]);
@@ -310,6 +312,65 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
       ChatSettings["mode"] | null
     >(null);
     const [pendingInsertions, setPendingInsertions] = useState<string[]>([]);
+
+    // Small toast when images are added
+    const [imagesToastVisible, setImagesToastVisible] = useState(false);
+    const [imagesToastText, setImagesToastText] = useState("");
+    const prevImagesCountRef = useRef<number>(selectedImages.length);
+    const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    useEffect(() => {
+      const prev = prevImagesCountRef.current;
+      const curr = selectedImages.length;
+
+      // Clear any existing timeout
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current);
+        toastTimeoutRef.current = null;
+      }
+
+      if (curr > prev) {
+        const added = curr - prev;
+        setImagesToastText(`${added} image${added === 1 ? "" : "s"} added`);
+        setImagesToastVisible(true);
+        toastTimeoutRef.current = setTimeout(() => {
+          setImagesToastVisible(false);
+          toastTimeoutRef.current = null;
+        }, 2000);
+        prevImagesCountRef.current = curr;
+
+        // Add two newlines to provide space for typing when images are added
+        if (textAreaRef.current) {
+          const currentValue = inputValue;
+          const newValue = currentValue + "\n\n";
+          setInputValue(newValue);
+
+          // Set cursor position at the end
+          const newCursorPosition = newValue.length;
+          setCursorPosition(newCursorPosition);
+          setIntendedCursorPosition(newCursorPosition);
+
+          // Focus the textarea
+          setTimeout(() => {
+            if (textAreaRef.current) {
+              textAreaRef.current.focus();
+            }
+          }, 0);
+        }
+
+      } else if (curr < prev) {
+        // Images were removed, hide toast immediately
+        setImagesToastVisible(false);
+        prevImagesCountRef.current = curr;
+      }
+
+      return () => {
+        if (toastTimeoutRef.current) {
+          clearTimeout(toastTimeoutRef.current);
+          toastTimeoutRef.current = null;
+        }
+      };
+    }, [selectedImages, inputValue, setInputValue]);
 
     const [fileSearchResults, setFileSearchResults] = useState<SearchResult[]>(
       [],
@@ -610,7 +671,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
         if (event.key === "Enter" && !event.shiftKey && !isComposing) {
           event.preventDefault();
           setIsTextAreaFocused(false);
-          onSend();
+          onSend(inputValue, selectedImages);
         }
 
         if (event.key === "Backspace" && !isComposing) {
@@ -1384,6 +1445,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
             ref={highlightLayerRef}
             style={{
               position: "absolute",
+
               top: 10,
               left: 15,
               right: 15,
@@ -1396,17 +1458,17 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
               backgroundColor: "var(--vscode-input-background)",
               fontFamily: "var(--vscode-font-family)",
               fontSize: "var(--vscode-editor-font-size)",
-              lineHeight: "var(--vscode-editor-line-height + 1)",
+              lineHeight: "var(--vscode-editor-line-height)",
               borderRadius: 10,
               borderLeft: 0,
               borderRight: 0,
               borderTop: 0,
               borderColor: "transparent",
               borderBottom: `${thumbnailsHeight + 6}px solid transparent`,
-              padding: "9px 28px 3px 9px",
+              padding: "10px 30px 5px 10px",
             }}
           />
-          <DynamicTextArea
+          <GlowingTextArea
             data-testid="chat-input"
             ref={(el) => {
               if (typeof ref === "function") {
@@ -1418,6 +1480,54 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
             }}
             value={inputValue}
             disabled={textAreaDisabled}
+            borderState={(() => {
+              // Determine border state from chat status
+              // sad: last event indicates error/failure
+              // waiting: an API request is in progress or partial content is streaming
+              // happy: idle/done
+              try {
+                const msgs = valorideMessages || [];
+                const last = msgs[msgs.length - 1] as any;
+
+                if (last) {
+                  if ((last.type === "ask" && last.ask === "api_req_failed") || (last.type === "say" && last.say === "error")) {
+                    return "sad" as const;
+                  }
+                }
+
+                // Look for most recent api_req_started vs finished/retried
+                let lastStarted = -1;
+                let lastFinished = -1;
+                for (let i = msgs.length - 1; i >= 0; i--) {
+                  const m: any = msgs[i];
+                  if (lastStarted === -1 && m.type === "say" && m.say === "api_req_started") lastStarted = i;
+                  if (lastFinished === -1 && m.type === "say" && (m.say === "api_req_finished" || m.say === "api_req_retried")) lastFinished = i;
+                  if (lastStarted !== -1 && lastFinished !== -1) break;
+                }
+
+                const hasOngoing = lastStarted !== -1 && (lastFinished === -1 || lastStarted > lastFinished);
+                const isPartialAsk = last?.type === "ask" && last?.partial === true;
+                if (hasOngoing || isPartialAsk) {
+                  return "waiting" as const;
+                }
+
+                return "happy" as const;
+              } catch {
+                return "happy" as const;
+              }
+            })()}
+            isExtendedThinking={(() => {
+              try {
+                const { selectedModelId, selectedModelInfo } = normalizeApiConfiguration(apiConfiguration);
+                const hasThinkingConfig = !!selectedModelInfo?.thinkingConfig;
+                const idImpliesThinking = /:thinking/i.test(selectedModelId || "");
+                const budget = apiConfiguration?.thinkingBudgetTokens || 0;
+                return (hasThinkingConfig || idImpliesThinking) && budget > 0;
+              } catch {
+                return false;
+              }
+            })()}
+            isStubborn={!!chatSettings.stubbornMode}
             onChange={(e) => {
               handleInputChange(e);
               updateHighlights();
@@ -1446,7 +1556,6 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
               boxSizing: "border-box",
               backgroundColor: "transparent",
               color: "var(--vscode-input-foreground)",
-              //border: "1px solid var(--vscode-input-border)",
               borderRadius: 10,
               fontFamily: "var(--vscode-font-family)",
               fontSize: "var(--vscode-editor-font-size)",
@@ -1457,11 +1566,13 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
               scrollbarWidth: "none",
               // Since we have maxRows, when text is long enough it starts to overflow the bottom padding, appearing behind the thumbnails. To fix this, we use a transparent border to push the text up instead. (https://stackoverflow.com/questions/42631947/maintaining-a-padding-inside-of-text-area/52538410#52538410)
               // borderTop: "9px solid transparent",
-              borderLeft: 0,
-              borderRight: 0,
-              borderTop: 0,
-              borderBottom: `${thumbnailsHeight + 6}px solid transparent`,
-              borderColor: "transparent",
+              //borderLeft: 0,
+              //borderRight: 0,
+              // borderTop: 0,
+
+
+              //borderBottom: `${thumbnailsHeight + 6}px solid transparent`,
+              //borderColor: "transparent",
               // borderRight: "54px solid transparent",
               // borderLeft: "9px solid transparent", // NOTE: react-textarea-autosize doesn't calculate correct height when using borderLeft/borderRight so we need to use horizontal padding instead
               // Instead of using boxShadow, we use a div with a border to better replicate the behavior when the textarea is focused
@@ -1516,7 +1627,9 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
                 onClick={() => {
                   if (!textAreaDisabled) {
                     setIsTextAreaFocused(false);
-                    onSend();
+                    onSend(inputValue, selectedImages);
+                    // Ensure images clear immediately after sending
+                    try { setSelectedImages([]); } catch { }
                   }
                 }}
               >
@@ -1528,6 +1641,27 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
         </div>
 
         <ControlsContainer>
+          {imagesToastVisible && (
+            <div
+              style={{
+                position: "absolute",
+                bottom: 42,
+                left: 20,
+                background: "var(--vscode-badge-background)",
+                color: "var(--vscode-badge-foreground)",
+                border: "1px solid var(--vscode-badge-foreground)",
+                borderRadius: 6,
+                padding: "3px 8px",
+                fontSize: 12,
+                boxShadow: "0 0 6px rgba(0,0,0,0.2)",
+                pointerEvents: "none",
+                zIndex: 10,
+              }}
+              aria-live="polite"
+            >
+              {imagesToastText}
+            </div>
+          )}
           <ButtonGroup>
             <Tooltip tipText="Add Context" style={{ left: 0 }}>
               <VSCodeButton
@@ -1574,6 +1708,27 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
             </Tooltip>
             <ServersToggleModal />
             <ValorIDERulesToggleModal />
+            <Tooltip tipText="Auto Repeat Check [stubborn mode]">
+              <VSCodeButton
+                appearance={chatSettings.stubbornMode ? "primary" : "secondary"}
+                aria-label="Toggle Stubborn Mode"
+                onClick={() => {
+                  // Toggle stubborn mode via existing chatSettings update pathway
+                  vscode.postMessage({
+                    type: "togglePlanActMode",
+                    chatSettings: {
+                      mode: chatSettings.mode,
+                      stubbornMode: !chatSettings.stubbornMode,
+                    },
+                  });
+                }}
+                style={{ padding: "0px 6px", height: 20, marginLeft: 4 }}
+              >
+                <ButtonContainer>
+                  <FaAngry className="flex items-center" style={{ fontSize: 12, marginBottom: -2 }} />
+                </ButtonContainer>
+              </VSCodeButton>
+            </Tooltip>
             <ModelContainer ref={modelSelectorRef}>
               <ModelButtonWrapper ref={buttonRef}>
                 <ModelDisplayButton

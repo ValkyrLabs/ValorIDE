@@ -22,6 +22,7 @@ import { LiteLlmHandler } from "./providers/litellm";
 import { AskSageHandler } from "./providers/asksage";
 import { XAIHandler } from "./providers/xai";
 import { SambanovaHandler } from "./providers/sambanova";
+import { ValkyraiHandler } from "./providers/valkyrai";
 
 export interface ApiHandler {
   createMessage(
@@ -41,6 +42,8 @@ export function buildApiHandler(configuration: ApiConfiguration): ApiHandler {
   switch (apiProvider) {
     case "anthropic":
       return new AnthropicHandler(options);
+    case "valkyrai":
+      return new ValkyraiHandler(options);
     case "openrouter":
       return new OpenRouterHandler(options);
     case "bedrock":

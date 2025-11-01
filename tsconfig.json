@@ -8,7 +8,11 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "lib": ["es2022", "esnext.disposable", "DOM"],
+    "lib": [
+      "es2022",
+      "esnext.disposable",
+      "DOM"
+    ],
     "module": "esnext",
     "moduleResolution": "Bundler",
     "noFallthroughCasesInSwitch": true,
@@ -25,16 +29,46 @@
     "useUnknownInCatchVariables": false,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@api/*": ["src/api/*"],
-      "@thor/*": ["src/webview-ui/src/thor/*"],
-      "@core/*": ["src/core/*"],
-      "@integrations/*": ["src/integrations/*"],
-      "@services/*": ["src/services/*"],
-      "@shared/*": ["src/shared/*"],
-      "@utils/*": ["src/utils/*"]
+      "@/*": [
+        "src/*",
+        "webview-ui/src/*"
+      ],
+      "@api/*": [
+        "src/api/*"
+      ],
+      "@thor/*": [
+        "webview-ui/src/thor/*"
+      ],
+      "@websocket/*": [
+        "webview-ui/src/websocket/*"
+      ],
+      "@core/*": [
+        "src/core/*"
+      ],
+      "@integrations/*": [
+        "src/integrations/*"
+      ],
+      "@services/*": [
+        "src/services/*"
+      ],
+      "@valkyr/component-library/*": [
+        "webview-ui/src/components/*"
+      ],
+      "@shared/*": [
+        "src/shared/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ]
     }
   },
-  "include": ["src/**/*", "scripts/**/*"],
-  "exclude": ["node_modules", ".vscode-test"]
+  "include": [
+    "src/**/*",
+    "scripts/**/*",
+    "webview-ui/src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    ".vscode-test"
+  ]
 }

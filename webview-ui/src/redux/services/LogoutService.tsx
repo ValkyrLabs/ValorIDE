@@ -1,11 +1,11 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { Logout } from "../../thor/model";
-import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+import { Logout } from "@thor/model";
+import customBaseQuery from "../../thor/redux/customBaseQuery";
 
 type LogoutResponse = Logout[];
 
 export const LogoutService = createApi({
-  reducerPath: "Logout", // This should remain unique
+  reducerPath: "LogoutCustom", // make unique to avoid collisions with generated slice
   baseQuery: customBaseQuery,
   tagTypes: ["Logout"],
   endpoints: (build) => ({

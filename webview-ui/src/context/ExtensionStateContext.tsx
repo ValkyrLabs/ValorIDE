@@ -30,6 +30,13 @@ import { DEFAULT_CHAT_SETTINGS } from "@shared/ChatSettings";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
 import { Principal } from "@/thor/model";
 import { Application } from "@/thor/model/Application";
+import {
+  clearStoredJwtToken,
+  clearStoredPrincipal,
+  hydrateStoredCredentials,
+  storeJwtToken,
+  writeStoredPrincipal,
+} from "@/utils/accessControl";
 
 interface ExtensionStateContextType extends ExtensionState {
   didHydrateState: boolean;
@@ -53,7 +60,7 @@ interface ExtensionStateContextType extends ExtensionState {
   isLoggedIn?: boolean;
 
   jwtToken?: string;
-  authenticatedPrincipal?: Principal;
+  authenticatedUser?: Principal;
 
   // Applications state
   applications: Application[];
@@ -71,6 +78,22 @@ interface ExtensionStateContextType extends ExtensionState {
 const ExtensionStateContext = createContext<
   ExtensionStateContextType | undefined
 >(undefined);
+
+const normalizePrincipal = (value: unknown): Principal | undefined => {
+  if (!value || typeof value !== "object") {
+    return undefined;
+  }
+  const candidate = value as Record<string, any>;
+  return {
+    ...candidate,
+    username:
+      typeof candidate.username === "string" ? candidate.username : "",
+    password:
+      typeof candidate.password === "string" ? candidate.password : "",
+    email: typeof candidate.email === "string" ? candidate.email : "",
+    roleList: Array.isArray(candidate.roleList) ? candidate.roleList : [],
+  } as Principal;
+};
 
 export const ExtensionStateContextProvider: React.FC<{
   children: React.ReactNode;
@@ -126,7 +149,7 @@ export const ExtensionStateContextProvider: React.FC<{
 
   // Authentication state - prioritize backend state over sessionStorage
   const [jwtToken, setJwtToken] = useState<string | undefined>();
-  const [authenticatedPrincipal, setAuthenticatedPrincipal] = useState<
+  const [authenticatedUser, setAuthenticatedUser] = useState<
     Principal | undefined
   >();
 
@@ -140,9 +163,41 @@ export const ExtensionStateContextProvider: React.FC<{
 
     switch (message.type) {
       case "state": {
-        setState((prevState) => {
-          const incoming = message.state!;
+        const incoming = message.state!;
 
+        // 1) Update auth-related local state + sessionStorage OUTSIDE of the setState updater
+        try {
+          if (incoming.authenticatedPrincipal) {
+            const principalRaw =
+              typeof incoming.authenticatedPrincipal === "string"
+                ? JSON.parse(incoming.authenticatedPrincipal)
+                : incoming.authenticatedPrincipal;
+            const principal = normalizePrincipal(principalRaw);
+            setAuthenticatedUser(principal);
+            if (principal) {
+              writeStoredPrincipal(principal as any);
+            } else {
+              clearStoredPrincipal("extension-state");
+            }
+          } else {
+            setAuthenticatedUser(undefined);
+            clearStoredPrincipal("extension-state");
+          }
+
+          if (incoming.jwtToken) {
+            setJwtToken(incoming.jwtToken);
+            storeJwtToken(incoming.jwtToken, "extension-state");
+          } else if (incoming.isLoggedIn === false) {
+            setJwtToken(undefined);
+            clearStoredJwtToken("extension-state");
+            clearStoredPrincipal("extension-state");
+          }
+        } catch {
+          // Ignore storage errors in webview sandbox
+        }
+
+        // 2) Update the main extension state via a PURE updater (no side-effects here)
+        setState((prevState) => {
           // Prevent unnecessary updates if state is the same
           if (JSON.stringify(prevState) === JSON.stringify(incoming)) {
             return prevState;
@@ -152,30 +207,6 @@ export const ExtensionStateContextProvider: React.FC<{
           const incomingVersion = incoming.autoApprovalSettings?.version ?? 1;
           const currentVersion = prevState.autoApprovalSettings?.version ?? 1;
           const shouldUpdateAutoApproval = incomingVersion > currentVersion;
-
-          // Update authentication state from backend
-          if (incoming.authenticatedPrincipal) {
-            setAuthenticatedPrincipal(incoming.authenticatedPrincipal);
-            // Sync with sessionStorage for ThorAPI requests
-            sessionStorage.setItem(
-              "authenticatedPrincipal",
-              JSON.stringify(incoming.authenticatedPrincipal),
-            );
-          } else {
-            // Clear authentication state if backend says user is not authenticated
-            setAuthenticatedPrincipal(undefined);
-            sessionStorage.removeItem("authenticatedPrincipal");
-          }
-
-          // Handle JWT token from backend state
-          if (incoming.jwtToken) {
-            setJwtToken(incoming.jwtToken);
-            sessionStorage.setItem("jwtToken", incoming.jwtToken);
-          } else if (incoming.isLoggedIn === false) {
-            // Clear JWT token if backend says user is not logged in
-            setJwtToken(undefined);
-            sessionStorage.removeItem("jwtToken");
-          }
 
           return {
             ...incoming,
@@ -289,30 +320,36 @@ export const ExtensionStateContextProvider: React.FC<{
 
         // Store JWT token in sessionStorage for ThorAPI requests
         if (token) {
-          sessionStorage.setItem("jwtToken", token);
+          storeJwtToken(token, "extension-loginSuccess");
           setJwtToken(token);
         }
 
-        // Store authenticated principal in sessionStorage
+        // Store authenticated user in sessionStorage
         if (authenticatedPrincipalStr) {
-          sessionStorage.setItem(
-            "authenticatedPrincipal",
-            authenticatedPrincipalStr,
-          );
-          const principal = JSON.parse(authenticatedPrincipalStr);
-          setAuthenticatedPrincipal(principal);
+          let parsed: unknown;
+          try {
+            parsed = JSON.parse(authenticatedPrincipalStr);
+          } catch {
+            parsed = authenticatedPrincipalStr;
+          }
+          const user = normalizePrincipal(parsed);
+          if (user) {
+            writeStoredPrincipal(user as any);
+          } else {
+            clearStoredPrincipal("extension-loginSuccess");
+          }
+          setAuthenticatedUser(user);
 
           setState((prevState) => ({
             ...prevState,
             // Store the JWT token
             jwtToken: token,
-            // Store the authenticated principal object
-            authenticatedPrincipal: principal,
             // Also update userInfo for backward compatibility
-            userInfo: principal,
+            userInfo: user ?? prevState.userInfo,
             isLoggedIn: true,
           }));
         } else {
+          clearStoredPrincipal("extension-loginSuccess");
           setState((prevState) => ({
             ...prevState,
             // Store the JWT token
@@ -337,25 +374,36 @@ export const ExtensionStateContextProvider: React.FC<{
 
   useEvent("message", handleMessage);
 
+  // On initial mount, if JWT exists in localStorage but not sessionStorage, mirror & notify so bridges can connect
+  useEffect(() => {
+    const { token, principal } = hydrateStoredCredentials("extension-init");
+    if (token) {
+      setJwtToken((prev) => prev ?? token);
+    }
+    if (principal) {
+      setAuthenticatedUser((prev) => prev ?? normalizePrincipal(principal));
+    }
+  }, []);
+
   useEffect(() => {
     vscode.postMessage({ type: "webviewDidLaunch" });
 
     // Initialize authentication state from sessionStorage as fallback
     // but prioritize backend state when it arrives
     const existingToken = sessionStorage.getItem("jwtToken");
-    const existingPrincipal = sessionStorage.getItem("authenticatedPrincipal");
+    const existingUser = sessionStorage.getItem("authenticatedUser");
 
     if (existingToken) {
       setJwtToken(existingToken);
     }
 
-    if (existingPrincipal) {
+    if (existingUser) {
       try {
-        const principal = JSON.parse(existingPrincipal);
-        setAuthenticatedPrincipal(principal);
+        const user = JSON.parse(existingUser);
+        setAuthenticatedUser(normalizePrincipal(user));
       } catch (error) {
-        console.error("Failed to parse stored authenticated principal:", error);
-        sessionStorage.removeItem("authenticatedPrincipal");
+        console.error("Failed to parse stored authenticated user:", error);
+        sessionStorage.removeItem("authenticatedUser");
       }
     }
   }, []);
@@ -368,9 +416,10 @@ export const ExtensionStateContextProvider: React.FC<{
 
   // Determine authentication status - prioritize backend state, fallback to local state
   const isAuthenticated =
-    state.isLoggedIn ?? !!(jwtToken || authenticatedPrincipal);
-  const currentUser =
-    state.authenticatedPrincipal || authenticatedPrincipal || state.userInfo;
+    state.isLoggedIn ?? !!(jwtToken || authenticatedUser);
+  const normalizedAuthenticatedUser = normalizePrincipal(authenticatedUser);
+  const normalizedStateUser = normalizePrincipal(state.userInfo);
+  const currentUser = normalizedAuthenticatedUser ?? normalizedStateUser;
   const currentToken = state.jwtToken || jwtToken;
 
   const contextValue: ExtensionStateContextType = {
@@ -389,7 +438,7 @@ export const ExtensionStateContextProvider: React.FC<{
     localValorIDERulesToggles: state.localValorIDERulesToggles || {},
     // Use computed authentication state
     jwtToken: currentToken,
-    authenticatedPrincipal: currentUser,
+    authenticatedUser: normalizedAuthenticatedUser,
     userInfo: currentUser,
     isLoggedIn: isAuthenticated,
     // Applications state

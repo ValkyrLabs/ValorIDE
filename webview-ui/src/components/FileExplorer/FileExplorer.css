@@ -15,6 +15,33 @@
   background: var(--vscode-sideBarSectionHeader-background);
 }
 
+.file-explorer-location {
+  padding: 4px 12px;
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  border-bottom: 1px solid var(--vscode-sideBar-border);
+  word-break: break-all;
+}
+
+.file-explorer-location code {
+  font-family: var(--vscode-editor-font-family, monospace);
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+.file-explorer-config-hint {
+  margin-left: 4px;
+  color: inherit;
+}
+
+.file-explorer-config-hint code {
+  font-family: var(--vscode-editor-font-family, monospace);
+  padding: 0;
+  background: transparent;
+  color: inherit;
+}
+
 .file-explorer-header h3 {
   margin: 0;
   font-size: 11px;

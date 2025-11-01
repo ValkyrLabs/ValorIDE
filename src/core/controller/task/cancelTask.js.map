@@ -1,0 +1,1 @@
+{"version":3,"file":"cancelTask.js","sourceRoot":"","sources":["cancelTask.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,KAAK,EAAgB,MAAM,8BAA8B,CAAC;AAEnE;;;;;GAKG;AACH,MAAM,CAAC,KAAK,UAAU,UAAU,CAC9B,UAAsB,EACtB,QAAsB;IAEtB,MAAM,UAAU,CAAC,UAAU,EAAE,CAAC;IAC9B,OAAO,KAAK,CAAC,MAAM,EAAE,CAAC;AACxB,CAAC"}

@@ -1,16 +1,24 @@
 // export const  = "ws://localhost:8081/chat";
 
 // un-comment for Vite apps
-// export const WEBSOCKET_URL = import.meta.env.VITE_wssBasePath.replace(
+export const WEBSOCKET_URL = import.meta.env.VITE_wssBasePath
+//.replace(
 //  /\/+$/,
 //  "",
 //);
 
 // un-comment for Create REact APp apps
-export const WEBSOCKET_URL = process.env.REACT_APP_WS_BASE_PATH; // .replace(/\/+$/, "");
+// Note: Guard against undefined or invalid values to avoid runtime crashes in webviews.
+const rawUrl = (process.env.REACT_APP_WS_BASE_PATH || "").trim();
+
+//export const WEBSOCKET_URL: string = rawUrl;
+
+export const isValidWsUrl = (url: string | undefined | null): boolean => {
+  if (!url) return false;
+  // Basic sanity check to ensure a ws:// or wss:// URL
+  return /^wss?:\/\//i.test(url);
+};
 
 export const Configuration = {
-  basePath: WEBSOCKET_URL, // This is the value that will be prepended to all endpoints.  For compatibility with
-  // previous versions, the default is an empty string.  Other generators typically use
-  // BASE_PATH as the default.
+  basePath: WEBSOCKET_URL,
 };

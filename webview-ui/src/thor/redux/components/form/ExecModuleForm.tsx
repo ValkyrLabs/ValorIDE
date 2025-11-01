@@ -4,15 +4,17 @@ import {
   Form as BSForm,
   Accordion,
   Col,
-  Nav,
   Row,
   Spinner
 } from 'react-bootstrap';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare, FaUserShield } from 'react-icons/fa';
-import CoolButton from '../../../../components/CoolButton';
+import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
+import CoolButton from '@valkyr/component-library/CoolButton';
 import * as Yup from 'yup';
-import PermissionDialog from '../../../../components/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '../../types/AclTypes';
+import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+
+import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
+import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
 
 
 import {
@@ -20,7 +22,7 @@ import {
   ExecModuleRoleEnum,
   ExecModuleModuleTypeEnum,
   ExecModuleStatusEnum,
-} from '../../../model';
+} from '@thor/model';
 
 import { useAddExecModuleMutation } from '../../services/ExecModuleService';
 
@@ -32,7 +34,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-08-12T20:30:33.554374-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -40,7 +42,7 @@ Template file: typescript-redux-query/modelForm.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 
 Description:
-ExecModule is the execution unit of the ValkyrAI Workflow Engine
+an ExecModule Instance -- an ExecModule is the execution unit of the ValkyrAI Workflow Engine
 */
 
 /* -----------------------------------------------------
@@ -75,100 +77,59 @@ const StatusValidation = () => {
 };
 
 /* -----------------------------------------------------
-   YUP VALIDATION SCHEMA
-   (Skip read-only fields and container types)
+   YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
+const asNumber = (schema: Yup.NumberSchema) =>
+  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+
 const validationSchema = Yup.object().shape({
-    
-        systemId: Yup.string()
-          
-          
-          ,
-    
-        taskId: Yup.string()
-          
-          
-          ,
-    
+        systemId: Yup.string(),
+        taskId: Yup.string(),
       role: Yup.mixed()
         .oneOf(RoleValidation(), "Invalid value for role")
-        
-        .notRequired(),
-    
-        name: Yup.string()
-          
-          
-          ,
-    
-        moduleOrder: Yup.number()
-          
-          
-          ,
-    
-        notes: Yup.string()
-          
-          
-          ,
-    
-        className: Yup.string()
-          
-          
-          ,
-    
+        ,
+        name: Yup.string(),
+        moduleOrder: asNumber(Yup.number().typeError("moduleOrder must be a number")),
+        notes: Yup.string(),
+        longDescription: Yup.string(),
+        className: Yup.string(),
       moduleType: Yup.mixed()
         .oneOf(ModuleTypeValidation(), "Invalid value for moduleType")
-        
-        .notRequired(),
-    
-        moduleData: Yup.string()
-          
-          
-          ,
-    
+        ,
+        moduleData: Yup.string(),
+        config: Yup.string(),
       status: Yup.mixed()
         .oneOf(StatusValidation(), "Invalid value for status")
-        
-        .notRequired(),
-    
-        id: Yup.string()
-          
-          
-          ,
-    
-        ownerId: Yup.string()
-          
-          
-          ,
-    
+        ,
+        id: Yup.string(),
+        ownerId: Yup.string(),
         createdDate: Yup.date()
-          
-          
-          ,
-    
-        keyHash: Yup.string()
-          
-          
-          ,
-    
-        lastAccessedById: Yup.string()
-          
-          
-          ,
-    
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("createdDate must be a valid date"),
+        keyHash: Yup.string(),
+        lastAccessedById: Yup.string(),
         lastAccessedDate: Yup.date()
-          
-          
-          ,
-    
-        lastModifiedById: Yup.string()
-          
-          
-          ,
-    
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastAccessedDate must be a valid date"),
+        lastModifiedById: Yup.string(),
         lastModifiedDate: Yup.date()
-          
-          
-          ,
+          .transform((value, originalValue) => {
+            if (!originalValue) {
+              return value;
+            }
+            const parsed = new Date(originalValue);
+            return Number.isNaN(parsed.getTime()) ? value : parsed;
+          }).typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -176,156 +137,46 @@ const validationSchema = Yup.object().shape({
 -------------------------------------------------------- */
 const ExecModuleForm: React.FC = () => {
   const [addExecModule, addExecModuleResult] = useAddExecModuleMutation();
-  
+
   // Permission Management State
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
   const [createdObjectId, setCreatedObjectId] = useState<string | null>(null);
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user', // This should come from authentication context
+    username: 'current_user',
     permissions: {
-      isOwner: true, // This should be determined by checking object ownership
-      isAdmin: true, // This should come from user roles
+      isOwner: true,
+      isAdmin: true,
       canGrantPermissions: true,
       permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
     },
   };
 
-  /* INITIAL VALUES - skip read-only fields */
+  /* -----------------------------------------------------
+     INITIAL VALUES - only NON read-only fields
+  -------------------------------------------------------- */
   const initialValues: Partial<ExecModule> = {
-          
-
-            systemId: 'null',
-
-
-
-
-
-          
-
-            taskId: 'null',
-
-
-
-
-
-          
-          role:
-            ExecModuleRoleEnum[
-              Object.keys(ExecModuleRoleEnum)[0]
-            ],
-          
-
-            name: 'EmailSendModule, OpenApiSpecImportModule',
-
-
-
-
-
-          
-
-
-
-
-            moduleOrder: 0.0,
-
-
-          
-
-            notes: 'null',
-
-
-
-
-
-          
-
-            className: 'EmailModule, PipelineModule, RestApiModule',
-
-
-
-
-
-          
-          moduleType:
-            ExecModuleModuleTypeEnum[
-              Object.keys(ExecModuleModuleTypeEnum)[0]
-            ],
-          
-
-            moduleData: 'null',
-
-
-
-
-
-          
-          status:
-            ExecModuleStatusEnum[
-              Object.keys(ExecModuleStatusEnum)[0]
-            ],
-          
-
-            id: 'e507ae03-d743-4858-8e63-b7e25f74e9b0',
-
-
-
-
-
-          
-
-            ownerId: '33025b30-c0d7-4e18-913c-6eff1eba1247',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            keyHash: 'null',
-
-
-
-
-
-          
-
-            lastAccessedById: '426d8850-a1e4-4e9e-807f-6536f82831a0',
-
-
-
-
-
-          
-
-
-
-
-
-
-          
-
-            lastModifiedById: '0c209aa5-7ed9-4ec4-a526-2345cce30ddb',
-
-
-
-
-
-          
-
-
-
-
-
-
+          systemId: '',
+          taskId: '',
+        role: undefined,
+          name: '',
+          moduleOrder: 0,
+          notes: '',
+          longDescription: '',
+          className: '',
+        moduleType: undefined,
+          moduleData: '',
+          config: '',
+        status: undefined,
+          id: '',
+          ownerId: '',
+          createdDate: new Date(),
+          keyHash: '',
+          lastAccessedById: '',
+          lastAccessedDate: new Date(),
+          lastModifiedById: '',
+          lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -341,16 +192,16 @@ const ExecModuleForm: React.FC = () => {
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
     console.log('Permissions saved for new ExecModule:', grants);
-    // Optionally show success message or redirect
   };
 
   /* SUBMIT HANDLER */
   const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<ExecModule>) => {
     try {
       console.log("ExecModule form values:", values);
-      const result = await addExecModule(values).unwrap();
-      
-      // If object was created successfully and has an ID, offer to set permissions
+
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addExecModule(values as any).unwrap();
+
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
           `ExecModule created successfully! Would you like to set permissions for this object?`
@@ -359,7 +210,7 @@ const ExecModuleForm: React.FC = () => {
           handleManagePermissions(result.id);
         }
       }
-      
+
       setSubmitting(false);
     } catch (error) {
       console.error('Failed to create ExecModule:', error);
@@ -379,6 +230,7 @@ const ExecModuleForm: React.FC = () => {
           isSubmitting,
           isValid,
           errors,
+          values,
           setFieldValue,
           touched,
           setFieldTouched,
@@ -386,27 +238,13 @@ const ExecModuleForm: React.FC = () => {
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              {/* Debug/Dev Accordion */}
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                  <FaCogs size={36} />
-                </Accordion.Header>
-                <Accordion.Body>
-                  errors: {JSON.stringify(errors)}
-                  <br />
-                  touched: {JSON.stringify(touched)}
-                  <br />
-                  addExecModuleResult: {JSON.stringify(addExecModuleResult)}
-                </Accordion.Body>
-              </Accordion.Item>
-
-              {/* Editable Fields (NON-read-only) */}
+              
+              {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                  <FaRegPlusSquare size={36} /> Add New ExecModule
+                  <FaRegPlusSquare size={28} /> &nbsp; Add New ExecModule
                 </Accordion.Header>
                 <Accordion.Body>
-                    
                     <label htmlFor="systemId" className="nice-form-control">
                       <b>
                         System Id:
@@ -418,16 +256,15 @@ const ExecModuleForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="systemId"
-                            type="text"
-                            className={
-                              errors.systemId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.systemId}
+                            placeholder="System Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -441,7 +278,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="taskId" className="nice-form-control">
                       <b>
                         Task Id:
@@ -453,16 +289,15 @@ const ExecModuleForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="taskId"
-                            type="text"
-                            className={
-                              errors.taskId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.taskId}
+                            placeholder="Task Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -476,7 +311,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="role" className="nice-form-control">
                       <b>
                         Role:
@@ -489,6 +323,7 @@ const ExecModuleForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="role"
+                          value={values.role || ''}
                           className={
                             errors.role
                               ? 'form-control field-error'
@@ -496,7 +331,7 @@ const ExecModuleForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('role', true);
-                            setFieldValue('role', e.target.value);
+                            setFieldValue('role', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Role" />
@@ -511,7 +346,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="name" className="nice-form-control">
                       <b>
                         Name:
@@ -523,16 +357,15 @@ const ExecModuleForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="name"
-                            type="text"
-                            className={
-                              errors.name
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.name}
+                            placeholder="Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -546,7 +379,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="moduleOrder" className="nice-form-control">
                       <b>
                         Module Order:
@@ -563,13 +395,21 @@ const ExecModuleForm: React.FC = () => {
                           {/* FLOAT FIELD */}
                           <Field
                             name="moduleOrder"
-                            type="text"
+                            type="number"
+                            step="any"
+                            value={values.moduleOrder || ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('moduleOrder', true);
+                              const v = e.target.value;
+                              setFieldValue('moduleOrder', v === '' ? undefined : Number(v));
+                            }}
                             className={
                               errors.moduleOrder
                                 ? 'form-control field-error'
                                 : 'nice-form-control form-control'
                             }
                           />
+
 
 
 
@@ -581,7 +421,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="notes" className="nice-form-control">
                       <b>
                         Notes:
@@ -593,16 +432,15 @@ const ExecModuleForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="notes"
-                            type="text"
-                            className={
-                              errors.notes
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.notes}
+                            placeholder="Notes"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -616,7 +454,39 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
+                    <label htmlFor="longDescription" className="nice-form-control">
+                      <b>
+                        Long Description:
+                        {touched.longDescription &&
+                         !errors.longDescription && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="longDescription"
+                            value={values?.longDescription}
+                            placeholder="Long Description"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="longDescription"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="className" className="nice-form-control">
                       <b>
                         Class Name:
@@ -628,16 +498,15 @@ const ExecModuleForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="className"
-                            type="text"
-                            className={
-                              errors.className
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.className}
+                            placeholder="Class Name"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -651,7 +520,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="moduleType" className="nice-form-control">
                       <b>
                         Module Type:
@@ -664,6 +532,7 @@ const ExecModuleForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="moduleType"
+                          value={values.moduleType || ''}
                           className={
                             errors.moduleType
                               ? 'form-control field-error'
@@ -671,7 +540,7 @@ const ExecModuleForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('moduleType', true);
-                            setFieldValue('moduleType', e.target.value);
+                            setFieldValue('moduleType', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Module Type" />
@@ -686,7 +555,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="moduleData" className="nice-form-control">
                       <b>
                         Module Data:
@@ -698,16 +566,15 @@ const ExecModuleForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="moduleData"
-                            type="text"
-                            className={
-                              errors.moduleData
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.moduleData}
+                            placeholder="Module Data"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -721,7 +588,39 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
+                    <label htmlFor="config" className="nice-form-control">
+                      <b>
+                        Config:
+                        {touched.config &&
+                         !errors.config && (
+                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
+                        )}
+                      </b>
+
+
+
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
+                            name="config"
+                            value={values?.config}
+                            placeholder="Config"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                          />
+
+
+
+
+
+
+
+                      <ErrorMessage
+                        className="error"
+                        name="config"
+                        component="span"
+                      />
+                    </label>
+                    <br />
                     <label htmlFor="status" className="nice-form-control">
                       <b>
                         Status:
@@ -734,6 +633,7 @@ const ExecModuleForm: React.FC = () => {
                         {/* ENUM DROPDOWN */}
                         <BSForm.Select
                           name="status"
+                          value={values.status || ''}
                           className={
                             errors.status
                               ? 'form-control field-error'
@@ -741,7 +641,7 @@ const ExecModuleForm: React.FC = () => {
                           }
                           onChange={(e) => {
                             setFieldTouched('status', true);
-                            setFieldValue('status', e.target.value);
+                            setFieldValue('status', e.target.value || undefined);
                           }}
                         >
                           <option value="" label="Select Status" />
@@ -756,7 +656,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="id" className="nice-form-control">
                       <b>
                         Id:
@@ -768,16 +667,15 @@ const ExecModuleForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="id"
-                            type="text"
-                            className={
-                              errors.id
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.id}
+                            placeholder="Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -791,7 +689,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="ownerId" className="nice-form-control">
                       <b>
                         Owner Id:
@@ -803,16 +700,15 @@ const ExecModuleForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="ownerId"
-                            type="text"
-                            className={
-                              errors.ownerId
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.ownerId}
+                            placeholder="Owner Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -826,7 +722,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="createdDate" className="nice-form-control">
                       <b>
                         Created Date:
@@ -844,6 +739,25 @@ const ExecModuleForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="createdDate"
+                            type="datetime-local"
+                            value={values.createdDate ? 
+                              new Date(values.createdDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('createdDate', true);
+                              const v = e.target.value;
+                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.createdDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="createdDate"
@@ -851,7 +765,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="keyHash" className="nice-form-control">
                       <b>
                         Key Hash:
@@ -863,16 +776,15 @@ const ExecModuleForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="keyHash"
-                            type="text"
-                            className={
-                              errors.keyHash
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.keyHash}
+                            placeholder="Key Hash"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -886,7 +798,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedById" className="nice-form-control">
                       <b>
                         Last Accessed By Id:
@@ -898,16 +809,15 @@ const ExecModuleForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastAccessedById"
-                            type="text"
-                            className={
-                              errors.lastAccessedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastAccessedById}
+                            placeholder="Last Accessed By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -921,7 +831,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastAccessedDate" className="nice-form-control">
                       <b>
                         Last Accessed Date:
@@ -939,6 +848,25 @@ const ExecModuleForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastAccessedDate"
+                            type="datetime-local"
+                            value={values.lastAccessedDate ? 
+                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastAccessedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastAccessedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="lastAccessedDate"
@@ -946,7 +874,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedById" className="nice-form-control">
                       <b>
                         Last Modified By Id:
@@ -958,16 +885,15 @@ const ExecModuleForm: React.FC = () => {
 
 
 
-                          {/* TEXT FIELD */}
-                          <Field
+                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                          <SmartField
                             name="lastModifiedById"
-                            type="text"
-                            className={
-                              errors.lastModifiedById
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
+                            value={values?.lastModifiedById}
+                            placeholder="Last Modified By Id"
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
                           />
+
 
 
 
@@ -981,7 +907,6 @@ const ExecModuleForm: React.FC = () => {
                       />
                     </label>
                     <br />
-                    
                     <label htmlFor="lastModifiedDate" className="nice-form-control">
                       <b>
                         Last Modified Date:
@@ -999,6 +924,25 @@ const ExecModuleForm: React.FC = () => {
 
 
 
+                          {/* DATETIME FIELD */}
+                          <Field
+                            name="lastModifiedDate"
+                            type="datetime-local"
+                            value={values.lastModifiedDate ? 
+                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
+                              ''}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                              setFieldTouched('lastModifiedDate', true);
+                              const v = e.target.value;
+                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
+                            }}
+                            className={
+                              errors.lastModifiedDate
+                                ? 'form-control field-error'
+                                : 'nice-form-control form-control'
+                            }
+                          />
+
                       <ErrorMessage
                         className="error"
                         name="lastModifiedDate"
@@ -1009,31 +953,34 @@ const ExecModuleForm: React.FC = () => {
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={touched && isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
                     type="submit"
+                    disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (
-                      <Spinner
-                        style={ { float: 'left' } }
-                        as="span"
-                        animation="grow"
-                        variant="light"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <FaCheckCircle size={30} /> Create New ExecModule
+                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    <FaCheckCircle size={28} /> Create New ExecModule
                   </CoolButton>
+
+                  {addExecModuleResult.error && (
+                    <div className="error" style={ { marginTop: 12 }}>
+                      {JSON.stringify('data' in (addExecModuleResult as any).error ? (addExecModuleResult as any).error.data : (addExecModuleResult as any).error)}
+                    </div>
+                  )}
                 </Accordion.Body>
               </Accordion.Item>
 
-              {/* Read-Only System Fields */}
-              <Accordion.Item eventKey="2">
-                <Accordion.Header>System Fields (Read Only)</Accordion.Header>
+            {/* Debug/Dev Accordion */}
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <FaCogs size={28} /> &nbsp;Server Messages
+                </Accordion.Header>
                 <Accordion.Body>
-                  <Row>
-                  </Row>
+                  errors: {JSON.stringify(errors)}
+                  <br />
+                  addExecModuleResult: {JSON.stringify(addExecModuleResult)}
                 </Accordion.Body>
               </Accordion.Item>
+
             </Accordion>
           </form>
         )}

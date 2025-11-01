@@ -4,12 +4,17 @@
 
 import { Card, Col, Nav, Row } from "react-bootstrap";
 import { FaHandPointUp } from "react-icons/fa";
-import { FiCalendar, FiLock, FiUserCheck, FiUserPlus } from "react-icons/fi";
+import {
+  FiCalendar,
+  FiHeart,
+  FiLock,
+  FiUserCheck,
+  FiUserPlus,
+} from "react-icons/fi";
 import { Link } from "react-router-dom";
-import { Principal } from "../../thor/model";
-import CoolButton from "../CoolButton";
+import { Principal } from "@thor/model";
+import CoolButton from "@valkyr/component-library/CoolButton";
 import Form from "./form";
-import "./index.css";
 
 const initialUser: Principal = {
   username: "",
@@ -17,6 +22,8 @@ const initialUser: Principal = {
   email: "",
   createdDate: new Date(),
   lastModifiedDate: new Date(),
+  roleList: [],
+  authorityList: [],
 };
 
 const Login = (props) => {
@@ -25,34 +32,48 @@ const Login = (props) => {
       <Row>
         <Col md={3}>
           <h2>Your User Account</h2>
-          <h4>Logging in is secure and fast</h4>
-          <br />
-          <b>Need an Account?</b>
-          <br />
-          <Nav.Link>
-            <Link to="/sign-up">
-              <CoolButton variant="dark">
-                <FiUserPlus size={30} /> Signup Now
-              </CoolButton>
-            </Link>
-          </Nav.Link>
-          <br />
+          <h5>Logging in is secure and fast</h5>
           <br />
         </Col>
-        <Col md={6}>
+        <Col md={9}>
           <Card style={{ padding: "1em", marginBottom: "3em" }}>
             <Card.Header>
-              <h4>
-                <FiUserCheck size={30} /> Login Now
-              </h4>
-              <h5>Sign into your Valkyr Labs account.</h5>
+              <Row>
+                <Col md={9}>
+                  <h4>
+                    <FiUserCheck size={30} /> Login Now
+                  </h4>
+                  <h5>Sign into your Valkyr Labs account.</h5>
+                </Col>
+                <Col md={3}>
+                  <Nav.Link>
+                    <Link to="/sign-up">
+                      <CoolButton variant="dark">
+                        <FiUserPlus size={30} /> Free Signup Now
+                      </CoolButton>
+                    </Link>
+                  </Nav.Link>
+                  <br />
+                  <Nav.Link>
+                    <Link to="/forgot-password">
+                      <CoolButton variant="dark">
+                        <FiUserCheck size={30} /> Reset Password
+                      </CoolButton>
+                    </Link>
+                  </Nav.Link>
+                </Col>
+              </Row>
             </Card.Header>
             <Card.Body>
               <Form />
             </Card.Body>
           </Card>
         </Col>
-        <Col md={3}>
+      </Row>
+      <Row>
+        <Col md={12}>
+          <br />
+          <br />
           <h3>
             <i>Staying Safe</i>
           </h3>
@@ -74,6 +95,11 @@ const Login = (props) => {
               It should be valid, from Valkyr Labs Inc in SF, California
             </p>
           </h6>
+          <br />
+          <FiHeart size={28} /> At Valkyr Labs, your privacy and security are a
+          top priority.
+          <br />
+          <br />
         </Col>
       </Row>
     </div>

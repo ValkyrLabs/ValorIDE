@@ -23,25 +23,25 @@ export function useSessionStorage<T>(
 
   // Save to sessionStorage whenever value changes
   const setValue = useCallback((value: T | ((prev: T) => T)) => {
-    try {
-      setStoredValue((prev) => {
-        const newValue = value instanceof Function ? value(prev) : value;
+    setStoredValue((prev) => {
+      const newValue = value instanceof Function ? value(prev) : value;
+      try {
         sessionStorage.setItem(key, JSON.stringify(newValue));
-        return newValue;
-      });
-    } catch (error) {
-      console.warn(`Error setting sessionStorage key "${key}":`, error);
-    }
+      } catch (error) {
+        console.warn(`Error setting sessionStorage key "${key}":`, error);
+      }
+      return newValue;
+    });
   }, [key]);
 
   // Clear the stored value
   const clearValue = useCallback(() => {
     try {
       sessionStorage.removeItem(key);
-      setStoredValue(initialValue);
     } catch (error) {
       console.warn(`Error removing sessionStorage key "${key}":`, error);
     }
+    setStoredValue(initialValue);
   }, [key, initialValue]);
 
   return [storedValue, setValue, clearValue];

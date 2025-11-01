@@ -11,7 +11,7 @@ import { handleGrpcRequest } from "./grpc-handler";
 import { buildApiHandler } from "@api/index";
 import { cleanupLegacyCheckpoints } from "@integrations/checkpoints/CheckpointMigration";
 import { downloadTask } from "@integrations/misc/export-markdown";
-import { extractLocalZip } from "@utils/zipExtractor";
+import { extractLocalZip, isZipBuffer } from "@utils/zipExtractor";
 import {
   fetchOpenGraphData,
   isImageUrl,
@@ -42,13 +42,15 @@ import {
   McpServer,
 } from "@shared/mcp";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
+import { validateAdvancedSettings, DEFAULT_ADVANCED_SETTINGS } from "@shared/AdvancedSettings";
 import {
   ValorIDECheckpointRestore,
   WebviewMessage,
 } from "@shared/WebviewMessage";
 import { fileExistsAtPath } from "@utils/fs";
 import { searchCommits } from "@utils/git";
-import { getWorkspacePath } from "@utils/path";
+import { getReadablePath, getWorkspacePath } from "@utils/path";
+import { resolveThorapiFolderPath } from "@utils/thorapi";
 import { getTotalTasksSize } from "@utils/storage";
 import { openMention } from "../mentions";
 import {
@@ -133,7 +135,7 @@ export class Controller {
   */
   async dispose() {
     this.outputChannel.appendLine("Starting ValorIDEProvider disposal...");
-    
+
     try {
       await this.clearTask();
       this.outputChannel.appendLine("Task cleared successfully");
@@ -383,6 +385,24 @@ export class Controller {
         });
         break;
       }
+      case "displayVSCodeInfo": {
+        if (message.text) {
+          vscode.window.showInformationMessage(message.text);
+        }
+        break;
+      }
+      case "displayVSCodeWarning": {
+        if (message.text) {
+          vscode.window.showWarningMessage(message.text);
+        }
+        break;
+      }
+      case "displayVSCodeError": {
+        if (message.text) {
+          vscode.window.showErrorMessage(message.text);
+        }
+        break;
+      }
       case "newTask":
         // Code that should run in response to the hello message command
         //vscode.window.showInformationMessage(message.text!)
@@ -532,6 +552,9 @@ export class Controller {
       case "refreshRequestyModels":
         await this.refreshRequestyModels();
         break;
+      case "refreshLLMDetails":
+        await this.refreshLLMDetails();
+        break;
       case "refreshOpenAiModels":
         const { apiConfiguration } = await getAllExtensionState(this.context);
         const openAiModels = await this.getOpenAiModels(
@@ -609,6 +632,16 @@ export class Controller {
       case "taskCompletionViewChanges": {
         if (message.number) {
           await this.task?.presentMultifileDiff(message.number, true);
+        }
+        break;
+      }
+      case "taskCompletionOpenFileDiff": {
+        if (message.number && message.relativePath) {
+          await this.task?.presentFileDiff(
+            message.number,
+            message.relativePath,
+            message.seeNewChangesSinceLastTaskCompletion ?? true,
+          );
         }
         break;
       }
@@ -928,6 +961,80 @@ export class Controller {
         await this.postMessageToWebview({ type: "didUpdateSettings" });
         break;
       }
+      case "requestSetBudgetLimit": {
+        // Prompt user for USD budget limit and persist without toggling mode
+        const { chatSettings: currentChatSettings } = await getAllExtensionState(
+          this.context,
+        );
+        const valueStr = await vscode.window.showInputBox({
+          title: "Set budget limit",
+          prompt: "Set budget limit (USD) for this task",
+          value:
+            currentChatSettings?.budgetLimit != null
+              ? String(currentChatSettings.budgetLimit)
+              : "",
+          validateInput: (v) => {
+            if (v.trim() === "") return null;
+            const n = Number(v);
+            return isFinite(n) && n >= 0 ? null : "Enter a non-negative number";
+          },
+        });
+        if (valueStr === undefined) break; // cancelled
+        const nextBudget = valueStr.trim() === "" ? undefined : Number(valueStr);
+        const nextSettings = {
+          ...(currentChatSettings ?? { mode: "act" as const }),
+          budgetLimit: nextBudget,
+        };
+        await updateGlobalState(this.context, "chatSettings", nextSettings);
+        if (this.task) this.task.chatSettings = nextSettings;
+        await this.postStateToWebview();
+        if (nextBudget != null) {
+          vscode.window.showInformationMessage(
+            `Budget limit set to $${nextBudget.toFixed(2)}`,
+          );
+        } else {
+          vscode.window.showInformationMessage("Budget limit cleared");
+        }
+        break;
+      }
+      case "requestSetApiThrottle": {
+        // Prompt user for delay between API calls (ms) and persist
+        const { chatSettings: currentChatSettings } = await getAllExtensionState(
+          this.context,
+        );
+        const valueStr = await vscode.window.showInputBox({
+          title: "Set API throttle",
+          prompt: "Set delay between API calls (ms)",
+          value:
+            currentChatSettings?.apiThrottleMs != null
+              ? String(currentChatSettings.apiThrottleMs)
+              : "",
+          validateInput: (v) => {
+            if (v.trim() === "") return null;
+            const n = Number(v);
+            return Number.isInteger(n) && n >= 0
+              ? null
+              : "Enter a non-negative integer";
+          },
+        });
+        if (valueStr === undefined) break; // cancelled
+        const nextDelay = valueStr.trim() === "" ? undefined : Number(valueStr);
+        const nextSettings = {
+          ...(currentChatSettings ?? { mode: "act" as const }),
+          apiThrottleMs: nextDelay,
+        };
+        await updateGlobalState(this.context, "chatSettings", nextSettings);
+        if (this.task) this.task.chatSettings = nextSettings;
+        await this.postStateToWebview();
+        if (nextDelay != null) {
+          vscode.window.showInformationMessage(
+            `API throttle set to ${nextDelay} ms`,
+          );
+        } else {
+          vscode.window.showInformationMessage("API throttle cleared");
+        }
+        break;
+      }
       case "clearAllTaskHistory": {
         await this.deleteAllTaskHistory();
         await this.postStateToWebview();
@@ -1082,7 +1189,7 @@ export class Controller {
       case "getThorapiFolderContents": {
         try {
           // Get thorapi folder contents
-          const thorapiFolderPath = path.join(cwd, "thorapi");
+          const thorapiFolderPath = resolveThorapiFolderPath(cwd);
           const files = await this.getThorapiFolderStructure(thorapiFolderPath);
 
           await this.postMessageToWebview({
@@ -1104,37 +1211,255 @@ export class Controller {
         }
         break;
       }
-      case "streamToThorapi": {
+      case "promptAddGeneratedToProject": {
         try {
-          const { blobData, applicationId, applicationName, filename } = message;
+          const rel = message.text || "";
+          const cwd = vscode.workspace.workspaceFolders
+            ?.map((folder) => folder.uri.fsPath)
+            .at(0);
+          if (!cwd || !rel) break;
+          const abs = path.resolve(cwd, rel);
+
+          const choice = await vscode.window.showInformationMessage(
+            `Add generated code at "${rel}" to your project?`,
+            { modal: false },
+            "Add",
+            "Skip",
+          );
+          if (choice !== "Add") break;
+
+          // Reuse existing command to update tsconfig aliases and includes
+          await vscode.commands.executeCommand(
+            "valoride.addThorAliasesFromFolder",
+            vscode.Uri.file(abs),
+          );
+        } catch (err) {
+          console.error("promptAddGeneratedToProject error", err);
+          vscode.window.showWarningMessage(
+            `Failed to prepare alias update: ${err instanceof Error ? err.message : String(err)}`,
+          );
+        }
+        break;
+      }
+      case "addGeneratedToProject": {
+        try {
+          const rel = message.text || "";
+          const folderName = message.folderName || "";
+          const cwd = vscode.workspace.workspaceFolders
+            ?.map((folder) => folder.uri.fsPath)
+            .at(0);
+          if (!cwd || !rel) break;
+          const abs = path.resolve(cwd, rel);
+
+          // Reuse existing command to update tsconfig aliases and includes
+          await vscode.commands.executeCommand(
+            "valoride.addThorAliasesFromFolder",
+            vscode.Uri.file(abs),
+          );
+
+          // Show success message
+          vscode.window.showInformationMessage(
+            `Successfully added "${folderName}" to your project with TypeScript aliases.`,
+          );
+        } catch (err) {
+          console.error("addGeneratedToProject error", err);
+          vscode.window.showErrorMessage(
+            `Failed to add generated code to project: ${err instanceof Error ? err.message : String(err)}`,
+          );
+        }
+        break;
+      }
+      case "startServer": {
+        try {
+          const rel = message.text || "";
+          const folderName = message.folderName || "";
+          const serverType = message.serverType || "spring-boot";
+          const cwd = vscode.workspace.workspaceFolders
+            ?.map((folder) => folder.uri.fsPath)
+            .at(0);
+          if (!cwd || !rel) break;
+          const abs = path.resolve(cwd, rel);
+
+          let command: string;
+          let port: string;
+          let serverDescription: string;
+
+          switch (serverType) {
+            case "spring-boot":
+              command = "mvn spring-boot:run";
+              port = "8080";
+              serverDescription = "Spring Boot development server";
+              break;
+            case "nestjs":
+              command = "npm run start:dev";
+              port = "3000";
+              serverDescription = "Nest.js development server";
+              break;
+            case "typescript":
+              command = "npm run build";
+              port = "";
+              serverDescription = "TypeScript client build";
+              break;
+            default:
+              command = "npm start";
+              port = "3000";
+              serverDescription = "development server";
+          }
+
+          // For TypeScript client builds, also ensure tsconfig alias mapping is applied
+          if (serverType === "typescript") {
+            try {
+              await vscode.commands.executeCommand(
+                "valoride.addThorAliasesFromFolder",
+                vscode.Uri.file(abs),
+              );
+            } catch (e) {
+              console.warn(
+                `Failed to update tsconfig aliases for ${folderName}: ${e instanceof Error ? e.message : String(e)}`,
+              );
+            }
+          }
+
+          // Open a new terminal and run the command
+          const terminal = vscode.window.createTerminal({
+            name: `${folderName} Server`,
+            cwd: abs,
+          });
+
+          terminal.show();
+          terminal.sendText(command);
+
+          // Show success message
+          const portMessage = port ? ` (localhost:${port})` : "";
+          vscode.window.showInformationMessage(
+            `Starting ${serverDescription} for "${folderName}"${portMessage}. Check the terminal for output.`,
+          );
+
+          // If it's a web server, offer to open in browser after a delay
+          if (port && serverType !== "typescript") {
+            setTimeout(() => {
+              vscode.window
+                .showInformationMessage(
+                  `Server should be running on localhost:${port}. Open in browser?`,
+                  "Open Browser",
+                  "Later",
+                )
+                .then((choice) => {
+                  if (choice === "Open Browser") {
+                    vscode.env.openExternal(vscode.Uri.parse(`http://localhost:${port}`));
+                  }
+                });
+            }, 5000); // Wait 5 seconds for server to start
+          }
+        } catch (err) {
+          console.error("startServer error", err);
+          vscode.window.showErrorMessage(
+            `Failed to start server: ${err instanceof Error ? err.message : String(err)}`,
+          );
+        }
+        break;
+      }
+      case "streamToThorapi": {
+        const {
+          blobData,
+          applicationId,
+          applicationName,
+          filename,
+          mimeType,
+        } = message;
+
+        const sendProgress = async (step: string, progressMessage: string) => {
+          if (!applicationId) {
+            return;
+          }
+          await this.postMessageToWebview({
+            type: "streamToThorapiResult",
+            streamToThorapiResult: {
+              success: true,
+              applicationId,
+              step,
+              message: progressMessage,
+            },
+          });
+        };
+
+        try {
           if (!blobData || !applicationId) {
             throw new Error("Missing required data for streamToThorapi");
           }
 
-          // Create thorapi directory if it doesn't exist
-          const thorapiFolderPath = path.join(cwd, "thorapi");
+          await sendProgress("receiving", "Decoding generated archive...");
+
+          const binaryData = Buffer.from(blobData, "base64");
+          const thorapiFolderPath = resolveThorapiFolderPath(cwd);
           await fs.mkdir(thorapiFolderPath, { recursive: true });
 
-          // Use provided filename or generate one
-          const finalFilename =
-            filename || `application-${applicationId}-${Date.now()}.zip`;
+          const incomingName =
+            filename?.trim() ||
+            `application-${applicationId}-${Date.now()}`;
+          const sanitizedBaseName = path
+            .basename(incomingName)
+            .replace(/[\\/:*?"<>|]/g, "_")
+            .trim() || `application-${applicationId}-${Date.now()}`;
+
+          const mime = mimeType?.toLowerCase() ?? "";
+          const looksLikeZip = isZipBuffer(binaryData) || mime.includes("zip");
+
+          let finalFilename = sanitizedBaseName;
+          if (looksLikeZip && !/\.zip$/i.test(finalFilename)) {
+            finalFilename = `${finalFilename}.zip`;
+          }
+
           const filePath = path.join(thorapiFolderPath, finalFilename);
-
-          // Convert base64 back to binary and write file
-          const binaryData = Buffer.from(blobData, "base64");
           await fs.writeFile(filePath, binaryData);
+          await sendProgress(
+            "processing",
+            `Saved archive to ${getReadablePath(filePath)}`,
+          );
 
-          // Extract if it's a zip file
           let extractedPath: string | undefined;
-          if (finalFilename.endsWith(".zip")) {
-            // Use applicationName for folder name, fallback to applicationId if not provided
-            const folderName = applicationName || applicationId;
-            // Extract the zip file using the proper zip library with application name as subfolder
-            await extractLocalZip(filePath, thorapiFolderPath, folderName);
-            extractedPath = path.join(thorapiFolderPath, folderName);
+          let readmePath: string | undefined;
 
-            // Delete the zip file after successful extraction
-            await fs.unlink(filePath);
+          if (looksLikeZip) {
+            await sendProgress("extracting", "Extracting project files...");
+            try {
+              extractedPath = await extractLocalZip(
+                filePath,
+                thorapiFolderPath,
+                applicationName || applicationId,
+              );
+            } catch (extractionError) {
+              throw new Error(
+                `Failed to extract archive: ${
+                  extractionError instanceof Error
+                    ? extractionError.message
+                    : String(extractionError)
+                }`,
+              );
+            }
+
+            if (extractedPath) {
+              readmePath = await this.findReadmeFile(extractedPath);
+              await sendProgress(
+                "finalizing",
+                `Extracted to ${getReadablePath(extractedPath)}`,
+              );
+            }
+
+            await fs.unlink(filePath).catch((unlinkError) => {
+              console.warn(
+                `Failed to delete archive ${filePath}: ${
+                  unlinkError instanceof Error
+                    ? unlinkError.message
+                    : String(unlinkError)
+                }`,
+              );
+            });
+          } else {
+            await sendProgress(
+              "finalizing",
+              `Saved file to ${getReadablePath(filePath)}`,
+            );
           }
 
           await this.postMessageToWebview({
@@ -1145,6 +1470,11 @@ export class Controller {
               filePath,
               filename: finalFilename,
               extractedPath,
+              readmePath,
+              step: "completed",
+              message: looksLikeZip
+                ? "Application extracted successfully."
+                : "Application saved successfully.",
             },
           });
         } catch (error) {
@@ -1158,6 +1488,7 @@ export class Controller {
                 error instanceof Error
                   ? error.message
                   : "Failed to stream to thorapi",
+              step: "error",
             },
           });
         }
@@ -1720,7 +2051,7 @@ export class Controller {
 
       // Fetch server details from marketplace using same URL pattern as ApplicationService
       const response = await axios.post<McpDownloadResponse>(
-        `${process.env.REACT_APP_BASE_PATH || "http://localhost:8080/v1"}/McpServer`,
+        `${process.env.VITE_basePath || "http://localhost:8080/v1"}/McpServer`,
         { mcpId },
         {
           headers,
@@ -2040,6 +2371,67 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
     await this.postMessageToWebview({
       type: "requestyModels",
       requestyModels: models,
+    });
+    return models;
+  }
+
+  async refreshLLMDetails() {
+    let models: Record<string, any> = {};
+    try {
+      const { apiConfiguration } = await getAllExtensionState(this.context);
+
+      // If ValkyrAI is not configured, don't attempt to fetch
+      if (!apiConfiguration?.valkyraiHost) {
+        console.log("ValkyrAI host not configured, skipping LLMDetails fetch");
+        await this.postMessageToWebview({
+          type: "llmDetailsUpdated",
+          models: {},
+        });
+        return {};
+      }
+
+      // Fetch LLM details from ValkyrAI
+      const valkyraiUrl = apiConfiguration.valkyraiHost.replace(/\/$/, ""); // Remove trailing slash
+      const endpoint = `${valkyraiUrl}/v1/llm-details`;
+
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+
+      // Add JWT token if available
+      if (apiConfiguration?.valkyraiJwt) {
+        headers["Authorization"] = `Bearer ${apiConfiguration.valkyraiJwt}`;
+      }
+
+      const response = await axios.get(endpoint, { headers });
+
+      if (Array.isArray(response.data)) {
+        // Transform ValkyrAI LLMDetails to ModelInfo format
+        for (const llmDetail of response.data) {
+          if (llmDetail.id) {
+            const modelInfo: ModelInfo = {
+              maxTokens: llmDetail.maxTokens,
+              contextWindow: llmDetail.contextWindow,
+              supportsImages: llmDetail.supportsImages,
+              supportsPromptCache: llmDetail.supportsPromptCache,
+              inputPrice: llmDetail.inputPrice,
+              outputPrice: llmDetail.outputPrice,
+              description: llmDetail.description || `${llmDetail.provider} ${llmDetail.name}${llmDetail.version ? ` (${llmDetail.version})` : ""}`,
+            };
+            models[llmDetail.id] = modelInfo;
+          }
+        }
+        console.log("LLMDetails fetched from ValkyrAI", models);
+      } else {
+        console.error("Invalid response from ValkyrAI LLMDetails endpoint");
+      }
+    } catch (error) {
+      console.error("Error fetching LLMDetails from ValkyrAI:", error);
+    }
+
+    await this.postMessageToWebview({
+      type: "llmDetailsUpdated",
+      models,
     });
     return models;
   }
@@ -2367,6 +2759,62 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       isLoggedIn,
     } = await getAllExtensionState(this.context);
 
+    // Build advanced settings from VS Code configuration
+    const cfg = vscode.workspace.getConfiguration("valoride");
+    const advancedSettings = validateAdvancedSettings({
+      fileProcessing: {
+        maxFileSize:
+          (cfg.get<number>("advanced.fileProcessing.maxFileSize") as number | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.fileProcessing.maxFileSize,
+        warnLargeFiles:
+          (cfg.get<boolean>("advanced.fileProcessing.warnLargeFiles") as boolean | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.fileProcessing.warnLargeFiles,
+        largeFileThreshold:
+          (cfg.get<number>("advanced.fileProcessing.largeFileThreshold") as number | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.fileProcessing.largeFileThreshold,
+        chunkSize: DEFAULT_ADVANCED_SETTINGS.fileProcessing.chunkSize,
+        streamingDelay: DEFAULT_ADVANCED_SETTINGS.fileProcessing.streamingDelay,
+        enableProgressiveLoading: DEFAULT_ADVANCED_SETTINGS.fileProcessing.enableProgressiveLoading,
+      },
+      budgetAlerts: {
+        depletedThreshold:
+          (cfg.get<number>("advanced.budgetAlerts.depletedThreshold") as number | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.budgetAlerts.depletedThreshold,
+        criticalThreshold:
+          (cfg.get<number>("advanced.budgetAlerts.criticalThreshold") as number | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.budgetAlerts.criticalThreshold,
+        lowThreshold:
+          (cfg.get<number>("advanced.budgetAlerts.lowThreshold") as number | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.budgetAlerts.lowThreshold,
+        alertThreshold:
+          (cfg.get<number>("advanced.budgetAlerts.alertThreshold") as number | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.budgetAlerts.alertThreshold,
+      },
+      debugging: {
+        enableVerboseLogging:
+          (cfg.get<boolean>("advanced.debugging.enableVerboseLogging") as boolean | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.debugging.enableVerboseLogging,
+        saveFailedMatches:
+          (cfg.get<boolean>("advanced.debugging.saveFailedMatches") as boolean | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.debugging.saveFailedMatches,
+        enablePerformanceMetrics:
+          (cfg.get<boolean>("advanced.debugging.enablePerformanceMetrics") as boolean | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.debugging.enablePerformanceMetrics,
+        logOutputFiltering:
+          (cfg.get<boolean>("advanced.debugging.logOutputFiltering") as boolean | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.debugging.logOutputFiltering,
+        showPsrResultsReport:
+          (cfg.get<boolean>("advanced.debugging.showPsrResultsReport") as boolean | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.debugging.showPsrResultsReport,
+      },
+      thorapi: {
+        outputFolder:
+          (cfg.get<string>("advanced.thorapi.outputFolder") as string | undefined) ??
+          DEFAULT_ADVANCED_SETTINGS.thorapi.outputFolder,
+      },
+    });
+    const thorapiFolderPath = resolveThorapiFolderPath(cwd);
+
     // Get JWT token from secrets
     const jwtToken = await getSecret(this.context, "jwtToken");
 
@@ -2403,6 +2851,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       vscMachineId: vscode.env.machineId,
       globalValorIDERulesToggles: globalValorIDERulesToggles || {},
       localValorIDERulesToggles: localValorIDERulesToggles || {},
+      thorapiFolderPath,
       // Include authentication state fields
       authenticatedPrincipal,
       isLoggedIn,
@@ -2529,6 +2978,58 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
   }
 
   // File system helpers
+
+  private async findReadmeFile(
+    directory: string | undefined,
+  ): Promise<string | undefined> {
+    if (!directory) {
+      return undefined;
+    }
+
+    const readmeRegex = /^readme(\.|$)/i;
+
+    try {
+      const entries = await fs.readdir(directory, { withFileTypes: true });
+
+      for (const entry of entries) {
+        if (entry.isFile() && readmeRegex.test(entry.name)) {
+          return path.join(directory, entry.name);
+        }
+      }
+
+      for (const entry of entries) {
+        if (!entry.isDirectory()) {
+          continue;
+        }
+        const subdir = path.join(directory, entry.name);
+        try {
+          const subEntries = await fs.readdir(subdir, { withFileTypes: true });
+          const readmeEntry = subEntries.find(
+            (subEntry) => subEntry.isFile() && readmeRegex.test(subEntry.name),
+          );
+          if (readmeEntry) {
+            return path.join(subdir, readmeEntry.name);
+          }
+        } catch (subdirError) {
+          console.warn(
+            `findReadmeFile: unable to scan ${subdir}: ${
+              subdirError instanceof Error
+                ? subdirError.message
+                : String(subdirError)
+            }`,
+          );
+        }
+      }
+    } catch (error) {
+      console.warn(
+        `findReadmeFile: unable to scan ${directory}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
+
+    return undefined;
+  }
 
   async getThorapiFolderStructure(folderPath: string): Promise<any[]> {
     try {

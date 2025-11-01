@@ -1,6 +1,6 @@
 ![ValorIDE Logo](https://valkyrlabs.com/assets/valorIde-horizontal-DyPXHpke.png)
 
-## Agentic Coder, Powered by ThorAPI ⚡
+## Agentic Coder, Powered by ThorAPI ⚡ (Precision PSR Verified)
 
 [English Documentation](https://valkyrlabs.com/v1/docs/Products/ValorIDE/valoride-documentation)
 
@@ -8,6 +8,8 @@
 
 | [**Download on VS Marketplace**](https://marketplace.visualstudio.com/items?itemName=ValkyrLabsInc.valoride-dev) | [**Feature Requests**](https://github.com/valkyrlabs/valoride/discussions/categories/feature-requests?discussions_q=is%3Aopen+category%3A%22Feature+Requests%22+sort%3Atop) | [**Getting Started**](https://valkyrlabs.com/v1/docs/Products/ValorIDE/getting-started-new-coders/getting-started-with-valoride) |
 | :--------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------: |
+
+> ⚡ NEW: Claude 4.5 and GPT-5 Support
 
 ## What is Valor IDE?
 
@@ -27,6 +29,81 @@ Built on **ThorAPI's secure generation engine** and **Claude Opus agentic capabi
 ---
 
 ## How It Works
+
+                             ┌─────────────────────────────────────────────┐
+                             │               ThorAPI.java                  │
+                             │  (service app / OpenAPI enhancement)        │
+                             └─────────────────────────────────────────────┘
+                                               ▲
+                                               │ orchestrates + enhances
+                                               │
+        ┌──────────────────────────────┐       │        ┌──────────────────────────────────────────┐
+        │           INPUTS             │       │        │             SPEC FRAGMENTS                │
+        ├──────────────────────────────┤       │        ├──────────────────────────────────────────┤
+        │ api.yaml                     │       │        │ valkyrai/src/main/resources/openapi/     │
+        │  • Bare-bones OpenAPI        │       │        │   api_inc.hbs.yaml (Handlebars section)  │
+        │  • Lists COMPONENT NAMES     │       │        │  • Injected after all human edits        │
+        │    to expose as CRUD APIs    │       │        └──────────────────────────────────────────┘
+        │  • No properties, no paths   │       │
+        ├──────────────────────────────┤       │
+        │ api.hbs.yaml                 │       │
+        │  • FULL component schemas    │       │
+        │  • NO CRUD paths             │       │
+        │  • Master truth for models   │       │
+        └──────────────────────────────┘       │
+                                               │
+                                               ▼
+                              ┌─────────────────────────────────────────────┐
+                              │         SPEC ASSEMBLY & MERGE               │
+                              │  1) Start with api.hbs.yaml (full models)   │
+                              │  2) Merge api.yaml to decide CRUD exposure  │
+                              │     - Components listed ⇒ CRUD controllers  │
+                              │     - Not listed ⇒ backend-only services    │
+                              │  3) Append api_inc.hbs.yaml (Handlebars)    │
+                              └─────────────────────────────────────────────┘
+                                               │
+                                               │ writes
+                                               ▼
+                         ┌────────────────────────────────────────────────────┐
+                         │ assembled.api.yaml.hbs                              │
+                         │  • Single master spec w/ Handlebars blocks         │
+                         │  • Human-editable YAML remains valid               │
+                         └────────────────────────────────────────────────────┘
+                                               │
+                                               │ enhance (add standard fields/annotations)
+                                               ▼
+                   ┌──────────────────────────────────────────────────────────────┐
+                   │            THORAPI ENHANCEMENT PHASE                        │
+                   │ Adds standard model surface:                                │
+                   │   id, createdDate, lastModifiedDate, lastModifiedById, etc. │
+                   │ Applies custom annotations / x-thorapi metadata             │
+                   └──────────────────────────────────────────────────────────────┘
+                                               │
+                                               │ outputs
+                                               ▼
+                 ┌───────────────────────────────────────────────────────────────┐
+                 │ api-out.yaml                                                  │
+                 │  • FINAL enhanced OpenAPI spec                                │
+                 │  • Ready for codegen (consumed on EVERY Maven build)          │
+                 └───────────────────────────────────────────────────────────────┘
+                                               │
+                                               │ mvn clean install (ThorAPI templates)
+                                               ▼
+     ┌──────────────────────────────┬──────────────────────────────┬───────────────────────────────┬──────────────────────────────┐
+     │  Java Spring Boot server     │  TypeScript Client Libs      │  TypeScript Component Libs    │  Other user-defined targets  │
+     │  • CRUD controllers (only    │  • Bound to ThorAPI server   │  • UI components wired to      │  • Any additional codegen     │
+     │    for comps listed in       │  • Used by apps/services      │    ThorAPI data sources        │    templates configured       │
+     │    api.yaml)                 │                              │                                │                              │
+     └──────────────────────────────┴──────────────────────────────┴───────────────────────────────┴──────────────────────────────┘
+                                               │
+                                               │ injected into
+                                               ▼
+                         ┌─────────────────────────────────────────────────┐
+                         │ ValorIDE project                                │
+                         │  • Vibe Coder finishes the last mile            │
+                         │  • Uses generated artifacts + live ValkyrAI     │
+                         │    services to ship the app                     │
+                         └─────────────────────────────────────────────────┘
 
 1. **Define a Task**
    - Example: "Fix this bug" or "Convert this mockup into a working app."
@@ -55,8 +132,23 @@ Built on **ThorAPI's secure generation engine** and **Claude Opus agentic capabi
 
 ### 🔗 Use Any API & Model
 
-Valor IDE integrates with OpenRouter, Anthropic, OpenAI, Google Gemini, AWS Bedrock, Azure, GCP Vertex, or local models (Ollama / LM Studio).\
+Valor IDE connects to model apis to perform AI-powered code generation and other tasks.
+
+Valor integrates with almost any LLM model api including Anthropic, OpenAI, Google Gemini, AWS Bedrock, Azure, GCP Vertex, or local models (Ollama / LM Studio).\
+
+Valor also can connect to ValkyrAI models that you can customize and train to your specific environment, project, and business needs.
+
 It also tracks **token usage and costs** across entire task loops, so you always know your spend.
+
+---
+
+### 🔗 Use Customized Models for Projects
+
+Valor IDE integrates with ValkyrAI models that you can customize and configure for your specific needs.
+
+Adjust the initial prompt with technical details specific to your project(s) and business(es) to save time and maximize efficiency and effectiveness.
+
+Using Valor P2P you can configure a management Model and a work execution Model and run a supervised project right within your IDE.
 
 ---
 
@@ -74,6 +166,12 @@ Valor IDE integrates with the rest of the Valhalla Suite from Valkyr Labs -- Tho
 ValkyrAI can be run as a service in your generated application stack, providing workflow automations, while built-in RBAC allows secure sharing of any object in the system.
 
 Agentic reporting tracks **token usage and costs** across entire task loops, so you always know your spend and monetization features of the ValkyrLabs.com
+
+### 🛠️ Valor P2P
+
+P2P allows multiple Valor instances to communicate and orchestrate tasks together.
+
+It's an innovative and fun way to increase the power of Valor in your IDE.
 
 ---
 
@@ -241,6 +339,74 @@ Push → Open PR → CI runs → Changesetbot handles versioning + release.
 
 ---
 
+## CHANGES
+
+- 2025-10-07: Added language- and behavior-specific directives to the system prompt covering Java, TypeScript, ThorAPI usage, and task-completion rituals.
+
+---
+
 ## License
 
 [Apache 2.0 © 2025 Valkyr Labs Inc.](./LICENSE)
+
+---
+
+### 🚀 Latest Developments
+
+**Updated: January 2, 2025 (P2P & WebSocket Integration Complete)**
+
+#### P2P Communication & WebSocket Integration
+
+- **WebSocket Mothership Integration**: Complete real-time communication system with Thor/STOMP broker connectivity, featuring bidirectional message routing and auto-reconnect capabilities.
+
+- **P2P Peer Discovery**: VSCode inter-instance communication with real-time peer count tracking, ping/ack/nack protocol, and visual status indicators.
+
+- **Enhanced StatusBadge System**: Dual-panel status display showing WebSocket Mothership connection (left) and P2P peer status (right) with connection counts and visual feedback.
+
+- **BROADCAST Rollcall Protocol**: Automatic instance discovery on connection with rollcall request/response system for tracking connected ValorIDE instances across the network.
+
+#### Latest Features (v3.13.2)
+
+- **Gemini 2.5 Flash Support**: Added to Vertex and Gemini providers with caching support and thinking budget options.
+
+- **Enhanced .valorideignore**: Added `!include .file` directive support for more flexible file pattern management.
+
+- **Improved Model Support**: Added thinking budget support for Gemini models, fixed Azure API temperature handling, and enhanced DeepSeek model compatibility.
+
+- **Terminal & Output Improvements**: Fixed terminal output formatting issues, improved non-alphanumeric output handling, and enhanced command execution reliability.
+
+- **Browser Tool Enhancements**: Removed computer use restrictions, enabling browser automation through any image-supporting model.
+
+#### Core Tool Enhancements
+
+- **Precision Search and Replace Tool**: Advanced file editing capability featuring a three-layer strategy (AST → contextual → byte). This tool ensures reliable, atomic edits with built-in verification and rollback support. ✅ **Test Status: Verified** - Successfully tested with comprehensive error handling and delta tracking.
+
+- **Enhanced File Editing Pipeline**: Improved safety protocols with automatic backup creation, verification steps, and error recovery for all file modifications.
+
+#### Platform & Architecture
+
+- **Communication Service**: Enhanced inter-service communication with improved reliability, Redux integration, and comprehensive error handling.
+
+- **State Management**: Advanced state management with WebSocket-specific state handling, event listeners, and efficient update mechanisms.
+
+- **MCP Ecosystem**: Continued expansion of Model Context Protocol integration, enabling dynamic tool creation and enhanced agentic capabilities throughout the Valhalla Suite.
+
+#### Agent Telemetry & UX
+
+- **Streamlined Login Integration**: Clean, integrated authentication form with username/password handling and remember-me functionality.
+
+- **Real-time Status Tracking**: Enhanced connection monitoring with spinning indicators, tooltips, and detailed instance information.
+
+- **Performance Optimization**: Efficient event handling, connection pooling, and improved message routing for better overall performance.
+
+---
+
+## Additional Resources
+
+- **ValorIDE GitHub Repository:** [https://github.com/valkyrlabs/valoride](https://github.com/valkyrlabs/valoride)
+
+- **ThorAPI Documentation:** [https://valkyrlabs.com/v1/docs/Products/ThorAPI](https://valkyrlabs.com/v1/docs/Products/ThorAPI)
+
+- **MCP Documentation:** [https://modelcontextprotocol.org/docs](https://modelcontextprotocol.org/docs)
+
+- **ValorIDE Documentation:** [docs/README.md](docs/README.md)

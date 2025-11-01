@@ -155,7 +155,7 @@ const McpResponseDisplay: React.FC<McpResponseDisplayProps> = ({
     if (displayMode === "plain") {
       setIsLoading(false);
       setUrlMatches([]); // Clear any existing matches when in plain mode
-      return;
+      return undefined;
     }
 
     // Use a direct boolean for cancellation that's scoped to this effect run
@@ -229,7 +229,7 @@ const McpResponseDisplay: React.FC<McpResponseDisplayProps> = ({
               console.log(
                 "URL processing canceled - display mode changed to plain",
               );
-              return;
+              return undefined;
             }
 
             const match = matches[i];
@@ -242,7 +242,7 @@ const McpResponseDisplay: React.FC<McpResponseDisplayProps> = ({
               const isImage = await checkIfImageUrl(match.url);
 
               // Skip if processing has been canceled
-              if (processingCanceled) return;
+              if (processingCanceled) return undefined;
 
               // Update the match in place
               match.isImage = isImage;
