@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,31 +10,27 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WebsocketSessionTypeEnum = exports.WebsocketSessionStateEnum = void 0;
-exports.WebsocketSessionFromJSON = WebsocketSessionFromJSON;
-exports.WebsocketSessionToJSON = WebsocketSessionToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function WebsocketSessionFromJSON(json) {
+import { exists } from '../src/runtime';
+import { WebsocketMessageFromJSON, WebsocketMessageToJSON, } from './';
+export function WebsocketSessionFromJSON(json) {
     return {
-        'execModuleId': !(0, runtime_1.exists)(json, 'execModuleId') ? undefined : json['execModuleId'],
-        'state': !(0, runtime_1.exists)(json, 'state') ? undefined : json['state'],
-        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
-        'connected': !(0, runtime_1.exists)(json, 'connected') ? undefined : json['connected'],
-        'statuses': !(0, runtime_1.exists)(json, 'statuses') ? undefined : json['statuses'].map(_1.WebsocketMessageFromJSON),
-        'messages': !(0, runtime_1.exists)(json, 'messages') ? undefined : json['messages'].map(_1.WebsocketMessageFromJSON),
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'execModuleId': !exists(json, 'execModuleId') ? undefined : json['execModuleId'],
+        'state': !exists(json, 'state') ? undefined : json['state'],
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'connected': !exists(json, 'connected') ? undefined : json['connected'],
+        'statuses': !exists(json, 'statuses') ? undefined : json['statuses'].map(WebsocketMessageFromJSON),
+        'messages': !exists(json, 'messages') ? undefined : json['messages'].map(WebsocketMessageFromJSON),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function WebsocketSessionToJSON(value) {
+export function WebsocketSessionToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -44,8 +39,8 @@ function WebsocketSessionToJSON(value) {
         'state': value.state,
         'type': value.type,
         'connected': value.connected,
-        'statuses': value.statuses === undefined ? undefined : value.statuses.map(_1.WebsocketMessageToJSON),
-        'messages': value.messages === undefined ? undefined : value.messages.map(_1.WebsocketMessageToJSON),
+        'statuses': value.statuses === undefined ? undefined : value.statuses.map(WebsocketMessageToJSON),
+        'messages': value.messages === undefined ? undefined : value.messages.map(WebsocketMessageToJSON),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
@@ -60,22 +55,22 @@ function WebsocketSessionToJSON(value) {
 * @export
 * @enum {string}
 */
-var WebsocketSessionStateEnum;
+export var WebsocketSessionStateEnum;
 (function (WebsocketSessionStateEnum) {
     WebsocketSessionStateEnum["BROADCAST"] = "broadcast";
     WebsocketSessionStateEnum["ROOM"] = "room";
     WebsocketSessionStateEnum["PRIVATE"] = "private";
     WebsocketSessionStateEnum["AGENT"] = "agent";
-})(WebsocketSessionStateEnum || (exports.WebsocketSessionStateEnum = WebsocketSessionStateEnum = {}));
+})(WebsocketSessionStateEnum || (WebsocketSessionStateEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-var WebsocketSessionTypeEnum;
+export var WebsocketSessionTypeEnum;
 (function (WebsocketSessionTypeEnum) {
     WebsocketSessionTypeEnum["BROADCAST"] = "broadcast";
     WebsocketSessionTypeEnum["ROOM"] = "room";
     WebsocketSessionTypeEnum["PRIVATE"] = "private";
     WebsocketSessionTypeEnum["AGENT"] = "agent";
-})(WebsocketSessionTypeEnum || (exports.WebsocketSessionTypeEnum = WebsocketSessionTypeEnum = {}));
+})(WebsocketSessionTypeEnum || (WebsocketSessionTypeEnum = {}));
 //# sourceMappingURL=WebsocketSession.js.map

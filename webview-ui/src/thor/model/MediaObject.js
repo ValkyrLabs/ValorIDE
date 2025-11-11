@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,29 +10,25 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MediaObjectTypeEnum = void 0;
-exports.MediaObjectFromJSON = MediaObjectFromJSON;
-exports.MediaObjectToJSON = MediaObjectToJSON;
-const runtime_1 = require("../src/runtime");
-function MediaObjectFromJSON(json) {
+import { exists } from '../src/runtime';
+export function MediaObjectFromJSON(json) {
     return {
-        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
-        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
-        'url': !(0, runtime_1.exists)(json, 'url') ? undefined : json['url'],
-        'positionRow': !(0, runtime_1.exists)(json, 'position:-row') ? undefined : json['position:-row'],
-        'positionCol': !(0, runtime_1.exists)(json, 'position-col') ? undefined : json['position-col'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'sheetId': !exists(json, 'sheetId') ? undefined : json['sheetId'],
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'url': !exists(json, 'url') ? undefined : json['url'],
+        'positionRow': !exists(json, 'position:-row') ? undefined : json['position:-row'],
+        'positionCol': !exists(json, 'position-col') ? undefined : json['position-col'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function MediaObjectToJSON(value) {
+export function MediaObjectToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -57,11 +52,11 @@ function MediaObjectToJSON(value) {
 * @export
 * @enum {string}
 */
-var MediaObjectTypeEnum;
+export var MediaObjectTypeEnum;
 (function (MediaObjectTypeEnum) {
     MediaObjectTypeEnum["MEDIAIMAGE"] = "image";
     MediaObjectTypeEnum["MEDIAAUDIO"] = "audio";
     MediaObjectTypeEnum["MEDIAVIDEO"] = "video";
     MediaObjectTypeEnum["MEDIASHAPE"] = "shape";
-})(MediaObjectTypeEnum || (exports.MediaObjectTypeEnum = MediaObjectTypeEnum = {}));
+})(MediaObjectTypeEnum || (MediaObjectTypeEnum = {}));
 //# sourceMappingURL=MediaObject.js.map

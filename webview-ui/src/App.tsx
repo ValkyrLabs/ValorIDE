@@ -81,7 +81,7 @@ const AppContent = () => {
         setShowGeneratedFiles(false);
         setShowApplicationProgress(false);
         setShowFileExplorer(true);
-        
+
         // Track login success as a task start
         trackTaskStart("user-session", "User logged in successfully");
         break;

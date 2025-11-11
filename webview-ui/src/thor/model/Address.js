@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,36 +10,32 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AddressAddressTypeEnum = void 0;
-exports.AddressFromJSON = AddressFromJSON;
-exports.AddressToJSON = AddressToJSON;
-const runtime_1 = require("../src/runtime");
-function AddressFromJSON(json) {
+import { exists } from '../src/runtime';
+export function AddressFromJSON(json) {
     return {
         'name': json['name'],
         'street1': json['street1'],
         'city': json['city'],
         'state': json['state'],
         'postalCode': json['postal_code'],
-        'hasWifi': !(0, runtime_1.exists)(json, 'hasWifi') ? undefined : json['hasWifi'],
-        'principalId': !(0, runtime_1.exists)(json, 'principalId') ? undefined : json['principalId'],
-        'addressType': !(0, runtime_1.exists)(json, 'addressType') ? undefined : json['addressType'],
-        'gpsCoordinateLat': !(0, runtime_1.exists)(json, 'gps_coordinate_lat') ? undefined : json['gps_coordinate_lat'],
-        'gpsCoordinateLong': !(0, runtime_1.exists)(json, 'gps_coordinate_long') ? undefined : json['gps_coordinate_long'],
-        'street2': !(0, runtime_1.exists)(json, 'street2') ? undefined : json['street2'],
-        'country': !(0, runtime_1.exists)(json, 'country') ? undefined : json['country'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'hasWifi': !exists(json, 'hasWifi') ? undefined : json['hasWifi'],
+        'principalId': !exists(json, 'principalId') ? undefined : json['principalId'],
+        'addressType': !exists(json, 'addressType') ? undefined : json['addressType'],
+        'gpsCoordinateLat': !exists(json, 'gps_coordinate_lat') ? undefined : json['gps_coordinate_lat'],
+        'gpsCoordinateLong': !exists(json, 'gps_coordinate_long') ? undefined : json['gps_coordinate_long'],
+        'street2': !exists(json, 'street2') ? undefined : json['street2'],
+        'country': !exists(json, 'country') ? undefined : json['country'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function AddressToJSON(value) {
+export function AddressToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -71,12 +66,12 @@ function AddressToJSON(value) {
 * @export
 * @enum {string}
 */
-var AddressAddressTypeEnum;
+export var AddressAddressTypeEnum;
 (function (AddressAddressTypeEnum) {
     AddressAddressTypeEnum["HOME"] = "home";
     AddressAddressTypeEnum["MAIL"] = "mail";
     AddressAddressTypeEnum["WORK"] = "work";
     AddressAddressTypeEnum["SCHOOL"] = "school";
     AddressAddressTypeEnum["OTHER"] = "other";
-})(AddressAddressTypeEnum || (exports.AddressAddressTypeEnum = AddressAddressTypeEnum = {}));
+})(AddressAddressTypeEnum || (AddressAddressTypeEnum = {}));
 //# sourceMappingURL=Address.js.map

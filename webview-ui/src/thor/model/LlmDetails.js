@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,45 +10,41 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.LlmDetailsRoleEnum = exports.LlmDetailsApiTypeEnum = exports.LlmDetailsProviderEnum = void 0;
-exports.LlmDetailsFromJSON = LlmDetailsFromJSON;
-exports.LlmDetailsToJSON = LlmDetailsToJSON;
-const runtime_1 = require("../src/runtime");
-function LlmDetailsFromJSON(json) {
+import { exists } from '../src/runtime';
+export function LlmDetailsFromJSON(json) {
     return {
         'name': json['name'],
         'provider': json['provider'],
         'apiType': json['apiType'],
-        'version': !(0, runtime_1.exists)(json, 'version') ? undefined : json['version'],
-        'notes': !(0, runtime_1.exists)(json, 'notes') ? undefined : json['notes'],
-        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : json['role'],
-        'initialPrompt': !(0, runtime_1.exists)(json, 'initialPrompt') ? undefined : json['initialPrompt'],
-        'apiKey': !(0, runtime_1.exists)(json, 'apiKey') ? undefined : json['apiKey'],
-        'credential': !(0, runtime_1.exists)(json, 'credential') ? undefined : json['credential'],
-        'credentialPassword': !(0, runtime_1.exists)(json, 'credentialPassword') ? undefined : json['credentialPassword'],
-        'temperature': !(0, runtime_1.exists)(json, 'temperature') ? undefined : json['temperature'],
-        'contextWindow': !(0, runtime_1.exists)(json, 'contextWindow') ? undefined : json['contextWindow'],
-        'maxTokens': !(0, runtime_1.exists)(json, 'maxTokens') ? undefined : json['maxTokens'],
-        'supportsImages': !(0, runtime_1.exists)(json, 'supportsImages') ? undefined : json['supportsImages'],
-        'supportsPromptCache': !(0, runtime_1.exists)(json, 'supportsPromptCache') ? undefined : json['supportsPromptCache'],
-        'inputPrice': !(0, runtime_1.exists)(json, 'inputPrice') ? undefined : json['inputPrice'],
-        'outputPrice': !(0, runtime_1.exists)(json, 'outputPrice') ? undefined : json['outputPrice'],
-        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
-        'url': !(0, runtime_1.exists)(json, 'url') ? undefined : json['url'],
-        'requestParameters': !(0, runtime_1.exists)(json, 'requestParameters') ? undefined : json['requestParameters'],
-        'metaData': !(0, runtime_1.exists)(json, 'metaData') ? undefined : json['metaData'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'version': !exists(json, 'version') ? undefined : json['version'],
+        'notes': !exists(json, 'notes') ? undefined : json['notes'],
+        'role': !exists(json, 'role') ? undefined : json['role'],
+        'initialPrompt': !exists(json, 'initialPrompt') ? undefined : json['initialPrompt'],
+        'apiKey': !exists(json, 'apiKey') ? undefined : json['apiKey'],
+        'credential': !exists(json, 'credential') ? undefined : json['credential'],
+        'credentialPassword': !exists(json, 'credentialPassword') ? undefined : json['credentialPassword'],
+        'temperature': !exists(json, 'temperature') ? undefined : json['temperature'],
+        'contextWindow': !exists(json, 'contextWindow') ? undefined : json['contextWindow'],
+        'maxTokens': !exists(json, 'maxTokens') ? undefined : json['maxTokens'],
+        'supportsImages': !exists(json, 'supportsImages') ? undefined : json['supportsImages'],
+        'supportsPromptCache': !exists(json, 'supportsPromptCache') ? undefined : json['supportsPromptCache'],
+        'inputPrice': !exists(json, 'inputPrice') ? undefined : json['inputPrice'],
+        'outputPrice': !exists(json, 'outputPrice') ? undefined : json['outputPrice'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'url': !exists(json, 'url') ? undefined : json['url'],
+        'requestParameters': !exists(json, 'requestParameters') ? undefined : json['requestParameters'],
+        'metaData': !exists(json, 'metaData') ? undefined : json['metaData'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function LlmDetailsToJSON(value) {
+export function LlmDetailsToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -89,7 +84,7 @@ function LlmDetailsToJSON(value) {
 * @export
 * @enum {string}
 */
-var LlmDetailsProviderEnum;
+export var LlmDetailsProviderEnum;
 (function (LlmDetailsProviderEnum) {
     LlmDetailsProviderEnum["VALKYRAI"] = "valkyrai";
     LlmDetailsProviderEnum["OPENAI"] = "openai";
@@ -101,24 +96,24 @@ var LlmDetailsProviderEnum;
     LlmDetailsProviderEnum["GEMINI"] = "gemini";
     LlmDetailsProviderEnum["OTHER"] = "other";
     LlmDetailsProviderEnum["CHATGPTPASSTHROUGH"] = "chatgpt_pass_through";
-})(LlmDetailsProviderEnum || (exports.LlmDetailsProviderEnum = LlmDetailsProviderEnum = {}));
+})(LlmDetailsProviderEnum || (LlmDetailsProviderEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-var LlmDetailsApiTypeEnum;
+export var LlmDetailsApiTypeEnum;
 (function (LlmDetailsApiTypeEnum) {
     LlmDetailsApiTypeEnum["OPENAI"] = "openai";
     LlmDetailsApiTypeEnum["OLLAMA"] = "ollama";
     LlmDetailsApiTypeEnum["OTHER"] = "other";
-})(LlmDetailsApiTypeEnum || (exports.LlmDetailsApiTypeEnum = LlmDetailsApiTypeEnum = {}));
+})(LlmDetailsApiTypeEnum || (LlmDetailsApiTypeEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-var LlmDetailsRoleEnum;
+export var LlmDetailsRoleEnum;
 (function (LlmDetailsRoleEnum) {
     LlmDetailsRoleEnum["USER"] = "user";
     LlmDetailsRoleEnum["ASSISTANT"] = "assistant";
-})(LlmDetailsRoleEnum || (exports.LlmDetailsRoleEnum = LlmDetailsRoleEnum = {}));
+})(LlmDetailsRoleEnum || (LlmDetailsRoleEnum = {}));
 //# sourceMappingURL=LlmDetails.js.map

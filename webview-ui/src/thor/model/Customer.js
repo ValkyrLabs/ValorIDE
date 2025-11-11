@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,33 +10,29 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CustomerRoleEnum = exports.CustomerStatusEnum = void 0;
-exports.CustomerFromJSON = CustomerFromJSON;
-exports.CustomerToJSON = CustomerToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function CustomerFromJSON(json) {
+import { exists } from '../src/runtime';
+import { PrincipalFromJSON, PrincipalToJSON, } from './';
+export function CustomerFromJSON(json) {
     return {
-        'principal': !(0, runtime_1.exists)(json, 'principal') ? undefined : (0, _1.PrincipalFromJSON)(json['principal']),
-        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
-        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : json['role'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'role': !exists(json, 'role') ? undefined : json['role'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function CustomerToJSON(value) {
+export function CustomerToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        'principal': (0, _1.PrincipalToJSON)(value.principal),
+        'principal': PrincipalToJSON(value.principal),
         'status': value.status,
         'role': value.role,
         'id': value.id,
@@ -54,17 +49,17 @@ function CustomerToJSON(value) {
 * @export
 * @enum {string}
 */
-var CustomerStatusEnum;
+export var CustomerStatusEnum;
 (function (CustomerStatusEnum) {
     CustomerStatusEnum["ACTIVE"] = "active";
     CustomerStatusEnum["INACTIVE"] = "inactive";
     CustomerStatusEnum["PROSPECT"] = "prospect";
-})(CustomerStatusEnum || (exports.CustomerStatusEnum = CustomerStatusEnum = {}));
+})(CustomerStatusEnum || (CustomerStatusEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-var CustomerRoleEnum;
+export var CustomerRoleEnum;
 (function (CustomerRoleEnum) {
     CustomerRoleEnum["CXO"] = "cxo";
     CustomerRoleEnum["ENGINEERING"] = "engineering";
@@ -89,5 +84,5 @@ var CustomerRoleEnum;
     CustomerRoleEnum["SALES"] = "sales";
     CustomerRoleEnum["PROCUREMENT"] = "procurement";
     CustomerRoleEnum["TECHNICAL"] = "technical";
-})(CustomerRoleEnum || (exports.CustomerRoleEnum = CustomerRoleEnum = {}));
+})(CustomerRoleEnum || (CustomerRoleEnum = {}));
 //# sourceMappingURL=Customer.js.map

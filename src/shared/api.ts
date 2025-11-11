@@ -143,9 +143,9 @@ export const anthropicModels = {
       "Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)",
   },
   "claude-haiku-4-5-20251001": {
-    maxTokens: 8192,
+    maxTokens: 16_000,
     contextWindow: 200_000,
-    supportsImages: false,
+    supportsImages: true,
     supportsPromptCache: true,
     inputPrice: 0.8,
     outputPrice: 4.0,
@@ -229,6 +229,7 @@ export const anthropicModels = {
     maxTokens: 4096,
     contextWindow: 200_000,
     supportsImages: false,
+
     supportsPromptCache: true,
     inputPrice: 0.3,
     outputPrice: 1.5,

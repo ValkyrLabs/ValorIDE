@@ -14,6 +14,7 @@ import {
   ValorIDESayBrowserAction,
   ValorIDESayTool,
 } from "@shared/ExtensionMessage";
+import { ValorIDEAskResponse } from "@shared/WebviewMessage";
 import { formatResponse } from "@core/prompts/responses";
 import { telemetryService } from "@services/telemetry/TelemetryService";
 import { extractTextFromFile } from "@integrations/misc/extract-text";
@@ -45,6 +46,21 @@ type ToolResponse =
   | string
   | Array<Anthropic.TextBlockParam | Anthropic.ImageBlockParam>;
 type ToolFeedback = { text?: string; images?: string[] };
+type AskFunction = (
+  type: ValorIDEAsk,
+  text?: string,
+  partial?: boolean
+) => Promise<{
+  response: ValorIDEAskResponse;
+  text?: string;
+  images?: string[];
+}>;
+type SayFunction = (
+  type: ValorIDESay,
+  text?: string,
+  images?: string[],
+  partial?: boolean
+) => Promise<undefined>;
 
 /**
  * Core tool execution engine that handles all tool implementations
@@ -53,15 +69,81 @@ type ToolFeedback = { text?: string; images?: string[] };
 export class ToolExecutionEngine {
   private toolApprovalManager: ToolApprovalManager;
   private toolManager: ToolManager;
+  private boundAsk: AskFunction;
+  private boundSay: SayFunction;
 
   constructor(
     private task: any, // Task reference for accessing methods and properties
     private cwd: string
   ) {
+    const askFn =
+      typeof this.task?.ask === "function"
+        ? (this.task.ask.bind(this.task) as AskFunction)
+        : typeof this.task?.messageHandler?.ask === "function"
+          ? (this.task.messageHandler.ask.bind(
+            this.task.messageHandler,
+          ) as AskFunction)
+          : undefined;
+
+    const sayFn =
+      typeof this.task?.say === "function"
+        ? (this.task.say.bind(this.task) as SayFunction)
+        : typeof this.task?.messageHandler?.say === "function"
+          ? (this.task.messageHandler.say.bind(
+            this.task.messageHandler,
+          ) as SayFunction)
+          : undefined;
+
+    if (!askFn || !sayFn) {
+      const errorMessage =
+        "ToolExecutionEngine: Missing ask or say implementation on task/messageHandler.";
+      Logger.error(errorMessage);
+      throw new Error(errorMessage);
+    }
+
+    this.boundAsk = askFn;
+    this.boundSay = sayFn;
+
     this.toolApprovalManager = new ToolApprovalManager(
       this.task.autoApprovalSettings,
-      this.task.ask.bind(this.task),
-      this.task.say.bind(this.task)
+      this.boundAsk,
+      this.boundSay
+    );
+
+    const bindTaskMethod = <T extends (...args: any[]) => any>(
+      methodName: string,
+      fallback: T,
+    ): T => {
+      const method = this.task?.[methodName];
+      if (typeof method === "function") {
+        return method.bind(this.task) as T;
+      }
+      Logger.warn(
+        `ToolExecutionEngine: Missing ${methodName} implementation on task; using fallback.`,
+      );
+      return fallback;
+    };
+
+    const saveCheckpoint = bindTaskMethod<() => Promise<void>>("saveCheckpoint", async () => {});
+    const shouldAutoApproveTool = bindTaskMethod<
+      (toolName: string) => boolean | [boolean, boolean]
+    >("shouldAutoApproveTool", () => false);
+    const shouldAutoApproveToolWithPath = bindTaskMethod<
+      (toolName: string, toolPath?: string) => boolean
+    >("shouldAutoApproveToolWithPath", () => false);
+    const sayAndCreateMissingParamError = bindTaskMethod<
+      (toolName: string, paramName: string, relPath?: string) => Promise<ToolResponse>
+    >("sayAndCreateMissingParamError", async (toolName, paramName, relPath) => {
+      const errorMessage = `ToolExecutionEngine: sayAndCreateMissingParamError fallback triggered for tool='${toolName}' param='${paramName}' relPath='${relPath ?? ""}'.`;
+      Logger.error(errorMessage);
+      throw new Error(errorMessage);
+    });
+    const removeLastPartialMessageIfExistsWithType = bindTaskMethod<
+      (type: "ask" | "say", askOrSay: ValorIDEAsk | ValorIDESay) => Promise<void>
+    >("removeLastPartialMessageIfExistsWithType", async () => {});
+    const markTaskDirSizeStale = bindTaskMethod<() => void>(
+      "markTaskDirSizeStale",
+      () => undefined,
     );
 
     // Create ToolContext from task properties
@@ -87,13 +169,14 @@ export class ToolExecutionEngine {
       consecutiveAutoApprovedRequestsCount: this.task.consecutiveAutoApprovedRequestsCount,
 
       // Callbacks
-      say: this.task.say.bind(this.task),
-      ask: this.task.ask.bind(this.task),
-      saveCheckpoint: this.task.saveCheckpoint.bind(this.task),
-      shouldAutoApproveTool: this.task.shouldAutoApproveTool.bind(this.task),
-      shouldAutoApproveToolWithPath: this.task.shouldAutoApproveToolWithPath.bind(this.task),
-      sayAndCreateMissingParamError: this.task.sayAndCreateMissingParamError.bind(this.task),
-      removeLastPartialMessageIfExistsWithType: this.task.removeLastPartialMessageIfExistsWithType.bind(this.task),
+      say: this.boundSay,
+      ask: this.boundAsk,
+      saveCheckpoint,
+      shouldAutoApproveTool,
+      shouldAutoApproveToolWithPath,
+      sayAndCreateMissingParamError,
+      removeLastPartialMessageIfExistsWithType,
+      markTaskDirSizeStale,
 
       // Flags
       didRejectTool: false,
@@ -173,7 +256,7 @@ export class ToolExecutionEngine {
         return;
       }
       const errorString = `Error ${action}: ${JSON.stringify({ message: error.message, stack: error.stack })}`;
-      await this.task.say(
+      await this.boundSay(
         "error",
         `Error ${action}:\n${error.message ?? JSON.stringify({ message: error.message, stack: error.stack }, null, 2)}`,
       );

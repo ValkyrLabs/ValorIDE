@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,28 +10,25 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.McpResourceFromJSON = McpResourceFromJSON;
-exports.McpResourceToJSON = McpResourceToJSON;
-const runtime_1 = require("../src/runtime");
-function McpResourceFromJSON(json) {
+import { exists } from '../src/runtime';
+export function McpResourceFromJSON(json) {
     return {
         'uri': json['uri'],
         'name': json['name'],
-        'mcpServerId': !(0, runtime_1.exists)(json, 'mcpServerId') ? undefined : json['mcpServerId'],
-        'mimeType': !(0, runtime_1.exists)(json, 'mimeType') ? undefined : json['mimeType'],
-        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'mcpServerId': !exists(json, 'mcpServerId') ? undefined : json['mcpServerId'],
+        'mimeType': !exists(json, 'mimeType') ? undefined : json['mimeType'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function McpResourceToJSON(value) {
+export function McpResourceToJSON(value) {
     if (value === undefined) {
         return undefined;
     }

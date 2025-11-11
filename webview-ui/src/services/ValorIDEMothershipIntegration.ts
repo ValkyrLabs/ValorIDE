@@ -32,6 +32,9 @@ export class ValorIDEMothershipIntegration {
   };
   private actionQueue: ChatAction[] = [];
   private isProcessingQueue = false;
+  private hasLoggedMissingService = false;
+  private hasLoggedQueueOverflow = false;
+  private static readonly MAX_QUEUE_LENGTH = 250;
 
   constructor(mothershipService: MothershipService | null) {
     this.mothershipService = mothershipService;
@@ -44,6 +47,7 @@ export class ValorIDEMothershipIntegration {
   public updateMothershipService(service: MothershipService | null): void {
     this.mothershipService = service;
     if (service) {
+      this.hasLoggedMissingService = false;
       this.setupEventListeners();
       // Process any queued actions
       this.processActionQueue();
@@ -68,20 +72,35 @@ export class ValorIDEMothershipIntegration {
    * Send a ValorIDE action to the mothership using command protocol
    */
   public async sendChatAction(action: ChatAction): Promise<void> {
+    if (!this.mothershipService) {
+      if (!this.hasLoggedMissingService) {
+        console.warn('🚀 Mothership service not configured; dropping chat actions.');
+        this.hasLoggedMissingService = true;
+      }
+      return;
+    }
+
     console.log('🚀 sendChatAction called with:', action);
     this.updateLastActivity();
 
     // Debug connection status
-    const isConnected = this.mothershipService?.isConnected();
-    const instanceId = this.mothershipService?.getInstanceId();
+    const isConnected = this.mothershipService.isConnected();
+    const instanceId = this.mothershipService.getInstanceId();
     console.log('🚀 Mothership service status:', { 
-      hasService: !!this.mothershipService,
+      hasService: true,
       isConnected,
       instanceId,
       queueLength: this.actionQueue.length
     });
 
     if (!isConnected) {
+      if (this.actionQueue.length >= ValorIDEMothershipIntegration.MAX_QUEUE_LENGTH) {
+        this.actionQueue.shift();
+        if (!this.hasLoggedQueueOverflow) {
+          console.warn('🚀 Mothership action queue is full; dropping oldest entries until connection is restored.');
+          this.hasLoggedQueueOverflow = true;
+        }
+      }
       // Queue the action for when connection is restored
       this.actionQueue.push(action);
       console.warn('🚀 Mothership not connected, queuing action:', action.type);
@@ -123,6 +142,7 @@ export class ValorIDEMothershipIntegration {
       const result = this.mothershipService.sendMessage(message);
       console.log('🚀 sendMessage result:', result);
       console.log('🚀 Successfully sent ValorIDE command to mothership:', action.type);
+      this.hasLoggedQueueOverflow = false;
     } catch (error) {
       console.error('🚀 Failed to send chat action to mothership:', error);
       console.error('🚀 Error details:', {

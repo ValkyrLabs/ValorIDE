@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,33 +10,30 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AccountBalanceFromJSON = AccountBalanceFromJSON;
-exports.AccountBalanceToJSON = AccountBalanceToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function AccountBalanceFromJSON(json) {
+import { exists } from '../src/runtime';
+import { PaymentTransactionFromJSON, PaymentTransactionToJSON, UsageTransactionFromJSON, UsageTransactionToJSON, } from './';
+export function AccountBalanceFromJSON(json) {
     return {
-        'usageTransactions': json['usageTransactions'].map(_1.UsageTransactionFromJSON),
-        'paymentTransactions': json['paymentTransactions'].map(_1.PaymentTransactionFromJSON),
-        'currentBalance': !(0, runtime_1.exists)(json, 'currentBalance') ? undefined : json['currentBalance'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'usageTransactions': json['usageTransactions'].map(UsageTransactionFromJSON),
+        'paymentTransactions': json['paymentTransactions'].map(PaymentTransactionFromJSON),
+        'currentBalance': !exists(json, 'currentBalance') ? undefined : json['currentBalance'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function AccountBalanceToJSON(value) {
+export function AccountBalanceToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        'usageTransactions': value.usageTransactions.map(_1.UsageTransactionToJSON),
-        'paymentTransactions': value.paymentTransactions.map(_1.PaymentTransactionToJSON),
+        'usageTransactions': value.usageTransactions.map(UsageTransactionToJSON),
+        'paymentTransactions': value.paymentTransactions.map(PaymentTransactionToJSON),
         'currentBalance': value.currentBalance,
         'id': value.id,
         'ownerId': value.ownerId,

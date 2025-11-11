@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,36 +10,32 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductTypeEnum = exports.ProductStatusEnum = void 0;
-exports.ProductFromJSON = ProductFromJSON;
-exports.ProductToJSON = ProductToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function ProductFromJSON(json) {
+import { exists } from '../src/runtime';
+import { ContentDataFromJSON, ContentDataToJSON, ProductFeatureFromJSON, ProductFeatureToJSON, } from './';
+export function ProductFromJSON(json) {
     return {
         'name': json['name'],
         'price': json['price'],
         'status': json['status'],
-        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
-        'salePrice': !(0, runtime_1.exists)(json, 'salePrice') ? undefined : json['salePrice'],
-        'taxRate': !(0, runtime_1.exists)(json, 'taxRate') ? undefined : json['taxRate'],
-        'duration': !(0, runtime_1.exists)(json, 'duration') ? undefined : json['duration'],
-        'productContentData': !(0, runtime_1.exists)(json, 'productContentData') ? undefined : json['productContentData'].map(_1.ContentDataFromJSON),
-        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
-        'features': !(0, runtime_1.exists)(json, 'features') ? undefined : json['features'].map(_1.ProductFeatureFromJSON),
-        'countryOfOrigin': !(0, runtime_1.exists)(json, 'countryOfOrigin') ? undefined : json['countryOfOrigin'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'salePrice': !exists(json, 'salePrice') ? undefined : json['salePrice'],
+        'taxRate': !exists(json, 'taxRate') ? undefined : json['taxRate'],
+        'duration': !exists(json, 'duration') ? undefined : json['duration'],
+        'productContentData': !exists(json, 'productContentData') ? undefined : json['productContentData'].map(ContentDataFromJSON),
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'features': !exists(json, 'features') ? undefined : json['features'].map(ProductFeatureFromJSON),
+        'countryOfOrigin': !exists(json, 'countryOfOrigin') ? undefined : json['countryOfOrigin'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function ProductToJSON(value) {
+export function ProductToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -52,9 +47,9 @@ function ProductToJSON(value) {
         'salePrice': value.salePrice,
         'taxRate': value.taxRate,
         'duration': value.duration,
-        'productContentData': value.productContentData === undefined ? undefined : value.productContentData.map(_1.ContentDataToJSON),
+        'productContentData': value.productContentData === undefined ? undefined : value.productContentData.map(ContentDataToJSON),
         'type': value.type,
-        'features': value.features === undefined ? undefined : value.features.map(_1.ProductFeatureToJSON),
+        'features': value.features === undefined ? undefined : value.features.map(ProductFeatureToJSON),
         'countryOfOrigin': value.countryOfOrigin,
         'id': value.id,
         'ownerId': value.ownerId,
@@ -70,7 +65,7 @@ function ProductToJSON(value) {
 * @export
 * @enum {string}
 */
-var ProductStatusEnum;
+export var ProductStatusEnum;
 (function (ProductStatusEnum) {
     ProductStatusEnum["PENDING"] = "pending";
     ProductStatusEnum["SALE"] = "sale";
@@ -78,12 +73,12 @@ var ProductStatusEnum;
     ProductStatusEnum["AVAILABLE"] = "available";
     ProductStatusEnum["DISCONTINUED"] = "discontinued";
     ProductStatusEnum["OUTOFSTOCK"] = "out_of_stock";
-})(ProductStatusEnum || (exports.ProductStatusEnum = ProductStatusEnum = {}));
+})(ProductStatusEnum || (ProductStatusEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-var ProductTypeEnum;
+export var ProductTypeEnum;
 (function (ProductTypeEnum) {
     ProductTypeEnum["PHYSICAL"] = "physical";
     ProductTypeEnum["SUBSCRIPTION"] = "subscription";
@@ -97,5 +92,5 @@ var ProductTypeEnum;
     ProductTypeEnum["MEDIA"] = "media";
     ProductTypeEnum["PERFORMANCE"] = "performance";
     ProductTypeEnum["OTHER"] = "other";
-})(ProductTypeEnum || (exports.ProductTypeEnum = ProductTypeEnum = {}));
+})(ProductTypeEnum || (ProductTypeEnum = {}));
 //# sourceMappingURL=Product.js.map

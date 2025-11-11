@@ -39,6 +39,7 @@ describe("webview accessControl persistence helpers", () => {
             localStorage,
             CustomEvent: MockCustomEvent,
         });
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         const module = require("../../webview-ui/src/utils/accessControl");
         storeJwtToken = module.storeJwtToken;
         hydrateStoredCredentials = module.hydrateStoredCredentials;

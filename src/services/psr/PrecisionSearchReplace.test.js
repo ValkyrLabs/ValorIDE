@@ -120,7 +120,7 @@ describe("precisionSearchAndReplace", () => {
                 replace: "world",
             },
         ], access, { makeBackup: true });
-        const undoDir = path.join(tmpDir, ".valor/undo", "nested");
+        const undoDir = path.join(tmpDir, ".valoride/undo", "nested");
         const backupName = `example.ts.${result.baseHash.slice(0, 8)}.bak`;
         const backupPath = path.join(undoDir, backupName);
         const backupContents = await fsp.readFile(backupPath, "utf8");

@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,32 +10,29 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.OasObjectSchemaFromJSON = OasObjectSchemaFromJSON;
-exports.OasObjectSchemaToJSON = OasObjectSchemaToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function OasObjectSchemaFromJSON(json) {
+import { exists } from '../src/runtime';
+import { OasEnumFromJSON, OasEnumToJSON, OasRequiredFromJSON, OasRequiredToJSON, } from './';
+export function OasObjectSchemaFromJSON(json) {
     return {
-        'oasComponentId': !(0, runtime_1.exists)(json, 'oasComponentId') ? undefined : json['oasComponentId'],
-        'oasParameterId': !(0, runtime_1.exists)(json, 'oasParameterId') ? undefined : json['oasParameterId'],
-        'oasResponseId': !(0, runtime_1.exists)(json, 'oasResponseId') ? undefined : json['oasResponseId'],
-        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
-        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
-        'format': !(0, runtime_1.exists)(json, 'format') ? undefined : json['format'],
-        'oasEnum': !(0, runtime_1.exists)(json, 'oasEnum') ? undefined : json['oasEnum'].map(_1.OasEnumFromJSON),
-        'required': !(0, runtime_1.exists)(json, 'required') ? undefined : json['required'].map(_1.OasRequiredFromJSON),
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'oasComponentId': !exists(json, 'oasComponentId') ? undefined : json['oasComponentId'],
+        'oasParameterId': !exists(json, 'oasParameterId') ? undefined : json['oasParameterId'],
+        'oasResponseId': !exists(json, 'oasResponseId') ? undefined : json['oasResponseId'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'format': !exists(json, 'format') ? undefined : json['format'],
+        'oasEnum': !exists(json, 'oasEnum') ? undefined : json['oasEnum'].map(OasEnumFromJSON),
+        'required': !exists(json, 'required') ? undefined : json['required'].map(OasRequiredFromJSON),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function OasObjectSchemaToJSON(value) {
+export function OasObjectSchemaToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -47,8 +43,8 @@ function OasObjectSchemaToJSON(value) {
         'description': value.description,
         'type': value.type,
         'format': value.format,
-        'oasEnum': value.oasEnum === undefined ? undefined : value.oasEnum.map(_1.OasEnumToJSON),
-        'required': value.required === undefined ? undefined : value.required.map(_1.OasRequiredToJSON),
+        'oasEnum': value.oasEnum === undefined ? undefined : value.oasEnum.map(OasEnumToJSON),
+        'required': value.required === undefined ? undefined : value.required.map(OasRequiredToJSON),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

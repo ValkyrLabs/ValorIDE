@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,29 +10,25 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PtgTypeEnum = void 0;
-exports.PtgFromJSON = PtgFromJSON;
-exports.PtgToJSON = PtgToJSON;
-const runtime_1 = require("../src/runtime");
-function PtgFromJSON(json) {
+import { exists } from '../src/runtime';
+export function PtgFromJSON(json) {
     return {
-        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
-        'formulaId': !(0, runtime_1.exists)(json, 'formulaId') ? undefined : json['formulaId'],
-        'stringValue': !(0, runtime_1.exists)(json, 'stringValue') ? undefined : json['stringValue'],
-        'numberValue': !(0, runtime_1.exists)(json, 'numberValue') ? undefined : json['numberValue'],
-        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'sheetId': !exists(json, 'sheetId') ? undefined : json['sheetId'],
+        'formulaId': !exists(json, 'formulaId') ? undefined : json['formulaId'],
+        'stringValue': !exists(json, 'stringValue') ? undefined : json['stringValue'],
+        'numberValue': !exists(json, 'numberValue') ? undefined : json['numberValue'],
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function PtgToJSON(value) {
+export function PtgToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -57,7 +52,7 @@ function PtgToJSON(value) {
 * @export
 * @enum {string}
 */
-var PtgTypeEnum;
+export var PtgTypeEnum;
 (function (PtgTypeEnum) {
     PtgTypeEnum["PTGINT"] = "ptgint";
     PtgTypeEnum["PTGSTR"] = "ptgstr";
@@ -67,5 +62,5 @@ var PtgTypeEnum;
     PtgTypeEnum["PTGNAME"] = "ptgname";
     PtgTypeEnum["PTGREF"] = "ptgref";
     PtgTypeEnum["PTGAREA"] = "ptgarea";
-})(PtgTypeEnum || (exports.PtgTypeEnum = PtgTypeEnum = {}));
+})(PtgTypeEnum || (PtgTypeEnum = {}));
 //# sourceMappingURL=Ptg.js.map

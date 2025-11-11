@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,27 +10,23 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BorderColorEnum = exports.BorderStyleEnum = void 0;
-exports.BorderFromJSON = BorderFromJSON;
-exports.BorderToJSON = BorderToJSON;
-const runtime_1 = require("../src/runtime");
-function BorderFromJSON(json) {
+import { exists } from '../src/runtime';
+export function BorderFromJSON(json) {
     return {
-        'formatId': !(0, runtime_1.exists)(json, 'formatId') ? undefined : json['formatId'],
-        'style': !(0, runtime_1.exists)(json, 'style') ? undefined : json['style'],
-        'color': !(0, runtime_1.exists)(json, 'color') ? undefined : json['color'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'formatId': !exists(json, 'formatId') ? undefined : json['formatId'],
+        'style': !exists(json, 'style') ? undefined : json['style'],
+        'color': !exists(json, 'color') ? undefined : json['color'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function BorderToJSON(value) {
+export function BorderToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -53,7 +48,7 @@ function BorderToJSON(value) {
 * @export
 * @enum {string}
 */
-var BorderStyleEnum;
+export var BorderStyleEnum;
 (function (BorderStyleEnum) {
     BorderStyleEnum["BORDERNONE"] = "none";
     BorderStyleEnum["BORDERTHIN"] = "thin";
@@ -69,12 +64,12 @@ var BorderStyleEnum;
     BorderStyleEnum["BORDERDASHDOTDOT"] = "dashdotdot";
     BorderStyleEnum["BORDERMEDIUMDASHDOTDOT"] = "mediumdashdotdot";
     BorderStyleEnum["BORDERSLANTEDDASHDOT"] = "slanteddashdot";
-})(BorderStyleEnum || (exports.BorderStyleEnum = BorderStyleEnum = {}));
+})(BorderStyleEnum || (BorderStyleEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-var BorderColorEnum;
+export var BorderColorEnum;
 (function (BorderColorEnum) {
     BorderColorEnum["COLORBLACK"] = "black";
     BorderColorEnum["COLORRED"] = "red";
@@ -83,5 +78,5 @@ var BorderColorEnum;
     BorderColorEnum["COLORGREEN"] = "green";
     BorderColorEnum["COLORTEAL"] = "teal";
     BorderColorEnum["COLORGRAY50"] = "gray50";
-})(BorderColorEnum || (exports.BorderColorEnum = BorderColorEnum = {}));
+})(BorderColorEnum || (BorderColorEnum = {}));
 //# sourceMappingURL=Border.js.map

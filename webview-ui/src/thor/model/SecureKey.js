@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,30 +10,26 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SecureKeyStatusEnum = void 0;
-exports.SecureKeyFromJSON = SecureKeyFromJSON;
-exports.SecureKeyToJSON = SecureKeyToJSON;
-const runtime_1 = require("../src/runtime");
-function SecureKeyFromJSON(json) {
+import { exists } from '../src/runtime';
+export function SecureKeyFromJSON(json) {
     return {
         'algorithm': json['algorithm'],
         'version': json['version'],
         'keyValue': json['keyValue'],
         'status': json['status'],
-        'notes': !(0, runtime_1.exists)(json, 'notes') ? undefined : json['notes'],
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'cipherWorkCost': !(0, runtime_1.exists)(json, 'cipherWorkCost') ? undefined : json['cipherWorkCost'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'notes': !exists(json, 'notes') ? undefined : json['notes'],
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'cipherWorkCost': !exists(json, 'cipherWorkCost') ? undefined : json['cipherWorkCost'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function SecureKeyToJSON(value) {
+export function SecureKeyToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -59,12 +54,12 @@ function SecureKeyToJSON(value) {
 * @export
 * @enum {string}
 */
-var SecureKeyStatusEnum;
+export var SecureKeyStatusEnum;
 (function (SecureKeyStatusEnum) {
     SecureKeyStatusEnum["KEYACTIVE"] = "active";
     SecureKeyStatusEnum["KEYDEFAULT"] = "default";
     SecureKeyStatusEnum["KEYARCHIVED"] = "archived";
     SecureKeyStatusEnum["KEYREVOKED"] = "revoked";
     SecureKeyStatusEnum["KEYINVALID"] = "invalid";
-})(SecureKeyStatusEnum || (exports.SecureKeyStatusEnum = SecureKeyStatusEnum = {}));
+})(SecureKeyStatusEnum || (SecureKeyStatusEnum = {}));
 //# sourceMappingURL=SecureKey.js.map

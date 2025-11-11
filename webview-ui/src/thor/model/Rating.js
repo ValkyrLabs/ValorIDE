@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,29 +10,25 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RatingTargetTypeEnum = void 0;
-exports.RatingFromJSON = RatingFromJSON;
-exports.RatingToJSON = RatingToJSON;
-const runtime_1 = require("../src/runtime");
-function RatingFromJSON(json) {
+import { exists } from '../src/runtime';
+export function RatingFromJSON(json) {
     return {
         'contentId': json['contentId'],
-        'targetType': !(0, runtime_1.exists)(json, 'targetType') ? undefined : json['targetType'],
-        'comments': !(0, runtime_1.exists)(json, 'comments') ? undefined : json['comments'],
-        'url': !(0, runtime_1.exists)(json, 'url') ? undefined : json['url'],
-        'rating': !(0, runtime_1.exists)(json, 'rating') ? undefined : json['rating'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'targetType': !exists(json, 'targetType') ? undefined : json['targetType'],
+        'comments': !exists(json, 'comments') ? undefined : json['comments'],
+        'url': !exists(json, 'url') ? undefined : json['url'],
+        'rating': !exists(json, 'rating') ? undefined : json['rating'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function RatingToJSON(value) {
+export function RatingToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -57,7 +52,7 @@ function RatingToJSON(value) {
 * @export
 * @enum {string}
 */
-var RatingTargetTypeEnum;
+export var RatingTargetTypeEnum;
 (function (RatingTargetTypeEnum) {
     RatingTargetTypeEnum["HOMEPAGE"] = "homepage";
     RatingTargetTypeEnum["WEBPAGE"] = "webpage";
@@ -73,5 +68,5 @@ var RatingTargetTypeEnum;
     RatingTargetTypeEnum["SATISFACTION"] = "satisfaction";
     RatingTargetTypeEnum["PRODUCT"] = "product";
     RatingTargetTypeEnum["NONE"] = "none";
-})(RatingTargetTypeEnum || (exports.RatingTargetTypeEnum = RatingTargetTypeEnum = {}));
+})(RatingTargetTypeEnum || (RatingTargetTypeEnum = {}));
 //# sourceMappingURL=Rating.js.map

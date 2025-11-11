@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,43 +10,40 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.McpMarketplaceItemFromJSON = McpMarketplaceItemFromJSON;
-exports.McpMarketplaceItemToJSON = McpMarketplaceItemToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function McpMarketplaceItemFromJSON(json) {
+import { exists } from '../src/runtime';
+import { McpMarketplaceItemTagFromJSON, McpMarketplaceItemTagToJSON, } from './';
+export function McpMarketplaceItemFromJSON(json) {
     return {
         'githubUrl': json['githubUrl'],
         'name': json['name'],
         'author': json['author'],
         'description': json['description'],
-        'mcpMarketplaceCatalogId': !(0, runtime_1.exists)(json, 'mcpMarketplaceCatalogId') ? undefined : json['mcpMarketplaceCatalogId'],
-        'mcpServerId': !(0, runtime_1.exists)(json, 'mcpServerId') ? undefined : json['mcpServerId'],
-        'icon': !(0, runtime_1.exists)(json, 'icon') ? undefined : json['icon'],
-        'logoUrl': !(0, runtime_1.exists)(json, 'logoUrl') ? undefined : json['logoUrl'],
-        'category': !(0, runtime_1.exists)(json, 'category') ? undefined : json['category'],
-        'tags': !(0, runtime_1.exists)(json, 'tags') ? undefined : json['tags'].map(_1.McpMarketplaceItemTagFromJSON),
-        'requiresApiKey': !(0, runtime_1.exists)(json, 'requiresApiKey') ? undefined : json['requiresApiKey'],
-        'readmeContent': !(0, runtime_1.exists)(json, 'readmeContent') ? undefined : json['readmeContent'],
-        'llmsInstallationContent': !(0, runtime_1.exists)(json, 'llmsInstallationContent') ? undefined : json['llmsInstallationContent'],
-        'isRecommended': !(0, runtime_1.exists)(json, 'isRecommended') ? undefined : json['isRecommended'],
-        'githubStars': !(0, runtime_1.exists)(json, 'githubStars') ? undefined : json['githubStars'],
-        'downloadCount': !(0, runtime_1.exists)(json, 'downloadCount') ? undefined : json['downloadCount'],
-        'createdAt': !(0, runtime_1.exists)(json, 'createdAt') ? undefined : new Date(json['createdAt']),
-        'updatedAt': !(0, runtime_1.exists)(json, 'updatedAt') ? undefined : new Date(json['updatedAt']),
-        'lastGithubSync': !(0, runtime_1.exists)(json, 'lastGithubSync') ? undefined : new Date(json['lastGithubSync']),
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'mcpMarketplaceCatalogId': !exists(json, 'mcpMarketplaceCatalogId') ? undefined : json['mcpMarketplaceCatalogId'],
+        'mcpServerId': !exists(json, 'mcpServerId') ? undefined : json['mcpServerId'],
+        'icon': !exists(json, 'icon') ? undefined : json['icon'],
+        'logoUrl': !exists(json, 'logoUrl') ? undefined : json['logoUrl'],
+        'category': !exists(json, 'category') ? undefined : json['category'],
+        'tags': !exists(json, 'tags') ? undefined : json['tags'].map(McpMarketplaceItemTagFromJSON),
+        'requiresApiKey': !exists(json, 'requiresApiKey') ? undefined : json['requiresApiKey'],
+        'readmeContent': !exists(json, 'readmeContent') ? undefined : json['readmeContent'],
+        'llmsInstallationContent': !exists(json, 'llmsInstallationContent') ? undefined : json['llmsInstallationContent'],
+        'isRecommended': !exists(json, 'isRecommended') ? undefined : json['isRecommended'],
+        'githubStars': !exists(json, 'githubStars') ? undefined : json['githubStars'],
+        'downloadCount': !exists(json, 'downloadCount') ? undefined : json['downloadCount'],
+        'createdAt': !exists(json, 'createdAt') ? undefined : new Date(json['createdAt']),
+        'updatedAt': !exists(json, 'updatedAt') ? undefined : new Date(json['updatedAt']),
+        'lastGithubSync': !exists(json, 'lastGithubSync') ? undefined : new Date(json['lastGithubSync']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function McpMarketplaceItemToJSON(value) {
+export function McpMarketplaceItemToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -61,7 +57,7 @@ function McpMarketplaceItemToJSON(value) {
         'icon': value.icon,
         'logoUrl': value.logoUrl,
         'category': value.category,
-        'tags': value.tags === undefined ? undefined : value.tags.map(_1.McpMarketplaceItemTagToJSON),
+        'tags': value.tags === undefined ? undefined : value.tags.map(McpMarketplaceItemTagToJSON),
         'requiresApiKey': value.requiresApiKey,
         'readmeContent': value.readmeContent,
         'llmsInstallationContent': value.llmsInstallationContent,

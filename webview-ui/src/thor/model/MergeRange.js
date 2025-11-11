@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,34 +10,31 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MergeRangeFromJSON = MergeRangeFromJSON;
-exports.MergeRangeToJSON = MergeRangeToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function MergeRangeFromJSON(json) {
+import { exists } from '../src/runtime';
+import { CellFromJSON, CellToJSON, } from './';
+export function MergeRangeFromJSON(json) {
     return {
-        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
-        'startCell': !(0, runtime_1.exists)(json, 'startCell') ? undefined : (0, _1.CellFromJSON)(json['startCell']),
-        'endCell': !(0, runtime_1.exists)(json, 'endCell') ? undefined : (0, _1.CellFromJSON)(json['endCell']),
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'sheetId': !exists(json, 'sheetId') ? undefined : json['sheetId'],
+        'startCell': !exists(json, 'startCell') ? undefined : CellFromJSON(json['startCell']),
+        'endCell': !exists(json, 'endCell') ? undefined : CellFromJSON(json['endCell']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function MergeRangeToJSON(value) {
+export function MergeRangeToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
         'sheetId': value.sheetId,
-        'startCell': (0, _1.CellToJSON)(value.startCell),
-        'endCell': (0, _1.CellToJSON)(value.endCell),
+        'startCell': CellToJSON(value.startCell),
+        'endCell': CellToJSON(value.endCell),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

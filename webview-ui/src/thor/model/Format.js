@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,38 +10,34 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.FormatPatternEnum = exports.FormatAlignmentVerticalEnum = exports.FormatAlignmentHorizontalEnum = exports.FormatColorEnum = exports.FormatUnderlineEnum = exports.FormatFontWeightEnum = void 0;
-exports.FormatFromJSON = FormatFromJSON;
-exports.FormatToJSON = FormatToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function FormatFromJSON(json) {
+import { exists } from '../src/runtime';
+import { BorderFromJSON, BorderToJSON, } from './';
+export function FormatFromJSON(json) {
     return {
-        'workbookId': !(0, runtime_1.exists)(json, 'workbookId') ? undefined : json['workbookId'],
-        'fontWeight': !(0, runtime_1.exists)(json, 'fontWeight') ? undefined : json['fontWeight'],
-        'fontSize': !(0, runtime_1.exists)(json, 'fontSize') ? undefined : json['fontSize'],
-        'fontFace': !(0, runtime_1.exists)(json, 'fontFace') ? undefined : json['fontFace'],
-        'underline': !(0, runtime_1.exists)(json, 'underline') ? undefined : json['underline'],
-        'color': !(0, runtime_1.exists)(json, 'color') ? undefined : json['color'],
-        'alignmentHorizontal': !(0, runtime_1.exists)(json, 'alignment-horizontal') ? undefined : json['alignment-horizontal'],
-        'alignmentVertical': !(0, runtime_1.exists)(json, 'alignment-vertical') ? undefined : json['alignment-vertical'],
-        'pattern': !(0, runtime_1.exists)(json, 'pattern') ? undefined : json['pattern'],
-        'borderLeft': !(0, runtime_1.exists)(json, 'border-left') ? undefined : (0, _1.BorderFromJSON)(json['border-left']),
-        'borderRight': !(0, runtime_1.exists)(json, 'border-right') ? undefined : (0, _1.BorderFromJSON)(json['border-right']),
-        'borderTop': !(0, runtime_1.exists)(json, 'border-top') ? undefined : (0, _1.BorderFromJSON)(json['border-top']),
-        'borderBottom': !(0, runtime_1.exists)(json, 'border-bottom') ? undefined : (0, _1.BorderFromJSON)(json['border-bottom']),
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'workbookId': !exists(json, 'workbookId') ? undefined : json['workbookId'],
+        'fontWeight': !exists(json, 'fontWeight') ? undefined : json['fontWeight'],
+        'fontSize': !exists(json, 'fontSize') ? undefined : json['fontSize'],
+        'fontFace': !exists(json, 'fontFace') ? undefined : json['fontFace'],
+        'underline': !exists(json, 'underline') ? undefined : json['underline'],
+        'color': !exists(json, 'color') ? undefined : json['color'],
+        'alignmentHorizontal': !exists(json, 'alignment-horizontal') ? undefined : json['alignment-horizontal'],
+        'alignmentVertical': !exists(json, 'alignment-vertical') ? undefined : json['alignment-vertical'],
+        'pattern': !exists(json, 'pattern') ? undefined : json['pattern'],
+        'borderLeft': !exists(json, 'border-left') ? undefined : BorderFromJSON(json['border-left']),
+        'borderRight': !exists(json, 'border-right') ? undefined : BorderFromJSON(json['border-right']),
+        'borderTop': !exists(json, 'border-top') ? undefined : BorderFromJSON(json['border-top']),
+        'borderBottom': !exists(json, 'border-bottom') ? undefined : BorderFromJSON(json['border-bottom']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function FormatToJSON(value) {
+export function FormatToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -56,10 +51,10 @@ function FormatToJSON(value) {
         'alignment-horizontal': value.alignmentHorizontal,
         'alignment-vertical': value.alignmentVertical,
         'pattern': value.pattern,
-        'border-left': (0, _1.BorderToJSON)(value.borderLeft),
-        'border-right': (0, _1.BorderToJSON)(value.borderRight),
-        'border-top': (0, _1.BorderToJSON)(value.borderTop),
-        'border-bottom': (0, _1.BorderToJSON)(value.borderBottom),
+        'border-left': BorderToJSON(value.borderLeft),
+        'border-right': BorderToJSON(value.borderRight),
+        'border-top': BorderToJSON(value.borderTop),
+        'border-bottom': BorderToJSON(value.borderBottom),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
@@ -74,29 +69,29 @@ function FormatToJSON(value) {
 * @export
 * @enum {string}
 */
-var FormatFontWeightEnum;
+export var FormatFontWeightEnum;
 (function (FormatFontWeightEnum) {
     FormatFontWeightEnum[FormatFontWeightEnum["FONTWEIGHTLIGHT"] = 200] = "FONTWEIGHTLIGHT";
     FormatFontWeightEnum[FormatFontWeightEnum["FONTWEIGHTREGULAR"] = 400] = "FONTWEIGHTREGULAR";
     FormatFontWeightEnum[FormatFontWeightEnum["FONTWEIGHTBOLD"] = 700] = "FONTWEIGHTBOLD";
-})(FormatFontWeightEnum || (exports.FormatFontWeightEnum = FormatFontWeightEnum = {}));
+})(FormatFontWeightEnum || (FormatFontWeightEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-var FormatUnderlineEnum;
+export var FormatUnderlineEnum;
 (function (FormatUnderlineEnum) {
     FormatUnderlineEnum[FormatUnderlineEnum["UNDERLINENONE"] = 0] = "UNDERLINENONE";
     FormatUnderlineEnum[FormatUnderlineEnum["UNDERLINESINGLE"] = 1] = "UNDERLINESINGLE";
     FormatUnderlineEnum[FormatUnderlineEnum["UNDERLINEDOUBLE"] = 2] = "UNDERLINEDOUBLE";
     FormatUnderlineEnum[FormatUnderlineEnum["UNDERLINESINGLEACCOUNTING"] = 21] = "UNDERLINESINGLEACCOUNTING";
     FormatUnderlineEnum[FormatUnderlineEnum["UNDERLINEDOUBLEACCOUNTING"] = 22] = "UNDERLINEDOUBLEACCOUNTING";
-})(FormatUnderlineEnum || (exports.FormatUnderlineEnum = FormatUnderlineEnum = {}));
+})(FormatUnderlineEnum || (FormatUnderlineEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-var FormatColorEnum;
+export var FormatColorEnum;
 (function (FormatColorEnum) {
     FormatColorEnum["COLORBLACK"] = "black";
     FormatColorEnum["COLORWHITE"] = "white";
@@ -114,12 +109,12 @@ var FormatColorEnum;
     FormatColorEnum["COLORLIGHTBLUE"] = "lightblue";
     FormatColorEnum["COLORVIOLET"] = "violet";
     FormatColorEnum["COLORGRAY80"] = "gray80";
-})(FormatColorEnum || (exports.FormatColorEnum = FormatColorEnum = {}));
+})(FormatColorEnum || (FormatColorEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-var FormatAlignmentHorizontalEnum;
+export var FormatAlignmentHorizontalEnum;
 (function (FormatAlignmentHorizontalEnum) {
     FormatAlignmentHorizontalEnum["ALIGNLEFT"] = "left";
     FormatAlignmentHorizontalEnum["ALIGNCENTER"] = "center";
@@ -127,23 +122,23 @@ var FormatAlignmentHorizontalEnum;
     FormatAlignmentHorizontalEnum["ALIGNFILL"] = "fill";
     FormatAlignmentHorizontalEnum["ALIGNJUSTIFY"] = "justify";
     FormatAlignmentHorizontalEnum["ALIGNCENTERACROSSSELECTION"] = "centeracrossselection";
-})(FormatAlignmentHorizontalEnum || (exports.FormatAlignmentHorizontalEnum = FormatAlignmentHorizontalEnum = {}));
+})(FormatAlignmentHorizontalEnum || (FormatAlignmentHorizontalEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-var FormatAlignmentVerticalEnum;
+export var FormatAlignmentVerticalEnum;
 (function (FormatAlignmentVerticalEnum) {
     FormatAlignmentVerticalEnum["ALIGNTOP"] = "top";
     FormatAlignmentVerticalEnum["ALIGNMIDDLE"] = "middle";
     FormatAlignmentVerticalEnum["ALIGNBOTTOM"] = "bottom";
     FormatAlignmentVerticalEnum["ALIGNJUSTIFY"] = "justify";
-})(FormatAlignmentVerticalEnum || (exports.FormatAlignmentVerticalEnum = FormatAlignmentVerticalEnum = {}));
+})(FormatAlignmentVerticalEnum || (FormatAlignmentVerticalEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-var FormatPatternEnum;
+export var FormatPatternEnum;
 (function (FormatPatternEnum) {
     FormatPatternEnum[FormatPatternEnum["PATTERNNONE"] = 0] = "PATTERNNONE";
     FormatPatternEnum[FormatPatternEnum["PATTERNFILLED"] = 1] = "PATTERNFILLED";
@@ -155,5 +150,5 @@ var FormatPatternEnum;
     FormatPatternEnum[FormatPatternEnum["PATTERNDIAGONALSTRIPES"] = 7] = "PATTERNDIAGONALSTRIPES";
     FormatPatternEnum[FormatPatternEnum["PATTERNDIAGONALSTRIPESALT"] = 8] = "PATTERNDIAGONALSTRIPESALT";
     FormatPatternEnum[FormatPatternEnum["PATTERNCHECKERBOARD"] = 9] = "PATTERNCHECKERBOARD";
-})(FormatPatternEnum || (exports.FormatPatternEnum = FormatPatternEnum = {}));
+})(FormatPatternEnum || (FormatPatternEnum = {}));
 //# sourceMappingURL=Format.js.map

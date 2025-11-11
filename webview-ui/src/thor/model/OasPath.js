@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,32 +10,29 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.OasPathFromJSON = OasPathFromJSON;
-exports.OasPathToJSON = OasPathToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function OasPathFromJSON(json) {
+import { exists } from '../src/runtime';
+import { OasOperationFromJSON, OasOperationToJSON, } from './';
+export function OasPathFromJSON(json) {
     return {
-        'path': !(0, runtime_1.exists)(json, 'path') ? undefined : json['path'],
-        'oasOpenAPISpecId': !(0, runtime_1.exists)(json, 'oasOpenAPISpecId') ? undefined : json['oasOpenAPISpecId'],
-        'summary': !(0, runtime_1.exists)(json, 'summary') ? undefined : json['summary'],
-        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
-        'get': !(0, runtime_1.exists)(json, 'get') ? undefined : (0, _1.OasOperationFromJSON)(json['get']),
-        'put': !(0, runtime_1.exists)(json, 'put') ? undefined : (0, _1.OasOperationFromJSON)(json['put']),
-        'post': !(0, runtime_1.exists)(json, 'post') ? undefined : (0, _1.OasOperationFromJSON)(json['post']),
-        '_delete': !(0, runtime_1.exists)(json, 'delete') ? undefined : (0, _1.OasOperationFromJSON)(json['delete']),
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'path': !exists(json, 'path') ? undefined : json['path'],
+        'oasOpenAPISpecId': !exists(json, 'oasOpenAPISpecId') ? undefined : json['oasOpenAPISpecId'],
+        'summary': !exists(json, 'summary') ? undefined : json['summary'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'get': !exists(json, 'get') ? undefined : OasOperationFromJSON(json['get']),
+        'put': !exists(json, 'put') ? undefined : OasOperationFromJSON(json['put']),
+        'post': !exists(json, 'post') ? undefined : OasOperationFromJSON(json['post']),
+        '_delete': !exists(json, 'delete') ? undefined : OasOperationFromJSON(json['delete']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function OasPathToJSON(value) {
+export function OasPathToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -45,10 +41,10 @@ function OasPathToJSON(value) {
         'oasOpenAPISpecId': value.oasOpenAPISpecId,
         'summary': value.summary,
         'description': value.description,
-        'get': (0, _1.OasOperationToJSON)(value.get),
-        'put': (0, _1.OasOperationToJSON)(value.put),
-        'post': (0, _1.OasOperationToJSON)(value.post),
-        'delete': (0, _1.OasOperationToJSON)(value._delete),
+        'get': OasOperationToJSON(value.get),
+        'put': OasOperationToJSON(value.put),
+        'post': OasOperationToJSON(value.post),
+        'delete': OasOperationToJSON(value._delete),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

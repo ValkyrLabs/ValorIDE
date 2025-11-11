@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,33 +10,30 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CellFromJSON = CellFromJSON;
-exports.CellToJSON = CellToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function CellFromJSON(json) {
+import { exists } from '../src/runtime';
+import { FormatFromJSON, FormatToJSON, FormulaFromJSON, FormulaToJSON, SheetColumnFromJSON, SheetColumnToJSON, SheetRowFromJSON, SheetRowToJSON, } from './';
+export function CellFromJSON(json) {
     return {
-        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
-        'comment': !(0, runtime_1.exists)(json, 'comment') ? undefined : json['comment'],
-        'hyperlink': !(0, runtime_1.exists)(json, 'hyperlink') ? undefined : json['hyperlink'],
-        'row': !(0, runtime_1.exists)(json, 'row') ? undefined : (0, _1.SheetRowFromJSON)(json['row']),
-        'column': !(0, runtime_1.exists)(json, 'column') ? undefined : (0, _1.SheetColumnFromJSON)(json['column']),
-        'stringValue': !(0, runtime_1.exists)(json, 'stringValue') ? undefined : json['stringValue'],
-        'numberValue': !(0, runtime_1.exists)(json, 'numberValue') ? undefined : json['numberValue'],
-        'formula': !(0, runtime_1.exists)(json, 'formula') ? undefined : (0, _1.FormulaFromJSON)(json['formula']),
-        'format': !(0, runtime_1.exists)(json, 'format') ? undefined : (0, _1.FormatFromJSON)(json['format']),
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'sheetId': !exists(json, 'sheetId') ? undefined : json['sheetId'],
+        'comment': !exists(json, 'comment') ? undefined : json['comment'],
+        'hyperlink': !exists(json, 'hyperlink') ? undefined : json['hyperlink'],
+        'row': !exists(json, 'row') ? undefined : SheetRowFromJSON(json['row']),
+        'column': !exists(json, 'column') ? undefined : SheetColumnFromJSON(json['column']),
+        'stringValue': !exists(json, 'stringValue') ? undefined : json['stringValue'],
+        'numberValue': !exists(json, 'numberValue') ? undefined : json['numberValue'],
+        'formula': !exists(json, 'formula') ? undefined : FormulaFromJSON(json['formula']),
+        'format': !exists(json, 'format') ? undefined : FormatFromJSON(json['format']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function CellToJSON(value) {
+export function CellToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -45,12 +41,12 @@ function CellToJSON(value) {
         'sheetId': value.sheetId,
         'comment': value.comment,
         'hyperlink': value.hyperlink,
-        'row': (0, _1.SheetRowToJSON)(value.row),
-        'column': (0, _1.SheetColumnToJSON)(value.column),
+        'row': SheetRowToJSON(value.row),
+        'column': SheetColumnToJSON(value.column),
         'stringValue': value.stringValue,
         'numberValue': value.numberValue,
-        'formula': (0, _1.FormulaToJSON)(value.formula),
-        'format': (0, _1.FormatToJSON)(value.format),
+        'formula': FormulaToJSON(value.formula),
+        'format': FormatToJSON(value.format),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

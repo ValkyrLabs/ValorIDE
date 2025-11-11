@@ -45,8 +45,8 @@ export class NotificationService {
         if (this.autoApprovalSettings.enabled &&
             this.autoApprovalSettings.enableNotifications) {
             showSystemNotification({
-                subtitle: "ValorIDE wants to start a new task...",
-                message: `ValorIDE is suggesting to start a new task with: ${context}`,
+                subtitle: "Starting new task...",
+                message: `New task: ${context}`,
             });
         }
     }
@@ -57,8 +57,8 @@ export class NotificationService {
         if (this.autoApprovalSettings.enabled &&
             this.autoApprovalSettings.enableNotifications) {
             showSystemNotification({
-                subtitle: "ValorIDE wants to condense the conversation...",
-                message: `ValorIDE is suggesting to condense your conversation with: ${context}`,
+                subtitle: "Condensing conversation...",
+                message: `Condensing: ${context}`,
             });
         }
     }
@@ -98,7 +98,7 @@ export class NotificationService {
      * Shows notification for command execution
      */
     showCommandExecutionNotification(command) {
-        this.this.notifyCommandExecuting(command);
+        this.showNotificationForApprovalIfAutoApprovalEnabled(`Executing: ${command}`);
     }
     /**
      * Shows notification for file operations
@@ -107,13 +107,13 @@ export class NotificationService {
         let message;
         switch (operation) {
             case "edit":
-                message = `ValorIDE wants to edit ${filename}`;
+                message = `Editing: ${filename}`;
                 break;
             case "create":
-                message = `ValorIDE wants to create ${filename}`;
+                message = `Creating: ${filename}`;
                 break;
             case "read":
-                message = `ValorIDE wants to read ${filename}`;
+                message = `Reading: ${filename}`;
                 break;
         }
         this.showNotificationForApprovalIfAutoApprovalEnabled(message);
@@ -122,25 +122,25 @@ export class NotificationService {
      * Shows notification for browser operations
      */
     showBrowserOperationNotification(url) {
-        this.showNotificationForApprovalIfAutoApprovalEnabled(`ValorIDE wants to use a browser and launch ${url}`);
+        this.showNotificationForApprovalIfAutoApprovalEnabled(`Browser: ${url}`);
     }
     /**
      * Shows notification for MCP operations
      */
     showMcpOperationNotification(toolName, serverName) {
-        this.showNotificationForApprovalIfAutoApprovalEnabled(`ValorIDE wants to use ${toolName} on ${serverName}`);
+        this.showNotificationForApprovalIfAutoApprovalEnabled(`MCP: ${toolName} → ${serverName}`);
     }
     /**
      * Shows notification for MCP resource access
      */
     showMcpResourceNotification(uri, serverName) {
-        this.showNotificationForApprovalIfAutoApprovalEnabled(`ValorIDE wants to access ${uri} on ${serverName}`);
+        this.showNotificationForApprovalIfAutoApprovalEnabled(`Accessing: ${uri} (${serverName})`);
     }
     /**
      * Shows notification for directory operations
      */
     showDirectoryOperationNotification(operation, directoryName) {
-        this.showNotificationForApprovalIfAutoApprovalEnabled(`ValorIDE wants to ${operation} ${directoryName}/`);
+        this.showNotificationForApprovalIfAutoApprovalEnabled(`${operation.toUpperCase()}: ${directoryName}/`);
     }
 }
 //# sourceMappingURL=NotificationService.js.map

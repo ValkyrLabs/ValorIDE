@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,34 +10,31 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.OasResponseFromJSON = OasResponseFromJSON;
-exports.OasResponseToJSON = OasResponseToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function OasResponseFromJSON(json) {
+import { exists } from '../src/runtime';
+import { OasObjectSchemaFromJSON, OasObjectSchemaToJSON, } from './';
+export function OasResponseFromJSON(json) {
     return {
-        'oasOperationId': !(0, runtime_1.exists)(json, 'oasOperationId') ? undefined : json['oasOperationId'],
-        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
-        'content': !(0, runtime_1.exists)(json, 'content') ? undefined : json['content'].map(_1.OasObjectSchemaFromJSON),
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'oasOperationId': !exists(json, 'oasOperationId') ? undefined : json['oasOperationId'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'content': !exists(json, 'content') ? undefined : json['content'].map(OasObjectSchemaFromJSON),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function OasResponseToJSON(value) {
+export function OasResponseToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
         'oasOperationId': value.oasOperationId,
         'description': value.description,
-        'content': value.content === undefined ? undefined : value.content.map(_1.OasObjectSchemaToJSON),
+        'content': value.content === undefined ? undefined : value.content.map(OasObjectSchemaToJSON),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

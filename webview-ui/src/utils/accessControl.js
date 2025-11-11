@@ -1,17 +1,6 @@
-"use strict";
 /**
  * Access control utilities for storing and managing user authentication state
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.shouldPersistJwt = shouldPersistJwt;
-exports.writeStoredPrincipal = writeStoredPrincipal;
-exports.readStoredPrincipal = readStoredPrincipal;
-exports.clearStoredPrincipal = clearStoredPrincipal;
-exports.storeJwtToken = storeJwtToken;
-exports.hydrateStoredCredentials = hydrateStoredCredentials;
-exports.clearStoredJwtToken = clearStoredJwtToken;
-exports.hasRole = hasRole;
-exports.hasPermission = hasPermission;
 const PERSIST_FLAG_KEY = "valoride.persistJwt";
 const JWT_TOKEN_KEY = "jwtToken";
 const LEGACY_JWT_KEYS = ["jwtToken", "authToken"];
@@ -60,7 +49,7 @@ function safeGet(storage, key) {
         return null;
     }
 }
-function shouldPersistJwt() {
+export function shouldPersistJwt() {
     if (!inBrowser)
         return true;
     try {
@@ -79,7 +68,7 @@ function storePrincipalInStorage(storage, principalData) {
  * Writes the authenticated principal to storage
  * @param principal The principal object to store
  */
-function writeStoredPrincipal(principal) {
+export function writeStoredPrincipal(principal) {
     if (!inBrowser)
         return;
     try {
@@ -105,7 +94,7 @@ function writeStoredPrincipal(principal) {
  * Reads the stored principal from storage
  * @returns The stored principal or null if not found
  */
-function readStoredPrincipal() {
+export function readStoredPrincipal() {
     if (!inBrowser)
         return null;
     try {
@@ -129,7 +118,7 @@ function readStoredPrincipal() {
 /**
  * Clears the stored principal from all storage locations
  */
-function clearStoredPrincipal(source = "manual") {
+export function clearStoredPrincipal(source = "manual") {
     if (!inBrowser)
         return;
     try {
@@ -146,7 +135,7 @@ function clearStoredPrincipal(source = "manual") {
  * Persist a JWT token according to user preference.
  * Mirrors into sessionStorage, optionally localStorage, and notifies listeners.
  */
-function storeJwtToken(token, source = "manual") {
+export function storeJwtToken(token, source = "manual") {
     if (!inBrowser)
         return;
     if (!token) {
@@ -169,7 +158,7 @@ function storeJwtToken(token, source = "manual") {
  * Hydrate JWT + principal from persistent storage into sessionStorage so the
  * app can treat them as active credentials.
  */
-function hydrateStoredCredentials(source = "hydrate") {
+export function hydrateStoredCredentials(source = "hydrate") {
     if (!inBrowser)
         return {};
     let token = safeGet(window.sessionStorage, JWT_TOKEN_KEY) ?? undefined;
@@ -210,7 +199,7 @@ function hydrateStoredCredentials(source = "hydrate") {
 /**
  * Clears JWT tokens from all storage locations.
  */
-function clearStoredJwtToken(source = "manual") {
+export function clearStoredJwtToken(source = "manual") {
     if (!inBrowser)
         return;
     safeRemove(window.sessionStorage, JWT_TOKEN_KEY);
@@ -223,7 +212,7 @@ function clearStoredJwtToken(source = "manual") {
  * @param role The role to check for
  * @returns True if the user has the role, false otherwise
  */
-function hasRole(role) {
+export function hasRole(role) {
     const principal = readStoredPrincipal();
     return principal?.roles?.includes(role) ?? false;
 }
@@ -232,7 +221,7 @@ function hasRole(role) {
  * @param permission The permission to check for
  * @returns True if the user has the permission, false otherwise
  */
-function hasPermission(permission) {
+export function hasPermission(permission) {
     const principal = readStoredPrincipal();
     return principal?.permissions?.includes(permission) ?? false;
 }

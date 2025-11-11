@@ -13,6 +13,7 @@ export class CommandToolHandler extends BaseToolHandler {
         if (block.type !== "tool_use" || block.name !== "execute_command") {
             return { shouldContinue: false };
         }
+        Logger.info(`[CommandToolHandler] Received execute_command tool partial=${partial} params=${JSON.stringify(block.params)}`);
         let command = block.params.command;
         const requiresApprovalRaw = block.params.requires_approval;
         const requiresApprovalPerLLM = requiresApprovalRaw?.toLowerCase() === "true";
@@ -55,6 +56,7 @@ export class CommandToolHandler extends BaseToolHandler {
                     };
                 }
                 let didAutoApprove = false;
+                let approvalFeedback;
                 // If the model says this command is safe and auto approval for safe commands is true, execute the command
                 // If the model says the command is risky, but *BOTH* auto approve settings are true, execute the command
                 const autoApproveResult = this.context.shouldAutoApproveTool(block.name);
@@ -72,7 +74,7 @@ export class CommandToolHandler extends BaseToolHandler {
                     if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
                         showSystemNotification({
                             subtitle: "Approval Required",
-                            message: `Executing: ${command}`
+                            message: `$ ${command}`
                         });
                     }
                     const { response, text, images } = await this.context.ask("command", command + (this.context.shouldAutoApproveTool(block.name) && requiresApprovalPerLLM ? COMMAND_REQ_APP_STRING : ""), false);
@@ -81,14 +83,14 @@ export class CommandToolHandler extends BaseToolHandler {
                         (response === "messageResponse" &&
                             (normalizedText === "yes" || normalizedText === "approve"));
                     const hasFeedback = !!text || !!images?.length;
+                    approvalFeedback = hasFeedback ? { text, images } : undefined;
                     if (!approved) {
-                        if (hasFeedback) {
-                            await this.context.say("user_feedback", text, images);
-                        }
-                        return { shouldContinue: true, userRejected: true };
-                    }
-                    if (hasFeedback) {
-                        await this.context.say("user_feedback", text, images);
+                        return {
+                            shouldContinue: true,
+                            userRejected: true,
+                            toolResponse: formatResponse.toolDenied(),
+                            feedback: approvalFeedback
+                        };
                     }
                 }
                 let timeoutId;
@@ -108,10 +110,19 @@ export class CommandToolHandler extends BaseToolHandler {
                 // Re-populate file paths in case the command modified the workspace
                 this.context.workspaceTracker.populateFilePaths();
                 await this.context.saveCheckpoint();
-                return { shouldContinue: true, toolResponse: result, userRejected };
+                this.context.markTaskDirSizeStale();
+                Logger.info(`[CommandToolHandler] Command completed userRejected=${userRejected} resultPreview=${typeof result === "string" ? result.slice(0, 120) : "[non-string]"}`);
+                return {
+                    shouldContinue: true,
+                    toolResponse: result,
+                    userRejected,
+                    feedback: approvalFeedback,
+                    didAlreadyUseTool: true
+                };
             }
         }
         catch (error) {
+            Logger.error(`[CommandToolHandler] Error executing command: ${error.message}`, error);
             return {
                 shouldContinue: true,
                 toolResponse: await this.handleError("executing command", error)

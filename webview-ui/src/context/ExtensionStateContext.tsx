@@ -196,22 +196,33 @@ export const ExtensionStateContextProvider: React.FC<{
           // Ignore storage errors in webview sandbox
         }
 
+        const normalizedState: ExtensionState = {
+          ...incoming,
+          taskHistory: Array.isArray(incoming.taskHistory)
+            ? incoming.taskHistory
+            : [],
+          valorideMessages: Array.isArray(incoming.valorideMessages)
+            ? incoming.valorideMessages
+            : [],
+        };
+
         // 2) Update the main extension state via a PURE updater (no side-effects here)
         setState((prevState) => {
           // Prevent unnecessary updates if state is the same
-          if (JSON.stringify(prevState) === JSON.stringify(incoming)) {
+          if (JSON.stringify(prevState) === JSON.stringify(normalizedState)) {
             return prevState;
           }
 
           // Versioning logic for autoApprovalSettings
-          const incomingVersion = incoming.autoApprovalSettings?.version ?? 1;
+          const incomingVersion =
+            normalizedState.autoApprovalSettings?.version ?? 1;
           const currentVersion = prevState.autoApprovalSettings?.version ?? 1;
           const shouldUpdateAutoApproval = incomingVersion > currentVersion;
 
           return {
-            ...incoming,
+            ...normalizedState,
             autoApprovalSettings: shouldUpdateAutoApproval
-              ? incoming.autoApprovalSettings
+              ? normalizedState.autoApprovalSettings
               : prevState.autoApprovalSettings,
           };
         });

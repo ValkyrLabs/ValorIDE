@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,29 +10,26 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.LoginFromJSON = LoginFromJSON;
-exports.LoginToJSON = LoginToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function LoginFromJSON(json) {
+import { exists } from '../src/runtime';
+import { PrincipalFromJSON, PrincipalToJSON, } from './';
+export function LoginFromJSON(json) {
     return {
-        'username': !(0, runtime_1.exists)(json, 'username') ? undefined : json['username'],
-        'password': !(0, runtime_1.exists)(json, 'password') ? undefined : json['password'],
-        'token': !(0, runtime_1.exists)(json, 'token') ? undefined : json['token'],
-        'authenticatedPrincipal': !(0, runtime_1.exists)(json, 'authenticatedPrincipal') ? undefined : (0, _1.PrincipalFromJSON)(json['authenticatedPrincipal']),
-        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'username': !exists(json, 'username') ? undefined : json['username'],
+        'password': !exists(json, 'password') ? undefined : json['password'],
+        'token': !exists(json, 'token') ? undefined : json['token'],
+        'authenticatedPrincipal': !exists(json, 'authenticatedPrincipal') ? undefined : PrincipalFromJSON(json['authenticatedPrincipal']),
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function LoginToJSON(value) {
+export function LoginToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -41,7 +37,7 @@ function LoginToJSON(value) {
         'username': value.username,
         'password': value.password,
         'token': value.token,
-        'authenticatedPrincipal': (0, _1.PrincipalToJSON)(value.authenticatedPrincipal),
+        'authenticatedPrincipal': PrincipalToJSON(value.authenticatedPrincipal),
         'description': value.description,
         'id': value.id,
         'ownerId': value.ownerId,

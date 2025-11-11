@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,26 +10,22 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RoleRoleEnum = void 0;
-exports.RoleFromJSON = RoleFromJSON;
-exports.RoleToJSON = RoleToJSON;
-const runtime_1 = require("../src/runtime");
-function RoleFromJSON(json) {
+import { exists } from '../src/runtime';
+export function RoleFromJSON(json) {
     return {
-        'roleName': !(0, runtime_1.exists)(json, 'roleName') ? undefined : json['roleName'],
-        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : json['role'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'roleName': !exists(json, 'roleName') ? undefined : json['roleName'],
+        'role': !exists(json, 'role') ? undefined : json['role'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function RoleToJSON(value) {
+export function RoleToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -51,7 +46,7 @@ function RoleToJSON(value) {
 * @export
 * @enum {string}
 */
-var RoleRoleEnum;
+export var RoleRoleEnum;
 (function (RoleRoleEnum) {
     RoleRoleEnum["ROLE_ANONYMOUS"] = "anonymous";
     RoleRoleEnum["ROLE_EVERYONE"] = "everyone";
@@ -60,5 +55,5 @@ var RoleRoleEnum;
     RoleRoleEnum["ROLE_STAFF"] = "staff";
     RoleRoleEnum["ROLE_ADMIN"] = "admin";
     RoleRoleEnum["ROLE_CUSTOM"] = "custom";
-})(RoleRoleEnum || (exports.RoleRoleEnum = RoleRoleEnum = {}));
+})(RoleRoleEnum || (RoleRoleEnum = {}));
 //# sourceMappingURL=Role.js.map

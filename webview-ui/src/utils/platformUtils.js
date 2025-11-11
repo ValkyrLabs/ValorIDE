@@ -1,0 +1,34 @@
+export const unknown = "Unknown";
+const platforms = {
+    windows: /win32/,
+    mac: /darwin/,
+    linux: /linux/,
+};
+export const detectOS = (platform) => {
+    let detectedOs = unknown;
+    if (platform.match(platforms.windows)) {
+        detectedOs = "windows";
+    }
+    else if (platform.match(platforms.mac)) {
+        detectedOs = "mac";
+    }
+    else if (platform.match(platforms.linux)) {
+        detectedOs = "linux";
+    }
+    return detectedOs;
+};
+export const detectMetaKeyChar = (platform) => {
+    if (platform.match(platforms.mac)) {
+        return "CMD";
+    }
+    else if (platform.match(platforms.windows)) {
+        return "Win";
+    }
+    else if (platform.match(platforms.linux)) {
+        return "Alt";
+    }
+    else {
+        return "CMD";
+    }
+};
+//# sourceMappingURL=platformUtils.js.map

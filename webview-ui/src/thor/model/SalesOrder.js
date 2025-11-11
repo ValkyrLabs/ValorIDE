@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,47 +10,43 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SalesOrderStatusEnum = void 0;
-exports.SalesOrderFromJSON = SalesOrderFromJSON;
-exports.SalesOrderToJSON = SalesOrderToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function SalesOrderFromJSON(json) {
+import { exists } from '../src/runtime';
+import { CustomerFromJSON, CustomerToJSON, DiscountFromJSON, DiscountToJSON, LineItemFromJSON, LineItemToJSON, } from './';
+export function SalesOrderFromJSON(json) {
     return {
-        'customer': (0, _1.CustomerFromJSON)(json['customer']),
+        'customer': CustomerFromJSON(json['customer']),
         'totalAmount': json['totalAmount'],
         'orderDate': new Date(json['orderDate']),
         'status': json['status'],
-        'customerId': !(0, runtime_1.exists)(json, 'customerId') ? undefined : json['customerId'],
-        'orderItems': !(0, runtime_1.exists)(json, 'orderItems') ? undefined : json['orderItems'].map(_1.LineItemFromJSON),
-        'orderDiscounts': !(0, runtime_1.exists)(json, 'orderDiscounts') ? undefined : json['orderDiscounts'].map(_1.DiscountFromJSON),
-        'taxAmount': !(0, runtime_1.exists)(json, 'taxAmount') ? undefined : json['taxAmount'],
-        'tariffAmount': !(0, runtime_1.exists)(json, 'tariffAmount') ? undefined : json['tariffAmount'],
-        'subtotalAmount': !(0, runtime_1.exists)(json, 'subtotalAmount') ? undefined : json['subtotalAmount'],
-        'expirationDate': !(0, runtime_1.exists)(json, 'expirationDate') ? undefined : new Date(json['expirationDate']),
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'customerId': !exists(json, 'customerId') ? undefined : json['customerId'],
+        'orderItems': !exists(json, 'orderItems') ? undefined : json['orderItems'].map(LineItemFromJSON),
+        'orderDiscounts': !exists(json, 'orderDiscounts') ? undefined : json['orderDiscounts'].map(DiscountFromJSON),
+        'taxAmount': !exists(json, 'taxAmount') ? undefined : json['taxAmount'],
+        'tariffAmount': !exists(json, 'tariffAmount') ? undefined : json['tariffAmount'],
+        'subtotalAmount': !exists(json, 'subtotalAmount') ? undefined : json['subtotalAmount'],
+        'expirationDate': !exists(json, 'expirationDate') ? undefined : new Date(json['expirationDate']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function SalesOrderToJSON(value) {
+export function SalesOrderToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        'customer': (0, _1.CustomerToJSON)(value.customer),
+        'customer': CustomerToJSON(value.customer),
         'totalAmount': value.totalAmount,
         'orderDate': value.orderDate.toISOString(),
         'status': value.status,
         'customerId': value.customerId,
-        'orderItems': value.orderItems === undefined ? undefined : value.orderItems.map(_1.LineItemToJSON),
-        'orderDiscounts': value.orderDiscounts === undefined ? undefined : value.orderDiscounts.map(_1.DiscountToJSON),
+        'orderItems': value.orderItems === undefined ? undefined : value.orderItems.map(LineItemToJSON),
+        'orderDiscounts': value.orderDiscounts === undefined ? undefined : value.orderDiscounts.map(DiscountToJSON),
         'taxAmount': value.taxAmount,
         'tariffAmount': value.tariffAmount,
         'subtotalAmount': value.subtotalAmount,
@@ -70,12 +65,12 @@ function SalesOrderToJSON(value) {
 * @export
 * @enum {string}
 */
-var SalesOrderStatusEnum;
+export var SalesOrderStatusEnum;
 (function (SalesOrderStatusEnum) {
     SalesOrderStatusEnum["SHOPPING"] = "shopping";
     SalesOrderStatusEnum["PENDING"] = "pending";
     SalesOrderStatusEnum["SHIPPED"] = "shipped";
     SalesOrderStatusEnum["DELIVERED"] = "delivered";
     SalesOrderStatusEnum["CANCELED"] = "canceled";
-})(SalesOrderStatusEnum || (exports.SalesOrderStatusEnum = SalesOrderStatusEnum = {}));
+})(SalesOrderStatusEnum || (SalesOrderStatusEnum = {}));
 //# sourceMappingURL=SalesOrder.js.map

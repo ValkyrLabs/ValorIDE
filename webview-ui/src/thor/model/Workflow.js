@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,44 +10,40 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkflowStatusEnum = exports.WorkflowRoleEnum = void 0;
-exports.WorkflowFromJSON = WorkflowFromJSON;
-exports.WorkflowToJSON = WorkflowToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function WorkflowFromJSON(json) {
+import { exists } from '../src/runtime';
+import { TaskFromJSON, TaskToJSON, WorkflowStateFromJSON, WorkflowStateToJSON, } from './';
+export function WorkflowFromJSON(json) {
     return {
-        'tasks': json['tasks'].map(_1.TaskFromJSON),
-        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
-        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
-        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : json['role'],
-        'schedule': !(0, runtime_1.exists)(json, 'schedule') ? undefined : json['schedule'],
-        'meta': !(0, runtime_1.exists)(json, 'meta') ? undefined : json['meta'],
-        'workflowState': !(0, runtime_1.exists)(json, 'workflow_state') ? undefined : json['workflow_state'].map(_1.WorkflowStateFromJSON),
-        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'tasks': json['tasks'].map(TaskFromJSON),
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'role': !exists(json, 'role') ? undefined : json['role'],
+        'schedule': !exists(json, 'schedule') ? undefined : json['schedule'],
+        'meta': !exists(json, 'meta') ? undefined : json['meta'],
+        'workflowState': !exists(json, 'workflow_state') ? undefined : json['workflow_state'].map(WorkflowStateFromJSON),
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function WorkflowToJSON(value) {
+export function WorkflowToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        'tasks': value.tasks.map(_1.TaskToJSON),
+        'tasks': value.tasks.map(TaskToJSON),
         'name': value.name,
         'description': value.description,
         'role': value.role,
         'schedule': value.schedule,
         'meta': value.meta,
-        'workflow_state': value.workflowState === undefined ? undefined : value.workflowState.map(_1.WorkflowStateToJSON),
+        'workflow_state': value.workflowState === undefined ? undefined : value.workflowState.map(WorkflowStateToJSON),
         'status': value.status,
         'id': value.id,
         'ownerId': value.ownerId,
@@ -64,17 +59,17 @@ function WorkflowToJSON(value) {
 * @export
 * @enum {string}
 */
-var WorkflowRoleEnum;
+export var WorkflowRoleEnum;
 (function (WorkflowRoleEnum) {
     WorkflowRoleEnum["USER"] = "user";
     WorkflowRoleEnum["ASSISTANT"] = "assistant";
     WorkflowRoleEnum["SYSTEM"] = "system";
-})(WorkflowRoleEnum || (exports.WorkflowRoleEnum = WorkflowRoleEnum = {}));
+})(WorkflowRoleEnum || (WorkflowRoleEnum = {}));
 /**
 * @export
 * @enum {string}
 */
-var WorkflowStatusEnum;
+export var WorkflowStatusEnum;
 (function (WorkflowStatusEnum) {
     WorkflowStatusEnum["RUNNING"] = "running";
     WorkflowStatusEnum["STOPPED"] = "stopped";
@@ -82,5 +77,5 @@ var WorkflowStatusEnum;
     WorkflowStatusEnum["WARNING"] = "warning";
     WorkflowStatusEnum["ERROR"] = "error";
     WorkflowStatusEnum["DISABLED"] = "disabled";
-})(WorkflowStatusEnum || (exports.WorkflowStatusEnum = WorkflowStatusEnum = {}));
+})(WorkflowStatusEnum || (WorkflowStatusEnum = {}));
 //# sourceMappingURL=Workflow.js.map

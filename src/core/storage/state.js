@@ -225,7 +225,7 @@ export async function getAllExtensionState(context) {
         },
         lastShownAnnouncementId,
         customInstructions,
-        taskHistory,
+        taskHistory: Array.isArray(taskHistory) ? taskHistory : [],
         autoApprovalSettings: autoApprovalSettings || DEFAULT_AUTO_APPROVAL_SETTINGS, // default value can be 0 or empty string
         globalValorIDERulesToggles: globalValorIDERulesToggles || {},
         localValorIDERulesToggles: localValorIDERulesToggles || {},

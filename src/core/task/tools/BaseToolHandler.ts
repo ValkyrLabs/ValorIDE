@@ -50,6 +50,7 @@ export interface ToolContext {
   shouldAutoApproveToolWithPath: (toolName: string, path?: string) => boolean;
   sayAndCreateMissingParamError: (toolName: string, paramName: string, relPath?: string) => Promise<ToolResponse>;
   removeLastPartialMessageIfExistsWithType: (type: "ask" | "say", askOrSay: ValorIDEAsk | ValorIDESay) => Promise<void>;
+  markTaskDirSizeStale: () => void;
 
   // Flags
   didRejectTool: boolean;

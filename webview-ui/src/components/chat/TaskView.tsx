@@ -7,7 +7,7 @@ import { Virtuoso, type VirtuosoHandle } from "react-virtuoso"
 import styled from "styled-components"
 import { ValorIDEMessage, ValorIDESayBrowserAction } from "@shared/ExtensionMessage"
 import { combineApiRequests } from "@shared/combineApiRequests"
-import { combineCommandSequences } from "@shared/combineCommandSequences"
+import { combineCommandSequences, COMMAND_OUTPUT_STRING } from "@shared/combineCommandSequences"
 import { getApiMetrics } from "@shared/getApiMetrics"
 import { normalizeApiConfiguration } from "@/components/settings/ApiOptions"
 import TaskHeader from "@/components/chat/TaskHeader"
@@ -125,6 +125,35 @@ const TaskView: React.FC<TaskViewProps> = ({
 			return true
 		})
 	}, [modifiedMessages])
+
+	useEffect(() => {
+		setExpandedRows((prev) => {
+			let next = prev
+			let changed = false
+
+			for (const message of visibleMessages) {
+				if (next[message.ts] !== undefined) {
+					continue
+				}
+
+				const shouldAutoExpand =
+					(message.say === "api_req_started" && Boolean(message.text)) ||
+					((message.ask === "command" || message.say === "command") &&
+						typeof message.text === "string" &&
+						message.text.includes(COMMAND_OUTPUT_STRING))
+
+				if (shouldAutoExpand) {
+					if (!changed) {
+						next = { ...prev }
+						changed = true
+					}
+					next[message.ts] = true
+				}
+			}
+
+			return changed ? next : prev
+		})
+	}, [visibleMessages])
 
 	const groupedMessages = useMemo(() => {
 		const result: (ValorIDEMessage | ValorIDEMessage[])[] = []

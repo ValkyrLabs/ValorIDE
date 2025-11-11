@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,36 +10,33 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PrincipalRolesFromJSON = PrincipalRolesFromJSON;
-exports.PrincipalRolesToJSON = PrincipalRolesToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function PrincipalRolesFromJSON(json) {
+import { exists } from '../src/runtime';
+import { PrincipalFromJSON, PrincipalToJSON, RoleFromJSON, RoleToJSON, } from './';
+export function PrincipalRolesFromJSON(json) {
     return {
-        'principalId': !(0, runtime_1.exists)(json, 'principal_id') ? undefined : json['principal_id'],
-        'roleId': !(0, runtime_1.exists)(json, 'role_id') ? undefined : json['role_id'],
-        'role': !(0, runtime_1.exists)(json, 'role') ? undefined : (0, _1.RoleFromJSON)(json['role']),
-        'principal': !(0, runtime_1.exists)(json, 'principal') ? undefined : (0, _1.PrincipalFromJSON)(json['principal']),
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'principalId': !exists(json, 'principal_id') ? undefined : json['principal_id'],
+        'roleId': !exists(json, 'role_id') ? undefined : json['role_id'],
+        'role': !exists(json, 'role') ? undefined : RoleFromJSON(json['role']),
+        'principal': !exists(json, 'principal') ? undefined : PrincipalFromJSON(json['principal']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function PrincipalRolesToJSON(value) {
+export function PrincipalRolesToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
         'principal_id': value.principalId,
         'role_id': value.roleId,
-        'role': (0, _1.RoleToJSON)(value.role),
-        'principal': (0, _1.PrincipalToJSON)(value.principal),
+        'role': RoleToJSON(value.role),
+        'principal': PrincipalToJSON(value.principal),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

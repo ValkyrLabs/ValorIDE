@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,28 +10,25 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.McpToolFromJSON = McpToolFromJSON;
-exports.McpToolToJSON = McpToolToJSON;
-const runtime_1 = require("../src/runtime");
-function McpToolFromJSON(json) {
+import { exists } from '../src/runtime';
+export function McpToolFromJSON(json) {
     return {
         'name': json['name'],
-        'mcpServerId': !(0, runtime_1.exists)(json, 'mcpServerId') ? undefined : json['mcpServerId'],
-        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
-        'inputSchema': !(0, runtime_1.exists)(json, 'inputSchema') ? undefined : json['inputSchema'],
-        'autoApprove': !(0, runtime_1.exists)(json, 'autoApprove') ? undefined : json['autoApprove'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'mcpServerId': !exists(json, 'mcpServerId') ? undefined : json['mcpServerId'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'inputSchema': !exists(json, 'inputSchema') ? undefined : json['inputSchema'],
+        'autoApprove': !exists(json, 'autoApprove') ? undefined : json['autoApprove'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function McpToolToJSON(value) {
+export function McpToolToJSON(value) {
     if (value === undefined) {
         return undefined;
     }

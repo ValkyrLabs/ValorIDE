@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,30 +10,26 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.InvoiceStatusEnum = void 0;
-exports.InvoiceFromJSON = InvoiceFromJSON;
-exports.InvoiceToJSON = InvoiceToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function InvoiceFromJSON(json) {
+import { exists } from '../src/runtime';
+import { SalesOrderFromJSON, SalesOrderToJSON, } from './';
+export function InvoiceFromJSON(json) {
     return {
         'invoiceDate': new Date(json['invoiceDate']),
         'dueDate': new Date(json['dueDate']),
         'amount': json['amount'],
         'status': json['status'],
-        'salesOrder': !(0, runtime_1.exists)(json, 'salesOrder') ? undefined : (0, _1.SalesOrderFromJSON)(json['salesOrder']),
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'salesOrder': !exists(json, 'salesOrder') ? undefined : SalesOrderFromJSON(json['salesOrder']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function InvoiceToJSON(value) {
+export function InvoiceToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -43,7 +38,7 @@ function InvoiceToJSON(value) {
         'dueDate': value.dueDate.toISOString(),
         'amount': value.amount,
         'status': value.status,
-        'salesOrder': (0, _1.SalesOrderToJSON)(value.salesOrder),
+        'salesOrder': SalesOrderToJSON(value.salesOrder),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
@@ -58,12 +53,12 @@ function InvoiceToJSON(value) {
 * @export
 * @enum {string}
 */
-var InvoiceStatusEnum;
+export var InvoiceStatusEnum;
 (function (InvoiceStatusEnum) {
     InvoiceStatusEnum["DRAFT"] = "draft";
     InvoiceStatusEnum["SENT"] = "sent";
     InvoiceStatusEnum["PAID"] = "paid";
     InvoiceStatusEnum["OVERDUE"] = "overdue";
     InvoiceStatusEnum["CANCELED"] = "canceled";
-})(InvoiceStatusEnum || (exports.InvoiceStatusEnum = InvoiceStatusEnum = {}));
+})(InvoiceStatusEnum || (InvoiceStatusEnum = {}));
 //# sourceMappingURL=Invoice.js.map

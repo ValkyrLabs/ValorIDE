@@ -125,7 +125,7 @@ async function fsyncDir(dir) {
 }
 function resolveBackupRoot(cwd, backupDir) {
     if (!backupDir) {
-        return path.resolve(cwd, ".valor/undo");
+        return path.resolve(cwd, ".valoride/undo");
     }
     return path.isAbsolute(backupDir) ? backupDir : path.resolve(cwd, backupDir);
 }

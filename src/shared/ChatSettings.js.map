@@ -1,1 +1,1 @@
-{"version":3,"file":"ChatSettings.js","sourceRoot":"","sources":["ChatSettings.ts"],"names":[],"mappings":"AAQA,MAAM,CAAC,MAAM,qBAAqB,GAAiB;IACjD,IAAI,EAAE,KAAK;CACZ,CAAC"}
+{"version":3,"file":"ChatSettings.js","sourceRoot":"","sources":["ChatSettings.ts"],"names":[],"mappings":"AASA,MAAM,CAAC,MAAM,qBAAqB,GAAiB;IACjD,IAAI,EAAE,KAAK;IACX,sBAAsB,EAAE,MAAM;CAC/B,CAAC"}

@@ -56,17 +56,17 @@ const WelcomeView = memo(() => {
 
           </div>
           <p>
-            I can do all kinds of tasks thanks to breakthroughs in{" "}
+
             <VSCodeLink
               href="https://valkyrlabs.com/v1/Products/ValorIDE/getting-started"
               className="inline"
             >
-             Help Getting Started
+              Help Getting Started
             </VSCodeLink>
-            agentic coding capabilities and access to tools that let me create &
-            edit files, explore complex projects, use a browser, and execute
-            terminal commands <i>(with your permission, of course)</i>. I can even
-            use MCP to create new tools and extend my own capabilities.
+
+            Valor IDE is able to edit files, explore complex projects, use a browser, and execute
+            terminal commands <i>(with your permission, of course)</i>. It can even
+            use MCP to create new tools and extend its own capabilities.
           </p>
 
           <p className="text-[var(--vscode-descriptionForeground)]">

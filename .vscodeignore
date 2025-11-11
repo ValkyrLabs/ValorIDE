@@ -4,8 +4,18 @@
 .husky/
 .vscode/
 .DS_Store
-.valoride
+.valor/
+.valoride/
+.valoride_docs/
+.valoriderules
 ValorIDE_docs/
+valoride-instruct.md-codex-and-valoride
+system-prompts-and-models-of-ai-tools/
+packages/
+out/
+webview-ui/**
+assets/**
+locales/
 # ignore caches and build outputs
 **/dist/**
 **/.cache/**
@@ -22,16 +32,23 @@ evals/
 *.jsx
 *.test.*
 *.spec.*
+test-*.js
 tsconfig.json
 tsconfig.*.json
+tsconfig.tsbuildinfo
 esbuild.js
 vite.config.*
 eslint.config.*
+increment-version.js
+jest.config.cjs
+jest.esbuild-transform.cjs
+test_system.sh
 *.log
 *.lock
 *.md
 *.markdown
 *.vsix
+*.acorn
 
 # Exclude node_modules except production dependencies (if not bundled)
 node_modules/
@@ -43,11 +60,12 @@ node_modules/
 *.tmp
 
 # Include only the built output and essential files
-!out/
-!dist/
-dist/**/*.map
-!extension.js
+!dist/extension.js
+!dist/tree-sitter*.wasm
 !package.json
 !README.md
 !LICENSE
-!assets/
+!assets/icons/icon.png
+!assets/icons/icon.svg
+!webview-ui/build/
+!webview-ui/build/**

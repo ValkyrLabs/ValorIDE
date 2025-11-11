@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,48 +10,45 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SheetFromJSON = SheetFromJSON;
-exports.SheetToJSON = SheetToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function SheetFromJSON(json) {
+import { exists } from '../src/runtime';
+import { BlankRangeFromJSON, BlankRangeToJSON, CellFromJSON, CellToJSON, ChartFromJSON, ChartToJSON, MergeRangeFromJSON, MergeRangeToJSON, NamedRangeFromJSON, NamedRangeToJSON, PivotTableFromJSON, PivotTableToJSON, SheetColumnFromJSON, SheetColumnToJSON, SheetRowFromJSON, SheetRowToJSON, } from './';
+export function SheetFromJSON(json) {
     return {
-        'workbookId': !(0, runtime_1.exists)(json, 'workbookId') ? undefined : json['workbookId'],
-        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
-        'cells': !(0, runtime_1.exists)(json, 'cells') ? undefined : json['cells'].map(_1.CellFromJSON),
-        'rows': !(0, runtime_1.exists)(json, 'rows') ? undefined : json['rows'].map(_1.SheetRowFromJSON),
-        'cols': !(0, runtime_1.exists)(json, 'cols') ? undefined : json['cols'].map(_1.SheetColumnFromJSON),
-        'namedRanges': !(0, runtime_1.exists)(json, 'namedRanges') ? undefined : json['namedRanges'].map(_1.NamedRangeFromJSON),
-        'mergeRanges': !(0, runtime_1.exists)(json, 'mergeRanges') ? undefined : json['mergeRanges'].map(_1.MergeRangeFromJSON),
-        'blankRanges': !(0, runtime_1.exists)(json, 'blankRanges') ? undefined : json['blankRanges'].map(_1.BlankRangeFromJSON),
-        'charts': !(0, runtime_1.exists)(json, 'charts') ? undefined : json['charts'].map(_1.ChartFromJSON),
-        'pivotTables': !(0, runtime_1.exists)(json, 'pivotTables') ? undefined : json['pivotTables'].map(_1.PivotTableFromJSON),
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'workbookId': !exists(json, 'workbookId') ? undefined : json['workbookId'],
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'cells': !exists(json, 'cells') ? undefined : json['cells'].map(CellFromJSON),
+        'rows': !exists(json, 'rows') ? undefined : json['rows'].map(SheetRowFromJSON),
+        'cols': !exists(json, 'cols') ? undefined : json['cols'].map(SheetColumnFromJSON),
+        'namedRanges': !exists(json, 'namedRanges') ? undefined : json['namedRanges'].map(NamedRangeFromJSON),
+        'mergeRanges': !exists(json, 'mergeRanges') ? undefined : json['mergeRanges'].map(MergeRangeFromJSON),
+        'blankRanges': !exists(json, 'blankRanges') ? undefined : json['blankRanges'].map(BlankRangeFromJSON),
+        'charts': !exists(json, 'charts') ? undefined : json['charts'].map(ChartFromJSON),
+        'pivotTables': !exists(json, 'pivotTables') ? undefined : json['pivotTables'].map(PivotTableFromJSON),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function SheetToJSON(value) {
+export function SheetToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
         'workbookId': value.workbookId,
         'name': value.name,
-        'cells': value.cells === undefined ? undefined : value.cells.map(_1.CellToJSON),
-        'rows': value.rows === undefined ? undefined : value.rows.map(_1.SheetRowToJSON),
-        'cols': value.cols === undefined ? undefined : value.cols.map(_1.SheetColumnToJSON),
-        'namedRanges': value.namedRanges === undefined ? undefined : value.namedRanges.map(_1.NamedRangeToJSON),
-        'mergeRanges': value.mergeRanges === undefined ? undefined : value.mergeRanges.map(_1.MergeRangeToJSON),
-        'blankRanges': value.blankRanges === undefined ? undefined : value.blankRanges.map(_1.BlankRangeToJSON),
-        'charts': value.charts === undefined ? undefined : value.charts.map(_1.ChartToJSON),
-        'pivotTables': value.pivotTables === undefined ? undefined : value.pivotTables.map(_1.PivotTableToJSON),
+        'cells': value.cells === undefined ? undefined : value.cells.map(CellToJSON),
+        'rows': value.rows === undefined ? undefined : value.rows.map(SheetRowToJSON),
+        'cols': value.cols === undefined ? undefined : value.cols.map(SheetColumnToJSON),
+        'namedRanges': value.namedRanges === undefined ? undefined : value.namedRanges.map(NamedRangeToJSON),
+        'mergeRanges': value.mergeRanges === undefined ? undefined : value.mergeRanges.map(MergeRangeToJSON),
+        'blankRanges': value.blankRanges === undefined ? undefined : value.blankRanges.map(BlankRangeToJSON),
+        'charts': value.charts === undefined ? undefined : value.charts.map(ChartToJSON),
+        'pivotTables': value.pivotTables === undefined ? undefined : value.pivotTables.map(PivotTableToJSON),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

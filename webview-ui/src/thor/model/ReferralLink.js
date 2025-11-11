@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,28 +10,24 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ReferralLinkReferralTypeEnum = void 0;
-exports.ReferralLinkFromJSON = ReferralLinkFromJSON;
-exports.ReferralLinkToJSON = ReferralLinkToJSON;
-const runtime_1 = require("../src/runtime");
-function ReferralLinkFromJSON(json) {
+import { exists } from '../src/runtime';
+export function ReferralLinkFromJSON(json) {
     return {
-        'name': !(0, runtime_1.exists)(json, 'name') ? undefined : json['name'],
-        'link': !(0, runtime_1.exists)(json, 'link') ? undefined : json['link'],
-        'description': !(0, runtime_1.exists)(json, 'description') ? undefined : json['description'],
-        'referralType': !(0, runtime_1.exists)(json, 'referralType') ? undefined : json['referralType'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'name': !exists(json, 'name') ? undefined : json['name'],
+        'link': !exists(json, 'link') ? undefined : json['link'],
+        'description': !exists(json, 'description') ? undefined : json['description'],
+        'referralType': !exists(json, 'referralType') ? undefined : json['referralType'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function ReferralLinkToJSON(value) {
+export function ReferralLinkToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -55,12 +50,12 @@ function ReferralLinkToJSON(value) {
 * @export
 * @enum {string}
 */
-var ReferralLinkReferralTypeEnum;
+export var ReferralLinkReferralTypeEnum;
 (function (ReferralLinkReferralTypeEnum) {
     ReferralLinkReferralTypeEnum["INTERNAL"] = "internal";
     ReferralLinkReferralTypeEnum["PRODUCT"] = "product";
     ReferralLinkReferralTypeEnum["SERVICE"] = "service";
     ReferralLinkReferralTypeEnum["MEDIA"] = "media";
     ReferralLinkReferralTypeEnum["OTHER"] = "other";
-})(ReferralLinkReferralTypeEnum || (exports.ReferralLinkReferralTypeEnum = ReferralLinkReferralTypeEnum = {}));
+})(ReferralLinkReferralTypeEnum || (ReferralLinkReferralTypeEnum = {}));
 //# sourceMappingURL=ReferralLink.js.map

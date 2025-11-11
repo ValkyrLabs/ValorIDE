@@ -139,6 +139,7 @@ export class CommandToolHandler extends BaseToolHandler {
         this.context.workspaceTracker.populateFilePaths();
 
         await this.context.saveCheckpoint();
+        this.context.markTaskDirSizeStale();
 
         Logger.info(
           `[CommandToolHandler] Command completed userRejected=${userRejected} resultPreview=${typeof result === "string" ? result.slice(0, 120) : "[non-string]"}`,

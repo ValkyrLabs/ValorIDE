@@ -154,6 +154,7 @@ export class OutputFilterService {
     static filterGenericOutput(output, config = {}) {
         let filtered = output;
         // Remove ANSI escape codes
+        // eslint-disable-next-line no-control-regex
         filtered = filtered.replace(/\x1b\[[0-9;]*m/g, '');
         // Remove excessive whitespace
         filtered = filtered.replace(/^\s*[\r\n]+/gm, "\n");

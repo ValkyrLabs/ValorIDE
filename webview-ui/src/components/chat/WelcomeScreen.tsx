@@ -55,6 +55,16 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
 				{taskHistory.length > 0 && <HistoryPreview showHistoryView={showHistoryView} />}
 			</div>
 
+			{/* login front and center */}
+			<div style={{ display: "flex", justifyContent: "center", padding: "20px" }}>
+				{/* Login form or content goes here */}
+				<form>
+					<input type="text" placeholder="Username" />
+					<input type="password" placeholder="Password" />
+					<button type="submit">Login</button>
+				</form>
+			</div>
+
 			<AutoApproveMenu
 				style={{
 					marginBottom: -2,

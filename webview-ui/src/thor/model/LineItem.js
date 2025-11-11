@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,41 +10,37 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.LineItemTypeEnum = void 0;
-exports.LineItemFromJSON = LineItemFromJSON;
-exports.LineItemToJSON = LineItemToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function LineItemFromJSON(json) {
+import { exists } from '../src/runtime';
+import { DiscountFromJSON, DiscountToJSON, ProductFromJSON, ProductToJSON, } from './';
+export function LineItemFromJSON(json) {
     return {
-        'salesOrderId': !(0, runtime_1.exists)(json, 'salesOrderId') ? undefined : json['salesOrderId'],
-        'product': !(0, runtime_1.exists)(json, 'product') ? undefined : (0, _1.ProductFromJSON)(json['product']),
-        'lineItemAmount': !(0, runtime_1.exists)(json, 'lineItemAmount') ? undefined : json['lineItemAmount'],
-        'taxRate': !(0, runtime_1.exists)(json, 'taxRate') ? undefined : json['taxRate'],
-        'discount': !(0, runtime_1.exists)(json, 'discount') ? undefined : (0, _1.DiscountFromJSON)(json['discount']),
-        'quantity': !(0, runtime_1.exists)(json, 'quantity') ? undefined : json['quantity'],
-        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'salesOrderId': !exists(json, 'salesOrderId') ? undefined : json['salesOrderId'],
+        'product': !exists(json, 'product') ? undefined : ProductFromJSON(json['product']),
+        'lineItemAmount': !exists(json, 'lineItemAmount') ? undefined : json['lineItemAmount'],
+        'taxRate': !exists(json, 'taxRate') ? undefined : json['taxRate'],
+        'discount': !exists(json, 'discount') ? undefined : DiscountFromJSON(json['discount']),
+        'quantity': !exists(json, 'quantity') ? undefined : json['quantity'],
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function LineItemToJSON(value) {
+export function LineItemToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
         'salesOrderId': value.salesOrderId,
-        'product': (0, _1.ProductToJSON)(value.product),
+        'product': ProductToJSON(value.product),
         'lineItemAmount': value.lineItemAmount,
         'taxRate': value.taxRate,
-        'discount': (0, _1.DiscountToJSON)(value.discount),
+        'discount': DiscountToJSON(value.discount),
         'quantity': value.quantity,
         'type': value.type,
         'id': value.id,
@@ -62,12 +57,12 @@ function LineItemToJSON(value) {
 * @export
 * @enum {string}
 */
-var LineItemTypeEnum;
+export var LineItemTypeEnum;
 (function (LineItemTypeEnum) {
     LineItemTypeEnum["PRODUCT"] = "product";
     LineItemTypeEnum["SERVICE"] = "service";
     LineItemTypeEnum["DISCOUNT"] = "discount";
     LineItemTypeEnum["ADJUSTMENT"] = "adjustment";
     LineItemTypeEnum["OTHER"] = "other";
-})(LineItemTypeEnum || (exports.LineItemTypeEnum = LineItemTypeEnum = {}));
+})(LineItemTypeEnum || (LineItemTypeEnum = {}));
 //# sourceMappingURL=LineItem.js.map

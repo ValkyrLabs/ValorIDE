@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,31 +10,27 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DiscountTypeEnum = void 0;
-exports.DiscountFromJSON = DiscountFromJSON;
-exports.DiscountToJSON = DiscountToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function DiscountFromJSON(json) {
+import { exists } from '../src/runtime';
+import { ProductFromJSON, ProductToJSON, } from './';
+export function DiscountFromJSON(json) {
     return {
-        'code': !(0, runtime_1.exists)(json, 'code') ? undefined : json['code'],
-        'lineItemId': !(0, runtime_1.exists)(json, 'lineItemId') ? undefined : json['lineItemId'],
-        'orderDiscount': !(0, runtime_1.exists)(json, 'orderDiscount') ? undefined : json['orderDiscount'],
-        'lineItem': !(0, runtime_1.exists)(json, 'lineItem') ? undefined : (0, _1.ProductFromJSON)(json['lineItem']),
-        'type': !(0, runtime_1.exists)(json, 'type') ? undefined : json['type'],
-        'amount': !(0, runtime_1.exists)(json, 'amount') ? undefined : json['amount'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'code': !exists(json, 'code') ? undefined : json['code'],
+        'lineItemId': !exists(json, 'lineItemId') ? undefined : json['lineItemId'],
+        'orderDiscount': !exists(json, 'orderDiscount') ? undefined : json['orderDiscount'],
+        'lineItem': !exists(json, 'lineItem') ? undefined : ProductFromJSON(json['lineItem']),
+        'type': !exists(json, 'type') ? undefined : json['type'],
+        'amount': !exists(json, 'amount') ? undefined : json['amount'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function DiscountToJSON(value) {
+export function DiscountToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -43,7 +38,7 @@ function DiscountToJSON(value) {
         'code': value.code,
         'lineItemId': value.lineItemId,
         'orderDiscount': value.orderDiscount,
-        'lineItem': (0, _1.ProductToJSON)(value.lineItem),
+        'lineItem': ProductToJSON(value.lineItem),
         'type': value.type,
         'amount': value.amount,
         'id': value.id,
@@ -60,10 +55,10 @@ function DiscountToJSON(value) {
 * @export
 * @enum {string}
 */
-var DiscountTypeEnum;
+export var DiscountTypeEnum;
 (function (DiscountTypeEnum) {
     DiscountTypeEnum["PERCENTAGE"] = "percentage";
     DiscountTypeEnum["FIXED"] = "fixed";
     DiscountTypeEnum["OTHER"] = "other";
-})(DiscountTypeEnum || (exports.DiscountTypeEnum = DiscountTypeEnum = {}));
+})(DiscountTypeEnum || (DiscountTypeEnum = {}));
 //# sourceMappingURL=Discount.js.map

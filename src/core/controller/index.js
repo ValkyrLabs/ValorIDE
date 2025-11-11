@@ -2031,7 +2031,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
     }
     async deleteAllTaskHistory() {
         await this.clearTask();
-        await updateGlobalState(this.context, "taskHistory", undefined);
+        await updateGlobalState(this.context, "taskHistory", []);
         try {
             // Remove all contents of tasks directory
             const taskDirPath = path.join(this.context.globalStorageUri.fsPath, "tasks");

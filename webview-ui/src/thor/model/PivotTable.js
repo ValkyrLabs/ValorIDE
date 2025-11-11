@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,34 +10,31 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PivotTableFromJSON = PivotTableFromJSON;
-exports.PivotTableToJSON = PivotTableToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function PivotTableFromJSON(json) {
+import { exists } from '../src/runtime';
+import { NamedRangeFromJSON, NamedRangeToJSON, } from './';
+export function PivotTableFromJSON(json) {
     return {
-        'sheetId': !(0, runtime_1.exists)(json, 'sheetId') ? undefined : json['sheetId'],
-        'sourceRange': !(0, runtime_1.exists)(json, 'sourceRange') ? undefined : (0, _1.NamedRangeFromJSON)(json['sourceRange']),
-        'dataRange': !(0, runtime_1.exists)(json, 'dataRange') ? undefined : (0, _1.NamedRangeFromJSON)(json['dataRange']),
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'sheetId': !exists(json, 'sheetId') ? undefined : json['sheetId'],
+        'sourceRange': !exists(json, 'sourceRange') ? undefined : NamedRangeFromJSON(json['sourceRange']),
+        'dataRange': !exists(json, 'dataRange') ? undefined : NamedRangeFromJSON(json['dataRange']),
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function PivotTableToJSON(value) {
+export function PivotTableToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
         'sheetId': value.sheetId,
-        'sourceRange': (0, _1.NamedRangeToJSON)(value.sourceRange),
-        'dataRange': (0, _1.NamedRangeToJSON)(value.dataRange),
+        'sourceRange': NamedRangeToJSON(value.sourceRange),
+        'dataRange': NamedRangeToJSON(value.dataRange),
         'id': value.id,
         'ownerId': value.ownerId,
         'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),

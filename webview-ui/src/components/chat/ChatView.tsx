@@ -99,7 +99,8 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		handleTaskCloseButtonClick,
 		setTextAreaDisabled,
 		setValorIDEAsk,
-		setEnableButtons
+		setEnableButtons,
+		markUserMessagePending
 	} = useChatState({ messages, chatSettings })
 
 	const { handleSendMessage } = useMessageHandling({
@@ -109,7 +110,8 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		setTextAreaDisabled,
 		setValorIDEAsk,
 		setEnableButtons,
-		ourSenderId
+		ourSenderId,
+		markUserMessagePending
 	})
 
 	// Computed values

@@ -4,7 +4,7 @@ import * as fs from "fs";
 const DEFAULT_DENY_PATTERNS = [
     "**/.git/**",
     "**/node_modules/**",
-    "**/.valor/undo/**",
+    "**/.valoride/undo/**",
     "**/.DS_Store",
 ];
 /** Very small, dependency‑free path guard.

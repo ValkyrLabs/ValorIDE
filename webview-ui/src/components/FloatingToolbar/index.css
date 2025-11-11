@@ -8,3 +8,60 @@
   top: 0;
   margin-top: -30px;
 }
+
+.floating-window {
+  position: fixed;
+  left: 50%;
+  top: 80px;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+}
+
+.floating-window-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: grab;
+  padding: 8px 12px;
+  background: linear-gradient(180deg, #ffffff, #fafafa);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.floating-window-title {
+  font-weight: 600;
+}
+
+.floating-window-body {
+  padding: 8px 12px;
+  flex: 1 1 auto;
+  overflow: auto;
+}
+
+.floating-window-resize {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 14px;
+  height: 14px;
+  cursor: se-resize;
+  background: transparent;
+}
+
+.floating-toolbar-restore {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  background: #222;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}

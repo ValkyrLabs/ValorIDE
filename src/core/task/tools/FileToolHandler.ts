@@ -226,6 +226,7 @@ export class FileToolHandler extends BaseToolHandler {
         "valoride_edited",
       );
       await this.context.saveCheckpoint();
+      this.context.markTaskDirSizeStale();
       telemetryService.captureToolUsage(
         this.context.taskId,
         "precision_search_and_replace",
@@ -501,6 +502,7 @@ export class FileToolHandler extends BaseToolHandler {
 
         await this.context.diffViewProvider.reset();
         await this.context.saveCheckpoint();
+        this.context.markTaskDirSizeStale();
 
         return { shouldContinue: true, toolResponse };
       }
@@ -589,6 +591,28 @@ export class FileToolHandler extends BaseToolHandler {
         }
 
         // now execute the tool like normal
+        // Check if path is a directory before attempting to read
+        const fs = await import('fs/promises');
+        try {
+          const stats = await fs.stat(absolutePath);
+          if (stats.isDirectory()) {
+            return {
+              shouldContinue: true,
+              toolResponse: formatResponse.toolError(
+                `The path '${relPath}' is a directory. Use list_files tool to view directory contents instead of read_file.`
+              )
+            };
+          }
+        } catch (statError: any) {
+          if (statError.code === 'ENOENT') {
+            return {
+              shouldContinue: true,
+              toolResponse: formatResponse.toolError(`File not found: ${relPath}`)
+            };
+          }
+          // Let other errors fall through to the main error handler
+        }
+        
         const content = await extractTextFromFile(absolutePath);
 
         // Track file read operation

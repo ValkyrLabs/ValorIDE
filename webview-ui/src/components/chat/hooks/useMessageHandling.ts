@@ -12,6 +12,7 @@ interface UseMessageHandlingProps {
 	setValorIDEAsk: (ask: ValorIDEAsk | undefined) => void
 	setEnableButtons: (enabled: boolean) => void
 	ourSenderId: string
+	markUserMessagePending: (text: string, images: string[]) => void
 }
 
 export const useMessageHandling = ({
@@ -21,7 +22,8 @@ export const useMessageHandling = ({
 	setTextAreaDisabled,
 	setValorIDEAsk,
 	setEnableButtons,
-	ourSenderId
+	ourSenderId,
+	markUserMessagePending
 }: UseMessageHandlingProps) => {
 	// Helper: detect @valoride mention
 	const containsValorIDEMention = useCallback((text: string) => text?.toLowerCase?.().includes("@valoride") === true, [])
@@ -48,6 +50,9 @@ export const useMessageHandling = ({
 					clearChatInput()
 					return
 				}
+
+				markUserMessagePending(text, images)
+
 				if (messages.length === 0) {
 					await TaskServiceClient.newTask({ text, images })
 				} else if (valorideAsk) {
@@ -87,7 +92,7 @@ export const useMessageHandling = ({
 				setEnableButtons(false)
 			}
 		},
-		[messages.length, valorideAsk, clearChatInput, setTextAreaDisabled, setValorIDEAsk, setEnableButtons, ourSenderId]
+		[messages.length, valorideAsk, clearChatInput, setTextAreaDisabled, setValorIDEAsk, setEnableButtons, ourSenderId, markUserMessagePending]
 	)
 
 	return {

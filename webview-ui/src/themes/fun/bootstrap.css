@@ -535,11 +535,6 @@ h6 {
 }
 
 .dropdown-item:hover {
-  background: linear-gradient(
-    90deg,
-    rgba(30, 229, 255, 0.15),
-    rgba(122, 92, 255, 0.15)
-  );
   color: var(--bs-primary);
 }
 

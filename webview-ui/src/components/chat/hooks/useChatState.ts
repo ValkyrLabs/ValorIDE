@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react"
 import { useDeepCompareEffect } from "react-use"
-import { ValorIDEAsk, ValorIDEMessage, ValorIDESayTool } from "@shared/ExtensionMessage"
+import { ValorIDEAsk, ValorIDEMessage, ValorIDESay, ValorIDESayTool } from "@shared/ExtensionMessage"
 import { vscode } from "@/utils/vscode"
 import { TaskServiceClient } from "@/services/grpc-client"
 
@@ -8,6 +8,54 @@ interface UseChatStateProps {
 	messages: ValorIDEMessage[]
 	chatSettings?: any
 }
+
+const USER_MESSAGE_SAY_VALUES = ["text", "task"] as const satisfies readonly ValorIDESay[]
+const ACKNOWLEDGEMENT_SAY_VALUES = [
+	"api_req_started",
+	"api_req_finished",
+	"api_req_retried",
+	"browser_action",
+	"browser_action_launch",
+	"browser_action_result",
+	"checkpoint_created",
+	"command",
+	"command_output",
+	"completion_result",
+	"diff_error",
+	"deleted_api_reqs",
+	"error",
+	"load_mcp_documentation",
+	"mcp_server_request_started",
+	"mcp_server_response",
+	"p2p_chat_message",
+	"reasoning",
+	"shell_integration_warning",
+	"tool",
+	"use_mcp_server",
+	"user_feedback",
+	"user_feedback_diff",
+	"valorideignore_error",
+] as const satisfies readonly ValorIDESay[]
+
+const USER_MESSAGE_SAY_TYPES: ReadonlySet<ValorIDESay> = new Set(USER_MESSAGE_SAY_VALUES)
+const ACKNOWLEDGEMENT_SAY_TYPES: ReadonlySet<ValorIDESay> = new Set(ACKNOWLEDGEMENT_SAY_VALUES)
+
+type PendingUserMessage = {
+	key: string
+	hasUserMessageEchoed: boolean
+	startedAt: number
+	userMessageTs?: number
+}
+
+const normalizeForComparison = (value: string) => value.replace(/\s+/g, " ").trim()
+
+const buildMessageKey = (text?: string, images?: readonly string[]) => {
+	const normalized = normalizeForComparison(text ?? "")
+	const imageCount = images?.length ?? 0
+	return `${normalized}::${imageCount}`
+}
+
+const isUserMessageSayType = (say?: ValorIDESay) => (say ? USER_MESSAGE_SAY_TYPES.has(say) : false)
 
 export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
 	const [valorideAsk, setValorIDEAsk] = useState<ValorIDEAsk | undefined>(undefined)
@@ -17,9 +65,20 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
 	const [didClickCancel, setDidClickCancel] = useState(false)
 	const [textAreaDisabled, setTextAreaDisabled] = useState(false)
 	const [isChatLoading, setIsChatLoading] = useState(false)
+	const [pendingUserMessage, setPendingUserMessage] = useState<PendingUserMessage | null>(null)
 
 	const lastMessage = useMemo(() => messages.at(-1), [messages])
 	const secondLastMessage = useMemo(() => messages.at(-2), [messages])
+
+	const markUserMessagePending = useCallback((text: string, images: string[]) => {
+		const key = buildMessageKey(text, images)
+		setPendingUserMessage({
+			key,
+			hasUserMessageEchoed: false,
+			startedAt: Date.now(),
+			userMessageTs: undefined,
+		})
+	}, [])
 
 	// Handle message state changes to update UI
 	useDeepCompareEffect(() => {
@@ -201,13 +260,64 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
 		}
 	}, [lastMessage, secondLastMessage, chatSettings])
 
+	useEffect(() => {
+		if (!pendingUserMessage || !lastMessage) return
+
+		const lastMessageKey = buildMessageKey(lastMessage.text, lastMessage.images)
+		const lastMessageSay = lastMessage.say
+
+		if (!pendingUserMessage.hasUserMessageEchoed) {
+			const isUserEcho =
+				lastMessage.type === "say" &&
+				isUserMessageSayType(lastMessageSay) &&
+				lastMessageKey === pendingUserMessage.key
+
+			if (isUserEcho) {
+				setPendingUserMessage((prev) =>
+					prev ? { ...prev, hasUserMessageEchoed: true, userMessageTs: lastMessage.ts } : null,
+				)
+			}
+			return
+		}
+
+		const isAcknowledgement =
+			lastMessage.type === "ask" ||
+			(lastMessage.type === "say" &&
+				(
+					(lastMessageSay !== undefined && ACKNOWLEDGEMENT_SAY_TYPES.has(lastMessageSay)) ||
+					(isUserMessageSayType(lastMessageSay) &&
+						(lastMessageKey !== pendingUserMessage.key || lastMessage.ts !== pendingUserMessage.userMessageTs))
+				))
+
+		if (isAcknowledgement) {
+			setPendingUserMessage(null)
+		}
+	}, [lastMessage, pendingUserMessage])
+
+	useEffect(() => {
+		if (!pendingUserMessage) { return null; }
+
+		const timeoutId = setTimeout(() => {
+			setPendingUserMessage(null)
+		}, 45_000)
+
+		return () => clearTimeout(timeoutId)
+	}, [pendingUserMessage])
+
+	useEffect(() => {
+		if (messages.length === 0 && pendingUserMessage) {
+			setPendingUserMessage(null)
+		}
+	}, [messages.length, pendingUserMessage])
+
 	// Detect chat loading state - when we're waiting for API responses
 	useEffect(() => {
-		const isWaitingForResponse = lastMessage?.say === "api_req_started" ||
+		const isWaitingForResponse = Boolean(pendingUserMessage) ||
+			lastMessage?.say === "api_req_started" ||
 			(textAreaDisabled && !enableButtons) ||
 			lastMessage?.ask === "followup" && lastMessage?.partial
 		setIsChatLoading(isWaitingForResponse)
-	}, [lastMessage, textAreaDisabled, enableButtons])
+	}, [lastMessage, textAreaDisabled, enableButtons, pendingUserMessage])
 
 	const handlePrimaryButtonClick = useCallback(() => {
 		if (!enableButtons || !valorideAsk) return
@@ -264,6 +374,7 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
 		handleTaskCloseButtonClick,
 		setTextAreaDisabled,
 		setValorIDEAsk,
-		setEnableButtons
+		setEnableButtons,
+		markUserMessagePending,
 	}
 }

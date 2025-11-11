@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,26 +10,23 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GoalDependencyFromJSON = GoalDependencyFromJSON;
-exports.GoalDependencyToJSON = GoalDependencyToJSON;
-const runtime_1 = require("../src/runtime");
-function GoalDependencyFromJSON(json) {
+import { exists } from '../src/runtime';
+export function GoalDependencyFromJSON(json) {
     return {
-        'goalId': !(0, runtime_1.exists)(json, 'goalId') ? undefined : json['goalId'],
-        'dependencyOrder': !(0, runtime_1.exists)(json, 'dependencyOrder') ? undefined : json['dependencyOrder'],
-        'dependencyName': !(0, runtime_1.exists)(json, 'dependencyName') ? undefined : json['dependencyName'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'goalId': !exists(json, 'goalId') ? undefined : json['goalId'],
+        'dependencyOrder': !exists(json, 'dependencyOrder') ? undefined : json['dependencyOrder'],
+        'dependencyName': !exists(json, 'dependencyName') ? undefined : json['dependencyName'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function GoalDependencyToJSON(value) {
+export function GoalDependencyToJSON(value) {
     if (value === undefined) {
         return undefined;
     }

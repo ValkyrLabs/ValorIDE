@@ -49,7 +49,8 @@ export class ToolManager {
                 toolResponse: result.toolResponse,
                 userRejected: result.userRejected,
                 didRejectTool: result.userRejected,
-                didAlreadyUseTool: result.shouldContinue && !result.userRejected,
+                didAlreadyUseTool: result.didAlreadyUseTool ?? (result.shouldContinue && !result.userRejected),
+                feedback: result.feedback,
             };
         }
         // If no handler found, return false to indicate the tool should be handled elsewhere

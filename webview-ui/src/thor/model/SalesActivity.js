@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,29 +10,25 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SalesActivityTypeEnum = void 0;
-exports.SalesActivityFromJSON = SalesActivityFromJSON;
-exports.SalesActivityToJSON = SalesActivityToJSON;
-const runtime_1 = require("../src/runtime");
-function SalesActivityFromJSON(json) {
+import { exists } from '../src/runtime';
+export function SalesActivityFromJSON(json) {
     return {
         'opportunityId': json['opportunityId'],
         'type': json['type'],
         'activityDate': new Date(json['activityDate']),
         'performedBy': json['performedBy'],
-        'details': !(0, runtime_1.exists)(json, 'details') ? undefined : json['details'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'details': !exists(json, 'details') ? undefined : json['details'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function SalesActivityToJSON(value) {
+export function SalesActivityToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -57,11 +52,11 @@ function SalesActivityToJSON(value) {
 * @export
 * @enum {string}
 */
-var SalesActivityTypeEnum;
+export var SalesActivityTypeEnum;
 (function (SalesActivityTypeEnum) {
     SalesActivityTypeEnum["CALL"] = "call";
     SalesActivityTypeEnum["MEETING"] = "meeting";
     SalesActivityTypeEnum["EMAIL"] = "email";
     SalesActivityTypeEnum["FOLLOWUP"] = "follow-up";
-})(SalesActivityTypeEnum || (exports.SalesActivityTypeEnum = SalesActivityTypeEnum = {}));
+})(SalesActivityTypeEnum || (SalesActivityTypeEnum = {}));
 //# sourceMappingURL=SalesActivity.js.map

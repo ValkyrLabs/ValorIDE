@@ -14,7 +14,7 @@ import { AnthropicHandler } from "@api/providers/anthropic";
 import { ValorIDEHandler } from "@api/providers/valoride";
 import { OpenRouterHandler } from "@api/providers/openrouter";
 import CheckpointTracker from "@integrations/checkpoints/CheckpointTracker";
-import { DIFF_VIEW_URI_SCHEME, } from "@integrations/editor/DiffViewProvider";
+import { DIFF_VIEW_URI_SCHEME, DiffViewProvider, } from "@integrations/editor/DiffViewProvider";
 import { formatContentBlockToMarkdown } from "@integrations/misc/export-markdown";
 import { extractTextFromFile } from "@integrations/misc/extract-text";
 import { showSystemNotification } from "@integrations/notifications";
@@ -26,6 +26,7 @@ import { regexSearchFiles } from "@services/ripgrep";
 import { telemetryService } from "@services/telemetry/TelemetryService";
 import { parseSourceCodeForDefinitionsTopLevel } from "@services/tree-sitter";
 import { findLast, findLastIndex, parsePartialArrayString, } from "@shared/array";
+import { DEFAULT_CHAT_SETTINGS } from "@shared/ChatSettings";
 import { combineApiRequests } from "@shared/combineApiRequests";
 import { combineCommandSequences, COMMAND_REQ_APP_STRING, } from "@shared/combineCommandSequences";
 import { browserActions, COMPLETION_RESULT_CHANGES_FLAG, } from "@shared/ExtensionMessage";
@@ -45,6 +46,7 @@ import { getContextWindowInfo } from "@core/context/context-management/context-w
 import { FileContextTracker } from "@core/context/context-tracking/FileContextTracker";
 import { ModelContextTracker } from "@core/context/context-tracking/ModelContextTracker";
 import { checkIsAnthropicContextWindowError, checkIsOpenRouterContextWindowError, } from "@core/context/context-management/context-error-handling";
+import { ContextManager } from "@core/context/context-management/ContextManager";
 import { loadMcpDocumentation } from "@core/prompts/loadMcpDocumentation";
 import { ensureRulesDirectoryExists, ensureTaskDirectoryExists, getSavedApiConversationHistory, getSavedValorIDEMessages, saveApiConversationHistory, saveValorIDEMessages, } from "@core/storage/disk";
 import { getGlobalValorIDERules, getLocalValorIDERules, refreshValorIDERulesToggles, } from "@core/context/instructions/user-instructions/valoride-rules";
@@ -52,13 +54,13 @@ import { getGlobalState } from "@core/storage/state";
 import { parseSlashCommands } from "@core/slash-commands";
 import { isInTestMode } from "../../services/test/TestMode";
 import { OutputFilterService } from "@services/output-filter/OutputFilterService";
+import { DEFAULT_ADVANCED_SETTINGS } from "@shared/AdvancedSettings";
 import { MessageHandler } from "./MessageHandler";
 import { StreamingHandler } from "./StreamingHandler";
 import { CheckpointHandler } from "./CheckpointHandler";
 import { ToolDescriptionHelper } from "./ToolDescriptionHelper";
 import { TagProcessingUtils } from "./TagProcessingUtils";
 import { ErrorHandlingUtils } from "./ErrorHandlingUtils";
-import { DEFAULT_CHAT_SETTINGS } from "@shared/ChatSettings";
 export const cwd = vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
     path.join(os.homedir(), "Desktop"); // may or may not exist but fs checking existence would immediately ask for permission which would be bad UX, need to come up with a better solution
 export class Task {
@@ -112,8 +114,6 @@ export class Task {
     isStreaming = false;
     currentStreamingContentIndex = 0;
     assistantMessageContent = [];
-    presentAssistantMessageLocked = false;
-    presentAssistantMessageHasPendingUpdates = false;
     userMessageContent = [];
     userMessageContentReady = false;
     didRejectTool = false;
@@ -157,6 +157,8 @@ export class Task {
         this.terminalManager = new TerminalManager();
         this.urlContentFetcher = new UrlContentFetcher(context);
         this.browserSession = new BrowserSession(context, browserSettings);
+        this.contextManager = new ContextManager();
+        this.diffViewProvider = new DiffViewProvider(cwd, DEFAULT_ADVANCED_SETTINGS.fileProcessing);
         this.customInstructions = customInstructions;
         this.autoApprovalSettings = autoApprovalSettings;
         this.browserSettings = browserSettings;
@@ -191,10 +193,14 @@ export class Task {
         this.checkpointHandler = new CheckpointHandler(this.taskId, context, this.messageHandler, this.updateTaskHistory, this.postStateToWebview, this.postMessageToWebview, this.reinitExistingTaskFromId, this.cancelTask, this.saveValorIDEMessagesAndUpdateHistory.bind(this));
         // Continue with task initialization
         if (historyItem) {
-            this.resumeTaskFromHistory();
+            this.resumeTaskFromHistory().catch((error) => {
+                console.error("Failed to resume task from history:", error);
+            });
         }
         else if (task || images) {
-            this.startTask(task, images);
+            this.startTask(task, images).catch((error) => {
+                console.error("Failed to start task:", error);
+            });
         }
         // initialize telemetry
         if (historyItem) {
@@ -1140,7 +1146,7 @@ export class Task {
                         childProcess.kill("SIGKILL"); // Use SIGKILL for more forceful termination
                     }
                     reject(new Error("Command timeout after 30s"));
-                }, 30000);
+                }, 60000);
             });
             // Race between command completion and timeout
             const result = await Promise.race([childProcess, timeoutPromise]).catch((error) => {
@@ -1181,118 +1187,168 @@ export class Task {
     }
     async executeCommandTool(command) {
         Logger.info("IS_TEST: " + isInTestMode());
-        // Check if we're in test mode
+        const trimmedCommand = command.trim();
+        if (!trimmedCommand) {
+            return [
+                false,
+                formatResponse.toolError("Command was empty. Provide a command to run."),
+            ];
+        }
         if (isInTestMode()) {
-            // In test mode, execute the command directly in Node
             Logger.info("Executing command in Node: " + command);
             return this.executeCommandInNode(command);
         }
         Logger.info("Executing command in VS code terminal: " + command);
         const terminalInfo = await this.terminalManager.getOrCreateTerminal(cwd);
-        terminalInfo.terminal.show(); // weird visual bug when creating new terminals (even manually) where there's an empty space at the top.
+        terminalInfo.terminal.show();
         const process = this.terminalManager.runCommand(terminalInfo, command);
+        process.startedAt = Date.now();
         let userFeedback;
         let didContinue = false;
-        // Chunked terminal output buffering
-        const CHUNK_LINE_COUNT = 20;
-        const CHUNK_BYTE_SIZE = 2048; // 2KB
+        let completed = false;
+        let processError;
+        const CHUNK_LINE_LIMIT = 20;
+        const CHUNK_BYTE_LIMIT = 2048;
         const CHUNK_DEBOUNCE_MS = 100;
-        let outputBuffer = [];
-        let outputBufferSize = 0;
-        let chunkTimer = null;
-        let chunkEnroute = false;
-        const flushBuffer = async (force = false) => {
-            if (chunkEnroute || outputBuffer.length === 0) {
-                if (force && !chunkEnroute && outputBuffer.length > 0) {
-                    // If force is true and no chunkEnroute, flush anyway
-                }
-                else {
-                    return;
-                }
-            }
-            const chunk = outputBuffer.join("\n");
-            outputBuffer = [];
-            outputBufferSize = 0;
-            chunkEnroute = true;
-            try {
-                const { response, text, images } = await this.ask("command_output", chunk);
-                if (response === "yesButtonClicked") {
-                    // proceed while running
-                }
-                else {
-                    userFeedback = { text, images };
-                }
-                didContinue = true;
-                process.continue();
-            }
-            catch {
-                // ask promise was ignored
-            }
-            finally {
-                chunkEnroute = false;
-                // If more output accumulated while chunkEnroute, flush again
-                if (outputBuffer.length > 0) {
-                    await flushBuffer();
-                }
-            }
-        };
-        const scheduleFlush = () => {
+        let bufferedLines = [];
+        let bufferedBytes = 0;
+        let chunkTimer;
+        let pendingFlush = null;
+        const cancelFlushTimer = () => {
             if (chunkTimer) {
                 clearTimeout(chunkTimer);
+                chunkTimer = undefined;
             }
-            chunkTimer = setTimeout(() => flushBuffer(), CHUNK_DEBOUNCE_MS);
         };
-        let result = "";
-        let fullOutput = ""; // Keep track of full output for filtering
+        const streamLine = (line) => {
+            this.say("command_output", line)
+                .catch((error) => {
+                Logger.warn(`Failed to stream command output line: ${error instanceof Error ? error.message : String(error)}`);
+            });
+        };
+        const flushBufferedOutput = async (force = false) => {
+            if (pendingFlush) {
+                if (!force) {
+                    return;
+                }
+                await pendingFlush;
+            }
+            if (bufferedLines.length === 0) {
+                return;
+            }
+            const chunk = bufferedLines.join("\n");
+            bufferedLines = [];
+            bufferedBytes = 0;
+            pendingFlush = (async () => {
+                cancelFlushTimer();
+                try {
+                    // Use a timeout to prevent indefinite blocking on long-running commands
+                    const askPromise = this.ask("command_output", chunk);
+                    const timeoutPromise = new Promise((resolve) => {
+                        setTimeout(() => {
+                            // Auto-approve if user doesn't respond within 2s
+                            resolve({ response: "yesButtonClicked", text: "", images: [] });
+                        }, 2000);
+                    });
+                    const { response, text, images } = await Promise.race([askPromise, timeoutPromise]);
+                    if (response !== "yesButtonClicked") {
+                        userFeedback = { text, images };
+                    }
+                    if (!didContinue) {
+                        didContinue = true;
+                        process.continue();
+                        if (bufferedLines.length > 0) {
+                            const backlog = bufferedLines.splice(0);
+                            bufferedBytes = 0;
+                            for (const pendingLine of backlog) {
+                                streamLine(pendingLine);
+                            }
+                        }
+                    }
+                }
+                catch (error) {
+                    Logger.warn(`Failed to deliver command output chunk: ${error instanceof Error ? error.message : String(error)}`);
+                }
+                finally {
+                    pendingFlush = null;
+                }
+            })();
+            await pendingFlush;
+        };
+        const safeFlush = (force = false) => void flushBufferedOutput(force).catch((error) => {
+            Logger.warn(`Command output flush failed: ${error instanceof Error ? error.message : String(error)}`);
+        });
+        const scheduleFlush = () => {
+            cancelFlushTimer();
+            chunkTimer = setTimeout(() => safeFlush(), CHUNK_DEBOUNCE_MS);
+        };
+        let fullOutput = "";
+        let lastProgressReport = Date.now();
+        const PROGRESS_REPORT_INTERVAL = 5000;
         process.on("line", (line) => {
-            result += line + "\n";
-            fullOutput += line + "\n";
+            const safeLine = line ?? "";
+            fullOutput += safeLine + "\n";
             if (!didContinue) {
-                outputBuffer.push(line);
-                outputBufferSize += Buffer.byteLength(line, "utf8");
-                // Flush if buffer is large enough
-                if (outputBuffer.length >= CHUNK_LINE_COUNT ||
-                    outputBufferSize >= CHUNK_BYTE_SIZE) {
-                    flushBuffer();
+                bufferedLines.push(safeLine);
+                bufferedBytes += Buffer.byteLength(safeLine, "utf8");
+                if (bufferedLines.length >= CHUNK_LINE_LIMIT ||
+                    bufferedBytes >= CHUNK_BYTE_LIMIT) {
+                    safeFlush();
                 }
                 else {
                     scheduleFlush();
                 }
             }
             else {
-                this.say("command_output", line);
+                streamLine(safeLine);
+            }
+            const now = Date.now();
+            if (now - lastProgressReport > PROGRESS_REPORT_INTERVAL) {
+                lastProgressReport = now;
+                const elapsed = Math.round((now - process.startedAt) / 1000);
+                void this.say("command_output", `[Still running for ${elapsed}s...]`)
+                    .catch(() => { });
             }
         });
-        let completed = false;
-        process.once("completed", async () => {
+        process.once("completed", () => {
             completed = true;
-            // Flush any remaining buffered output
-            if (!didContinue && outputBuffer.length > 0) {
-                if (chunkTimer) {
-                    clearTimeout(chunkTimer);
-                    chunkTimer = null;
-                }
-                await flushBuffer(true);
+            cancelFlushTimer();
+            if (!didContinue) {
+                safeFlush(true);
             }
         });
         process.once("no_shell_integration", async () => {
             await this.say("shell_integration_warning");
         });
-        await process;
-        // Wait for a short delay to ensure all messages are sent to the webview
-        // This delay allows time for non-awaited promises to be created and
-        // for their associated messages to be sent to the webview, maintaining
-        // the correct order of messages (although the webview is smart about
-        // grouping command_output messages despite any gaps anyways)
+        process.once("error", (error) => {
+            processError = error instanceof Error ? error : new Error(String(error));
+        });
+        try {
+            await process;
+        }
+        catch (error) {
+            processError =
+                processError ?? (error instanceof Error ? error : new Error(String(error)));
+        }
+        await flushBufferedOutput(true);
+        cancelFlushTimer();
         await setTimeoutPromise(50);
-        // Filter the full output before using it
         const filteredOutput = OutputFilterService.filterCommandOutput(fullOutput, command);
-        result = result.trim();
+        if (processError) {
+            return [
+                false,
+                formatResponse.toolError(`Command failed to execute.\nError: ${processError.message}${filteredOutput.length > 0
+                    ? `\n\nPartial output:\n${filteredOutput}`
+                    : ""}`),
+            ];
+        }
         if (userFeedback) {
             await this.say("user_feedback", userFeedback.text, userFeedback.images);
             return [
                 true,
-                formatResponse.toolResult(`Command is still running in the user's terminal.${filteredOutput.length > 0 ? `\nHere's the output so far:\n${filteredOutput}` : ""}\n\nThe user provided the following feedback:\n<feedback>\n${userFeedback.text}\n</feedback>`, userFeedback.images),
+                formatResponse.toolResult(`Command is still running in the user's terminal.${filteredOutput.length > 0
+                    ? `\nHere's the output so far:\n${filteredOutput}`
+                    : ""}\n\nThe user provided the following feedback:\n<feedback>\n${userFeedback.text ?? ""}\n</feedback>`, userFeedback.images),
             ];
         }
         if (completed) {
@@ -1301,12 +1357,12 @@ export class Task {
                 `Command executed.${filteredOutput.length > 0 ? `\nOutput:\n${filteredOutput}` : ""}`,
             ];
         }
-        else {
-            return [
-                false,
-                `Command is still running in the user's terminal.${filteredOutput.length > 0 ? `\nHere's the output so far:\n${filteredOutput}` : ""}\n\nYou will be updated on the terminal status and new output in the future.`,
-            ];
-        }
+        return [
+            false,
+            `Command is still running in the user's terminal.${filteredOutput.length > 0
+                ? `\nHere's the output so far:\n${filteredOutput}`
+                : ""}\n\nYou will be updated on the terminal status and new output in the future.`,
+        ];
     }
     // Check if the tool should be auto-approved based on the settings
     // Returns bool for most tools, and tuple for tools with nested settings
@@ -1370,102 +1426,100 @@ export class Task {
     formatErrorWithStatusCode(error) {
         return ErrorHandlingUtils.formatErrorWithStatusCode(error);
     }
+    async resetStreamingState() {
+        this.currentStreamingContentIndex = 0;
+        this.assistantMessageContent = [];
+        this.didCompleteReadingStream = false;
+        this.userMessageContent = [];
+        this.userMessageContentReady = false;
+        this.didRejectTool = false;
+        this.didAlreadyUseTool = false;
+        this.didAutomaticallyRetryFailedApiRequest = false;
+        await this.diffViewProvider.reset();
+    }
     async *attemptApiRequest(previousApiReqIndex) {
-        // Wait for MCP servers to be connected before generating system prompt
-        await pWaitFor(() => this.mcpHub.isConnecting !== true, {
-            timeout: 10_000,
-        }).catch(() => {
-            console.error("MCP servers failed to connect in time");
-        });
-        const disableBrowserTool = vscode.workspace
-            .getConfiguration("valoride")
-            .get("disableBrowserTool") ?? false;
-        // valoride browser tool uses image recognition for navigation (requires model image support).
-        const modelSupportsBrowserUse = this.api.getModel().info.supportsImages ?? false;
-        const supportsBrowserUse = modelSupportsBrowserUse && !disableBrowserTool; // only enable browser use if the model supports it and the user hasn't disabled it
-        let systemPrompt = await SYSTEM_PROMPT(cwd, supportsBrowserUse, this.thorapi_project, this.mcpHub, this.browserSettings);
-        let settingsCustomInstructions = this.customInstructions?.trim();
-        const preferredLanguage = getLanguageKey(vscode.workspace
-            .getConfiguration("valoride")
-            .get("preferredLanguage"));
-        const preferredLanguageInstructions = preferredLanguage && preferredLanguage !== DEFAULT_LANGUAGE_SETTINGS
-            ? `# Preferred Language\n\nSpeak in ${preferredLanguage}.`
-            : "";
-        const { globalToggles, localToggles } = await refreshValorIDERulesToggles(this.getContext(), cwd);
-        const globalValorIDERulesFilePath = await ensureRulesDirectoryExists();
-        const globalValorIDERulesFileInstructions = await getGlobalValorIDERules(globalValorIDERulesFilePath, globalToggles);
-        const localValorIDERulesFileInstructions = await getLocalValorIDERules(cwd, localToggles);
-        const valorideIgnoreContent = this.valorideIgnoreController.valorideIgnoreContent;
-        let valorideIgnoreInstructions;
-        if (valorideIgnoreContent) {
-            valorideIgnoreInstructions = formatResponse.valorideIgnoreInstructions(valorideIgnoreContent);
-        }
-        if (settingsCustomInstructions ||
-            globalValorIDERulesFileInstructions ||
-            localValorIDERulesFileInstructions ||
-            valorideIgnoreInstructions ||
-            preferredLanguageInstructions) {
-            // altering the system prompt mid-task will break the prompt cache, but in the grand scheme this will not change often so it's better to not pollute user messages with it the way we have to with <potentially relevant details>
-            systemPrompt += addUserInstructions(settingsCustomInstructions, globalValorIDERulesFileInstructions, localValorIDERulesFileInstructions, valorideIgnoreInstructions, preferredLanguageInstructions);
-        }
-        const contextManagementMetadata = await this.contextManager.getNewContextMessagesAndMetadata(this.apiConversationHistory, this.valorideMessages, this.api, this.conversationHistoryDeletedRange, previousApiReqIndex, await ensureTaskDirectoryExists(this.getContext(), this.taskId));
-        if (contextManagementMetadata.updatedConversationHistoryDeletedRange) {
-            this.conversationHistoryDeletedRange =
-                contextManagementMetadata.conversationHistoryDeletedRange;
-            await this.saveValorIDEMessagesAndUpdateHistory(); // saves task history item which we use to keep track of conversation history deleted range
-        }
-        let stream = this.api.createMessage(systemPrompt, contextManagementMetadata.truncatedConversationHistory);
-        const iterator = stream[Symbol.asyncIterator]();
-        const defaultFirstChunkTimeout = (DEFAULT_CHAT_SETTINGS.apiFirstChunkTimeoutMs ?? 45000);
-        const configuredFirstChunkTimeout = typeof (this.chatSettings?.apiFirstChunkTimeoutMs) === "number" &&
-            this.chatSettings.apiFirstChunkTimeoutMs > 0
-            ? this.chatSettings.apiFirstChunkTimeoutMs
-            : undefined;
-        const firstChunkTimeoutMs = configuredFirstChunkTimeout ?? defaultFirstChunkTimeout;
-        let firstChunkResult;
-        this.isWaitingForFirstChunk = true;
-        try {
-            firstChunkResult = await pTimeout(iterator.next(), {
-                milliseconds: firstChunkTimeoutMs,
-                message: "API request timed out before the model started streaming a response.",
+        const waitForMcpConnection = async () => {
+            await pWaitFor(() => this.mcpHub.isConnecting !== true, {
+                timeout: 10_000,
+            }).catch(() => {
+                console.error("MCP servers failed to connect in time");
             });
-        }
-        catch (rawError) {
-            this.isWaitingForFirstChunk = false;
-            const error = rawError instanceof TimeoutError
-                ? new Error(`Timed out waiting ${Math.round(firstChunkTimeoutMs / 1000)}s for the model to respond.`)
-                : rawError;
-            const isOpenRouter = this.api instanceof OpenRouterHandler ||
-                this.api instanceof ValorIDEHandler;
-            const isAnthropic = this.api instanceof AnthropicHandler;
-            const isOpenRouterContextWindowError = checkIsOpenRouterContextWindowError(error) && isOpenRouter;
-            const isAnthropicContextWindowError = checkIsAnthropicContextWindowError(error) && isAnthropic;
-            if (isAnthropic &&
-                isAnthropicContextWindowError &&
-                !this.didAutomaticallyRetryFailedApiRequest) {
-                this.conversationHistoryDeletedRange =
-                    this.contextManager.getNextTruncationRange(this.apiConversationHistory, this.conversationHistoryDeletedRange, "quarter");
-                await this.saveValorIDEMessagesAndUpdateHistory();
-                this.didAutomaticallyRetryFailedApiRequest = true;
+        };
+        while (true) {
+            await waitForMcpConnection();
+            const disableBrowserTool = vscode.workspace
+                .getConfiguration("valoride")
+                .get("disableBrowserTool") ?? false;
+            const modelSupportsBrowserUse = this.api.getModel().info.supportsImages ?? false;
+            const supportsBrowserUse = modelSupportsBrowserUse && !disableBrowserTool;
+            let systemPrompt = await SYSTEM_PROMPT(cwd, supportsBrowserUse, this.mcpHub, this.thorapi_project, this.browserSettings);
+            const settingsCustomInstructions = this.customInstructions?.trim();
+            const preferredLanguage = getLanguageKey(vscode.workspace
+                .getConfiguration("valoride")
+                .get("preferredLanguage"));
+            const preferredLanguageInstructions = preferredLanguage && preferredLanguage !== DEFAULT_LANGUAGE_SETTINGS
+                ? `# Preferred Language\n\nSpeak in ${preferredLanguage}.`
+                : "";
+            const { globalToggles, localToggles } = await refreshValorIDERulesToggles(this.getContext(), cwd);
+            const globalValorIDERulesFilePath = await ensureRulesDirectoryExists();
+            const globalValorIDERulesFileInstructions = await getGlobalValorIDERules(globalValorIDERulesFilePath, globalToggles);
+            const localValorIDERulesFileInstructions = await getLocalValorIDERules(cwd, localToggles);
+            const valorideIgnoreContent = this.valorideIgnoreController.valorideIgnoreContent;
+            let valorideIgnoreInstructions;
+            if (valorideIgnoreContent) {
+                valorideIgnoreInstructions =
+                    formatResponse.valorideIgnoreInstructions(valorideIgnoreContent);
             }
-            else if (isOpenRouter && !this.didAutomaticallyRetryFailedApiRequest) {
-                if (isOpenRouterContextWindowError) {
+            if (settingsCustomInstructions ||
+                globalValorIDERulesFileInstructions ||
+                localValorIDERulesFileInstructions ||
+                valorideIgnoreInstructions ||
+                preferredLanguageInstructions) {
+                systemPrompt += addUserInstructions(settingsCustomInstructions, globalValorIDERulesFileInstructions, localValorIDERulesFileInstructions, valorideIgnoreInstructions, preferredLanguageInstructions);
+            }
+            const contextManagementMetadata = await this.contextManager.getNewContextMessagesAndMetadata(this.apiConversationHistory, this.valorideMessages, this.api, this.conversationHistoryDeletedRange, previousApiReqIndex, await ensureTaskDirectoryExists(this.getContext(), this.taskId));
+            if (contextManagementMetadata.updatedConversationHistoryDeletedRange) {
+                this.conversationHistoryDeletedRange =
+                    contextManagementMetadata.conversationHistoryDeletedRange;
+                await this.saveValorIDEMessagesAndUpdateHistory();
+            }
+            const stream = this.api.createMessage(systemPrompt, contextManagementMetadata.truncatedConversationHistory);
+            const iterator = stream[Symbol.asyncIterator]();
+            const defaultFirstChunkTimeout = DEFAULT_CHAT_SETTINGS.apiFirstChunkTimeoutMs ?? 45_000;
+            const configuredFirstChunkTimeout = typeof this.chatSettings?.apiFirstChunkTimeoutMs === "number" &&
+                this.chatSettings.apiFirstChunkTimeoutMs > 0
+                ? this.chatSettings.apiFirstChunkTimeoutMs
+                : undefined;
+            const firstChunkTimeoutMs = configuredFirstChunkTimeout ?? defaultFirstChunkTimeout;
+            const handleFirstChunkFailure = async (error) => {
+                const isOpenRouter = this.api instanceof OpenRouterHandler ||
+                    this.api instanceof ValorIDEHandler;
+                const isAnthropic = this.api instanceof AnthropicHandler;
+                const isOpenRouterContextWindowError = checkIsOpenRouterContextWindowError(error) && isOpenRouter;
+                const isAnthropicContextWindowError = checkIsAnthropicContextWindowError(error) && isAnthropic;
+                if (isAnthropic &&
+                    isAnthropicContextWindowError &&
+                    !this.didAutomaticallyRetryFailedApiRequest) {
                     this.conversationHistoryDeletedRange =
                         this.contextManager.getNextTruncationRange(this.apiConversationHistory, this.conversationHistoryDeletedRange, "quarter");
                     await this.saveValorIDEMessagesAndUpdateHistory();
+                    this.didAutomaticallyRetryFailedApiRequest = true;
+                    return true;
                 }
-                console.log("first chunk failed, waiting 1 second before retrying");
-                await setTimeoutPromise(1000);
-                this.didAutomaticallyRetryFailedApiRequest = true;
-            }
-            else {
-                // request failed after retrying automatically once, ask user if they want to retry again
-                // note that this api_req_failed ask is unique in that we only present this option if the api hasn't streamed any content yet (ie it fails on the first chunk due), as it would allow them to hit a retry button. However if the api failed mid-stream, it could be in any arbitrary state where some tools may have executed, so that error is handled differently and requires cancelling the task entirely.
+                if (isOpenRouter && !this.didAutomaticallyRetryFailedApiRequest) {
+                    if (isOpenRouterContextWindowError) {
+                        this.conversationHistoryDeletedRange =
+                            this.contextManager.getNextTruncationRange(this.apiConversationHistory, this.conversationHistoryDeletedRange, "quarter");
+                        await this.saveValorIDEMessagesAndUpdateHistory();
+                    }
+                    console.log("first chunk failed, waiting 1 second before retrying");
+                    await setTimeoutPromise(1000);
+                    this.didAutomaticallyRetryFailedApiRequest = true;
+                    return true;
+                }
                 if (isOpenRouterContextWindowError || isAnthropicContextWindowError) {
                     let normalizedError = error;
                     const truncatedConversationHistory = this.contextManager.getTruncatedMessages(this.apiConversationHistory, this.conversationHistoryDeletedRange);
-                    // If the conversation has more than 3 messages, we can truncate again. If not, then the conversation is bricked.
-                    // ToDo: Allow the user to change their input if this is the case.
                     if (truncatedConversationHistory.length > 3) {
                         normalizedError = new Error("Context window exceeded. Click retry to truncate the conversation and try again.");
                         this.didAutomaticallyRetryFailedApiRequest = false;
@@ -1473,51 +1527,60 @@ export class Task {
                     const errorMessage = this.formatErrorWithStatusCode(normalizedError);
                     const { response } = await this.ask("api_req_failed", errorMessage);
                     if (response !== "yesButtonClicked") {
-                        // this will never happen since if noButtonClicked, we will clear current task, aborting this instance
-                        throw new Error("API request failed");
+                        return false;
                     }
                     await this.say("api_req_retried");
+                    return true;
                 }
-                else {
-                    const errorMessage = this.formatErrorWithStatusCode(error);
-                    const { response } = await this.ask("api_req_failed", errorMessage);
-                    if (response !== "yesButtonClicked") {
-                        // this will never happen since if noButtonClicked, we will clear current task, aborting this instance
-                        throw new Error("API request failed");
-                    }
-                    await this.say("api_req_retried");
+                const errorMessage = this.formatErrorWithStatusCode(error);
+                const { response } = await this.ask("api_req_failed", errorMessage);
+                if (response !== "yesButtonClicked") {
+                    return false;
                 }
+                await this.say("api_req_retried");
+                return true;
+            };
+            this.isWaitingForFirstChunk = true;
+            let firstChunkResult;
+            try {
+                firstChunkResult = await pTimeout(iterator.next(), {
+                    milliseconds: firstChunkTimeoutMs,
+                    message: "API request timed out before the model started streaming a response.",
+                });
             }
-            // delegate generator output from the recursive call
-            yield* this.attemptApiRequest(previousApiReqIndex);
+            catch (rawError) {
+                this.isWaitingForFirstChunk = false;
+                const normalizedError = rawError instanceof TimeoutError
+                    ? new Error(`Timed out waiting ${Math.round(firstChunkTimeoutMs / 1000)}s for the model to respond.`)
+                    : rawError instanceof Error
+                        ? rawError
+                        : new Error(String(rawError));
+                const shouldRetry = await handleFirstChunkFailure(normalizedError);
+                if (shouldRetry) {
+                    continue;
+                }
+                throw new Error("API request failed");
+            }
+            this.isWaitingForFirstChunk = false;
+            if (firstChunkResult && !firstChunkResult.done) {
+                yield firstChunkResult.value;
+            }
+            for await (const chunk of iterator) {
+                yield chunk;
+            }
             return;
         }
-        this.isWaitingForFirstChunk = false;
-        if (firstChunkResult && !firstChunkResult.done) {
-            yield firstChunkResult.value;
-        }
-        // no error, so we can continue to yield all remaining chunks
-        // (needs to be placed outside of try/catch since it we want caller to handle errors not with api_req_failed as that is reserved for first chunk failures only)
-        // this delegates to another generator or iterable object. In this case, it's saying "yield all remaining values from this iterator". This effectively passes along all subsequent chunks from the original stream.
-        yield* iterator;
     }
-    async presentAssistantMessage() {
+    async processAssistantBlocks() {
         if (this.abort) {
             throw new Error("ValorIDE instance aborted");
         }
-        if (this.presentAssistantMessageLocked) {
-            this.presentAssistantMessageHasPendingUpdates = true;
-            return;
-        }
-        this.presentAssistantMessageLocked = true;
-        this.presentAssistantMessageHasPendingUpdates = false;
         if (this.currentStreamingContentIndex >= this.assistantMessageContent.length) {
             // this may happen if the last content block was completed before streaming could finish. if streaming is finished, and we're out of bounds then this means we already presented/executed the last content block and are ready to continue to next request
             if (this.didCompleteReadingStream) {
                 this.userMessageContentReady = true;
             }
             // console.log("no more content blocks to stream! this shouldn't happen?")
-            this.presentAssistantMessageLocked = false;
             return;
             //throw new Error("No more content blocks to stream! This shouldn't happen...") // remove and just return after testing
         }
@@ -1637,6 +1700,17 @@ export class Task {
                         this.userMessageContent.push(...content);
                     }
                 };
+                const handleToolFeedback = async (feedback) => {
+                    if (!feedback) {
+                        return;
+                    }
+                    const { text, images } = feedback;
+                    if (!text && (!images || images.length === 0)) {
+                        return;
+                    }
+                    pushAdditionalToolFeedback(text, images);
+                    await this.say("user_feedback", text, images);
+                };
                 const askApproval = async (type, partialMessage) => {
                     const { response, text, images } = await this.ask(type, partialMessage, false);
                     if (response !== "yesButtonClicked") {
@@ -1688,9 +1762,15 @@ export class Task {
                 }
                 // Use the ToolExecutionEngine for consistent tool handling (delegates to legacy implementations)
                 const toolEngine = new (await import('./ToolExecutionEngine')).ToolExecutionEngine(this, cwd);
-                const engineResult = await toolEngine.executeToolBlock(block, toolDescription, this.userMessageContent, this.didRejectTool, this.didAlreadyUseTool, removeClosingTag);
+                const engineResult = await toolEngine.executeToolBlock(block, toolDescription, this.userMessageContent, this.didRejectTool, this.didAlreadyUseTool, removeClosingTag, handleToolFeedback);
                 this.didRejectTool = engineResult.didRejectTool;
                 this.didAlreadyUseTool = engineResult.didAlreadyUseTool;
+                if (engineResult.handled) {
+                    if (!engineResult.shouldContinue) {
+                        break;
+                    }
+                    break;
+                }
                 if (!engineResult.shouldContinue) {
                     break;
                 }
@@ -1864,7 +1944,7 @@ export class Task {
                                 }
                                 else {
                                     // If auto-approval is enabled but this tool wasn't auto-approved, send notification
-                                    showNotificationForApprovalIfAutoApprovalEnabled(`ValorIDE wants to ${fileExists ? "edit" : "create"} ${path.basename(relPath)}`);
+                                    showNotificationForApprovalIfAutoApprovalEnabled(`${fileExists ? "Editing" : "Creating"}: ${path.basename(relPath)}`);
                                     this.removeLastPartialMessageIfExistsWithType("say", "tool");
                                     // Need a more customized tool response for file edits to highlight the fact that the file was not updated (particularly important for deepseek)
                                     let didApprove = true;
@@ -1982,7 +2062,7 @@ export class Task {
                                     telemetryService.captureToolUsage(this.taskId, block.name, true, true);
                                 }
                                 else {
-                                    showNotificationForApprovalIfAutoApprovalEnabled(`ValorIDE wants to read ${path.basename(absolutePath)}`);
+                                    showNotificationForApprovalIfAutoApprovalEnabled(`Reading: ${path.basename(absolutePath)}`);
                                     this.removeLastPartialMessageIfExistsWithType("say", "tool");
                                     const didApprove = await askApproval("tool", completeMessage);
                                     if (!didApprove) {
@@ -2051,7 +2131,7 @@ export class Task {
                                     telemetryService.captureToolUsage(this.taskId, block.name, true, true);
                                 }
                                 else {
-                                    showNotificationForApprovalIfAutoApprovalEnabled(`ValorIDE wants to view directory ${path.basename(absolutePath)}/`);
+                                    showNotificationForApprovalIfAutoApprovalEnabled(`Browsing: ${path.basename(absolutePath)}/`);
                                     this.removeLastPartialMessageIfExistsWithType("say", "tool");
                                     const didApprove = await askApproval("tool", completeMessage);
                                     if (!didApprove) {
@@ -2113,7 +2193,7 @@ export class Task {
                                     telemetryService.captureToolUsage(this.taskId, block.name, true, true);
                                 }
                                 else {
-                                    showNotificationForApprovalIfAutoApprovalEnabled(`ValorIDE wants to view source code definitions in ${path.basename(absolutePath)}/`);
+                                    showNotificationForApprovalIfAutoApprovalEnabled(`Analyzing: ${path.basename(absolutePath)}/`);
                                     this.removeLastPartialMessageIfExistsWithType("say", "tool");
                                     const didApprove = await askApproval("tool", completeMessage);
                                     if (!didApprove) {
@@ -2184,7 +2264,7 @@ export class Task {
                                     telemetryService.captureToolUsage(this.taskId, block.name, true, true);
                                 }
                                 else {
-                                    showNotificationForApprovalIfAutoApprovalEnabled(`ValorIDE wants to search files in ${path.basename(absolutePath)}/`);
+                                    showNotificationForApprovalIfAutoApprovalEnabled(`Searching: ${path.basename(absolutePath)}/`);
                                     this.removeLastPartialMessageIfExistsWithType("say", "tool");
                                     const didApprove = await askApproval("tool", completeMessage);
                                     if (!didApprove) {
@@ -2255,7 +2335,7 @@ export class Task {
                                         this.consecutiveAutoApprovedRequestsCount++;
                                     }
                                     else {
-                                        showNotificationForApprovalIfAutoApprovalEnabled(`ValorIDE wants to use a browser and launch ${url}`);
+                                        showNotificationForApprovalIfAutoApprovalEnabled(`Launching browser: ${url}`);
                                         this.removeLastPartialMessageIfExistsWithType("say", "browser_action_launch");
                                         const didApprove = await askApproval("browser_action_launch", url);
                                         if (!didApprove) {
@@ -2403,7 +2483,7 @@ export class Task {
                                     didAutoApprove = true;
                                 }
                                 else {
-                                    this.notifyCommandExecuting(command);
+                                    showNotificationForApprovalIfAutoApprovalEnabled(`$ ${command}`);
                                     // this.removeLastPartialMessageIfExistsWithType("say", "command")
                                     const didApprove = await askApproval("command", command +
                                         `${this.shouldAutoApproveTool(block.name) && requiresApprovalPerLLM ? COMMAND_REQ_APP_STRING : ""}`);
@@ -2509,7 +2589,7 @@ export class Task {
                                     this.consecutiveAutoApprovedRequestsCount++;
                                 }
                                 else {
-                                    showNotificationForApprovalIfAutoApprovalEnabled(`ValorIDE wants to use ${tool_name} on ${server_name}`);
+                                    showNotificationForApprovalIfAutoApprovalEnabled(`MCP: ${tool_name} (${server_name})`);
                                     this.removeLastPartialMessageIfExistsWithType("say", "use_mcp_server");
                                     const didApprove = await askApproval("use_mcp_server", completeMessage);
                                     if (!didApprove) {
@@ -2600,7 +2680,7 @@ export class Task {
                                     this.consecutiveAutoApprovedRequestsCount++;
                                 }
                                 else {
-                                    showNotificationForApprovalIfAutoApprovalEnabled(`ValorIDE wants to access ${uri} on ${server_name}`);
+                                    showNotificationForApprovalIfAutoApprovalEnabled(`Accessing: ${uri} (${server_name})`);
                                     this.removeLastPartialMessageIfExistsWithType("say", "use_mcp_server");
                                     const didApprove = await askApproval("use_mcp_server", completeMessage);
                                     if (!didApprove) {
@@ -2704,8 +2784,8 @@ export class Task {
                                 if (this.autoApprovalSettings.enabled &&
                                     this.autoApprovalSettings.enableNotifications) {
                                     showSystemNotification({
-                                        subtitle: "ValorIDE wants to start a new task...",
-                                        message: `ValorIDE is suggesting to start a new task with: ${context}`,
+                                        subtitle: "Starting new task...",
+                                        message: `New task: ${context}`,
                                     });
                                 }
                                 const { text, images } = await this.ask("new_task", context, false);
@@ -2743,8 +2823,8 @@ export class Task {
                                 if (this.autoApprovalSettings.enabled &&
                                     this.autoApprovalSettings.enableNotifications) {
                                     showSystemNotification({
-                                        subtitle: "ValorIDE wants to condense the conversation...",
-                                        message: `ValorIDE is suggesting to condense your conversation with: ${context}`,
+                                        subtitle: "Condensing conversation...",
+                                        message: `Condense: ${context}`,
                                     });
                                 }
                                 const { text, images } = await this.ask("condense", context, false);
@@ -3059,13 +3139,12 @@ export class Task {
         Seeing out of bounds is fine, it means that the next too call is being built up and ready to add to assistantMessageContent to present.
         When you see the UI inactive during this, it means that a tool is breaking without presenting any UI. For example the write_to_file tool was breaking when relpath was undefined, and for invalid relpath it never presented UI.
         */
-        this.presentAssistantMessageLocked = false; // this needs to be placed here, if not then calling this.presentAssistantMessage below would fail (sometimes) since it's locked
         // NOTE: when tool is rejected, iterator stream is interrupted and it waits for userMessageContentReady to be true. Future calls to present will skip execution since didRejectTool and iterate until contentIndex is set to message length and it sets userMessageContentReady to true itself (instead of preemptively doing it in iterator)
         if (!block.partial || this.didRejectTool || this.didAlreadyUseTool) {
             // block is finished streaming and executing
             if (this.currentStreamingContentIndex ===
                 this.assistantMessageContent.length - 1) {
-                // its okay that we increment if !didCompleteReadingStream, it'll just return bc out of bounds and as streaming continues it will call presentAssistantMessage if a new block is ready. if streaming is finished then we set userMessageContentReady to true when out of bounds. This gracefully allows the stream to continue on and all potential content blocks be presented.
+                // its okay that we increment if !didCompleteReadingStream, it'll just return bc out of bounds and as streaming continues it will call processAssistantBlocks if a new block is ready. if streaming is finished then we set userMessageContentReady to true when out of bounds. This gracefully allows the stream to continue on and all potential content blocks be presented.
                 // last block is complete and it is finished executing
                 this.userMessageContentReady = true; // will allow pwaitfor to continue
             }
@@ -3074,14 +3153,11 @@ export class Task {
             if (this.currentStreamingContentIndex < this.assistantMessageContent.length) {
                 // there are already more content blocks to stream, so we'll call this function ourselves
                 // await this.presentAssistantContent()
-                this.presentAssistantMessage();
+                await this.processAssistantBlocks();
                 return;
             }
         }
         // block is partial, but the read stream may have finished
-        if (this.presentAssistantMessageHasPendingUpdates) {
-            this.presentAssistantMessage();
-        }
     }
     async recursivelyMakeValorIDERequests(userContent, includeFileDetails = false) {
         if (this.abort) {
@@ -3264,17 +3340,7 @@ export class Task {
                 this.didFinishAbortingStream = true;
             };
             // reset streaming state
-            this.currentStreamingContentIndex = 0;
-            this.assistantMessageContent = [];
-            this.didCompleteReadingStream = false;
-            this.userMessageContent = [];
-            this.userMessageContentReady = false;
-            this.didRejectTool = false;
-            this.didAlreadyUseTool = false;
-            this.presentAssistantMessageLocked = false;
-            this.presentAssistantMessageHasPendingUpdates = false;
-            this.didAutomaticallyRetryFailedApiRequest = false;
-            await this.diffViewProvider.reset();
+            await this.resetStreamingState();
             const stream = this.attemptApiRequest(previousApiReqIndex); // yields only if the first chunk is successful, otherwise will allow the user to retry the request (most likely due to rate limit error, which gets thrown on the first chunk)
             let assistantMessage = "";
             let reasoningMessage = "";
@@ -3316,7 +3382,7 @@ export class Task {
                                 this.userMessageContentReady = false; // new content we need to present, reset to false in case previous content set this to true
                             }
                             // present content to user
-                            this.presentAssistantMessage();
+                            await this.processAssistantBlocks();
                             break;
                     }
                     if (this.abort) {
@@ -3388,15 +3454,15 @@ export class Task {
                 throw new Error("ValorIDE instance aborted");
             }
             this.didCompleteReadingStream = true;
-            // set any blocks to be complete to allow presentAssistantMessage to finish and set userMessageContentReady to true
-            // (could be a text block that had no subsequent tool uses, or a text block at the very end, or an invalid tool use, etc. whatever the case, presentAssistantMessage relies on these blocks either to be completed or the user to reject a block in order to proceed and eventually set userMessageContentReady to true)
+            // set any blocks to be complete to allow processAssistantBlocks to finish and set userMessageContentReady to true
+            // (could be a text block that had no subsequent tool uses, or a text block at the very end, or an invalid tool use, etc. whatever the case, processAssistantBlocks relies on these blocks either to be completed or the user to reject a block in order to proceed and eventually set userMessageContentReady to true)
             const partialBlocks = this.assistantMessageContent.filter((block) => block.partial);
             partialBlocks.forEach((block) => {
                 block.partial = false;
             });
             // this.assistantMessageContent.forEach((e) => (e.partial = false)) // can't just do this bc a tool could be in the middle of executing ()
             if (partialBlocks.length > 0) {
-                this.presentAssistantMessage(); // if there is content to update then it will complete and update this.userMessageContentReady to true, which we pwaitfor before making the next request. all this is really doing is presenting the last partial message that we just set to complete
+                await this.processAssistantBlocks(); // if there is content to update then it will complete and update this.userMessageContentReady to true, which we pwaitfor before making the next request. all this is really doing is presenting the last partial message that we just set to complete
             }
             updateApiReqMsg();
             await this.saveValorIDEMessagesAndUpdateHistory();
@@ -3439,7 +3505,7 @@ export class Task {
                 }
                 // NOTE: this comment is here for future reference - this was a workaround for userMessageContent not getting set to true. It was due to it not recursively calling for partial blocks when didRejectTool, so it would get stuck waiting for a partial block to complete before it could continue.
                 // in case the content blocks finished
-                // it may be the api stream finished after the last parsed content block was executed, so  we are able to detect out of bounds and set userMessageContentReady to true (note you should not call presentAssistantMessage since if the last block is completed it will be presented again)
+                // it may be the api stream finished after the last parsed content block was executed, so  we are able to detect out of bounds and set userMessageContentReady to true (note you should not call processAssistantBlocks since if the last block is completed it will be presented again)
                 // const completeBlocks = this.assistantMessageContent.filter((block) => !block.partial) // if there are any partial blocks after the stream ended we can consider them invalid
                 // if (this.currentStreamingContentIndex >= completeBlocks.length) {
                 // 	this.userMessageContentReady = true

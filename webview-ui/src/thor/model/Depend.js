@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,30 +10,26 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DependStatusEnum = void 0;
-exports.DependFromJSON = DependFromJSON;
-exports.DependToJSON = DependToJSON;
-const runtime_1 = require("../src/runtime");
-function DependFromJSON(json) {
+import { exists } from '../src/runtime';
+export function DependFromJSON(json) {
     return {
         'groupId': json['groupId'],
         'artifactId': json['artifactId'],
         'version': json['version'],
-        'scope': !(0, runtime_1.exists)(json, 'scope') ? undefined : json['scope'],
-        'status': !(0, runtime_1.exists)(json, 'status') ? undefined : json['status'],
-        'buildId': !(0, runtime_1.exists)(json, 'buildId') ? undefined : json['buildId'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'scope': !exists(json, 'scope') ? undefined : json['scope'],
+        'status': !exists(json, 'status') ? undefined : json['status'],
+        'buildId': !exists(json, 'buildId') ? undefined : json['buildId'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function DependToJSON(value) {
+export function DependToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
@@ -59,10 +54,10 @@ function DependToJSON(value) {
 * @export
 * @enum {string}
 */
-var DependStatusEnum;
+export var DependStatusEnum;
 (function (DependStatusEnum) {
     DependStatusEnum["UPTODATE"] = "up_to_date";
     DependStatusEnum["OUTDATED"] = "outdated";
     DependStatusEnum["MISSING"] = "missing";
-})(DependStatusEnum || (exports.DependStatusEnum = DependStatusEnum = {}));
+})(DependStatusEnum || (DependStatusEnum = {}));
 //# sourceMappingURL=Depend.js.map

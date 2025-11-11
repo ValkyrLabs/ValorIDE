@@ -36,6 +36,7 @@ export class AnthropicHandler {
         let stream;
         const modelId = model.id;
         const budget_tokens = this.options.thinkingBudgetTokens || 0;
+        // TODO: this type of hard coded BS is what annoys me about Cline tbh
         const reasoningOn = (modelId.includes("3-7") || modelId.includes("4-")) && budget_tokens !== 0
             ? true
             : false;

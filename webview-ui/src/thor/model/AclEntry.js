@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,39 +10,36 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AclEntryFromJSON = AclEntryFromJSON;
-exports.AclEntryToJSON = AclEntryToJSON;
-const runtime_1 = require("../src/runtime");
-const _1 = require("./");
-function AclEntryFromJSON(json) {
+import { exists } from '../src/runtime';
+import { AclObjectIdentityFromJSON, AclObjectIdentityToJSON, AclSidFromJSON, AclSidToJSON, } from './';
+export function AclEntryFromJSON(json) {
     return {
-        'aclObjectIdentity': (0, _1.AclObjectIdentityFromJSON)(json['aclObjectIdentity']),
+        'aclObjectIdentity': AclObjectIdentityFromJSON(json['aclObjectIdentity']),
         'aceOrder': json['aceOrder'],
-        'aclSid': (0, _1.AclSidFromJSON)(json['aclSid']),
+        'aclSid': AclSidFromJSON(json['aclSid']),
         'mask': json['mask'],
         'granting': json['granting'],
-        'auditSuccess': !(0, runtime_1.exists)(json, 'auditSuccess') ? undefined : json['auditSuccess'],
-        'auditFailure': !(0, runtime_1.exists)(json, 'auditFailure') ? undefined : json['auditFailure'],
-        'sid': !(0, runtime_1.exists)(json, 'sid') ? undefined : json['sid'],
-        'id': !(0, runtime_1.exists)(json, 'id') ? undefined : json['id'],
-        'ownerId': !(0, runtime_1.exists)(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !(0, runtime_1.exists)(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !(0, runtime_1.exists)(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !(0, runtime_1.exists)(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !(0, runtime_1.exists)(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !(0, runtime_1.exists)(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !(0, runtime_1.exists)(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
+        'auditSuccess': !exists(json, 'auditSuccess') ? undefined : json['auditSuccess'],
+        'auditFailure': !exists(json, 'auditFailure') ? undefined : json['auditFailure'],
+        'sid': !exists(json, 'sid') ? undefined : json['sid'],
+        'id': !exists(json, 'id') ? undefined : json['id'],
+        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
+        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
+        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
+        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
+        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
+        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
+        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
     };
 }
-function AclEntryToJSON(value) {
+export function AclEntryToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        'aclObjectIdentity': (0, _1.AclObjectIdentityToJSON)(value.aclObjectIdentity),
+        'aclObjectIdentity': AclObjectIdentityToJSON(value.aclObjectIdentity),
         'aceOrder': value.aceOrder,
-        'aclSid': (0, _1.AclSidToJSON)(value.aclSid),
+        'aclSid': AclSidToJSON(value.aclSid),
         'mask': value.mask,
         'granting': value.granting,
         'auditSuccess': value.auditSuccess,
