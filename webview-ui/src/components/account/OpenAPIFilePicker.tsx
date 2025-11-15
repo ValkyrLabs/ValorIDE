@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   VSCodeButton,
   VSCodeProgressRing,
@@ -52,21 +52,56 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
     setUploadStatus({ type: null, message: "" });
 
     try {
+      // Validate file size (max 10MB)
+      const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+      if (selectedFile.size > MAX_FILE_SIZE) {
+        throw new Error(`File size exceeds maximum limit of 10MB. Current size: ${(selectedFile.size / 1024 / 1024).toFixed(2)}MB`);
+      }
+
       // Read file content
       const fileContent = await selectedFile.text();
 
-      // Validate that it's a valid OpenAPI spec (basic validation)
-      let parsedContent;
+      // Validate that it's a valid OpenAPI spec
+      const fileName = selectedFile.name.toLowerCase();
+      const isJson = fileName.endsWith('.json');
+      const isYaml = fileName.endsWith('.yaml') || fileName.endsWith('.yml');
+
+      if (!isJson && !isYaml) {
+        throw new Error("Invalid file extension. Please select a .json, .yaml, or .yml file.");
+      }
+
+      // Parse and validate the content
+      let parsedContent: any;
       try {
-        if (selectedFile.name.toLowerCase().endsWith('.json')) {
+        if (isJson) {
           parsedContent = JSON.parse(fileContent);
         } else {
-          // For YAML files, we'll send the raw content and let the backend parse it
+          // For YAML files, do basic validation (non-empty, not obviously broken)
+          if (!fileContent || fileContent.trim().length === 0) {
+            throw new Error("File is empty.");
+          }
+          // Basic YAML structure validation - should start with openapi or swagger key
+          if (!fileContent.includes('openapi:') && !fileContent.includes('swagger:') && 
+              !fileContent.includes('"openapi"') && !fileContent.includes('"swagger"')) {
+            throw new Error("File does not appear to be an OpenAPI specification (missing 'openapi' or 'swagger' key).");
+          }
           parsedContent = fileContent;
         }
+
+        // Verify it has OpenAPI structure
+        if (isJson && (!parsedContent.openapi && !parsedContent.swagger)) {
+          throw new Error("Invalid OpenAPI spec: missing 'openapi' or 'swagger' version field.");
+        }
       } catch (parseError) {
-        throw new Error("Invalid file format. Please ensure the file contains valid JSON or YAML.");
+        const message = parseError instanceof Error ? parseError.message : "File format validation failed";
+        throw new Error(`Invalid file format: ${message}`);
       }
+
+      // Show uploading status
+      setUploadStatus({
+        type: null,
+        message: `Uploading ${selectedFile.name}...`,
+      });
 
       // Send to extension for processing
       vscode.postMessage({
@@ -76,17 +111,14 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
         fileSize: selectedFile.size,
       });
 
-      setUploadStatus({
-        type: "success",
-        message: `Successfully uploaded ${selectedFile.name}`,
-      });
+      // Wait for response from extension (listener below)
+      // The success message will be shown via uploadOpenAPISpecResult message
     } catch (error) {
-      console.error("Upload failed:", error);
+      console.error("Upload validation failed:", error);
       setUploadStatus({
         type: "error",
-        message: error instanceof Error ? error.message : "Upload failed",
+        message: error instanceof Error ? error.message : "Upload failed. Please check the file and try again.",
       });
-    } finally {
       setIsUploading(false);
     }
   };
@@ -98,6 +130,34 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
       fileInputRef.current.value = "";
     }
   };
+
+  // Listen for upload result from extension
+  useEffect(() => {
+    const handleMessage = (event: any) => {
+      const message = event.data;
+      if (message.type === "uploadOpenAPISpecResult") {
+        if (message.success) {
+          setUploadStatus({
+            type: "success",
+            message: `✅ Successfully uploaded and processed ${message.filename || selectedFile?.name || "file"}. Ready to import into application generator.`,
+          });
+          // Clear the selected file and input after successful upload
+          setTimeout(() => {
+            handleClear();
+          }, 2000);
+        } else {
+          setUploadStatus({
+            type: "error",
+            message: message.error || "Upload failed. The server could not process the file.",
+          });
+        }
+        setIsUploading(false);
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [selectedFile]);
 
   return (
     <div className="openapi-file-picker">

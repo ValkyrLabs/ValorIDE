@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.544",
+  "version": "3.20.550",
   "icon": "assets/icons/icon.png",
   "pricing": "Free",
   "galleryBanner": {
@@ -569,6 +569,8 @@
     "@vscode/webview-ui-toolkit": "^1.4.0",
     "JSX": "^1.1.0",
     "adm-zip": "^0.5.16",
+    "ant-design": "^1.0.0",
+    "antd": "^5.28.1",
     "anthropic-ai": "^0.0.10",
     "axios": "^1.8.3",
     "cheerio": "^1.0.0",

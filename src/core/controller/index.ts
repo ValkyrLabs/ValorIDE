@@ -1359,6 +1359,158 @@ export class Controller {
         }
         break;
       }
+      case "uploadOpenAPISpec": {
+        try {
+          const { filename, fileContent, fileSize } = message;
+          
+          if (!filename || !fileContent) {
+            throw new Error("Missing filename or file content");
+          }
+
+          // Validate file size on backend as well
+          const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+          if (fileSize && fileSize > MAX_FILE_SIZE) {
+            throw new Error(`File size exceeds maximum limit of 10MB. Current size: ${(fileSize / 1024 / 1024).toFixed(2)}MB`);
+          }
+
+          // Validate content type and structure
+          const isJson = filename.toLowerCase().endsWith(".json");
+          const isYaml = filename.toLowerCase().endsWith(".yaml") || filename.toLowerCase().endsWith(".yml");
+
+          if (!isJson && !isYaml) {
+            throw new Error("Invalid file type. Only JSON and YAML OpenAPI spec files are supported.");
+          }
+
+          // Parse and validate the OpenAPI spec
+          let spec: any;
+          try {
+            if (isJson) {
+              spec = JSON.parse(fileContent);
+            } else {
+              // For YAML, do basic validation
+              if (!fileContent || fileContent.trim().length === 0) {
+                throw new Error("File is empty.");
+              }
+              // Check for required OpenAPI fields
+              if (!fileContent.includes("openapi:") && !fileContent.includes("swagger:") &&
+                  !fileContent.includes("\"openapi\"") && !fileContent.includes("\"swagger\"")) {
+                throw new Error("File does not contain OpenAPI specification (missing 'openapi' or 'swagger' key).");
+              }
+              spec = fileContent;
+            }
+          } catch (parseError) {
+            const errorMsg = parseError instanceof Error ? parseError.message : "Parse error";
+            throw new Error(`Failed to parse OpenAPI spec: ${errorMsg}`);
+          }
+
+          // Validate required OpenAPI structure
+          if (isJson) {
+            if (!spec.openapi && !spec.swagger) {
+              throw new Error("Invalid OpenAPI spec: missing required 'openapi' or 'swagger' version field.");
+            }
+            if (!spec.info || !spec.info.title) {
+              throw new Error("Invalid OpenAPI spec: missing required 'info.title' field.");
+            }
+            if (!spec.paths && !spec.components?.schemas) {
+              throw new Error("Invalid OpenAPI spec: missing required 'paths' or 'components.schemas' definitions.");
+            }
+          }
+
+          // Store the spec in a temporary location for processing
+          const specsDir = path.join(this.context.globalStorageUri.fsPath, "openapi-specs");
+          await fs.mkdir(specsDir, { recursive: true });
+
+          const timestamp = Date.now();
+          const sanitizedFilename = filename.replace(/[^\\w.-]/g, "_");
+          const specPath = path.join(specsDir, `${timestamp}_${sanitizedFilename}`);
+          await fs.writeFile(specPath, fileContent);
+
+          // Send success response back to webview
+          await this.postMessageToWebview({
+            type: "uploadOpenAPISpecResult",
+            success: true,
+            filename: filename,
+            specPath: specPath,
+            message: `Successfully processed ${filename}. OpenAPI spec is ready for import.`,
+          });
+
+          // Get JWT token for ThorAPI call
+          const jwtToken = await getSecret(this.context, "jwtToken");
+          const headers: any = {
+            "Content-Type": "application/json",
+          };
+          if (jwtToken) {
+            headers["Authorization"] = `Bearer ${jwtToken}`;
+          }
+
+          // Call ThorAPI /v1/thorapi/specs/import endpoint
+          const apiBaseUrl = process.env.VITE_basePath || "http://localhost:8080/v1";
+          const importUrl = `${apiBaseUrl}/thorapi/specs/import`;
+
+          try {
+            const response = await axios.post(
+              importUrl,
+              {
+                filename: filename,
+                content: fileContent,
+                fileType: isJson ? "json" : "yaml",
+              },
+              {
+                headers,
+                timeout: 30000,
+              }
+            );
+
+            if (response.data?.success === true || response.status === 200) {
+              await this.postMessageToWebview({
+                type: "uploadOpenAPISpecResult",
+                success: true,
+                filename: filename,
+                message: `Successfully imported ${filename}. Ready to generate code.`,
+              });
+              console.log(`[uploadOpenAPISpec] Imported to ThorAPI: ${filename}`);
+            } else {
+              throw new Error(response.data?.error || "ThorAPI returned unexpected response");
+            }
+          } catch (apiError) {
+            let errorMsg = "Failed to import to ThorAPI";
+            if (axios.isAxiosError(apiError)) {
+              if (apiError.response?.status === 401) {
+                errorMsg = "Authentication failed. Please log in.";
+              } else if (apiError.response?.status === 400) {
+                errorMsg = `Invalid OpenAPI: ${apiError.response.data?.error || "validation failed"}`;
+              } else if (apiError.code === "ECONNREFUSED") {
+                errorMsg = `Cannot reach ThorAPI at ${importUrl}`;
+              } else if (apiError.message) {
+                errorMsg = apiError.message;
+              }
+            } else if (apiError instanceof Error) {
+              errorMsg = apiError.message;
+            }
+            
+            await this.postMessageToWebview({
+              type: "uploadOpenAPISpecResult",
+              success: false,
+              filename: filename,
+              error: errorMsg,
+            });
+            console.error(`[uploadOpenAPISpec] ThorAPI error: ${errorMsg}`);
+            throw new Error(errorMsg);
+          }
+          console.log(`[uploadOpenAPISpec] Successfully processed: ${filename} (${(fileSize / 1024).toFixed(2)}KB)`);
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : "Failed to process OpenAPI spec";
+          console.error(`[uploadOpenAPISpec] Error: ${errorMessage}`, error);
+          
+          await this.postMessageToWebview({
+            type: "uploadOpenAPISpecResult",
+            success: false,
+            filename: message.filename,
+            error: errorMessage,
+          });
+        }
+        break;
+      }
       case "streamToThorapi": {
         const {
           blobData,

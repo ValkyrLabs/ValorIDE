@@ -254,7 +254,7 @@ const Form: React.FC<FormProps> = ({
                         touched && isValid
                           ? isSubmitting
                             ? "disabled"
-                            : "success"
+                            : "warning"
                           : "info"
                       }
                       // disabled={!(touched && isValid && (loginUserResult.status == 'uninitialized'))}
@@ -263,10 +263,10 @@ const Form: React.FC<FormProps> = ({
                     >
                       {isSubmitting && (
                         <Spinner
-                          style={{ float: "left" }}
+                          style={{ float: "left", maxWidth: "16px" }}
                           as="span"
                           animation="grow"
-                          variant="light"
+                          variant="dark"
                           aria-hidden="true"
                         />
                       )}

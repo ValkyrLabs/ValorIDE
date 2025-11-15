@@ -76,6 +76,7 @@ export interface ExtensionMessage {
   | "contentData"
   | "LIST_APPLICATION_SUCCESS"
   | "remoteCommand"
+  | "uploadOpenAPISpecResult"
   | "swarm:task-assignment"
   | "swarm:task-cancelled"
   | "swarm:remote-command"
@@ -183,6 +184,16 @@ export interface ExtensionMessage {
   }>;
   contentData?: any; // Data from the ContentData endpoint
   command?: RemoteCommand; // Remote command from mothership
+  uploadOpenAPISpecResult?: {
+    success: boolean;
+    filename?: string;
+    specPath?: string;
+    message?: string;
+    error?: string;
+  };
+  filename?: string;
+  specPath?: string;
+  message?: string;
 }
 
 export type Invoke =

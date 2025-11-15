@@ -94,6 +94,7 @@ export interface WebviewMessage {
   | "addGeneratedToProject"
   | "startServer"
   | "uploadOpenAPISpec"
+  | "uploadOpenAPISpecResult"
   | "openFile";
 
   // | "relaunchChromeDebugMode"
@@ -160,6 +161,10 @@ export interface WebviewMessage {
   // For uploadOpenAPISpec
   fileContent?: string;
   fileSize?: number;
+  // For uploadOpenAPISpecResult
+  success?: boolean;
+  specPath?: string;
+  error?: string;
 }
 
 export type ValorIDEAskResponse =
