@@ -20,22 +20,16 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import {
-
-
-    FileRecord,
-    FileRecordFromJSON,
-    FileRecordToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { FileRecord, FileRecordFromJSON, FileRecordToJSON } from "./";
 
 // thorapi
 
@@ -44,132 +38,156 @@ import {
  * @export
  * @interface SpaceFile
  */
-export type SpaceFile  = {
-    /**
-     * Space that references the file record.
-     * @type {string}
-     * @memberof SpaceFile
-     */
-    spaceId: string;
-    /**
-     * File record linked to the space.
-     * @type {string}
-     * @memberof SpaceFile
-     */
-    fileRecordId: string;
-    /**
-     * 
-     * @type {FileRecord}
-     * @memberof SpaceFile
-     */
-    fileRecord?: FileRecord;
-    /**
-     * Timestamp when the file was added to the space.
-     * @type {Date}
-     * @memberof SpaceFile
-     */
-    addedDate?: Date;
-    /**
-     * Indicates whether the file should appear in the space favorites list.
-     * @type {boolean}
-     * @memberof SpaceFile
-     */
-    isPinned?: boolean;
-    /**
-     * Principal who pinned the file to the favorites list.
-     * @type {string}
-     * @memberof SpaceFile
-     */
-    pinnedById?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof SpaceFile
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof SpaceFile
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof SpaceFile
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof SpaceFile
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof SpaceFile
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof SpaceFile
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof SpaceFile
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof SpaceFile
-     */
-    lastModifiedDate?: Date;
-}
+export type SpaceFile = DataObject & {
+  /**
+   * Space that references the file record.
+   * @type {string}
+   * @memberof SpaceFile
+   */
+  spaceId: string;
+  /**
+   * File record linked to the space.
+   * @type {string}
+   * @memberof SpaceFile
+   */
+  fileRecordId: string;
+  /**
+   *
+   * @type {FileRecord}
+   * @memberof SpaceFile
+   */
+  fileRecord?: FileRecord;
+  /**
+   * Timestamp when the file was added to the space.
+   * @type {Date}
+   * @memberof SpaceFile
+   */
+  addedDate?: Date;
+  /**
+   * Indicates whether the file should appear in the space favorites list.
+   * @type {boolean}
+   * @memberof SpaceFile
+   */
+  isPinned?: boolean;
+  /**
+   * Principal who pinned the file to the favorites list.
+   * @type {string}
+   * @memberof SpaceFile
+   */
+  pinnedById?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof SpaceFile
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof SpaceFile
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof SpaceFile
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof SpaceFile
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof SpaceFile
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof SpaceFile
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof SpaceFile
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof SpaceFile
+   */
+  lastModifiedDate?: Date;
+};
 
 export function SpaceFileFromJSON(json: any): SpaceFile {
-    return {
-        'spaceId': json['spaceId'],
-        'fileRecordId': json['fileRecordId'],
-        'fileRecord': !exists(json, 'fileRecord') ? undefined : FileRecordFromJSON(json['fileRecord']),
-        'addedDate': !exists(json, 'addedDate') ? undefined : new Date(json['addedDate']),
-        'isPinned': !exists(json, 'isPinned') ? undefined : json['isPinned'],
-        'pinnedById': !exists(json, 'pinnedById') ? undefined : json['pinnedById'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    spaceId: json["spaceId"],
+    fileRecordId: json["fileRecordId"],
+    fileRecord: !exists(json, "fileRecord")
+      ? undefined
+      : FileRecordFromJSON(json["fileRecord"]),
+    addedDate: !exists(json, "addedDate")
+      ? undefined
+      : new Date(json["addedDate"]),
+    isPinned: !exists(json, "isPinned") ? undefined : json["isPinned"],
+    pinnedById: !exists(json, "pinnedById") ? undefined : json["pinnedById"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function SpaceFileToJSON(value?: SpaceFile): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'spaceId': value.spaceId,
-        'fileRecordId': value.fileRecordId,
-        'fileRecord': FileRecordToJSON(value.fileRecord),
-        'addedDate': value.addedDate === undefined ? undefined : value.addedDate.toISOString(),
-        'isPinned': value.isPinned,
-        'pinnedById': value.pinnedById,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    spaceId: value.spaceId,
+    fileRecordId: value.fileRecordId,
+    fileRecord: FileRecordToJSON(value.fileRecord),
+    addedDate:
+      value.addedDate === undefined ? undefined : value.addedDate.toISOString(),
+    isPinned: value.isPinned,
+    pinnedById: value.pinnedById,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
-
-

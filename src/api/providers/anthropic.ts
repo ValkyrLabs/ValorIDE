@@ -109,24 +109,24 @@ export class AnthropicHandler implements ApiHandler {
                   content:
                     typeof message.content === "string"
                       ? [
-                        {
-                          type: "text",
-                          text: message.content,
-                          cache_control: {
-                            type: "ephemeral",
-                          },
-                        },
-                      ]
-                      : message.content.map((content, contentIndex) =>
-                        contentIndex === message.content.length - 1
-                          ? {
-                            ...content,
+                          {
+                            type: "text",
+                            text: message.content,
                             cache_control: {
                               type: "ephemeral",
                             },
-                          }
-                          : content,
-                      ),
+                          },
+                        ]
+                      : message.content.map((content, contentIndex) =>
+                          contentIndex === message.content.length - 1
+                            ? {
+                                ...content,
+                                cache_control: {
+                                  type: "ephemeral",
+                                },
+                              }
+                            : content,
+                        ),
                 };
               }
               return message;

@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,294 +19,351 @@ Template file: typescript-redux-query/apis.mustache
 Description: AccountBalanceApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    AccountBalance,
-    AccountBalanceFromJSON,
-    AccountBalanceToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  AccountBalance,
+  AccountBalanceFromJSON,
+  AccountBalanceToJSON,
+} from "../model";
 
 export interface DeleteAccountBalanceApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetAccountBalanceApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetAccountBalanceListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PostAccountBalanceApiRequest {
-    accountBalance: AccountBalance;
+  accountBalance: AccountBalance;
 }
 
 export interface UpdateAccountBalanceApiRequest {
-    id: string;
-    accountBalance: AccountBalance;
+  id: string;
+  accountBalance: AccountBalance;
 }
-
 
 /**
  * Deletes a specific AccountBalance.
  * Delete a AccountBalance.
  */
-function deleteAccountBalanceRaw<T>(requestParameters: DeleteAccountBalanceApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteAccountBalance.');
-    }
+function deleteAccountBalanceRaw<T>(
+  requestParameters: DeleteAccountBalanceApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteAccountBalance.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/AccountBalance/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/AccountBalance/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific AccountBalance.
-* Delete a AccountBalance.
-*/
-export function deleteAccountBalance<T>(requestParameters: DeleteAccountBalanceApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteAccountBalanceRaw(requestParameters, requestConfig);
+ * Deletes a specific AccountBalance.
+ * Delete a AccountBalance.
+ */
+export function deleteAccountBalance<T>(
+  requestParameters: DeleteAccountBalanceApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteAccountBalanceRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single AccountBalance for a specific uid.
  * Retrieve a single AccountBalance
  */
-function getAccountBalanceRaw<T>(requestParameters: GetAccountBalanceApiRequest, requestConfig: runtime.TypedQueryConfig<T, AccountBalance> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getAccountBalance.');
-    }
+function getAccountBalanceRaw<T>(
+  requestParameters: GetAccountBalanceApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, AccountBalance> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getAccountBalance.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/AccountBalance/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(AccountBalanceFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/AccountBalance/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AccountBalanceFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single AccountBalance for a specific uid.
-* Retrieve a single AccountBalance
-*/
-export function getAccountBalance<T>(requestParameters: GetAccountBalanceApiRequest, requestConfig?: runtime.TypedQueryConfig<T, AccountBalance>): QueryConfig<T> {
-    return getAccountBalanceRaw(requestParameters, requestConfig);
+ * Retrieves a single AccountBalance for a specific uid.
+ * Retrieve a single AccountBalance
+ */
+export function getAccountBalance<T>(
+  requestParameters: GetAccountBalanceApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, AccountBalance>,
+): QueryConfig<T> {
+  return getAccountBalanceRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of AccountBalances.
  * Retrieve a list of AccountBalances
  */
-function getAccountBalanceListRaw<T>(requestParameters: GetAccountBalanceListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<AccountBalance>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getAccountBalanceListRaw<T>(
+  requestParameters: GetAccountBalanceListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<AccountBalance>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/AccountBalance`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(AccountBalanceFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/AccountBalance`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(AccountBalanceFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of AccountBalances.
-* Retrieve a list of AccountBalances
-*/
-export function getAccountBalanceList<T>(requestParameters: GetAccountBalanceListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<AccountBalance>>): QueryConfig<T> {
-    return getAccountBalanceListRaw(requestParameters, requestConfig);
+ * Retrieves a list of AccountBalances.
+ * Retrieve a list of AccountBalances
+ */
+export function getAccountBalanceList<T>(
+  requestParameters: GetAccountBalanceListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<AccountBalance>>,
+): QueryConfig<T> {
+  return getAccountBalanceListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new AccountBalance.
  * Create a new AccountBalance
  */
-function postAccountBalanceRaw<T>(requestParameters: PostAccountBalanceApiRequest, requestConfig: runtime.TypedQueryConfig<T, AccountBalance> = {}): QueryConfig<T> {
-    if (requestParameters.accountBalance === null || requestParameters.accountBalance === undefined) {
-        throw new runtime.RequiredError('accountBalance','Required parameter requestParameters.accountBalance was null or undefined when calling postAccountBalance.');
-    }
+function postAccountBalanceRaw<T>(
+  requestParameters: PostAccountBalanceApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, AccountBalance> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.accountBalance === null ||
+    requestParameters.accountBalance === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "accountBalance",
+      "Required parameter requestParameters.accountBalance was null or undefined when calling postAccountBalance.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/AccountBalance`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters || AccountBalanceToJSON(requestParameters.accountBalance),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(AccountBalanceFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/AccountBalance`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || AccountBalanceToJSON(requestParameters.accountBalance),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AccountBalanceFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new AccountBalance.
-* Create a new AccountBalance
-*/
-export function postAccountBalance<T>(requestParameters: PostAccountBalanceApiRequest, requestConfig?: runtime.TypedQueryConfig<T, AccountBalance>): QueryConfig<T> {
-    return postAccountBalanceRaw(requestParameters, requestConfig);
+ * Creates a new AccountBalance.
+ * Create a new AccountBalance
+ */
+export function postAccountBalance<T>(
+  requestParameters: PostAccountBalanceApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, AccountBalance>,
+): QueryConfig<T> {
+  return postAccountBalanceRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing AccountBalance.
  * Update an existing AccountBalance
  */
-function updateAccountBalanceRaw<T>(requestParameters: UpdateAccountBalanceApiRequest, requestConfig: runtime.TypedQueryConfig<T, AccountBalance> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateAccountBalance.');
-    }
+function updateAccountBalanceRaw<T>(
+  requestParameters: UpdateAccountBalanceApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, AccountBalance> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateAccountBalance.",
+    );
+  }
 
-    if (requestParameters.accountBalance === null || requestParameters.accountBalance === undefined) {
-        throw new runtime.RequiredError('accountBalance','Required parameter requestParameters.accountBalance was null or undefined when calling updateAccountBalance.');
-    }
+  if (
+    requestParameters.accountBalance === null ||
+    requestParameters.accountBalance === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "accountBalance",
+      "Required parameter requestParameters.accountBalance was null or undefined when calling updateAccountBalance.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/AccountBalance/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters || AccountBalanceToJSON(requestParameters.accountBalance),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(AccountBalanceFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/AccountBalance/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || AccountBalanceToJSON(requestParameters.accountBalance),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AccountBalanceFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing AccountBalance.
-* Update an existing AccountBalance
-*/
-export function updateAccountBalance<T>(requestParameters: UpdateAccountBalanceApiRequest, requestConfig?: runtime.TypedQueryConfig<T, AccountBalance>): QueryConfig<T> {
-    return updateAccountBalanceRaw(requestParameters, requestConfig);
+ * Updates an existing AccountBalance.
+ * Update an existing AccountBalance
+ */
+export function updateAccountBalance<T>(
+  requestParameters: UpdateAccountBalanceApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, AccountBalance>,
+): QueryConfig<T> {
+  return updateAccountBalanceRaw(requestParameters, requestConfig);
 }
-

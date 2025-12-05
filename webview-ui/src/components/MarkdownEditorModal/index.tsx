@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
+import React, { useState } from "react";
+import { Modal, Form, Button } from "react-bootstrap";
 
 interface MarkdownEditorModalProps {
   show?: boolean;
@@ -11,8 +11,8 @@ interface MarkdownEditorModalProps {
 
 const MarkdownEditorModal: React.FC<MarkdownEditorModalProps> = ({
   show = false,
-  title = 'Edit Markdown',
-  initialValue = '',
+  title = "Edit Markdown",
+  initialValue = "",
   onCancel,
   onSave,
 }) => {
@@ -50,7 +50,7 @@ const MarkdownEditorModal: React.FC<MarkdownEditorModalProps> = ({
           Cancel
         </Button>
         <Button variant="primary" onClick={handleSave} disabled={isSaving}>
-          {isSaving ? 'Saving...' : 'Save'}
+          {isSaving ? "Saving..." : "Save"}
         </Button>
       </Modal.Footer>
     </Modal>

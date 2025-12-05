@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasRequired } from '@thor/model/OasRequired';
+import { OasRequired } from "@thor/model/OasRequired";
 
 const OasRequiredSlice = createSlice({
   name: "OasRequireds",
@@ -12,20 +12,23 @@ const OasRequiredSlice = createSlice({
     },
 
     OasRequiredValueToggled(state, action) {
-      console.log("OasRequired TOGGLE")
-      console.warn(JSON.stringify(action))
-      const OasRequired:OasRequired = state.find((OasRequired) => OasRequired.id === action.payload.OasRequiredId);
+      console.log("OasRequired TOGGLE");
+      console.warn(JSON.stringify(action));
+      const OasRequired: OasRequired = state.find(
+        (OasRequired) => OasRequired.id === action.payload.OasRequiredId,
+      );
       if (OasRequired) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     OasRequiredpropertySet(state, action) {
-      const OasRequired = state.find((OasRequired) => OasRequired.id === action.payload.OasRequiredId);
+      const OasRequired = state.find(
+        (OasRequired) => OasRequired.id === action.payload.OasRequiredId,
+      );
       if (OasRequired) {
-      //  OasRequired[action.property] = action.payload[action.property];
+        //  OasRequired[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +37,6 @@ const OasRequiredSlice = createSlice({
 export const {
   OasRequiredAdded,
   OasRequiredValueToggled,
-  OasRequiredpropertySet
+  OasRequiredpropertySet,
 } = OasRequiredSlice.actions;
 export default OasRequiredSlice.reducer;

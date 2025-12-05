@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // DeadLetterQueue
 
-export const FETCH_DEADLETTERQUEUE_REQUEST = 'FETCH_DEADLETTERQUEUE_REQUEST';
-export const FETCH_DEADLETTERQUEUE_SUCCESS = 'FETCH_DEADLETTERQUEUE_SUCCESS';
-export const FETCH_DEADLETTERQUEUE_FAILURE = 'FETCH_DEADLETTERQUEUE_FAILURE';
+export const FETCH_DEADLETTERQUEUE_REQUEST = "FETCH_DEADLETTERQUEUE_REQUEST";
+export const FETCH_DEADLETTERQUEUE_SUCCESS = "FETCH_DEADLETTERQUEUE_SUCCESS";
+export const FETCH_DEADLETTERQUEUE_FAILURE = "FETCH_DEADLETTERQUEUE_FAILURE";
 
-export const ADD_DEADLETTERQUEUE_REQUEST = 'ADD_DEADLETTERQUEUE_REQUEST';
-export const ADD_DEADLETTERQUEUE_SUCCESS = 'ADD_DEADLETTERQUEUE_SUCCESS';
-export const ADD_DEADLETTERQUEUE_FAILURE = 'ADD_DEADLETTERQUEUE_FAILURE';
+export const ADD_DEADLETTERQUEUE_REQUEST = "ADD_DEADLETTERQUEUE_REQUEST";
+export const ADD_DEADLETTERQUEUE_SUCCESS = "ADD_DEADLETTERQUEUE_SUCCESS";
+export const ADD_DEADLETTERQUEUE_FAILURE = "ADD_DEADLETTERQUEUE_FAILURE";
 
-export const UPDATE_DEADLETTERQUEUE_REQUEST = 'UPDATE_DEADLETTERQUEUE_REQUEST';
-export const UPDATE_DEADLETTERQUEUE_SUCCESS = 'UPDATE_DEADLETTERQUEUE_SUCCESS';
-export const UPDATE_DEADLETTERQUEUE_FAILURE = 'UPDATE_DEADLETTERQUEUE_FAILURE';
+export const UPDATE_DEADLETTERQUEUE_REQUEST = "UPDATE_DEADLETTERQUEUE_REQUEST";
+export const UPDATE_DEADLETTERQUEUE_SUCCESS = "UPDATE_DEADLETTERQUEUE_SUCCESS";
+export const UPDATE_DEADLETTERQUEUE_FAILURE = "UPDATE_DEADLETTERQUEUE_FAILURE";
 
-export const DELETE_DEADLETTERQUEUE_REQUEST = 'DELETE_DEADLETTERQUEUE_REQUEST';
-export const DELETE_DEADLETTERQUEUE_SUCCESS = 'DELETE_DEADLETTERQUEUE_SUCCESS';
-export const DELETE_DEADLETTERQUEUE_FAILURE = 'DELETE_DEADLETTERQUEUE_FAILURE';
+export const DELETE_DEADLETTERQUEUE_REQUEST = "DELETE_DEADLETTERQUEUE_REQUEST";
+export const DELETE_DEADLETTERQUEUE_SUCCESS = "DELETE_DEADLETTERQUEUE_SUCCESS";
+export const DELETE_DEADLETTERQUEUE_FAILURE = "DELETE_DEADLETTERQUEUE_FAILURE";
 
-export const LIST_DEADLETTERQUEUE_REQUEST = 'LIST_DEADLETTERQUEUE_REQUEST';
-export const LIST_DEADLETTERQUEUE_SUCCESS = 'LIST_DEADLETTERQUEUE_SUCCESS';
-export const LIST_DEADLETTERQUEUE_FAILURE = 'LIST_DEADLETTERQUEUE_FAILURE';
+export const LIST_DEADLETTERQUEUE_REQUEST = "LIST_DEADLETTERQUEUE_REQUEST";
+export const LIST_DEADLETTERQUEUE_SUCCESS = "LIST_DEADLETTERQUEUE_SUCCESS";
+export const LIST_DEADLETTERQUEUE_FAILURE = "LIST_DEADLETTERQUEUE_FAILURE";
 
 export const addDeadLetterQueueRequest = () => ({
-    type: ADD_DEADLETTERQUEUE_REQUEST,
+  type: ADD_DEADLETTERQUEUE_REQUEST,
 });
 
 export const addDeadLetterQueueSuccess = (DeadLetterQueues: any) => ({
-    type: ADD_DEADLETTERQUEUE_SUCCESS,
-    payload: DeadLetterQueues,
+  type: ADD_DEADLETTERQUEUE_SUCCESS,
+  payload: DeadLetterQueues,
 });
 
 export const addDeadLetterQueueFailure = (error: Error) => ({
-    type: ADD_DEADLETTERQUEUE_FAILURE,
-    payload: error,
+  type: ADD_DEADLETTERQUEUE_FAILURE,
+  payload: error,
 });
 
-
 export const fetchDeadLetterQueueRequest = () => ({
-    type: FETCH_DEADLETTERQUEUE_REQUEST,
+  type: FETCH_DEADLETTERQUEUE_REQUEST,
 });
 
 export const fetchDeadLetterQueueSuccess = (DeadLetterQueues: any) => ({
-    type: FETCH_DEADLETTERQUEUE_SUCCESS,
-    payload: DeadLetterQueues,
+  type: FETCH_DEADLETTERQUEUE_SUCCESS,
+  payload: DeadLetterQueues,
 });
 
 export const fetchDeadLetterQueueFailure = (error: Error) => ({
-    type: FETCH_DEADLETTERQUEUE_FAILURE,
-    payload: error,
+  type: FETCH_DEADLETTERQUEUE_FAILURE,
+  payload: error,
 });
 
 export const listDeadLetterQueueRequest = () => ({
-    type: LIST_DEADLETTERQUEUE_REQUEST,
+  type: LIST_DEADLETTERQUEUE_REQUEST,
 });
 
 export const listDeadLetterQueueSuccess = (DeadLetterQueues: any) => ({
-    type: LIST_DEADLETTERQUEUE_SUCCESS,
-    payload: DeadLetterQueues,
+  type: LIST_DEADLETTERQUEUE_SUCCESS,
+  payload: DeadLetterQueues,
 });
 
 export const listDeadLetterQueueFailure = (error: Error) => ({
-    type: LIST_DEADLETTERQUEUE_FAILURE,
-    payload: error,
+  type: LIST_DEADLETTERQUEUE_FAILURE,
+  payload: error,
 });
 
 export const updateDeadLetterQueueRequest = (DeadLetterQueue: any) => ({
-    type: UPDATE_DEADLETTERQUEUE_REQUEST,
-    payload: DeadLetterQueue,
+  type: UPDATE_DEADLETTERQUEUE_REQUEST,
+  payload: DeadLetterQueue,
 });
 
 export const updateDeadLetterQueueSuccess = (DeadLetterQueue: any) => ({
-    type: UPDATE_DEADLETTERQUEUE_SUCCESS,
-    payload: DeadLetterQueue,
+  type: UPDATE_DEADLETTERQUEUE_SUCCESS,
+  payload: DeadLetterQueue,
 });
 
 export const updateDeadLetterQueueFailure = (error: Error) => ({
-    type: UPDATE_DEADLETTERQUEUE_FAILURE,
-    payload: error,
+  type: UPDATE_DEADLETTERQUEUE_FAILURE,
+  payload: error,
 });
 
 export const deleteDeadLetterQueueRequest = (DeadLetterQueue: any) => ({
-    type: DELETE_DEADLETTERQUEUE_REQUEST,
-    payload: DeadLetterQueue,
+  type: DELETE_DEADLETTERQUEUE_REQUEST,
+  payload: DeadLetterQueue,
 });
 
 export const deleteDeadLetterQueueSuccess = (DeadLetterQueue: any) => ({
-    type: DELETE_DEADLETTERQUEUE_SUCCESS,
-    payload: DeadLetterQueue,
+  type: DELETE_DEADLETTERQUEUE_SUCCESS,
+  payload: DeadLetterQueue,
 });
 
 export const deleteDeadLetterQueueFailure = (error: Error) => ({
-    type: DELETE_DEADLETTERQUEUE_FAILURE,
-    payload: error,
+  type: DELETE_DEADLETTERQUEUE_FAILURE,
+  payload: error,
 });

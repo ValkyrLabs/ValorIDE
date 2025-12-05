@@ -29,7 +29,7 @@ export class EnvironmentService {
     private valorideIgnoreController: ValorIDEIgnoreController,
     private terminalManager: TerminalManager,
     private fileContextTracker: FileContextTracker,
-    private urlContentFetcher: UrlContentFetcher
+    private urlContentFetcher: UrlContentFetcher,
   ) {}
 
   async loadContext(
@@ -78,7 +78,7 @@ export class EnvironmentService {
     didEditFile: boolean = false,
     valorideMessages: ValorIDEMessage[] = [],
     api?: ApiHandler,
-    chatSettings?: ChatSettings
+    chatSettings?: ChatSettings,
   ): Promise<string> {
     let details = "";
 
@@ -212,7 +212,10 @@ export class EnvironmentService {
 
     if (includeFileDetails) {
       details += `\n\n# Current Working Directory (${this.cwd.toPosix()}) Files\n`;
-      const isDesktop = arePathsEqual(this.cwd, path.join(os.homedir(), "Desktop"));
+      const isDesktop = arePathsEqual(
+        this.cwd,
+        path.join(os.homedir(), "Desktop"),
+      );
       if (isDesktop) {
         // don't want to immediately access desktop since it would show permission popup
         details +=

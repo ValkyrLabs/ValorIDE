@@ -20,22 +20,16 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import {
-
-
-    Cell,
-    CellFromJSON,
-    CellToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { Cell, CellFromJSON, CellToJSON } from "./";
 
 // thorapi
 
@@ -44,116 +38,139 @@ import {
  * @export
  * @interface NamedRange
  */
-export type NamedRange  = {
-    /**
-     * the sheet containing this named range
-     * @type {string}
-     * @memberof NamedRange
-     */
-    sheetId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof NamedRange
-     */
-    name?: string;
-    /**
-     * 
-     * @type {Cell}
-     * @memberof NamedRange
-     */
-    startCell?: Cell;
-    /**
-     * 
-     * @type {Cell}
-     * @memberof NamedRange
-     */
-    endCell?: Cell;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof NamedRange
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof NamedRange
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof NamedRange
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof NamedRange
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof NamedRange
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof NamedRange
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof NamedRange
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof NamedRange
-     */
-    lastModifiedDate?: Date;
-}
+export type NamedRange = DataObject & {
+  /**
+   * the sheet containing this named range
+   * @type {string}
+   * @memberof NamedRange
+   */
+  sheetId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof NamedRange
+   */
+  name?: string;
+  /**
+   *
+   * @type {Cell}
+   * @memberof NamedRange
+   */
+  startCell?: Cell;
+  /**
+   *
+   * @type {Cell}
+   * @memberof NamedRange
+   */
+  endCell?: Cell;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof NamedRange
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof NamedRange
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof NamedRange
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof NamedRange
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof NamedRange
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof NamedRange
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof NamedRange
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof NamedRange
+   */
+  lastModifiedDate?: Date;
+};
 
 export function NamedRangeFromJSON(json: any): NamedRange {
-    return {
-        'sheetId': !exists(json, 'sheetId') ? undefined : json['sheetId'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'startCell': !exists(json, 'startCell') ? undefined : CellFromJSON(json['startCell']),
-        'endCell': !exists(json, 'endCell') ? undefined : CellFromJSON(json['endCell']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
+    name: !exists(json, "name") ? undefined : json["name"],
+    startCell: !exists(json, "startCell")
+      ? undefined
+      : CellFromJSON(json["startCell"]),
+    endCell: !exists(json, "endCell")
+      ? undefined
+      : CellFromJSON(json["endCell"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function NamedRangeToJSON(value?: NamedRange): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'sheetId': value.sheetId,
-        'name': value.name,
-        'startCell': CellToJSON(value.startCell),
-        'endCell': CellToJSON(value.endCell),
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    sheetId: value.sheetId,
+    name: value.name,
+    startCell: CellToJSON(value.startCell),
+    endCell: CellToJSON(value.endCell),
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
-
-

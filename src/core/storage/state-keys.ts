@@ -81,6 +81,7 @@ export type GlobalStateKey =
   | "reasoningEffort"
   | "planActSeparateModelsSetting"
   | "favoritedModelIds"
-  | "valorideSwarmInstanceId";
+  | "valorideSwarmInstanceId"
+  | "selectedLlmDetails";
 
 export type LocalStateKey = "localValorIDERulesToggles";

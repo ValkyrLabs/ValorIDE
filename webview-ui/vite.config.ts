@@ -40,15 +40,40 @@ export default defineConfig({
     },
   },
   resolve: {
-    alias: {
-      "@": resolve(__dirname, "./src"),
-      "@components": resolve(__dirname, "./src/components"),
-      "@context": resolve(__dirname, "./src/context"),
-      "@shared": resolve(__dirname, "../src/shared"),
-      "@utils": resolve(__dirname, "./src/utils"),
-      "@thor": resolve(__dirname, "./src/thor"),
-      "@valkyr/component-library": resolve(__dirname, "./src/components"),
-    },
+    alias: [
+      {
+        find: "@utils/serverValkyraiHost",
+        replacement: resolve(__dirname, "./src/utils/serverValkyraiHost"),
+      },
+      {
+        find: "@utils",
+        replacement: resolve(__dirname, "../src/utils"),
+      },
+      {
+        find: "@",
+        replacement: resolve(__dirname, "./src"),
+      },
+      {
+        find: "@components",
+        replacement: resolve(__dirname, "./src/components"),
+      },
+      {
+        find: "@context",
+        replacement: resolve(__dirname, "./src/context"),
+      },
+      {
+        find: "@shared",
+        replacement: resolve(__dirname, "../src/shared"),
+      },
+      {
+        find: "@thor",
+        replacement: resolve(__dirname, "./src/thor"),
+      },
+      {
+        find: "@valkyr/component-library",
+        replacement: resolve(__dirname, "./src/components"),
+      },
+    ],
     // Ensure all dependencies share the same React singleton (fixes hooks issues)
     dedupe: ["react", "react-dom", "react-dom/client", "react/jsx-runtime"],
     extensions: [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".json"],

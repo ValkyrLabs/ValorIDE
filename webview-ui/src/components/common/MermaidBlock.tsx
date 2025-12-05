@@ -285,7 +285,6 @@ const StyledVSCodeButton = styled(VSCodeButton)`
   justify-content: center;
   transition: all 0.2s ease;
 
-
   &:hover {
     background-color: var(--vscode-button-secondaryHoverBackground);
     border-color: var(--vscode-button-border);

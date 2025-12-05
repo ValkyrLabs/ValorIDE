@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { LegalPrecedent } from '@thor/model/LegalPrecedent';
+import { LegalPrecedent } from "@thor/model/LegalPrecedent";
 
 const LegalPrecedentSlice = createSlice({
   name: "LegalPrecedents",
@@ -12,20 +12,25 @@ const LegalPrecedentSlice = createSlice({
     },
 
     LegalPrecedentValueToggled(state, action) {
-      console.log("LegalPrecedent TOGGLE")
-      console.warn(JSON.stringify(action))
-      const LegalPrecedent:LegalPrecedent = state.find((LegalPrecedent) => LegalPrecedent.id === action.payload.LegalPrecedentId);
+      console.log("LegalPrecedent TOGGLE");
+      console.warn(JSON.stringify(action));
+      const LegalPrecedent: LegalPrecedent = state.find(
+        (LegalPrecedent) =>
+          LegalPrecedent.id === action.payload.LegalPrecedentId,
+      );
       if (LegalPrecedent) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     LegalPrecedentpropertySet(state, action) {
-      const LegalPrecedent = state.find((LegalPrecedent) => LegalPrecedent.id === action.payload.LegalPrecedentId);
+      const LegalPrecedent = state.find(
+        (LegalPrecedent) =>
+          LegalPrecedent.id === action.payload.LegalPrecedentId,
+      );
       if (LegalPrecedent) {
-      //  LegalPrecedent[action.property] = action.payload[action.property];
+        //  LegalPrecedent[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const LegalPrecedentSlice = createSlice({
 export const {
   LegalPrecedentAdded,
   LegalPrecedentValueToggled,
-  LegalPrecedentpropertySet
+  LegalPrecedentpropertySet,
 } = LegalPrecedentSlice.actions;
 export default LegalPrecedentSlice.reducer;

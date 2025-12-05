@@ -9,7 +9,7 @@ import * as diff from "diff";
 import { diagnosticsToProblemsString, getNewDiagnostics } from "../diagnostics";
 import { detectEncoding } from "../misc/extract-text";
 import * as iconv from "iconv-lite";
-import { DEFAULT_FILE_PROCESSING_CONFIG } from "@shared/AdvancedSettings";
+import { DEFAULT_FILE_PROCESSING_CONFIG, } from "@shared/AdvancedSettings";
 export const DIFF_VIEW_URI_SCHEME = "valoride-diff";
 export class DiffViewProvider {
     cwd;
@@ -29,7 +29,8 @@ export class DiffViewProvider {
     fileProcessingConfig;
     constructor(cwd, fileProcessingConfig) {
         this.cwd = cwd;
-        this.fileProcessingConfig = fileProcessingConfig || DEFAULT_FILE_PROCESSING_CONFIG;
+        this.fileProcessingConfig =
+            fileProcessingConfig || DEFAULT_FILE_PROCESSING_CONFIG;
     }
     async open(relPath) {
         this.relPath = relPath;
@@ -43,17 +44,21 @@ export class DiffViewProvider {
                 const fileSizeBytes = stats.size;
                 if (fileSizeBytes > this.fileProcessingConfig.maxFileSize) {
                     const fileSizeMB = (fileSizeBytes / (1024 * 1024)).toFixed(2);
-                    const maxSizeMB = (this.fileProcessingConfig.maxFileSize / (1024 * 1024)).toFixed(2);
-                    const result = await vscode.window.showWarningMessage(`File "${path.basename(relPath)}" is ${fileSizeMB}MB, which exceeds the maximum size limit of ${maxSizeMB}MB. This may cause performance issues or truncation. Do you want to continue?`, { modal: true, detail: "Select 'Continue and don't warn again' to remember this preference." }, "Continue", "Continue and don't warn again", "Cancel");
+                    const maxSizeMB = (this.fileProcessingConfig.maxFileSize /
+                        (1024 * 1024)).toFixed(2);
+                    const result = await vscode.window.showWarningMessage(`File "${path.basename(relPath)}" is ${fileSizeMB}MB, which exceeds the maximum size limit of ${maxSizeMB}MB. This may cause performance issues or truncation. Do you want to continue?`, {
+                        modal: true,
+                        detail: "Select 'Continue and don't warn again' to remember this preference.",
+                    }, "Continue", "Continue and don't warn again", "Cancel");
                     if (result === "Continue and don't warn again") {
                         try {
-                            const config = vscode.workspace.getConfiguration('valoride');
-                            await config.update('advanced.fileProcessing.warnLargeFiles', false, true);
+                            const config = vscode.workspace.getConfiguration("valoride");
+                            await config.update("advanced.fileProcessing.warnLargeFiles", false, true);
                             this.fileProcessingConfig.warnLargeFiles = false;
                         }
                         catch (e) {
                             // Non-fatal: user preference might not persist (permissions/workspace scope)
-                            console.debug('Failed to persist warnLargeFiles=false', e);
+                            console.debug("Failed to persist warnLargeFiles=false", e);
                         }
                     }
                     else if (result !== "Continue") {
@@ -62,16 +67,19 @@ export class DiffViewProvider {
                 }
                 else if (fileSizeBytes > this.fileProcessingConfig.largeFileThreshold) {
                     const fileSizeMB = (fileSizeBytes / (1024 * 1024)).toFixed(2);
-                    const result = await vscode.window.showInformationMessage(`File "${path.basename(relPath)}" is ${fileSizeMB}MB. Large file processing may take longer than usual.`, { modal: false, detail: "Select 'OK and don't warn again' to remember this preference." }, "OK", "OK and don't warn again");
+                    const result = await vscode.window.showInformationMessage(`File "${path.basename(relPath)}" is ${fileSizeMB}MB. Large file processing may take longer than usual.`, {
+                        modal: false,
+                        detail: "Select 'OK and don't warn again' to remember this preference.",
+                    }, "OK", "OK and don't warn again");
                     if (result === "OK and don't warn again") {
                         try {
-                            const config = vscode.workspace.getConfiguration('valoride');
-                            await config.update('advanced.fileProcessing.warnLargeFiles', false, true);
+                            const config = vscode.workspace.getConfiguration("valoride");
+                            await config.update("advanced.fileProcessing.warnLargeFiles", false, true);
                             this.fileProcessingConfig.warnLargeFiles = false;
                         }
                         catch (e) {
                             // Non-fatal: user preference might not persist (permissions/workspace scope)
-                            console.debug('Failed to persist warnLargeFiles=false', e);
+                            console.debug("Failed to persist warnLargeFiles=false", e);
                         }
                     }
                 }

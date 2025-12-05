@@ -3,7 +3,7 @@
  */
 export interface P2pMessageEnvelope<T> {
   sourceId: string;
-  targetId: string | 'broadcast';
+  targetId: string | "broadcast";
   messageId: string;
   type: P2pMessageType;
   payload: T;
@@ -14,8 +14,8 @@ export interface P2pMessageEnvelope<T> {
  * Enum of all supported P2P message types.
  */
 export enum P2pMessageType {
-  LlmResponse = 'llm_response',
-  UserCommand = 'user_command',
+  LlmResponse = "llm_response",
+  UserCommand = "user_command",
 }
 
 /**

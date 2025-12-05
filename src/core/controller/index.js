@@ -21,11 +21,15 @@ import { BrowserSession } from "@services/browser/BrowserSession";
 import { McpHub } from "@services/mcp/McpHub";
 import { searchWorkspaceFiles } from "@services/search/file-search";
 import { telemetryService } from "@services/telemetry/TelemetryService";
-import { validateAdvancedSettings, DEFAULT_ADVANCED_SETTINGS } from "@shared/AdvancedSettings";
+import { getLLMPromptService } from "@services/llmPromptService";
+import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
+import { StartupAuthService } from "@services/auth/StartupAuthService";
+import { validateAdvancedSettings, DEFAULT_ADVANCED_SETTINGS, } from "@shared/AdvancedSettings";
 import { fileExistsAtPath } from "@utils/fs";
 import { searchCommits } from "@utils/git";
 import { getReadablePath, getWorkspacePath } from "@utils/path";
 import { resolveThorapiFolderPath } from "@utils/thorapi";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { getTotalTasksSize } from "@utils/storage";
 import { openMention } from "../mentions";
 import { ensureMcpServersDirectoryExists, ensureSettingsDirectoryExists, GlobalFileNames, } from "../storage/disk";
@@ -58,6 +62,11 @@ export class Controller {
             const { apiConfiguration } = await this.getStateToPostToWebview();
             return apiConfiguration?.valorideApiKey;
         });
+        this.disposables.push(vscode.workspace.onDidChangeConfiguration((event) => {
+            if (event.affectsConfiguration("valoride.valkyrai.host")) {
+                void this.handleValkyraiHostConfigChange();
+            }
+        }));
         // Clean up legacy checkpoints
         cleanupLegacyCheckpoints(this.context.globalStorageUri.fsPath, this.outputChannel).catch((error) => {
             console.error("Failed to cleanup legacy checkpoints:", error);
@@ -403,6 +412,40 @@ export class Controller {
             case "refreshLLMDetails":
                 await this.refreshLLMDetails();
                 break;
+            case "testValkyraiHost": {
+                const targetHost = message.valkyraiHost?.trim();
+                if (!targetHost) {
+                    await this.postMessageToWebview({
+                        type: "valkyraiHostTestResult",
+                        host: "",
+                        success: false,
+                        error: "Host URL is required.",
+                    });
+                    break;
+                }
+                await this.testValkyraiHostConnection(targetHost);
+                break;
+            }
+            case "updateValkyraiHost": {
+                const nextHost = message.valkyraiHost?.trim();
+                if (!nextHost) {
+                    break;
+                }
+                await vscode.workspace
+                    .getConfiguration("valoride.valkyrai")
+                    .update("host", nextHost, vscode.ConfigurationTarget.Global);
+                await updateGlobalState(this.context, "valkyraiHost", nextHost);
+                await this.postStateToWebview();
+                await this.refreshLLMDetails();
+                try {
+                    const startupAuthService = StartupAuthService.getInstance(this.context);
+                    await startupAuthService.restoreAuthentication();
+                }
+                catch (error) {
+                    console.warn("Failed to restore authentication after host change:", error);
+                }
+                break;
+            }
             case "refreshOpenAiModels":
                 const { apiConfiguration } = await getAllExtensionState(this.context);
                 const openAiModels = await this.getOpenAiModels(apiConfiguration.openAiBaseUrl, apiConfiguration.openAiApiKey);
@@ -738,6 +781,65 @@ export class Controller {
                 await this.postMessageToWebview({ type: "didUpdateSettings" });
                 break;
             }
+            case "updateLLMDetails": {
+                try {
+                    const selected = message.llmDetails;
+                    if (!selected?.id || !selected.initialPrompt) {
+                        void vscode.window.showErrorMessage("Unable to load prompt — missing initial prompt text.");
+                        break;
+                    }
+                    const normalizedSelection = {
+                        id: selected.id,
+                        name: selected.name || selected.id,
+                        description: selected.description,
+                        tags: selected.tags || [],
+                        ratingScore: selected.ratingScore,
+                        promptType: selected.promptType ?? "SYSTEM",
+                        initialPrompt: selected.initialPrompt,
+                        prompt: selected.initialPrompt,
+                        mode: (selected.promptType ?? "SYSTEM"),
+                        source: "thorapi",
+                        updatedAt: Date.now(),
+                    };
+                    await updateGlobalState(this.context, "selectedLlmDetails", normalizedSelection);
+                    try {
+                        const promptService = getLLMPromptService();
+                        promptService.applyManualSelection({
+                            llmDetailsId: normalizedSelection.id,
+                            name: normalizedSelection.name,
+                            prompt: normalizedSelection.prompt,
+                            mode: normalizedSelection.mode,
+                            tags: normalizedSelection.tags,
+                            source: "thorapi",
+                        });
+                    }
+                    catch (error) {
+                        console.error("Failed to apply prompt override:", error);
+                    }
+                    try {
+                        const broadcaster = getSwarmPromptBroadcaster();
+                        const supervisorId = vscode.env.machineId || "valoride-supervisor";
+                        const intent = message.taskIntent || "manual-selection";
+                        const broadcastMessage = broadcaster.selectPromptForTask(supervisorId, intent, normalizedSelection.id, normalizedSelection.tags || []);
+                        const targets = broadcaster.broadcastPromptSelection(broadcastMessage);
+                        targets.forEach((workerId) => broadcaster.acknowledgePromptReload(workerId, normalizedSelection.id || ""));
+                        await this.postMessageToWebview({
+                            type: "swarm:broadcast",
+                            payload: broadcastMessage,
+                        });
+                    }
+                    catch (error) {
+                        console.error("Swarm prompt broadcaster unavailable:", error);
+                    }
+                    await this.postStateToWebview();
+                    void vscode.window.showInformationMessage(`LLM prompt switched to ${normalizedSelection.name} (${normalizedSelection.mode})`);
+                }
+                catch (error) {
+                    console.error("Failed to update LLMDetails selection:", error);
+                    void vscode.window.showErrorMessage("Failed to update LLM prompt selection.");
+                }
+                break;
+            }
             case "requestSetBudgetLimit": {
                 // Prompt user for USD budget limit and persist without toggling mode
                 const { chatSettings: currentChatSettings } = await getAllExtensionState(this.context);
@@ -1067,8 +1169,155 @@ export class Controller {
                 }
                 break;
             }
+            case "uploadOpenAPISpec": {
+                try {
+                    const { filename, fileContent, fileSize } = message;
+                    if (!filename || !fileContent) {
+                        throw new Error("Missing filename or file content");
+                    }
+                    // Validate file size on backend as well
+                    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+                    if (fileSize && fileSize > MAX_FILE_SIZE) {
+                        throw new Error(`File size exceeds maximum limit of 10MB. Current size: ${(fileSize / 1024 / 1024).toFixed(2)}MB`);
+                    }
+                    // Validate content type and structure
+                    const isJson = filename.toLowerCase().endsWith(".json");
+                    const isYaml = filename.toLowerCase().endsWith(".yaml") ||
+                        filename.toLowerCase().endsWith(".yml");
+                    if (!isJson && !isYaml) {
+                        throw new Error("Invalid file type. Only JSON and YAML OpenAPI spec files are supported.");
+                    }
+                    // Parse and validate the OpenAPI spec
+                    let spec;
+                    try {
+                        if (isJson) {
+                            spec = JSON.parse(fileContent);
+                        }
+                        else {
+                            // For YAML, do basic validation
+                            if (!fileContent || fileContent.trim().length === 0) {
+                                throw new Error("File is empty.");
+                            }
+                            // Check for required OpenAPI fields
+                            if (!fileContent.includes("openapi:") &&
+                                !fileContent.includes("swagger:") &&
+                                !fileContent.includes('"openapi"') &&
+                                !fileContent.includes('"swagger"')) {
+                                throw new Error("File does not contain OpenAPI specification (missing 'openapi' or 'swagger' key).");
+                            }
+                            spec = fileContent;
+                        }
+                    }
+                    catch (parseError) {
+                        const errorMsg = parseError instanceof Error ? parseError.message : "Parse error";
+                        throw new Error(`Failed to parse OpenAPI spec: ${errorMsg}`);
+                    }
+                    // Validate required OpenAPI structure
+                    if (isJson) {
+                        if (!spec.openapi && !spec.swagger) {
+                            throw new Error("Invalid OpenAPI spec: missing required 'openapi' or 'swagger' version field.");
+                        }
+                        if (!spec.info || !spec.info.title) {
+                            throw new Error("Invalid OpenAPI spec: missing required 'info.title' field.");
+                        }
+                        if (!spec.paths && !spec.components?.schemas) {
+                            throw new Error("Invalid OpenAPI spec: missing required 'paths' or 'components.schemas' definitions.");
+                        }
+                    }
+                    // Store the spec in a temporary location for processing
+                    const specsDir = path.join(this.context.globalStorageUri.fsPath, "openapi-specs");
+                    await fs.mkdir(specsDir, { recursive: true });
+                    const timestamp = Date.now();
+                    const sanitizedFilename = filename.replace(/[^\\w.-]/g, "_");
+                    const specPath = path.join(specsDir, `${timestamp}_${sanitizedFilename}`);
+                    await fs.writeFile(specPath, fileContent);
+                    // Send success response back to webview
+                    await this.postMessageToWebview({
+                        type: "uploadOpenAPISpecResult",
+                        success: true,
+                        filename: filename,
+                        specPath: specPath,
+                        message: `Successfully processed ${filename}. OpenAPI spec is ready for import.`,
+                    });
+                    // Get JWT token for ThorAPI call
+                    const jwtToken = await getSecret(this.context, "jwtToken");
+                    const headers = {
+                        "Content-Type": "application/json",
+                    };
+                    if (jwtToken) {
+                        headers["Authorization"] = `Bearer ${jwtToken}`;
+                    }
+                    // Call ThorAPI /v1/thorapi/specs/import endpoint
+                    const apiBaseUrl = getValkyraiBasePath();
+                    const importUrl = `${apiBaseUrl}/thorapi/specs/import`;
+                    try {
+                        const response = await axios.post(importUrl, {
+                            filename: filename,
+                            content: fileContent,
+                            fileType: isJson ? "json" : "yaml",
+                        }, {
+                            headers,
+                            timeout: 30000,
+                        });
+                        if (response.data?.success === true || response.status === 200) {
+                            await this.postMessageToWebview({
+                                type: "uploadOpenAPISpecResult",
+                                success: true,
+                                filename: filename,
+                                message: `Successfully imported ${filename}. Ready to generate code.`,
+                            });
+                            console.log(`[uploadOpenAPISpec] Imported to ThorAPI: ${filename}`);
+                        }
+                        else {
+                            throw new Error(response.data?.error || "ThorAPI returned unexpected response");
+                        }
+                    }
+                    catch (apiError) {
+                        let errorMsg = "Failed to import to ThorAPI";
+                        if (axios.isAxiosError(apiError)) {
+                            if (apiError.response?.status === 401) {
+                                errorMsg = "Authentication failed. Please log in.";
+                            }
+                            else if (apiError.response?.status === 400) {
+                                errorMsg = `Invalid OpenAPI: ${apiError.response.data?.error || "validation failed"}`;
+                            }
+                            else if (apiError.code === "ECONNREFUSED") {
+                                errorMsg = `Cannot reach ThorAPI at ${importUrl}`;
+                            }
+                            else if (apiError.message) {
+                                errorMsg = apiError.message;
+                            }
+                        }
+                        else if (apiError instanceof Error) {
+                            errorMsg = apiError.message;
+                        }
+                        await this.postMessageToWebview({
+                            type: "uploadOpenAPISpecResult",
+                            success: false,
+                            filename: filename,
+                            error: errorMsg,
+                        });
+                        console.error(`[uploadOpenAPISpec] ThorAPI error: ${errorMsg}`);
+                        throw new Error(errorMsg);
+                    }
+                    console.log(`[uploadOpenAPISpec] Successfully processed: ${filename} (${(fileSize / 1024).toFixed(2)}KB)`);
+                }
+                catch (error) {
+                    const errorMessage = error instanceof Error
+                        ? error.message
+                        : "Failed to process OpenAPI spec";
+                    console.error(`[uploadOpenAPISpec] Error: ${errorMessage}`, error);
+                    await this.postMessageToWebview({
+                        type: "uploadOpenAPISpecResult",
+                        success: false,
+                        filename: message.filename,
+                        error: errorMessage,
+                    });
+                }
+                break;
+            }
             case "streamToThorapi": {
-                const { blobData, applicationId, applicationName, filename, mimeType, } = message;
+                const { blobData, applicationId, applicationName, filename, mimeType } = message;
                 const sendProgress = async (step, progressMessage) => {
                     if (!applicationId) {
                         return;
@@ -1091,8 +1340,7 @@ export class Controller {
                     const binaryData = Buffer.from(blobData, "base64");
                     const thorapiFolderPath = resolveThorapiFolderPath(cwd);
                     await fs.mkdir(thorapiFolderPath, { recursive: true });
-                    const incomingName = filename?.trim() ||
-                        `application-${applicationId}-${Date.now()}`;
+                    const incomingName = filename?.trim() || `application-${applicationId}-${Date.now()}`;
                     const sanitizedBaseName = path
                         .basename(incomingName)
                         .replace(/[\\/:*?"<>|]/g, "_")
@@ -1552,7 +1800,7 @@ export class Controller {
                 headers["authorization"] = `Bearer ${token}`;
             }
             // Fetch server details from marketplace using same URL pattern as ApplicationService
-            const response = await axios.post(`${process.env.VITE_basePath || "http://localhost:8080/v1"}/McpServer`, { mcpId }, {
+            const response = await axios.post(`${getValkyraiBasePath()}/McpServer`, { mcpId }, {
                 headers,
                 timeout: 10000,
             });
@@ -1849,6 +2097,8 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
     }
     async refreshLLMDetails() {
         let models = {};
+        const llmDetailsList = [];
+        let lastError;
         try {
             const { apiConfiguration } = await getAllExtensionState(this.context);
             // If ValkyrAI is not configured, don't attempt to fetch
@@ -1857,6 +2107,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
                 await this.postMessageToWebview({
                     type: "llmDetailsUpdated",
                     models: {},
+                    llmDetails: [],
                 });
                 return {};
             }
@@ -1882,9 +2133,24 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
                             supportsPromptCache: llmDetail.supportsPromptCache,
                             inputPrice: llmDetail.inputPrice,
                             outputPrice: llmDetail.outputPrice,
-                            description: llmDetail.description || `${llmDetail.provider} ${llmDetail.name}${llmDetail.version ? ` (${llmDetail.version})` : ""}`,
+                            description: llmDetail.description ||
+                                `${llmDetail.provider} ${llmDetail.name}${llmDetail.version ? ` (${llmDetail.version})` : ""}`,
                         };
                         models[llmDetail.id] = modelInfo;
+                        llmDetailsList.push({
+                            id: llmDetail.id,
+                            name: llmDetail.name || llmDetail.provider || llmDetail.id,
+                            description: llmDetail.description,
+                            promptType: (llmDetail.promptType || "SYSTEM"),
+                            initialPrompt: llmDetail.initialPrompt,
+                            tags: Array.isArray(llmDetail.tags) ? llmDetail.tags : [],
+                            ratingScore: typeof llmDetail.ratingScore === "number"
+                                ? llmDetail.ratingScore
+                                : undefined,
+                            provider: llmDetail.provider,
+                            version: llmDetail.version,
+                            lastModifiedDate: llmDetail.lastModifiedDate,
+                        });
                     }
                 }
                 console.log("LLMDetails fetched from ValkyrAI", models);
@@ -1895,12 +2161,62 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         }
         catch (error) {
             console.error("Error fetching LLMDetails from ValkyrAI:", error);
+            lastError =
+                error instanceof Error ? error.message : "Unknown LLMDetails error";
         }
         await this.postMessageToWebview({
             type: "llmDetailsUpdated",
             models,
+            llmDetails: llmDetailsList,
+            error: lastError,
         });
         return models;
+    }
+    async testValkyraiHostConnection(host) {
+        let success = false;
+        let errorMessage;
+        const normalizedHost = host.replace(/\/$/, "");
+        const endpoints = [
+            `${normalizedHost}/health`,
+            `${normalizedHost}/status`,
+            normalizedHost,
+        ];
+        for (const endpoint of endpoints) {
+            try {
+                await axios.get(endpoint, { timeout: 5000 });
+                success = true;
+                errorMessage = undefined;
+                break;
+            }
+            catch (error) {
+                if (axios.isAxiosError(error) && error.response) {
+                    success = true;
+                    errorMessage = undefined;
+                    break;
+                }
+                errorMessage =
+                    error instanceof Error ? error.message : "Unable to reach host.";
+            }
+        }
+        await this.postMessageToWebview({
+            type: "valkyraiHostTestResult",
+            host: normalizedHost,
+            success,
+            error: errorMessage,
+        });
+    }
+    async handleValkyraiHostConfigChange() {
+        try {
+            const configuredHost = vscode.workspace
+                .getConfiguration("valoride.valkyrai")
+                .get("host");
+            await updateGlobalState(this.context, "valkyraiHost", configuredHost);
+            await this.postStateToWebview();
+            await this.refreshLLMDetails();
+        }
+        catch (error) {
+            console.error("Failed to react to ValkyrAI host change:", error);
+        }
     }
     // Context menus and code actions
     getFileMentionFromPath(filePath) {
@@ -2128,8 +2444,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
                     DEFAULT_ADVANCED_SETTINGS.budgetAlerts.depletedThreshold,
                 criticalThreshold: cfg.get("advanced.budgetAlerts.criticalThreshold") ??
                     DEFAULT_ADVANCED_SETTINGS.budgetAlerts.criticalThreshold,
-                lowThreshold: cfg.get("advanced.budgetAlerts.lowThreshold") ??
-                    DEFAULT_ADVANCED_SETTINGS.budgetAlerts.lowThreshold,
+                lowThreshold: cfg.get("advanced.budgetAlerts.lowThreshold") ?? DEFAULT_ADVANCED_SETTINGS.budgetAlerts.lowThreshold,
                 alertThreshold: cfg.get("advanced.budgetAlerts.alertThreshold") ??
                     DEFAULT_ADVANCED_SETTINGS.budgetAlerts.alertThreshold,
             },
@@ -2146,8 +2461,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
                     DEFAULT_ADVANCED_SETTINGS.debugging.showPsrResultsReport,
             },
             thorapi: {
-                outputFolder: cfg.get("advanced.thorapi.outputFolder") ??
-                    DEFAULT_ADVANCED_SETTINGS.thorapi.outputFolder,
+                outputFolder: cfg.get("advanced.thorapi.outputFolder") ?? DEFAULT_ADVANCED_SETTINGS.thorapi.outputFolder,
             },
         });
         const thorapiFolderPath = resolveThorapiFolderPath(cwd);

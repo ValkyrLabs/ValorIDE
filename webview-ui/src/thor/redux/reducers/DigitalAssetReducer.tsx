@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { DigitalAsset } from '@thor/model/DigitalAsset';
+import { DigitalAsset } from "@thor/model/DigitalAsset";
 
 const DigitalAssetSlice = createSlice({
   name: "DigitalAssets",
@@ -12,20 +12,23 @@ const DigitalAssetSlice = createSlice({
     },
 
     DigitalAssetValueToggled(state, action) {
-      console.log("DigitalAsset TOGGLE")
-      console.warn(JSON.stringify(action))
-      const DigitalAsset:DigitalAsset = state.find((DigitalAsset) => DigitalAsset.id === action.payload.DigitalAssetId);
+      console.log("DigitalAsset TOGGLE");
+      console.warn(JSON.stringify(action));
+      const DigitalAsset: DigitalAsset = state.find(
+        (DigitalAsset) => DigitalAsset.id === action.payload.DigitalAssetId,
+      );
       if (DigitalAsset) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     DigitalAssetpropertySet(state, action) {
-      const DigitalAsset = state.find((DigitalAsset) => DigitalAsset.id === action.payload.DigitalAssetId);
+      const DigitalAsset = state.find(
+        (DigitalAsset) => DigitalAsset.id === action.payload.DigitalAssetId,
+      );
       if (DigitalAsset) {
-      //  DigitalAsset[action.property] = action.payload[action.property];
+        //  DigitalAsset[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +37,6 @@ const DigitalAssetSlice = createSlice({
 export const {
   DigitalAssetAdded,
   DigitalAssetValueToggled,
-  DigitalAssetpropertySet
+  DigitalAssetpropertySet,
 } = DigitalAssetSlice.actions;
 export default DigitalAssetSlice.reducer;

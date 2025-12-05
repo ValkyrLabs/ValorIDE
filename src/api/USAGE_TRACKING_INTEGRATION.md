@@ -57,14 +57,14 @@ For providers that don't provide usage in the stream, you can track manually:
 import { trackApiUsage, getModelPricing } from "../usage-tracking";
 
 // After API call completion
-const pricing = getModelPricing('anthropic', 'claude-3-5-sonnet-20241022');
+const pricing = getModelPricing("anthropic", "claude-3-5-sonnet-20241022");
 await trackApiUsage(
-  'anthropic',
-  'claude-3-5-sonnet-20241022',
+  "anthropic",
+  "claude-3-5-sonnet-20241022",
   estimatedInputTokens,
   estimatedOutputTokens,
   pricing.inputCost,
-  pricing.outputCost
+  pricing.outputCost,
 );
 ```
 
@@ -75,6 +75,7 @@ await trackApiUsage(
 Automatically looks up pricing and tracks usage. Recommended for most use cases.
 
 **Parameters:**
+
 - `provider`: string - Provider name (e.g., 'openai', 'anthropic', 'gemini')
 - `model`: string - Model identifier
 - `inputTokens`: number - Number of input tokens
@@ -120,6 +121,7 @@ For unsupported providers/models, default fallback pricing is used.
 The system uses existing ThorAPI models:
 
 ### UsageTransaction Model
+
 ```typescript
 {
   spentAt: Date;
@@ -133,6 +135,7 @@ The system uses existing ThorAPI models:
 ```
 
 ### BalanceResponse Model
+
 ```typescript
 {
   currentBalance: number;
@@ -148,9 +151,12 @@ Here's a complete example for a new API provider:
 import { trackApiUsageWithPricing } from "../usage-tracking";
 
 export class MyApiHandler implements ApiHandler {
-  async *createMessage(systemPrompt: string, messages: MessageParam[]): ApiStream {
+  async *createMessage(
+    systemPrompt: string,
+    messages: MessageParam[],
+  ): ApiStream {
     const modelId = this.options.modelId ?? "";
-    
+
     // Make API call
     const stream = await this.client.chat.completions.create({
       model: modelId,
@@ -181,10 +187,10 @@ export class MyApiHandler implements ApiHandler {
 
         // Track usage for billing (NEW)
         await trackApiUsageWithPricing(
-          'my-provider',
+          "my-provider",
           modelId,
           inputTokens,
-          outputTokens
+          outputTokens,
         );
       }
     }
@@ -200,9 +206,9 @@ Update the pricing table in `src/api/usage-tracking.ts`:
 
 ```typescript
 const pricing = {
-  'my-provider': {
-    'my-model-v1': { inputCost: 0.000001, outputCost: 0.000002 },
-    'my-model-v2': { inputCost: 0.000002, outputCost: 0.000004 },
+  "my-provider": {
+    "my-model-v1": { inputCost: 0.000001, outputCost: 0.000002 },
+    "my-model-v2": { inputCost: 0.000002, outputCost: 0.000004 },
   },
   // ... existing providers
 };

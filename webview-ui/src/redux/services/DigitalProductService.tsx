@@ -83,9 +83,9 @@ export const DigitalProductService = createApi({
       providesTags: (result) =>
         result
           ? [
-            ...result.map(({ id }) => ({ type: "FileRecord" as const, id })),
-            { type: "FileRecord", id: "LIST" },
-          ]
+              ...result.map(({ id }) => ({ type: "FileRecord" as const, id })),
+              { type: "FileRecord", id: "LIST" },
+            ]
           : [{ type: "FileRecord", id: "LIST" }],
     }),
 
@@ -101,9 +101,9 @@ export const DigitalProductService = createApi({
       invalidatesTags: (result) =>
         result
           ? [
-            { type: "DigitalProductDraft", id: result.product.id },
-            { type: "FileRecord", id: "LIST" },
-          ]
+              { type: "DigitalProductDraft", id: result.product.id },
+              { type: "FileRecord", id: "LIST" },
+            ]
           : [{ type: "FileRecord", id: "LIST" }],
     }),
 

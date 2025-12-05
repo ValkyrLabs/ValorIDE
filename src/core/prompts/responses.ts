@@ -24,6 +24,9 @@ export const formatResponse = {
   valorideIgnoreError: (path: string) =>
     `Access to ${path} is blocked by the .valorideignore file settings. You must try to continue in the task without using this file, or ask the user to update the .valorideignore file.`,
 
+  workspaceAccessError: (path: string, workspaceRoot: string) =>
+    `Access to ${path} is blocked because it is outside of the current workspace root (${workspaceRoot}). Re-run the task from the correct workspace, or ask the user to open the folder that contains this file if it should be accessible.`,
+
   noToolsUsed: () =>
     `[ERROR] You did not use a tool in your previous response! Please retry with a tool use.
 

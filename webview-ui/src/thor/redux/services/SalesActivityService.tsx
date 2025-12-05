@@ -1,33 +1,43 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { SalesActivity } from '@thor/model/SalesActivity'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { SalesActivity } from "@thor/model/SalesActivity";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type SalesActivityResponse = SalesActivity[]
+type SalesActivityResponse = SalesActivity[];
 
 export const SalesActivityService = createApi({
-  reducerPath: 'SalesActivity', // This should remain unique
+  reducerPath: "SalesActivity", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['SalesActivity'],
+  tagTypes: ["SalesActivity"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSalesActivitysPaged: build.query<SalesActivityResponse, { page: number; size?: number; example?: Partial<SalesActivity> }>({
+    getSalesActivitysPaged: build.query<
+      SalesActivityResponse,
+      { page: number; size?: number; example?: Partial<SalesActivity> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SalesActivity?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SalesActivity?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'SalesActivity' as const, id })),
-              { type: 'SalesActivity', id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({
+                type: "SalesActivity" as const,
+                id,
+              })),
+              { type: "SalesActivity", id: `PAGE_${page}` },
             ]
           : [],
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSalesActivitys: build.query<SalesActivityResponse, { example?: Partial<SalesActivity> } | void>({
+    getSalesActivitys: build.query<
+      SalesActivityResponse,
+      { example?: Partial<SalesActivity> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -38,75 +48,88 @@ export const SalesActivityService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'SalesActivity' as const, id })),
-              { type: 'SalesActivity', id: 'LIST' },
+              ...result.map(({ id }) => ({
+                type: "SalesActivity" as const,
+                id,
+              })),
+              { type: "SalesActivity", id: "LIST" },
             ]
-          : [{ type: 'SalesActivity', id: 'LIST' }],
+          : [{ type: "SalesActivity", id: "LIST" }],
     }),
 
     // 3) Create
     addSalesActivity: build.mutation<SalesActivity, Partial<SalesActivity>>({
       query: (body) => ({
         url: `SalesActivity`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'SalesActivity', id: 'LIST' }],
+      invalidatesTags: [{ type: "SalesActivity", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getSalesActivity: build.query<SalesActivity, string>({
       query: (id) => `SalesActivity/${id}`,
-      providesTags: (result, error, id) => [{ type: 'SalesActivity', id }],
+      providesTags: (result, error, id) => [{ type: "SalesActivity", id }],
     }),
 
     // 5) Update
-    updateSalesActivity: build.mutation<void, Pick<SalesActivity, 'id'> & Partial<SalesActivity>>({
+    updateSalesActivity: build.mutation<
+      void,
+      Pick<SalesActivity, "id"> & Partial<SalesActivity>
+    >({
       query: ({ id, ...patch }) => ({
         url: `SalesActivity/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SalesActivityService.util.updateQueryData('getSalesActivity', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            SalesActivityService.util.updateQueryData(
+              "getSalesActivity",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [
-        { type: 'SalesActivity', id },
-        { type: 'SalesActivity', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<SalesActivity, "id">) => [
+        { type: "SalesActivity", id },
+        { type: "SalesActivity", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteSalesActivity: build.mutation<{ success: boolean; id: string }, number>({
+    deleteSalesActivity: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `SalesActivity/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'SalesActivity', id }],
+      invalidatesTags: (result, error, id) => [{ type: "SalesActivity", id }],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetSalesActivitysPagedQuery`
 export const {
-  useGetSalesActivitysPagedQuery,     // immediate fetch
+  useGetSalesActivitysPagedQuery, // immediate fetch
   useLazyGetSalesActivitysPagedQuery, // lazy fetch
   useGetSalesActivityQuery,
   useGetSalesActivitysQuery,
   useAddSalesActivityMutation,
   useUpdateSalesActivityMutation,
   useDeleteSalesActivityMutation,
-} = SalesActivityService
+} = SalesActivityService;

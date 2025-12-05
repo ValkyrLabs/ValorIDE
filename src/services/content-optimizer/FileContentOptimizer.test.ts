@@ -6,17 +6,24 @@ describe("FileContentOptimizer", () => {
   describe("optimizeFileContent", () => {
     it("should return content as-is for small files", async () => {
       const content = "Small file content";
-      const result = await FileContentOptimizer.optimizeFileContent("test.js", content);
-      
+      const result = await FileContentOptimizer.optimizeFileContent(
+        "test.js",
+        content,
+      );
+
       result.should.equal(content);
     });
 
     it("should truncate large content intelligently", async () => {
       const longContent = "A".repeat(15000);
-      const result = await FileContentOptimizer.optimizeFileContent("test.txt", longContent, {
-        maxContentLength: 1000
-      });
-      
+      const result = await FileContentOptimizer.optimizeFileContent(
+        "test.txt",
+        longContent,
+        {
+          maxContentLength: 1000,
+        },
+      );
+
       result.length.should.be.lessThan(1100);
       result.should.containEql("[Content truncated...]");
     });
@@ -36,25 +43,33 @@ function Component2() {
 export { Component1, Component2 };
       `.repeat(100); // Make it large
 
-      const result = await FileContentOptimizer.optimizeFileContent("test.tsx", largeSourceContent, {
-        maxFileSize: 1000,
-        extractOnlyRelevant: true
-      });
-      
-      result.should.containEql("[File is large - showing relevant portions only]");
+      const result = await FileContentOptimizer.optimizeFileContent(
+        "test.tsx",
+        largeSourceContent,
+        {
+          maxFileSize: 1000,
+          extractOnlyRelevant: true,
+        },
+      );
+
+      result.should.containEql(
+        "[File is large - showing relevant portions only]",
+      );
     });
   });
 
   describe("shouldOptimizeFile", () => {
     it("should return false for non-existent files", async () => {
-      const result = await FileContentOptimizer.shouldOptimizeFile("non-existent.txt");
+      const result =
+        await FileContentOptimizer.shouldOptimizeFile("non-existent.txt");
       result.should.be.false();
     });
   });
 
   describe("getFileSummary", () => {
     it("should return error message for non-existent files", async () => {
-      const result = await FileContentOptimizer.getFileSummary("non-existent.txt");
+      const result =
+        await FileContentOptimizer.getFileSummary("non-existent.txt");
       result.should.containEql("Error reading file");
     });
   });
@@ -76,8 +91,11 @@ function test3() {
       `;
 
       // Access private method through any cast for testing
-      const result = (FileContentOptimizer as any).truncateIntelligently(content, { maxContentLength: 80 });
-      
+      const result = (FileContentOptimizer as any).truncateIntelligently(
+        content,
+        { maxContentLength: 80 },
+      );
+
       result.should.containEql("[Content truncated...]");
       // Should truncate at a logical boundary (end of function)
       result.should.not.containEql("function test3");
@@ -99,8 +117,11 @@ function another() {
       `;
 
       // Access private method for testing
-      const result = (FileContentOptimizer as any).findLogicalTruncatePoint(content, 60);
-      
+      const result = (FileContentOptimizer as any).findLogicalTruncatePoint(
+        content,
+        60,
+      );
+
       // Should find a point after the first function's closing brace
       const truncatedContent = content.substring(0, result);
       truncatedContent.should.containEql("function test()");
@@ -116,8 +137,11 @@ Second paragraph with more content.
 Third paragraph.
       `;
 
-      const result = (FileContentOptimizer as any).findLogicalTruncatePoint(content, 50);
-      
+      const result = (FileContentOptimizer as any).findLogicalTruncatePoint(
+        content,
+        50,
+      );
+
       // Should find a paragraph break
       const truncatedContent = content.substring(0, result);
       truncatedContent.should.containEql("First paragraph");
@@ -139,9 +163,14 @@ Normal line 4
       `;
 
       // Access private method for testing
-      const result = (FileContentOptimizer as any).extractByPatterns(content, {});
-      
-      result.should.containEql("[File is large - showing relevant portions only]");
+      const result = (FileContentOptimizer as any).extractByPatterns(
+        content,
+        {},
+      );
+
+      result.should.containEql(
+        "[File is large - showing relevant portions only]",
+      );
       result.should.containEql("ERROR: Something went wrong");
       result.should.containEql("TODO: Fix this later");
       result.should.containEql("function testFunction()");
@@ -154,8 +183,10 @@ ERROR: Test error
 Line 3
       `;
 
-      const result = (FileContentOptimizer as any).extractByPatterns(content, { includeLineNumbers: true });
-      
+      const result = (FileContentOptimizer as any).extractByPatterns(content, {
+        includeLineNumbers: true,
+      });
+
       result.should.match(/\d+: ERROR: Test error/);
     });
   });
@@ -171,8 +202,10 @@ Another different line
       `;
 
       // Access private method for testing
-      const result = (FileContentOptimizer as any).summarizeRepetitiveOutput(content);
-      
+      const result = (FileContentOptimizer as any).summarizeRepetitiveOutput(
+        content,
+      );
+
       result.should.containEql("Different line");
       result.should.containEql("Same line");
       result.should.containEql("[Previous line repeated 2 times]");
@@ -189,8 +222,10 @@ Line 2
 Line 3
       `;
 
-      const result = (FileContentOptimizer as any).summarizeRepetitiveOutput(content);
-      
+      const result = (FileContentOptimizer as any).summarizeRepetitiveOutput(
+        content,
+      );
+
       result.should.containEql("Line 1");
       result.should.containEql("Line 2");
       result.should.containEql("[Previous line repeated 1 times]");
@@ -201,17 +236,17 @@ Line 3
   describe("isSourceCodeFile", () => {
     it("should identify source code files correctly", () => {
       const isSourceCode = (FileContentOptimizer as any).isSourceCodeFile;
-      
-      isSourceCode('.js').should.be.true();
-      isSourceCode('.ts').should.be.true();
-      isSourceCode('.tsx').should.be.true();
-      isSourceCode('.py').should.be.true();
-      isSourceCode('.java').should.be.true();
-      isSourceCode('.cpp').should.be.true();
-      
-      isSourceCode('.txt').should.be.false();
-      isSourceCode('.md').should.be.false();
-      isSourceCode('.json').should.be.false();
+
+      isSourceCode(".js").should.be.true();
+      isSourceCode(".ts").should.be.true();
+      isSourceCode(".tsx").should.be.true();
+      isSourceCode(".py").should.be.true();
+      isSourceCode(".java").should.be.true();
+      isSourceCode(".cpp").should.be.true();
+
+      isSourceCode(".txt").should.be.false();
+      isSourceCode(".md").should.be.false();
+      isSourceCode(".json").should.be.false();
     });
   });
 });

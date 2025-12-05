@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,103 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // WorkflowExecution
 
-export const FETCH_WORKFLOWEXECUTION_REQUEST = 'FETCH_WORKFLOWEXECUTION_REQUEST';
-export const FETCH_WORKFLOWEXECUTION_SUCCESS = 'FETCH_WORKFLOWEXECUTION_SUCCESS';
-export const FETCH_WORKFLOWEXECUTION_FAILURE = 'FETCH_WORKFLOWEXECUTION_FAILURE';
+export const FETCH_WORKFLOWEXECUTION_REQUEST =
+  "FETCH_WORKFLOWEXECUTION_REQUEST";
+export const FETCH_WORKFLOWEXECUTION_SUCCESS =
+  "FETCH_WORKFLOWEXECUTION_SUCCESS";
+export const FETCH_WORKFLOWEXECUTION_FAILURE =
+  "FETCH_WORKFLOWEXECUTION_FAILURE";
 
-export const ADD_WORKFLOWEXECUTION_REQUEST = 'ADD_WORKFLOWEXECUTION_REQUEST';
-export const ADD_WORKFLOWEXECUTION_SUCCESS = 'ADD_WORKFLOWEXECUTION_SUCCESS';
-export const ADD_WORKFLOWEXECUTION_FAILURE = 'ADD_WORKFLOWEXECUTION_FAILURE';
+export const ADD_WORKFLOWEXECUTION_REQUEST = "ADD_WORKFLOWEXECUTION_REQUEST";
+export const ADD_WORKFLOWEXECUTION_SUCCESS = "ADD_WORKFLOWEXECUTION_SUCCESS";
+export const ADD_WORKFLOWEXECUTION_FAILURE = "ADD_WORKFLOWEXECUTION_FAILURE";
 
-export const UPDATE_WORKFLOWEXECUTION_REQUEST = 'UPDATE_WORKFLOWEXECUTION_REQUEST';
-export const UPDATE_WORKFLOWEXECUTION_SUCCESS = 'UPDATE_WORKFLOWEXECUTION_SUCCESS';
-export const UPDATE_WORKFLOWEXECUTION_FAILURE = 'UPDATE_WORKFLOWEXECUTION_FAILURE';
+export const UPDATE_WORKFLOWEXECUTION_REQUEST =
+  "UPDATE_WORKFLOWEXECUTION_REQUEST";
+export const UPDATE_WORKFLOWEXECUTION_SUCCESS =
+  "UPDATE_WORKFLOWEXECUTION_SUCCESS";
+export const UPDATE_WORKFLOWEXECUTION_FAILURE =
+  "UPDATE_WORKFLOWEXECUTION_FAILURE";
 
-export const DELETE_WORKFLOWEXECUTION_REQUEST = 'DELETE_WORKFLOWEXECUTION_REQUEST';
-export const DELETE_WORKFLOWEXECUTION_SUCCESS = 'DELETE_WORKFLOWEXECUTION_SUCCESS';
-export const DELETE_WORKFLOWEXECUTION_FAILURE = 'DELETE_WORKFLOWEXECUTION_FAILURE';
+export const DELETE_WORKFLOWEXECUTION_REQUEST =
+  "DELETE_WORKFLOWEXECUTION_REQUEST";
+export const DELETE_WORKFLOWEXECUTION_SUCCESS =
+  "DELETE_WORKFLOWEXECUTION_SUCCESS";
+export const DELETE_WORKFLOWEXECUTION_FAILURE =
+  "DELETE_WORKFLOWEXECUTION_FAILURE";
 
-export const LIST_WORKFLOWEXECUTION_REQUEST = 'LIST_WORKFLOWEXECUTION_REQUEST';
-export const LIST_WORKFLOWEXECUTION_SUCCESS = 'LIST_WORKFLOWEXECUTION_SUCCESS';
-export const LIST_WORKFLOWEXECUTION_FAILURE = 'LIST_WORKFLOWEXECUTION_FAILURE';
+export const LIST_WORKFLOWEXECUTION_REQUEST = "LIST_WORKFLOWEXECUTION_REQUEST";
+export const LIST_WORKFLOWEXECUTION_SUCCESS = "LIST_WORKFLOWEXECUTION_SUCCESS";
+export const LIST_WORKFLOWEXECUTION_FAILURE = "LIST_WORKFLOWEXECUTION_FAILURE";
 
 export const addWorkflowExecutionRequest = () => ({
-    type: ADD_WORKFLOWEXECUTION_REQUEST,
+  type: ADD_WORKFLOWEXECUTION_REQUEST,
 });
 
 export const addWorkflowExecutionSuccess = (WorkflowExecutions: any) => ({
-    type: ADD_WORKFLOWEXECUTION_SUCCESS,
-    payload: WorkflowExecutions,
+  type: ADD_WORKFLOWEXECUTION_SUCCESS,
+  payload: WorkflowExecutions,
 });
 
 export const addWorkflowExecutionFailure = (error: Error) => ({
-    type: ADD_WORKFLOWEXECUTION_FAILURE,
-    payload: error,
+  type: ADD_WORKFLOWEXECUTION_FAILURE,
+  payload: error,
 });
 
-
 export const fetchWorkflowExecutionRequest = () => ({
-    type: FETCH_WORKFLOWEXECUTION_REQUEST,
+  type: FETCH_WORKFLOWEXECUTION_REQUEST,
 });
 
 export const fetchWorkflowExecutionSuccess = (WorkflowExecutions: any) => ({
-    type: FETCH_WORKFLOWEXECUTION_SUCCESS,
-    payload: WorkflowExecutions,
+  type: FETCH_WORKFLOWEXECUTION_SUCCESS,
+  payload: WorkflowExecutions,
 });
 
 export const fetchWorkflowExecutionFailure = (error: Error) => ({
-    type: FETCH_WORKFLOWEXECUTION_FAILURE,
-    payload: error,
+  type: FETCH_WORKFLOWEXECUTION_FAILURE,
+  payload: error,
 });
 
 export const listWorkflowExecutionRequest = () => ({
-    type: LIST_WORKFLOWEXECUTION_REQUEST,
+  type: LIST_WORKFLOWEXECUTION_REQUEST,
 });
 
 export const listWorkflowExecutionSuccess = (WorkflowExecutions: any) => ({
-    type: LIST_WORKFLOWEXECUTION_SUCCESS,
-    payload: WorkflowExecutions,
+  type: LIST_WORKFLOWEXECUTION_SUCCESS,
+  payload: WorkflowExecutions,
 });
 
 export const listWorkflowExecutionFailure = (error: Error) => ({
-    type: LIST_WORKFLOWEXECUTION_FAILURE,
-    payload: error,
+  type: LIST_WORKFLOWEXECUTION_FAILURE,
+  payload: error,
 });
 
 export const updateWorkflowExecutionRequest = (WorkflowExecution: any) => ({
-    type: UPDATE_WORKFLOWEXECUTION_REQUEST,
-    payload: WorkflowExecution,
+  type: UPDATE_WORKFLOWEXECUTION_REQUEST,
+  payload: WorkflowExecution,
 });
 
 export const updateWorkflowExecutionSuccess = (WorkflowExecution: any) => ({
-    type: UPDATE_WORKFLOWEXECUTION_SUCCESS,
-    payload: WorkflowExecution,
+  type: UPDATE_WORKFLOWEXECUTION_SUCCESS,
+  payload: WorkflowExecution,
 });
 
 export const updateWorkflowExecutionFailure = (error: Error) => ({
-    type: UPDATE_WORKFLOWEXECUTION_FAILURE,
-    payload: error,
+  type: UPDATE_WORKFLOWEXECUTION_FAILURE,
+  payload: error,
 });
 
 export const deleteWorkflowExecutionRequest = (WorkflowExecution: any) => ({
-    type: DELETE_WORKFLOWEXECUTION_REQUEST,
-    payload: WorkflowExecution,
+  type: DELETE_WORKFLOWEXECUTION_REQUEST,
+  payload: WorkflowExecution,
 });
 
 export const deleteWorkflowExecutionSuccess = (WorkflowExecution: any) => ({
-    type: DELETE_WORKFLOWEXECUTION_SUCCESS,
-    payload: WorkflowExecution,
+  type: DELETE_WORKFLOWEXECUTION_SUCCESS,
+  payload: WorkflowExecution,
 });
 
 export const deleteWorkflowExecutionFailure = (error: Error) => ({
-    type: DELETE_WORKFLOWEXECUTION_FAILURE,
-    payload: error,
+  type: DELETE_WORKFLOWEXECUTION_FAILURE,
+  payload: error,
 });

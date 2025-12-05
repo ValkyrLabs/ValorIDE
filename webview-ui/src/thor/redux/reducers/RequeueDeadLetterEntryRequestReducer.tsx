@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { RequeueDeadLetterEntryRequest } from '@thor/model/RequeueDeadLetterEntryRequest';
+import { RequeueDeadLetterEntryRequest } from "@thor/model/RequeueDeadLetterEntryRequest";
 
 const RequeueDeadLetterEntryRequestSlice = createSlice({
   name: "RequeueDeadLetterEntryRequests",
@@ -12,20 +12,28 @@ const RequeueDeadLetterEntryRequestSlice = createSlice({
     },
 
     RequeueDeadLetterEntryRequestValueToggled(state, action) {
-      console.log("RequeueDeadLetterEntryRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const RequeueDeadLetterEntryRequest:RequeueDeadLetterEntryRequest = state.find((RequeueDeadLetterEntryRequest) => RequeueDeadLetterEntryRequest.id === action.payload.RequeueDeadLetterEntryRequestId);
+      console.log("RequeueDeadLetterEntryRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const RequeueDeadLetterEntryRequest: RequeueDeadLetterEntryRequest =
+        state.find(
+          (RequeueDeadLetterEntryRequest) =>
+            RequeueDeadLetterEntryRequest.id ===
+            action.payload.RequeueDeadLetterEntryRequestId,
+        );
       if (RequeueDeadLetterEntryRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     RequeueDeadLetterEntryRequestpropertySet(state, action) {
-      const RequeueDeadLetterEntryRequest = state.find((RequeueDeadLetterEntryRequest) => RequeueDeadLetterEntryRequest.id === action.payload.RequeueDeadLetterEntryRequestId);
+      const RequeueDeadLetterEntryRequest = state.find(
+        (RequeueDeadLetterEntryRequest) =>
+          RequeueDeadLetterEntryRequest.id ===
+          action.payload.RequeueDeadLetterEntryRequestId,
+      );
       if (RequeueDeadLetterEntryRequest) {
-      //  RequeueDeadLetterEntryRequest[action.property] = action.payload[action.property];
+        //  RequeueDeadLetterEntryRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +42,6 @@ const RequeueDeadLetterEntryRequestSlice = createSlice({
 export const {
   RequeueDeadLetterEntryRequestAdded,
   RequeueDeadLetterEntryRequestValueToggled,
-  RequeueDeadLetterEntryRequestpropertySet
+  RequeueDeadLetterEntryRequestpropertySet,
 } = RequeueDeadLetterEntryRequestSlice.actions;
 export default RequeueDeadLetterEntryRequestSlice.reducer;

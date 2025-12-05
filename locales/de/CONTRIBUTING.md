@@ -21,7 +21,6 @@ Wenn du planst, an einer größeren Funktion zu arbeiten, erstelle bitte zuerst 
 ## Entwicklungsumgebung einrichten
 
 1. **VS Code Erweiterungen**
-
    - Beim Öffnen des Projekts wird VS Code dich auffordern, die empfohlenen Erweiterungen zu installieren
    - Diese Erweiterungen sind für die Entwicklung erforderlich, bitte akzeptiere alle Installationsanfragen
    - Wenn du die Anfragen abgelehnt hast, kannst du sie manuell im Erweiterungsbereich installieren
@@ -36,13 +35,11 @@ Wenn du planst, an einer größeren Funktion zu arbeiten, erstelle bitte zuerst 
 Jeder kann Code zu ValorIDE beitragen, aber wir bitten dich, diese Richtlinien zu befolgen, um sicherzustellen, dass deine Beiträge reibungslos integriert werden:
 
 1. **Pull Requests fokussiert halten**
-
    - Begrenze PRs auf eine einzelne Funktion oder Fehlerbehebung
    - Teile größere Änderungen in kleinere, kohärente PRs auf
    - Teile Änderungen in logische Commits auf, die unabhängig überprüft werden können
 
 2. **Codequalität**
-
    - Führe `npm run lint` aus, um den Code-Stil zu überprüfen
    - Führe `npm run format` aus, um den Code automatisch zu formatieren
    - Alle PRs müssen die CI-Prüfungen bestehen, die Linting und Formatierung umfassen
@@ -50,20 +47,17 @@ Jeder kann Code zu ValorIDE beitragen, aber wir bitten dich, diese Richtlinien z
    - Befolge die Best Practices für TypeScript und halte die Typensicherheit ein
 
 3. **Tests**
-
    - Füge Tests für neue Funktionen hinzu
    - Führe `npm test` aus, um sicherzustellen, dass alle Tests bestehen
    - Aktualisiere bestehende Tests, wenn deine Änderungen sie beeinflussen
    - Füge sowohl Unit- als auch Integrationstests hinzu, wo es angebracht ist
 
 4. **Commit-Richtlinien**
-
    - Schreibe klare und beschreibende Commit-Nachrichten
    - Verwende das konventionelle Commit-Format (z.B. "feat:", "fix:", "docs:")
    - Verweise auf relevante Issues in den Commits mit #Issue-Nummer
 
 5. **Vor dem Einreichen**
-
    - Rebase deinen Branch mit dem neuesten Main
    - Stelle sicher, dass dein Branch korrekt gebaut wird
    - Überprüfe, dass alle Tests bestehen

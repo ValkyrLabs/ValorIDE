@@ -135,7 +135,7 @@ export const bedrockModels = {
         supportsPromptCache: true, // assume prompt cache is supported
         inputPrice: 3.0, //  per million input tokens
         outputPrice: 15.0, //  per million output tokens
-        description: 'Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)',
+        description: "Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)",
     },
     "anthropic.claude-3-7-sonnet-20250219-v1:0": {
         maxTokens: 8192,
@@ -231,7 +231,7 @@ export const vertexModels = {
         supportsPromptCache: true, // assume prompt cache is supported
         inputPrice: 3.0, //  per million input tokens
         outputPrice: 15.0, //  per million output tokens
-        description: 'Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)',
+        description: "Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)",
     },
     "claude-3-7-sonnet@20250219": {
         maxTokens: 8192,
@@ -418,8 +418,25 @@ export const openAiModelInfoSaneDefaults = {
     outputPrice: 0,
     temperature: 0,
 };
-export const geminiDefaultModelId = "gemini-2.0-flash-001";
+export const geminiDefaultModelId = "gemini-3-pro-preview";
 export const geminiModels = {
+    "gemini-3-pro-preview": {
+        maxTokens: 65_536, // 64k output
+        contextWindow: 1_048_576, // 1M input
+        supportsImages: true,
+        supportsPromptCache: false,
+        inputPriceTiers: [
+            { tokenLimit: 200_000, price: 2.0 }, // <= 200k input tokens
+            { tokenLimit: Infinity, price: 4.0 }, //  > 200k input tokens
+        ],
+        outputPriceTiers: [
+            { tokenLimit: 200_000, price: 12.0 }, // <= 200k output tokens
+            { tokenLimit: Infinity, price: 18.0 }, //  > 200k output tokens
+        ],
+        // Optional: if you want to mirror Cline’s thinking-level UI,
+        // you'll control that via ApiHandlerOptions (planMode / actMode),
+        // not via this ModelInfo.
+    },
     "gemini-2.5-flash-lite": {
         maxTokens: 65536,
         contextWindow: 1_048_576,
@@ -589,7 +606,7 @@ export const openAiNativeModels = {
         outputPrice: 0,
         cacheReadsPrice: 0,
     },
-    "o3": {
+    o3: {
         maxTokens: 100_000,
         contextWindow: 200_000,
         supportsImages: true,
@@ -644,7 +661,7 @@ export const openAiNativeModels = {
         cacheReadsPrice: 0.55,
     },
     // don't support tool use yet
-    "o1": {
+    o1: {
         maxTokens: 100_000,
         contextWindow: 200_000,
         supportsImages: true,

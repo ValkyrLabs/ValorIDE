@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // FileVersion
 
-export const FETCH_FILEVERSION_REQUEST = 'FETCH_FILEVERSION_REQUEST';
-export const FETCH_FILEVERSION_SUCCESS = 'FETCH_FILEVERSION_SUCCESS';
-export const FETCH_FILEVERSION_FAILURE = 'FETCH_FILEVERSION_FAILURE';
+export const FETCH_FILEVERSION_REQUEST = "FETCH_FILEVERSION_REQUEST";
+export const FETCH_FILEVERSION_SUCCESS = "FETCH_FILEVERSION_SUCCESS";
+export const FETCH_FILEVERSION_FAILURE = "FETCH_FILEVERSION_FAILURE";
 
-export const ADD_FILEVERSION_REQUEST = 'ADD_FILEVERSION_REQUEST';
-export const ADD_FILEVERSION_SUCCESS = 'ADD_FILEVERSION_SUCCESS';
-export const ADD_FILEVERSION_FAILURE = 'ADD_FILEVERSION_FAILURE';
+export const ADD_FILEVERSION_REQUEST = "ADD_FILEVERSION_REQUEST";
+export const ADD_FILEVERSION_SUCCESS = "ADD_FILEVERSION_SUCCESS";
+export const ADD_FILEVERSION_FAILURE = "ADD_FILEVERSION_FAILURE";
 
-export const UPDATE_FILEVERSION_REQUEST = 'UPDATE_FILEVERSION_REQUEST';
-export const UPDATE_FILEVERSION_SUCCESS = 'UPDATE_FILEVERSION_SUCCESS';
-export const UPDATE_FILEVERSION_FAILURE = 'UPDATE_FILEVERSION_FAILURE';
+export const UPDATE_FILEVERSION_REQUEST = "UPDATE_FILEVERSION_REQUEST";
+export const UPDATE_FILEVERSION_SUCCESS = "UPDATE_FILEVERSION_SUCCESS";
+export const UPDATE_FILEVERSION_FAILURE = "UPDATE_FILEVERSION_FAILURE";
 
-export const DELETE_FILEVERSION_REQUEST = 'DELETE_FILEVERSION_REQUEST';
-export const DELETE_FILEVERSION_SUCCESS = 'DELETE_FILEVERSION_SUCCESS';
-export const DELETE_FILEVERSION_FAILURE = 'DELETE_FILEVERSION_FAILURE';
+export const DELETE_FILEVERSION_REQUEST = "DELETE_FILEVERSION_REQUEST";
+export const DELETE_FILEVERSION_SUCCESS = "DELETE_FILEVERSION_SUCCESS";
+export const DELETE_FILEVERSION_FAILURE = "DELETE_FILEVERSION_FAILURE";
 
-export const LIST_FILEVERSION_REQUEST = 'LIST_FILEVERSION_REQUEST';
-export const LIST_FILEVERSION_SUCCESS = 'LIST_FILEVERSION_SUCCESS';
-export const LIST_FILEVERSION_FAILURE = 'LIST_FILEVERSION_FAILURE';
+export const LIST_FILEVERSION_REQUEST = "LIST_FILEVERSION_REQUEST";
+export const LIST_FILEVERSION_SUCCESS = "LIST_FILEVERSION_SUCCESS";
+export const LIST_FILEVERSION_FAILURE = "LIST_FILEVERSION_FAILURE";
 
 export const addFileVersionRequest = () => ({
-    type: ADD_FILEVERSION_REQUEST,
+  type: ADD_FILEVERSION_REQUEST,
 });
 
 export const addFileVersionSuccess = (FileVersions: any) => ({
-    type: ADD_FILEVERSION_SUCCESS,
-    payload: FileVersions,
+  type: ADD_FILEVERSION_SUCCESS,
+  payload: FileVersions,
 });
 
 export const addFileVersionFailure = (error: Error) => ({
-    type: ADD_FILEVERSION_FAILURE,
-    payload: error,
+  type: ADD_FILEVERSION_FAILURE,
+  payload: error,
 });
 
-
 export const fetchFileVersionRequest = () => ({
-    type: FETCH_FILEVERSION_REQUEST,
+  type: FETCH_FILEVERSION_REQUEST,
 });
 
 export const fetchFileVersionSuccess = (FileVersions: any) => ({
-    type: FETCH_FILEVERSION_SUCCESS,
-    payload: FileVersions,
+  type: FETCH_FILEVERSION_SUCCESS,
+  payload: FileVersions,
 });
 
 export const fetchFileVersionFailure = (error: Error) => ({
-    type: FETCH_FILEVERSION_FAILURE,
-    payload: error,
+  type: FETCH_FILEVERSION_FAILURE,
+  payload: error,
 });
 
 export const listFileVersionRequest = () => ({
-    type: LIST_FILEVERSION_REQUEST,
+  type: LIST_FILEVERSION_REQUEST,
 });
 
 export const listFileVersionSuccess = (FileVersions: any) => ({
-    type: LIST_FILEVERSION_SUCCESS,
-    payload: FileVersions,
+  type: LIST_FILEVERSION_SUCCESS,
+  payload: FileVersions,
 });
 
 export const listFileVersionFailure = (error: Error) => ({
-    type: LIST_FILEVERSION_FAILURE,
-    payload: error,
+  type: LIST_FILEVERSION_FAILURE,
+  payload: error,
 });
 
 export const updateFileVersionRequest = (FileVersion: any) => ({
-    type: UPDATE_FILEVERSION_REQUEST,
-    payload: FileVersion,
+  type: UPDATE_FILEVERSION_REQUEST,
+  payload: FileVersion,
 });
 
 export const updateFileVersionSuccess = (FileVersion: any) => ({
-    type: UPDATE_FILEVERSION_SUCCESS,
-    payload: FileVersion,
+  type: UPDATE_FILEVERSION_SUCCESS,
+  payload: FileVersion,
 });
 
 export const updateFileVersionFailure = (error: Error) => ({
-    type: UPDATE_FILEVERSION_FAILURE,
-    payload: error,
+  type: UPDATE_FILEVERSION_FAILURE,
+  payload: error,
 });
 
 export const deleteFileVersionRequest = (FileVersion: any) => ({
-    type: DELETE_FILEVERSION_REQUEST,
-    payload: FileVersion,
+  type: DELETE_FILEVERSION_REQUEST,
+  payload: FileVersion,
 });
 
 export const deleteFileVersionSuccess = (FileVersion: any) => ({
-    type: DELETE_FILEVERSION_SUCCESS,
-    payload: FileVersion,
+  type: DELETE_FILEVERSION_SUCCESS,
+  payload: FileVersion,
 });
 
 export const deleteFileVersionFailure = (error: Error) => ({
-    type: DELETE_FILEVERSION_FAILURE,
-    payload: error,
+  type: DELETE_FILEVERSION_FAILURE,
+  payload: error,
 });

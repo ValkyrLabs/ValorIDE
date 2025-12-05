@@ -1,0 +1,401 @@
+.earnings-dashboard {
+  padding: 24px;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a3f 100%);
+  border-radius: 12px;
+  color: #fff;
+}
+
+.dashboard-header {
+  margin-bottom: 28px;
+  border-bottom: 2px solid rgba(100, 200, 255, 0.2);
+  padding-bottom: 20px;
+}
+
+.dashboard-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #64c8ff 0%, #fff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dashboard-subtitle {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 40px 20px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 16px;
+}
+
+.error-message {
+  padding: 14px 18px;
+  background: rgba(255, 68, 68, 0.1);
+  border: 1px solid rgba(255, 68, 68, 0.4);
+  border-radius: 8px;
+  color: #ff6b6b;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* Total Earnings Card */
+.earnings-card {
+  background: linear-gradient(
+    135deg,
+    rgba(100, 200, 255, 0.15) 0%,
+    rgba(100, 200, 255, 0.05) 100%
+  );
+  border: 2px solid rgba(100, 200, 255, 0.3);
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 28px;
+  transition: all 0.3s ease;
+}
+
+.earnings-card:hover {
+  border-color: rgba(100, 200, 255, 0.6);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(100, 200, 255, 0.15);
+}
+
+.card-content h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+
+.total-amount {
+  font-size: 48px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #64c8ff 0%, #fff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 8px 0;
+}
+
+.card-subtitle {
+  margin: 8px 0 0 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+}
+
+/* Monthly Section */
+.monthly-section {
+  margin-bottom: 32px;
+}
+
+.month-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.nav-btn {
+  padding: 8px 16px;
+  background: rgba(100, 200, 255, 0.2);
+  border: 1px solid rgba(100, 200, 255, 0.4);
+  border-radius: 6px;
+  color: #64c8ff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+  background: rgba(100, 200, 255, 0.3);
+  border-color: rgba(100, 200, 255, 0.6);
+}
+
+.month-input {
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(100, 200, 255, 0.3);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.month-input:focus {
+  outline: none;
+  border-color: rgba(100, 200, 255, 0.8);
+}
+
+.monthly-card {
+  background: rgba(100, 200, 255, 0.08);
+  border: 1px solid rgba(100, 200, 255, 0.2);
+  border-radius: 10px;
+  padding: 24px;
+}
+
+.month-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(100, 200, 255, 0.1);
+}
+
+.month-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.payout-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-paid {
+  background: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+  border: 1px solid rgba(76, 175, 80, 0.4);
+}
+
+.status-pending {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.4);
+}
+
+.status-processing {
+  background: rgba(33, 150, 243, 0.2);
+  color: #2196f3;
+  border: 1px solid rgba(33, 150, 243, 0.4);
+}
+
+.status-failed {
+  background: rgba(244, 67, 54, 0.2);
+  color: #f44336;
+  border: 1px solid rgba(244, 67, 54, 0.4);
+}
+
+.monthly-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.stat-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(100, 200, 255, 0.15);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.stat-label {
+  display: block;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #64c8ff;
+}
+
+.payout-info {
+  padding: 12px 16px;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 6px;
+  color: #4caf50;
+  font-size: 13px;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px 20px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Services Section */
+.services-section {
+  margin-bottom: 32px;
+}
+
+.services-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.service-card {
+  background: rgba(100, 200, 255, 0.08);
+  border: 1px solid rgba(100, 200, 255, 0.2);
+  border-radius: 10px;
+  padding: 16px;
+  transition: all 0.3s ease;
+}
+
+.service-card:hover {
+  border-color: rgba(100, 200, 255, 0.5);
+  background: rgba(100, 200, 255, 0.12);
+}
+
+.service-card h4 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.service-details {
+  margin-bottom: 12px;
+}
+
+.service-status {
+  margin: 8px 0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  background: rgba(100, 200, 255, 0.3);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #64c8ff;
+}
+
+.service-price {
+  margin: 8px 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.service-price strong {
+  color: #64c8ff;
+}
+
+.service-date {
+  margin: 8px 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.view-analytics-btn {
+  width: 100%;
+  padding: 8px 12px;
+  background: rgba(100, 200, 255, 0.2);
+  border: 1px solid rgba(100, 200, 255, 0.4);
+  border-radius: 6px;
+  color: #64c8ff;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.view-analytics-btn:hover {
+  background: rgba(100, 200, 255, 0.3);
+  border-color: rgba(100, 200, 255, 0.6);
+}
+
+.no-services {
+  text-align: center;
+  padding: 40px 20px;
+  background: rgba(100, 200, 255, 0.05);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Payout Section */
+.payout-section {
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 2px solid rgba(100, 200, 255, 0.1);
+}
+
+.payout-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.payout-card {
+  background: rgba(100, 200, 255, 0.08);
+  border: 1px solid rgba(100, 200, 255, 0.2);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.payout-card p {
+  margin: 0;
+  flex: 1;
+}
+
+.payout-card p:first-child {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.payout-card .secondary {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-secondary {
+  background: rgba(100, 200, 255, 0.2);
+  border: 1px solid rgba(100, 200, 255, 0.4);
+  color: #64c8ff;
+}
+
+.btn-secondary:hover {
+  background: rgba(100, 200, 255, 0.3);
+  border-color: rgba(100, 200, 255, 0.6);
+}
+
+.minimum-notice {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+  border-radius: 6px;
+  font-size: 12px;
+  color: rgba(255, 193, 7, 0.9);
+}

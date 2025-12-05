@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // SheetRow
 
-export const FETCH_SHEETROW_REQUEST = 'FETCH_SHEETROW_REQUEST';
-export const FETCH_SHEETROW_SUCCESS = 'FETCH_SHEETROW_SUCCESS';
-export const FETCH_SHEETROW_FAILURE = 'FETCH_SHEETROW_FAILURE';
+export const FETCH_SHEETROW_REQUEST = "FETCH_SHEETROW_REQUEST";
+export const FETCH_SHEETROW_SUCCESS = "FETCH_SHEETROW_SUCCESS";
+export const FETCH_SHEETROW_FAILURE = "FETCH_SHEETROW_FAILURE";
 
-export const ADD_SHEETROW_REQUEST = 'ADD_SHEETROW_REQUEST';
-export const ADD_SHEETROW_SUCCESS = 'ADD_SHEETROW_SUCCESS';
-export const ADD_SHEETROW_FAILURE = 'ADD_SHEETROW_FAILURE';
+export const ADD_SHEETROW_REQUEST = "ADD_SHEETROW_REQUEST";
+export const ADD_SHEETROW_SUCCESS = "ADD_SHEETROW_SUCCESS";
+export const ADD_SHEETROW_FAILURE = "ADD_SHEETROW_FAILURE";
 
-export const UPDATE_SHEETROW_REQUEST = 'UPDATE_SHEETROW_REQUEST';
-export const UPDATE_SHEETROW_SUCCESS = 'UPDATE_SHEETROW_SUCCESS';
-export const UPDATE_SHEETROW_FAILURE = 'UPDATE_SHEETROW_FAILURE';
+export const UPDATE_SHEETROW_REQUEST = "UPDATE_SHEETROW_REQUEST";
+export const UPDATE_SHEETROW_SUCCESS = "UPDATE_SHEETROW_SUCCESS";
+export const UPDATE_SHEETROW_FAILURE = "UPDATE_SHEETROW_FAILURE";
 
-export const DELETE_SHEETROW_REQUEST = 'DELETE_SHEETROW_REQUEST';
-export const DELETE_SHEETROW_SUCCESS = 'DELETE_SHEETROW_SUCCESS';
-export const DELETE_SHEETROW_FAILURE = 'DELETE_SHEETROW_FAILURE';
+export const DELETE_SHEETROW_REQUEST = "DELETE_SHEETROW_REQUEST";
+export const DELETE_SHEETROW_SUCCESS = "DELETE_SHEETROW_SUCCESS";
+export const DELETE_SHEETROW_FAILURE = "DELETE_SHEETROW_FAILURE";
 
-export const LIST_SHEETROW_REQUEST = 'LIST_SHEETROW_REQUEST';
-export const LIST_SHEETROW_SUCCESS = 'LIST_SHEETROW_SUCCESS';
-export const LIST_SHEETROW_FAILURE = 'LIST_SHEETROW_FAILURE';
+export const LIST_SHEETROW_REQUEST = "LIST_SHEETROW_REQUEST";
+export const LIST_SHEETROW_SUCCESS = "LIST_SHEETROW_SUCCESS";
+export const LIST_SHEETROW_FAILURE = "LIST_SHEETROW_FAILURE";
 
 export const addSheetRowRequest = () => ({
-    type: ADD_SHEETROW_REQUEST,
+  type: ADD_SHEETROW_REQUEST,
 });
 
 export const addSheetRowSuccess = (SheetRows: any) => ({
-    type: ADD_SHEETROW_SUCCESS,
-    payload: SheetRows,
+  type: ADD_SHEETROW_SUCCESS,
+  payload: SheetRows,
 });
 
 export const addSheetRowFailure = (error: Error) => ({
-    type: ADD_SHEETROW_FAILURE,
-    payload: error,
+  type: ADD_SHEETROW_FAILURE,
+  payload: error,
 });
 
-
 export const fetchSheetRowRequest = () => ({
-    type: FETCH_SHEETROW_REQUEST,
+  type: FETCH_SHEETROW_REQUEST,
 });
 
 export const fetchSheetRowSuccess = (SheetRows: any) => ({
-    type: FETCH_SHEETROW_SUCCESS,
-    payload: SheetRows,
+  type: FETCH_SHEETROW_SUCCESS,
+  payload: SheetRows,
 });
 
 export const fetchSheetRowFailure = (error: Error) => ({
-    type: FETCH_SHEETROW_FAILURE,
-    payload: error,
+  type: FETCH_SHEETROW_FAILURE,
+  payload: error,
 });
 
 export const listSheetRowRequest = () => ({
-    type: LIST_SHEETROW_REQUEST,
+  type: LIST_SHEETROW_REQUEST,
 });
 
 export const listSheetRowSuccess = (SheetRows: any) => ({
-    type: LIST_SHEETROW_SUCCESS,
-    payload: SheetRows,
+  type: LIST_SHEETROW_SUCCESS,
+  payload: SheetRows,
 });
 
 export const listSheetRowFailure = (error: Error) => ({
-    type: LIST_SHEETROW_FAILURE,
-    payload: error,
+  type: LIST_SHEETROW_FAILURE,
+  payload: error,
 });
 
 export const updateSheetRowRequest = (SheetRow: any) => ({
-    type: UPDATE_SHEETROW_REQUEST,
-    payload: SheetRow,
+  type: UPDATE_SHEETROW_REQUEST,
+  payload: SheetRow,
 });
 
 export const updateSheetRowSuccess = (SheetRow: any) => ({
-    type: UPDATE_SHEETROW_SUCCESS,
-    payload: SheetRow,
+  type: UPDATE_SHEETROW_SUCCESS,
+  payload: SheetRow,
 });
 
 export const updateSheetRowFailure = (error: Error) => ({
-    type: UPDATE_SHEETROW_FAILURE,
-    payload: error,
+  type: UPDATE_SHEETROW_FAILURE,
+  payload: error,
 });
 
 export const deleteSheetRowRequest = (SheetRow: any) => ({
-    type: DELETE_SHEETROW_REQUEST,
-    payload: SheetRow,
+  type: DELETE_SHEETROW_REQUEST,
+  payload: SheetRow,
 });
 
 export const deleteSheetRowSuccess = (SheetRow: any) => ({
-    type: DELETE_SHEETROW_SUCCESS,
-    payload: SheetRow,
+  type: DELETE_SHEETROW_SUCCESS,
+  payload: SheetRow,
 });
 
 export const deleteSheetRowFailure = (error: Error) => ({
-    type: DELETE_SHEETROW_FAILURE,
-    payload: error,
+  type: DELETE_SHEETROW_FAILURE,
+  payload: error,
 });

@@ -23,10 +23,14 @@ export class StartupAuthService {
     this.tokenStorage = TokenStorageService.getInstance(context);
   }
 
-  public static getInstance(context?: vscode.ExtensionContext): StartupAuthService {
+  public static getInstance(
+    context?: vscode.ExtensionContext,
+  ): StartupAuthService {
     if (!StartupAuthService.instance) {
       if (!context) {
-        throw new Error("StartupAuthService requires context for initialization");
+        throw new Error(
+          "StartupAuthService requires context for initialization",
+        );
       }
       StartupAuthService.instance = new StartupAuthService(context);
     }
@@ -41,7 +45,8 @@ export class StartupAuthService {
       Logger.log("Attempting to restore authentication from stored tokens...");
 
       // Check if auth persistence is enabled
-      const persistenceEnabled = await this.tokenStorage.isAuthPersistenceEnabled();
+      const persistenceEnabled =
+        await this.tokenStorage.isAuthPersistenceEnabled();
       if (!persistenceEnabled) {
         Logger.log("Authentication persistence is disabled");
         return { success: false, error: "Authentication persistence disabled" };
@@ -57,31 +62,43 @@ export class StartupAuthService {
       Logger.log("Found stored authentication tokens, validating...");
 
       // Validate tokens with backend
-      const validation = await this.tokenStorage.validateTokens(storedAuth.tokens);
+      const validation = await this.tokenStorage.validateTokens(
+        storedAuth.tokens,
+      );
       if (!validation.valid) {
         // Try to refresh tokens if we have a refresh token
         if (storedAuth.tokens.refreshToken) {
           Logger.log("Tokens invalid, attempting to refresh...");
-          const refreshedTokens = await this.tokenStorage.refreshTokens(storedAuth.tokens.refreshToken);
-          
+          const refreshedTokens = await this.tokenStorage.refreshTokens(
+            storedAuth.tokens.refreshToken,
+          );
+
           if (refreshedTokens) {
             Logger.log("Tokens refreshed successfully");
-            
+
             // Store refreshed tokens
-            await this.tokenStorage.storeAuthTokens(refreshedTokens, storedAuth.user);
-            
+            await this.tokenStorage.storeAuthTokens(
+              refreshedTokens,
+              storedAuth.user,
+            );
+
             // Update extension state with refreshed auth
-            await this.updateExtensionAuthState(refreshedTokens, storedAuth.user);
-            
+            await this.updateExtensionAuthState(
+              refreshedTokens,
+              storedAuth.user,
+            );
+
             return {
               success: true,
               tokens: refreshedTokens,
-              user: storedAuth.user
+              user: storedAuth.user,
             };
           }
         }
 
-        Logger.log("Token validation failed and refresh not possible, clearing stored tokens");
+        Logger.log(
+          "Token validation failed and refresh not possible, clearing stored tokens",
+        );
         await this.tokenStorage.clearStoredTokens();
         return { success: false, error: "Invalid tokens" };
       }
@@ -89,18 +106,21 @@ export class StartupAuthService {
       Logger.log("Stored tokens are valid, restoring authentication state");
 
       // Update extension state with validated auth
-      await this.updateExtensionAuthState(storedAuth.tokens, validation.user || storedAuth.user);
+      await this.updateExtensionAuthState(
+        storedAuth.tokens,
+        validation.user || storedAuth.user,
+      );
 
       return {
         success: true,
         tokens: storedAuth.tokens,
-        user: validation.user || storedAuth.user
+        user: validation.user || storedAuth.user,
       };
-
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       Logger.log(`Error during authentication restoration: ${errorMessage}`);
-      
+
       // Clear potentially corrupted tokens
       try {
         await this.tokenStorage.clearStoredTokens();
@@ -115,7 +135,10 @@ export class StartupAuthService {
   /**
    * Update extension state with authenticated user info
    */
-  private async updateExtensionAuthState(tokens: any, user: any): Promise<void> {
+  private async updateExtensionAuthState(
+    tokens: any,
+    user: any,
+  ): Promise<void> {
     try {
       // Store tokens in VSCode secrets for other services
       await storeSecret(this.context, "jwtToken", tokens.jwtToken);
@@ -160,10 +183,14 @@ export class StartupAuthService {
   async handleLogout(): Promise<void> {
     try {
       await this.tokenStorage.clearStoredTokens();
-      
+
       // Clear extension state
       await updateGlobalState(this.context, "userInfo", undefined);
-      await updateGlobalState(this.context, "authenticatedPrincipal", undefined);
+      await updateGlobalState(
+        this.context,
+        "authenticatedPrincipal",
+        undefined,
+      );
       await updateGlobalState(this.context, "isLoggedIn", false);
       await storeSecret(this.context, "jwtToken", undefined);
       await storeSecret(this.context, "valorideApiKey", undefined);
@@ -185,7 +212,9 @@ export class StartupAuthService {
         return false;
       }
 
-      const validation = await this.tokenStorage.validateTokens(storedAuth.tokens);
+      const validation = await this.tokenStorage.validateTokens(
+        storedAuth.tokens,
+      );
       return validation.valid;
     } catch {
       return false;
@@ -202,7 +231,9 @@ export class StartupAuthService {
         return null;
       }
 
-      const validation = await this.tokenStorage.validateTokens(storedAuth.tokens);
+      const validation = await this.tokenStorage.validateTokens(
+        storedAuth.tokens,
+      );
       if (!validation.valid) {
         return null;
       }

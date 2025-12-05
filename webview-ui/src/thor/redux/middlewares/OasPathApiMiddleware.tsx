@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +14,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_OASPATH_REQUEST,
-    FETCH_OASPATH_REQUEST,
-    LIST_OASPATH_REQUEST,
-    UPDATE_OASPATH_REQUEST,
-    DELETE_OASPATH_REQUEST,
-
-    addOasPathFailure,
-    addOasPathSuccess,
-
-    fetchOasPathFailure,
-    fetchOasPathSuccess,
-    
-    listOasPathFailure,
-    listOasPathSuccess,
-
-    updateOasPathFailure,
-    updateOasPathSuccess,
-    
-    deleteOasPathFailure,
-    deleteOasPathSuccess,
-    
-} from '../actions/OasPathApiAction';
+  ADD_OASPATH_REQUEST,
+  FETCH_OASPATH_REQUEST,
+  LIST_OASPATH_REQUEST,
+  UPDATE_OASPATH_REQUEST,
+  DELETE_OASPATH_REQUEST,
+  addOasPathFailure,
+  addOasPathSuccess,
+  fetchOasPathFailure,
+  fetchOasPathSuccess,
+  listOasPathFailure,
+  listOasPathSuccess,
+  updateOasPathFailure,
+  updateOasPathSuccess,
+  deleteOasPathFailure,
+  deleteOasPathSuccess,
+} from "../actions/OasPathApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +48,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: OasPath
 */
 
-
-
-export const OasPathMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("OasPath MIDDLEWARE: " + JSON.stringify(action) )
+export const OasPathMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("OasPath MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

@@ -1,8 +1,22 @@
-import { WebsocketMessage, WebsocketMessageTypeEnum, WebsocketMessageToJSON } from "@thor/model";
-import { MothershipService, RemoteCommand } from "../../../src/services/communication/MothershipService";
+import {
+  WebsocketMessage,
+  WebsocketMessageTypeEnum,
+  WebsocketMessageToJSON,
+} from "@thor/model";
+import {
+  MothershipService,
+  RemoteCommand,
+} from "../../../src/services/communication/MothershipService";
 
 export interface ChatAction {
-  type: 'chat_message' | 'task_start' | 'task_complete' | 'tool_use' | 'file_edit' | 'command_execute' | 'api_data';
+  type:
+    | "chat_message"
+    | "task_start"
+    | "task_complete"
+    | "tool_use"
+    | "file_edit"
+    | "command_execute"
+    | "api_data";
   taskId?: string;
   messageId?: string;
   toolName?: string;
@@ -35,7 +49,7 @@ export class ValorIDEMothershipIntegration {
 
   constructor(mothershipService: MothershipService | null) {
     this.mothershipService = mothershipService;
-    
+
     if (mothershipService) {
       this.setupEventListeners();
     }
@@ -54,12 +68,12 @@ export class ValorIDEMothershipIntegration {
     if (!this.mothershipService) return;
 
     // Listen for remote commands from other ValorIDE instances or ValkyrAI agents
-    this.mothershipService.on('remoteCommand', (command: RemoteCommand) => {
+    this.mothershipService.on("remoteCommand", (command: RemoteCommand) => {
       this.handleRemoteCommand(command);
     });
 
     // Listen for broadcast messages
-    this.mothershipService.on('broadcast', (payload: any) => {
+    this.mothershipService.on("broadcast", (payload: any) => {
       this.handleBroadcastMessage(payload);
     });
   }
@@ -68,32 +82,32 @@ export class ValorIDEMothershipIntegration {
    * Send a ValorIDE action to the mothership using command protocol
    */
   public async sendChatAction(action: ChatAction): Promise<void> {
-    console.log('🚀 sendChatAction called with:', action);
+    console.log("🚀 sendChatAction called with:", action);
     this.updateLastActivity();
 
     // Debug connection status
     const isConnected = this.mothershipService?.isConnected();
     const instanceId = this.mothershipService?.getInstanceId();
-    console.log('🚀 Mothership service status:', { 
+    console.log("🚀 Mothership service status:", {
       hasService: !!this.mothershipService,
       isConnected,
       instanceId,
-      queueLength: this.actionQueue.length
+      queueLength: this.actionQueue.length,
     });
 
     if (!isConnected) {
       // Queue the action for when connection is restored
       this.actionQueue.push(action);
-      console.warn('🚀 Mothership not connected, queuing action:', action.type);
+      console.warn("🚀 Mothership not connected, queuing action:", action.type);
       return;
     }
 
     try {
       // Use command type for mothership protocol communication
       const message: WebsocketMessage = {
-        type: 'command' as any, // Using command type as specified for mothership protocol
+        type: "command" as any, // Using command type as specified for mothership protocol
         payload: JSON.stringify({
-          source: 'valoride',
+          source: "valoride",
           command: action.type,
           taskId: action.taskId || this.currentState.currentTaskId,
           data: {
@@ -111,24 +125,27 @@ export class ValorIDEMothershipIntegration {
         time: new Date().toISOString(),
       };
 
-      console.log('🚀 Sending message to mothership:', {
+      console.log("🚀 Sending message to mothership:", {
         messageType: message.type,
         payloadLength: message.payload?.length,
         actionType: action.type,
         taskId: action.taskId,
-        messagePreview: message.payload?.substring(0, 200) + '...'
+        messagePreview: message.payload?.substring(0, 200) + "...",
       });
 
       // Actually send the message
       const result = this.mothershipService.sendMessage(message);
-      console.log('🚀 sendMessage result:', result);
-      console.log('🚀 Successfully sent ValorIDE command to mothership:', action.type);
+      console.log("🚀 sendMessage result:", result);
+      console.log(
+        "🚀 Successfully sent ValorIDE command to mothership:",
+        action.type,
+      );
     } catch (error) {
-      console.error('🚀 Failed to send chat action to mothership:', error);
-      console.error('🚀 Error details:', {
+      console.error("🚀 Failed to send chat action to mothership:", error);
+      console.error("🚀 Error details:", {
         errorMessage: error?.message,
         errorStack: error?.stack,
-        actionType: action.type
+        actionType: action.type,
       });
     }
   }
@@ -137,57 +154,58 @@ export class ValorIDEMothershipIntegration {
    * Handle remote commands from mothership or other ValorIDE instances
    */
   private handleRemoteCommand(command: RemoteCommand): void {
-    console.log('Processing remote command:', command);
+    console.log("Processing remote command:", command);
 
     try {
-      const payload = typeof command.payload === 'string' 
-        ? JSON.parse(command.payload) 
-        : command.payload;
+      const payload =
+        typeof command.payload === "string"
+          ? JSON.parse(command.payload)
+          : command.payload;
 
       switch (command.type) {
-        case 'execute_tool':
+        case "execute_tool":
           this.handleRemoteToolExecution(payload);
           break;
-        case 'open_file':
+        case "open_file":
           this.handleRemoteFileOpen(payload);
           break;
-        case 'send_message':
+        case "send_message":
           this.handleRemoteMessage(payload);
           break;
-        case 'sync_state':
+        case "sync_state":
           this.handleStateSyncRequest(payload);
           break;
-        case 'task_coordination':
+        case "task_coordination":
           this.handleTaskCoordination(payload);
           break;
-        case 'remote_chat_message':
+        case "remote_chat_message":
           this.handleRemoteChatMessage(payload);
           break;
-        case 'remote_api_command':
+        case "remote_api_command":
           this.handleRemoteApiCommand(payload);
           break;
-        case 'cross_instance_chat':
+        case "cross_instance_chat":
           this.handleCrossInstanceChat(payload);
           break;
         default:
-          console.warn('Unknown remote command type:', command.type);
+          console.warn("Unknown remote command type:", command.type);
           // Forward to extension for handling
           this.forwardToExtension({
-            type: 'remoteCommand',
+            type: "remoteCommand",
             command,
           });
       }
     } catch (error) {
-      console.error('Error handling remote command:', error);
+      console.error("Error handling remote command:", error);
     }
   }
 
   private handleRemoteToolExecution(payload: any): void {
-    console.log('Remote tool execution requested:', payload);
-    
+    console.log("Remote tool execution requested:", payload);
+
     // Forward to the VS Code extension
     this.forwardToExtension({
-      type: 'executeRemoteTool',
+      type: "executeRemoteTool",
       toolName: payload.toolName,
       arguments: payload.arguments,
       taskId: payload.taskId,
@@ -195,10 +213,10 @@ export class ValorIDEMothershipIntegration {
   }
 
   private handleRemoteFileOpen(payload: any): void {
-    console.log('Remote file open requested:', payload);
-    
+    console.log("Remote file open requested:", payload);
+
     this.forwardToExtension({
-      type: 'openFile',
+      type: "openFile",
       filePath: payload.filePath,
       line: payload.line,
       column: payload.column,
@@ -206,11 +224,11 @@ export class ValorIDEMothershipIntegration {
   }
 
   private handleRemoteMessage(payload: any): void {
-    console.log('Remote message received:', payload);
-    
+    console.log("Remote message received:", payload);
+
     // Display the message in the chat interface
     this.forwardToExtension({
-      type: 'displayRemoteMessage',
+      type: "displayRemoteMessage",
       message: payload.message,
       sender: payload.sender,
       priority: payload.priority,
@@ -220,7 +238,7 @@ export class ValorIDEMothershipIntegration {
   private handleStateSyncRequest(payload: any): void {
     // Send current state to requesting instance
     this.sendChatAction({
-      type: 'task_start', // Use existing type for state sync
+      type: "task_start", // Use existing type for state sync
       metadata: {
         syncResponse: true,
         requestId: payload.requestId,
@@ -230,12 +248,12 @@ export class ValorIDEMothershipIntegration {
   }
 
   private handleTaskCoordination(payload: any): void {
-    console.log('Task coordination message:', payload);
-    
-    if (payload.action === 'task_handoff') {
+    console.log("Task coordination message:", payload);
+
+    if (payload.action === "task_handoff") {
       this.currentState.currentTaskId = payload.taskId;
       this.forwardToExtension({
-        type: 'taskHandoff',
+        type: "taskHandoff",
         taskId: payload.taskId,
         description: payload.description,
         fromInstanceId: payload.fromInstanceId,
@@ -244,11 +262,11 @@ export class ValorIDEMothershipIntegration {
   }
 
   private handleBroadcastMessage(payload: any): void {
-    console.log('Broadcast message received:', payload);
-    
-    if (payload.type === 'system_announcement') {
+    console.log("Broadcast message received:", payload);
+
+    if (payload.type === "system_announcement") {
       this.forwardToExtension({
-        type: 'systemAnnouncement',
+        type: "systemAnnouncement",
         message: payload.message,
         level: payload.level,
       });
@@ -259,16 +277,19 @@ export class ValorIDEMothershipIntegration {
    * Handle remote chat messages from other ValorIDE instances or ValkyrAI
    */
   private handleRemoteChatMessage(payload: any): void {
-    console.log('Remote chat message received:', payload);
-    
+    console.log("Remote chat message received:", payload);
+
     // Inject remote chat message into current chat interface
-    if (typeof window !== 'undefined' && (window as any).valorideDispatchChatAction) {
-      (window as any).valorideDispatchChatAction('remote-message', {
+    if (
+      typeof window !== "undefined" &&
+      (window as any).valorideDispatchChatAction
+    ) {
+      (window as any).valorideDispatchChatAction("remote-message", {
         text: payload.message,
         sender: payload.sender,
         instanceId: payload.instanceId,
         timestamp: payload.timestamp,
-        taskId: payload.taskId
+        taskId: payload.taskId,
       });
     }
   }
@@ -277,46 +298,54 @@ export class ValorIDEMothershipIntegration {
    * Handle remote API control commands (e.g., trigger new API calls, modify responses)
    */
   private handleRemoteApiCommand(payload: any): void {
-    console.log('Remote API command received:', payload);
-    
+    console.log("Remote API command received:", payload);
+
     switch (payload.apiAction) {
-      case 'inject_response':
+      case "inject_response":
         // Inject synthetic API response into the chat stream
-        if (typeof window !== 'undefined' && (window as any).valorideDispatchChatAction) {
-          (window as any).valorideDispatchChatAction('api-data', {
-            type: 'stream_chunk',
+        if (
+          typeof window !== "undefined" &&
+          (window as any).valorideDispatchChatAction
+        ) {
+          (window as any).valorideDispatchChatAction("api-data", {
+            type: "stream_chunk",
             data: {
-              choices: [{
-                delta: {
-                  content: payload.content,
-                  role: 'assistant'
-                }
-              }]
+              choices: [
+                {
+                  delta: {
+                    content: payload.content,
+                    role: "assistant",
+                  },
+                },
+              ],
             },
             timestamp: Date.now(),
-            source: 'remote_control'
+            source: "remote_control",
           });
         }
         break;
-        
-      case 'trigger_api_call':
+
+      case "trigger_api_call":
         // Trigger new API call with specified parameters
         this.forwardToExtension({
-          type: 'triggerRemoteApiCall',
+          type: "triggerRemoteApiCall",
           model: payload.model,
           messages: payload.messages,
           taskId: payload.taskId,
         });
         break;
-        
-      case 'modify_stream':
+
+      case "modify_stream":
         // Modify ongoing stream with new content
-        if (typeof window !== 'undefined' && (window as any).valorideDispatchChatAction) {
-          (window as any).valorideDispatchChatAction('api-data', {
-            type: 'stream_chunk',
+        if (
+          typeof window !== "undefined" &&
+          (window as any).valorideDispatchChatAction
+        ) {
+          (window as any).valorideDispatchChatAction("api-data", {
+            type: "stream_chunk",
             data: payload.streamData,
             timestamp: Date.now(),
-            source: 'remote_modification'
+            source: "remote_modification",
           });
         }
         break;
@@ -327,11 +356,11 @@ export class ValorIDEMothershipIntegration {
    * Handle cross-instance chat between multiple ValorIDE instances
    */
   private handleCrossInstanceChat(payload: any): void {
-    console.log('Cross-instance chat message:', payload);
-    
+    console.log("Cross-instance chat message:", payload);
+
     // Display chat message from another ValorIDE instance in current interface
     this.forwardToExtension({
-      type: 'displayCrossInstanceMessage',
+      type: "displayCrossInstanceMessage",
       message: payload.message,
       fromInstance: payload.fromInstance,
       timestamp: payload.timestamp,
@@ -343,7 +372,7 @@ export class ValorIDEMothershipIntegration {
     try {
       (window as any).vscode?.postMessage(message);
     } catch (error) {
-      console.error('Failed to forward message to extension:', error);
+      console.error("Failed to forward message to extension:", error);
     }
   }
 
@@ -353,32 +382,38 @@ export class ValorIDEMothershipIntegration {
     }
 
     this.isProcessingQueue = true;
-    console.log('🚀 Processing action queue:', `${this.actionQueue.length} queued actions`);
+    console.log(
+      "🚀 Processing action queue:",
+      `${this.actionQueue.length} queued actions`,
+    );
 
-    while (this.actionQueue.length > 0 && this.mothershipService?.isConnected()) {
+    while (
+      this.actionQueue.length > 0 &&
+      this.mothershipService?.isConnected()
+    ) {
       const action = this.actionQueue.shift();
       if (action) {
-        console.log('🚀 Processing queued action:', action.type);
+        console.log("🚀 Processing queued action:", action.type);
         await this.sendChatAction(action);
         // Small delay to avoid overwhelming the connection
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
     }
 
     this.isProcessingQueue = false;
-    console.log('🚀 Finished processing action queue');
+    console.log("🚀 Finished processing action queue");
   }
 
   /**
    * Update current task context
    */
   public setCurrentTask(taskId: string): void {
-    console.log('🚀 Setting current task:', taskId);
+    console.log("🚀 Setting current task:", taskId);
     this.currentState.currentTaskId = taskId;
     this.sendChatAction({
-      type: 'task_start',
+      type: "task_start",
       taskId,
-      metadata: { action: 'task_context_update' },
+      metadata: { action: "task_context_update" },
     });
   }
 
@@ -401,13 +436,17 @@ export class ValorIDEMothershipIntegration {
   /**
    * Send remote command to another ValorIDE instance or ValkyrAI
    */
-  public sendRemoteCommand(targetInstanceId: string, type: string, data: any): void {
+  public sendRemoteCommand(
+    targetInstanceId: string,
+    type: string,
+    data: any,
+  ): void {
     if (!this.mothershipService?.isConnected()) {
-      console.warn('Cannot send remote command - mothership not connected');
+      console.warn("Cannot send remote command - mothership not connected");
       return;
     }
 
-    const command: Omit<RemoteCommand, 'sourceInstanceId'> = {
+    const command: Omit<RemoteCommand, "sourceInstanceId"> = {
       id: Math.random().toString(36).substring(2, 15),
       type,
       payload: data,
@@ -422,14 +461,14 @@ export class ValorIDEMothershipIntegration {
    */
   public broadcastToAll(type: string, data: any): void {
     if (!this.mothershipService?.isConnected()) {
-      console.warn('Cannot broadcast - mothership not connected');
+      console.warn("Cannot broadcast - mothership not connected");
       return;
     }
 
     this.mothershipService.sendMessage({
       type: WebsocketMessageTypeEnum.BROADCAST,
       payload: JSON.stringify({
-        source: 'valoride',
+        source: "valoride",
         type,
         data,
         instanceId: this.mothershipService.getInstanceId(),

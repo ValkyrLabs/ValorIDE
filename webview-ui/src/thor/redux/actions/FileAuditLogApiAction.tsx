@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // FileAuditLog
 
-export const FETCH_FILEAUDITLOG_REQUEST = 'FETCH_FILEAUDITLOG_REQUEST';
-export const FETCH_FILEAUDITLOG_SUCCESS = 'FETCH_FILEAUDITLOG_SUCCESS';
-export const FETCH_FILEAUDITLOG_FAILURE = 'FETCH_FILEAUDITLOG_FAILURE';
+export const FETCH_FILEAUDITLOG_REQUEST = "FETCH_FILEAUDITLOG_REQUEST";
+export const FETCH_FILEAUDITLOG_SUCCESS = "FETCH_FILEAUDITLOG_SUCCESS";
+export const FETCH_FILEAUDITLOG_FAILURE = "FETCH_FILEAUDITLOG_FAILURE";
 
-export const ADD_FILEAUDITLOG_REQUEST = 'ADD_FILEAUDITLOG_REQUEST';
-export const ADD_FILEAUDITLOG_SUCCESS = 'ADD_FILEAUDITLOG_SUCCESS';
-export const ADD_FILEAUDITLOG_FAILURE = 'ADD_FILEAUDITLOG_FAILURE';
+export const ADD_FILEAUDITLOG_REQUEST = "ADD_FILEAUDITLOG_REQUEST";
+export const ADD_FILEAUDITLOG_SUCCESS = "ADD_FILEAUDITLOG_SUCCESS";
+export const ADD_FILEAUDITLOG_FAILURE = "ADD_FILEAUDITLOG_FAILURE";
 
-export const UPDATE_FILEAUDITLOG_REQUEST = 'UPDATE_FILEAUDITLOG_REQUEST';
-export const UPDATE_FILEAUDITLOG_SUCCESS = 'UPDATE_FILEAUDITLOG_SUCCESS';
-export const UPDATE_FILEAUDITLOG_FAILURE = 'UPDATE_FILEAUDITLOG_FAILURE';
+export const UPDATE_FILEAUDITLOG_REQUEST = "UPDATE_FILEAUDITLOG_REQUEST";
+export const UPDATE_FILEAUDITLOG_SUCCESS = "UPDATE_FILEAUDITLOG_SUCCESS";
+export const UPDATE_FILEAUDITLOG_FAILURE = "UPDATE_FILEAUDITLOG_FAILURE";
 
-export const DELETE_FILEAUDITLOG_REQUEST = 'DELETE_FILEAUDITLOG_REQUEST';
-export const DELETE_FILEAUDITLOG_SUCCESS = 'DELETE_FILEAUDITLOG_SUCCESS';
-export const DELETE_FILEAUDITLOG_FAILURE = 'DELETE_FILEAUDITLOG_FAILURE';
+export const DELETE_FILEAUDITLOG_REQUEST = "DELETE_FILEAUDITLOG_REQUEST";
+export const DELETE_FILEAUDITLOG_SUCCESS = "DELETE_FILEAUDITLOG_SUCCESS";
+export const DELETE_FILEAUDITLOG_FAILURE = "DELETE_FILEAUDITLOG_FAILURE";
 
-export const LIST_FILEAUDITLOG_REQUEST = 'LIST_FILEAUDITLOG_REQUEST';
-export const LIST_FILEAUDITLOG_SUCCESS = 'LIST_FILEAUDITLOG_SUCCESS';
-export const LIST_FILEAUDITLOG_FAILURE = 'LIST_FILEAUDITLOG_FAILURE';
+export const LIST_FILEAUDITLOG_REQUEST = "LIST_FILEAUDITLOG_REQUEST";
+export const LIST_FILEAUDITLOG_SUCCESS = "LIST_FILEAUDITLOG_SUCCESS";
+export const LIST_FILEAUDITLOG_FAILURE = "LIST_FILEAUDITLOG_FAILURE";
 
 export const addFileAuditLogRequest = () => ({
-    type: ADD_FILEAUDITLOG_REQUEST,
+  type: ADD_FILEAUDITLOG_REQUEST,
 });
 
 export const addFileAuditLogSuccess = (FileAuditLogs: any) => ({
-    type: ADD_FILEAUDITLOG_SUCCESS,
-    payload: FileAuditLogs,
+  type: ADD_FILEAUDITLOG_SUCCESS,
+  payload: FileAuditLogs,
 });
 
 export const addFileAuditLogFailure = (error: Error) => ({
-    type: ADD_FILEAUDITLOG_FAILURE,
-    payload: error,
+  type: ADD_FILEAUDITLOG_FAILURE,
+  payload: error,
 });
 
-
 export const fetchFileAuditLogRequest = () => ({
-    type: FETCH_FILEAUDITLOG_REQUEST,
+  type: FETCH_FILEAUDITLOG_REQUEST,
 });
 
 export const fetchFileAuditLogSuccess = (FileAuditLogs: any) => ({
-    type: FETCH_FILEAUDITLOG_SUCCESS,
-    payload: FileAuditLogs,
+  type: FETCH_FILEAUDITLOG_SUCCESS,
+  payload: FileAuditLogs,
 });
 
 export const fetchFileAuditLogFailure = (error: Error) => ({
-    type: FETCH_FILEAUDITLOG_FAILURE,
-    payload: error,
+  type: FETCH_FILEAUDITLOG_FAILURE,
+  payload: error,
 });
 
 export const listFileAuditLogRequest = () => ({
-    type: LIST_FILEAUDITLOG_REQUEST,
+  type: LIST_FILEAUDITLOG_REQUEST,
 });
 
 export const listFileAuditLogSuccess = (FileAuditLogs: any) => ({
-    type: LIST_FILEAUDITLOG_SUCCESS,
-    payload: FileAuditLogs,
+  type: LIST_FILEAUDITLOG_SUCCESS,
+  payload: FileAuditLogs,
 });
 
 export const listFileAuditLogFailure = (error: Error) => ({
-    type: LIST_FILEAUDITLOG_FAILURE,
-    payload: error,
+  type: LIST_FILEAUDITLOG_FAILURE,
+  payload: error,
 });
 
 export const updateFileAuditLogRequest = (FileAuditLog: any) => ({
-    type: UPDATE_FILEAUDITLOG_REQUEST,
-    payload: FileAuditLog,
+  type: UPDATE_FILEAUDITLOG_REQUEST,
+  payload: FileAuditLog,
 });
 
 export const updateFileAuditLogSuccess = (FileAuditLog: any) => ({
-    type: UPDATE_FILEAUDITLOG_SUCCESS,
-    payload: FileAuditLog,
+  type: UPDATE_FILEAUDITLOG_SUCCESS,
+  payload: FileAuditLog,
 });
 
 export const updateFileAuditLogFailure = (error: Error) => ({
-    type: UPDATE_FILEAUDITLOG_FAILURE,
-    payload: error,
+  type: UPDATE_FILEAUDITLOG_FAILURE,
+  payload: error,
 });
 
 export const deleteFileAuditLogRequest = (FileAuditLog: any) => ({
-    type: DELETE_FILEAUDITLOG_REQUEST,
-    payload: FileAuditLog,
+  type: DELETE_FILEAUDITLOG_REQUEST,
+  payload: FileAuditLog,
 });
 
 export const deleteFileAuditLogSuccess = (FileAuditLog: any) => ({
-    type: DELETE_FILEAUDITLOG_SUCCESS,
-    payload: FileAuditLog,
+  type: DELETE_FILEAUDITLOG_SUCCESS,
+  payload: FileAuditLog,
 });
 
 export const deleteFileAuditLogFailure = (error: Error) => ({
-    type: DELETE_FILEAUDITLOG_FAILURE,
-    payload: error,
+  type: DELETE_FILEAUDITLOG_FAILURE,
+  payload: error,
 });

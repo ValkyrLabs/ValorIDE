@@ -9,7 +9,10 @@ import * as diff from "diff";
 import { diagnosticsToProblemsString, getNewDiagnostics } from "../diagnostics";
 import { detectEncoding } from "../misc/extract-text";
 import * as iconv from "iconv-lite";
-import { FileProcessingConfig, DEFAULT_FILE_PROCESSING_CONFIG } from "@shared/AdvancedSettings";
+import {
+  FileProcessingConfig,
+  DEFAULT_FILE_PROCESSING_CONFIG,
+} from "@shared/AdvancedSettings";
 
 export const DIFF_VIEW_URI_SCHEME = "valoride-diff";
 
@@ -29,8 +32,12 @@ export class DiffViewProvider {
   private fileEncoding: string = "utf8";
   private fileProcessingConfig: FileProcessingConfig;
 
-  constructor(private cwd: string, fileProcessingConfig?: FileProcessingConfig) {
-    this.fileProcessingConfig = fileProcessingConfig || DEFAULT_FILE_PROCESSING_CONFIG;
+  constructor(
+    private cwd: string,
+    fileProcessingConfig?: FileProcessingConfig,
+  ) {
+    this.fileProcessingConfig =
+      fileProcessingConfig || DEFAULT_FILE_PROCESSING_CONFIG;
   }
 
   async open(relPath: string): Promise<void> {
@@ -38,54 +45,77 @@ export class DiffViewProvider {
     const fileExists = this.editType === "modify";
     const absolutePath = path.resolve(this.cwd, relPath);
     this.isEditing = true;
-    
+
     // Check file size and warn if necessary
     if (fileExists && this.fileProcessingConfig.warnLargeFiles) {
       try {
         const stats = await fs.stat(absolutePath);
         const fileSizeBytes = stats.size;
-        
+
         if (fileSizeBytes > this.fileProcessingConfig.maxFileSize) {
           const fileSizeMB = (fileSizeBytes / (1024 * 1024)).toFixed(2);
-          const maxSizeMB = (this.fileProcessingConfig.maxFileSize / (1024 * 1024)).toFixed(2);
-          
+          const maxSizeMB = (
+            this.fileProcessingConfig.maxFileSize /
+            (1024 * 1024)
+          ).toFixed(2);
+
           const result = await vscode.window.showWarningMessage(
             `File "${path.basename(relPath)}" is ${fileSizeMB}MB, which exceeds the maximum size limit of ${maxSizeMB}MB. This may cause performance issues or truncation. Do you want to continue?`,
-            { modal: true, detail: "Select 'Continue and don't warn again' to remember this preference." },
+            {
+              modal: true,
+              detail:
+                "Select 'Continue and don't warn again' to remember this preference.",
+            },
             "Continue",
             "Continue and don't warn again",
             "Cancel",
           );
-          
+
           if (result === "Continue and don't warn again") {
             try {
-              const config = vscode.workspace.getConfiguration('valoride');
-              await config.update('advanced.fileProcessing.warnLargeFiles', false, true);
+              const config = vscode.workspace.getConfiguration("valoride");
+              await config.update(
+                "advanced.fileProcessing.warnLargeFiles",
+                false,
+                true,
+              );
               this.fileProcessingConfig.warnLargeFiles = false;
             } catch (e) {
               // Non-fatal: user preference might not persist (permissions/workspace scope)
-              console.debug('Failed to persist warnLargeFiles=false', e);
+              console.debug("Failed to persist warnLargeFiles=false", e);
             }
           } else if (result !== "Continue") {
-            throw new Error(`File operation cancelled: File size (${fileSizeMB}MB) exceeds limit (${maxSizeMB}MB)`);
+            throw new Error(
+              `File operation cancelled: File size (${fileSizeMB}MB) exceeds limit (${maxSizeMB}MB)`,
+            );
           }
-        } else if (fileSizeBytes > this.fileProcessingConfig.largeFileThreshold) {
+        } else if (
+          fileSizeBytes > this.fileProcessingConfig.largeFileThreshold
+        ) {
           const fileSizeMB = (fileSizeBytes / (1024 * 1024)).toFixed(2);
-          
+
           const result = await vscode.window.showInformationMessage(
             `File "${path.basename(relPath)}" is ${fileSizeMB}MB. Large file processing may take longer than usual.`,
-            { modal: false, detail: "Select 'OK and don't warn again' to remember this preference." },
+            {
+              modal: false,
+              detail:
+                "Select 'OK and don't warn again' to remember this preference.",
+            },
             "OK",
             "OK and don't warn again",
           );
           if (result === "OK and don't warn again") {
             try {
-              const config = vscode.workspace.getConfiguration('valoride');
-              await config.update('advanced.fileProcessing.warnLargeFiles', false, true);
+              const config = vscode.workspace.getConfiguration("valoride");
+              await config.update(
+                "advanced.fileProcessing.warnLargeFiles",
+                false,
+                true,
+              );
               this.fileProcessingConfig.warnLargeFiles = false;
             } catch (e) {
               // Non-fatal: user preference might not persist (permissions/workspace scope)
-              console.debug('Failed to persist warnLargeFiles=false', e);
+              console.debug("Failed to persist warnLargeFiles=false", e);
             }
           }
         }
@@ -94,7 +124,7 @@ export class DiffViewProvider {
         console.warn(`Could not check file size for ${relPath}:`, error);
       }
     }
-    
+
     // if the file is already open, ensure it's not dirty before getting its contents
     if (fileExists) {
       const existingDocument = vscode.workspace.textDocuments.find((doc) =>
@@ -204,7 +234,8 @@ export class DiffViewProvider {
       let contentSnapshot: string;
       if (isFinal) {
         contentSnapshot = accumulatedContent;
-        const originalHadTrailingNewline = this.originalContent?.endsWith("\n") ?? false;
+        const originalHadTrailingNewline =
+          this.originalContent?.endsWith("\n") ?? false;
         if (originalHadTrailingNewline && !contentSnapshot.endsWith("\n")) {
           contentSnapshot += "\n";
           accumulatedContent = contentSnapshot;

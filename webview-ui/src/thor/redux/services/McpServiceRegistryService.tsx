@@ -1,0 +1,144 @@
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { McpServiceRegistry } from "@thor/model/McpServiceRegistry";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+
+type McpServiceRegistryResponse = McpServiceRegistry[];
+
+export const McpServiceRegistryService = createApi({
+  reducerPath: "McpServiceRegistry", // This should remain unique
+  baseQuery: customBaseQuery,
+  tagTypes: ["McpServiceRegistry"],
+  endpoints: (build) => ({
+    // 1) Paged Query Endpoint
+    // Standardized pagination: page (0-based), size (page size)
+    getMcpServiceRegistrysPaged: build.query<
+      McpServiceRegistryResponse,
+      { page: number; size?: number; example?: Partial<McpServiceRegistry> }
+    >({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `McpServiceRegistry?${q.join("&")}`;
+      },
+      providesTags: (result, error, { page }) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "McpServiceRegistry" as const,
+                id,
+              })),
+              { type: "McpServiceRegistry", id: `PAGE_${page}` },
+            ]
+          : [],
+    }),
+
+    // 2) Simple "get all" Query (optional)
+    getMcpServiceRegistrys: build.query<
+      McpServiceRegistryResponse,
+      { example?: Partial<McpServiceRegistry> } | void
+    >({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `McpServiceRegistry?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `McpServiceRegistry`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "McpServiceRegistry" as const,
+                id,
+              })),
+              { type: "McpServiceRegistry", id: "LIST" },
+            ]
+          : [{ type: "McpServiceRegistry", id: "LIST" }],
+    }),
+
+    // 3) Create
+    addMcpServiceRegistry: build.mutation<
+      McpServiceRegistry,
+      Partial<McpServiceRegistry>
+    >({
+      query: (body) => ({
+        url: `McpServiceRegistry`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "McpServiceRegistry", id: "LIST" }],
+    }),
+
+    // 4) Get single by ID
+    getMcpServiceRegistry: build.query<McpServiceRegistry, string>({
+      query: (id) => `McpServiceRegistry/${id}`,
+      providesTags: (result, error, id) => [{ type: "McpServiceRegistry", id }],
+    }),
+
+    // 5) Update
+    updateMcpServiceRegistry: build.mutation<
+      void,
+      Pick<McpServiceRegistry, "id"> & Partial<McpServiceRegistry>
+    >({
+      query: ({ id, ...patch }) => ({
+        url: `McpServiceRegistry/${id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        if (id) {
+          const patchResult = dispatch(
+            McpServiceRegistryService.util.updateQueryData(
+              "getMcpServiceRegistry",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        }
+      },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<McpServiceRegistry, "id">,
+      ) => [
+        { type: "McpServiceRegistry", id },
+        { type: "McpServiceRegistry", id: "LIST" },
+      ],
+    }),
+
+    // 6) Delete
+    deleteMcpServiceRegistry: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
+      query(id) {
+        return {
+          url: `McpServiceRegistry/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, id) => [
+        { type: "McpServiceRegistry", id },
+      ],
+    }),
+  }),
+});
+
+// Notice we now also export `useLazyGetMcpServiceRegistrysPagedQuery`
+export const {
+  useGetMcpServiceRegistrysPagedQuery, // immediate fetch
+  useLazyGetMcpServiceRegistrysPagedQuery, // lazy fetch
+  useGetMcpServiceRegistryQuery,
+  useGetMcpServiceRegistrysQuery,
+  useAddMcpServiceRegistryMutation,
+  useUpdateMcpServiceRegistryMutation,
+  useDeleteMcpServiceRegistryMutation,
+} = McpServiceRegistryService;

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { BackupConfig } from '@thor/model/BackupConfig';
+import { BackupConfig } from "@thor/model/BackupConfig";
 
 const BackupConfigSlice = createSlice({
   name: "BackupConfigs",
@@ -12,20 +12,23 @@ const BackupConfigSlice = createSlice({
     },
 
     BackupConfigValueToggled(state, action) {
-      console.log("BackupConfig TOGGLE")
-      console.warn(JSON.stringify(action))
-      const BackupConfig:BackupConfig = state.find((BackupConfig) => BackupConfig.id === action.payload.BackupConfigId);
+      console.log("BackupConfig TOGGLE");
+      console.warn(JSON.stringify(action));
+      const BackupConfig: BackupConfig = state.find(
+        (BackupConfig) => BackupConfig.id === action.payload.BackupConfigId,
+      );
       if (BackupConfig) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     BackupConfigpropertySet(state, action) {
-      const BackupConfig = state.find((BackupConfig) => BackupConfig.id === action.payload.BackupConfigId);
+      const BackupConfig = state.find(
+        (BackupConfig) => BackupConfig.id === action.payload.BackupConfigId,
+      );
       if (BackupConfig) {
-      //  BackupConfig[action.property] = action.payload[action.property];
+        //  BackupConfig[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +37,6 @@ const BackupConfigSlice = createSlice({
 export const {
   BackupConfigAdded,
   BackupConfigValueToggled,
-  BackupConfigpropertySet
+  BackupConfigpropertySet,
 } = BackupConfigSlice.actions;
 export default BackupConfigSlice.reducer;

@@ -1,4 +1,9 @@
-import { BaseToolHandler, ToolContext, ToolExecutionResult, ToolResponse } from "./BaseToolHandler";
+import {
+  BaseToolHandler,
+  ToolContext,
+  ToolExecutionResult,
+  ToolResponse,
+} from "./BaseToolHandler";
 import { FileToolHandler } from "./FileToolHandler";
 import { CommandToolHandler } from "./CommandToolHandler";
 import { AssistantMessageContent } from "@core/assistant-message";
@@ -9,7 +14,7 @@ export class ToolManager {
 
   constructor(context: ToolContext) {
     this.handlers = new Map();
-    
+
     // Register file operation handlers
     const fileHandler = new FileToolHandler(context);
     this.handlers.set("write_to_file", fileHandler);
@@ -19,7 +24,7 @@ export class ToolManager {
     this.handlers.set("list_files", fileHandler);
     this.handlers.set("list_code_definition_names", fileHandler);
     this.handlers.set("search_files", fileHandler);
-    
+
     // Register command handler
     const commandHandler = new CommandToolHandler(context);
     this.handlers.set("execute_command", commandHandler);
@@ -29,7 +34,7 @@ export class ToolManager {
     block: AssistantMessageContent,
     partial: boolean,
     didRejectTool: boolean,
-    didAlreadyUseTool: boolean
+    didAlreadyUseTool: boolean,
   ): Promise<{
     shouldContinue: boolean;
     toolResponse?: ToolResponse;
@@ -71,7 +76,8 @@ export class ToolManager {
         userRejected: result.userRejected,
         didRejectTool: result.userRejected,
         didAlreadyUseTool:
-          result.didAlreadyUseTool ?? (result.shouldContinue && !result.userRejected),
+          result.didAlreadyUseTool ??
+          (result.shouldContinue && !result.userRejected),
         feedback: result.feedback,
       };
     }

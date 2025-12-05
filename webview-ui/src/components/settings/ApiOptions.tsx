@@ -17,7 +17,12 @@ import {
   useMemo,
   useState,
 } from "react";
-import { FaChevronDown, FaChevronRight, FaCheck, FaTimes } from "react-icons/fa";
+import {
+  FaChevronDown,
+  FaChevronRight,
+  FaCheck,
+  FaTimes,
+} from "react-icons/fa";
 import ThinkingBudgetSlider from "./ThinkingBudgetSlider";
 import { useEvent, useInterval } from "react-use";
 import styled from "styled-components";
@@ -242,7 +247,9 @@ const ApiOptions = ({
         supportsPromptCache: !!m.supportsPromptCache,
         inputPrice: m.inputPrice,
         outputPrice: m.outputPrice,
-        description: m.description || `${m.provider} ${m.name}${m.version ? ` (${m.version})` : ""}`,
+        description:
+          m.description ||
+          `${m.provider} ${m.name}${m.version ? ` (${m.version})` : ""}`,
       } as ModelInfo;
     });
     return models;
@@ -1970,14 +1977,14 @@ const ApiOptions = ({
               selectedModelId === "claude-3-7-sonnet-20250219") ||
               (selectedProvider === "bedrock" &&
                 selectedModelId ===
-                "anthropic.claude-3-7-sonnet-20250219-v1:0") ||
+                  "anthropic.claude-3-7-sonnet-20250219-v1:0") ||
               (selectedProvider === "vertex" &&
                 selectedModelId === "claude-3-7-sonnet@20250219")) && (
-                <ThinkingBudgetSlider
-                  apiConfiguration={apiConfiguration}
-                  setApiConfiguration={setApiConfiguration}
-                />
-              )}
+              <ThinkingBudgetSlider
+                apiConfiguration={apiConfiguration}
+                setApiConfiguration={setApiConfiguration}
+              />
+            )}
 
             {selectedProvider === "xai" &&
               selectedModelId.includes("3-mini") && (

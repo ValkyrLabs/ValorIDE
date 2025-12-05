@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { BaseToolHandler } from "./BaseToolHandler";
+import { BaseToolHandler, } from "./BaseToolHandler";
 import { constructNewFileContent } from "@core/assistant-message/diff";
 import { extractTextFromFile } from "@integrations/misc/extract-text";
 import { listFiles } from "@services/glob/list-files";
@@ -51,7 +51,9 @@ export class FileToolHandler extends BaseToolHandler {
         const relPath = block.params.path?.trim();
         const editsRaw = block.params?.edits;
         const optionsRaw = block.params?.options;
-        if (!relPath || !editsRaw || (typeof editsRaw === "string" && editsRaw.trim().length === 0)) {
+        if (!relPath ||
+            !editsRaw ||
+            (typeof editsRaw === "string" && editsRaw.trim().length === 0)) {
             this.context.consecutiveMistakeCount++;
             return {
                 shouldContinue: true,
@@ -82,7 +84,8 @@ export class FileToolHandler extends BaseToolHandler {
             };
         }
         let options;
-        if (optionsRaw && (!(typeof optionsRaw === "string" && optionsRaw.trim().length === 0))) {
+        if (optionsRaw &&
+            !(typeof optionsRaw === "string" && optionsRaw.trim().length === 0)) {
             try {
                 options =
                     typeof optionsRaw === "string"
@@ -99,10 +102,10 @@ export class FileToolHandler extends BaseToolHandler {
         }
         const pathAccess = this.getPathAccess();
         if (!pathAccess.validateAccess(relPath)) {
-            await this.context.say("valorideignore_error", relPath);
+            const errorText = await this.describePathAccessFailure(relPath, pathAccess);
             return {
                 shouldContinue: true,
-                toolResponse: formatResponse.toolError(formatResponse.valorideIgnoreError(relPath)),
+                toolResponse: formatResponse.toolError(errorText),
             };
         }
         // PSR NEVER requires approval - it's our primary file editing tool
@@ -119,7 +122,7 @@ export class FileToolHandler extends BaseToolHandler {
         await this.context.say("tool", message, undefined, false);
         this.context.consecutiveAutoApprovedRequestsCount++;
         try {
-            const result = await precisionSearchAndReplace(this.context.cwd, relPath, edits, pathAccess, { makeBackup: true, backupDir: ".valor/undo", ...(options ?? {}) });
+            const result = await precisionSearchAndReplace(this.context.cwd, relPath, edits, pathAccess, { makeBackup: true, backupDir: ".valoride/undo", ...(options ?? {}) });
             const showPsrReport = vscode.workspace
                 .getConfiguration("valoride")
                 .get("advanced.debugging.showPsrResultsReport") === true;
@@ -152,7 +155,9 @@ export class FileToolHandler extends BaseToolHandler {
                 telemetryService.captureToolUsage(this.context.taskId, "precision_search_and_replace", autoApproved, false);
                 const dryRunMessage = [
                     `PSR dry-run: ${result.editsApplied}/${result.editsRequested} hunks would apply. Δbytes=${result.bytesDelta}.`,
-                    result.warnings.length ? `Warnings: ${result.warnings.join("; ")}` : undefined,
+                    result.warnings.length
+                        ? `Warnings: ${result.warnings.join("; ")}`
+                        : undefined,
                     result.skipped.length ? `Skipped: ${skippedSummary}` : undefined,
                     "No file was modified.",
                 ]
@@ -195,12 +200,13 @@ export class FileToolHandler extends BaseToolHandler {
         if (!relPath || (!content && !diff)) {
             return { shouldContinue: false }; // wait for more data
         }
-        const accessAllowed = this.getPathAccess().validateAccess(relPath);
+        const pathAccess = this.getPathAccess();
+        const accessAllowed = pathAccess.validateAccess(relPath);
         if (!accessAllowed) {
-            await this.context.say("valorideignore_error", relPath);
+            const errorText = await this.describePathAccessFailure(relPath, pathAccess);
             return {
                 shouldContinue: true,
-                toolResponse: formatResponse.toolError(formatResponse.valorideIgnoreError(relPath))
+                toolResponse: formatResponse.toolError(errorText),
             };
         }
         // Check if file exists using cached map or fs.access
@@ -232,7 +238,8 @@ export class FileToolHandler extends BaseToolHandler {
                 catch (error) {
                     await this.context.say("diff_error", relPath);
                     // Extract error type from error message if possible, or use a generic type
-                    const errorType = error instanceof Error && error.message.includes("does not match anything")
+                    const errorType = error instanceof Error &&
+                        error.message.includes("does not match anything")
                         ? "search_not_found"
                         : "other_diff_error";
                     // Add telemetry for diff edit failure
@@ -277,7 +284,9 @@ export class FileToolHandler extends BaseToolHandler {
                 }
                 else {
                     this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-                    await this.context.ask("tool", partialMessage, partial).catch(() => { });
+                    await this.context
+                        .ask("tool", partialMessage, partial)
+                        .catch(() => { });
                 }
                 // update editor
                 if (!this.context.diffViewProvider.isEditing) {
@@ -292,21 +301,21 @@ export class FileToolHandler extends BaseToolHandler {
                     this.context.consecutiveMistakeCount++;
                     return {
                         shouldContinue: true,
-                        toolResponse: await this.context.sayAndCreateMissingParamError(block.name, "path")
+                        toolResponse: await this.context.sayAndCreateMissingParamError(block.name, "path"),
                     };
                 }
                 if (block.name === "replace_in_file" && !diff) {
                     this.context.consecutiveMistakeCount++;
                     return {
                         shouldContinue: true,
-                        toolResponse: await this.context.sayAndCreateMissingParamError("replace_in_file", "diff")
+                        toolResponse: await this.context.sayAndCreateMissingParamError("replace_in_file", "diff"),
                     };
                 }
                 if (block.name === "write_to_file" && !content) {
                     this.context.consecutiveMistakeCount++;
                     return {
                         shouldContinue: true,
-                        toolResponse: await this.context.sayAndCreateMissingParamError("write_to_file", "content")
+                        toolResponse: await this.context.sayAndCreateMissingParamError("write_to_file", "content"),
                     };
                 }
                 this.context.consecutiveMistakeCount = 0;
@@ -334,10 +343,11 @@ export class FileToolHandler extends BaseToolHandler {
                 }
                 else {
                     // If auto-approval is enabled but this tool wasn't auto-approved, send notification
-                    if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
+                    if (this.context.autoApprovalSettings.enabled &&
+                        this.context.autoApprovalSettings.enableNotifications) {
                         showSystemNotification({
                             subtitle: "Approval Required",
-                            message: `ValorIDE wants to ${fileExists ? "edit" : "create"} ${path.basename(relPath)}`
+                            message: `${fileExists ? "Editing" : "Creating"}: ${path.basename(relPath)}`,
                         });
                     }
                     this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
@@ -355,7 +365,7 @@ export class FileToolHandler extends BaseToolHandler {
                         return {
                             shouldContinue: true,
                             toolResponse: `The user denied this operation. ${fileDeniedNote}`,
-                            userRejected: true
+                            userRejected: true,
                         };
                     }
                     else {
@@ -368,7 +378,7 @@ export class FileToolHandler extends BaseToolHandler {
                 }
                 // Mark the file as edited by ValorIDE to prevent false "recently modified" warnings
                 this.context.fileContextTracker.markFileAsEditedByValorIDE(relPath);
-                const { newProblemsMessage, userEdits, autoFormattingEdits, finalContent } = await this.context.diffViewProvider.saveChanges();
+                const { newProblemsMessage, userEdits, autoFormattingEdits, finalContent, } = await this.context.diffViewProvider.saveChanges();
                 this.context.didEditFile = true; // used to determine if we should wait for busy terminal to update
                 // Track file edit operation
                 await this.context.fileContextTracker.trackFileContext(relPath, "valoride_edited");
@@ -399,7 +409,7 @@ export class FileToolHandler extends BaseToolHandler {
             await this.context.diffViewProvider.reset();
             return {
                 shouldContinue: true,
-                toolResponse: await this.handleError("writing file", error)
+                toolResponse: await this.handleError("writing file", error),
             };
         }
     }
@@ -425,7 +435,9 @@ export class FileToolHandler extends BaseToolHandler {
                 }
                 else {
                     this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-                    await this.context.ask("tool", partialMessage, partial).catch(() => { });
+                    await this.context
+                        .ask("tool", partialMessage, partial)
+                        .catch(() => { });
                 }
                 return { shouldContinue: false };
             }
@@ -434,15 +446,16 @@ export class FileToolHandler extends BaseToolHandler {
                     this.context.consecutiveMistakeCount++;
                     return {
                         shouldContinue: true,
-                        toolResponse: await this.context.sayAndCreateMissingParamError("read_file", "path")
+                        toolResponse: await this.context.sayAndCreateMissingParamError("read_file", "path"),
                     };
                 }
-                const accessAllowed = this.getPathAccess().validateAccess(relPath);
+                const pathAccess = this.getPathAccess();
+                const accessAllowed = pathAccess.validateAccess(relPath);
                 if (!accessAllowed) {
-                    await this.context.say("valorideignore_error", relPath);
+                    const errorText = await this.describePathAccessFailure(relPath, pathAccess);
                     return {
                         shouldContinue: true,
-                        toolResponse: formatResponse.toolError(formatResponse.valorideIgnoreError(relPath))
+                        toolResponse: formatResponse.toolError(errorText),
                     };
                 }
                 this.context.consecutiveMistakeCount = 0;
@@ -459,10 +472,11 @@ export class FileToolHandler extends BaseToolHandler {
                     telemetryService.captureToolUsage(this.context.taskId, block.name, true, true);
                 }
                 else {
-                    if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
+                    if (this.context.autoApprovalSettings.enabled &&
+                        this.context.autoApprovalSettings.enableNotifications) {
                         showSystemNotification({
                             subtitle: "Approval Required",
-                            message: `ValorIDE wants to read ${path.basename(absolutePath)}`
+                            message: `Reading: ${path.basename(absolutePath)}`,
                         });
                     }
                     this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
@@ -483,7 +497,7 @@ export class FileToolHandler extends BaseToolHandler {
         catch (error) {
             return {
                 shouldContinue: true,
-                toolResponse: await this.handleError("reading file", error)
+                toolResponse: await this.handleError("reading file", error),
             };
         }
     }
@@ -511,7 +525,9 @@ export class FileToolHandler extends BaseToolHandler {
                 }
                 else {
                     this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-                    await this.context.ask("tool", partialMessage, partial).catch(() => { });
+                    await this.context
+                        .ask("tool", partialMessage, partial)
+                        .catch(() => { });
                 }
                 return { shouldContinue: false };
             }
@@ -520,17 +536,17 @@ export class FileToolHandler extends BaseToolHandler {
                     this.context.consecutiveMistakeCount++;
                     return {
                         shouldContinue: true,
-                        toolResponse: await this.context.sayAndCreateMissingParamError("list_files", "path")
+                        toolResponse: await this.context.sayAndCreateMissingParamError("list_files", "path"),
                     };
                 }
                 this.context.consecutiveMistakeCount = 0;
                 const pathAccess = this.getPathAccess();
                 const normalizedRelDirPath = relDirPath.trim();
                 if (!pathAccess.validateAccess(normalizedRelDirPath)) {
-                    await this.context.say("valorideignore_error", relDirPath);
+                    const errorText = await this.describePathAccessFailure(relDirPath, pathAccess);
                     return {
                         shouldContinue: true,
-                        toolResponse: formatResponse.toolError(formatResponse.valorideIgnoreError(relDirPath)),
+                        toolResponse: formatResponse.toolError(errorText),
                     };
                 }
                 const absolutePath = path.resolve(this.context.cwd, normalizedRelDirPath);
@@ -549,10 +565,11 @@ export class FileToolHandler extends BaseToolHandler {
                     telemetryService.captureToolUsage(this.context.taskId, block.name, true, true);
                 }
                 else {
-                    if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
+                    if (this.context.autoApprovalSettings.enabled &&
+                        this.context.autoApprovalSettings.enableNotifications) {
                         showSystemNotification({
                             subtitle: "Approval Required",
-                            message: `ValorIDE wants to view directory ${path.basename(absolutePath)}/`
+                            message: `Browsing: ${path.basename(absolutePath)}/`,
                         });
                     }
                     this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
@@ -569,7 +586,7 @@ export class FileToolHandler extends BaseToolHandler {
         catch (error) {
             return {
                 shouldContinue: true,
-                toolResponse: await this.handleError("listing files", error)
+                toolResponse: await this.handleError("listing files", error),
             };
         }
     }
@@ -595,7 +612,9 @@ export class FileToolHandler extends BaseToolHandler {
                 }
                 else {
                     this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-                    await this.context.ask("tool", partialMessage, partial).catch(() => { });
+                    await this.context
+                        .ask("tool", partialMessage, partial)
+                        .catch(() => { });
                 }
                 return { shouldContinue: false };
             }
@@ -604,17 +623,17 @@ export class FileToolHandler extends BaseToolHandler {
                     this.context.consecutiveMistakeCount++;
                     return {
                         shouldContinue: true,
-                        toolResponse: await this.context.sayAndCreateMissingParamError("list_code_definition_names", "path")
+                        toolResponse: await this.context.sayAndCreateMissingParamError("list_code_definition_names", "path"),
                     };
                 }
                 this.context.consecutiveMistakeCount = 0;
                 const pathAccess = this.getPathAccess();
                 const normalizedRelDirPath = relDirPath.trim();
                 if (!pathAccess.validateAccess(normalizedRelDirPath)) {
-                    await this.context.say("valorideignore_error", relDirPath);
+                    const errorText = await this.describePathAccessFailure(relDirPath, pathAccess);
                     return {
                         shouldContinue: true,
-                        toolResponse: formatResponse.toolError(formatResponse.valorideIgnoreError(relDirPath)),
+                        toolResponse: formatResponse.toolError(errorText),
                     };
                 }
                 const absolutePath = path.resolve(this.context.cwd, normalizedRelDirPath);
@@ -631,10 +650,11 @@ export class FileToolHandler extends BaseToolHandler {
                     telemetryService.captureToolUsage(this.context.taskId, block.name, true, true);
                 }
                 else {
-                    if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
+                    if (this.context.autoApprovalSettings.enabled &&
+                        this.context.autoApprovalSettings.enableNotifications) {
                         showSystemNotification({
                             subtitle: "Approval Required",
-                            message: `ValorIDE wants to view source code definitions in ${path.basename(absolutePath)}/`
+                            message: `Analyzing: ${path.basename(absolutePath)}/`,
                         });
                     }
                     this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
@@ -651,7 +671,7 @@ export class FileToolHandler extends BaseToolHandler {
         catch (error) {
             return {
                 shouldContinue: true,
-                toolResponse: await this.handleError("parsing source code definitions", error)
+                toolResponse: await this.handleError("parsing source code definitions", error),
             };
         }
     }
@@ -681,7 +701,9 @@ export class FileToolHandler extends BaseToolHandler {
                 }
                 else {
                     this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-                    await this.context.ask("tool", partialMessage, partial).catch(() => { });
+                    await this.context
+                        .ask("tool", partialMessage, partial)
+                        .catch(() => { });
                 }
                 return { shouldContinue: false };
             }
@@ -690,24 +712,24 @@ export class FileToolHandler extends BaseToolHandler {
                     this.context.consecutiveMistakeCount++;
                     return {
                         shouldContinue: true,
-                        toolResponse: await this.context.sayAndCreateMissingParamError("search_files", "path")
+                        toolResponse: await this.context.sayAndCreateMissingParamError("search_files", "path"),
                     };
                 }
                 if (!regex) {
                     this.context.consecutiveMistakeCount++;
                     return {
                         shouldContinue: true,
-                        toolResponse: await this.context.sayAndCreateMissingParamError("search_files", "regex")
+                        toolResponse: await this.context.sayAndCreateMissingParamError("search_files", "regex"),
                     };
                 }
                 this.context.consecutiveMistakeCount = 0;
                 const pathAccess = this.getPathAccess();
                 const normalizedRelDirPath = relDirPath.trim();
                 if (!pathAccess.validateAccess(normalizedRelDirPath)) {
-                    await this.context.say("valorideignore_error", relDirPath);
+                    const errorText = await this.describePathAccessFailure(relDirPath, pathAccess);
                     return {
                         shouldContinue: true,
-                        toolResponse: formatResponse.toolError(formatResponse.valorideIgnoreError(relDirPath)),
+                        toolResponse: formatResponse.toolError(errorText),
                     };
                 }
                 const absolutePath = path.resolve(this.context.cwd, normalizedRelDirPath);
@@ -724,10 +746,11 @@ export class FileToolHandler extends BaseToolHandler {
                     telemetryService.captureToolUsage(this.context.taskId, block.name, true, true);
                 }
                 else {
-                    if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
+                    if (this.context.autoApprovalSettings.enabled &&
+                        this.context.autoApprovalSettings.enableNotifications) {
                         showSystemNotification({
                             subtitle: "Approval Required",
-                            message: `ValorIDE wants to search files in ${path.basename(absolutePath)}/`
+                            message: `Searching: ${path.basename(absolutePath)}/`,
                         });
                     }
                     this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
@@ -744,9 +767,18 @@ export class FileToolHandler extends BaseToolHandler {
         catch (error) {
             return {
                 shouldContinue: true,
-                toolResponse: await this.handleError("searching files", error)
+                toolResponse: await this.handleError("searching files", error),
             };
         }
+    }
+    async describePathAccessFailure(relPath, pathAccess) {
+        const rejection = pathAccess.getLastRejection();
+        if (rejection?.reason === "outside-workspace") {
+            await this.context.say("workspace_access_error", relPath);
+            return formatResponse.workspaceAccessError(relPath, this.context.cwd);
+        }
+        await this.context.say("valorideignore_error", relPath);
+        return formatResponse.valorideIgnoreError(relPath);
     }
 }
 //# sourceMappingURL=FileToolHandler.js.map

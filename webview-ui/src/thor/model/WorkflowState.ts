@@ -20,14 +20,15 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,108 +37,127 @@ import { exists, mapValues } from '../src/runtime';
  * @export
  * @interface WorkflowState
  */
-export type WorkflowState  = {
-    /**
-     * The workflow this state is participating in
-     * @type {string}
-     * @memberof WorkflowState
-     */
-    workflowId?: string;
-    /**
-     * name of the property that holds the value
-     * @type {string}
-     * @memberof WorkflowState
-     */
-    name?: string;
-    /**
-     * value of the property
-     * @type {string}
-     * @memberof WorkflowState
-     */
-    stateValue?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof WorkflowState
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof WorkflowState
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof WorkflowState
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof WorkflowState
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof WorkflowState
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof WorkflowState
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof WorkflowState
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof WorkflowState
-     */
-    lastModifiedDate?: Date;
-}
+export type WorkflowState = DataObject & {
+  /**
+   * The workflow this state is participating in
+   * @type {string}
+   * @memberof WorkflowState
+   */
+  workflowId?: string;
+  /**
+   * name of the property that holds the value
+   * @type {string}
+   * @memberof WorkflowState
+   */
+  name?: string;
+  /**
+   * value of the property
+   * @type {string}
+   * @memberof WorkflowState
+   */
+  stateValue?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof WorkflowState
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof WorkflowState
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof WorkflowState
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof WorkflowState
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof WorkflowState
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof WorkflowState
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof WorkflowState
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof WorkflowState
+   */
+  lastModifiedDate?: Date;
+};
 
 export function WorkflowStateFromJSON(json: any): WorkflowState {
-    return {
-        'workflowId': !exists(json, 'workflowId') ? undefined : json['workflowId'],
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'stateValue': !exists(json, 'state_value') ? undefined : json['state_value'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    workflowId: !exists(json, "workflowId") ? undefined : json["workflowId"],
+    name: !exists(json, "name") ? undefined : json["name"],
+    stateValue: !exists(json, "state_value") ? undefined : json["state_value"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function WorkflowStateToJSON(value?: WorkflowState): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'workflowId': value.workflowId,
-        'name': value.name,
-        'state_value': value.stateValue,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    workflowId: value.workflowId,
+    name: value.name,
+    state_value: value.stateValue,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
-
-

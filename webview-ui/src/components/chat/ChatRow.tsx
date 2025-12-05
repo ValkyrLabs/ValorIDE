@@ -45,7 +45,7 @@ import {
   FaBrain,
   FaCarCrash,
   FaMagic,
-  FaFileUpload
+  FaFileUpload,
 } from "react-icons/fa";
 import { VscError, VscCheck } from "react-icons/vsc";
 import type {
@@ -157,7 +157,10 @@ const SummaryMetric = styled.span<{ variant: "added" | "removed" }>`
 const ChangesSummaryActionButton = styled.button`
   background: none;
   border: none;
-  color: var(--vscode-editorLink-activeForeground, var(--vscode-textLink-foreground));
+  color: var(
+    --vscode-editorLink-activeForeground,
+    var(--vscode-textLink-foreground)
+  );
   display: flex;
   align-items: center;
   justify-content: center;
@@ -192,10 +195,17 @@ const ChangesSummaryRow = styled.button`
   padding: 8px 10px;
   cursor: pointer;
   gap: 10px;
-  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
 
   &:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--vscode-editorWidget-background) 55%, transparent);
+    background: color-mix(
+      in srgb,
+      var(--vscode-editorWidget-background) 55%,
+      transparent
+    );
     border-color: color-mix(in srgb, currentColor 20%, transparent);
   }
 
@@ -219,7 +229,8 @@ const StatusBadge = styled.span<{ status: ValorIDEFileChangeStatus }>`
   border-radius: 6px;
   background: ${({ status }) =>
     colorMix(statusColorMap[status] ?? "var(--vscode-foreground)", 0.15)};
-  color: ${({ status }) => statusColorMap[status] ?? "var(--vscode-foreground)"};
+  color: ${({ status }) =>
+    statusColorMap[status] ?? "var(--vscode-foreground)"};
   text-transform: uppercase;
 `;
 
@@ -277,9 +288,7 @@ const CompletionChangesSummary: React.FC<CompletionChangesSummaryProps> = ({
   }
 
   const totalFilesLabel =
-    summary.totalFiles === 1
-      ? "1 file"
-      : `${summary.totalFiles} files`;
+    summary.totalFiles === 1 ? "1 file" : `${summary.totalFiles} files`;
 
   return (
     <ChangesSummaryContainer>
@@ -391,7 +400,7 @@ interface ChatRowProps {
   sendMessageFromChatRow?: (text: string, images: string[]) => void;
 }
 
-interface ChatRowContentProps extends Omit<ChatRowProps, "onHeightChange"> { }
+interface ChatRowContentProps extends Omit<ChatRowProps, "onHeightChange"> {}
 
 export const ProgressIndicator = () => (
   <div
@@ -528,8 +537,7 @@ export const ChatRowContent = ({
   useEvent("message", handleMessage);
 
   const seeNewChangesSinceLastCompletion =
-    message.ask === "completion_result" ||
-    message.say === "completion_result";
+    message.ask === "completion_result" || message.say === "completion_result";
 
   const handleOpenAllChanges = useCallback(() => {
     if (seeNewChangesDisabled) {
@@ -542,11 +550,7 @@ export const ChatRowContent = ({
       number: message.ts,
       seeNewChangesSinceLastTaskCompletion: seeNewChangesSinceLastCompletion,
     });
-  }, [
-    message.ts,
-    seeNewChangesDisabled,
-    seeNewChangesSinceLastCompletion,
-  ]);
+  }, [message.ts, seeNewChangesDisabled, seeNewChangesSinceLastCompletion]);
 
   const handleOpenFileDiff = useCallback(
     (relativePath: string) => {
@@ -562,11 +566,7 @@ export const ChatRowContent = ({
         seeNewChangesSinceLastTaskCompletion: seeNewChangesSinceLastCompletion,
       });
     },
-    [
-      message.ts,
-      seeNewChangesDisabled,
-      seeNewChangesSinceLastCompletion,
-    ],
+    [message.ts, seeNewChangesDisabled, seeNewChangesSinceLastCompletion],
   );
 
   const [icon, title] = useMemo(() => {
@@ -670,7 +670,10 @@ export const ChatRowContent = ({
           </span>,
         ];
       case "api_req_started":
-        const getIconSpan = (IconComponent: React.ComponentType<any>, color: string) => (
+        const getIconSpan = (
+          IconComponent: React.ComponentType<any>,
+          color: string,
+        ) => (
           <div
             style={{
               width: 16,
@@ -827,9 +830,7 @@ export const ChatRowContent = ({
                   -90,
                   "This file is outside of your workspace",
                 )}
-              <span style={{ fontWeight: "bold" }}>
-                ValorIDE editing:
-              </span>
+              <span style={{ fontWeight: "bold" }}>ValorIDE editing:</span>
             </div>
             <CodeAccordian
               // isLoading={message.partial}
@@ -879,10 +880,14 @@ export const ChatRowContent = ({
         }
 
         let editSummary: string | undefined;
-        if (Array.isArray(parsedContent?.edits) && parsedContent.edits.length > 0) {
+        if (
+          Array.isArray(parsedContent?.edits) &&
+          parsedContent.edits.length > 0
+        ) {
           const counts = parsedContent.edits.reduce(
             (acc: Record<string, number>, edit: { kind?: string }) => {
-              const kind = typeof edit?.kind === "string" ? edit.kind : "contextual";
+              const kind =
+                typeof edit?.kind === "string" ? edit.kind : "contextual";
               acc[kind] = (acc[kind] ?? 0) + 1;
               return acc;
             },
@@ -897,7 +902,10 @@ export const ChatRowContent = ({
         if (editSummary) {
           summaryParts.push(`Edits: ${editSummary}`);
         }
-        if (parsedContent?.options && Object.keys(parsedContent.options).length > 0) {
+        if (
+          parsedContent?.options &&
+          Object.keys(parsedContent.options).length > 0
+        ) {
           summaryParts.push("Options provided");
         }
 
@@ -1100,8 +1108,7 @@ export const ChatRowContent = ({
                   "This is outside of your workspace",
                 )}
               <span style={{ fontWeight: "bold" }}>
-                ValorIDE searching this directory for{" "}
-                <code>{tool.regex}</code>:
+                ValorIDE searching this directory for <code>{tool.regex}</code>:
               </span>
             </div>
             <CodeAccordian
@@ -1314,7 +1321,7 @@ export const ChatRowContent = ({
                   ...headerStyle,
                   marginBottom:
                     (cost == null && apiRequestFailedMessage) ||
-                      apiReqStreamingFailedMessage
+                    apiReqStreamingFailedMessage
                       ? 10
                       : 0,
                   justifyContent: "space-between",
@@ -1348,64 +1355,64 @@ export const ChatRowContent = ({
               </div>
               {((cost == null && apiRequestFailedMessage) ||
                 apiReqStreamingFailedMessage) && (
-                  <>
-                    {(() => {
-                      // Try to parse the error message as JSON for credit limit error
-                      const errorData = parseErrorText(apiRequestFailedMessage);
-                      if (errorData) {
-                        if (
-                          errorData.code === "insufficient_credits" &&
-                          typeof errorData.current_balance === "number" &&
-                          typeof errorData.total_spent === "number" &&
-                          typeof errorData.total_promotions === "number" &&
-                          typeof errorData.message === "string"
-                        ) {
-                          return (
-                            <CreditLimitError
-                              currentBalance={errorData.current_balance}
-                              totalSpent={errorData.total_spent}
-                              totalPromotions={errorData.total_promotions}
-                              message={errorData.message}
-                            />
-                          );
-                        }
+                <>
+                  {(() => {
+                    // Try to parse the error message as JSON for credit limit error
+                    const errorData = parseErrorText(apiRequestFailedMessage);
+                    if (errorData) {
+                      if (
+                        errorData.code === "insufficient_credits" &&
+                        typeof errorData.current_balance === "number" &&
+                        typeof errorData.total_spent === "number" &&
+                        typeof errorData.total_promotions === "number" &&
+                        typeof errorData.message === "string"
+                      ) {
+                        return (
+                          <CreditLimitError
+                            currentBalance={errorData.current_balance}
+                            totalSpent={errorData.total_spent}
+                            totalPromotions={errorData.total_promotions}
+                            message={errorData.message}
+                          />
+                        );
                       }
+                    }
 
-                      // Default error display
-                      return (
-                        <p
-                          style={{
-                            ...pStyle,
-                            color: "var(--vscode-errorForeground)",
-                          }}
-                        >
-                          {apiRequestFailedMessage ||
-                            apiReqStreamingFailedMessage}
-                          {apiRequestFailedMessage
-                            ?.toLowerCase()
-                            .includes("powershell") && (
-                              <>
-                                <br />
-                                <br />
-                                It seems like you're having Windows PowerShell
-                                issues, please see this{" "}
-                                <a
-                                  href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
-                                  style={{
-                                    color: "inherit",
-                                    textDecoration: "underline",
-                                  }}
-                                >
-                                  troubleshooting guide
-                                </a>
-                                .
-                              </>
-                            )}
-                        </p>
-                      );
-                    })()}
-                  </>
-                )}
+                    // Default error display
+                    return (
+                      <p
+                        style={{
+                          ...pStyle,
+                          color: "var(--vscode-errorForeground)",
+                        }}
+                      >
+                        {apiRequestFailedMessage ||
+                          apiReqStreamingFailedMessage}
+                        {apiRequestFailedMessage
+                          ?.toLowerCase()
+                          .includes("powershell") && (
+                          <>
+                            <br />
+                            <br />
+                            It seems like you're having Windows PowerShell
+                            issues, please see this{" "}
+                            <a
+                              href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
+                              style={{
+                                color: "inherit",
+                                textDecoration: "underline",
+                              }}
+                            >
+                              troubleshooting guide
+                            </a>
+                            .
+                          </>
+                        )}
+                      </p>
+                    );
+                  })()}
+                </>
+              )}
 
               {isExpanded && (
                 <div style={{ marginTop: "10px" }}>
@@ -1453,7 +1460,12 @@ export const ChatRowContent = ({
                           marginBottom: "4px",
                         }}
                       >
-                        <FaBrain className="chatTextArea" color="red" size={32} /> Thinking
+                        <FaBrain
+                          className="chatTextArea"
+                          color="red"
+                          size={32}
+                        />{" "}
+                        Thinking
                       </span>
                       {message.text}
                     </div>
@@ -1592,6 +1604,45 @@ export const ChatRowContent = ({
                   ValorIDE tried to access <code>{message.text}</code> which is
                   blocked by the <code>.valorideignore</code>
                   file.
+                </div>
+              </div>
+            </>
+          );
+        case "workspace_access_error":
+          return (
+            <>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  backgroundColor: "rgba(255, 191, 0, 0.1)",
+                  padding: 8,
+                  borderRadius: 3,
+                  fontSize: 12,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: 4,
+                  }}
+                >
+                  <FaCarCrash />
+                  <span
+                    style={{
+                      fontWeight: 500,
+                      color: "#FFA500",
+                    }}
+                  >
+                    Outside Workspace
+                  </span>
+                </div>
+                <div>
+                  ValorIDE can only operate inside the opened workspace. The
+                  file <code>{message.text}</code> lives elsewhere. Open the
+                  folder that contains it or share the contents manually if it
+                  should be accessible.
                 </div>
               </div>
             </>
@@ -1927,9 +1978,7 @@ export const ChatRowContent = ({
               <OptionsButtons
                 options={options}
                 selected={selected}
-                isActive={
-                  isLast && message.ask === "plan_mode_respond"
-                }
+                isActive={isLast && message.ask === "plan_mode_respond"}
                 inputValue={inputValue}
                 onSelectOption={setInputValue}
               />

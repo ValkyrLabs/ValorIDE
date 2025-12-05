@@ -19,7 +19,12 @@ import {
   VSCodeTextArea,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
-import { VscCaseSensitive, VscWholeWord, VscRegex, VscChevronRight } from "react-icons/vsc";
+import {
+  VscCaseSensitive,
+  VscWholeWord,
+  VscRegex,
+  VscChevronRight,
+} from "react-icons/vsc";
 
 function Demo() {
   // function handleHowdyClick() {

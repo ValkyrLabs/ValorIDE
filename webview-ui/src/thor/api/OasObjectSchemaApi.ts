@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,294 +19,353 @@ Template file: typescript-redux-query/apis.mustache
 Description: OasObjectSchemaApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    OasObjectSchema,
-    OasObjectSchemaFromJSON,
-    OasObjectSchemaToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  OasObjectSchema,
+  OasObjectSchemaFromJSON,
+  OasObjectSchemaToJSON,
+} from "../model";
 
 export interface DeleteOasObjectSchemaApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetOasObjectSchemaApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetOasObjectSchemaListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PostOasObjectSchemaApiRequest {
-    oasObjectSchema: OasObjectSchema;
+  oasObjectSchema: OasObjectSchema;
 }
 
 export interface UpdateOasObjectSchemaApiRequest {
-    id: string;
-    oasObjectSchema: OasObjectSchema;
+  id: string;
+  oasObjectSchema: OasObjectSchema;
 }
-
 
 /**
  * Deletes a specific OasObjectSchema.
  * Delete a OasObjectSchema.
  */
-function deleteOasObjectSchemaRaw<T>(requestParameters: DeleteOasObjectSchemaApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteOasObjectSchema.');
-    }
+function deleteOasObjectSchemaRaw<T>(
+  requestParameters: DeleteOasObjectSchemaApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteOasObjectSchema.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasObjectSchema/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/OasObjectSchema/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific OasObjectSchema.
-* Delete a OasObjectSchema.
-*/
-export function deleteOasObjectSchema<T>(requestParameters: DeleteOasObjectSchemaApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteOasObjectSchemaRaw(requestParameters, requestConfig);
+ * Deletes a specific OasObjectSchema.
+ * Delete a OasObjectSchema.
+ */
+export function deleteOasObjectSchema<T>(
+  requestParameters: DeleteOasObjectSchemaApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteOasObjectSchemaRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single OasObjectSchema for a specific uid.
  * Retrieve a single OasObjectSchema
  */
-function getOasObjectSchemaRaw<T>(requestParameters: GetOasObjectSchemaApiRequest, requestConfig: runtime.TypedQueryConfig<T, OasObjectSchema> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getOasObjectSchema.');
-    }
+function getOasObjectSchemaRaw<T>(
+  requestParameters: GetOasObjectSchemaApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, OasObjectSchema> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getOasObjectSchema.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasObjectSchema/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(OasObjectSchemaFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/OasObjectSchema/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasObjectSchemaFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single OasObjectSchema for a specific uid.
-* Retrieve a single OasObjectSchema
-*/
-export function getOasObjectSchema<T>(requestParameters: GetOasObjectSchemaApiRequest, requestConfig?: runtime.TypedQueryConfig<T, OasObjectSchema>): QueryConfig<T> {
-    return getOasObjectSchemaRaw(requestParameters, requestConfig);
+ * Retrieves a single OasObjectSchema for a specific uid.
+ * Retrieve a single OasObjectSchema
+ */
+export function getOasObjectSchema<T>(
+  requestParameters: GetOasObjectSchemaApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, OasObjectSchema>,
+): QueryConfig<T> {
+  return getOasObjectSchemaRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of OasObjectSchemas.
  * Retrieve a list of OasObjectSchemas
  */
-function getOasObjectSchemaListRaw<T>(requestParameters: GetOasObjectSchemaListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<OasObjectSchema>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getOasObjectSchemaListRaw<T>(
+  requestParameters: GetOasObjectSchemaListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<OasObjectSchema>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasObjectSchema`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(OasObjectSchemaFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/OasObjectSchema`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(OasObjectSchemaFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of OasObjectSchemas.
-* Retrieve a list of OasObjectSchemas
-*/
-export function getOasObjectSchemaList<T>(requestParameters: GetOasObjectSchemaListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<OasObjectSchema>>): QueryConfig<T> {
-    return getOasObjectSchemaListRaw(requestParameters, requestConfig);
+ * Retrieves a list of OasObjectSchemas.
+ * Retrieve a list of OasObjectSchemas
+ */
+export function getOasObjectSchemaList<T>(
+  requestParameters: GetOasObjectSchemaListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<OasObjectSchema>>,
+): QueryConfig<T> {
+  return getOasObjectSchemaListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new OasObjectSchema.
  * Create a new OasObjectSchema
  */
-function postOasObjectSchemaRaw<T>(requestParameters: PostOasObjectSchemaApiRequest, requestConfig: runtime.TypedQueryConfig<T, OasObjectSchema> = {}): QueryConfig<T> {
-    if (requestParameters.oasObjectSchema === null || requestParameters.oasObjectSchema === undefined) {
-        throw new runtime.RequiredError('oasObjectSchema','Required parameter requestParameters.oasObjectSchema was null or undefined when calling postOasObjectSchema.');
-    }
+function postOasObjectSchemaRaw<T>(
+  requestParameters: PostOasObjectSchemaApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, OasObjectSchema> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.oasObjectSchema === null ||
+    requestParameters.oasObjectSchema === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "oasObjectSchema",
+      "Required parameter requestParameters.oasObjectSchema was null or undefined when calling postOasObjectSchema.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasObjectSchema`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      OasObjectSchemaToJSON(requestParameters.oasObjectSchema),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(OasObjectSchemaFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/OasObjectSchema`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || OasObjectSchemaToJSON(requestParameters.oasObjectSchema),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasObjectSchemaFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new OasObjectSchema.
-* Create a new OasObjectSchema
-*/
-export function postOasObjectSchema<T>(requestParameters: PostOasObjectSchemaApiRequest, requestConfig?: runtime.TypedQueryConfig<T, OasObjectSchema>): QueryConfig<T> {
-    return postOasObjectSchemaRaw(requestParameters, requestConfig);
+ * Creates a new OasObjectSchema.
+ * Create a new OasObjectSchema
+ */
+export function postOasObjectSchema<T>(
+  requestParameters: PostOasObjectSchemaApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, OasObjectSchema>,
+): QueryConfig<T> {
+  return postOasObjectSchemaRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing OasObjectSchema.
  * Update an existing OasObjectSchema
  */
-function updateOasObjectSchemaRaw<T>(requestParameters: UpdateOasObjectSchemaApiRequest, requestConfig: runtime.TypedQueryConfig<T, OasObjectSchema> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateOasObjectSchema.');
-    }
+function updateOasObjectSchemaRaw<T>(
+  requestParameters: UpdateOasObjectSchemaApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, OasObjectSchema> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateOasObjectSchema.",
+    );
+  }
 
-    if (requestParameters.oasObjectSchema === null || requestParameters.oasObjectSchema === undefined) {
-        throw new runtime.RequiredError('oasObjectSchema','Required parameter requestParameters.oasObjectSchema was null or undefined when calling updateOasObjectSchema.');
-    }
+  if (
+    requestParameters.oasObjectSchema === null ||
+    requestParameters.oasObjectSchema === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "oasObjectSchema",
+      "Required parameter requestParameters.oasObjectSchema was null or undefined when calling updateOasObjectSchema.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/OasObjectSchema/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      OasObjectSchemaToJSON(requestParameters.oasObjectSchema),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(OasObjectSchemaFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/OasObjectSchema/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || OasObjectSchemaToJSON(requestParameters.oasObjectSchema),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(OasObjectSchemaFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing OasObjectSchema.
-* Update an existing OasObjectSchema
-*/
-export function updateOasObjectSchema<T>(requestParameters: UpdateOasObjectSchemaApiRequest, requestConfig?: runtime.TypedQueryConfig<T, OasObjectSchema>): QueryConfig<T> {
-    return updateOasObjectSchemaRaw(requestParameters, requestConfig);
+ * Updates an existing OasObjectSchema.
+ * Update an existing OasObjectSchema
+ */
+export function updateOasObjectSchema<T>(
+  requestParameters: UpdateOasObjectSchemaApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, OasObjectSchema>,
+): QueryConfig<T> {
+  return updateOasObjectSchemaRaw(requestParameters, requestConfig);
 }
-

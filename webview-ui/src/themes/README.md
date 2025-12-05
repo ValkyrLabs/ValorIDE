@@ -7,9 +7,10 @@ This is the **consolidated Bootstrap theme system** for the Valkyr Design Langua
 ## 🌈 Available Themes
 
 ### 1. **Fun Theme** (`fun`)
+
 - **Style**: Bright, vibrant, and energetic
 - **Usage**: CMS applications, Content Management, Creative tools
-- **Colors**: 
+- **Colors**:
   - Primary: `#1ee5ff` (Cyan)
   - Secondary: `#7a5cff` (Purple)
   - Accent: `#ff9d00` (Orange)
@@ -17,16 +18,18 @@ This is the **consolidated Bootstrap theme system** for the Valkyr Design Langua
 - **Best for**: User-facing applications, creative workflows
 
 ### 2. **Dark Theme** (`dark`)
+
 - **Style**: Professional, serious, and sophisticated
 - **Usage**: CRM applications, Professional tools, Data management
 - **Colors**:
   - Primary: `#1ee5ff` (Cyan)
-  - Secondary: `#7a5cff` (Purple) 
+  - Secondary: `#7a5cff` (Purple)
   - Accent: `#ff9d00` (Orange)
 - **Character**: Dark theme with subtle glows and professional gradients
 - **Best for**: Business applications, data dashboards, admin interfaces
 
 ### 3. **Valkyr Theme** (`valkyr`)
+
 - **Style**: Balanced, native Valkyr design language
 - **Usage**: Core applications, Main dashboard, General purpose
 - **Colors**:
@@ -39,17 +42,19 @@ This is the **consolidated Bootstrap theme system** for the Valkyr Design Langua
 ## 🚀 Quick Start
 
 ### 1. Import and Initialize
+
 ```typescript
-import { initThemes, setTheme } from './src/themes';
+import { initThemes, setTheme } from "./src/themes";
 
 // Initialize the theme system
 initThemes();
 
 // Set a specific theme
-setTheme('valkyr'); // or 'fun' or 'dark'
+setTheme("valkyr"); // or 'fun' or 'dark'
 ```
 
 ### 2. Use the Theme Switcher Component
+
 ```typescript
 import { ThemeSwitcher } from './src/components/ThemeSwitcher';
 
@@ -64,6 +69,7 @@ import { ThemeSwitcher } from './src/components/ThemeSwitcher';
 ```
 
 ### 3. Use Standard Bootstrap Classes
+
 ```html
 <!-- These classes work consistently across all themes -->
 <div class="card">
@@ -81,12 +87,14 @@ import { ThemeSwitcher } from './src/components/ThemeSwitcher';
 ## 🎯 Design Philosophy
 
 ### Bootstrap-First Approach
+
 - **No custom class names** - Uses standard Bootstrap classes
 - **Semantic naming** - `.btn-primary`, `.card`, `.navbar`, etc.
 - **Consistent behavior** - Same HTML works across all themes
 - **Easy migration** - Drop-in replacement for existing Bootstrap sites
 
 ### LCARS Integration
+
 - **Star Trek LCARS influence** - Futuristic, technical aesthetic
 - **Gradient backgrounds** - Dynamic color transitions
 - **Glass morphism** - Translucent surfaces with backdrop blur
@@ -94,8 +102,9 @@ import { ThemeSwitcher } from './src/components/ThemeSwitcher';
 - **Geometric shapes** - Clean, angular design elements
 
 ### Theme Consolidation
+
 - **3 themes instead of 20+ styles** - Massive consolidation
-- **Shared class names** - `.card`, `.btn`, `.navbar` work everywhere  
+- **Shared class names** - `.card`, `.btn`, `.navbar` work everywhere
 - **Consistent patterns** - Same design patterns across themes
 - **Maintainable** - One place to update styles
 
@@ -109,7 +118,7 @@ src/themes/
 │   ├── index.ts         # Fun theme export
 │   └── bootstrap.css    # Fun theme Bootstrap overrides
 ├── dark/
-│   ├── index.ts         # Dark theme export  
+│   ├── index.ts         # Dark theme export
 │   └── bootstrap.css    # Dark theme Bootstrap overrides
 └── valkyr/
     ├── index.ts         # Valkyr theme export
@@ -121,7 +130,7 @@ src/themes/
 ### Theme Switching API
 
 ```typescript
-import { themeSwitcher, ThemeName } from './src/themes';
+import { themeSwitcher, ThemeName } from "./src/themes";
 
 // Get current theme
 const current: ThemeName = themeSwitcher.getCurrentTheme();
@@ -131,7 +140,7 @@ const themeInfo = themeSwitcher.getCurrentThemeInfo();
 console.log(themeInfo.displayName); // "Valkyr Theme"
 
 // Set theme
-themeSwitcher.setTheme('dark');
+themeSwitcher.setTheme("dark");
 
 // Cycle through themes
 themeSwitcher.cycleTheme();
@@ -149,9 +158,11 @@ const allThemes = themeSwitcher.getAvailableThemes();
 ```
 
 ### Keyboard Shortcuts
+
 - **Ctrl+Shift+T** - Cycle through themes
 
 ### Local Storage
+
 Themes are automatically saved to `localStorage` as `valkyr-theme`.
 
 ## 🎨 Customization
@@ -159,11 +170,13 @@ Themes are automatically saved to `localStorage` as `valkyr-theme`.
 ### Adding a New Theme
 
 1. **Create theme directory**:
+
 ```bash
 mkdir src/themes/mytheme
 ```
 
 2. **Create bootstrap.css**:
+
 ```css
 /* src/themes/mytheme/bootstrap.css */
 :root {
@@ -173,40 +186,46 @@ mkdir src/themes/mytheme
 }
 
 /* Override Bootstrap classes */
-.btn { /* your styles */ }
-.card { /* your styles */ }
+.btn {
+  /* your styles */
+}
+.card {
+  /* your styles */
+}
 /* ... */
 ```
 
 3. **Create index.ts**:
+
 ```typescript
 // src/themes/mytheme/index.ts
-import './bootstrap.css';
+import "./bootstrap.css";
 
 export const theme = {
-  name: 'mytheme',
-  displayName: 'My Theme',
-  description: 'My custom theme',
-  primaryColor: '#your-color',
-  secondaryColor: '#your-color', 
-  accentColor: '#your-color',
-  type: 'light' as const, // or 'dark'
-  usage: ['Custom Applications']
+  name: "mytheme",
+  displayName: "My Theme",
+  description: "My custom theme",
+  primaryColor: "#your-color",
+  secondaryColor: "#your-color",
+  accentColor: "#your-color",
+  type: "light" as const, // or 'dark'
+  usage: ["Custom Applications"],
 };
 
 export default theme;
 ```
 
 4. **Register in main index.ts**:
+
 ```typescript
 // src/themes/index.ts
-import myTheme from './mytheme';
+import myTheme from "./mytheme";
 
 export const themes = {
   fun: funTheme,
   dark: darkTheme,
   valkyr: valkyrTheme,
-  mytheme: myTheme // Add here
+  mytheme: myTheme, // Add here
 } as const;
 ```
 
@@ -221,16 +240,16 @@ Each theme defines these key CSS variables:
   --bs-primary-rgb: r, g, b;
   --bs-secondary: #color;
   /* ... other Bootstrap colors */
-  
+
   /* LCARS Gradients */
   --lcars-gradient-primary: linear-gradient(...);
   --lcars-gradient-secondary: linear-gradient(...);
-  
+
   /* Glass Effects */
   --glass-bg: rgba(...);
   --glass-border: rgba(...);
   --backdrop-blur: blur(10px);
-  
+
   /* Theme-Specific Variables */
   --theme-glow: 0 0 20px rgba(...);
   --theme-shadow: 0 4px 20px rgba(...);
@@ -240,10 +259,11 @@ Each theme defines these key CSS variables:
 ## 🧩 Component Integration
 
 ### Existing Components
+
 All existing components automatically work with the new theme system:
 
 - **Cards** - Enhanced with glass morphism and gradients
-- **Buttons** - LCARS-style with hover animations  
+- **Buttons** - LCARS-style with hover animations
 - **Navbars** - Translucent with accent borders
 - **Modals** - Glass effect with backdrop blur
 - **Tables** - Hover effects and gradient headers
@@ -252,12 +272,13 @@ All existing components automatically work with the new theme system:
 - **Alerts** - LCARS-style with accent borders
 
 ### Theme-Aware Components
+
 Some components are specifically designed to work with themes:
 
 ```typescript
 // Theme switcher variants
 <ThemeSwitcher variant="dropdown" />
-<ThemeSwitcher variant="buttons" />  
+<ThemeSwitcher variant="buttons" />
 <ThemeSwitcher variant="cycle" />
 ```
 
@@ -278,7 +299,9 @@ Some components are specifically designed to work with themes:
 ## 🎯 Migration Guide
 
 ### From Custom CSS Classes
+
 **Before**:
+
 ```html
 <div class="lcars-card variant-cyan">
   <div class="lcars-card-header">
@@ -288,6 +311,7 @@ Some components are specifically designed to work with themes:
 ```
 
 **After**:
+
 ```html
 <div class="card">
   <div class="card-header">
@@ -297,36 +321,42 @@ Some components are specifically designed to work with themes:
 ```
 
 ### From Multiple Theme Files
+
 **Before**:
+
 ```typescript
-import './cms-styles.css';
-import './crm-dark.css';
-import './sidebar-theme.css';
+import "./cms-styles.css";
+import "./crm-dark.css";
+import "./sidebar-theme.css";
 ```
 
 **After**:
+
 ```typescript
-import { initThemes, setTheme } from './src/themes';
+import { initThemes, setTheme } from "./src/themes";
 initThemes();
-setTheme('fun'); // or 'dark', 'valkyr'
+setTheme("fun"); // or 'dark', 'valkyr'
 ```
 
 ## 🏆 Benefits
 
 ### For Developers
+
 - ✅ **Consistent API** - Same Bootstrap classes everywhere
 - ✅ **Easy switching** - Change entire app theme with one line
 - ✅ **Maintainable** - One theme system to rule them all
 - ✅ **TypeScript support** - Full type safety
 - ✅ **Hot reloading** - Instant theme changes in development
 
-### For Designers  
+### For Designers
+
 - ✅ **Design consistency** - Unified design language
 - ✅ **Brand flexibility** - Multiple themes for different apps
 - ✅ **LCARS aesthetic** - Futuristic, technical look and feel
 - ✅ **Responsive** - Works on all screen sizes
 
 ### For Users
+
 - ✅ **Theme persistence** - Remembers preferred theme
 - ✅ **Keyboard shortcuts** - Quick theme switching
 - ✅ **Accessibility** - High contrast and reduced motion support
@@ -335,6 +365,7 @@ setTheme('fun'); // or 'dark', 'valkyr'
 ## 🛠️ Development
 
 ### Adding New Components
+
 When creating new components, use standard Bootstrap classes:
 
 ```typescript
@@ -356,11 +387,12 @@ const MyComponent = () => (
 ```
 
 ### Testing Themes
+
 ```bash
 # Test all themes
 npm run test:themes
 
-# Visual regression testing  
+# Visual regression testing
 npm run test:visual
 
 # Accessibility testing

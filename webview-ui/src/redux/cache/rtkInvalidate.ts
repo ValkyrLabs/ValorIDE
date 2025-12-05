@@ -1,5 +1,6 @@
 import store from "../store";
 import * as ThorServices from "../../thor/redux/services";
+import { getValkyraiHost } from "@/utils/valkyraiHost";
 
 type AnyApiSlice = {
   reducerPath: string;
@@ -66,11 +67,11 @@ export async function globalUuidLookup(
     const results = await Promise.all(
       group.map(async (api) => {
         try {
-          const base = (await import("../customBaseQuery")).default as any;
+          await import("../customBaseQuery");
           // We can’t call baseQuery directly here; fallback to fetch
-          const { BASE_PATH } = await import("../../thor/src");
           const token = sessionStorage.getItem("jwtToken") || "";
-          const res = await fetch(`${BASE_PATH}/${api.reducerPath}/${uuid}`, {
+          const basePath = getValkyraiHost().replace(/\/+$/, "");
+          const res = await fetch(`${basePath}/${api.reducerPath}/${uuid}`, {
             headers: token ? { authorization: `Bearer ${token}` } : undefined,
           });
           if (res.ok)

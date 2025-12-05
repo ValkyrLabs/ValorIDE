@@ -1,33 +1,40 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { ContentData } from '@thor/model/ContentData'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ContentData } from "@thor/model/ContentData";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type ContentDataResponse = ContentData[]
+type ContentDataResponse = ContentData[];
 
 export const ContentDataService = createApi({
-  reducerPath: 'ContentData', // This should remain unique
+  reducerPath: "ContentData", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['ContentData'],
+  tagTypes: ["ContentData"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getContentDatasPaged: build.query<ContentDataResponse, { page: number; size?: number; example?: Partial<ContentData> }>({
+    getContentDatasPaged: build.query<
+      ContentDataResponse,
+      { page: number; size?: number; example?: Partial<ContentData> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `ContentData?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ContentData?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'ContentData' as const, id })),
-              { type: 'ContentData', id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: "ContentData" as const, id })),
+              { type: "ContentData", id: `PAGE_${page}` },
             ]
           : [],
     }),
 
     // 2) Simple "get all" Query (optional)
-    getContentDatas: build.query<ContentDataResponse, { example?: Partial<ContentData> } | void>({
+    getContentDatas: build.query<
+      ContentDataResponse,
+      { example?: Partial<ContentData> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -38,75 +45,84 @@ export const ContentDataService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'ContentData' as const, id })),
-              { type: 'ContentData', id: 'LIST' },
+              ...result.map(({ id }) => ({ type: "ContentData" as const, id })),
+              { type: "ContentData", id: "LIST" },
             ]
-          : [{ type: 'ContentData', id: 'LIST' }],
+          : [{ type: "ContentData", id: "LIST" }],
     }),
 
     // 3) Create
     addContentData: build.mutation<ContentData, Partial<ContentData>>({
       query: (body) => ({
         url: `ContentData`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'ContentData', id: 'LIST' }],
+      invalidatesTags: [{ type: "ContentData", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getContentData: build.query<ContentData, string>({
       query: (id) => `ContentData/${id}`,
-      providesTags: (result, error, id) => [{ type: 'ContentData', id }],
+      providesTags: (result, error, id) => [{ type: "ContentData", id }],
     }),
 
     // 5) Update
-    updateContentData: build.mutation<void, Pick<ContentData, 'id'> & Partial<ContentData>>({
+    updateContentData: build.mutation<
+      void,
+      Pick<ContentData, "id"> & Partial<ContentData>
+    >({
       query: ({ id, ...patch }) => ({
         url: `ContentData/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            ContentDataService.util.updateQueryData('getContentData', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            ContentDataService.util.updateQueryData(
+              "getContentData",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [
-        { type: 'ContentData', id },
-        { type: 'ContentData', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<ContentData, "id">) => [
+        { type: "ContentData", id },
+        { type: "ContentData", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteContentData: build.mutation<{ success: boolean; id: string }, number>({
-      query(id) {
-        return {
-          url: `ContentData/${id}`,
-          method: 'DELETE',
-        }
+    deleteContentData: build.mutation<{ success: boolean; id: string }, number>(
+      {
+        query(id) {
+          return {
+            url: `ContentData/${id}`,
+            method: "DELETE",
+          };
+        },
+        invalidatesTags: (result, error, id) => [{ type: "ContentData", id }],
       },
-      invalidatesTags: (result, error, id) => [{ type: 'ContentData', id }],
-    }),
+    ),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetContentDatasPagedQuery`
 export const {
-  useGetContentDatasPagedQuery,     // immediate fetch
+  useGetContentDatasPagedQuery, // immediate fetch
   useLazyGetContentDatasPagedQuery, // lazy fetch
   useGetContentDataQuery,
   useGetContentDatasQuery,
   useAddContentDataMutation,
   useUpdateContentDataMutation,
   useDeleteContentDataMutation,
-} = ContentDataService
+} = ContentDataService;

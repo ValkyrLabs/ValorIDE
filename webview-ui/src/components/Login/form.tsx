@@ -20,10 +20,7 @@ import { Login } from "@thor/model";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import ErrorModal from "../ErrorModal";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import {
-  storeJwtToken,
-  writeStoredPrincipal,
-} from "../../utils/accessControl";
+import { storeJwtToken, writeStoredPrincipal } from "../../utils/accessControl";
 import { useExtensionState } from "@/context/ExtensionStateContext";
 
 const validationSchema = Yup.object().shape({
@@ -34,7 +31,10 @@ const validationSchema = Yup.object().shape({
 });
 
 interface FormProps {
-  onSubmit?: (values: Login, formikHelpers: FormikHelpers<Login>) => Promise<void>;
+  onSubmit?: (
+    values: Login,
+    formikHelpers: FormikHelpers<Login>,
+  ) => Promise<void>;
   isLoggedIn?: boolean;
 }
 
@@ -106,7 +106,7 @@ const Form: React.FC<FormProps> = ({
         }, 0);
       }
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error("Form submission error:", error);
       setSubmitting(false);
     }
   };
@@ -249,13 +249,13 @@ const Form: React.FC<FormProps> = ({
                 <Row>
                   <Col>
                     <CoolButton
-                      customStyle={{ width: "100%" }}
+                      customStyle={{ width: "100%", color: "black" }}
                       variant={
                         touched && isValid
                           ? isSubmitting
                             ? "disabled"
                             : "warning"
-                          : "info"
+                          : "dark"
                       }
                       // disabled={!(touched && isValid && (loginUserResult.status == 'uninitialized'))}
                       type="submit"
@@ -277,7 +277,7 @@ const Form: React.FC<FormProps> = ({
 
                 {/* Loader overlay during submission */}
                 {isSubmitting && (
-                  <LoadingSpinner size={128} label="Signing you in..." />
+                  <LoadingSpinner size={64} label="Signing you in..." />
                 )}
               </form>
             );

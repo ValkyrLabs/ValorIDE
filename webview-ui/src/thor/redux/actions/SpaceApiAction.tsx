@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // Space
 
-export const FETCH_SPACE_REQUEST = 'FETCH_SPACE_REQUEST';
-export const FETCH_SPACE_SUCCESS = 'FETCH_SPACE_SUCCESS';
-export const FETCH_SPACE_FAILURE = 'FETCH_SPACE_FAILURE';
+export const FETCH_SPACE_REQUEST = "FETCH_SPACE_REQUEST";
+export const FETCH_SPACE_SUCCESS = "FETCH_SPACE_SUCCESS";
+export const FETCH_SPACE_FAILURE = "FETCH_SPACE_FAILURE";
 
-export const ADD_SPACE_REQUEST = 'ADD_SPACE_REQUEST';
-export const ADD_SPACE_SUCCESS = 'ADD_SPACE_SUCCESS';
-export const ADD_SPACE_FAILURE = 'ADD_SPACE_FAILURE';
+export const ADD_SPACE_REQUEST = "ADD_SPACE_REQUEST";
+export const ADD_SPACE_SUCCESS = "ADD_SPACE_SUCCESS";
+export const ADD_SPACE_FAILURE = "ADD_SPACE_FAILURE";
 
-export const UPDATE_SPACE_REQUEST = 'UPDATE_SPACE_REQUEST';
-export const UPDATE_SPACE_SUCCESS = 'UPDATE_SPACE_SUCCESS';
-export const UPDATE_SPACE_FAILURE = 'UPDATE_SPACE_FAILURE';
+export const UPDATE_SPACE_REQUEST = "UPDATE_SPACE_REQUEST";
+export const UPDATE_SPACE_SUCCESS = "UPDATE_SPACE_SUCCESS";
+export const UPDATE_SPACE_FAILURE = "UPDATE_SPACE_FAILURE";
 
-export const DELETE_SPACE_REQUEST = 'DELETE_SPACE_REQUEST';
-export const DELETE_SPACE_SUCCESS = 'DELETE_SPACE_SUCCESS';
-export const DELETE_SPACE_FAILURE = 'DELETE_SPACE_FAILURE';
+export const DELETE_SPACE_REQUEST = "DELETE_SPACE_REQUEST";
+export const DELETE_SPACE_SUCCESS = "DELETE_SPACE_SUCCESS";
+export const DELETE_SPACE_FAILURE = "DELETE_SPACE_FAILURE";
 
-export const LIST_SPACE_REQUEST = 'LIST_SPACE_REQUEST';
-export const LIST_SPACE_SUCCESS = 'LIST_SPACE_SUCCESS';
-export const LIST_SPACE_FAILURE = 'LIST_SPACE_FAILURE';
+export const LIST_SPACE_REQUEST = "LIST_SPACE_REQUEST";
+export const LIST_SPACE_SUCCESS = "LIST_SPACE_SUCCESS";
+export const LIST_SPACE_FAILURE = "LIST_SPACE_FAILURE";
 
 export const addSpaceRequest = () => ({
-    type: ADD_SPACE_REQUEST,
+  type: ADD_SPACE_REQUEST,
 });
 
 export const addSpaceSuccess = (Spaces: any) => ({
-    type: ADD_SPACE_SUCCESS,
-    payload: Spaces,
+  type: ADD_SPACE_SUCCESS,
+  payload: Spaces,
 });
 
 export const addSpaceFailure = (error: Error) => ({
-    type: ADD_SPACE_FAILURE,
-    payload: error,
+  type: ADD_SPACE_FAILURE,
+  payload: error,
 });
 
-
 export const fetchSpaceRequest = () => ({
-    type: FETCH_SPACE_REQUEST,
+  type: FETCH_SPACE_REQUEST,
 });
 
 export const fetchSpaceSuccess = (Spaces: any) => ({
-    type: FETCH_SPACE_SUCCESS,
-    payload: Spaces,
+  type: FETCH_SPACE_SUCCESS,
+  payload: Spaces,
 });
 
 export const fetchSpaceFailure = (error: Error) => ({
-    type: FETCH_SPACE_FAILURE,
-    payload: error,
+  type: FETCH_SPACE_FAILURE,
+  payload: error,
 });
 
 export const listSpaceRequest = () => ({
-    type: LIST_SPACE_REQUEST,
+  type: LIST_SPACE_REQUEST,
 });
 
 export const listSpaceSuccess = (Spaces: any) => ({
-    type: LIST_SPACE_SUCCESS,
-    payload: Spaces,
+  type: LIST_SPACE_SUCCESS,
+  payload: Spaces,
 });
 
 export const listSpaceFailure = (error: Error) => ({
-    type: LIST_SPACE_FAILURE,
-    payload: error,
+  type: LIST_SPACE_FAILURE,
+  payload: error,
 });
 
 export const updateSpaceRequest = (Space: any) => ({
-    type: UPDATE_SPACE_REQUEST,
-    payload: Space,
+  type: UPDATE_SPACE_REQUEST,
+  payload: Space,
 });
 
 export const updateSpaceSuccess = (Space: any) => ({
-    type: UPDATE_SPACE_SUCCESS,
-    payload: Space,
+  type: UPDATE_SPACE_SUCCESS,
+  payload: Space,
 });
 
 export const updateSpaceFailure = (error: Error) => ({
-    type: UPDATE_SPACE_FAILURE,
-    payload: error,
+  type: UPDATE_SPACE_FAILURE,
+  payload: error,
 });
 
 export const deleteSpaceRequest = (Space: any) => ({
-    type: DELETE_SPACE_REQUEST,
-    payload: Space,
+  type: DELETE_SPACE_REQUEST,
+  payload: Space,
 });
 
 export const deleteSpaceSuccess = (Space: any) => ({
-    type: DELETE_SPACE_SUCCESS,
-    payload: Space,
+  type: DELETE_SPACE_SUCCESS,
+  payload: Space,
 });
 
 export const deleteSpaceFailure = (error: Error) => ({
-    type: DELETE_SPACE_FAILURE,
-    payload: error,
+  type: DELETE_SPACE_FAILURE,
+  payload: error,
 });

@@ -232,7 +232,8 @@ const ApplicationProgress: React.FC<ApplicationProgressProps> = ({
                     </li>
                     {resultDetails.readmePath && (
                       <li>
-                        <strong>Documentation:</strong> {resultDetails.readmePath}
+                        <strong>Documentation:</strong>{" "}
+                        {resultDetails.readmePath}
                       </li>
                     )}
                   </ul>

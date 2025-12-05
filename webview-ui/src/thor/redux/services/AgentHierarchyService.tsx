@@ -1,0 +1,135 @@
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { AgentHierarchy } from "@thor/model/AgentHierarchy";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+
+type AgentHierarchyResponse = AgentHierarchy[];
+
+export const AgentHierarchyService = createApi({
+  reducerPath: "AgentHierarchy", // This should remain unique
+  baseQuery: customBaseQuery,
+  tagTypes: ["AgentHierarchy"],
+  endpoints: (build) => ({
+    // 1) Paged Query Endpoint
+    // Standardized pagination: page (0-based), size (page size)
+    getAgentHierarchysPaged: build.query<
+      AgentHierarchyResponse,
+      { page: number; size?: number; example?: Partial<AgentHierarchy> }
+    >({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `AgentHierarchy?${q.join("&")}`;
+      },
+      providesTags: (result, error, { page }) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "AgentHierarchy" as const,
+                id,
+              })),
+              { type: "AgentHierarchy", id: `PAGE_${page}` },
+            ]
+          : [],
+    }),
+
+    // 2) Simple "get all" Query (optional)
+    getAgentHierarchys: build.query<
+      AgentHierarchyResponse,
+      { example?: Partial<AgentHierarchy> } | void
+    >({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `AgentHierarchy?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `AgentHierarchy`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "AgentHierarchy" as const,
+                id,
+              })),
+              { type: "AgentHierarchy", id: "LIST" },
+            ]
+          : [{ type: "AgentHierarchy", id: "LIST" }],
+    }),
+
+    // 3) Create
+    addAgentHierarchy: build.mutation<AgentHierarchy, Partial<AgentHierarchy>>({
+      query: (body) => ({
+        url: `AgentHierarchy`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "AgentHierarchy", id: "LIST" }],
+    }),
+
+    // 4) Get single by ID
+    getAgentHierarchy: build.query<AgentHierarchy, string>({
+      query: (id) => `AgentHierarchy/${id}`,
+      providesTags: (result, error, id) => [{ type: "AgentHierarchy", id }],
+    }),
+
+    // 5) Update
+    updateAgentHierarchy: build.mutation<
+      void,
+      Pick<AgentHierarchy, "id"> & Partial<AgentHierarchy>
+    >({
+      query: ({ id, ...patch }) => ({
+        url: `AgentHierarchy/${id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        if (id) {
+          const patchResult = dispatch(
+            AgentHierarchyService.util.updateQueryData(
+              "getAgentHierarchy",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        }
+      },
+      invalidatesTags: (result, error, { id }: Pick<AgentHierarchy, "id">) => [
+        { type: "AgentHierarchy", id },
+        { type: "AgentHierarchy", id: "LIST" },
+      ],
+    }),
+
+    // 6) Delete
+    deleteAgentHierarchy: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
+      query(id) {
+        return {
+          url: `AgentHierarchy/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, id) => [{ type: "AgentHierarchy", id }],
+    }),
+  }),
+});
+
+// Notice we now also export `useLazyGetAgentHierarchysPagedQuery`
+export const {
+  useGetAgentHierarchysPagedQuery, // immediate fetch
+  useLazyGetAgentHierarchysPagedQuery, // lazy fetch
+  useGetAgentHierarchyQuery,
+  useGetAgentHierarchysQuery,
+  useAddAgentHierarchyMutation,
+  useUpdateAgentHierarchyMutation,
+  useDeleteAgentHierarchyMutation,
+} = AgentHierarchyService;

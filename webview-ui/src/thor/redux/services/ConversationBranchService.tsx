@@ -1,0 +1,144 @@
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { ConversationBranch } from "@thor/model/ConversationBranch";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+
+type ConversationBranchResponse = ConversationBranch[];
+
+export const ConversationBranchService = createApi({
+  reducerPath: "ConversationBranch", // This should remain unique
+  baseQuery: customBaseQuery,
+  tagTypes: ["ConversationBranch"],
+  endpoints: (build) => ({
+    // 1) Paged Query Endpoint
+    // Standardized pagination: page (0-based), size (page size)
+    getConversationBranchsPaged: build.query<
+      ConversationBranchResponse,
+      { page: number; size?: number; example?: Partial<ConversationBranch> }
+    >({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ConversationBranch?${q.join("&")}`;
+      },
+      providesTags: (result, error, { page }) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "ConversationBranch" as const,
+                id,
+              })),
+              { type: "ConversationBranch", id: `PAGE_${page}` },
+            ]
+          : [],
+    }),
+
+    // 2) Simple "get all" Query (optional)
+    getConversationBranchs: build.query<
+      ConversationBranchResponse,
+      { example?: Partial<ConversationBranch> } | void
+    >({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `ConversationBranch?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `ConversationBranch`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "ConversationBranch" as const,
+                id,
+              })),
+              { type: "ConversationBranch", id: "LIST" },
+            ]
+          : [{ type: "ConversationBranch", id: "LIST" }],
+    }),
+
+    // 3) Create
+    addConversationBranch: build.mutation<
+      ConversationBranch,
+      Partial<ConversationBranch>
+    >({
+      query: (body) => ({
+        url: `ConversationBranch`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "ConversationBranch", id: "LIST" }],
+    }),
+
+    // 4) Get single by ID
+    getConversationBranch: build.query<ConversationBranch, string>({
+      query: (id) => `ConversationBranch/${id}`,
+      providesTags: (result, error, id) => [{ type: "ConversationBranch", id }],
+    }),
+
+    // 5) Update
+    updateConversationBranch: build.mutation<
+      void,
+      Pick<ConversationBranch, "id"> & Partial<ConversationBranch>
+    >({
+      query: ({ id, ...patch }) => ({
+        url: `ConversationBranch/${id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        if (id) {
+          const patchResult = dispatch(
+            ConversationBranchService.util.updateQueryData(
+              "getConversationBranch",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        }
+      },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<ConversationBranch, "id">,
+      ) => [
+        { type: "ConversationBranch", id },
+        { type: "ConversationBranch", id: "LIST" },
+      ],
+    }),
+
+    // 6) Delete
+    deleteConversationBranch: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
+      query(id) {
+        return {
+          url: `ConversationBranch/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, id) => [
+        { type: "ConversationBranch", id },
+      ],
+    }),
+  }),
+});
+
+// Notice we now also export `useLazyGetConversationBranchsPagedQuery`
+export const {
+  useGetConversationBranchsPagedQuery, // immediate fetch
+  useLazyGetConversationBranchsPagedQuery, // lazy fetch
+  useGetConversationBranchQuery,
+  useGetConversationBranchsQuery,
+  useAddConversationBranchMutation,
+  useUpdateConversationBranchMutation,
+  useDeleteConversationBranchMutation,
+} = ConversationBranchService;

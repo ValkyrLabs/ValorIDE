@@ -20,14 +20,15 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,116 +37,142 @@ import { exists, mapValues } from '../src/runtime';
  * @export
  * @interface SwarmRegisterResponse
  */
-export type SwarmRegisterResponse  = {
-    /**
-     * Registration outcome message.
-     * @type {string}
-     * @memberof SwarmRegisterResponse
-     */
-    status?: string;
-    /**
-     * Identifier of the registered agent.
-     * @type {string}
-     * @memberof SwarmRegisterResponse
-     */
-    instanceId?: string;
-    /**
-     * Timestamp when the registration was recorded.
-     * @type {Date}
-     * @memberof SwarmRegisterResponse
-     */
-    lastSeen?: Date;
-    /**
-     * Effective metadata stored for the agent after registration.
-     * @type {string}
-     * @memberof SwarmRegisterResponse
-     */
-    metadata?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof SwarmRegisterResponse
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof SwarmRegisterResponse
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof SwarmRegisterResponse
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof SwarmRegisterResponse
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof SwarmRegisterResponse
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof SwarmRegisterResponse
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof SwarmRegisterResponse
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof SwarmRegisterResponse
-     */
-    lastModifiedDate?: Date;
+export type SwarmRegisterResponse = DataObject & {
+  /**
+   * Registration outcome message.
+   * @type {string}
+   * @memberof SwarmRegisterResponse
+   */
+  status?: string;
+  /**
+   * Identifier of the registered agent.
+   * @type {string}
+   * @memberof SwarmRegisterResponse
+   */
+  instanceId?: string;
+  /**
+   * Timestamp when the registration was recorded.
+   * @type {Date}
+   * @memberof SwarmRegisterResponse
+   */
+  lastSeen?: Date;
+  /**
+   * Effective metadata stored for the agent after registration.
+   * @type {string}
+   * @memberof SwarmRegisterResponse
+   */
+  metadata?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof SwarmRegisterResponse
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof SwarmRegisterResponse
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof SwarmRegisterResponse
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof SwarmRegisterResponse
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof SwarmRegisterResponse
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof SwarmRegisterResponse
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof SwarmRegisterResponse
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof SwarmRegisterResponse
+   */
+  lastModifiedDate?: Date;
+};
+
+export function SwarmRegisterResponseFromJSON(
+  json: any,
+): SwarmRegisterResponse {
+  return {
+    ...DataObjectFromJSON(json),
+    status: !exists(json, "status") ? undefined : json["status"],
+    instanceId: !exists(json, "instanceId") ? undefined : json["instanceId"],
+    lastSeen: !exists(json, "lastSeen")
+      ? undefined
+      : new Date(json["lastSeen"]),
+    metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
-export function SwarmRegisterResponseFromJSON(json: any): SwarmRegisterResponse {
-    return {
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'instanceId': !exists(json, 'instanceId') ? undefined : json['instanceId'],
-        'lastSeen': !exists(json, 'lastSeen') ? undefined : new Date(json['lastSeen']),
-        'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+export function SwarmRegisterResponseToJSON(
+  value?: SwarmRegisterResponse,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    status: value.status,
+    instanceId: value.instanceId,
+    lastSeen:
+      value.lastSeen === undefined ? undefined : value.lastSeen.toISOString(),
+    metadata: value.metadata,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
-
-export function SwarmRegisterResponseToJSON(value?: SwarmRegisterResponse): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'status': value.status,
-        'instanceId': value.instanceId,
-        'lastSeen': value.lastSeen === undefined ? undefined : value.lastSeen.toISOString(),
-        'metadata': value.metadata,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
-}
-
-

@@ -1,0 +1,150 @@
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { AgentChatMessageRequest } from "@thor/model/AgentChatMessageRequest";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+
+type AgentChatMessageRequestResponse = AgentChatMessageRequest[];
+
+export const AgentChatMessageRequestService = createApi({
+  reducerPath: "AgentChatMessageRequest", // This should remain unique
+  baseQuery: customBaseQuery,
+  tagTypes: ["AgentChatMessageRequest"],
+  endpoints: (build) => ({
+    // 1) Paged Query Endpoint
+    // Standardized pagination: page (0-based), size (page size)
+    getAgentChatMessageRequestsPaged: build.query<
+      AgentChatMessageRequestResponse,
+      {
+        page: number;
+        size?: number;
+        example?: Partial<AgentChatMessageRequest>;
+      }
+    >({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `AgentChatMessageRequest?${q.join("&")}`;
+      },
+      providesTags: (result, error, { page }) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "AgentChatMessageRequest" as const,
+                id,
+              })),
+              { type: "AgentChatMessageRequest", id: `PAGE_${page}` },
+            ]
+          : [],
+    }),
+
+    // 2) Simple "get all" Query (optional)
+    getAgentChatMessageRequests: build.query<
+      AgentChatMessageRequestResponse,
+      { example?: Partial<AgentChatMessageRequest> } | void
+    >({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `AgentChatMessageRequest?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `AgentChatMessageRequest`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "AgentChatMessageRequest" as const,
+                id,
+              })),
+              { type: "AgentChatMessageRequest", id: "LIST" },
+            ]
+          : [{ type: "AgentChatMessageRequest", id: "LIST" }],
+    }),
+
+    // 3) Create
+    addAgentChatMessageRequest: build.mutation<
+      AgentChatMessageRequest,
+      Partial<AgentChatMessageRequest>
+    >({
+      query: (body) => ({
+        url: `AgentChatMessageRequest`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "AgentChatMessageRequest", id: "LIST" }],
+    }),
+
+    // 4) Get single by ID
+    getAgentChatMessageRequest: build.query<AgentChatMessageRequest, string>({
+      query: (id) => `AgentChatMessageRequest/${id}`,
+      providesTags: (result, error, id) => [
+        { type: "AgentChatMessageRequest", id },
+      ],
+    }),
+
+    // 5) Update
+    updateAgentChatMessageRequest: build.mutation<
+      void,
+      Pick<AgentChatMessageRequest, "id"> & Partial<AgentChatMessageRequest>
+    >({
+      query: ({ id, ...patch }) => ({
+        url: `AgentChatMessageRequest/${id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        if (id) {
+          const patchResult = dispatch(
+            AgentChatMessageRequestService.util.updateQueryData(
+              "getAgentChatMessageRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        }
+      },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<AgentChatMessageRequest, "id">,
+      ) => [
+        { type: "AgentChatMessageRequest", id },
+        { type: "AgentChatMessageRequest", id: "LIST" },
+      ],
+    }),
+
+    // 6) Delete
+    deleteAgentChatMessageRequest: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
+      query(id) {
+        return {
+          url: `AgentChatMessageRequest/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, id) => [
+        { type: "AgentChatMessageRequest", id },
+      ],
+    }),
+  }),
+});
+
+// Notice we now also export `useLazyGetAgentChatMessageRequestsPagedQuery`
+export const {
+  useGetAgentChatMessageRequestsPagedQuery, // immediate fetch
+  useLazyGetAgentChatMessageRequestsPagedQuery, // lazy fetch
+  useGetAgentChatMessageRequestQuery,
+  useGetAgentChatMessageRequestsQuery,
+  useAddAgentChatMessageRequestMutation,
+  useUpdateAgentChatMessageRequestMutation,
+  useDeleteAgentChatMessageRequestMutation,
+} = AgentChatMessageRequestService;

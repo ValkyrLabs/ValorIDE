@@ -17,7 +17,9 @@ export class CommunicationService extends EventEmitter {
     rtcPeers = new Map();
     rtcChannels = new Map();
     rtcEnabled = true;
-    iceServers = [{ urls: ["stun:stun.l.google.com:19302"] }];
+    iceServers = [
+        { urls: ["stun:stun.l.google.com:19302"] },
+    ];
     p2pOpenCount = 0;
     constructor(options) {
         super();
@@ -32,7 +34,8 @@ export class CommunicationService extends EventEmitter {
         return Math.random().toString(36).substring(2, 10);
     }
     static isSupported() {
-        return typeof window !== "undefined" && typeof window.addEventListener === "function";
+        return (typeof window !== "undefined" &&
+            typeof window.addEventListener === "function");
     }
     connect() {
         if (this.connected)
@@ -69,7 +72,8 @@ export class CommunicationService extends EventEmitter {
                                 this.teardownPeer(appMsg.payload.id);
                             }
                         }
-                        else if (appMsg.type === "presence:state" && Array.isArray(appMsg.payload?.ids)) {
+                        else if (appMsg.type === "presence:state" &&
+                            Array.isArray(appMsg.payload?.ids)) {
                             this.peers = new Set(appMsg.payload.ids);
                             this.peers.forEach((id) => this.tryInitiateWebRTC(id));
                         }
@@ -137,7 +141,8 @@ export class CommunicationService extends EventEmitter {
                                 void e;
                             }
                         }
-                        if (appMsg.type === "presence:state" && Array.isArray(appMsg.payload.ids)) {
+                        if (appMsg.type === "presence:state" &&
+                            Array.isArray(appMsg.payload.ids)) {
                             this.peers = new Set(appMsg.payload.ids);
                             // Opportunistically initiate P2P with stable ordering to avoid glare
                             this.peers.forEach((id) => this.tryInitiateWebRTC(id));
@@ -175,7 +180,9 @@ export class CommunicationService extends EventEmitter {
                     this.connectToVsCodePeers();
                     this.reconnectPeers();
                 }
-                catch { /* ignore */ }
+                catch {
+                    /* ignore */
+                }
             };
             // Immediate kick to engage hub promptly
             kick();
@@ -276,13 +283,17 @@ export class CommunicationService extends EventEmitter {
             try {
                 this.rtcChannels.forEach((_, id) => this.teardownPeer(id));
             }
-            catch { /* ignore */ }
+            catch {
+                /* ignore */
+            }
         }
         this.emit("p2p-status", this.getP2PStatus());
         try {
             window.dispatchEvent(new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }));
         }
-        catch { /* ignore */ }
+        catch {
+            /* ignore */
+        }
     }
     async tryInitiateWebRTC(peerId) {
         if (!this.rtcEnabled)
@@ -300,7 +311,11 @@ export class CommunicationService extends EventEmitter {
             this.attachChannel(peerId, channel);
             const offer = await pc.createOffer();
             await pc.setLocalDescription(offer);
-            this.sendMessage("webrtc:offer", { to: peerId, from: this.senderId, sdp: offer });
+            this.sendMessage("webrtc:offer", {
+                to: peerId,
+                from: this.senderId,
+                sdp: offer,
+            });
         }
         catch (e) {
             // Swallow P2P init failures to keep resilience best-effort
@@ -312,7 +327,11 @@ export class CommunicationService extends EventEmitter {
         pc.onicecandidate = (ev) => {
             if (!ev.candidate)
                 return;
-            this.sendMessage("webrtc:ice", { to: peerId, from: this.senderId, candidate: ev.candidate });
+            this.sendMessage("webrtc:ice", {
+                to: peerId,
+                from: this.senderId,
+                candidate: ev.candidate,
+            });
         };
         pc.ondatachannel = (ev) => {
             this.attachChannel(peerId, ev.channel);
@@ -418,7 +437,11 @@ export class CommunicationService extends EventEmitter {
                 await pc.setRemoteDescription(new RTCSessionDescription(payload.sdp));
                 const answer = await pc.createAnswer();
                 await pc.setLocalDescription(answer);
-                this.sendMessage("webrtc:answer", { to: from, from: this.senderId, sdp: answer });
+                this.sendMessage("webrtc:answer", {
+                    to: from,
+                    from: this.senderId,
+                    sdp: answer,
+                });
             }
             catch (e) {
                 void e;
@@ -469,8 +492,10 @@ export class CommunicationService extends EventEmitter {
     }
     countOpenChannels() {
         let n = 0;
-        this.rtcChannels.forEach((ch) => { if (ch.readyState === "open")
-            n++; });
+        this.rtcChannels.forEach((ch) => {
+            if (ch.readyState === "open")
+                n++;
+        });
         return n;
     }
 }

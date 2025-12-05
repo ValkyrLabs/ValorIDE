@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ActivateAgent200Response } from '@thor/model/ActivateAgent200Response';
+import { ActivateAgent200Response } from "@thor/model/ActivateAgent200Response";
 
 const ActivateAgent200ResponseSlice = createSlice({
   name: "ActivateAgent200Responses",
@@ -12,20 +12,27 @@ const ActivateAgent200ResponseSlice = createSlice({
     },
 
     ActivateAgent200ResponseValueToggled(state, action) {
-      console.log("ActivateAgent200Response TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ActivateAgent200Response:ActivateAgent200Response = state.find((ActivateAgent200Response) => ActivateAgent200Response.id === action.payload.ActivateAgent200ResponseId);
+      console.log("ActivateAgent200Response TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ActivateAgent200Response: ActivateAgent200Response = state.find(
+        (ActivateAgent200Response) =>
+          ActivateAgent200Response.id ===
+          action.payload.ActivateAgent200ResponseId,
+      );
       if (ActivateAgent200Response) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ActivateAgent200ResponsepropertySet(state, action) {
-      const ActivateAgent200Response = state.find((ActivateAgent200Response) => ActivateAgent200Response.id === action.payload.ActivateAgent200ResponseId);
+      const ActivateAgent200Response = state.find(
+        (ActivateAgent200Response) =>
+          ActivateAgent200Response.id ===
+          action.payload.ActivateAgent200ResponseId,
+      );
       if (ActivateAgent200Response) {
-      //  ActivateAgent200Response[action.property] = action.payload[action.property];
+        //  ActivateAgent200Response[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +41,6 @@ const ActivateAgent200ResponseSlice = createSlice({
 export const {
   ActivateAgent200ResponseAdded,
   ActivateAgent200ResponseValueToggled,
-  ActivateAgent200ResponsepropertySet
+  ActivateAgent200ResponsepropertySet,
 } = ActivateAgent200ResponseSlice.actions;
 export default ActivateAgent200ResponseSlice.reducer;

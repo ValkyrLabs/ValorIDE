@@ -23,9 +23,7 @@ const McpResourceRow = ({ item }: McpResourceRowProps) => {
           marginBottom: "4px",
         }}
       >
-        <VscSymbolFile
-          style={{ marginRight: "6px" }}
-        />
+        <VscSymbolFile style={{ marginRight: "6px" }} />
         <span style={{ fontWeight: 500, wordBreak: "break-all" }}>{uri}</span>
       </div>
       <div

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { DefaultResponse } from '@thor/model/DefaultResponse';
+import { DefaultResponse } from "@thor/model/DefaultResponse";
 
 const DefaultResponseSlice = createSlice({
   name: "DefaultResponses",
@@ -12,20 +12,25 @@ const DefaultResponseSlice = createSlice({
     },
 
     DefaultResponseValueToggled(state, action) {
-      console.log("DefaultResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const DefaultResponse:DefaultResponse = state.find((DefaultResponse) => DefaultResponse.id === action.payload.DefaultResponseId);
+      console.log("DefaultResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const DefaultResponse: DefaultResponse = state.find(
+        (DefaultResponse) =>
+          DefaultResponse.id === action.payload.DefaultResponseId,
+      );
       if (DefaultResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     DefaultResponsepropertySet(state, action) {
-      const DefaultResponse = state.find((DefaultResponse) => DefaultResponse.id === action.payload.DefaultResponseId);
+      const DefaultResponse = state.find(
+        (DefaultResponse) =>
+          DefaultResponse.id === action.payload.DefaultResponseId,
+      );
       if (DefaultResponse) {
-      //  DefaultResponse[action.property] = action.payload[action.property];
+        //  DefaultResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const DefaultResponseSlice = createSlice({
 export const {
   DefaultResponseAdded,
   DefaultResponseValueToggled,
-  DefaultResponsepropertySet
+  DefaultResponsepropertySet,
 } = DefaultResponseSlice.actions;
 export default DefaultResponseSlice.reducer;

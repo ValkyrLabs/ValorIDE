@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,294 +19,353 @@ Template file: typescript-redux-query/apis.mustache
 Description: BalanceResponseApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    BalanceResponse,
-    BalanceResponseFromJSON,
-    BalanceResponseToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  BalanceResponse,
+  BalanceResponseFromJSON,
+  BalanceResponseToJSON,
+} from "../model";
 
 export interface DeleteBalanceResponseApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetBalanceResponseApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetBalanceResponseListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PostBalanceResponseApiRequest {
-    balanceResponse: BalanceResponse;
+  balanceResponse: BalanceResponse;
 }
 
 export interface UpdateBalanceResponseApiRequest {
-    id: string;
-    balanceResponse: BalanceResponse;
+  id: string;
+  balanceResponse: BalanceResponse;
 }
-
 
 /**
  * Deletes a specific BalanceResponse.
  * Delete a BalanceResponse.
  */
-function deleteBalanceResponseRaw<T>(requestParameters: DeleteBalanceResponseApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteBalanceResponse.');
-    }
+function deleteBalanceResponseRaw<T>(
+  requestParameters: DeleteBalanceResponseApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteBalanceResponse.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/BalanceResponse/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/BalanceResponse/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific BalanceResponse.
-* Delete a BalanceResponse.
-*/
-export function deleteBalanceResponse<T>(requestParameters: DeleteBalanceResponseApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteBalanceResponseRaw(requestParameters, requestConfig);
+ * Deletes a specific BalanceResponse.
+ * Delete a BalanceResponse.
+ */
+export function deleteBalanceResponse<T>(
+  requestParameters: DeleteBalanceResponseApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteBalanceResponseRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single BalanceResponse for a specific uid.
  * Retrieve a single BalanceResponse
  */
-function getBalanceResponseRaw<T>(requestParameters: GetBalanceResponseApiRequest, requestConfig: runtime.TypedQueryConfig<T, BalanceResponse> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getBalanceResponse.');
-    }
+function getBalanceResponseRaw<T>(
+  requestParameters: GetBalanceResponseApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, BalanceResponse> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getBalanceResponse.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/BalanceResponse/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(BalanceResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/BalanceResponse/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BalanceResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single BalanceResponse for a specific uid.
-* Retrieve a single BalanceResponse
-*/
-export function getBalanceResponse<T>(requestParameters: GetBalanceResponseApiRequest, requestConfig?: runtime.TypedQueryConfig<T, BalanceResponse>): QueryConfig<T> {
-    return getBalanceResponseRaw(requestParameters, requestConfig);
+ * Retrieves a single BalanceResponse for a specific uid.
+ * Retrieve a single BalanceResponse
+ */
+export function getBalanceResponse<T>(
+  requestParameters: GetBalanceResponseApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, BalanceResponse>,
+): QueryConfig<T> {
+  return getBalanceResponseRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of BalanceResponses.
  * Retrieve a list of BalanceResponses
  */
-function getBalanceResponseListRaw<T>(requestParameters: GetBalanceResponseListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<BalanceResponse>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getBalanceResponseListRaw<T>(
+  requestParameters: GetBalanceResponseListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<BalanceResponse>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/BalanceResponse`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(BalanceResponseFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/BalanceResponse`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(BalanceResponseFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of BalanceResponses.
-* Retrieve a list of BalanceResponses
-*/
-export function getBalanceResponseList<T>(requestParameters: GetBalanceResponseListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<BalanceResponse>>): QueryConfig<T> {
-    return getBalanceResponseListRaw(requestParameters, requestConfig);
+ * Retrieves a list of BalanceResponses.
+ * Retrieve a list of BalanceResponses
+ */
+export function getBalanceResponseList<T>(
+  requestParameters: GetBalanceResponseListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<BalanceResponse>>,
+): QueryConfig<T> {
+  return getBalanceResponseListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new BalanceResponse.
  * Create a new BalanceResponse
  */
-function postBalanceResponseRaw<T>(requestParameters: PostBalanceResponseApiRequest, requestConfig: runtime.TypedQueryConfig<T, BalanceResponse> = {}): QueryConfig<T> {
-    if (requestParameters.balanceResponse === null || requestParameters.balanceResponse === undefined) {
-        throw new runtime.RequiredError('balanceResponse','Required parameter requestParameters.balanceResponse was null or undefined when calling postBalanceResponse.');
-    }
+function postBalanceResponseRaw<T>(
+  requestParameters: PostBalanceResponseApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, BalanceResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.balanceResponse === null ||
+    requestParameters.balanceResponse === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "balanceResponse",
+      "Required parameter requestParameters.balanceResponse was null or undefined when calling postBalanceResponse.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/BalanceResponse`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      BalanceResponseToJSON(requestParameters.balanceResponse),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(BalanceResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/BalanceResponse`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || BalanceResponseToJSON(requestParameters.balanceResponse),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BalanceResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new BalanceResponse.
-* Create a new BalanceResponse
-*/
-export function postBalanceResponse<T>(requestParameters: PostBalanceResponseApiRequest, requestConfig?: runtime.TypedQueryConfig<T, BalanceResponse>): QueryConfig<T> {
-    return postBalanceResponseRaw(requestParameters, requestConfig);
+ * Creates a new BalanceResponse.
+ * Create a new BalanceResponse
+ */
+export function postBalanceResponse<T>(
+  requestParameters: PostBalanceResponseApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, BalanceResponse>,
+): QueryConfig<T> {
+  return postBalanceResponseRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing BalanceResponse.
  * Update an existing BalanceResponse
  */
-function updateBalanceResponseRaw<T>(requestParameters: UpdateBalanceResponseApiRequest, requestConfig: runtime.TypedQueryConfig<T, BalanceResponse> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateBalanceResponse.');
-    }
+function updateBalanceResponseRaw<T>(
+  requestParameters: UpdateBalanceResponseApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, BalanceResponse> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateBalanceResponse.",
+    );
+  }
 
-    if (requestParameters.balanceResponse === null || requestParameters.balanceResponse === undefined) {
-        throw new runtime.RequiredError('balanceResponse','Required parameter requestParameters.balanceResponse was null or undefined when calling updateBalanceResponse.');
-    }
+  if (
+    requestParameters.balanceResponse === null ||
+    requestParameters.balanceResponse === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "balanceResponse",
+      "Required parameter requestParameters.balanceResponse was null or undefined when calling updateBalanceResponse.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/BalanceResponse/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      BalanceResponseToJSON(requestParameters.balanceResponse),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(BalanceResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/BalanceResponse/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || BalanceResponseToJSON(requestParameters.balanceResponse),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(BalanceResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing BalanceResponse.
-* Update an existing BalanceResponse
-*/
-export function updateBalanceResponse<T>(requestParameters: UpdateBalanceResponseApiRequest, requestConfig?: runtime.TypedQueryConfig<T, BalanceResponse>): QueryConfig<T> {
-    return updateBalanceResponseRaw(requestParameters, requestConfig);
+ * Updates an existing BalanceResponse.
+ * Update an existing BalanceResponse
+ */
+export function updateBalanceResponse<T>(
+  requestParameters: UpdateBalanceResponseApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, BalanceResponse>,
+): QueryConfig<T> {
+  return updateBalanceResponseRaw(requestParameters, requestConfig);
 }
-

@@ -1,33 +1,40 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { KeyMetric } from '@thor/model/KeyMetric'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { KeyMetric } from "@thor/model/KeyMetric";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type KeyMetricResponse = KeyMetric[]
+type KeyMetricResponse = KeyMetric[];
 
 export const KeyMetricService = createApi({
-  reducerPath: 'KeyMetric', // This should remain unique
+  reducerPath: "KeyMetric", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['KeyMetric'],
+  tagTypes: ["KeyMetric"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getKeyMetricsPaged: build.query<KeyMetricResponse, { page: number; size?: number; example?: Partial<KeyMetric> }>({
+    getKeyMetricsPaged: build.query<
+      KeyMetricResponse,
+      { page: number; size?: number; example?: Partial<KeyMetric> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `KeyMetric?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `KeyMetric?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'KeyMetric' as const, id })),
-              { type: 'KeyMetric', id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: "KeyMetric" as const, id })),
+              { type: "KeyMetric", id: `PAGE_${page}` },
             ]
           : [],
     }),
 
     // 2) Simple "get all" Query (optional)
-    getKeyMetrics: build.query<KeyMetricResponse, { example?: Partial<KeyMetric> } | void>({
+    getKeyMetrics: build.query<
+      KeyMetricResponse,
+      { example?: Partial<KeyMetric> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -38,52 +45,59 @@ export const KeyMetricService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'KeyMetric' as const, id })),
-              { type: 'KeyMetric', id: 'LIST' },
+              ...result.map(({ id }) => ({ type: "KeyMetric" as const, id })),
+              { type: "KeyMetric", id: "LIST" },
             ]
-          : [{ type: 'KeyMetric', id: 'LIST' }],
+          : [{ type: "KeyMetric", id: "LIST" }],
     }),
 
     // 3) Create
     addKeyMetric: build.mutation<KeyMetric, Partial<KeyMetric>>({
       query: (body) => ({
         url: `KeyMetric`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'KeyMetric', id: 'LIST' }],
+      invalidatesTags: [{ type: "KeyMetric", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getKeyMetric: build.query<KeyMetric, string>({
       query: (id) => `KeyMetric/${id}`,
-      providesTags: (result, error, id) => [{ type: 'KeyMetric', id }],
+      providesTags: (result, error, id) => [{ type: "KeyMetric", id }],
     }),
 
     // 5) Update
-    updateKeyMetric: build.mutation<void, Pick<KeyMetric, 'id'> & Partial<KeyMetric>>({
+    updateKeyMetric: build.mutation<
+      void,
+      Pick<KeyMetric, "id"> & Partial<KeyMetric>
+    >({
       query: ({ id, ...patch }) => ({
         url: `KeyMetric/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            KeyMetricService.util.updateQueryData('getKeyMetric', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            KeyMetricService.util.updateQueryData(
+              "getKeyMetric",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [
-        { type: 'KeyMetric', id },
-        { type: 'KeyMetric', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<KeyMetric, "id">) => [
+        { type: "KeyMetric", id },
+        { type: "KeyMetric", id: "LIST" },
       ],
     }),
 
@@ -92,21 +106,21 @@ export const KeyMetricService = createApi({
       query(id) {
         return {
           url: `KeyMetric/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'KeyMetric', id }],
+      invalidatesTags: (result, error, id) => [{ type: "KeyMetric", id }],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetKeyMetricsPagedQuery`
 export const {
-  useGetKeyMetricsPagedQuery,     // immediate fetch
+  useGetKeyMetricsPagedQuery, // immediate fetch
   useLazyGetKeyMetricsPagedQuery, // lazy fetch
   useGetKeyMetricQuery,
   useGetKeyMetricsQuery,
   useAddKeyMetricMutation,
   useUpdateKeyMetricMutation,
   useDeleteKeyMetricMutation,
-} = KeyMetricService
+} = KeyMetricService;

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ApiTrafficEvent } from '@thor/model/ApiTrafficEvent';
+import { ApiTrafficEvent } from "@thor/model/ApiTrafficEvent";
 
 const ApiTrafficEventSlice = createSlice({
   name: "ApiTrafficEvents",
@@ -12,20 +12,25 @@ const ApiTrafficEventSlice = createSlice({
     },
 
     ApiTrafficEventValueToggled(state, action) {
-      console.log("ApiTrafficEvent TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ApiTrafficEvent:ApiTrafficEvent = state.find((ApiTrafficEvent) => ApiTrafficEvent.id === action.payload.ApiTrafficEventId);
+      console.log("ApiTrafficEvent TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ApiTrafficEvent: ApiTrafficEvent = state.find(
+        (ApiTrafficEvent) =>
+          ApiTrafficEvent.id === action.payload.ApiTrafficEventId,
+      );
       if (ApiTrafficEvent) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ApiTrafficEventpropertySet(state, action) {
-      const ApiTrafficEvent = state.find((ApiTrafficEvent) => ApiTrafficEvent.id === action.payload.ApiTrafficEventId);
+      const ApiTrafficEvent = state.find(
+        (ApiTrafficEvent) =>
+          ApiTrafficEvent.id === action.payload.ApiTrafficEventId,
+      );
       if (ApiTrafficEvent) {
-      //  ApiTrafficEvent[action.property] = action.payload[action.property];
+        //  ApiTrafficEvent[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const ApiTrafficEventSlice = createSlice({
 export const {
   ApiTrafficEventAdded,
   ApiTrafficEventValueToggled,
-  ApiTrafficEventpropertySet
+  ApiTrafficEventpropertySet,
 } = ApiTrafficEventSlice.actions;
 export default ApiTrafficEventSlice.reducer;

@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // McpResource
 
-export const FETCH_MCPRESOURCE_REQUEST = 'FETCH_MCPRESOURCE_REQUEST';
-export const FETCH_MCPRESOURCE_SUCCESS = 'FETCH_MCPRESOURCE_SUCCESS';
-export const FETCH_MCPRESOURCE_FAILURE = 'FETCH_MCPRESOURCE_FAILURE';
+export const FETCH_MCPRESOURCE_REQUEST = "FETCH_MCPRESOURCE_REQUEST";
+export const FETCH_MCPRESOURCE_SUCCESS = "FETCH_MCPRESOURCE_SUCCESS";
+export const FETCH_MCPRESOURCE_FAILURE = "FETCH_MCPRESOURCE_FAILURE";
 
-export const ADD_MCPRESOURCE_REQUEST = 'ADD_MCPRESOURCE_REQUEST';
-export const ADD_MCPRESOURCE_SUCCESS = 'ADD_MCPRESOURCE_SUCCESS';
-export const ADD_MCPRESOURCE_FAILURE = 'ADD_MCPRESOURCE_FAILURE';
+export const ADD_MCPRESOURCE_REQUEST = "ADD_MCPRESOURCE_REQUEST";
+export const ADD_MCPRESOURCE_SUCCESS = "ADD_MCPRESOURCE_SUCCESS";
+export const ADD_MCPRESOURCE_FAILURE = "ADD_MCPRESOURCE_FAILURE";
 
-export const UPDATE_MCPRESOURCE_REQUEST = 'UPDATE_MCPRESOURCE_REQUEST';
-export const UPDATE_MCPRESOURCE_SUCCESS = 'UPDATE_MCPRESOURCE_SUCCESS';
-export const UPDATE_MCPRESOURCE_FAILURE = 'UPDATE_MCPRESOURCE_FAILURE';
+export const UPDATE_MCPRESOURCE_REQUEST = "UPDATE_MCPRESOURCE_REQUEST";
+export const UPDATE_MCPRESOURCE_SUCCESS = "UPDATE_MCPRESOURCE_SUCCESS";
+export const UPDATE_MCPRESOURCE_FAILURE = "UPDATE_MCPRESOURCE_FAILURE";
 
-export const DELETE_MCPRESOURCE_REQUEST = 'DELETE_MCPRESOURCE_REQUEST';
-export const DELETE_MCPRESOURCE_SUCCESS = 'DELETE_MCPRESOURCE_SUCCESS';
-export const DELETE_MCPRESOURCE_FAILURE = 'DELETE_MCPRESOURCE_FAILURE';
+export const DELETE_MCPRESOURCE_REQUEST = "DELETE_MCPRESOURCE_REQUEST";
+export const DELETE_MCPRESOURCE_SUCCESS = "DELETE_MCPRESOURCE_SUCCESS";
+export const DELETE_MCPRESOURCE_FAILURE = "DELETE_MCPRESOURCE_FAILURE";
 
-export const LIST_MCPRESOURCE_REQUEST = 'LIST_MCPRESOURCE_REQUEST';
-export const LIST_MCPRESOURCE_SUCCESS = 'LIST_MCPRESOURCE_SUCCESS';
-export const LIST_MCPRESOURCE_FAILURE = 'LIST_MCPRESOURCE_FAILURE';
+export const LIST_MCPRESOURCE_REQUEST = "LIST_MCPRESOURCE_REQUEST";
+export const LIST_MCPRESOURCE_SUCCESS = "LIST_MCPRESOURCE_SUCCESS";
+export const LIST_MCPRESOURCE_FAILURE = "LIST_MCPRESOURCE_FAILURE";
 
 export const addMcpResourceRequest = () => ({
-    type: ADD_MCPRESOURCE_REQUEST,
+  type: ADD_MCPRESOURCE_REQUEST,
 });
 
 export const addMcpResourceSuccess = (McpResources: any) => ({
-    type: ADD_MCPRESOURCE_SUCCESS,
-    payload: McpResources,
+  type: ADD_MCPRESOURCE_SUCCESS,
+  payload: McpResources,
 });
 
 export const addMcpResourceFailure = (error: Error) => ({
-    type: ADD_MCPRESOURCE_FAILURE,
-    payload: error,
+  type: ADD_MCPRESOURCE_FAILURE,
+  payload: error,
 });
 
-
 export const fetchMcpResourceRequest = () => ({
-    type: FETCH_MCPRESOURCE_REQUEST,
+  type: FETCH_MCPRESOURCE_REQUEST,
 });
 
 export const fetchMcpResourceSuccess = (McpResources: any) => ({
-    type: FETCH_MCPRESOURCE_SUCCESS,
-    payload: McpResources,
+  type: FETCH_MCPRESOURCE_SUCCESS,
+  payload: McpResources,
 });
 
 export const fetchMcpResourceFailure = (error: Error) => ({
-    type: FETCH_MCPRESOURCE_FAILURE,
-    payload: error,
+  type: FETCH_MCPRESOURCE_FAILURE,
+  payload: error,
 });
 
 export const listMcpResourceRequest = () => ({
-    type: LIST_MCPRESOURCE_REQUEST,
+  type: LIST_MCPRESOURCE_REQUEST,
 });
 
 export const listMcpResourceSuccess = (McpResources: any) => ({
-    type: LIST_MCPRESOURCE_SUCCESS,
-    payload: McpResources,
+  type: LIST_MCPRESOURCE_SUCCESS,
+  payload: McpResources,
 });
 
 export const listMcpResourceFailure = (error: Error) => ({
-    type: LIST_MCPRESOURCE_FAILURE,
-    payload: error,
+  type: LIST_MCPRESOURCE_FAILURE,
+  payload: error,
 });
 
 export const updateMcpResourceRequest = (McpResource: any) => ({
-    type: UPDATE_MCPRESOURCE_REQUEST,
-    payload: McpResource,
+  type: UPDATE_MCPRESOURCE_REQUEST,
+  payload: McpResource,
 });
 
 export const updateMcpResourceSuccess = (McpResource: any) => ({
-    type: UPDATE_MCPRESOURCE_SUCCESS,
-    payload: McpResource,
+  type: UPDATE_MCPRESOURCE_SUCCESS,
+  payload: McpResource,
 });
 
 export const updateMcpResourceFailure = (error: Error) => ({
-    type: UPDATE_MCPRESOURCE_FAILURE,
-    payload: error,
+  type: UPDATE_MCPRESOURCE_FAILURE,
+  payload: error,
 });
 
 export const deleteMcpResourceRequest = (McpResource: any) => ({
-    type: DELETE_MCPRESOURCE_REQUEST,
-    payload: McpResource,
+  type: DELETE_MCPRESOURCE_REQUEST,
+  payload: McpResource,
 });
 
 export const deleteMcpResourceSuccess = (McpResource: any) => ({
-    type: DELETE_MCPRESOURCE_SUCCESS,
-    payload: McpResource,
+  type: DELETE_MCPRESOURCE_SUCCESS,
+  payload: McpResource,
 });
 
 export const deleteMcpResourceFailure = (error: Error) => ({
-    type: DELETE_MCPRESOURCE_FAILURE,
-    payload: error,
+  type: DELETE_MCPRESOURCE_FAILURE,
+  payload: error,
 });

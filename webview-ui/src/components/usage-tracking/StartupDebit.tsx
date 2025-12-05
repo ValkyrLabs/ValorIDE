@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { useAddUsageTransactionMutation } from '../../thor/redux/services/UsageTransactionService';
+import React, { useEffect } from "react";
+import { useAddUsageTransactionMutation } from "../../thor/redux/services/UsageTransactionService";
 
 /**
  * Fires a one-time $0.01 debit when the webview starts up
@@ -11,7 +11,11 @@ const StartupDebit: React.FC = () => {
 
   useEffect(() => {
     const alreadyCharged = (() => {
-      try { return sessionStorage.getItem('valoride.startupDebit.sent') === 'true'; } catch { return false; }
+      try {
+        return sessionStorage.getItem("valoride.startupDebit.sent") === "true";
+      } catch {
+        return false;
+      }
     })();
     if (alreadyCharged) {
       return undefined;
@@ -20,8 +24,13 @@ const StartupDebit: React.FC = () => {
     // Detect existing token at startup
     let token: string | null = null;
     try {
-      token = sessionStorage.getItem('jwtToken') || localStorage.getItem('jwtToken') || localStorage.getItem('authToken');
-    } catch { /* ignore */ }
+      token =
+        sessionStorage.getItem("jwtToken") ||
+        localStorage.getItem("jwtToken") ||
+        localStorage.getItem("authToken");
+    } catch {
+      /* ignore */
+    }
 
     if (!token) {
       return undefined; // No auto-login token; normal login flow will handle debit.
@@ -32,16 +41,20 @@ const StartupDebit: React.FC = () => {
         const debit = {
           spentAt: new Date(),
           credits: 0.01,
-          modelProvider: 'valoride',
-          model: 'auto-connect',
+          modelProvider: "valoride",
+          model: "auto-connect",
           promptTokens: 0,
           completionTokens: 0,
         } as any;
         await addUsageTransaction(debit).unwrap();
-        try { sessionStorage.setItem('valoride.startupDebit.sent', 'true'); } catch { /* ignore */ }
+        try {
+          sessionStorage.setItem("valoride.startupDebit.sent", "true");
+        } catch {
+          /* ignore */
+        }
       } catch (e) {
         // Log but do not disrupt UI
-        console.warn('StartupDebit: failed to send auto-connect debit', e);
+        console.warn("StartupDebit: failed to send auto-connect debit", e);
       }
     };
 

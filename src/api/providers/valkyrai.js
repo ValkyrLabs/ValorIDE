@@ -1,5 +1,6 @@
-import { openAiModelInfoSaneDefaults } from "@shared/api";
+import { openAiModelInfoSaneDefaults, } from "@shared/api";
 import { callValkyraiLlm } from "../../services/ValkyraiLlmService";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 function extractUserText(message) {
     if (!message) {
         return "";
@@ -30,9 +31,7 @@ export class ValkyraiHandler {
         this.options = options;
     }
     async *createMessage(_systemPrompt, messages) {
-        const host = this.options.valkyraiHost ||
-            process.env.VITE_basePath ||
-            "https://api-0.valkyrlabs.com/v1";
+        const host = this.options.valkyraiHost || getValkyraiBasePath();
         const serviceId = this.options.valkyraiServiceId || this.options.apiModelId || "";
         const jwt = this.options.valkyraiJwt;
         const lastUser = [...messages].reverse().find((m) => m.role === "user");
@@ -45,7 +44,12 @@ export class ValkyraiHandler {
                 "," +
                 content);
         }
-        const res = await callValkyraiLlm({ host, serviceId, jwt, prompt: content });
+        const res = await callValkyraiLlm({
+            host,
+            serviceId,
+            jwt,
+            prompt: content,
+        });
         yield { type: "text", text: res.content };
     }
     getModel() {

@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // ChatMessage
 
-export const FETCH_CHATMESSAGE_REQUEST = 'FETCH_CHATMESSAGE_REQUEST';
-export const FETCH_CHATMESSAGE_SUCCESS = 'FETCH_CHATMESSAGE_SUCCESS';
-export const FETCH_CHATMESSAGE_FAILURE = 'FETCH_CHATMESSAGE_FAILURE';
+export const FETCH_CHATMESSAGE_REQUEST = "FETCH_CHATMESSAGE_REQUEST";
+export const FETCH_CHATMESSAGE_SUCCESS = "FETCH_CHATMESSAGE_SUCCESS";
+export const FETCH_CHATMESSAGE_FAILURE = "FETCH_CHATMESSAGE_FAILURE";
 
-export const ADD_CHATMESSAGE_REQUEST = 'ADD_CHATMESSAGE_REQUEST';
-export const ADD_CHATMESSAGE_SUCCESS = 'ADD_CHATMESSAGE_SUCCESS';
-export const ADD_CHATMESSAGE_FAILURE = 'ADD_CHATMESSAGE_FAILURE';
+export const ADD_CHATMESSAGE_REQUEST = "ADD_CHATMESSAGE_REQUEST";
+export const ADD_CHATMESSAGE_SUCCESS = "ADD_CHATMESSAGE_SUCCESS";
+export const ADD_CHATMESSAGE_FAILURE = "ADD_CHATMESSAGE_FAILURE";
 
-export const UPDATE_CHATMESSAGE_REQUEST = 'UPDATE_CHATMESSAGE_REQUEST';
-export const UPDATE_CHATMESSAGE_SUCCESS = 'UPDATE_CHATMESSAGE_SUCCESS';
-export const UPDATE_CHATMESSAGE_FAILURE = 'UPDATE_CHATMESSAGE_FAILURE';
+export const UPDATE_CHATMESSAGE_REQUEST = "UPDATE_CHATMESSAGE_REQUEST";
+export const UPDATE_CHATMESSAGE_SUCCESS = "UPDATE_CHATMESSAGE_SUCCESS";
+export const UPDATE_CHATMESSAGE_FAILURE = "UPDATE_CHATMESSAGE_FAILURE";
 
-export const DELETE_CHATMESSAGE_REQUEST = 'DELETE_CHATMESSAGE_REQUEST';
-export const DELETE_CHATMESSAGE_SUCCESS = 'DELETE_CHATMESSAGE_SUCCESS';
-export const DELETE_CHATMESSAGE_FAILURE = 'DELETE_CHATMESSAGE_FAILURE';
+export const DELETE_CHATMESSAGE_REQUEST = "DELETE_CHATMESSAGE_REQUEST";
+export const DELETE_CHATMESSAGE_SUCCESS = "DELETE_CHATMESSAGE_SUCCESS";
+export const DELETE_CHATMESSAGE_FAILURE = "DELETE_CHATMESSAGE_FAILURE";
 
-export const LIST_CHATMESSAGE_REQUEST = 'LIST_CHATMESSAGE_REQUEST';
-export const LIST_CHATMESSAGE_SUCCESS = 'LIST_CHATMESSAGE_SUCCESS';
-export const LIST_CHATMESSAGE_FAILURE = 'LIST_CHATMESSAGE_FAILURE';
+export const LIST_CHATMESSAGE_REQUEST = "LIST_CHATMESSAGE_REQUEST";
+export const LIST_CHATMESSAGE_SUCCESS = "LIST_CHATMESSAGE_SUCCESS";
+export const LIST_CHATMESSAGE_FAILURE = "LIST_CHATMESSAGE_FAILURE";
 
 export const addChatMessageRequest = () => ({
-    type: ADD_CHATMESSAGE_REQUEST,
+  type: ADD_CHATMESSAGE_REQUEST,
 });
 
 export const addChatMessageSuccess = (ChatMessages: any) => ({
-    type: ADD_CHATMESSAGE_SUCCESS,
-    payload: ChatMessages,
+  type: ADD_CHATMESSAGE_SUCCESS,
+  payload: ChatMessages,
 });
 
 export const addChatMessageFailure = (error: Error) => ({
-    type: ADD_CHATMESSAGE_FAILURE,
-    payload: error,
+  type: ADD_CHATMESSAGE_FAILURE,
+  payload: error,
 });
 
-
 export const fetchChatMessageRequest = () => ({
-    type: FETCH_CHATMESSAGE_REQUEST,
+  type: FETCH_CHATMESSAGE_REQUEST,
 });
 
 export const fetchChatMessageSuccess = (ChatMessages: any) => ({
-    type: FETCH_CHATMESSAGE_SUCCESS,
-    payload: ChatMessages,
+  type: FETCH_CHATMESSAGE_SUCCESS,
+  payload: ChatMessages,
 });
 
 export const fetchChatMessageFailure = (error: Error) => ({
-    type: FETCH_CHATMESSAGE_FAILURE,
-    payload: error,
+  type: FETCH_CHATMESSAGE_FAILURE,
+  payload: error,
 });
 
 export const listChatMessageRequest = () => ({
-    type: LIST_CHATMESSAGE_REQUEST,
+  type: LIST_CHATMESSAGE_REQUEST,
 });
 
 export const listChatMessageSuccess = (ChatMessages: any) => ({
-    type: LIST_CHATMESSAGE_SUCCESS,
-    payload: ChatMessages,
+  type: LIST_CHATMESSAGE_SUCCESS,
+  payload: ChatMessages,
 });
 
 export const listChatMessageFailure = (error: Error) => ({
-    type: LIST_CHATMESSAGE_FAILURE,
-    payload: error,
+  type: LIST_CHATMESSAGE_FAILURE,
+  payload: error,
 });
 
 export const updateChatMessageRequest = (ChatMessage: any) => ({
-    type: UPDATE_CHATMESSAGE_REQUEST,
-    payload: ChatMessage,
+  type: UPDATE_CHATMESSAGE_REQUEST,
+  payload: ChatMessage,
 });
 
 export const updateChatMessageSuccess = (ChatMessage: any) => ({
-    type: UPDATE_CHATMESSAGE_SUCCESS,
-    payload: ChatMessage,
+  type: UPDATE_CHATMESSAGE_SUCCESS,
+  payload: ChatMessage,
 });
 
 export const updateChatMessageFailure = (error: Error) => ({
-    type: UPDATE_CHATMESSAGE_FAILURE,
-    payload: error,
+  type: UPDATE_CHATMESSAGE_FAILURE,
+  payload: error,
 });
 
 export const deleteChatMessageRequest = (ChatMessage: any) => ({
-    type: DELETE_CHATMESSAGE_REQUEST,
-    payload: ChatMessage,
+  type: DELETE_CHATMESSAGE_REQUEST,
+  payload: ChatMessage,
 });
 
 export const deleteChatMessageSuccess = (ChatMessage: any) => ({
-    type: DELETE_CHATMESSAGE_SUCCESS,
-    payload: ChatMessage,
+  type: DELETE_CHATMESSAGE_SUCCESS,
+  payload: ChatMessage,
 });
 
 export const deleteChatMessageFailure = (error: Error) => ({
-    type: DELETE_CHATMESSAGE_FAILURE,
-    payload: error,
+  type: DELETE_CHATMESSAGE_FAILURE,
+  payload: error,
 });

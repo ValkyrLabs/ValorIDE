@@ -1,33 +1,43 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { SwarmMessage } from '@thor/model/SwarmMessage'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { SwarmMessage } from "@thor/model/SwarmMessage";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type SwarmMessageResponse = SwarmMessage[]
+type SwarmMessageResponse = SwarmMessage[];
 
 export const SwarmMessageService = createApi({
-  reducerPath: 'SwarmMessage', // This should remain unique
+  reducerPath: "SwarmMessage", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['SwarmMessage'],
+  tagTypes: ["SwarmMessage"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getSwarmMessagesPaged: build.query<SwarmMessageResponse, { page: number; size?: number; example?: Partial<SwarmMessage> }>({
+    getSwarmMessagesPaged: build.query<
+      SwarmMessageResponse,
+      { page: number; size?: number; example?: Partial<SwarmMessage> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `SwarmMessage?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `SwarmMessage?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'SwarmMessage' as const, id })),
-              { type: 'SwarmMessage', id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({
+                type: "SwarmMessage" as const,
+                id,
+              })),
+              { type: "SwarmMessage", id: `PAGE_${page}` },
             ]
           : [],
     }),
 
     // 2) Simple "get all" Query (optional)
-    getSwarmMessages: build.query<SwarmMessageResponse, { example?: Partial<SwarmMessage> } | void>({
+    getSwarmMessages: build.query<
+      SwarmMessageResponse,
+      { example?: Partial<SwarmMessage> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -38,75 +48,88 @@ export const SwarmMessageService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'SwarmMessage' as const, id })),
-              { type: 'SwarmMessage', id: 'LIST' },
+              ...result.map(({ id }) => ({
+                type: "SwarmMessage" as const,
+                id,
+              })),
+              { type: "SwarmMessage", id: "LIST" },
             ]
-          : [{ type: 'SwarmMessage', id: 'LIST' }],
+          : [{ type: "SwarmMessage", id: "LIST" }],
     }),
 
     // 3) Create
     addSwarmMessage: build.mutation<SwarmMessage, Partial<SwarmMessage>>({
       query: (body) => ({
         url: `SwarmMessage`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'SwarmMessage', id: 'LIST' }],
+      invalidatesTags: [{ type: "SwarmMessage", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getSwarmMessage: build.query<SwarmMessage, string>({
       query: (id) => `SwarmMessage/${id}`,
-      providesTags: (result, error, id) => [{ type: 'SwarmMessage', id }],
+      providesTags: (result, error, id) => [{ type: "SwarmMessage", id }],
     }),
 
     // 5) Update
-    updateSwarmMessage: build.mutation<void, Pick<SwarmMessage, 'id'> & Partial<SwarmMessage>>({
+    updateSwarmMessage: build.mutation<
+      void,
+      Pick<SwarmMessage, "id"> & Partial<SwarmMessage>
+    >({
       query: ({ id, ...patch }) => ({
         url: `SwarmMessage/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            SwarmMessageService.util.updateQueryData('getSwarmMessage', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            SwarmMessageService.util.updateQueryData(
+              "getSwarmMessage",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [
-        { type: 'SwarmMessage', id },
-        { type: 'SwarmMessage', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<SwarmMessage, "id">) => [
+        { type: "SwarmMessage", id },
+        { type: "SwarmMessage", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteSwarmMessage: build.mutation<{ success: boolean; id: string }, number>({
+    deleteSwarmMessage: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `SwarmMessage/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'SwarmMessage', id }],
+      invalidatesTags: (result, error, id) => [{ type: "SwarmMessage", id }],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetSwarmMessagesPagedQuery`
 export const {
-  useGetSwarmMessagesPagedQuery,     // immediate fetch
+  useGetSwarmMessagesPagedQuery, // immediate fetch
   useLazyGetSwarmMessagesPagedQuery, // lazy fetch
   useGetSwarmMessageQuery,
   useGetSwarmMessagesQuery,
   useAddSwarmMessageMutation,
   useUpdateSwarmMessageMutation,
   useDeleteSwarmMessageMutation,
-} = SwarmMessageService
+} = SwarmMessageService;

@@ -14,7 +14,7 @@ Progress (1): 4.1/4.1 kB
       `.trim();
 
       const result = OutputFilterService.filterMavenOutput(input);
-      
+
       result.should.not.containEql("Downloading from central");
       result.should.not.containEql("Downloaded from central");
       result.should.not.containEql("Progress (1)");
@@ -38,18 +38,26 @@ Caused by: java.lang.IllegalArgumentException: Invalid path
       `.trim();
 
       const result = OutputFilterService.filterMavenOutput(input);
-      
+
       result.should.containEql("java.lang.RuntimeException: Build failed");
-      result.should.containEql("Caused by: java.io.IOException: File not found");
-      result.should.containEql("Caused by: java.lang.IllegalArgumentException: Invalid path");
-      result.should.not.containEql("at org.apache.maven.DefaultMaven.doExecute");
+      result.should.containEql(
+        "Caused by: java.io.IOException: File not found",
+      );
+      result.should.containEql(
+        "Caused by: java.lang.IllegalArgumentException: Invalid path",
+      );
+      result.should.not.containEql(
+        "at org.apache.maven.DefaultMaven.doExecute",
+      );
       result.should.not.containEql("at java.io.FileInputStream.<init>");
     });
 
     it("should truncate output if too long", () => {
       const longOutput = "A".repeat(10000);
-      const result = OutputFilterService.filterMavenOutput(longOutput, { maxOutputLength: 100 });
-      
+      const result = OutputFilterService.filterMavenOutput(longOutput, {
+        maxOutputLength: 100,
+      });
+
       result.length.should.be.lessThan(200);
       result.should.containEql("[Output truncated");
     });
@@ -66,7 +74,7 @@ found 0 vulnerabilities
       `.trim();
 
       const result = OutputFilterService.filterNpmOutput(input);
-      
+
       result.should.not.containEql("⠋ Installing");
       result.should.not.containEql("⠙ Resolving");
       result.should.not.containEql("npm timing");
@@ -81,7 +89,7 @@ found 3 high severity vulnerabilities
       `.trim();
 
       const result = OutputFilterService.filterNpmOutput(input);
-      
+
       result.should.containEql("found 3 high severity vulnerabilities");
     });
   });
@@ -96,7 +104,7 @@ Successfully installed requests-2.25.1
       `.trim();
 
       const result = OutputFilterService.filterPythonOutput(input);
-      
+
       result.should.not.containEql("|████████████████████████████████|");
       result.should.containEql("Collecting requests");
       result.should.containEql("Successfully installed");
@@ -111,7 +119,7 @@ Successfully installed working-package
       `.trim();
 
       const result = OutputFilterService.filterPythonOutput(input);
-      
+
       result.should.containEql("Collecting broken-package");
       result.should.containEql("ERROR: Could not find");
       result.should.containEql("Collecting working-package");
@@ -121,24 +129,34 @@ Successfully installed working-package
   describe("filterCommandOutput", () => {
     it("should detect maven commands and apply maven filtering", () => {
       const input = "Downloading from central: test\n[INFO] BUILD SUCCESS";
-      const result = OutputFilterService.filterCommandOutput(input, "mvn clean install");
-      
+      const result = OutputFilterService.filterCommandOutput(
+        input,
+        "mvn clean install",
+      );
+
       result.should.not.containEql("Downloading from central");
       result.should.containEql("[INFO] BUILD SUCCESS");
     });
 
     it("should detect npm commands and apply npm filtering", () => {
-      const input = "⠋ Installing...\nnpm audit report\nfound 0 vulnerabilities";
-      const result = OutputFilterService.filterCommandOutput(input, "npm install");
-      
+      const input =
+        "⠋ Installing...\nnpm audit report\nfound 0 vulnerabilities";
+      const result = OutputFilterService.filterCommandOutput(
+        input,
+        "npm install",
+      );
+
       result.should.not.containEql("⠋ Installing");
       result.should.not.containEql("npm audit report");
     });
 
     it("should apply generic filtering for unknown commands", () => {
       const input = "\x1b[32mGreen text\x1b[0m\nNormal text";
-      const result = OutputFilterService.filterCommandOutput(input, "unknown-command");
-      
+      const result = OutputFilterService.filterCommandOutput(
+        input,
+        "unknown-command",
+      );
+
       result.should.not.containEql("\x1b[32m");
       result.should.containEql("Green text");
       result.should.containEql("Normal text");
@@ -147,30 +165,33 @@ Successfully installed working-package
 
   describe("extractErrorSummary", () => {
     it("should extract error messages", () => {
-      const input = "Some output\nERROR: Build failed due to compilation errors\nMore output";
+      const input =
+        "Some output\nERROR: Build failed due to compilation errors\nMore output";
       const result = OutputFilterService.extractErrorSummary(input);
-      
+
       result.should.equal("Build failed due to compilation errors");
     });
 
     it("should extract exception messages", () => {
-      const input = "Exception: Null pointer exception occurred\nStack trace...";
+      const input =
+        "Exception: Null pointer exception occurred\nStack trace...";
       const result = OutputFilterService.extractErrorSummary(input);
-      
+
       result.should.equal("Null pointer exception occurred");
     });
 
     it("should extract caused by messages", () => {
-      const input = "Build failed\nCaused by: Invalid configuration file\nDetails...";
+      const input =
+        "Build failed\nCaused by: Invalid configuration file\nDetails...";
       const result = OutputFilterService.extractErrorSummary(input);
-      
+
       result.should.equal("Invalid configuration file");
     });
 
     it("should return null if no error found", () => {
       const input = "All good\nBuild successful\nNo issues";
       const result = OutputFilterService.extractErrorSummary(input);
-      
+
       (result === null).should.be.true();
     });
   });

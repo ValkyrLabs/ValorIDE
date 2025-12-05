@@ -20,22 +20,16 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import {
-
-
-    SwarmMessage,
-    SwarmMessageFromJSON,
-    SwarmMessageToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { SwarmMessage, SwarmMessageFromJSON, SwarmMessageToJSON } from "./";
 
 // thorapi
 
@@ -44,100 +38,121 @@ import {
  * @export
  * @interface SwarmCommandRequest
  */
-export type SwarmCommandRequest  = {
-    /**
-     * 
-     * @type {SwarmMessage}
-     * @memberof SwarmCommandRequest
-     */
-    message: SwarmMessage;
-    /**
-     * Optional specific agent instance to receive the command.
-     * @type {string}
-     * @memberof SwarmCommandRequest
-     */
-    targetInstanceId?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof SwarmCommandRequest
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof SwarmCommandRequest
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof SwarmCommandRequest
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof SwarmCommandRequest
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof SwarmCommandRequest
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof SwarmCommandRequest
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof SwarmCommandRequest
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof SwarmCommandRequest
-     */
-    lastModifiedDate?: Date;
-}
+export type SwarmCommandRequest = DataObject & {
+  /**
+   *
+   * @type {SwarmMessage}
+   * @memberof SwarmCommandRequest
+   */
+  message: SwarmMessage;
+  /**
+   * Optional specific agent instance to receive the command.
+   * @type {string}
+   * @memberof SwarmCommandRequest
+   */
+  targetInstanceId?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof SwarmCommandRequest
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof SwarmCommandRequest
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof SwarmCommandRequest
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof SwarmCommandRequest
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof SwarmCommandRequest
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof SwarmCommandRequest
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof SwarmCommandRequest
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof SwarmCommandRequest
+   */
+  lastModifiedDate?: Date;
+};
 
 export function SwarmCommandRequestFromJSON(json: any): SwarmCommandRequest {
-    return {
-        'message': SwarmMessageFromJSON(json['message']),
-        'targetInstanceId': !exists(json, 'targetInstanceId') ? undefined : json['targetInstanceId'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    message: SwarmMessageFromJSON(json["message"]),
+    targetInstanceId: !exists(json, "targetInstanceId")
+      ? undefined
+      : json["targetInstanceId"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function SwarmCommandRequestToJSON(value?: SwarmCommandRequest): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'message': SwarmMessageToJSON(value.message),
-        'targetInstanceId': value.targetInstanceId,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    message: SwarmMessageToJSON(value.message),
+    targetInstanceId: value.targetInstanceId,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
-
-

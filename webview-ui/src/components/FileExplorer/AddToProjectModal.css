@@ -127,17 +127,17 @@
     width: 95%;
     margin: 20px;
   }
-  
+
   .modal-header,
   .modal-body,
   .modal-footer {
     padding: 16px;
   }
-  
+
   .modal-footer {
     flex-direction: column-reverse;
   }
-  
+
   .modal-footer vscode-button {
     width: 100%;
   }

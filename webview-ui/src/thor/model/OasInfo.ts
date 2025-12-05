@@ -20,14 +20,15 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,116 +37,137 @@ import { exists, mapValues } from '../src/runtime';
  * @export
  * @interface OasInfo
  */
-export type OasInfo  = {
-    /**
-     * 
-     * @type {string}
-     * @memberof OasInfo
-     */
-    oasOpenAPISpecId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof OasInfo
-     */
-    title?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof OasInfo
-     */
-    description?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof OasInfo
-     */
-    version?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof OasInfo
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof OasInfo
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof OasInfo
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof OasInfo
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof OasInfo
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof OasInfo
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof OasInfo
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof OasInfo
-     */
-    lastModifiedDate?: Date;
-}
+export type OasInfo = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof OasInfo
+   */
+  oasOpenAPISpecId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof OasInfo
+   */
+  title?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof OasInfo
+   */
+  description?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof OasInfo
+   */
+  version?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof OasInfo
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof OasInfo
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof OasInfo
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof OasInfo
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof OasInfo
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof OasInfo
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof OasInfo
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof OasInfo
+   */
+  lastModifiedDate?: Date;
+};
 
 export function OasInfoFromJSON(json: any): OasInfo {
-    return {
-        'oasOpenAPISpecId': !exists(json, 'oasOpenAPISpecId') ? undefined : json['oasOpenAPISpecId'],
-        'title': !exists(json, 'title') ? undefined : json['title'],
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'version': !exists(json, 'version') ? undefined : json['version'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    oasOpenAPISpecId: !exists(json, "oasOpenAPISpecId")
+      ? undefined
+      : json["oasOpenAPISpecId"],
+    title: !exists(json, "title") ? undefined : json["title"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    version: !exists(json, "version") ? undefined : json["version"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function OasInfoToJSON(value?: OasInfo): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'oasOpenAPISpecId': value.oasOpenAPISpecId,
-        'title': value.title,
-        'description': value.description,
-        'version': value.version,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    oasOpenAPISpecId: value.oasOpenAPISpecId,
+    title: value.title,
+    description: value.description,
+    version: value.version,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
-
-

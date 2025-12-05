@@ -20,14 +20,15 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,150 +37,175 @@ import { exists, mapValues } from '../src/runtime';
  * @export
  * @interface RetryPolicy
  */
-export type RetryPolicy  = {
-    /**
-     * Maximum number of retry attempts
-     * @type {number}
-     * @memberof RetryPolicy
-     */
-    maxAttempts?: number;
-    /**
-     * Backoff calculation strategy
-     * @type {string}
-     * @memberof RetryPolicy
-     */
-    backoffStrategy?: RetryPolicyBackoffStrategyEnum;
-    /**
-     * Initial delay before first retry in milliseconds
-     * @type {number}
-     * @memberof RetryPolicy
-     */
-    initialDelayMs?: number;
-    /**
-     * Maximum delay between retries in milliseconds
-     * @type {number}
-     * @memberof RetryPolicy
-     */
-    maxDelayMs?: number;
-    /**
-     * Backoff multiplier for exponential strategy
-     * @type {number}
-     * @memberof RetryPolicy
-     */
-    multiplier?: number;
-    /**
-     * Whether to add random jitter to delays
-     * @type {boolean}
-     * @memberof RetryPolicy
-     */
-    jitter?: boolean;
-    /**
-     * List of error types that should trigger retries (empty = all transient)
-     * @type {string}
-     * @memberof RetryPolicy
-     */
-    retryableErrors?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof RetryPolicy
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof RetryPolicy
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof RetryPolicy
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof RetryPolicy
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof RetryPolicy
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof RetryPolicy
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof RetryPolicy
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof RetryPolicy
-     */
-    lastModifiedDate?: Date;
-}
+export type RetryPolicy = DataObject & {
+  /**
+   * Maximum number of retry attempts
+   * @type {number}
+   * @memberof RetryPolicy
+   */
+  maxAttempts?: number;
+  /**
+   * Backoff calculation strategy
+   * @type {string}
+   * @memberof RetryPolicy
+   */
+  backoffStrategy?: RetryPolicyBackoffStrategyEnum;
+  /**
+   * Initial delay before first retry in milliseconds
+   * @type {number}
+   * @memberof RetryPolicy
+   */
+  initialDelayMs?: number;
+  /**
+   * Maximum delay between retries in milliseconds
+   * @type {number}
+   * @memberof RetryPolicy
+   */
+  maxDelayMs?: number;
+  /**
+   * Backoff multiplier for exponential strategy
+   * @type {number}
+   * @memberof RetryPolicy
+   */
+  multiplier?: number;
+  /**
+   * Whether to add random jitter to delays
+   * @type {boolean}
+   * @memberof RetryPolicy
+   */
+  jitter?: boolean;
+  /**
+   * List of error types that should trigger retries (empty = all transient)
+   * @type {string}
+   * @memberof RetryPolicy
+   */
+  retryableErrors?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof RetryPolicy
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof RetryPolicy
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof RetryPolicy
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof RetryPolicy
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof RetryPolicy
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof RetryPolicy
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof RetryPolicy
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof RetryPolicy
+   */
+  lastModifiedDate?: Date;
+};
 
 export function RetryPolicyFromJSON(json: any): RetryPolicy {
-    return {
-        'maxAttempts': !exists(json, 'maxAttempts') ? undefined : json['maxAttempts'],
-        'backoffStrategy': !exists(json, 'backoffStrategy') ? undefined : json['backoffStrategy'],
-        'initialDelayMs': !exists(json, 'initialDelayMs') ? undefined : json['initialDelayMs'],
-        'maxDelayMs': !exists(json, 'maxDelayMs') ? undefined : json['maxDelayMs'],
-        'multiplier': !exists(json, 'multiplier') ? undefined : json['multiplier'],
-        'jitter': !exists(json, 'jitter') ? undefined : json['jitter'],
-        'retryableErrors': !exists(json, 'retryableErrors') ? undefined : json['retryableErrors'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    maxAttempts: !exists(json, "maxAttempts") ? undefined : json["maxAttempts"],
+    backoffStrategy: !exists(json, "backoffStrategy")
+      ? undefined
+      : json["backoffStrategy"],
+    initialDelayMs: !exists(json, "initialDelayMs")
+      ? undefined
+      : json["initialDelayMs"],
+    maxDelayMs: !exists(json, "maxDelayMs") ? undefined : json["maxDelayMs"],
+    multiplier: !exists(json, "multiplier") ? undefined : json["multiplier"],
+    jitter: !exists(json, "jitter") ? undefined : json["jitter"],
+    retryableErrors: !exists(json, "retryableErrors")
+      ? undefined
+      : json["retryableErrors"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function RetryPolicyToJSON(value?: RetryPolicy): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'maxAttempts': value.maxAttempts,
-        'backoffStrategy': value.backoffStrategy,
-        'initialDelayMs': value.initialDelayMs,
-        'maxDelayMs': value.maxDelayMs,
-        'multiplier': value.multiplier,
-        'jitter': value.jitter,
-        'retryableErrors': value.retryableErrors,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    maxAttempts: value.maxAttempts,
+    backoffStrategy: value.backoffStrategy,
+    initialDelayMs: value.initialDelayMs,
+    maxDelayMs: value.maxDelayMs,
+    multiplier: value.multiplier,
+    jitter: value.jitter,
+    retryableErrors: value.retryableErrors,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum RetryPolicyBackoffStrategyEnum {
-    FIXED = 'fixed',
-    EXPONENTIAL = 'exponential',
-    LINEAR = 'linear'
+  FIXED = "fixed",
+  EXPONENTIAL = "exponential",
+  LINEAR = "linear",
 }
-
-

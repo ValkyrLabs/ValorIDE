@@ -82,9 +82,7 @@ const ServersToggleModal: React.FC = () => {
             style={{ padding: "0px 0px", height: "20px" }}
           >
             <div className="flex items-center gap-1 text-xs whitespace-nowrap min-w-0 w-full">
-              <FaServer
-                style={{ fontSize: "12.5px", marginBottom: 1 }}
-              />
+              <FaServer style={{ fontSize: "12.5px", marginBottom: 1 }} />
             </div>
           </VSCodeButton>
         </Tooltip>
@@ -164,9 +162,7 @@ const ServersToggleModal: React.FC = () => {
                   onClick={handleRefresh}
                   style={{ fontSize: "11px", padding: "2px 8px" }}
                 >
-                  <FaSync
-                    style={{ marginRight: "4px" }}
-                  />
+                  <FaSync style={{ marginRight: "4px" }} />
                   Retry
                 </VSCodeButton>
               </div>

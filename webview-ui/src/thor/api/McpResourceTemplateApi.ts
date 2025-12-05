@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,294 +19,353 @@ Template file: typescript-redux-query/apis.mustache
 Description: McpResourceTemplateApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    McpResourceTemplate,
-    McpResourceTemplateFromJSON,
-    McpResourceTemplateToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  McpResourceTemplate,
+  McpResourceTemplateFromJSON,
+  McpResourceTemplateToJSON,
+} from "../model";
 
 export interface DeleteMcpResourceTemplateApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetMcpResourceTemplateApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetMcpResourceTemplateListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PostMcpResourceTemplateApiRequest {
-    mcpResourceTemplate: McpResourceTemplate;
+  mcpResourceTemplate: McpResourceTemplate;
 }
 
 export interface UpdateMcpResourceTemplateApiRequest {
-    id: string;
-    mcpResourceTemplate: McpResourceTemplate;
+  id: string;
+  mcpResourceTemplate: McpResourceTemplate;
 }
-
 
 /**
  * Deletes a specific McpResourceTemplate.
  * Delete a McpResourceTemplate.
  */
-function deleteMcpResourceTemplateRaw<T>(requestParameters: DeleteMcpResourceTemplateApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteMcpResourceTemplate.');
-    }
+function deleteMcpResourceTemplateRaw<T>(
+  requestParameters: DeleteMcpResourceTemplateApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteMcpResourceTemplate.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpResourceTemplate/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/McpResourceTemplate/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific McpResourceTemplate.
-* Delete a McpResourceTemplate.
-*/
-export function deleteMcpResourceTemplate<T>(requestParameters: DeleteMcpResourceTemplateApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteMcpResourceTemplateRaw(requestParameters, requestConfig);
+ * Deletes a specific McpResourceTemplate.
+ * Delete a McpResourceTemplate.
+ */
+export function deleteMcpResourceTemplate<T>(
+  requestParameters: DeleteMcpResourceTemplateApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteMcpResourceTemplateRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single McpResourceTemplate for a specific uid.
  * Retrieve a single McpResourceTemplate
  */
-function getMcpResourceTemplateRaw<T>(requestParameters: GetMcpResourceTemplateApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpResourceTemplate> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getMcpResourceTemplate.');
-    }
+function getMcpResourceTemplateRaw<T>(
+  requestParameters: GetMcpResourceTemplateApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpResourceTemplate> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getMcpResourceTemplate.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpResourceTemplate/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpResourceTemplateFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/McpResourceTemplate/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpResourceTemplateFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single McpResourceTemplate for a specific uid.
-* Retrieve a single McpResourceTemplate
-*/
-export function getMcpResourceTemplate<T>(requestParameters: GetMcpResourceTemplateApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpResourceTemplate>): QueryConfig<T> {
-    return getMcpResourceTemplateRaw(requestParameters, requestConfig);
+ * Retrieves a single McpResourceTemplate for a specific uid.
+ * Retrieve a single McpResourceTemplate
+ */
+export function getMcpResourceTemplate<T>(
+  requestParameters: GetMcpResourceTemplateApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpResourceTemplate>,
+): QueryConfig<T> {
+  return getMcpResourceTemplateRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of McpResourceTemplates.
  * Retrieve a list of McpResourceTemplates
  */
-function getMcpResourceTemplateListRaw<T>(requestParameters: GetMcpResourceTemplateListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<McpResourceTemplate>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getMcpResourceTemplateListRaw<T>(
+  requestParameters: GetMcpResourceTemplateListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<McpResourceTemplate>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpResourceTemplate`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(McpResourceTemplateFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/McpResourceTemplate`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(McpResourceTemplateFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of McpResourceTemplates.
-* Retrieve a list of McpResourceTemplates
-*/
-export function getMcpResourceTemplateList<T>(requestParameters: GetMcpResourceTemplateListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<McpResourceTemplate>>): QueryConfig<T> {
-    return getMcpResourceTemplateListRaw(requestParameters, requestConfig);
+ * Retrieves a list of McpResourceTemplates.
+ * Retrieve a list of McpResourceTemplates
+ */
+export function getMcpResourceTemplateList<T>(
+  requestParameters: GetMcpResourceTemplateListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<McpResourceTemplate>>,
+): QueryConfig<T> {
+  return getMcpResourceTemplateListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new McpResourceTemplate.
  * Create a new McpResourceTemplate
  */
-function postMcpResourceTemplateRaw<T>(requestParameters: PostMcpResourceTemplateApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpResourceTemplate> = {}): QueryConfig<T> {
-    if (requestParameters.mcpResourceTemplate === null || requestParameters.mcpResourceTemplate === undefined) {
-        throw new runtime.RequiredError('mcpResourceTemplate','Required parameter requestParameters.mcpResourceTemplate was null or undefined when calling postMcpResourceTemplate.');
-    }
+function postMcpResourceTemplateRaw<T>(
+  requestParameters: PostMcpResourceTemplateApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpResourceTemplate> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.mcpResourceTemplate === null ||
+    requestParameters.mcpResourceTemplate === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mcpResourceTemplate",
+      "Required parameter requestParameters.mcpResourceTemplate was null or undefined when calling postMcpResourceTemplate.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpResourceTemplate`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      McpResourceTemplateToJSON(requestParameters.mcpResourceTemplate),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpResourceTemplateFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/McpResourceTemplate`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || McpResourceTemplateToJSON(requestParameters.mcpResourceTemplate),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpResourceTemplateFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new McpResourceTemplate.
-* Create a new McpResourceTemplate
-*/
-export function postMcpResourceTemplate<T>(requestParameters: PostMcpResourceTemplateApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpResourceTemplate>): QueryConfig<T> {
-    return postMcpResourceTemplateRaw(requestParameters, requestConfig);
+ * Creates a new McpResourceTemplate.
+ * Create a new McpResourceTemplate
+ */
+export function postMcpResourceTemplate<T>(
+  requestParameters: PostMcpResourceTemplateApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpResourceTemplate>,
+): QueryConfig<T> {
+  return postMcpResourceTemplateRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing McpResourceTemplate.
  * Update an existing McpResourceTemplate
  */
-function updateMcpResourceTemplateRaw<T>(requestParameters: UpdateMcpResourceTemplateApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpResourceTemplate> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateMcpResourceTemplate.');
-    }
+function updateMcpResourceTemplateRaw<T>(
+  requestParameters: UpdateMcpResourceTemplateApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpResourceTemplate> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateMcpResourceTemplate.",
+    );
+  }
 
-    if (requestParameters.mcpResourceTemplate === null || requestParameters.mcpResourceTemplate === undefined) {
-        throw new runtime.RequiredError('mcpResourceTemplate','Required parameter requestParameters.mcpResourceTemplate was null or undefined when calling updateMcpResourceTemplate.');
-    }
+  if (
+    requestParameters.mcpResourceTemplate === null ||
+    requestParameters.mcpResourceTemplate === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mcpResourceTemplate",
+      "Required parameter requestParameters.mcpResourceTemplate was null or undefined when calling updateMcpResourceTemplate.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpResourceTemplate/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      McpResourceTemplateToJSON(requestParameters.mcpResourceTemplate),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpResourceTemplateFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/McpResourceTemplate/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || McpResourceTemplateToJSON(requestParameters.mcpResourceTemplate),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpResourceTemplateFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing McpResourceTemplate.
-* Update an existing McpResourceTemplate
-*/
-export function updateMcpResourceTemplate<T>(requestParameters: UpdateMcpResourceTemplateApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpResourceTemplate>): QueryConfig<T> {
-    return updateMcpResourceTemplateRaw(requestParameters, requestConfig);
+ * Updates an existing McpResourceTemplate.
+ * Update an existing McpResourceTemplate
+ */
+export function updateMcpResourceTemplate<T>(
+  requestParameters: UpdateMcpResourceTemplateApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpResourceTemplate>,
+): QueryConfig<T> {
+  return updateMcpResourceTemplateRaw(requestParameters, requestConfig);
 }
-

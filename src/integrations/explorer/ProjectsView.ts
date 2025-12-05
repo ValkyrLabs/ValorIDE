@@ -1,6 +1,9 @@
 import * as vscode from "vscode";
 import * as path from "path";
-import { resolveThorapiFolderPath, thorapiSettingChanged } from "@utils/thorapi";
+import {
+  resolveThorapiFolderPath,
+  thorapiSettingChanged,
+} from "@utils/thorapi";
 
 type Project = {
   name: string;
@@ -12,7 +15,9 @@ type Project = {
 export class ProjectsTreeDataProvider
   implements vscode.TreeDataProvider<Project>
 {
-  private _onDidChangeTreeData = new vscode.EventEmitter<Project | undefined | null | void>();
+  private _onDidChangeTreeData = new vscode.EventEmitter<
+    Project | undefined | null | void
+  >();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
   constructor(private output: vscode.OutputChannel) {}
@@ -22,8 +27,13 @@ export class ProjectsTreeDataProvider
   }
 
   getTreeItem(element: Project): vscode.TreeItem {
-    const item = new vscode.TreeItem(element.name, vscode.TreeItemCollapsibleState.None);
-    item.tooltip = `${element.name}` + (element.mtime ? ` — ${new Date(element.mtime).toLocaleString()}` : "");
+    const item = new vscode.TreeItem(
+      element.name,
+      vscode.TreeItemCollapsibleState.None,
+    );
+    item.tooltip =
+      `${element.name}` +
+      (element.mtime ? ` — ${new Date(element.mtime).toLocaleString()}` : "");
     item.resourceUri = element.uri;
     (item as any).contextValue = "thorProject";
     item.iconPath = new vscode.ThemeIcon("folder-library");
@@ -52,7 +62,10 @@ export class ProjectsTreeDataProvider
           let mtime: number | undefined;
           try {
             const stat = await vscode.workspace.fs.stat(uri);
-            mtime = typeof (stat as any).mtime === "number" ? (stat as any).mtime : undefined;
+            mtime =
+              typeof (stat as any).mtime === "number"
+                ? (stat as any).mtime
+                : undefined;
           } catch (err) {
             // Debug: unable to stat project folder; leave mtime undefined
             this.output.appendLine(
@@ -68,7 +81,9 @@ export class ProjectsTreeDataProvider
     }
 
     // Sort by mtime desc then name
-    results.sort((a, b) => (b.mtime || 0) - (a.mtime || 0) || a.name.localeCompare(b.name));
+    results.sort(
+      (a, b) => (b.mtime || 0) - (a.mtime || 0) || a.name.localeCompare(b.name),
+    );
     return results;
   }
 }
@@ -98,62 +113,86 @@ export function registerProjectsView(
   };
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("valoride.projects.refresh", () => provider.refresh()),
+    vscode.commands.registerCommand("valoride.projects.refresh", () =>
+      provider.refresh(),
+    ),
     // Build selected project based on detected tool
-    vscode.commands.registerCommand("valoride.projects.build", async (uri?: vscode.Uri) => {
-      const u = getUriArg(uri);
-      if (!u) return;
-      await runProjectTask(u, "build");
-    }),
+    vscode.commands.registerCommand(
+      "valoride.projects.build",
+      async (uri?: vscode.Uri) => {
+        const u = getUriArg(uri);
+        if (!u) return;
+        await runProjectTask(u, "build");
+      },
+    ),
     // Run selected project based on detected tool
-    vscode.commands.registerCommand("valoride.projects.run", async (uri?: vscode.Uri) => {
-      const u = getUriArg(uri);
-      if (!u) return;
-      await runProjectTask(u, "run");
-    }),
-    vscode.commands.registerCommand("valoride.projects.openInWindow", async (uri?: vscode.Uri) => {
-      const u = getUriArg(uri);
-      if (u) await vscode.commands.executeCommand("vscode.openFolder", u, true);
-    }),
-    vscode.commands.registerCommand("valoride.projects.openTerminal", async (uri?: vscode.Uri) => {
-      const u = getUriArg(uri);
-      if (u) {
-        const term = vscode.window.createTerminal({ cwd: u.fsPath, name: path.basename(u.fsPath) });
-        term.show();
-      }
-    }),
-    vscode.commands.registerCommand("valoride.projects.reveal", async (uri?: vscode.Uri) => {
-      const u = getUriArg(uri);
-      if (u) await vscode.commands.executeCommand("revealInExplorer", u);
-    }),
-    vscode.commands.registerCommand("valoride.projects.openReadme", async (uri?: vscode.Uri) => {
-      const u = getUriArg(uri);
-      if (!u) return;
-      const candidates = [
-        "README.md",
-        "readme.md",
-        "README",
-        "README.txt",
-      ];
-      for (const filename of candidates) {
-        const file = vscode.Uri.joinPath(u, filename);
-        try {
-          await vscode.workspace.fs.stat(file);
-          await vscode.window.showTextDocument(file, { preview: false });
-          return;
-        } catch (err) {
-          // Debug: no README at this candidate path; continue
-          output.appendLine(
-            `[Projects][debug] README not found: ${file.fsPath}: ${String(err)}`,
-          );
+    vscode.commands.registerCommand(
+      "valoride.projects.run",
+      async (uri?: vscode.Uri) => {
+        const u = getUriArg(uri);
+        if (!u) return;
+        await runProjectTask(u, "run");
+      },
+    ),
+    vscode.commands.registerCommand(
+      "valoride.projects.openInWindow",
+      async (uri?: vscode.Uri) => {
+        const u = getUriArg(uri);
+        if (u)
+          await vscode.commands.executeCommand("vscode.openFolder", u, true);
+      },
+    ),
+    vscode.commands.registerCommand(
+      "valoride.projects.openTerminal",
+      async (uri?: vscode.Uri) => {
+        const u = getUriArg(uri);
+        if (u) {
+          const term = vscode.window.createTerminal({
+            cwd: u.fsPath,
+            name: path.basename(u.fsPath),
+          });
+          term.show();
         }
-      }
-      vscode.window.showInformationMessage("No README found in project root.");
-    }),
-    vscode.commands.registerCommand("valoride.projects.copyPath", async (uri?: vscode.Uri) => {
-      const u = getUriArg(uri);
-      if (u) await vscode.env.clipboard.writeText(u.fsPath);
-    }),
+      },
+    ),
+    vscode.commands.registerCommand(
+      "valoride.projects.reveal",
+      async (uri?: vscode.Uri) => {
+        const u = getUriArg(uri);
+        if (u) await vscode.commands.executeCommand("revealInExplorer", u);
+      },
+    ),
+    vscode.commands.registerCommand(
+      "valoride.projects.openReadme",
+      async (uri?: vscode.Uri) => {
+        const u = getUriArg(uri);
+        if (!u) return;
+        const candidates = ["README.md", "readme.md", "README", "README.txt"];
+        for (const filename of candidates) {
+          const file = vscode.Uri.joinPath(u, filename);
+          try {
+            await vscode.workspace.fs.stat(file);
+            await vscode.window.showTextDocument(file, { preview: false });
+            return;
+          } catch (err) {
+            // Debug: no README at this candidate path; continue
+            output.appendLine(
+              `[Projects][debug] README not found: ${file.fsPath}: ${String(err)}`,
+            );
+          }
+        }
+        vscode.window.showInformationMessage(
+          "No README found in project root.",
+        );
+      },
+    ),
+    vscode.commands.registerCommand(
+      "valoride.projects.copyPath",
+      async (uri?: vscode.Uri) => {
+        const u = getUriArg(uri);
+        if (u) await vscode.env.clipboard.writeText(u.fsPath);
+      },
+    ),
   );
 }
 
@@ -206,7 +245,10 @@ async function runProjectTask(uri: vscode.Uri, task: Task) {
   }
 
   const termName = `${path.basename(uri.fsPath)}: ${task}`;
-  const term = vscode.window.createTerminal({ cwd: uri.fsPath, name: termName });
+  const term = vscode.window.createTerminal({
+    cwd: uri.fsPath,
+    name: termName,
+  });
   term.show();
 
   const run = (cmd: string) => term.sendText(cmd, true);
@@ -236,7 +278,9 @@ async function runProjectTask(uri: vscode.Uri, task: Task) {
 
   if (tool === "node") {
     // Prefer pnpm > yarn > npm based on lockfiles
-    const hasPnpm = await pathExists(vscode.Uri.joinPath(uri, "pnpm-lock.yaml"));
+    const hasPnpm = await pathExists(
+      vscode.Uri.joinPath(uri, "pnpm-lock.yaml"),
+    );
     const hasYarn = await pathExists(vscode.Uri.joinPath(uri, "yarn.lock"));
     const pm = hasPnpm ? "pnpm" : hasYarn ? "yarn" : "npm";
     if (task === "build") {

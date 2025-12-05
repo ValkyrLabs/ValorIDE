@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,409 +19,493 @@ Template file: typescript-redux-query/apis.mustache
 Description: AgentApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    ActivateAgent200Response,
-    ActivateAgent200ResponseFromJSON,
-    ActivateAgent200ResponseToJSON,
-    Agent,
-    AgentFromJSON,
-    AgentToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  ActivateAgent200Response,
+  ActivateAgent200ResponseFromJSON,
+  ActivateAgent200ResponseToJSON,
+  Agent,
+  AgentFromJSON,
+  AgentToJSON,
+} from "../model";
 
 export interface ActivateAgentApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface DeleteAgentApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetAgentApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetAgentListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PostAgentApiRequest {
-    agent: Agent;
+  agent: Agent;
 }
 
 export interface PublishAgentEventApiRequest {
-    id: string;
-    eventType: string;
-    body?: string;
+  id: string;
+  eventType: string;
+  body?: string;
 }
 
 export interface UpdateAgentApiRequest {
-    id: string;
-    agent: Agent;
+  id: string;
+  agent: Agent;
 }
-
 
 /**
  * Applies the Agent\'s CRON schedule to its workflows and registers configured event triggers.
  * Activate an Agent (schedule workflows and register triggers)
  */
-function activateAgentRaw<T>(requestParameters: ActivateAgentApiRequest, requestConfig: runtime.TypedQueryConfig<T, ActivateAgent200Response> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling activateAgent.');
-    }
+function activateAgentRaw<T>(
+  requestParameters: ActivateAgentApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, ActivateAgent200Response> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling activateAgent.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Agent/{id}/activate`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ActivateAgent200ResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Agent/{id}/activate`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(ActivateAgent200ResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Applies the Agent\'s CRON schedule to its workflows and registers configured event triggers.
-* Activate an Agent (schedule workflows and register triggers)
-*/
-export function activateAgent<T>(requestParameters: ActivateAgentApiRequest, requestConfig?: runtime.TypedQueryConfig<T, ActivateAgent200Response>): QueryConfig<T> {
-    return activateAgentRaw(requestParameters, requestConfig);
+ * Applies the Agent\'s CRON schedule to its workflows and registers configured event triggers.
+ * Activate an Agent (schedule workflows and register triggers)
+ */
+export function activateAgent<T>(
+  requestParameters: ActivateAgentApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, ActivateAgent200Response>,
+): QueryConfig<T> {
+  return activateAgentRaw(requestParameters, requestConfig);
 }
 
 /**
  * Deletes a specific Agent.
  * Delete a Agent.
  */
-function deleteAgentRaw<T>(requestParameters: DeleteAgentApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteAgent.');
-    }
+function deleteAgentRaw<T>(
+  requestParameters: DeleteAgentApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteAgent.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Agent/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Agent/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific Agent.
-* Delete a Agent.
-*/
-export function deleteAgent<T>(requestParameters: DeleteAgentApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteAgentRaw(requestParameters, requestConfig);
+ * Deletes a specific Agent.
+ * Delete a Agent.
+ */
+export function deleteAgent<T>(
+  requestParameters: DeleteAgentApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteAgentRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single Agent for a specific uid.
  * Retrieve a single Agent
  */
-function getAgentRaw<T>(requestParameters: GetAgentApiRequest, requestConfig: runtime.TypedQueryConfig<T, Agent> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getAgent.');
-    }
+function getAgentRaw<T>(
+  requestParameters: GetAgentApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Agent> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getAgent.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Agent/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(AgentFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Agent/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AgentFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single Agent for a specific uid.
-* Retrieve a single Agent
-*/
-export function getAgent<T>(requestParameters: GetAgentApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Agent>): QueryConfig<T> {
-    return getAgentRaw(requestParameters, requestConfig);
+ * Retrieves a single Agent for a specific uid.
+ * Retrieve a single Agent
+ */
+export function getAgent<T>(
+  requestParameters: GetAgentApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Agent>,
+): QueryConfig<T> {
+  return getAgentRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Agents.
  * Retrieve a list of Agents
  */
-function getAgentListRaw<T>(requestParameters: GetAgentListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<Agent>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getAgentListRaw<T>(
+  requestParameters: GetAgentListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<Agent>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Agent`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(AgentFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Agent`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(AgentFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of Agents.
-* Retrieve a list of Agents
-*/
-export function getAgentList<T>(requestParameters: GetAgentListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Agent>>): QueryConfig<T> {
-    return getAgentListRaw(requestParameters, requestConfig);
+ * Retrieves a list of Agents.
+ * Retrieve a list of Agents
+ */
+export function getAgentList<T>(
+  requestParameters: GetAgentListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Agent>>,
+): QueryConfig<T> {
+  return getAgentListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new Agent.
  * Create a new Agent
  */
-function postAgentRaw<T>(requestParameters: PostAgentApiRequest, requestConfig: runtime.TypedQueryConfig<T, Agent> = {}): QueryConfig<T> {
-    if (requestParameters.agent === null || requestParameters.agent === undefined) {
-        throw new runtime.RequiredError('agent','Required parameter requestParameters.agent was null or undefined when calling postAgent.');
-    }
+function postAgentRaw<T>(
+  requestParameters: PostAgentApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Agent> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.agent === null ||
+    requestParameters.agent === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "agent",
+      "Required parameter requestParameters.agent was null or undefined when calling postAgent.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Agent`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || AgentToJSON(requestParameters.agent),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(AgentFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Agent`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || AgentToJSON(requestParameters.agent),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AgentFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new Agent.
-* Create a new Agent
-*/
-export function postAgent<T>(requestParameters: PostAgentApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Agent>): QueryConfig<T> {
-    return postAgentRaw(requestParameters, requestConfig);
+ * Creates a new Agent.
+ * Create a new Agent
+ */
+export function postAgent<T>(
+  requestParameters: PostAgentApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Agent>,
+): QueryConfig<T> {
+  return postAgentRaw(requestParameters, requestConfig);
 }
 
 /**
  * Publishes an event that will be routed to any workflows registered for this Agent.
  * Publish an event for an Agent
  */
-function publishAgentEventRaw<T>(requestParameters: PublishAgentEventApiRequest, requestConfig: runtime.TypedQueryConfig<T, string> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling publishAgentEvent.');
-    }
+function publishAgentEventRaw<T>(
+  requestParameters: PublishAgentEventApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, string> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling publishAgentEvent.",
+    );
+  }
 
-    if (requestParameters.eventType === null || requestParameters.eventType === undefined) {
-        throw new runtime.RequiredError('eventType','Required parameter requestParameters.eventType was null or undefined when calling publishAgentEvent.');
-    }
+  if (
+    requestParameters.eventType === null ||
+    requestParameters.eventType === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "eventType",
+      "Required parameter requestParameters.eventType was null or undefined when calling publishAgentEvent.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Agent/{id}/event/{eventType}`
+      .replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id)))
+      .replace(
+        `{${"eventType"}}`,
+        encodeURIComponent(String(requestParameters.eventType)),
+      ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || (requestParameters.body as any),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    throw "OH NO";
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Agent/{id}/event/{eventType}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))).replace(`{${"eventType"}}`, encodeURIComponent(String(requestParameters.eventType))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || requestParameters.body as any,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        throw "OH NO";
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Publishes an event that will be routed to any workflows registered for this Agent.
-* Publish an event for an Agent
-*/
-export function publishAgentEvent<T>(requestParameters: PublishAgentEventApiRequest, requestConfig?: runtime.TypedQueryConfig<T, string>): QueryConfig<T> {
-    return publishAgentEventRaw(requestParameters, requestConfig);
+ * Publishes an event that will be routed to any workflows registered for this Agent.
+ * Publish an event for an Agent
+ */
+export function publishAgentEvent<T>(
+  requestParameters: PublishAgentEventApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, string>,
+): QueryConfig<T> {
+  return publishAgentEventRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Agent.
  * Update an existing Agent
  */
-function updateAgentRaw<T>(requestParameters: UpdateAgentApiRequest, requestConfig: runtime.TypedQueryConfig<T, Agent> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateAgent.');
-    }
+function updateAgentRaw<T>(
+  requestParameters: UpdateAgentApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Agent> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateAgent.",
+    );
+  }
 
-    if (requestParameters.agent === null || requestParameters.agent === undefined) {
-        throw new runtime.RequiredError('agent','Required parameter requestParameters.agent was null or undefined when calling updateAgent.');
-    }
+  if (
+    requestParameters.agent === null ||
+    requestParameters.agent === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "agent",
+      "Required parameter requestParameters.agent was null or undefined when calling updateAgent.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Agent/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || AgentToJSON(requestParameters.agent),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(AgentFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Agent/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || AgentToJSON(requestParameters.agent),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(AgentFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing Agent.
-* Update an existing Agent
-*/
-export function updateAgent<T>(requestParameters: UpdateAgentApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Agent>): QueryConfig<T> {
-    return updateAgentRaw(requestParameters, requestConfig);
+ * Updates an existing Agent.
+ * Update an existing Agent
+ */
+export function updateAgent<T>(
+  requestParameters: UpdateAgentApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Agent>,
+): QueryConfig<T> {
+  return updateAgentRaw(requestParameters, requestConfig);
 }
-

@@ -272,8 +272,7 @@ export { funTheme, darkTheme, valkyrTheme };
 
 // Utility functions
 export const getTheme = (name: ThemeName): Theme => themes[name];
-export const getCurrentTheme = (): Theme =>
-  themeSwitcher.getCurrentThemeInfo();
+export const getCurrentTheme = (): Theme => themeSwitcher.getCurrentThemeInfo();
 export const setTheme = (
   name: ThemeName | string,
   options?: { persist?: boolean },

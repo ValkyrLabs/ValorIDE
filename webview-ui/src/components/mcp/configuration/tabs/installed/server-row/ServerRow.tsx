@@ -159,11 +159,13 @@ const ServerRow = ({
         }}
         onClick={handleRowClick}
       >
-        {!server.error && isExpandable && (
-          isExpanded
-            ? <FaChevronDown style={{ marginRight: "8px" }} />
-            : <FaChevronRight style={{ marginRight: "8px" }} />
-        )}
+        {!server.error &&
+          isExpandable &&
+          (isExpanded ? (
+            <FaChevronDown style={{ marginRight: "8px" }} />
+          ) : (
+            <FaChevronRight style={{ marginRight: "8px" }} />
+          ))}
         <span
           style={{
             flex: 1,

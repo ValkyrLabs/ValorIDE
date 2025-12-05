@@ -1,6 +1,6 @@
-stop
-import React from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
+stop;
+import React from "react";
+import { Modal, Form, Button } from "react-bootstrap";
 
 interface QBEPickerProps {
   show?: boolean;
@@ -9,19 +9,24 @@ interface QBEPickerProps {
   onPick?: (value: any) => void;
 }
 
-const QBEPicker: React.FC<QBEPickerProps> = ({ show = false, refType, onCancel, onPick }) => {
+const QBEPicker: React.FC<QBEPickerProps> = ({
+  show = false,
+  refType,
+  onCancel,
+  onPick,
+}) => {
   const [selectedValue, setSelectedValue] = React.useState<any>(null);
 
   return (
     <Modal show={show} onHide={onCancel} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Select {refType || 'Item'}</Modal.Title>
+        <Modal.Title>Select {refType || "Item"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form.Group>
           <Form.Label>Search & Select</Form.Label>
           <Form.Control
-            placeholder={`Search ${refType || 'items'}...`}
+            placeholder={`Search ${refType || "items"}...`}
             onChange={(e) => setSelectedValue(e.target.value)}
           />
         </Form.Group>

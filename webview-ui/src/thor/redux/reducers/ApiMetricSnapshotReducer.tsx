@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ApiMetricSnapshot } from '@thor/model/ApiMetricSnapshot';
+import { ApiMetricSnapshot } from "@thor/model/ApiMetricSnapshot";
 
 const ApiMetricSnapshotSlice = createSlice({
   name: "ApiMetricSnapshots",
@@ -12,20 +12,25 @@ const ApiMetricSnapshotSlice = createSlice({
     },
 
     ApiMetricSnapshotValueToggled(state, action) {
-      console.log("ApiMetricSnapshot TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ApiMetricSnapshot:ApiMetricSnapshot = state.find((ApiMetricSnapshot) => ApiMetricSnapshot.id === action.payload.ApiMetricSnapshotId);
+      console.log("ApiMetricSnapshot TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ApiMetricSnapshot: ApiMetricSnapshot = state.find(
+        (ApiMetricSnapshot) =>
+          ApiMetricSnapshot.id === action.payload.ApiMetricSnapshotId,
+      );
       if (ApiMetricSnapshot) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ApiMetricSnapshotpropertySet(state, action) {
-      const ApiMetricSnapshot = state.find((ApiMetricSnapshot) => ApiMetricSnapshot.id === action.payload.ApiMetricSnapshotId);
+      const ApiMetricSnapshot = state.find(
+        (ApiMetricSnapshot) =>
+          ApiMetricSnapshot.id === action.payload.ApiMetricSnapshotId,
+      );
       if (ApiMetricSnapshot) {
-      //  ApiMetricSnapshot[action.property] = action.payload[action.property];
+        //  ApiMetricSnapshot[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const ApiMetricSnapshotSlice = createSlice({
 export const {
   ApiMetricSnapshotAdded,
   ApiMetricSnapshotValueToggled,
-  ApiMetricSnapshotpropertySet
+  ApiMetricSnapshotpropertySet,
 } = ApiMetricSnapshotSlice.actions;
 export default ApiMetricSnapshotSlice.reducer;

@@ -36,7 +36,7 @@ export async function getWorkspaceState(context, key) {
 export async function getAllExtensionState(context) {
     const [storedApiProvider, apiModelId, apiKey, openRouterApiKey, valorideApiKey, awsAccessKey, awsSecretKey, awsSessionToken, awsRegion, awsUseCrossRegionInference, awsBedrockUsePromptCache, awsBedrockEndpoint, awsProfile, awsUseProfile, vertexProjectId, vertexRegion, openAiBaseUrl, openAiApiKey, openAiModelId, openAiModelInfo, openAiHeaders, ollamaModelId, ollamaBaseUrl, ollamaApiOptionsCtxNum, lmStudioModelId, lmStudioBaseUrl, anthropicBaseUrl, geminiApiKey, geminiBaseUrl, openAiNativeApiKey, deepSeekApiKey, requestyApiKey, requestyModelId, requestyModelInfo, togetherApiKey, togetherModelId, qwenApiKey, doubaoApiKey, mistralApiKey, azureApiVersion, openRouterModelId, openRouterModelInfo, openRouterProviderSorting, lastShownAnnouncementId, customInstructions, taskHistory, autoApprovalSettings, browserSettings, chatSettings, vsCodeLmModelSelector, liteLlmBaseUrl, liteLlmModelId, liteLlmUsePromptCache, userInfo, previousModeApiProvider, previousModeModelId, previousModeModelInfo, previousModeVsCodeLmModelSelector, previousModeThinkingBudgetTokens, previousModeReasoningEffort, qwenApiLine, liteLlmApiKey, telemetrySetting, asksageApiKey, asksageApiUrl, xaiApiKey, thinkingBudgetTokens, reasoningEffort, sambanovaApiKey, 
     // Valkyrai pass-through
-    valkyraiHost, valkyraiServiceId, valkyraiJwt, planActSeparateModelsSettingRaw, favoritedModelIds, globalValorIDERulesToggles, authenticatedPrincipal, isLoggedIn,] = await Promise.all([
+    valkyraiHost, valkyraiServiceId, valkyraiJwt, planActSeparateModelsSettingRaw, favoritedModelIds, globalValorIDERulesToggles, authenticatedPrincipal, isLoggedIn, selectedLlmDetails,] = await Promise.all([
         getGlobalState(context, "apiProvider"),
         getGlobalState(context, "apiModelId"),
         getSecret(context, "apiKey"),
@@ -115,6 +115,7 @@ export async function getAllExtensionState(context) {
         getGlobalState(context, "globalValorIDERulesToggles"),
         getGlobalState(context, "authenticatedPrincipal"),
         getGlobalState(context, "isLoggedIn"),
+        getGlobalState(context, "selectedLlmDetails"),
     ]);
     // Advanced settings are computed in controller when posting state to webview
     let apiProvider;
@@ -139,6 +140,9 @@ export async function getAllExtensionState(context) {
     const mcpMarketplaceEnabled = vscode.workspace
         .getConfiguration("valoride")
         .get("mcpMarketplace.enabled", true);
+    const configuredValkyraiHost = vscode.workspace
+        .getConfiguration("valoride.valkyrai")
+        .get("host");
     // Plan/Act separate models setting is a boolean indicating whether the user wants to use different models for plan and act. Existing users expect this to be enabled, while we want new users to opt in to this being disabled by default.
     // On win11 state sometimes initializes as empty string instead of undefined
     let planActSeparateModelsSetting = undefined;
@@ -159,6 +163,7 @@ export async function getAllExtensionState(context) {
         // persist so next time state is retrieved it's set to the correct value.
         await updateGlobalState(context, "planActSeparateModelsSetting", planActSeparateModelsSetting);
     }
+    const normalizedValkyraiHost = configuredValkyraiHost?.trim() || valkyraiHost || undefined;
     return {
         apiConfiguration: {
             apiProvider,
@@ -218,7 +223,7 @@ export async function getAllExtensionState(context) {
             xaiApiKey,
             sambanovaApiKey,
             // Valkyrai pass-through
-            valkyraiHost,
+            valkyraiHost: normalizedValkyraiHost,
             valkyraiServiceId,
             valkyraiJwt,
             favoritedModelIds,
@@ -243,6 +248,7 @@ export async function getAllExtensionState(context) {
         planActSeparateModelsSetting,
         authenticatedPrincipal,
         isLoggedIn: isLoggedIn || false,
+        selectedLlmDetails,
     };
 }
 export async function updateApiConfiguration(context, apiConfiguration) {

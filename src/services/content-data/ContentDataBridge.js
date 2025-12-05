@@ -24,7 +24,7 @@ export class ContentDataBridge {
         return new Promise((resolve, reject) => {
             const timeout = setTimeout(() => {
                 this.pending.delete(txnId);
-                reject(new Error('Timeout waiting for content data response'));
+                reject(new Error("Timeout waiting for content data response"));
             }, timeoutMs);
             this.pending.set(txnId, { resolve, reject, timeout });
         });
@@ -38,19 +38,23 @@ export class ContentDataBridge {
         if (success)
             waiter.resolve(payload);
         else
-            waiter.reject(payload ?? new Error('ContentDataBridge: request failed'));
+            waiter.reject(payload ?? new Error("ContentDataBridge: request failed"));
     }
     handleWebviewMessage(message) {
-        if (message?.type !== 'content_data_response')
+        if (message?.type !== "content_data_response")
             return;
         const action = message?.action;
         const data = message?.data || {};
         switch (action) {
-            case 'list_result': {
+            case "list_result": {
                 this.complete(data.transactionId, data.success, data.items);
                 break;
             }
-            case 'get_result': {
+            case "get_result": {
+                this.complete(data.transactionId, data.success, data.item);
+                break;
+            }
+            case "create_result": {
                 this.complete(data.transactionId, data.success, data.item);
                 break;
             }
@@ -63,12 +67,30 @@ export class ContentDataBridge {
      */
     async listContentData(params) {
         if (!this.webviewPanel)
-            throw new Error('ContentDataBridge: webview not ready');
+            throw new Error("ContentDataBridge: webview not ready");
         const transactionId = this.genTxnId();
         this.webviewPanel.webview.postMessage({
-            type: 'content_data',
-            action: 'list',
-            data: { transactionId, page: params?.page ?? 0, size: params?.size ?? 20 },
+            type: "content_data",
+            action: "list",
+            data: {
+                transactionId,
+                page: params?.page ?? 0,
+                size: params?.size ?? 20,
+            },
+        });
+        return await this.waitFor(transactionId, 15000);
+    }
+    /**
+     * Create ContentData via webview RTK Query handler.
+     */
+    async createContentData(contentData) {
+        if (!this.webviewPanel)
+            throw new Error("ContentDataBridge: webview not ready");
+        const transactionId = this.genTxnId();
+        this.webviewPanel.webview.postMessage({
+            type: "content_data",
+            action: "create",
+            data: { transactionId, contentData },
         });
         return await this.waitFor(transactionId, 15000);
     }

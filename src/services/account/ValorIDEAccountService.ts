@@ -6,7 +6,6 @@ import { ExtensionMessage } from "@shared/ExtensionMessage";
 import type { UsageTransaction, PaymentTransaction } from "@thor/model";
 
 export class ValorIDEAccountService {
-  private readonly baseUrl = process.env.VITE_basePath || "http://localhost:8080/v1";
   private postMessageToWebview: (message: ExtensionMessage) => Promise<void>;
   private getValorIDEApiKey: () => Promise<string | undefined>;
 
@@ -19,7 +18,6 @@ export class ValorIDEAccountService {
   }
 
   // Obsolete REST helpers removed. Usage/Payments now flow through webview RTK.
-
 
   /**
    * Request account balance refresh via the webview RTK Query system.
@@ -43,8 +41,13 @@ export class ValorIDEAccountService {
    */
   async fetchContentData(): Promise<any | undefined> {
     try {
-      const { ContentDataBridge } = await import('../../services/content-data/ContentDataBridge');
-      const items = await ContentDataBridge.getInstance().listContentData({ page: 0, size: 50 });
+      const { ContentDataBridge } = await import(
+        "../../services/content-data/ContentDataBridge"
+      );
+      const items = await ContentDataBridge.getInstance().listContentData({
+        page: 0,
+        size: 50,
+      });
 
       // Also forward to webview in case any components reflect it directly
       await this.postMessageToWebview({

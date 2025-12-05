@@ -20,14 +20,15 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,100 +37,125 @@ import { exists, mapValues } from '../src/runtime';
  * @export
  * @interface ActivateAgent200Response
  */
-export type ActivateAgent200Response  = {
-    /**
-     * 
-     * @type {number}
-     * @memberof ActivateAgent200Response
-     */
-    scheduled?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ActivateAgent200Response
-     */
-    triggersRegistered?: number;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof ActivateAgent200Response
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof ActivateAgent200Response
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof ActivateAgent200Response
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof ActivateAgent200Response
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof ActivateAgent200Response
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof ActivateAgent200Response
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof ActivateAgent200Response
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof ActivateAgent200Response
-     */
-    lastModifiedDate?: Date;
+export type ActivateAgent200Response = DataObject & {
+  /**
+   *
+   * @type {number}
+   * @memberof ActivateAgent200Response
+   */
+  scheduled?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof ActivateAgent200Response
+   */
+  triggersRegistered?: number;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof ActivateAgent200Response
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof ActivateAgent200Response
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof ActivateAgent200Response
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof ActivateAgent200Response
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof ActivateAgent200Response
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof ActivateAgent200Response
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof ActivateAgent200Response
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof ActivateAgent200Response
+   */
+  lastModifiedDate?: Date;
+};
+
+export function ActivateAgent200ResponseFromJSON(
+  json: any,
+): ActivateAgent200Response {
+  return {
+    ...DataObjectFromJSON(json),
+    scheduled: !exists(json, "scheduled") ? undefined : json["scheduled"],
+    triggersRegistered: !exists(json, "triggersRegistered")
+      ? undefined
+      : json["triggersRegistered"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
-export function ActivateAgent200ResponseFromJSON(json: any): ActivateAgent200Response {
-    return {
-        'scheduled': !exists(json, 'scheduled') ? undefined : json['scheduled'],
-        'triggersRegistered': !exists(json, 'triggersRegistered') ? undefined : json['triggersRegistered'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+export function ActivateAgent200ResponseToJSON(
+  value?: ActivateAgent200Response,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    scheduled: value.scheduled,
+    triggersRegistered: value.triggersRegistered,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
-
-export function ActivateAgent200ResponseToJSON(value?: ActivateAgent200Response): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'scheduled': value.scheduled,
-        'triggersRegistered': value.triggersRegistered,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
-}
-
-

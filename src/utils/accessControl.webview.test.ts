@@ -1,4 +1,5 @@
-type AccessControlModule = typeof import("../../webview-ui/src/utils/accessControl");
+type AccessControlModule =
+  typeof import("../../webview-ui/src/utils/accessControl");
 
 describe("webview accessControl persistence helpers", () => {
   let storeJwtToken: AccessControlModule["storeJwtToken"];
@@ -49,7 +50,9 @@ describe("webview accessControl persistence helpers", () => {
     });
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const module = require("../../webview-ui/src/utils/accessControl") as AccessControlModule;
+    const module = require(
+      "../../webview-ui/src/utils/accessControl",
+    ) as AccessControlModule;
     storeJwtToken = module.storeJwtToken;
     hydrateStoredCredentials = module.hydrateStoredCredentials;
     writeStoredPrincipal = module.writeStoredPrincipal;
@@ -101,9 +104,9 @@ describe("webview accessControl persistence helpers", () => {
     expect(result.token).toBe("persisted-token");
     expect(result.principal).toMatchObject(principal);
     expect(window.sessionStorage.getItem("jwtToken")).toBe("persisted-token");
-    expect(
-      window.sessionStorage.getItem("authenticatedPrincipal"),
-    ).toBe(JSON.stringify(principal));
+    expect(window.sessionStorage.getItem("authenticatedPrincipal")).toBe(
+      JSON.stringify(principal),
+    );
     expect(dispatchEvent).toHaveBeenCalled();
 
     clearStoredJwtToken("test-cleanup");
@@ -118,13 +121,11 @@ describe("webview accessControl persistence helpers", () => {
     const storedSession = window.sessionStorage.getItem(
       "authenticatedPrincipal",
     );
-    const storedLocal = window.localStorage.getItem(
-      "authenticatedPrincipal",
-    );
+    const storedLocal = window.localStorage.getItem("authenticatedPrincipal");
     expect(storedSession).toBe(JSON.stringify(principal));
     expect(storedLocal).toBe(JSON.stringify(principal));
-    expect(
-      window.sessionStorage.getItem("authenticatedUser"),
-    ).toBe(JSON.stringify(principal));
+    expect(window.sessionStorage.getItem("authenticatedUser")).toBe(
+      JSON.stringify(principal),
+    );
   });
 });

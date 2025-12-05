@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import axios from "axios";
 import { Logger } from "../logging/Logger";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 /**
  * Secure token storage service for persistent authentication
  * Uses VSCode secrets for secure storage with fallback to localStorage
@@ -37,12 +38,14 @@ export class TokenStorageService {
             const authState = {
                 tokens,
                 user: user || {},
-                timestamp: Date.now()
+                timestamp: Date.now(),
             };
             await this.context.secrets.store("authState", JSON.stringify(authState));
             // Also store in localStorage if persistence is enabled (for webview access)
             try {
-                const persistSetting = vscode.workspace.getConfiguration("valoride").get("persistJwt", true);
+                const persistSetting = vscode.workspace
+                    .getConfiguration("valoride")
+                    .get("persistJwt", true);
                 if (persistSetting) {
                     // This would be handled by the webview context, but we can set a flag
                     await this.context.globalState.update("authPersistenceEnabled", true);
@@ -88,17 +91,17 @@ export class TokenStorageService {
     async validateTokens(tokens) {
         try {
             // Make a test API call to validate the JWT token
-            const baseUrl = process.env.VITE_basePath || "http://localhost:8080/v1";
+            const baseUrl = getValkyraiBasePath();
             const response = await axios.get(`${baseUrl}/auth/validate`, {
                 headers: {
-                    "Authorization": `Bearer ${tokens.jwtToken}`,
+                    Authorization: `Bearer ${tokens.jwtToken}`,
                 },
-                timeout: 10000
+                timeout: 10000,
             });
             if (response.status === 200 && response.data.valid) {
                 return {
                     valid: true,
-                    user: response.data.user
+                    user: response.data.user,
                 };
             }
             return { valid: false };
@@ -113,18 +116,18 @@ export class TokenStorageService {
      */
     async refreshTokens(refreshToken) {
         try {
-            const baseUrl = process.env.VITE_basePath || "http://localhost:8080/v1";
+            const baseUrl = getValkyraiBasePath();
             const response = await axios.post(`${baseUrl}/auth/refresh`, {
-                refreshToken
+                refreshToken,
             }, {
-                timeout: 10000
+                timeout: 10000,
             });
             if (response.status === 200 && response.data.token) {
                 const newTokens = {
                     jwtToken: response.data.token,
                     apiKey: response.data.apiKey,
                     refreshToken: response.data.refreshToken || refreshToken,
-                    expiresAt: response.data.expiresAt
+                    expiresAt: response.data.expiresAt,
                 };
                 return newTokens;
             }
@@ -157,7 +160,9 @@ export class TokenStorageService {
      */
     async isAuthPersistenceEnabled() {
         try {
-            return vscode.workspace.getConfiguration("valoride").get("persistJwt", true);
+            return vscode.workspace
+                .getConfiguration("valoride")
+                .get("persistJwt", true);
         }
         catch {
             return true; // Default to enabled

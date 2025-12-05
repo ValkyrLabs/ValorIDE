@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { CircuitBreakerState } from '@thor/model/CircuitBreakerState';
+import { CircuitBreakerState } from "@thor/model/CircuitBreakerState";
 
 const CircuitBreakerStateSlice = createSlice({
   name: "CircuitBreakerStates",
@@ -12,20 +12,25 @@ const CircuitBreakerStateSlice = createSlice({
     },
 
     CircuitBreakerStateValueToggled(state, action) {
-      console.log("CircuitBreakerState TOGGLE")
-      console.warn(JSON.stringify(action))
-      const CircuitBreakerState:CircuitBreakerState = state.find((CircuitBreakerState) => CircuitBreakerState.id === action.payload.CircuitBreakerStateId);
+      console.log("CircuitBreakerState TOGGLE");
+      console.warn(JSON.stringify(action));
+      const CircuitBreakerState: CircuitBreakerState = state.find(
+        (CircuitBreakerState) =>
+          CircuitBreakerState.id === action.payload.CircuitBreakerStateId,
+      );
       if (CircuitBreakerState) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     CircuitBreakerStatepropertySet(state, action) {
-      const CircuitBreakerState = state.find((CircuitBreakerState) => CircuitBreakerState.id === action.payload.CircuitBreakerStateId);
+      const CircuitBreakerState = state.find(
+        (CircuitBreakerState) =>
+          CircuitBreakerState.id === action.payload.CircuitBreakerStateId,
+      );
       if (CircuitBreakerState) {
-      //  CircuitBreakerState[action.property] = action.payload[action.property];
+        //  CircuitBreakerState[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const CircuitBreakerStateSlice = createSlice({
 export const {
   CircuitBreakerStateAdded,
   CircuitBreakerStateValueToggled,
-  CircuitBreakerStatepropertySet
+  CircuitBreakerStatepropertySet,
 } = CircuitBreakerStateSlice.actions;
 export default CircuitBreakerStateSlice.reducer;

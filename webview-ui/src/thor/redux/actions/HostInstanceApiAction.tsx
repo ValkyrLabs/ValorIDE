@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // HostInstance
 
-export const FETCH_HOSTINSTANCE_REQUEST = 'FETCH_HOSTINSTANCE_REQUEST';
-export const FETCH_HOSTINSTANCE_SUCCESS = 'FETCH_HOSTINSTANCE_SUCCESS';
-export const FETCH_HOSTINSTANCE_FAILURE = 'FETCH_HOSTINSTANCE_FAILURE';
+export const FETCH_HOSTINSTANCE_REQUEST = "FETCH_HOSTINSTANCE_REQUEST";
+export const FETCH_HOSTINSTANCE_SUCCESS = "FETCH_HOSTINSTANCE_SUCCESS";
+export const FETCH_HOSTINSTANCE_FAILURE = "FETCH_HOSTINSTANCE_FAILURE";
 
-export const ADD_HOSTINSTANCE_REQUEST = 'ADD_HOSTINSTANCE_REQUEST';
-export const ADD_HOSTINSTANCE_SUCCESS = 'ADD_HOSTINSTANCE_SUCCESS';
-export const ADD_HOSTINSTANCE_FAILURE = 'ADD_HOSTINSTANCE_FAILURE';
+export const ADD_HOSTINSTANCE_REQUEST = "ADD_HOSTINSTANCE_REQUEST";
+export const ADD_HOSTINSTANCE_SUCCESS = "ADD_HOSTINSTANCE_SUCCESS";
+export const ADD_HOSTINSTANCE_FAILURE = "ADD_HOSTINSTANCE_FAILURE";
 
-export const UPDATE_HOSTINSTANCE_REQUEST = 'UPDATE_HOSTINSTANCE_REQUEST';
-export const UPDATE_HOSTINSTANCE_SUCCESS = 'UPDATE_HOSTINSTANCE_SUCCESS';
-export const UPDATE_HOSTINSTANCE_FAILURE = 'UPDATE_HOSTINSTANCE_FAILURE';
+export const UPDATE_HOSTINSTANCE_REQUEST = "UPDATE_HOSTINSTANCE_REQUEST";
+export const UPDATE_HOSTINSTANCE_SUCCESS = "UPDATE_HOSTINSTANCE_SUCCESS";
+export const UPDATE_HOSTINSTANCE_FAILURE = "UPDATE_HOSTINSTANCE_FAILURE";
 
-export const DELETE_HOSTINSTANCE_REQUEST = 'DELETE_HOSTINSTANCE_REQUEST';
-export const DELETE_HOSTINSTANCE_SUCCESS = 'DELETE_HOSTINSTANCE_SUCCESS';
-export const DELETE_HOSTINSTANCE_FAILURE = 'DELETE_HOSTINSTANCE_FAILURE';
+export const DELETE_HOSTINSTANCE_REQUEST = "DELETE_HOSTINSTANCE_REQUEST";
+export const DELETE_HOSTINSTANCE_SUCCESS = "DELETE_HOSTINSTANCE_SUCCESS";
+export const DELETE_HOSTINSTANCE_FAILURE = "DELETE_HOSTINSTANCE_FAILURE";
 
-export const LIST_HOSTINSTANCE_REQUEST = 'LIST_HOSTINSTANCE_REQUEST';
-export const LIST_HOSTINSTANCE_SUCCESS = 'LIST_HOSTINSTANCE_SUCCESS';
-export const LIST_HOSTINSTANCE_FAILURE = 'LIST_HOSTINSTANCE_FAILURE';
+export const LIST_HOSTINSTANCE_REQUEST = "LIST_HOSTINSTANCE_REQUEST";
+export const LIST_HOSTINSTANCE_SUCCESS = "LIST_HOSTINSTANCE_SUCCESS";
+export const LIST_HOSTINSTANCE_FAILURE = "LIST_HOSTINSTANCE_FAILURE";
 
 export const addHostInstanceRequest = () => ({
-    type: ADD_HOSTINSTANCE_REQUEST,
+  type: ADD_HOSTINSTANCE_REQUEST,
 });
 
 export const addHostInstanceSuccess = (HostInstances: any) => ({
-    type: ADD_HOSTINSTANCE_SUCCESS,
-    payload: HostInstances,
+  type: ADD_HOSTINSTANCE_SUCCESS,
+  payload: HostInstances,
 });
 
 export const addHostInstanceFailure = (error: Error) => ({
-    type: ADD_HOSTINSTANCE_FAILURE,
-    payload: error,
+  type: ADD_HOSTINSTANCE_FAILURE,
+  payload: error,
 });
 
-
 export const fetchHostInstanceRequest = () => ({
-    type: FETCH_HOSTINSTANCE_REQUEST,
+  type: FETCH_HOSTINSTANCE_REQUEST,
 });
 
 export const fetchHostInstanceSuccess = (HostInstances: any) => ({
-    type: FETCH_HOSTINSTANCE_SUCCESS,
-    payload: HostInstances,
+  type: FETCH_HOSTINSTANCE_SUCCESS,
+  payload: HostInstances,
 });
 
 export const fetchHostInstanceFailure = (error: Error) => ({
-    type: FETCH_HOSTINSTANCE_FAILURE,
-    payload: error,
+  type: FETCH_HOSTINSTANCE_FAILURE,
+  payload: error,
 });
 
 export const listHostInstanceRequest = () => ({
-    type: LIST_HOSTINSTANCE_REQUEST,
+  type: LIST_HOSTINSTANCE_REQUEST,
 });
 
 export const listHostInstanceSuccess = (HostInstances: any) => ({
-    type: LIST_HOSTINSTANCE_SUCCESS,
-    payload: HostInstances,
+  type: LIST_HOSTINSTANCE_SUCCESS,
+  payload: HostInstances,
 });
 
 export const listHostInstanceFailure = (error: Error) => ({
-    type: LIST_HOSTINSTANCE_FAILURE,
-    payload: error,
+  type: LIST_HOSTINSTANCE_FAILURE,
+  payload: error,
 });
 
 export const updateHostInstanceRequest = (HostInstance: any) => ({
-    type: UPDATE_HOSTINSTANCE_REQUEST,
-    payload: HostInstance,
+  type: UPDATE_HOSTINSTANCE_REQUEST,
+  payload: HostInstance,
 });
 
 export const updateHostInstanceSuccess = (HostInstance: any) => ({
-    type: UPDATE_HOSTINSTANCE_SUCCESS,
-    payload: HostInstance,
+  type: UPDATE_HOSTINSTANCE_SUCCESS,
+  payload: HostInstance,
 });
 
 export const updateHostInstanceFailure = (error: Error) => ({
-    type: UPDATE_HOSTINSTANCE_FAILURE,
-    payload: error,
+  type: UPDATE_HOSTINSTANCE_FAILURE,
+  payload: error,
 });
 
 export const deleteHostInstanceRequest = (HostInstance: any) => ({
-    type: DELETE_HOSTINSTANCE_REQUEST,
-    payload: HostInstance,
+  type: DELETE_HOSTINSTANCE_REQUEST,
+  payload: HostInstance,
 });
 
 export const deleteHostInstanceSuccess = (HostInstance: any) => ({
-    type: DELETE_HOSTINSTANCE_SUCCESS,
-    payload: HostInstance,
+  type: DELETE_HOSTINSTANCE_SUCCESS,
+  payload: HostInstance,
 });
 
 export const deleteHostInstanceFailure = (error: Error) => ({
-    type: DELETE_HOSTINSTANCE_FAILURE,
-    payload: error,
+  type: DELETE_HOSTINSTANCE_FAILURE,
+  payload: error,
 });

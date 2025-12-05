@@ -36,7 +36,10 @@ export async function precisionSearchAndReplace(cwd, relPath, edits, pathAccess,
         warnings: [],
         applied: new Set(),
     };
-    const annotated = edits.map((edit, index) => ({ edit, index }));
+    const annotated = edits.map((edit, index) => ({
+        edit,
+        index,
+    }));
     const maxAst = opts.maxFileBytesForAst ?? 5_000_000;
     const astEdits = annotated.filter((entry) => entry.edit.kind === "ts-ast");
     if (astEdits.length) {
@@ -102,7 +105,10 @@ function coalesceSkips(entries) {
         map.set(entry.index, set);
     }
     return Array.from(map.entries())
-        .map(([index, reasons]) => ({ index, reason: Array.from(reasons).join(", ") }))
+        .map(([index, reasons]) => ({
+        index,
+        reason: Array.from(reasons).join(", "),
+    }))
         .sort((a, b) => a.index - b.index);
 }
 function sha256(b) {
@@ -125,7 +131,7 @@ async function fsyncDir(dir) {
 }
 function resolveBackupRoot(cwd, backupDir) {
     if (!backupDir) {
-        return path.resolve(cwd, ".valor/undo");
+        return path.resolve(cwd, ".valoride/undo");
     }
     return path.isAbsolute(backupDir) ? backupDir : path.resolve(cwd, backupDir);
 }

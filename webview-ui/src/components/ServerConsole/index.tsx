@@ -1,41 +1,46 @@
 import * as StompJs from "@stomp/stompjs";
 import { useEffect, useState } from "react";
-import { Badge, Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
-import { FiTerminal, FiWifi, FiWifiOff, FiActivity, FiMaximize2, FiMinimize2, FiList } from "react-icons/fi";
+import {
+  Badge,
+  Button,
+  Card,
+  Col,
+  Form,
+  InputGroup,
+  Row,
+} from "react-bootstrap";
+import {
+  FiTerminal,
+  FiWifi,
+  FiWifiOff,
+  FiActivity,
+  FiMaximize2,
+  FiMinimize2,
+  FiList,
+} from "react-icons/fi";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 import type { AppDispatch, RootState } from "../../redux/store";
-import { WebsocketMessage, WebsocketMessageFromJSON, WebsocketMessageToJSON, WebsocketMessageTypeEnum } from "../../thor/model";
-import { WEBSOCKET_URL, isValidWsUrl } from "../../websocket/websocket";
+import {
+  WebsocketMessage,
+  WebsocketMessageFromJSON,
+  WebsocketMessageToJSON,
+  WebsocketMessageTypeEnum,
+} from "../../thor/model";
+import { getWebsocketUrl, isValidWsUrl } from "../../websocket/websocket";
 import { useMothership } from "../../context/MothershipContext";
 import { addMessage, setConnected } from "./websocketSlice";
-import { BASE_PATH } from "@/thor/src";
 import SystemAlerts from "@/components/SystemAlerts";
 import "./ServerConsole.css";
 import { FaPaperPlane } from "react-icons/fa";
 import CoolButton from "../CoolButton";
+import { deriveWsUrlFromHost, getValkyraiHost } from "@/utils/valkyraiHost";
+import { useExtensionState } from "@/context/ExtensionStateContext";
 
 const { Client } = StompJs;
 
-const deriveWsBase = (input?: string): string | undefined => {
-  if (!input) return undefined;
-  const trimmed = input.trim();
-  if (!trimmed) return undefined;
-  if (/^wss?:\/\//i.test(trimmed)) {
-    return trimmed;
-  }
-  try {
-    const url = new URL(trimmed);
-    if (url.protocol === "https:" || url.protocol === "http:") {
-      url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
-    }
-    return url.toString();
-  } catch {
-    return undefined;
-  }
-};
-
-const FALLBACK_WS_BASE = deriveWsBase(BASE_PATH) ?? "ws://localhost:8080";
+const fallbackWsBase = (host?: string) =>
+  deriveWsUrlFromHost(host || getValkyraiHost()) ?? "ws://localhost:8080";
 
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -61,32 +66,45 @@ const ServerConsole = () => {
   const [chatText, setChatText] = useState("");
   const [isConnecting, setIsConnecting] = useState(false);
 
-  const connected = useAppSelector((state: RootState) => state.websocket.connected);
-  const messages = useAppSelector((state: RootState) => state.websocket.messages);
+  const connected = useAppSelector(
+    (state: RootState) => state.websocket.connected,
+  );
+  const messages = useAppSelector(
+    (state: RootState) => state.websocket.messages,
+  );
   const { isConnected: mothershipConnected } = useMothership();
+  const { apiConfiguration } = useExtensionState();
+  const valkyraiHost = apiConfiguration?.valkyraiHost;
 
   const dispatch = useAppDispatch();
 
   // Determine connection state for styling
-  const connectionState: 'happy' | 'sad' | 'waiting' =
-    isConnecting
-      ? 'waiting'
-      : connected && mothershipConnected
-        ? 'happy'
-        : connected
-          ? 'waiting'
-          : 'sad';
+  const connectionState: "happy" | "sad" | "waiting" = isConnecting
+    ? "waiting"
+    : connected && mothershipConnected
+      ? "happy"
+      : connected
+        ? "waiting"
+        : "sad";
 
   useEffect(() => {
-    const socketUrl = isValidWsUrl(WEBSOCKET_URL) ? WEBSOCKET_URL : FALLBACK_WS_BASE;
+    const configuredUrl = getWebsocketUrl();
+    const socketUrl = isValidWsUrl(configuredUrl)
+      ? configuredUrl
+      : fallbackWsBase(valkyraiHost);
     if (!isValidWsUrl(socketUrl)) {
-      console.warn("ServerConsole: WebSocket disabled (missing or invalid VITE_wssBasePath/base path).");
+      console.warn(
+        "ServerConsole: WebSocket disabled (missing or invalid VITE_wssBasePath/base path).",
+      );
       dispatch(setConnected(false));
-      dispatch(addMessage({
-        type: "console",
-        payload: "WebSocket disabled: configure VITE_wssBasePath or ensure VITE_basePath is an http(s) URL.",
-        createdDate: new Date(),
-      } as any));
+      dispatch(
+        addMessage({
+          type: "console",
+          payload:
+            "WebSocket disabled: configure VITE_wssBasePath or ensure VITE_basePath is an http(s) URL.",
+          createdDate: new Date(),
+        } as any),
+      );
       return undefined;
     }
 
@@ -100,12 +118,16 @@ const ServerConsole = () => {
         dispatch(setConnected(true));
 
         stompClient.subscribe("/topic/statuses", (message) => {
-          const parsedMessage = WebsocketMessageFromJSON(JSON.parse(message.body));
+          const parsedMessage = WebsocketMessageFromJSON(
+            JSON.parse(message.body),
+          );
           dispatch(addMessage(parsedMessage));
         });
 
         stompClient.subscribe("/topic/messages", (message) => {
-          const parsedMessage = WebsocketMessageFromJSON(JSON.parse(message.body));
+          const parsedMessage = WebsocketMessageFromJSON(
+            JSON.parse(message.body),
+          );
           dispatch(addMessage(parsedMessage));
         });
       },
@@ -126,14 +148,14 @@ const ServerConsole = () => {
     return () => {
       stompClient.deactivate();
     };
-  }, [dispatch]);
+  }, [dispatch, valkyraiHost]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setChatText(e.target.value);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -156,11 +178,11 @@ const ServerConsole = () => {
   };
 
   const getStatusText = () => {
-    if (isConnecting) return 'Connecting...';
-    if (connected && mothershipConnected) return 'Connected to Mothership';
-    if (connected) return 'Awaiting Mothership';
-    if (mothershipConnected) return 'Mothership Connected (console offline)';
-    return 'Disconnected';
+    if (isConnecting) return "Connecting...";
+    if (connected && mothershipConnected) return "Connected to Mothership";
+    if (connected) return "Awaiting Mothership";
+    if (mothershipConnected) return "Mothership Connected (console offline)";
+    return "Disconnected";
   };
 
   const getStatusIcon = () => {
@@ -174,7 +196,9 @@ const ServerConsole = () => {
   return (
     <>
       <SystemAlerts />
-      <Card className={`server-console ${isCompact ? 'compact' : ''} ${isMaximized ? 'maximized' : ''} connection-${connectionState}`}>
+      <Card
+        className={`server-console ${isCompact ? "compact" : ""} ${isMaximized ? "maximized" : ""} connection-${connectionState}`}
+      >
         <Card.Header className="console-header p-3">
           <Row className="align-items-center">
             <Col>
@@ -185,19 +209,21 @@ const ServerConsole = () => {
             </Col>
             <Col xs="auto">
               <div className="connection-status d-flex align-items-center">
-                <div className={`status-icon ${isConnecting ? 'connecting' : ''}`}>
+                <div
+                  className={`status-icon ${isConnecting ? "connecting" : ""}`}
+                >
                   {getStatusIcon()}
                 </div>
                 {getStatusText()}
               </div>
             </Col>
             <Col xs="auto">
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div style={{ display: "flex", gap: 8 }}>
                 <CoolButton
                   size="sm"
                   className="control-btn"
                   onClick={() => setIsCompact(!isCompact)}
-                // title={isCompact ? 'Disable compact' : 'Enable compact'}
+                  // title={isCompact ? 'Disable compact' : 'Enable compact'}
                 >
                   <FiList size={14} />
                 </CoolButton>
@@ -206,9 +232,13 @@ const ServerConsole = () => {
                   size="sm"
                   className="control-btn"
                   onClick={() => setIsMaximized(!isMaximized)}
-                // title={isMaximized ? 'Minimize' : 'Maximize'}
+                  // title={isMaximized ? 'Minimize' : 'Maximize'}
                 >
-                  {isMaximized ? <FiMinimize2 size={14} /> : <FiMaximize2 size={14} />}
+                  {isMaximized ? (
+                    <FiMinimize2 size={14} />
+                  ) : (
+                    <FiMaximize2 size={14} />
+                  )}
                 </CoolButton>
               </div>
             </Col>
@@ -235,29 +265,30 @@ const ServerConsole = () => {
                 user: "info",
               };
 
-              const variant = typeMap[type as keyof typeof typeMap] || "secondary";
+              const variant =
+                typeMap[type as keyof typeof typeMap] || "secondary";
 
               return (
                 <div key={index} className="message-row">
                   <Badge className={`message-badge badge-${variant}`}>
-                    {type || 'msg'}
+                    {type || "msg"}
                   </Badge>
 
                   <div className="message-time">
-                    {time ? new Date(time).toLocaleTimeString() : 'now'}
+                    {time ? new Date(time).toLocaleTimeString() : "now"}
                   </div>
 
                   <div className="message-user">
                     <div className="user-avatar">
-                      {message.user?.username?.charAt(0)?.toUpperCase() || '?'}
+                      {message.user?.username?.charAt(0)?.toUpperCase() || "?"}
                     </div>
-                    <span style={{ fontSize: '10px', fontWeight: 800 }}>
-                      {message.user?.username || 'anon'}
+                    <span style={{ fontSize: "10px", fontWeight: 800 }}>
+                      {message.user?.username || "anon"}
                     </span>
                   </div>
 
                   <div className="message-content">
-                    {payload || 'Empty message'}
+                    {payload || "Empty message"}
                   </div>
                 </div>
               );
@@ -270,7 +301,7 @@ const ServerConsole = () => {
               <div>
                 Waiting for mothership communications...
                 <br />
-                <span style={{ fontSize: '12px', opacity: 0.6 }}>
+                <span style={{ fontSize: "12px", opacity: 0.6 }}>
                   Connect to start receiving real-time updates
                 </span>
               </div>
@@ -297,7 +328,14 @@ const ServerConsole = () => {
             />
 
             <button
-              style={{ cursor: "pointer", padding: "3px", width: "28px", height: "28px", backgroundColor: "darkblue", borderRadius: "14px" }}
+              style={{
+                cursor: "pointer",
+                padding: "3px",
+                width: "28px",
+                height: "28px",
+                backgroundColor: "darkblue",
+                borderRadius: "14px",
+              }}
               className="send-btn"
               onClick={sendMessage}
               disabled={!connected || !mothershipConnected || !chatText.trim()}

@@ -1,18 +1,28 @@
-import { BaseToolHandler, ToolExecutionResult, ToolResponse } from "./BaseToolHandler";
+import {
+  BaseToolHandler,
+  ToolExecutionResult,
+  ToolResponse,
+} from "./BaseToolHandler";
 import { AssistantMessageContent } from "@core/assistant-message";
 import { formatResponse } from "@core/prompts/responses";
 import { telemetryService } from "@services/telemetry/TelemetryService";
 import { showSystemNotification } from "@integrations/notifications";
 import { fixModelHtmlEscaping } from "@utils/string";
 import { execa } from "execa";
-import { combineCommandSequences, COMMAND_REQ_APP_STRING } from "@shared/combineCommandSequences";
+import {
+  combineCommandSequences,
+  COMMAND_REQ_APP_STRING,
+} from "@shared/combineCommandSequences";
 import { OutputFilterService } from "@services/output-filter/OutputFilterService";
 import { isInTestMode } from "@services/test/TestMode";
 import { Logger } from "@services/logging/Logger";
 import { setTimeout as setTimeoutPromise } from "node:timers/promises";
 
 export class CommandToolHandler extends BaseToolHandler {
-  async execute(block: AssistantMessageContent, partial: boolean): Promise<ToolExecutionResult> {
+  async execute(
+    block: AssistantMessageContent,
+    partial: boolean,
+  ): Promise<ToolExecutionResult> {
     if (block.type !== "tool_use" || block.name !== "execute_command") {
       return { shouldContinue: false };
     }
@@ -24,19 +34,23 @@ export class CommandToolHandler extends BaseToolHandler {
     );
 
     let command: string | undefined = block.params.command;
-    const requiresApprovalRaw: string | undefined = block.params.requires_approval;
-    const requiresApprovalPerLLM = requiresApprovalRaw?.toLowerCase() === "true";
+    const requiresApprovalRaw: string | undefined =
+      block.params.requires_approval;
+    const requiresApprovalPerLLM =
+      requiresApprovalRaw?.toLowerCase() === "true";
 
     try {
       if (partial) {
         if (this.context.shouldAutoApproveTool(block.name)) {
           // Can't partially stream a say since it depends on requiresApproval parameter
         } else {
-          await this.context.ask(
-            "command",
-            this.removeClosingTag("command", command, partial),
-            partial,
-          ).catch(() => {});
+          await this.context
+            .ask(
+              "command",
+              this.removeClosingTag("command", command, partial),
+              partial,
+            )
+            .catch(() => {});
         }
         return { shouldContinue: false };
       } else {
@@ -44,14 +58,20 @@ export class CommandToolHandler extends BaseToolHandler {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
-            toolResponse: await this.context.sayAndCreateMissingParamError("execute_command", "command")
+            toolResponse: await this.context.sayAndCreateMissingParamError(
+              "execute_command",
+              "command",
+            ),
           };
         }
         if (!requiresApprovalRaw) {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
-            toolResponse: await this.context.sayAndCreateMissingParamError("execute_command", "requires_approval")
+            toolResponse: await this.context.sayAndCreateMissingParamError(
+              "execute_command",
+              "requires_approval",
+            ),
           };
         }
         this.context.consecutiveMistakeCount = 0;
@@ -61,12 +81,18 @@ export class CommandToolHandler extends BaseToolHandler {
           command = fixModelHtmlEscaping(command);
         }
 
-        const ignoredFileAttemptedToAccess = this.context.valorideIgnoreController.validateCommand(command);
+        const ignoredFileAttemptedToAccess =
+          this.context.valorideIgnoreController.validateCommand(command);
         if (ignoredFileAttemptedToAccess) {
-          await this.context.say("valorideignore_error", ignoredFileAttemptedToAccess);
+          await this.context.say(
+            "valorideignore_error",
+            ignoredFileAttemptedToAccess,
+          );
           return {
             shouldContinue: true,
-            toolResponse: formatResponse.toolError(formatResponse.valorideIgnoreError(ignoredFileAttemptedToAccess))
+            toolResponse: formatResponse.toolError(
+              formatResponse.valorideIgnoreError(ignoredFileAttemptedToAccess),
+            ),
           };
         }
 
@@ -75,8 +101,12 @@ export class CommandToolHandler extends BaseToolHandler {
 
         // If the model says this command is safe and auto approval for safe commands is true, execute the command
         // If the model says the command is risky, but *BOTH* auto approve settings are true, execute the command
-        const autoApproveResult = this.context.shouldAutoApproveTool(block.name);
-        const [autoApproveSafe, autoApproveAll] = Array.isArray(autoApproveResult)
+        const autoApproveResult = this.context.shouldAutoApproveTool(
+          block.name,
+        );
+        const [autoApproveSafe, autoApproveAll] = Array.isArray(
+          autoApproveResult,
+        )
           ? autoApproveResult
           : [autoApproveResult, false];
 
@@ -84,22 +114,32 @@ export class CommandToolHandler extends BaseToolHandler {
           (!requiresApprovalPerLLM && autoApproveSafe) ||
           (requiresApprovalPerLLM && autoApproveSafe && autoApproveAll)
         ) {
-          this.context.removeLastPartialMessageIfExistsWithType("ask", "command");
+          this.context.removeLastPartialMessageIfExistsWithType(
+            "ask",
+            "command",
+          );
           await this.context.say("command", command, undefined, false);
           this.context.consecutiveAutoApprovedRequestsCount++;
           didAutoApprove = true;
         } else {
-          if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
+          if (
+            this.context.autoApprovalSettings.enabled &&
+            this.context.autoApprovalSettings.enableNotifications
+          ) {
             showSystemNotification({
               subtitle: "Approval Required",
-              message: `$ ${command}`
+              message: `$ ${command}`,
             });
           }
-          
+
           const { response, text, images } = await this.context.ask(
             "command",
-            command + (this.context.shouldAutoApproveTool(block.name) && requiresApprovalPerLLM ? COMMAND_REQ_APP_STRING : ""),
-            false
+            command +
+              (this.context.shouldAutoApproveTool(block.name) &&
+              requiresApprovalPerLLM
+                ? COMMAND_REQ_APP_STRING
+                : ""),
+            false,
           );
           const normalizedText = text?.trim().toLowerCase();
           const approved =
@@ -114,18 +154,22 @@ export class CommandToolHandler extends BaseToolHandler {
               shouldContinue: true,
               userRejected: true,
               toolResponse: formatResponse.toolDenied(),
-              feedback: approvalFeedback
+              feedback: approvalFeedback,
             };
           }
         }
 
         let timeoutId: NodeJS.Timeout | undefined;
-        if (didAutoApprove && this.context.autoApprovalSettings.enableNotifications) {
+        if (
+          didAutoApprove &&
+          this.context.autoApprovalSettings.enableNotifications
+        ) {
           // if the command was auto-approved, and it's long running we need to notify the user after some time has passed without proceeding
           timeoutId = setTimeout(() => {
             showSystemNotification({
               subtitle: "Command is still running",
-              message: "An auto-approved command has been running for 30s, and may need your attention.",
+              message:
+                "An auto-approved command has been running for 30s, and may need your attention.",
             });
           }, 30_000);
         }
@@ -149,7 +193,7 @@ export class CommandToolHandler extends BaseToolHandler {
           toolResponse: result,
           userRejected,
           feedback: approvalFeedback,
-          didAlreadyUseTool: true
+          didAlreadyUseTool: true,
         };
       }
     } catch (error) {
@@ -159,7 +203,10 @@ export class CommandToolHandler extends BaseToolHandler {
       );
       return {
         shouldContinue: true,
-        toolResponse: await this.handleError("executing command", error as Error)
+        toolResponse: await this.handleError(
+          "executing command",
+          error as Error,
+        ),
       };
     }
   }
@@ -168,7 +215,9 @@ export class CommandToolHandler extends BaseToolHandler {
    * Executes a command directly in Node.js using execa
    * This is used in test mode to capture the full output without using the VS Code terminal
    */
-  private async executeCommandInNode(command: string): Promise<[boolean, ToolResponse]> {
+  private async executeCommandInNode(
+    command: string,
+  ): Promise<[boolean, ToolResponse]> {
     try {
       // Create a child process
       const childProcess = execa(command, {
@@ -227,9 +276,14 @@ export class CommandToolHandler extends BaseToolHandler {
       }
 
       // Filter the output to reduce verbosity
-      const filteredOutput = OutputFilterService.filterCommandOutput(output, command);
+      const filteredOutput = OutputFilterService.filterCommandOutput(
+        output,
+        command,
+      );
 
-      Logger.info(`Command executed in Node: ${command}\nOutput:\n${filteredOutput}`);
+      Logger.info(
+        `Command executed in Node: ${command}\nOutput:\n${filteredOutput}`,
+      );
 
       // Format the result similar to terminal output
       return [
@@ -240,12 +294,15 @@ export class CommandToolHandler extends BaseToolHandler {
       ];
     } catch (error) {
       // Handle any errors that might occur
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       return [false, `Error executing command: ${errorMessage}`];
     }
   }
 
-  private async executeCommand(command: string): Promise<[boolean, ToolResponse]> {
+  private async executeCommand(
+    command: string,
+  ): Promise<[boolean, ToolResponse]> {
     Logger.info("IS_TEST: " + isInTestMode());
 
     // Check if we're in test mode
@@ -256,9 +313,14 @@ export class CommandToolHandler extends BaseToolHandler {
     }
     Logger.info("Executing command in VS code terminal: " + command);
 
-    const terminalInfo = await this.context.terminalManager.getOrCreateTerminal(this.context.cwd);
+    const terminalInfo = await this.context.terminalManager.getOrCreateTerminal(
+      this.context.cwd,
+    );
     terminalInfo.terminal.show(); // weird visual bug when creating new terminals
-    const process = this.context.terminalManager.runCommand(terminalInfo, command);
+    const process = this.context.terminalManager.runCommand(
+      terminalInfo,
+      command,
+    );
 
     let userFeedback: { text?: string; images?: string[] } | undefined;
     let didContinue = false;
@@ -286,7 +348,10 @@ export class CommandToolHandler extends BaseToolHandler {
       outputBufferSize = 0;
       chunkEnroute = true;
       try {
-        const { response, text, images } = await this.context.ask("command_output", chunk);
+        const { response, text, images } = await this.context.ask(
+          "command_output",
+          chunk,
+        );
         if (response === "yesButtonClicked") {
           // proceed while running
         } else {
@@ -359,7 +424,10 @@ export class CommandToolHandler extends BaseToolHandler {
     await setTimeoutPromise(50);
 
     // Filter the full output before using it
-    const filteredOutput = OutputFilterService.filterCommandOutput(fullOutput, command);
+    const filteredOutput = OutputFilterService.filterCommandOutput(
+      fullOutput,
+      command,
+    );
 
     result = result.trim();
 
@@ -368,7 +436,9 @@ export class CommandToolHandler extends BaseToolHandler {
         true,
         formatResponse.toolResult(
           `Command is still running in the user's terminal.${
-            filteredOutput.length > 0 ? `\nHere's the output so far:\n${filteredOutput}` : ""
+            filteredOutput.length > 0
+              ? `\nHere's the output so far:\n${filteredOutput}`
+              : ""
           }\n\nThe user provided the following feedback:\n<feedback>\n${userFeedback.text}\n</feedback>`,
           userFeedback.images,
         ),
@@ -384,7 +454,9 @@ export class CommandToolHandler extends BaseToolHandler {
       return [
         false,
         `Command is still running in the user's terminal.${
-          filteredOutput.length > 0 ? `\nHere's the output so far:\n${filteredOutput}` : ""
+          filteredOutput.length > 0
+            ? `\nHere's the output so far:\n${filteredOutput}`
+            : ""
         }\n\nYou will be updated on the terminal status and new output in the future.`,
       ];
     }

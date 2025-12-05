@@ -15,13 +15,13 @@ export const StatusBadge: React.FC<{
         return {
           bg: "var(--vscode-editor-background)",
           fg: "var(--vscode-editor-foreground)",
-          border: "1px solid var(--vscode-inputValidation-warningBorder)"
+          border: "1px solid var(--vscode-inputValidation-warningBorder)",
         };
       case "warn":
         return {
           bg: "var(--vscode-editor-background)",
           fg: "var(--vscode-editor-foreground)",
-          border: "1px solid var(--vscode-inputValidation-warningBorder)"
+          border: "1px solid var(--vscode-inputValidation-warningBorder)",
           /*
           bg: "var(--vscode-inputValidation-warningBackground)",
           fg: "var(--vscode-inputValidation-warningForeground)",
@@ -32,7 +32,7 @@ export const StatusBadge: React.FC<{
         return {
           bg: "var(--vscode-editor-background)",
           fg: "var(--vscode-editor-foreground)",
-          border: "1px solid var(--vscode-inputValidation-warningBorder)"
+          border: "1px solid var(--vscode-inputValidation-warningBorder)",
           /*
           bg: "var(--vscode-inputValidation-errorBackground)",
           fg: "var(--vscode-inputValidation-errorForeground)",
@@ -43,11 +43,10 @@ export const StatusBadge: React.FC<{
         return {
           bg: "var(--vscode-editor-background)",
           fg: "var(--vscode-editor-foreground)",
-          border: "1px solid var(--vscode-inputValidation-warningBorder)"
+          border: "1px solid var(--vscode-inputValidation-warningBorder)",
         };
     }
   })();
-
 
   return (
     <span
@@ -81,4 +80,3 @@ export const StatusBadge: React.FC<{
 };
 
 export default StatusBadge;
-

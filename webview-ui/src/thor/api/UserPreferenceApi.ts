@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,294 +19,351 @@ Template file: typescript-redux-query/apis.mustache
 Description: UserPreferenceApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    UserPreference,
-    UserPreferenceFromJSON,
-    UserPreferenceToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  UserPreference,
+  UserPreferenceFromJSON,
+  UserPreferenceToJSON,
+} from "../model";
 
 export interface DeleteUserPreferenceApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetUserPreferenceApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetUserPreferenceListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PostUserPreferenceApiRequest {
-    userPreference: UserPreference;
+  userPreference: UserPreference;
 }
 
 export interface UpdateUserPreferenceApiRequest {
-    id: string;
-    userPreference: UserPreference;
+  id: string;
+  userPreference: UserPreference;
 }
-
 
 /**
  * Deletes a specific UserPreference.
  * Delete a UserPreference.
  */
-function deleteUserPreferenceRaw<T>(requestParameters: DeleteUserPreferenceApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteUserPreference.');
-    }
+function deleteUserPreferenceRaw<T>(
+  requestParameters: DeleteUserPreferenceApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteUserPreference.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/UserPreference/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/UserPreference/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific UserPreference.
-* Delete a UserPreference.
-*/
-export function deleteUserPreference<T>(requestParameters: DeleteUserPreferenceApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteUserPreferenceRaw(requestParameters, requestConfig);
+ * Deletes a specific UserPreference.
+ * Delete a UserPreference.
+ */
+export function deleteUserPreference<T>(
+  requestParameters: DeleteUserPreferenceApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteUserPreferenceRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single UserPreference for a specific uid.
  * Retrieve a single UserPreference
  */
-function getUserPreferenceRaw<T>(requestParameters: GetUserPreferenceApiRequest, requestConfig: runtime.TypedQueryConfig<T, UserPreference> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getUserPreference.');
-    }
+function getUserPreferenceRaw<T>(
+  requestParameters: GetUserPreferenceApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, UserPreference> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getUserPreference.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/UserPreference/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(UserPreferenceFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/UserPreference/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(UserPreferenceFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single UserPreference for a specific uid.
-* Retrieve a single UserPreference
-*/
-export function getUserPreference<T>(requestParameters: GetUserPreferenceApiRequest, requestConfig?: runtime.TypedQueryConfig<T, UserPreference>): QueryConfig<T> {
-    return getUserPreferenceRaw(requestParameters, requestConfig);
+ * Retrieves a single UserPreference for a specific uid.
+ * Retrieve a single UserPreference
+ */
+export function getUserPreference<T>(
+  requestParameters: GetUserPreferenceApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, UserPreference>,
+): QueryConfig<T> {
+  return getUserPreferenceRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of UserPreferences.
  * Retrieve a list of UserPreferences
  */
-function getUserPreferenceListRaw<T>(requestParameters: GetUserPreferenceListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<UserPreference>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getUserPreferenceListRaw<T>(
+  requestParameters: GetUserPreferenceListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<UserPreference>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/UserPreference`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(UserPreferenceFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/UserPreference`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(UserPreferenceFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of UserPreferences.
-* Retrieve a list of UserPreferences
-*/
-export function getUserPreferenceList<T>(requestParameters: GetUserPreferenceListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<UserPreference>>): QueryConfig<T> {
-    return getUserPreferenceListRaw(requestParameters, requestConfig);
+ * Retrieves a list of UserPreferences.
+ * Retrieve a list of UserPreferences
+ */
+export function getUserPreferenceList<T>(
+  requestParameters: GetUserPreferenceListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<UserPreference>>,
+): QueryConfig<T> {
+  return getUserPreferenceListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new UserPreference.
  * Create a new UserPreference
  */
-function postUserPreferenceRaw<T>(requestParameters: PostUserPreferenceApiRequest, requestConfig: runtime.TypedQueryConfig<T, UserPreference> = {}): QueryConfig<T> {
-    if (requestParameters.userPreference === null || requestParameters.userPreference === undefined) {
-        throw new runtime.RequiredError('userPreference','Required parameter requestParameters.userPreference was null or undefined when calling postUserPreference.');
-    }
+function postUserPreferenceRaw<T>(
+  requestParameters: PostUserPreferenceApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, UserPreference> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.userPreference === null ||
+    requestParameters.userPreference === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "userPreference",
+      "Required parameter requestParameters.userPreference was null or undefined when calling postUserPreference.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/UserPreference`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters || UserPreferenceToJSON(requestParameters.userPreference),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(UserPreferenceFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/UserPreference`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || UserPreferenceToJSON(requestParameters.userPreference),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(UserPreferenceFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new UserPreference.
-* Create a new UserPreference
-*/
-export function postUserPreference<T>(requestParameters: PostUserPreferenceApiRequest, requestConfig?: runtime.TypedQueryConfig<T, UserPreference>): QueryConfig<T> {
-    return postUserPreferenceRaw(requestParameters, requestConfig);
+ * Creates a new UserPreference.
+ * Create a new UserPreference
+ */
+export function postUserPreference<T>(
+  requestParameters: PostUserPreferenceApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, UserPreference>,
+): QueryConfig<T> {
+  return postUserPreferenceRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing UserPreference.
  * Update an existing UserPreference
  */
-function updateUserPreferenceRaw<T>(requestParameters: UpdateUserPreferenceApiRequest, requestConfig: runtime.TypedQueryConfig<T, UserPreference> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateUserPreference.');
-    }
+function updateUserPreferenceRaw<T>(
+  requestParameters: UpdateUserPreferenceApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, UserPreference> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateUserPreference.",
+    );
+  }
 
-    if (requestParameters.userPreference === null || requestParameters.userPreference === undefined) {
-        throw new runtime.RequiredError('userPreference','Required parameter requestParameters.userPreference was null or undefined when calling updateUserPreference.');
-    }
+  if (
+    requestParameters.userPreference === null ||
+    requestParameters.userPreference === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "userPreference",
+      "Required parameter requestParameters.userPreference was null or undefined when calling updateUserPreference.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/UserPreference/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters || UserPreferenceToJSON(requestParameters.userPreference),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(UserPreferenceFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/UserPreference/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || UserPreferenceToJSON(requestParameters.userPreference),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(UserPreferenceFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing UserPreference.
-* Update an existing UserPreference
-*/
-export function updateUserPreference<T>(requestParameters: UpdateUserPreferenceApiRequest, requestConfig?: runtime.TypedQueryConfig<T, UserPreference>): QueryConfig<T> {
-    return updateUserPreferenceRaw(requestParameters, requestConfig);
+ * Updates an existing UserPreference.
+ * Update an existing UserPreference
+ */
+export function updateUserPreference<T>(
+  requestParameters: UpdateUserPreferenceApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, UserPreference>,
+): QueryConfig<T> {
+  return updateUserPreferenceRaw(requestParameters, requestConfig);
 }
-

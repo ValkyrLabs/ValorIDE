@@ -77,9 +77,7 @@ const ValorIDERulesToggleModal: React.FC = () => {
             style={{ padding: "0px 0px", height: "20px" }}
           >
             <div className="flex items-center gap-1 text-xs whitespace-nowrap min-w-0 w-full">
-              <FaGavel
-                style={{ fontSize: "12.5px", marginBottom: 1 }}
-              />
+              <FaGavel style={{ fontSize: "12.5px", marginBottom: 1 }} />
             </div>
           </VSCodeButton>
         </Tooltip>

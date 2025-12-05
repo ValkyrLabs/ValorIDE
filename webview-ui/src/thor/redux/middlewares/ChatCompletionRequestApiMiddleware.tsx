@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +14,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_CHATCOMPLETIONREQUEST_REQUEST,
-    FETCH_CHATCOMPLETIONREQUEST_REQUEST,
-    LIST_CHATCOMPLETIONREQUEST_REQUEST,
-    UPDATE_CHATCOMPLETIONREQUEST_REQUEST,
-    DELETE_CHATCOMPLETIONREQUEST_REQUEST,
-
-    addChatCompletionRequestFailure,
-    addChatCompletionRequestSuccess,
-
-    fetchChatCompletionRequestFailure,
-    fetchChatCompletionRequestSuccess,
-    
-    listChatCompletionRequestFailure,
-    listChatCompletionRequestSuccess,
-
-    updateChatCompletionRequestFailure,
-    updateChatCompletionRequestSuccess,
-    
-    deleteChatCompletionRequestFailure,
-    deleteChatCompletionRequestSuccess,
-    
-} from '../actions/ChatCompletionRequestApiAction';
+  ADD_CHATCOMPLETIONREQUEST_REQUEST,
+  FETCH_CHATCOMPLETIONREQUEST_REQUEST,
+  LIST_CHATCOMPLETIONREQUEST_REQUEST,
+  UPDATE_CHATCOMPLETIONREQUEST_REQUEST,
+  DELETE_CHATCOMPLETIONREQUEST_REQUEST,
+  addChatCompletionRequestFailure,
+  addChatCompletionRequestSuccess,
+  fetchChatCompletionRequestFailure,
+  fetchChatCompletionRequestSuccess,
+  listChatCompletionRequestFailure,
+  listChatCompletionRequestSuccess,
+  updateChatCompletionRequestFailure,
+  updateChatCompletionRequestSuccess,
+  deleteChatCompletionRequestFailure,
+  deleteChatCompletionRequestSuccess,
+} from "../actions/ChatCompletionRequestApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +48,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: ChatCompletionRequest
 */
 
-
-
-export const ChatCompletionRequestMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("ChatCompletionRequest MIDDLEWARE: " + JSON.stringify(action) )
+export const ChatCompletionRequestMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("ChatCompletionRequest MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

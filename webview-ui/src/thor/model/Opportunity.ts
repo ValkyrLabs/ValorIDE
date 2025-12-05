@@ -20,28 +20,26 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    Customer,
-    CustomerFromJSON,
-    CustomerToJSON,
-    Organization,
-    OrganizationFromJSON,
-    OrganizationToJSON,
-    SalesOrder,
-    SalesOrderFromJSON,
-    SalesOrderToJSON,
-} from './';
-
+  Customer,
+  CustomerFromJSON,
+  CustomerToJSON,
+  Organization,
+  OrganizationFromJSON,
+  OrganizationToJSON,
+  SalesOrder,
+  SalesOrderFromJSON,
+  SalesOrderToJSON,
+} from "./";
 
 // thorapi
 
@@ -50,171 +48,202 @@ import {
  * @export
  * @interface Opportunity
  */
-export type Opportunity  = {
-    /**
-     * Owning customer account
-     * @type {string}
-     * @memberof Opportunity
-     */
-    customerId: string;
-    /**
-     * Description of the opportunity.
-     * @type {string}
-     * @memberof Opportunity
-     */
-    description: string;
-    /**
-     * Status of the opportunity.
-     * @type {string}
-     * @memberof Opportunity
-     */
-    currentStatus: OpportunityCurrentStatusEnum;
-    /**
-     * 
-     * @type {Customer}
-     * @memberof Opportunity
-     */
-    customer?: Customer;
-    /**
-     * 
-     * @type {Organization}
-     * @memberof Opportunity
-     */
-    organization?: Organization;
-    /**
-     * Expected total value of the opportunity.
-     * @type {number}
-     * @memberof Opportunity
-     */
-    totalValue?: number;
-    /**
-     * 
-     * @type {SalesOrder}
-     * @memberof Opportunity
-     */
-    salesOrder?: SalesOrder;
-    /**
-     * Deadline the project associated with the opportunity
-     * @type {Date}
-     * @memberof Opportunity
-     */
-    deadline?: Date;
-    /**
-     * Closing date for the opportunity/project deadline
-     * @type {Date}
-     * @memberof Opportunity
-     */
-    closeDate?: Date;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof Opportunity
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof Opportunity
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof Opportunity
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof Opportunity
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof Opportunity
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof Opportunity
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof Opportunity
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof Opportunity
-     */
-    lastModifiedDate?: Date;
-}
+export type Opportunity = DataObject & {
+  /**
+   * Owning customer account
+   * @type {string}
+   * @memberof Opportunity
+   */
+  customerId: string;
+  /**
+   * Description of the opportunity.
+   * @type {string}
+   * @memberof Opportunity
+   */
+  description: string;
+  /**
+   * Status of the opportunity.
+   * @type {string}
+   * @memberof Opportunity
+   */
+  currentStatus: OpportunityCurrentStatusEnum;
+  /**
+   *
+   * @type {Customer}
+   * @memberof Opportunity
+   */
+  customer?: Customer;
+  /**
+   *
+   * @type {Organization}
+   * @memberof Opportunity
+   */
+  organization?: Organization;
+  /**
+   * Expected total value of the opportunity.
+   * @type {number}
+   * @memberof Opportunity
+   */
+  totalValue?: number;
+  /**
+   *
+   * @type {SalesOrder}
+   * @memberof Opportunity
+   */
+  salesOrder?: SalesOrder;
+  /**
+   * Deadline the project associated with the opportunity
+   * @type {Date}
+   * @memberof Opportunity
+   */
+  deadline?: Date;
+  /**
+   * Closing date for the opportunity/project deadline
+   * @type {Date}
+   * @memberof Opportunity
+   */
+  closeDate?: Date;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Opportunity
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Opportunity
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Opportunity
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Opportunity
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Opportunity
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Opportunity
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Opportunity
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Opportunity
+   */
+  lastModifiedDate?: Date;
+};
 
 export function OpportunityFromJSON(json: any): Opportunity {
-    return {
-        'customerId': json['customerId'],
-        'description': json['description'],
-        'currentStatus': json['currentStatus'],
-        'customer': !exists(json, 'customer') ? undefined : CustomerFromJSON(json['customer']),
-        'organization': !exists(json, 'organization') ? undefined : OrganizationFromJSON(json['organization']),
-        'totalValue': !exists(json, 'totalValue') ? undefined : json['totalValue'],
-        'salesOrder': !exists(json, 'salesOrder') ? undefined : SalesOrderFromJSON(json['salesOrder']),
-        'deadline': !exists(json, 'deadline') ? undefined : new Date(json['deadline']),
-        'closeDate': !exists(json, 'closeDate') ? undefined : new Date(json['closeDate']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    customerId: json["customerId"],
+    description: json["description"],
+    currentStatus: json["currentStatus"],
+    customer: !exists(json, "customer")
+      ? undefined
+      : CustomerFromJSON(json["customer"]),
+    organization: !exists(json, "organization")
+      ? undefined
+      : OrganizationFromJSON(json["organization"]),
+    totalValue: !exists(json, "totalValue") ? undefined : json["totalValue"],
+    salesOrder: !exists(json, "salesOrder")
+      ? undefined
+      : SalesOrderFromJSON(json["salesOrder"]),
+    deadline: !exists(json, "deadline")
+      ? undefined
+      : new Date(json["deadline"]),
+    closeDate: !exists(json, "closeDate")
+      ? undefined
+      : new Date(json["closeDate"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function OpportunityToJSON(value?: Opportunity): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'customerId': value.customerId,
-        'description': value.description,
-        'currentStatus': value.currentStatus,
-        'customer': CustomerToJSON(value.customer),
-        'organization': OrganizationToJSON(value.organization),
-        'totalValue': value.totalValue,
-        'salesOrder': SalesOrderToJSON(value.salesOrder),
-        'deadline': value.deadline === undefined ? undefined : value.deadline.toISOString(),
-        'closeDate': value.closeDate === undefined ? undefined : value.closeDate.toISOString(),
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    customerId: value.customerId,
+    description: value.description,
+    currentStatus: value.currentStatus,
+    customer: CustomerToJSON(value.customer),
+    organization: OrganizationToJSON(value.organization),
+    totalValue: value.totalValue,
+    salesOrder: SalesOrderToJSON(value.salesOrder),
+    deadline:
+      value.deadline === undefined ? undefined : value.deadline.toISOString(),
+    closeDate:
+      value.closeDate === undefined ? undefined : value.closeDate.toISOString(),
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum OpportunityCurrentStatusEnum {
-    DISCOVERY = 'discovery',
-    WON = 'won',
-    OPEN = 'open',
-    LOST = 'lost',
-    INACTIVE = 'inactive',
-    REVIVE = 'revive',
-    LEGAL = 'legal',
-    BLOCKED = 'blocked'
+  DISCOVERY = "discovery",
+  WON = "won",
+  OPEN = "open",
+  LOST = "lost",
+  INACTIVE = "inactive",
+  REVIVE = "revive",
+  LEGAL = "legal",
+  BLOCKED = "blocked",
 }
-
-

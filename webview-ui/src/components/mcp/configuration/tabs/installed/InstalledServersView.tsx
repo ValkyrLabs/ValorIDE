@@ -128,7 +128,9 @@ const InstalledServersView = () => {
             <div style={{ marginBottom: "8px", fontWeight: "bold" }}>
               {getErrorTitle(error)}: Failed to load MCP servers
             </div>
-            <div style={{ fontSize: "12px", opacity: 0.9, marginBottom: "12px" }}>
+            <div
+              style={{ fontSize: "12px", opacity: 0.9, marginBottom: "12px" }}
+            >
               {formatError(error)}
             </div>
             {isRetryableError(error) && (
@@ -138,9 +140,7 @@ const InstalledServersView = () => {
                 disabled={isLoading}
                 style={{ fontSize: "11px", padding: "4px 12px" }}
               >
-                <VscRefresh
-                  style={{ marginRight: "4px" }}
-                />
+                <VscRefresh style={{ marginRight: "4px" }} />
                 {isLoading ? "Retrying..." : "Retry"}
               </VSCodeButton>
             )}
@@ -162,9 +162,7 @@ const InstalledServersView = () => {
               vscode.postMessage({ type: "openMcpSettings" });
             }}
           >
-            <VscServer
-              style={{ marginRight: "6px" }}
-            />
+            <VscServer style={{ marginRight: "6px" }} />
             Configure MCP Servers
           </VSCodeButton>
 

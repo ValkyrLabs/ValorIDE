@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // Logout
 
-export const FETCH_LOGOUT_REQUEST = 'FETCH_LOGOUT_REQUEST';
-export const FETCH_LOGOUT_SUCCESS = 'FETCH_LOGOUT_SUCCESS';
-export const FETCH_LOGOUT_FAILURE = 'FETCH_LOGOUT_FAILURE';
+export const FETCH_LOGOUT_REQUEST = "FETCH_LOGOUT_REQUEST";
+export const FETCH_LOGOUT_SUCCESS = "FETCH_LOGOUT_SUCCESS";
+export const FETCH_LOGOUT_FAILURE = "FETCH_LOGOUT_FAILURE";
 
-export const ADD_LOGOUT_REQUEST = 'ADD_LOGOUT_REQUEST';
-export const ADD_LOGOUT_SUCCESS = 'ADD_LOGOUT_SUCCESS';
-export const ADD_LOGOUT_FAILURE = 'ADD_LOGOUT_FAILURE';
+export const ADD_LOGOUT_REQUEST = "ADD_LOGOUT_REQUEST";
+export const ADD_LOGOUT_SUCCESS = "ADD_LOGOUT_SUCCESS";
+export const ADD_LOGOUT_FAILURE = "ADD_LOGOUT_FAILURE";
 
-export const UPDATE_LOGOUT_REQUEST = 'UPDATE_LOGOUT_REQUEST';
-export const UPDATE_LOGOUT_SUCCESS = 'UPDATE_LOGOUT_SUCCESS';
-export const UPDATE_LOGOUT_FAILURE = 'UPDATE_LOGOUT_FAILURE';
+export const UPDATE_LOGOUT_REQUEST = "UPDATE_LOGOUT_REQUEST";
+export const UPDATE_LOGOUT_SUCCESS = "UPDATE_LOGOUT_SUCCESS";
+export const UPDATE_LOGOUT_FAILURE = "UPDATE_LOGOUT_FAILURE";
 
-export const DELETE_LOGOUT_REQUEST = 'DELETE_LOGOUT_REQUEST';
-export const DELETE_LOGOUT_SUCCESS = 'DELETE_LOGOUT_SUCCESS';
-export const DELETE_LOGOUT_FAILURE = 'DELETE_LOGOUT_FAILURE';
+export const DELETE_LOGOUT_REQUEST = "DELETE_LOGOUT_REQUEST";
+export const DELETE_LOGOUT_SUCCESS = "DELETE_LOGOUT_SUCCESS";
+export const DELETE_LOGOUT_FAILURE = "DELETE_LOGOUT_FAILURE";
 
-export const LIST_LOGOUT_REQUEST = 'LIST_LOGOUT_REQUEST';
-export const LIST_LOGOUT_SUCCESS = 'LIST_LOGOUT_SUCCESS';
-export const LIST_LOGOUT_FAILURE = 'LIST_LOGOUT_FAILURE';
+export const LIST_LOGOUT_REQUEST = "LIST_LOGOUT_REQUEST";
+export const LIST_LOGOUT_SUCCESS = "LIST_LOGOUT_SUCCESS";
+export const LIST_LOGOUT_FAILURE = "LIST_LOGOUT_FAILURE";
 
 export const addLogoutRequest = () => ({
-    type: ADD_LOGOUT_REQUEST,
+  type: ADD_LOGOUT_REQUEST,
 });
 
 export const addLogoutSuccess = (Logouts: any) => ({
-    type: ADD_LOGOUT_SUCCESS,
-    payload: Logouts,
+  type: ADD_LOGOUT_SUCCESS,
+  payload: Logouts,
 });
 
 export const addLogoutFailure = (error: Error) => ({
-    type: ADD_LOGOUT_FAILURE,
-    payload: error,
+  type: ADD_LOGOUT_FAILURE,
+  payload: error,
 });
 
-
 export const fetchLogoutRequest = () => ({
-    type: FETCH_LOGOUT_REQUEST,
+  type: FETCH_LOGOUT_REQUEST,
 });
 
 export const fetchLogoutSuccess = (Logouts: any) => ({
-    type: FETCH_LOGOUT_SUCCESS,
-    payload: Logouts,
+  type: FETCH_LOGOUT_SUCCESS,
+  payload: Logouts,
 });
 
 export const fetchLogoutFailure = (error: Error) => ({
-    type: FETCH_LOGOUT_FAILURE,
-    payload: error,
+  type: FETCH_LOGOUT_FAILURE,
+  payload: error,
 });
 
 export const listLogoutRequest = () => ({
-    type: LIST_LOGOUT_REQUEST,
+  type: LIST_LOGOUT_REQUEST,
 });
 
 export const listLogoutSuccess = (Logouts: any) => ({
-    type: LIST_LOGOUT_SUCCESS,
-    payload: Logouts,
+  type: LIST_LOGOUT_SUCCESS,
+  payload: Logouts,
 });
 
 export const listLogoutFailure = (error: Error) => ({
-    type: LIST_LOGOUT_FAILURE,
-    payload: error,
+  type: LIST_LOGOUT_FAILURE,
+  payload: error,
 });
 
 export const updateLogoutRequest = (Logout: any) => ({
-    type: UPDATE_LOGOUT_REQUEST,
-    payload: Logout,
+  type: UPDATE_LOGOUT_REQUEST,
+  payload: Logout,
 });
 
 export const updateLogoutSuccess = (Logout: any) => ({
-    type: UPDATE_LOGOUT_SUCCESS,
-    payload: Logout,
+  type: UPDATE_LOGOUT_SUCCESS,
+  payload: Logout,
 });
 
 export const updateLogoutFailure = (error: Error) => ({
-    type: UPDATE_LOGOUT_FAILURE,
-    payload: error,
+  type: UPDATE_LOGOUT_FAILURE,
+  payload: error,
 });
 
 export const deleteLogoutRequest = (Logout: any) => ({
-    type: DELETE_LOGOUT_REQUEST,
-    payload: Logout,
+  type: DELETE_LOGOUT_REQUEST,
+  payload: Logout,
 });
 
 export const deleteLogoutSuccess = (Logout: any) => ({
-    type: DELETE_LOGOUT_SUCCESS,
-    payload: Logout,
+  type: DELETE_LOGOUT_SUCCESS,
+  payload: Logout,
 });
 
 export const deleteLogoutFailure = (error: Error) => ({
-    type: DELETE_LOGOUT_FAILURE,
-    payload: error,
+  type: DELETE_LOGOUT_FAILURE,
+  payload: error,
 });

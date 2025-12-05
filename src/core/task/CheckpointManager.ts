@@ -19,14 +19,21 @@ export class CheckpointManager {
     private apiConversationHistory: any[],
     private conversationHistoryDeletedRange: [number, number] | undefined,
     private contextManager: any,
-    private say: (type: string, text?: string, images?: string[], partial?: boolean) => Promise<void>,
+    private say: (
+      type: string,
+      text?: string,
+      images?: string[],
+      partial?: boolean,
+    ) => Promise<void>,
     private postMessageToWebview: (message: any) => Promise<void>,
     private postStateToWebview: () => Promise<void>,
     private updateTaskHistory: (historyItem: any) => Promise<any>,
     private reinitExistingTaskFromId: (taskId: string) => Promise<void>,
     private cancelTask: () => Promise<void>,
     private overwriteApiConversationHistory: (history: any[]) => Promise<void>,
-    private overwriteValorIDEMessages: (messages: ValorIDEMessage[]) => Promise<void>,
+    private overwriteValorIDEMessages: (
+      messages: ValorIDEMessage[],
+    ) => Promise<void>,
     private saveValorIDEMessagesAndUpdateHistory: () => Promise<void>,
     private ensureTaskDirectoryExists: () => Promise<string>,
   ) {}
@@ -39,14 +46,17 @@ export class CheckpointManager {
           this.context.globalStorageUri.fsPath,
         );
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
         console.error("Failed to initialize checkpoint tracker:", errorMessage);
         this.checkpointTrackerErrorMessage = errorMessage;
       }
     }
   }
 
-  async saveCheckpoint(isAttemptCompletionMessage: boolean = false): Promise<void> {
+  async saveCheckpoint(
+    isAttemptCompletionMessage: boolean = false,
+  ): Promise<void> {
     // Set isCheckpointCheckedOut to false for all checkpoint_created messages
     this.valorideMessages.forEach((message) => {
       if (message.say === "checkpoint_created") {
@@ -94,7 +104,8 @@ export class CheckpointManager {
     offset?: number,
   ): Promise<void> {
     const messageIndex =
-      this.valorideMessages.findIndex((m) => m.ts === messageTs) - (offset || 0);
+      this.valorideMessages.findIndex((m) => m.ts === messageTs) -
+      (offset || 0);
     // Find the last message before messageIndex that has a lastCheckpointHash
     const lastHashIndex = findLastIndex(
       this.valorideMessages.slice(0, messageIndex),
@@ -122,8 +133,12 @@ export class CheckpointManager {
               this.context.globalStorageUri.fsPath,
             );
           } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Unknown error";
-            console.error("Failed to initialize checkpoint tracker:", errorMessage);
+            const errorMessage =
+              error instanceof Error ? error.message : "Unknown error";
+            console.error(
+              "Failed to initialize checkpoint tracker:",
+              errorMessage,
+            );
             this.checkpointTrackerErrorMessage = errorMessage;
             await this.postStateToWebview();
             vscode.window.showErrorMessage(errorMessage);
@@ -134,7 +149,8 @@ export class CheckpointManager {
           try {
             await this.checkpointTracker.resetHead(message.lastCheckpointHash);
           } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Unknown error";
+            const errorMessage =
+              error instanceof Error ? error.message : "Unknown error";
             vscode.window.showErrorMessage(
               "Failed to restore checkpoint: " + errorMessage,
             );
@@ -146,9 +162,12 @@ export class CheckpointManager {
           this.checkpointTracker
         ) {
           try {
-            await this.checkpointTracker.resetHead(lastMessageWithHash.lastCheckpointHash);
+            await this.checkpointTracker.resetHead(
+              lastMessageWithHash.lastCheckpointHash,
+            );
           } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Unknown error";
+            const errorMessage =
+              error instanceof Error ? error.message : "Unknown error";
             vscode.window.showErrorMessage(
               "Failed to restore offsetcheckpoint: " + errorMessage,
             );
@@ -180,7 +199,10 @@ export class CheckpointManager {
             combineApiRequests(combineCommandSequences(deletedMessages)),
           );
 
-          const newValorIDEMessages = this.valorideMessages.slice(0, messageIndex + 1);
+          const newValorIDEMessages = this.valorideMessages.slice(
+            0,
+            messageIndex + 1,
+          );
           await this.overwriteValorIDEMessages(newValorIDEMessages);
 
           await this.say(
@@ -250,7 +272,9 @@ export class CheckpointManager {
     };
 
     console.log("presentMultifileDiff", messageTs);
-    const messageIndex = this.valorideMessages.findIndex((m) => m.ts === messageTs);
+    const messageIndex = this.valorideMessages.findIndex(
+      (m) => m.ts === messageTs,
+    );
     const message = this.valorideMessages[messageIndex];
     if (!message) {
       console.error("Message not found");
@@ -271,7 +295,8 @@ export class CheckpointManager {
           this.context.globalStorageUri.fsPath,
         );
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
         console.error("Failed to initialize checkpoint tracker:", errorMessage);
         this.checkpointTrackerErrorMessage = errorMessage;
         await this.postStateToWebview();
@@ -302,10 +327,13 @@ export class CheckpointManager {
         )?.lastCheckpointHash;
 
         const previousCheckpointHash =
-          lastTaskCompletedMessageCheckpointHash || firstCheckpointMessageCheckpointHash;
+          lastTaskCompletedMessageCheckpointHash ||
+          firstCheckpointMessageCheckpointHash;
 
         if (!previousCheckpointHash) {
-          vscode.window.showErrorMessage("Unexpected error: No checkpoint hash found");
+          vscode.window.showErrorMessage(
+            "Unexpected error: No checkpoint hash found",
+          );
           relinquishButton();
           return;
         }
@@ -328,8 +356,11 @@ export class CheckpointManager {
         }
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
-      vscode.window.showErrorMessage("Failed to retrieve diff set: " + errorMessage);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      vscode.window.showErrorMessage(
+        "Failed to retrieve diff set: " + errorMessage,
+      );
       relinquishButton();
       return;
     }
@@ -337,7 +368,9 @@ export class CheckpointManager {
     // Open multi-diff editor
     await vscode.commands.executeCommand(
       "vscode.changes",
-      seeNewChangesSinceLastTaskCompletion ? "New changes" : "Changes since snapshot",
+      seeNewChangesSinceLastTaskCompletion
+        ? "New changes"
+        : "Changes since snapshot",
       changedFiles.map((file) => [
         vscode.Uri.file(file.absolutePath),
         vscode.Uri.parse(`${DIFF_VIEW_URI_SCHEME}:${file.relativePath}`).with({
@@ -374,7 +407,8 @@ export class CheckpointManager {
           this.context.globalStorageUri.fsPath,
         );
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
         console.error("Failed to initialize checkpoint tracker:", errorMessage);
         return false;
       }
@@ -393,14 +427,18 @@ export class CheckpointManager {
       )?.lastCheckpointHash;
 
       const previousCheckpointHash =
-        lastTaskCompletedMessageCheckpointHash || firstCheckpointMessageCheckpointHash;
+        lastTaskCompletedMessageCheckpointHash ||
+        firstCheckpointMessageCheckpointHash;
 
       if (!previousCheckpointHash) {
         return false;
       }
 
       const changedFilesCount =
-        (await this.checkpointTracker?.getDiffCount(previousCheckpointHash, hash)) || 0;
+        (await this.checkpointTracker?.getDiffCount(
+          previousCheckpointHash,
+          hash,
+        )) || 0;
       if (changedFilesCount > 0) {
         return true;
       }

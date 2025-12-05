@@ -21,9 +21,11 @@ function basenameNoExt(filename: string): string {
   return idx > 0 ? base.slice(0, idx) : base;
 }
 
-function deriveVersionedFolderName(
-  opts: { filename?: string; url?: string; fallbackName?: string },
-): string {
+function deriveVersionedFolderName(opts: {
+  filename?: string;
+  url?: string;
+  fallbackName?: string;
+}): string {
   // Try content filename
   let raw = opts.filename || "";
   if (!raw && opts.url) {
@@ -34,21 +36,27 @@ function deriveVersionedFolderName(
       // ignore
     }
   }
-  let name = raw ? basenameNoExt(raw) : opts.fallbackName || `project-${Date.now()}`;
+  let name = raw
+    ? basenameNoExt(raw)
+    : opts.fallbackName || `project-${Date.now()}`;
 
   name = sanitizeFolderName(name);
 
   // Ensure a version prefix exists (e.g., v1., v2-beta.)
   // If name already starts with something like v<alnum/.->.
   if (!/^v[0-9][\w.-]*\./i.test(name)) {
-    const fallback = opts.fallbackName ? sanitizeFolderName(opts.fallbackName) : "project";
+    const fallback = opts.fallbackName
+      ? sanitizeFolderName(opts.fallbackName)
+      : "project";
     // If filename had no version, construct one with v1.<fallback>
     name = `v1.${fallback}`;
   }
   return name;
 }
 
-export function isZipBuffer(data: Uint8Array | Buffer | null | undefined): boolean {
+export function isZipBuffer(
+  data: Uint8Array | Buffer | null | undefined,
+): boolean {
   if (!data || data.length < 4) {
     return false;
   }

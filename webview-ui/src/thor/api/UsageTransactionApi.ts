@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,294 +19,353 @@ Template file: typescript-redux-query/apis.mustache
 Description: UsageTransactionApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    UsageTransaction,
-    UsageTransactionFromJSON,
-    UsageTransactionToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  UsageTransaction,
+  UsageTransactionFromJSON,
+  UsageTransactionToJSON,
+} from "../model";
 
 export interface DeleteUsageTransactionApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetUsageTransactionApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetUsageTransactionListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PostUsageTransactionApiRequest {
-    usageTransaction: UsageTransaction;
+  usageTransaction: UsageTransaction;
 }
 
 export interface UpdateUsageTransactionApiRequest {
-    id: string;
-    usageTransaction: UsageTransaction;
+  id: string;
+  usageTransaction: UsageTransaction;
 }
-
 
 /**
  * Deletes a specific UsageTransaction.
  * Delete a UsageTransaction.
  */
-function deleteUsageTransactionRaw<T>(requestParameters: DeleteUsageTransactionApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteUsageTransaction.');
-    }
+function deleteUsageTransactionRaw<T>(
+  requestParameters: DeleteUsageTransactionApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteUsageTransaction.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/UsageTransaction/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/UsageTransaction/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific UsageTransaction.
-* Delete a UsageTransaction.
-*/
-export function deleteUsageTransaction<T>(requestParameters: DeleteUsageTransactionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteUsageTransactionRaw(requestParameters, requestConfig);
+ * Deletes a specific UsageTransaction.
+ * Delete a UsageTransaction.
+ */
+export function deleteUsageTransaction<T>(
+  requestParameters: DeleteUsageTransactionApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteUsageTransactionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single UsageTransaction for a specific uid.
  * Retrieve a single UsageTransaction
  */
-function getUsageTransactionRaw<T>(requestParameters: GetUsageTransactionApiRequest, requestConfig: runtime.TypedQueryConfig<T, UsageTransaction> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getUsageTransaction.');
-    }
+function getUsageTransactionRaw<T>(
+  requestParameters: GetUsageTransactionApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, UsageTransaction> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getUsageTransaction.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/UsageTransaction/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(UsageTransactionFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/UsageTransaction/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(UsageTransactionFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single UsageTransaction for a specific uid.
-* Retrieve a single UsageTransaction
-*/
-export function getUsageTransaction<T>(requestParameters: GetUsageTransactionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, UsageTransaction>): QueryConfig<T> {
-    return getUsageTransactionRaw(requestParameters, requestConfig);
+ * Retrieves a single UsageTransaction for a specific uid.
+ * Retrieve a single UsageTransaction
+ */
+export function getUsageTransaction<T>(
+  requestParameters: GetUsageTransactionApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, UsageTransaction>,
+): QueryConfig<T> {
+  return getUsageTransactionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of UsageTransactions.
  * Retrieve a list of UsageTransactions
  */
-function getUsageTransactionListRaw<T>(requestParameters: GetUsageTransactionListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<UsageTransaction>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getUsageTransactionListRaw<T>(
+  requestParameters: GetUsageTransactionListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<UsageTransaction>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/UsageTransaction`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(UsageTransactionFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/UsageTransaction`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(UsageTransactionFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of UsageTransactions.
-* Retrieve a list of UsageTransactions
-*/
-export function getUsageTransactionList<T>(requestParameters: GetUsageTransactionListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<UsageTransaction>>): QueryConfig<T> {
-    return getUsageTransactionListRaw(requestParameters, requestConfig);
+ * Retrieves a list of UsageTransactions.
+ * Retrieve a list of UsageTransactions
+ */
+export function getUsageTransactionList<T>(
+  requestParameters: GetUsageTransactionListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<UsageTransaction>>,
+): QueryConfig<T> {
+  return getUsageTransactionListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new UsageTransaction.
  * Create a new UsageTransaction
  */
-function postUsageTransactionRaw<T>(requestParameters: PostUsageTransactionApiRequest, requestConfig: runtime.TypedQueryConfig<T, UsageTransaction> = {}): QueryConfig<T> {
-    if (requestParameters.usageTransaction === null || requestParameters.usageTransaction === undefined) {
-        throw new runtime.RequiredError('usageTransaction','Required parameter requestParameters.usageTransaction was null or undefined when calling postUsageTransaction.');
-    }
+function postUsageTransactionRaw<T>(
+  requestParameters: PostUsageTransactionApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, UsageTransaction> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.usageTransaction === null ||
+    requestParameters.usageTransaction === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "usageTransaction",
+      "Required parameter requestParameters.usageTransaction was null or undefined when calling postUsageTransaction.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/UsageTransaction`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      UsageTransactionToJSON(requestParameters.usageTransaction),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(UsageTransactionFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/UsageTransaction`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || UsageTransactionToJSON(requestParameters.usageTransaction),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(UsageTransactionFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new UsageTransaction.
-* Create a new UsageTransaction
-*/
-export function postUsageTransaction<T>(requestParameters: PostUsageTransactionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, UsageTransaction>): QueryConfig<T> {
-    return postUsageTransactionRaw(requestParameters, requestConfig);
+ * Creates a new UsageTransaction.
+ * Create a new UsageTransaction
+ */
+export function postUsageTransaction<T>(
+  requestParameters: PostUsageTransactionApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, UsageTransaction>,
+): QueryConfig<T> {
+  return postUsageTransactionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing UsageTransaction.
  * Update an existing UsageTransaction
  */
-function updateUsageTransactionRaw<T>(requestParameters: UpdateUsageTransactionApiRequest, requestConfig: runtime.TypedQueryConfig<T, UsageTransaction> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateUsageTransaction.');
-    }
+function updateUsageTransactionRaw<T>(
+  requestParameters: UpdateUsageTransactionApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, UsageTransaction> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateUsageTransaction.",
+    );
+  }
 
-    if (requestParameters.usageTransaction === null || requestParameters.usageTransaction === undefined) {
-        throw new runtime.RequiredError('usageTransaction','Required parameter requestParameters.usageTransaction was null or undefined when calling updateUsageTransaction.');
-    }
+  if (
+    requestParameters.usageTransaction === null ||
+    requestParameters.usageTransaction === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "usageTransaction",
+      "Required parameter requestParameters.usageTransaction was null or undefined when calling updateUsageTransaction.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/UsageTransaction/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      UsageTransactionToJSON(requestParameters.usageTransaction),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(UsageTransactionFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/UsageTransaction/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || UsageTransactionToJSON(requestParameters.usageTransaction),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(UsageTransactionFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing UsageTransaction.
-* Update an existing UsageTransaction
-*/
-export function updateUsageTransaction<T>(requestParameters: UpdateUsageTransactionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, UsageTransaction>): QueryConfig<T> {
-    return updateUsageTransactionRaw(requestParameters, requestConfig);
+ * Updates an existing UsageTransaction.
+ * Update an existing UsageTransaction
+ */
+export function updateUsageTransaction<T>(
+  requestParameters: UpdateUsageTransactionApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, UsageTransaction>,
+): QueryConfig<T> {
+  return updateUsageTransactionRaw(requestParameters, requestConfig);
 }
-

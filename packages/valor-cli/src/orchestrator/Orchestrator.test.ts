@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { Orchestrator, OrchestrationContext } from './Orchestrator';
-import { Agent } from './Agent';
-import { AgentLedger } from './AgentLedger';
-import { promises as fs } from 'fs';
-import { join } from 'path';
-import { homedir } from 'os';
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { Orchestrator, OrchestrationContext } from "./Orchestrator";
+import { Agent } from "./Agent";
+import { AgentLedger } from "./AgentLedger";
+import { promises as fs } from "fs";
+import { join } from "path";
+import { homedir } from "os";
 
 class MockAgent extends Agent {
   private responseIndex: number = 0;
@@ -31,16 +31,16 @@ class MockAgent extends Agent {
   }
 }
 
-describe('Orchestrator', () => {
+describe("Orchestrator", () => {
   let orchestrator: Orchestrator;
   const taskId = `test-task-${Date.now()}`;
-  const ledgerDir = join(homedir(), '.valoride', 'tasks', taskId);
+  const ledgerDir = join(homedir(), ".valoride", "tasks", taskId);
 
   beforeEach(async () => {
     const context: OrchestrationContext = {
       taskId,
-      description: 'Test orchestration',
-      initialContext: { testData: 'hello' },
+      description: "Test orchestration",
+      initialContext: { testData: "hello" },
       maxTurns: 10,
     };
     orchestrator = new Orchestrator(context);
@@ -55,42 +55,42 @@ describe('Orchestrator', () => {
     }
   });
 
-  it('should initialize successfully', async () => {
+  it("should initialize successfully", async () => {
     expect(orchestrator).toBeDefined();
     expect(orchestrator.getTurn()).toBe(0);
   });
 
-  it('should register agents', () => {
-    const mockAgent = new MockAgent('planner', taskId);
+  it("should register agents", () => {
+    const mockAgent = new MockAgent("planner", taskId);
     orchestrator.registerAgent(mockAgent);
   });
 
-  it('should execute single agent orchestration', async () => {
-    const plannerAgent = new MockAgent('planner', taskId, [
-      { subtasks: ['task1', 'task2'], nextAgent: null },
+  it("should execute single agent orchestration", async () => {
+    const plannerAgent = new MockAgent("planner", taskId, [
+      { subtasks: ["task1", "task2"], nextAgent: null },
     ]);
     orchestrator.registerAgent(plannerAgent);
 
     const result = await orchestrator.execute();
-    expect(result.status).toBe('success');
+    expect(result.status).toBe("success");
     expect(result.turn).toBe(1);
-    expect(result.agent).toBe('planner');
+    expect(result.agent).toBe("planner");
   });
 
-  it('should execute multi-agent orchestration', async () => {
-    const plannerAgent = new MockAgent('planner', taskId, [
-      { subtasks: ['task1'], nextAgent: 'coder' },
+  it("should execute multi-agent orchestration", async () => {
+    const plannerAgent = new MockAgent("planner", taskId, [
+      { subtasks: ["task1"], nextAgent: "coder" },
     ]);
-    const coderAgent = new MockAgent('coder', taskId, [
-      { completed: ['file1.ts'], nextAgent: 'tester' },
+    const coderAgent = new MockAgent("coder", taskId, [
+      { completed: ["file1.ts"], nextAgent: "tester" },
     ]);
-    const testerAgent = new MockAgent('tester', taskId, [
-      { testsPassed: 5, nextAgent: 'docs' },
+    const testerAgent = new MockAgent("tester", taskId, [
+      { testsPassed: 5, nextAgent: "docs" },
     ]);
-    const docsAgent = new MockAgent('docs', taskId, [
-      { files: ['README.md'], nextAgent: 'integrator' },
+    const docsAgent = new MockAgent("docs", taskId, [
+      { files: ["README.md"], nextAgent: "integrator" },
     ]);
-    const integratorAgent = new MockAgent('integrator', taskId, [
+    const integratorAgent = new MockAgent("integrator", taskId, [
       { ready: true, nextAgent: null },
     ]);
 
@@ -101,14 +101,14 @@ describe('Orchestrator', () => {
     orchestrator.registerAgent(integratorAgent);
 
     const result = await orchestrator.execute();
-    expect(result.status).toBe('success');
+    expect(result.status).toBe("success");
     expect(result.turn).toBe(5);
     expect(result.ledgerEntries).toBe(5);
   });
 
-  it('should track total tokens and cost', async () => {
-    const plannerAgent = new MockAgent('planner', taskId, [
-      { subtasks: ['t1'], nextAgent: null },
+  it("should track total tokens and cost", async () => {
+    const plannerAgent = new MockAgent("planner", taskId, [
+      { subtasks: ["t1"], nextAgent: null },
     ]);
     orchestrator.registerAgent(plannerAgent);
 
@@ -117,16 +117,16 @@ describe('Orchestrator', () => {
     expect(result.totalCost).toBeGreaterThanOrEqual(0);
   });
 
-  it('should export history as CSV', async () => {
-    const plannerAgent = new MockAgent('planner', taskId, [
-      { plan: 'complete', nextAgent: null },
+  it("should export history as CSV", async () => {
+    const plannerAgent = new MockAgent("planner", taskId, [
+      { plan: "complete", nextAgent: null },
     ]);
     orchestrator.registerAgent(plannerAgent);
 
     await orchestrator.execute();
     const csv = await orchestrator.exportHistory();
 
-    expect(csv).toContain('timestamp');
-    expect(csv).toContain('agent');
+    expect(csv).toContain("timestamp");
+    expect(csv).toContain("agent");
   });
 });

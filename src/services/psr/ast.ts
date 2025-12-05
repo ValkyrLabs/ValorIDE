@@ -6,11 +6,14 @@ type AstEdit = Extract<PSREdit, { kind: "ts-ast" }>;
 
 export async function applyAstEdits(
   ctx: PSRWorkingContext,
-  edits: Array<{ edit: AstEdit; index: number }>
+  edits: Array<{ edit: AstEdit; index: number }>,
 ): Promise<PSRWorkingContext> {
   if (!edits.length) return ctx;
 
-  const proj = new Project({ useInMemoryFileSystem: true, skipAddingFilesFromTsConfig: true });
+  const proj = new Project({
+    useInMemoryFileSystem: true,
+    skipAddingFilesFromTsConfig: true,
+  });
   const file = proj.createSourceFile("f.tsx", ctx.text, { overwrite: true });
 
   for (const { edit, index } of edits) {
@@ -36,7 +39,10 @@ export async function applyAstEdits(
         if (applied) {
           ctx.applied.add(index);
         } else {
-          ctx.skipped.push({ index, reason: touched ? "already_applied" : "ast_no_match" });
+          ctx.skipped.push({
+            index,
+            reason: touched ? "already_applied" : "ast_no_match",
+          });
         }
         break;
       }
@@ -59,7 +65,10 @@ export async function applyAstEdits(
         if (applied) {
           ctx.applied.add(index);
         } else {
-          ctx.skipped.push({ index, reason: touched ? "already_applied" : "ast_no_chain_match" });
+          ctx.skipped.push({
+            index,
+            reason: touched ? "already_applied" : "ast_no_chain_match",
+          });
         }
         break;
       }
@@ -79,7 +88,10 @@ export async function applyAstEdits(
         if (applied) {
           ctx.applied.add(index);
         } else {
-          ctx.skipped.push({ index, reason: touched ? "already_applied" : "ast_no_property_match" });
+          ctx.skipped.push({
+            index,
+            reason: touched ? "already_applied" : "ast_no_property_match",
+          });
         }
         break;
       }

@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // Default
 
-export const FETCH_DEFAULT_REQUEST = 'FETCH_DEFAULT_REQUEST';
-export const FETCH_DEFAULT_SUCCESS = 'FETCH_DEFAULT_SUCCESS';
-export const FETCH_DEFAULT_FAILURE = 'FETCH_DEFAULT_FAILURE';
+export const FETCH_DEFAULT_REQUEST = "FETCH_DEFAULT_REQUEST";
+export const FETCH_DEFAULT_SUCCESS = "FETCH_DEFAULT_SUCCESS";
+export const FETCH_DEFAULT_FAILURE = "FETCH_DEFAULT_FAILURE";
 
-export const ADD_DEFAULT_REQUEST = 'ADD_DEFAULT_REQUEST';
-export const ADD_DEFAULT_SUCCESS = 'ADD_DEFAULT_SUCCESS';
-export const ADD_DEFAULT_FAILURE = 'ADD_DEFAULT_FAILURE';
+export const ADD_DEFAULT_REQUEST = "ADD_DEFAULT_REQUEST";
+export const ADD_DEFAULT_SUCCESS = "ADD_DEFAULT_SUCCESS";
+export const ADD_DEFAULT_FAILURE = "ADD_DEFAULT_FAILURE";
 
-export const UPDATE_DEFAULT_REQUEST = 'UPDATE_DEFAULT_REQUEST';
-export const UPDATE_DEFAULT_SUCCESS = 'UPDATE_DEFAULT_SUCCESS';
-export const UPDATE_DEFAULT_FAILURE = 'UPDATE_DEFAULT_FAILURE';
+export const UPDATE_DEFAULT_REQUEST = "UPDATE_DEFAULT_REQUEST";
+export const UPDATE_DEFAULT_SUCCESS = "UPDATE_DEFAULT_SUCCESS";
+export const UPDATE_DEFAULT_FAILURE = "UPDATE_DEFAULT_FAILURE";
 
-export const DELETE_DEFAULT_REQUEST = 'DELETE_DEFAULT_REQUEST';
-export const DELETE_DEFAULT_SUCCESS = 'DELETE_DEFAULT_SUCCESS';
-export const DELETE_DEFAULT_FAILURE = 'DELETE_DEFAULT_FAILURE';
+export const DELETE_DEFAULT_REQUEST = "DELETE_DEFAULT_REQUEST";
+export const DELETE_DEFAULT_SUCCESS = "DELETE_DEFAULT_SUCCESS";
+export const DELETE_DEFAULT_FAILURE = "DELETE_DEFAULT_FAILURE";
 
-export const LIST_DEFAULT_REQUEST = 'LIST_DEFAULT_REQUEST';
-export const LIST_DEFAULT_SUCCESS = 'LIST_DEFAULT_SUCCESS';
-export const LIST_DEFAULT_FAILURE = 'LIST_DEFAULT_FAILURE';
+export const LIST_DEFAULT_REQUEST = "LIST_DEFAULT_REQUEST";
+export const LIST_DEFAULT_SUCCESS = "LIST_DEFAULT_SUCCESS";
+export const LIST_DEFAULT_FAILURE = "LIST_DEFAULT_FAILURE";
 
 export const addDefaultRequest = () => ({
-    type: ADD_DEFAULT_REQUEST,
+  type: ADD_DEFAULT_REQUEST,
 });
 
 export const addDefaultSuccess = (Defaults: any) => ({
-    type: ADD_DEFAULT_SUCCESS,
-    payload: Defaults,
+  type: ADD_DEFAULT_SUCCESS,
+  payload: Defaults,
 });
 
 export const addDefaultFailure = (error: Error) => ({
-    type: ADD_DEFAULT_FAILURE,
-    payload: error,
+  type: ADD_DEFAULT_FAILURE,
+  payload: error,
 });
 
-
 export const fetchDefaultRequest = () => ({
-    type: FETCH_DEFAULT_REQUEST,
+  type: FETCH_DEFAULT_REQUEST,
 });
 
 export const fetchDefaultSuccess = (Defaults: any) => ({
-    type: FETCH_DEFAULT_SUCCESS,
-    payload: Defaults,
+  type: FETCH_DEFAULT_SUCCESS,
+  payload: Defaults,
 });
 
 export const fetchDefaultFailure = (error: Error) => ({
-    type: FETCH_DEFAULT_FAILURE,
-    payload: error,
+  type: FETCH_DEFAULT_FAILURE,
+  payload: error,
 });
 
 export const listDefaultRequest = () => ({
-    type: LIST_DEFAULT_REQUEST,
+  type: LIST_DEFAULT_REQUEST,
 });
 
 export const listDefaultSuccess = (Defaults: any) => ({
-    type: LIST_DEFAULT_SUCCESS,
-    payload: Defaults,
+  type: LIST_DEFAULT_SUCCESS,
+  payload: Defaults,
 });
 
 export const listDefaultFailure = (error: Error) => ({
-    type: LIST_DEFAULT_FAILURE,
-    payload: error,
+  type: LIST_DEFAULT_FAILURE,
+  payload: error,
 });
 
 export const updateDefaultRequest = (Default: any) => ({
-    type: UPDATE_DEFAULT_REQUEST,
-    payload: Default,
+  type: UPDATE_DEFAULT_REQUEST,
+  payload: Default,
 });
 
 export const updateDefaultSuccess = (Default: any) => ({
-    type: UPDATE_DEFAULT_SUCCESS,
-    payload: Default,
+  type: UPDATE_DEFAULT_SUCCESS,
+  payload: Default,
 });
 
 export const updateDefaultFailure = (error: Error) => ({
-    type: UPDATE_DEFAULT_FAILURE,
-    payload: error,
+  type: UPDATE_DEFAULT_FAILURE,
+  payload: error,
 });
 
 export const deleteDefaultRequest = (Default: any) => ({
-    type: DELETE_DEFAULT_REQUEST,
-    payload: Default,
+  type: DELETE_DEFAULT_REQUEST,
+  payload: Default,
 });
 
 export const deleteDefaultSuccess = (Default: any) => ({
-    type: DELETE_DEFAULT_SUCCESS,
-    payload: Default,
+  type: DELETE_DEFAULT_SUCCESS,
+  payload: Default,
 });
 
 export const deleteDefaultFailure = (error: Error) => ({
-    type: DELETE_DEFAULT_FAILURE,
-    payload: error,
+  type: DELETE_DEFAULT_FAILURE,
+  payload: error,
 });

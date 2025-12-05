@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SwarmMessage } from '@thor/model/SwarmMessage';
+import { SwarmMessage } from "@thor/model/SwarmMessage";
 
 const SwarmMessageSlice = createSlice({
   name: "SwarmMessages",
@@ -12,20 +12,23 @@ const SwarmMessageSlice = createSlice({
     },
 
     SwarmMessageValueToggled(state, action) {
-      console.log("SwarmMessage TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SwarmMessage:SwarmMessage = state.find((SwarmMessage) => SwarmMessage.id === action.payload.SwarmMessageId);
+      console.log("SwarmMessage TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SwarmMessage: SwarmMessage = state.find(
+        (SwarmMessage) => SwarmMessage.id === action.payload.SwarmMessageId,
+      );
       if (SwarmMessage) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SwarmMessagepropertySet(state, action) {
-      const SwarmMessage = state.find((SwarmMessage) => SwarmMessage.id === action.payload.SwarmMessageId);
+      const SwarmMessage = state.find(
+        (SwarmMessage) => SwarmMessage.id === action.payload.SwarmMessageId,
+      );
       if (SwarmMessage) {
-      //  SwarmMessage[action.property] = action.payload[action.property];
+        //  SwarmMessage[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +37,6 @@ const SwarmMessageSlice = createSlice({
 export const {
   SwarmMessageAdded,
   SwarmMessageValueToggled,
-  SwarmMessagepropertySet
+  SwarmMessagepropertySet,
 } = SwarmMessageSlice.actions;
 export default SwarmMessageSlice.reducer;

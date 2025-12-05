@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Space } from '@thor/model/Space';
+import { Space } from "@thor/model/Space";
 
 const SpaceSlice = createSlice({
   name: "Spaces",
@@ -12,28 +12,26 @@ const SpaceSlice = createSlice({
     },
 
     SpaceValueToggled(state, action) {
-      console.log("Space TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Space:Space = state.find((Space) => Space.id === action.payload.SpaceId);
+      console.log("Space TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Space: Space = state.find(
+        (Space) => Space.id === action.payload.SpaceId,
+      );
       if (Space) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SpacepropertySet(state, action) {
       const Space = state.find((Space) => Space.id === action.payload.SpaceId);
       if (Space) {
-      //  Space[action.property] = action.payload[action.property];
+        //  Space[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  SpaceAdded,
-  SpaceValueToggled,
-  SpacepropertySet
-} = SpaceSlice.actions;
+export const { SpaceAdded, SpaceValueToggled, SpacepropertySet } =
+  SpaceSlice.actions;
 export default SpaceSlice.reducer;

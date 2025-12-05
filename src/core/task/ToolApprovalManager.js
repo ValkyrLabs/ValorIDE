@@ -37,14 +37,14 @@ export class ToolApprovalManager {
             // User pressed reject button or responded with a message, which we treat as a rejection
             return {
                 approved: false,
-                feedback: text || images?.length ? { text, images } : undefined
+                feedback: text || images?.length ? { text, images } : undefined,
             };
         }
         else {
             // User hit the approve button, and may have provided feedback
             return {
                 approved: true,
-                feedback: text || images?.length ? { text, images } : undefined
+                feedback: text || images?.length ? { text, images } : undefined,
             };
         }
     }

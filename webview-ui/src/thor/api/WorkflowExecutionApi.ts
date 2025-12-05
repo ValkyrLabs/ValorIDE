@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,161 +19,194 @@ Template file: typescript-redux-query/apis.mustache
 Description: WorkflowExecutionApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
+import {
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
 
 export interface CancelWorkflowExecutionApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface PauseWorkflowExecutionApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface ResumeWorkflowExecutionApiRequest {
-    id: string;
+  id: string;
 }
-
 
 /**
  * Gracefully cancels a running execution, stopping all pending tasks
  * Cancel a running workflow execution
  */
-function cancelWorkflowExecutionRaw<T>(requestParameters: CancelWorkflowExecutionApiRequest, requestConfig: runtime.TypedQueryConfig<T, string> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling cancelWorkflowExecution.');
-    }
+function cancelWorkflowExecutionRaw<T>(
+  requestParameters: CancelWorkflowExecutionApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, string> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling cancelWorkflowExecution.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/WorkflowExecution/{id}/cancel`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    throw "OH NO";
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/WorkflowExecution/{id}/cancel`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        throw "OH NO";
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Gracefully cancels a running execution, stopping all pending tasks
-* Cancel a running workflow execution
-*/
-export function cancelWorkflowExecution<T>(requestParameters: CancelWorkflowExecutionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, string>): QueryConfig<T> {
-    return cancelWorkflowExecutionRaw(requestParameters, requestConfig);
+ * Gracefully cancels a running execution, stopping all pending tasks
+ * Cancel a running workflow execution
+ */
+export function cancelWorkflowExecution<T>(
+  requestParameters: CancelWorkflowExecutionApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, string>,
+): QueryConfig<T> {
+  return cancelWorkflowExecutionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Pauses execution after current task completes
  * Pause a running execution
  */
-function pauseWorkflowExecutionRaw<T>(requestParameters: PauseWorkflowExecutionApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling pauseWorkflowExecution.');
-    }
+function pauseWorkflowExecutionRaw<T>(
+  requestParameters: PauseWorkflowExecutionApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling pauseWorkflowExecution.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/WorkflowExecution/{id}/pause`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/WorkflowExecution/{id}/pause`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Pauses execution after current task completes
-* Pause a running execution
-*/
-export function pauseWorkflowExecution<T>(requestParameters: PauseWorkflowExecutionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return pauseWorkflowExecutionRaw(requestParameters, requestConfig);
+ * Pauses execution after current task completes
+ * Pause a running execution
+ */
+export function pauseWorkflowExecution<T>(
+  requestParameters: PauseWorkflowExecutionApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return pauseWorkflowExecutionRaw(requestParameters, requestConfig);
 }
 
 /**
  * Resumes execution from the paused state
  * Resume a paused execution
  */
-function resumeWorkflowExecutionRaw<T>(requestParameters: ResumeWorkflowExecutionApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling resumeWorkflowExecution.');
-    }
+function resumeWorkflowExecutionRaw<T>(
+  requestParameters: ResumeWorkflowExecutionApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling resumeWorkflowExecution.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/WorkflowExecution/{id}/resume`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/WorkflowExecution/{id}/resume`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Resumes execution from the paused state
-* Resume a paused execution
-*/
-export function resumeWorkflowExecution<T>(requestParameters: ResumeWorkflowExecutionApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return resumeWorkflowExecutionRaw(requestParameters, requestConfig);
+ * Resumes execution from the paused state
+ * Resume a paused execution
+ */
+export function resumeWorkflowExecution<T>(
+  requestParameters: ResumeWorkflowExecutionApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return resumeWorkflowExecutionRaw(requestParameters, requestConfig);
 }
-

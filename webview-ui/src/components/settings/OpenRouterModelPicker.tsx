@@ -302,10 +302,10 @@ const OpenRouterModelPicker: React.FC<OpenRouterModelPickerProps> = ({
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  height: "100%"
+                  height: "100%",
                 }}
               >
-                <FaTimes style={{ fontSize: "14px" }}/>
+                <FaTimes style={{ fontSize: "14px" }} />
               </div>
             )}
           </VSCodeTextField>

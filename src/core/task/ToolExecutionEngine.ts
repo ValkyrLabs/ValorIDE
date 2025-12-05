@@ -25,9 +25,9 @@ import { fileExistsAtPath } from "@utils/fs";
 import { getReadablePath, isLocatedInWorkspace } from "@utils/path";
 import { constructNewFileContent } from "@core/assistant-message/diff";
 import { findLast, parsePartialArrayString } from "@shared/array";
-import { 
-  combineCommandSequences, 
-  COMMAND_REQ_APP_STRING 
+import {
+  combineCommandSequences,
+  COMMAND_REQ_APP_STRING,
 } from "@shared/combineCommandSequences";
 import { loadMcpDocumentation } from "@core/prompts/loadMcpDocumentation";
 import {
@@ -56,12 +56,12 @@ export class ToolExecutionEngine {
 
   constructor(
     private task: any, // Task reference for accessing methods and properties
-    private cwd: string
+    private cwd: string,
   ) {
     this.toolApprovalManager = new ToolApprovalManager(
       this.task.autoApprovalSettings,
       this.task.ask.bind(this.task),
-      this.task.say.bind(this.task)
+      this.task.say.bind(this.task),
     );
 
     // Create ToolContext from task properties
@@ -84,16 +84,20 @@ export class ToolExecutionEngine {
       autoApprovalSettings: this.task.autoApprovalSettings,
       didEditFile: this.task.didEditFile,
       consecutiveMistakeCount: this.task.consecutiveMistakeCount,
-      consecutiveAutoApprovedRequestsCount: this.task.consecutiveAutoApprovedRequestsCount,
+      consecutiveAutoApprovedRequestsCount:
+        this.task.consecutiveAutoApprovedRequestsCount,
 
       // Callbacks
       say: this.task.say.bind(this.task),
       ask: this.task.ask.bind(this.task),
       saveCheckpoint: this.task.saveCheckpoint.bind(this.task),
       shouldAutoApproveTool: this.task.shouldAutoApproveTool.bind(this.task),
-      shouldAutoApproveToolWithPath: this.task.shouldAutoApproveToolWithPath.bind(this.task),
-      sayAndCreateMissingParamError: this.task.sayAndCreateMissingParamError.bind(this.task),
-      removeLastPartialMessageIfExistsWithType: this.task.removeLastPartialMessageIfExistsWithType.bind(this.task),
+      shouldAutoApproveToolWithPath:
+        this.task.shouldAutoApproveToolWithPath.bind(this.task),
+      sayAndCreateMissingParamError:
+        this.task.sayAndCreateMissingParamError.bind(this.task),
+      removeLastPartialMessageIfExistsWithType:
+        this.task.removeLastPartialMessageIfExistsWithType.bind(this.task),
 
       // Flags
       didRejectTool: false,
@@ -109,11 +113,14 @@ export class ToolExecutionEngine {
   async executeToolBlock(
     block: AssistantMessageContent & { type: "tool_use" },
     toolDescription: () => string,
-    userMessageContent: (Anthropic.TextBlockParam | Anthropic.ImageBlockParam)[],
+    userMessageContent: (
+      | Anthropic.TextBlockParam
+      | Anthropic.ImageBlockParam
+    )[],
     didRejectTool: boolean,
     didAlreadyUseTool: boolean,
     removeClosingTag: (tag: ToolParamName, text?: string) => string,
-    handleFeedback: (feedback?: ToolFeedback) => Promise<void> | void
+    handleFeedback: (feedback?: ToolFeedback) => Promise<void> | void,
   ): Promise<{
     shouldContinue: boolean;
     didRejectTool: boolean;
@@ -160,7 +167,11 @@ export class ToolExecutionEngine {
     }
 
     const pushToolResult = (content: ToolResponse) => {
-      this.toolApprovalManager.pushToolResult(userMessageContent, content, toolDescription());
+      this.toolApprovalManager.pushToolResult(
+        userMessageContent,
+        content,
+        toolDescription(),
+      );
       // Mark that we've used a tool
       didAlreadyUseTool = true;
     };
@@ -191,7 +202,7 @@ export class ToolExecutionEngine {
       handleError,
       removeClosingTag,
       toolDescription,
-      handleFeedback
+      handleFeedback,
     );
 
     return {
@@ -212,7 +223,7 @@ export class ToolExecutionEngine {
     handleError: (action: string, error: Error) => Promise<void>,
     removeClosingTag: (tag: ToolParamName, text?: string) => string,
     toolDescription: () => string,
-    handleFeedback: (feedback?: ToolFeedback) => Promise<void> | void
+    handleFeedback: (feedback?: ToolFeedback) => Promise<void> | void,
   ): Promise<{
     shouldContinue: boolean;
     didRejectTool: boolean;
@@ -225,7 +236,7 @@ export class ToolExecutionEngine {
         block,
         block.partial || false,
         false, // didRejectTool - handled at higher level
-        false  // didAlreadyUseTool - handled at higher level
+        false, // didAlreadyUseTool - handled at higher level
       );
 
       // If the ToolManager handled the tool
@@ -259,7 +270,6 @@ export class ToolExecutionEngine {
         didAlreadyUseTool: false,
         handled: false,
       };
-      
     } catch (error) {
       await handleError(`executing ${block.name}`, error as Error);
       Logger.error(
@@ -277,139 +287,211 @@ export class ToolExecutionEngine {
   private async executeFileOperation(
     block: AssistantMessageContent & { type: "tool_use" },
     pushToolResult: (content: ToolResponse) => void,
-    removeClosingTag: (tag: ToolParamName, text?: string) => string
+    removeClosingTag: (tag: ToolParamName, text?: string) => string,
   ) {
     // File operation implementation would go here
     // This is a placeholder - the actual implementation would be quite long
     // and would need access to diffViewProvider, consecutiveMistakeCount, etc.
-    
+
     pushToolResult("File operations not yet implemented in refactored engine");
-    return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+    return {
+      shouldContinue: false,
+      didRejectTool: false,
+      didAlreadyUseTool: true,
+    };
   }
 
   private async executeReadFile(
     block: AssistantMessageContent & { type: "tool_use" },
     pushToolResult: (content: ToolResponse) => void,
-    removeClosingTag: (tag: ToolParamName, text?: string) => string
+    removeClosingTag: (tag: ToolParamName, text?: string) => string,
   ) {
     pushToolResult("Read file not yet implemented in refactored engine");
-    return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+    return {
+      shouldContinue: false,
+      didRejectTool: false,
+      didAlreadyUseTool: true,
+    };
   }
 
   private async executeListFiles(
     block: AssistantMessageContent & { type: "tool_use" },
     pushToolResult: (content: ToolResponse) => void,
-    removeClosingTag: (tag: ToolParamName, text?: string) => string
+    removeClosingTag: (tag: ToolParamName, text?: string) => string,
   ) {
     pushToolResult("List files not yet implemented in refactored engine");
-    return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+    return {
+      shouldContinue: false,
+      didRejectTool: false,
+      didAlreadyUseTool: true,
+    };
   }
 
   private async executeListCodeDefinitions(
     block: AssistantMessageContent & { type: "tool_use" },
     pushToolResult: (content: ToolResponse) => void,
-    removeClosingTag: (tag: ToolParamName, text?: string) => string
+    removeClosingTag: (tag: ToolParamName, text?: string) => string,
   ) {
-    pushToolResult("List code definitions not yet implemented in refactored engine");
-    return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+    pushToolResult(
+      "List code definitions not yet implemented in refactored engine",
+    );
+    return {
+      shouldContinue: false,
+      didRejectTool: false,
+      didAlreadyUseTool: true,
+    };
   }
 
   private async executeSearchFiles(
     block: AssistantMessageContent & { type: "tool_use" },
     pushToolResult: (content: ToolResponse) => void,
-    removeClosingTag: (tag: ToolParamName, text?: string) => string
+    removeClosingTag: (tag: ToolParamName, text?: string) => string,
   ) {
     pushToolResult("Search files not yet implemented in refactored engine");
-    return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+    return {
+      shouldContinue: false,
+      didRejectTool: false,
+      didAlreadyUseTool: true,
+    };
   }
 
   private async executeBrowserAction(
     block: AssistantMessageContent & { type: "tool_use" },
     pushToolResult: (content: ToolResponse) => void,
-    removeClosingTag: (tag: ToolParamName, text?: string) => string
+    removeClosingTag: (tag: ToolParamName, text?: string) => string,
   ) {
     pushToolResult("Browser action not yet implemented in refactored engine");
-    return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+    return {
+      shouldContinue: false,
+      didRejectTool: false,
+      didAlreadyUseTool: true,
+    };
   }
 
   private async executeCommand(
     block: AssistantMessageContent & { type: "tool_use" },
     pushToolResult: (content: ToolResponse) => void,
-    removeClosingTag: (tag: ToolParamName, text?: string) => string
+    removeClosingTag: (tag: ToolParamName, text?: string) => string,
   ) {
     pushToolResult("Execute command not yet implemented in refactored engine");
-    return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+    return {
+      shouldContinue: false,
+      didRejectTool: false,
+      didAlreadyUseTool: true,
+    };
   }
 
   private async executeMcpTool(
     block: AssistantMessageContent & { type: "tool_use" },
     pushToolResult: (content: ToolResponse) => void,
-    removeClosingTag: (tag: ToolParamName, text?: string) => string
+    removeClosingTag: (tag: ToolParamName, text?: string) => string,
   ) {
     pushToolResult("MCP tool not yet implemented in refactored engine");
-    return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+    return {
+      shouldContinue: false,
+      didRejectTool: false,
+      didAlreadyUseTool: true,
+    };
   }
 
   private async executeAccessMcpResource(
     block: AssistantMessageContent & { type: "tool_use" },
     pushToolResult: (content: ToolResponse) => void,
-    removeClosingTag: (tag: ToolParamName, text?: string) => string
+    removeClosingTag: (tag: ToolParamName, text?: string) => string,
   ) {
-    pushToolResult("Access MCP resource not yet implemented in refactored engine");
-    return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+    pushToolResult(
+      "Access MCP resource not yet implemented in refactored engine",
+    );
+    return {
+      shouldContinue: false,
+      didRejectTool: false,
+      didAlreadyUseTool: true,
+    };
   }
 
   private async executeAskFollowupQuestion(
     block: AssistantMessageContent & { type: "tool_use" },
     pushToolResult: (content: ToolResponse) => void,
-    removeClosingTag: (tag: ToolParamName, text?: string) => string
+    removeClosingTag: (tag: ToolParamName, text?: string) => string,
   ) {
-    pushToolResult("Ask followup question not yet implemented in refactored engine");
-    return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+    pushToolResult(
+      "Ask followup question not yet implemented in refactored engine",
+    );
+    return {
+      shouldContinue: false,
+      didRejectTool: false,
+      didAlreadyUseTool: true,
+    };
   }
 
   private async executeNewTask(
     block: AssistantMessageContent & { type: "tool_use" },
     pushToolResult: (content: ToolResponse) => void,
-    removeClosingTag: (tag: ToolParamName, text?: string) => string
+    removeClosingTag: (tag: ToolParamName, text?: string) => string,
   ) {
     pushToolResult("New task not yet implemented in refactored engine");
-    return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+    return {
+      shouldContinue: false,
+      didRejectTool: false,
+      didAlreadyUseTool: true,
+    };
   }
 
   private async executeCondense(
     block: AssistantMessageContent & { type: "tool_use" },
     pushToolResult: (content: ToolResponse) => void,
-    removeClosingTag: (tag: ToolParamName, text?: string) => string
+    removeClosingTag: (tag: ToolParamName, text?: string) => string,
   ) {
     pushToolResult("Condense not yet implemented in refactored engine");
-    return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+    return {
+      shouldContinue: false,
+      didRejectTool: false,
+      didAlreadyUseTool: true,
+    };
   }
 
   private async executePlanModeRespond(
     block: AssistantMessageContent & { type: "tool_use" },
     pushToolResult: (content: ToolResponse) => void,
-    removeClosingTag: (tag: ToolParamName, text?: string) => string
+    removeClosingTag: (tag: ToolParamName, text?: string) => string,
   ) {
-    pushToolResult("Plan mode respond not yet implemented in refactored engine");
-    return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+    pushToolResult(
+      "Plan mode respond not yet implemented in refactored engine",
+    );
+    return {
+      shouldContinue: false,
+      didRejectTool: false,
+      didAlreadyUseTool: true,
+    };
   }
 
   private async executeLoadMcpDocumentation(
     block: AssistantMessageContent & { type: "tool_use" },
-    pushToolResult: (content: ToolResponse) => void
+    pushToolResult: (content: ToolResponse) => void,
   ) {
-    pushToolResult("Load MCP documentation not yet implemented in refactored engine");
-    return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+    pushToolResult(
+      "Load MCP documentation not yet implemented in refactored engine",
+    );
+    return {
+      shouldContinue: false,
+      didRejectTool: false,
+      didAlreadyUseTool: true,
+    };
   }
 
   private async executeAttemptCompletion(
     block: AssistantMessageContent & { type: "tool_use" },
     pushToolResult: (content: ToolResponse) => void,
     removeClosingTag: (tag: ToolParamName, text?: string) => string,
-    toolDescription: () => string
+    toolDescription: () => string,
   ) {
-    pushToolResult("Attempt completion not yet implemented in refactored engine");
-    return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+    pushToolResult(
+      "Attempt completion not yet implemented in refactored engine",
+    );
+    return {
+      shouldContinue: false,
+      didRejectTool: false,
+      didAlreadyUseTool: true,
+    };
   }
 }

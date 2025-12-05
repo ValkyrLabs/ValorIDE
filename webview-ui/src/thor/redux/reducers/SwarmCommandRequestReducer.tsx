@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SwarmCommandRequest } from '@thor/model/SwarmCommandRequest';
+import { SwarmCommandRequest } from "@thor/model/SwarmCommandRequest";
 
 const SwarmCommandRequestSlice = createSlice({
   name: "SwarmCommandRequests",
@@ -12,20 +12,25 @@ const SwarmCommandRequestSlice = createSlice({
     },
 
     SwarmCommandRequestValueToggled(state, action) {
-      console.log("SwarmCommandRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SwarmCommandRequest:SwarmCommandRequest = state.find((SwarmCommandRequest) => SwarmCommandRequest.id === action.payload.SwarmCommandRequestId);
+      console.log("SwarmCommandRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SwarmCommandRequest: SwarmCommandRequest = state.find(
+        (SwarmCommandRequest) =>
+          SwarmCommandRequest.id === action.payload.SwarmCommandRequestId,
+      );
       if (SwarmCommandRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SwarmCommandRequestpropertySet(state, action) {
-      const SwarmCommandRequest = state.find((SwarmCommandRequest) => SwarmCommandRequest.id === action.payload.SwarmCommandRequestId);
+      const SwarmCommandRequest = state.find(
+        (SwarmCommandRequest) =>
+          SwarmCommandRequest.id === action.payload.SwarmCommandRequestId,
+      );
       if (SwarmCommandRequest) {
-      //  SwarmCommandRequest[action.property] = action.payload[action.property];
+        //  SwarmCommandRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const SwarmCommandRequestSlice = createSlice({
 export const {
   SwarmCommandRequestAdded,
   SwarmCommandRequestValueToggled,
-  SwarmCommandRequestpropertySet
+  SwarmCommandRequestpropertySet,
 } = SwarmCommandRequestSlice.actions;
 export default SwarmCommandRequestSlice.reducer;

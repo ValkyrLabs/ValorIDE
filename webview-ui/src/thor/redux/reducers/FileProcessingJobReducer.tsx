@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { FileProcessingJob } from '@thor/model/FileProcessingJob';
+import { FileProcessingJob } from "@thor/model/FileProcessingJob";
 
 const FileProcessingJobSlice = createSlice({
   name: "FileProcessingJobs",
@@ -12,20 +12,25 @@ const FileProcessingJobSlice = createSlice({
     },
 
     FileProcessingJobValueToggled(state, action) {
-      console.log("FileProcessingJob TOGGLE")
-      console.warn(JSON.stringify(action))
-      const FileProcessingJob:FileProcessingJob = state.find((FileProcessingJob) => FileProcessingJob.id === action.payload.FileProcessingJobId);
+      console.log("FileProcessingJob TOGGLE");
+      console.warn(JSON.stringify(action));
+      const FileProcessingJob: FileProcessingJob = state.find(
+        (FileProcessingJob) =>
+          FileProcessingJob.id === action.payload.FileProcessingJobId,
+      );
       if (FileProcessingJob) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     FileProcessingJobpropertySet(state, action) {
-      const FileProcessingJob = state.find((FileProcessingJob) => FileProcessingJob.id === action.payload.FileProcessingJobId);
+      const FileProcessingJob = state.find(
+        (FileProcessingJob) =>
+          FileProcessingJob.id === action.payload.FileProcessingJobId,
+      );
       if (FileProcessingJob) {
-      //  FileProcessingJob[action.property] = action.payload[action.property];
+        //  FileProcessingJob[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const FileProcessingJobSlice = createSlice({
 export const {
   FileProcessingJobAdded,
   FileProcessingJobValueToggled,
-  FileProcessingJobpropertySet
+  FileProcessingJobpropertySet,
 } = FileProcessingJobSlice.actions;
 export default FileProcessingJobSlice.reducer;

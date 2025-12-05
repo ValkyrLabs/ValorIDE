@@ -1,14 +1,24 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Form as BSForm, ButtonGroup, Modal , Container} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
+import React, { useState, useEffect, useRef } from "react";
+import { Form as BSForm, ButtonGroup, Modal, Container } from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import {
-  FaArrowDown, FaFilter, FaSync, FaEye, FaChevronRight, FaChevronLeft, FaChevronDown,
-  FaPlus, FaTrash, FaCopy, FaPaste, FaUserShield
-} from 'react-icons/fa';
-import { UserPreference } from '@thor/model';
-import UserPreferenceForm from '@thor/redux/components/form/UserPreferenceForm';
+  FaArrowDown,
+  FaFilter,
+  FaSync,
+  FaEye,
+  FaChevronRight,
+  FaChevronLeft,
+  FaChevronDown,
+  FaPlus,
+  FaTrash,
+  FaCopy,
+  FaPaste,
+  FaUserShield,
+} from "react-icons/fa";
+import { UserPreference } from "@thor/model";
+import UserPreferenceForm from "@thor/redux/components/form/UserPreferenceForm";
 
-import CoolButton from '@valkyr/component-library/CoolButton';
+import CoolButton from "@valkyr/component-library/CoolButton";
 // Removed SplitPane usage; using floating toolbar for edit form
 
 // ** Import the LAZY paged hook only **
@@ -16,55 +26,73 @@ import {
   useLazyGetUserPreferencesPagedQuery,
   useAddUserPreferenceMutation,
   useUpdateUserPreferenceMutation,
-  useDeleteUserPreferenceMutation
-} from '@thor/redux/services/UserPreferenceService';
+  useDeleteUserPreferenceMutation,
+} from "@thor/redux/services/UserPreferenceService";
 
-import ObjectTreeView from '@valkyr/component-library/ObjectTreeView';
-import { RBGrid } from '@valkyr/component-library/BootstrapGrid';
-import QBEPicker from '@valkyr/component-library/QBEPicker';
-import MarkdownEditorModal from '@valkyr/component-library/MarkdownEditorModal';
-import type { ColumnSchema } from '@valkyr/component-library/BootstrapGrid';
+import ObjectTreeView from "@valkyr/component-library/ObjectTreeView";
+import { RBGrid } from "@valkyr/component-library/BootstrapGrid";
+import QBEPicker from "@valkyr/component-library/QBEPicker";
+import MarkdownEditorModal from "@valkyr/component-library/MarkdownEditorModal";
+import type { ColumnSchema } from "@valkyr/component-library/BootstrapGrid";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionAssignment, PermissionDialogProps, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-import FloatingControlPanel from '@valkyr/component-library/OpenAPIViz/FloatingControlPanel';
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
+import {
+  AclGrantRequest,
+  PermissionAssignment,
+  PermissionDialogProps,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
+import FloatingControlPanel from "@valkyr/component-library/OpenAPIViz/FloatingControlPanel";
 
 // Fields to hide by default
 const fieldSkipList = [
-  'keyHash', 'workflowStateId', 'createdDate', 'lastAccessedById', 'lastAccessedDate', 'lastModifiedDate', 'lastModifiedById'
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
 ];
 
 // Column schema hard-coded from model metadata (enums, dates, booleans)
 const columnSchema: Record<string, ColumnSchema> = {
-  'preferenceType': { type: 'enum', enumValues: [
-    'ux-layout', 'ux-mode', 'ux-theme', 'measurement', 'chatmemory', 
-  ], enumValueType: 'string' },
-  'createdDate': { type: 'datetime' },
-  'lastAccessedDate': { type: 'datetime' },
-  'lastModifiedDate': { type: 'datetime' },
+  preferenceType: {
+    type: "enum",
+    enumValues: [
+      "ux-layout",
+      "ux-mode",
+      "ux-theme",
+      "measurement",
+      "chatmemory",
+    ],
+    enumValueType: "string",
+  },
+  createdDate: { type: "datetime" },
+  lastAccessedDate: { type: "datetime" },
+  lastModifiedDate: { type: "datetime" },
 };
 
 const stringFieldCandidates = [
-  'principalId',
-  'preference',
-  'preferenceType',
-  'id',
-  'ownerId',
-  'keyHash',
-  'lastAccessedById',
-  'lastModifiedById',
+  "principalId",
+  "preference",
+  "preferenceType",
+  "id",
+  "ownerId",
+  "keyHash",
+  "lastAccessedById",
+  "lastModifiedById",
 ];
 
 const computeRefType = (field: string): string | null => {
   if (!field) return null;
   if (/^id$/i.test(field)) return null;
   if (/id$/i.test(field)) {
-    const base = field.replace(/id$/i, '');
+    const base = field.replace(/id$/i, "");
     return base ? base.charAt(0).toUpperCase() + base.slice(1) : null;
   }
   if (/uuid$/i.test(field)) {
-    const base = field.replace(/uuid$/i, '');
+    const base = field.replace(/uuid$/i, "");
     return base ? base.charAt(0).toUpperCase() + base.slice(1) : null;
   }
   return null;
@@ -124,7 +152,10 @@ const UserPreferenceTable: React.FC = () => {
       });
       // Update loaded timestamp (HH:MM)
       try {
-        const t = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const t = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
         setLastLoadedAt(t);
       } catch (e) {
         setLastLoadedAt(new Date().toISOString());
@@ -145,20 +176,34 @@ const UserPreferenceTable: React.FC = () => {
   const [editRowId, setEditRowId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<UserPreference>>({});
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalData, setModalData] = useState<{ id?: string; key?: string; value?: any }>({});
-  const [richModal, setRichModal] = useState<{ show: boolean; content: string; title?: string; rowId?: string; field?: string }>({ show: false, content: '' });
+  const [modalData, setModalData] = useState<{
+    id?: string;
+    key?: string;
+    value?: any;
+  }>({});
+  const [richModal, setRichModal] = useState<{
+    show: boolean;
+    content: string;
+    title?: string;
+    rowId?: string;
+    field?: string;
+  }>({ show: false, content: "" });
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showQbeModal, setShowQbeModal] = useState(false);
-  const [qbeText, setQbeText] = useState('');
+  const [qbeText, setQbeText] = useState("");
   const [qbeExample, setQbeExample] = useState<any | null>(null);
   const [copiedRow, setCopiedRow] = useState<UserPreference | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [showAllFields, setShowAllFields] = useState(false);
   const [lastLoadedAt, setLastLoadedAt] = useState<string | null>(null);
   // QBE reference picker state
-  const [qbePicker, setQbePicker] = useState<{ show: boolean; refType?: string; resolve?: (v: any|null)=>void }>( { show: false } );
+  const [qbePicker, setQbePicker] = useState<{
+    show: boolean;
+    refType?: string;
+    resolve?: (v: any | null) => void;
+  }>({ show: false });
 
   // Sorting state
   const [sortColumn, setSortColumn] = useState<string | undefined>();
@@ -174,10 +219,15 @@ const UserPreferenceTable: React.FC = () => {
   }, [panelRef.current]);
 
   // For object expansions
-  const [expandedObjects, setExpandedObjects] = useState<Record<string, boolean>>({});
+  const [expandedObjects, setExpandedObjects] = useState<
+    Record<string, boolean>
+  >({});
 
   // For keyboard navigation
-  const [activeCell, setActiveCell] = useState<{ rowIndex: number; colIndex: number } | null>(null);
+  const [activeCell, setActiveCell] = useState<{
+    rowIndex: number;
+    colIndex: number;
+  } | null>(null);
 
   // Track whether the initial load already ran
   const autoLoadRef = useRef<boolean>(false);
@@ -186,17 +236,16 @@ const UserPreferenceTable: React.FC = () => {
   // Permission Management State
   // -------------------------------------------------------------------
   const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-  const [selectedObjectForPermissions, setSelectedObjectForPermissions] = useState<{
-    objectType: string;
-    objectId: string;
-  } | null>(null);
-
+  const [selectedObjectForPermissions, setSelectedObjectForPermissions] =
+    useState<{
+      objectType: string;
+      objectId: string;
+    } | null>(null);
 
   // const token: string = sessionStorage.getItem("jwtToken"); // for testing
   const currentUser = JSON.parse(
     sessionStorage.getItem("authenticatedPrincipal"),
   );
-
 
   // -------------------------------------------------------------------
   // Ensure grid rows always have a required `id: string`
@@ -215,7 +264,7 @@ const UserPreferenceTable: React.FC = () => {
   const columns = React.useMemo(() => {
     if (!tableData.length) return [];
     return Object.keys(tableData[0]).filter(
-      (key) => showAllFields || !fieldSkipList.includes(key)
+      (key) => showAllFields || !fieldSkipList.includes(key),
     );
   }, [tableData, showAllFields]);
 
@@ -233,7 +282,11 @@ const UserPreferenceTable: React.FC = () => {
   }, []);
 
   // Reference picker bridge used by RBGrid
-  const onReferencePick = async (rowId: string, columnKey: string, refType?: string) => {
+  const onReferencePick = async (
+    rowId: string,
+    columnKey: string,
+    refType?: string,
+  ) => {
     return new Promise<any | null>((resolve) => {
       setQbePicker({ show: true, refType, resolve });
     });
@@ -269,9 +322,9 @@ const UserPreferenceTable: React.FC = () => {
           try {
             await deleteUserPreference(id as any).unwrap();
           } catch (e) {
-            console.error('Failed to delete id', id, e);
+            console.error("Failed to delete id", id, e);
           }
-        })
+        }),
       );
       setAllData((prev) => prev.filter((item) => !selectedRows.has(item.id)));
     } finally {
@@ -280,24 +333,22 @@ const UserPreferenceTable: React.FC = () => {
     }
   };
 
-
-
-// AddressToJSON(value?: Address)
+  // AddressToJSON(value?: Address)
 
   // -------------------------------------------------------------------
   // Add, Copy, Paste
   // -------------------------------------------------------------------
-  
+
   const handleAddRow = async () => {
     try {
       if (selectedRows.size !== 1) {
-        alert('Select exactly one row to duplicate.');
+        alert("Select exactly one row to duplicate.");
         return;
       }
       const rowId = Array.from(selectedRows)[0];
       const source = allData.find((item) => item.id === rowId);
       if (!source) {
-        alert('Could not find selected row.');
+        alert("Could not find selected row.");
         return;
       }
       const payload: Partial<UserPreference> = { ...source };
@@ -305,8 +356,8 @@ const UserPreferenceTable: React.FC = () => {
       const created = await addUserPreference(payload).unwrap();
       setAllData((prev) => [created as UserPreference, ...prev]);
     } catch (error) {
-      console.error('Failed to add UserPreference:', error);
-      alert('Failed to add. See console for details.');
+      console.error("Failed to add UserPreference:", error);
+      alert("Failed to add. See console for details.");
     }
   };
 
@@ -316,13 +367,13 @@ const UserPreferenceTable: React.FC = () => {
       const rowToCopy = allData.find((item) => item.id === rowId) || null;
       setCopiedRow(rowToCopy);
     } else {
-      alert('Select exactly one row to copy.');
+      alert("Select exactly one row to copy.");
     }
   };
 
   const handlePasteRow = async () => {
     if (!copiedRow) {
-      alert('No row copied. Please copy a row first.');
+      alert("No row copied. Please copy a row first.");
       return;
     }
     try {
@@ -331,8 +382,8 @@ const UserPreferenceTable: React.FC = () => {
       const created = await addUserPreference(payload).unwrap();
       setAllData((prev) => [created as UserPreference, ...prev]);
     } catch (error) {
-      console.error('Failed to paste (create) UserPreference:', error);
-      alert('Failed to paste. See console for details.');
+      console.error("Failed to paste (create) UserPreference:", error);
+      alert("Failed to paste. See console for details.");
     }
   };
 
@@ -340,19 +391,27 @@ const UserPreferenceTable: React.FC = () => {
   // Editing (inline & modal)
   // -------------------------------------------------------------------
   const handleDoubleClick = (id: string, key: string, value: any) => {
-    let val = value ?? '';
-    if (typeof val === 'string') {
+    let val = value ?? "";
+    if (typeof val === "string") {
       // Long text -> optionally open markdown rich view
       if (val.length > 1000) {
         try {
-          const askPref = localStorage.getItem('UX:AskRichText') ?? 'ask';
-          if (askPref === 'ask') {
-            const open = window.confirm('Open in rich text (Markdown) editor? Click Cancel to use plain text and do not ask again.');
+          const askPref = localStorage.getItem("UX:AskRichText") ?? "ask";
+          if (askPref === "ask") {
+            const open = window.confirm(
+              "Open in rich text (Markdown) editor? Click Cancel to use plain text and do not ask again.",
+            );
             if (open) {
-              setRichModal({ show: true, content: val, title: key, rowId: id, field: key });
+              setRichModal({
+                show: true,
+                content: val,
+                title: key,
+                rowId: id,
+                field: key,
+              });
               return;
             } else {
-              localStorage.setItem('UX:AskRichText','never');
+              localStorage.setItem("UX:AskRichText", "never");
             }
           }
         } catch {}
@@ -367,7 +426,7 @@ const UserPreferenceTable: React.FC = () => {
         setModalData({ id, key, value: val });
         setModalVisible(true);
       }
-    } else if (typeof val === 'object') {
+    } else if (typeof val === "object") {
       // expand/collapse
       const objKey = `${id}~${key}`;
       setExpandedObjects((prev) => ({ ...prev, [objKey]: !prev[objKey] }));
@@ -386,7 +445,7 @@ const UserPreferenceTable: React.FC = () => {
   };
 
   const handleSave = async (editKey: string) => {
-    const [id, key] = editKey.split('~');
+    const [id, key] = editKey.split("~");
     const row = allData.find((item) => item.id === id);
     if (!row) return;
 
@@ -395,7 +454,7 @@ const UserPreferenceTable: React.FC = () => {
       await updateUserPreference(updatedItem).unwrap();
       setAllData((prev) => prev.map((i) => (i.id === id ? updatedItem : i)));
     } catch (error) {
-      console.error('Failed to update UserPreference:', error);
+      console.error("Failed to update UserPreference:", error);
     }
     setEditRowId(null);
     setFormData({});
@@ -411,8 +470,8 @@ const UserPreferenceTable: React.FC = () => {
   };
 
   const handleKeyDownEdit = (e: React.KeyboardEvent, editKey: string) => {
-    if (e.key === 'Enter') handleSave(editKey);
-    else if (e.key === 'Escape') handleCancel();
+    if (e.key === "Enter") handleSave(editKey);
+    else if (e.key === "Escape") handleCancel();
   };
 
   const handleBlur = () => {
@@ -426,8 +485,16 @@ const UserPreferenceTable: React.FC = () => {
   };
 
   // Apply object field change to local state (RBGrid expanded panel)
-  const handleObjectFieldChange = (rowId: string, key: string, updatedObj: any) => {
-    setAllData((prev) => prev.map((d) => (d.id === rowId ? { ...d, [key]: updatedObj } as any : d)));
+  const handleObjectFieldChange = (
+    rowId: string,
+    key: string,
+    updatedObj: any,
+  ) => {
+    setAllData((prev) =>
+      prev.map((d) =>
+        d.id === rowId ? ({ ...d, [key]: updatedObj } as any) : d,
+      ),
+    );
   };
 
   // Select/Deselect all visible rows
@@ -452,28 +519,34 @@ const UserPreferenceTable: React.FC = () => {
     colIndex: number,
     itemId: string,
     columnKey: string,
-    cellValue: any
+    cellValue: any,
   ) => {
     if (editRowId) return;
 
     switch (e.key) {
-      case 'ArrowRight':
+      case "ArrowRight":
         e.preventDefault();
-        setActiveCell({ rowIndex, colIndex: Math.min(colIndex + 1, columns.length - 1) });
+        setActiveCell({
+          rowIndex,
+          colIndex: Math.min(colIndex + 1, columns.length - 1),
+        });
         break;
-      case 'ArrowLeft':
+      case "ArrowLeft":
         e.preventDefault();
         setActiveCell({ rowIndex, colIndex: Math.max(colIndex - 1, 0) });
         break;
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
-        setActiveCell({ rowIndex: Math.min(rowIndex + 1, allData.length - 1), colIndex });
+        setActiveCell({
+          rowIndex: Math.min(rowIndex + 1, allData.length - 1),
+          colIndex,
+        });
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         e.preventDefault();
         setActiveCell({ rowIndex: Math.max(rowIndex - 1, 0), colIndex });
         break;
-      case 'Enter':
+      case "Enter":
         e.preventDefault();
         handleDoubleClick(itemId, columnKey, cellValue);
         break;
@@ -486,12 +559,15 @@ const UserPreferenceTable: React.FC = () => {
   // Render helpers
   // -------------------------------------------------------------------
   const renderValue = (value: any, itemId: string, key: string) => {
-    if (value == null) return '';
-    if (typeof value === 'object') {
+    if (value == null) return "";
+    if (typeof value === "object") {
       const objKey = `${itemId}~${key}`;
       const isExpanded = expandedObjects[objKey] || false;
       return (
-        <CoolButton variant="info" onClick={() => handleDoubleClick(itemId, key, value)}>
+        <CoolButton
+          variant="info"
+          onClick={() => handleDoubleClick(itemId, key, value)}
+        >
           {isExpanded ? <FaChevronDown /> : <FaChevronRight />} {key}
         </CoolButton>
       );
@@ -515,7 +591,7 @@ const UserPreferenceTable: React.FC = () => {
       await updateUserPreference(updatedItem).unwrap();
       setAllData((prev) => prev.map((d) => (d.id === id ? updatedItem : d)));
     } catch (error) {
-      console.error('Failed to update from modal:', error);
+      console.error("Failed to update from modal:", error);
     }
     setModalVisible(false);
   };
@@ -531,19 +607,19 @@ const UserPreferenceTable: React.FC = () => {
     if (selectedRows.size === 1) {
       const rowId = Array.from(selectedRows)[0];
       setSelectedObjectForPermissions({
-        objectType: 'com.valkyrlabs.model.UserPreference',
+        objectType: "com.valkyrlabs.model.UserPreference",
         objectId: rowId,
       });
       setShowPermissionDialog(true);
     } else {
-      alert('Select exactly one row to manage permissions.');
+      alert("Select exactly one row to manage permissions.");
     }
   };
 
   // Handle permissions for a specific row (direct click)
   const handleRowPermissions = (itemId: string) => {
     setSelectedObjectForPermissions({
-      objectType: 'com.valkyrlabs.model.UserPreference',
+      objectType: "com.valkyrlabs.model.UserPreference",
       objectId: itemId,
     });
     setShowPermissionDialog(true);
@@ -555,7 +631,7 @@ const UserPreferenceTable: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved:', grants);
+    console.log("Permissions saved:", grants);
     // Optionally refresh data or show success message
   };
 
@@ -564,160 +640,190 @@ const UserPreferenceTable: React.FC = () => {
   // -------------------------------------------------------------------
   return (
     <>
-        <div className="tableContainer">
+      <div className="tableContainer">
+        <div className="spreadsheet-container">
+          <RBGrid
+            data={tableData}
+            columns={columns}
+            columnSchema={resolvedColumnSchema}
+            selectedRows={selectedRows}
+            onToggleRow={handleRowSelect}
+            onToggleAll={handleToggleAll}
+            onRowPermissions={handleRowPermissions}
+            editCellId={editRowId}
+            formData={formData}
+            onInputChange={handleInputChange}
+            onKeyDownEdit={handleKeyDownEdit}
+            onBlurEdit={handleBlur}
+            onCellDoubleClick={handleDoubleClick}
+            activeCell={activeCell}
+            onCellFocus={handleCellFocus}
+            onCellKeyDownNav={handleCellKeyDownNav}
+            expandedObjects={expandedObjects}
+            onToggleExpandObject={handleToggleExpandObject}
+            onObjectFieldChange={handleObjectFieldChange}
+            showAllFields={showAllFields}
+            onToggleShowAllFields={() => setShowAllFields(!showAllFields)}
+            storageKey="UserPreferenceTable"
+            onReferencePick={onReferencePick}
+            onRequestMoreRows={(dir) => {
+              if (dir === "down" && hasMore && !isFetching && dataLoaded) {
+                const nextPage = page + 1;
+                setPage(nextPage);
+                const arg: any = { page: nextPage };
+                if (qbeExample) arg.example = qbeExample;
+                triggerGetPage(arg);
+              }
+            }}
+          />
+          {/* Show spinner if fetching any page */}
+          {isFetching && <LoadingSpinner style={{ margin: "2em" }} />}
+        </div>
 
-          <div className="spreadsheet-container">
-            <RBGrid
-              data={tableData}
-              columns={columns}
-              columnSchema={resolvedColumnSchema}
-              selectedRows={selectedRows}
-              onToggleRow={handleRowSelect}
-              onToggleAll={handleToggleAll}
-              onRowPermissions={handleRowPermissions}
-              editCellId={editRowId}
-              formData={formData}
-              onInputChange={handleInputChange}
-              onKeyDownEdit={handleKeyDownEdit}
-              onBlurEdit={handleBlur}
-              onCellDoubleClick={handleDoubleClick}
-              activeCell={activeCell}
-              onCellFocus={handleCellFocus}
-              onCellKeyDownNav={handleCellKeyDownNav}
-              expandedObjects={expandedObjects}
-              onToggleExpandObject={handleToggleExpandObject}
-              onObjectFieldChange={handleObjectFieldChange}
-              showAllFields={showAllFields}
-              onToggleShowAllFields={() => setShowAllFields(!showAllFields)}
-              storageKey="UserPreferenceTable"
-              onReferencePick={onReferencePick}
-              onRequestMoreRows={(dir) => {
-                if (dir === 'down' && hasMore && !isFetching && dataLoaded) {
-                  const nextPage = page + 1;
-                  setPage(nextPage);
-                  const arg: any = { page: nextPage };
-                  if (qbeExample) arg.example = qbeExample;
-                  triggerGetPage(arg);
-                }
-              }}
-            />
-            {/* Show spinner if fetching any page */}
-          {isFetching && <LoadingSpinner style={ { margin: "2em" }} />}
-          
-          </div>
-          
-
-          {/* Floating Toolbar for grid actions */}
-          {/* Floating toolbar: vertically centered, peeking 100px when hidden */}
-          <div
-            ref={panelRef}
-            style={ {
-              position: 'fixed',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              right: toolbarOpen ? 20 : `-${Math.max(panelWidth - 100, 0)}px`,
-              zIndex: 9999,
-              pointerEvents: 'auto',
-            } }
+        {/* Floating Toolbar for grid actions */}
+        {/* Floating toolbar: vertically centered, peeking 100px when hidden */}
+        <div
+          ref={panelRef}
+          style={{
+            position: "fixed",
+            top: "50%",
+            transform: "translateY(-50%)",
+            right: toolbarOpen ? 20 : `-${Math.max(panelWidth - 100, 0)}px`,
+            zIndex: 9999,
+            pointerEvents: "auto",
+          }}
+        >
+          <FloatingControlPanel
+            description="UserPreference Actions"
+            className="grid-toolbar"
+            style={{
+              pointerEvents: "auto",
+              width: 360,
+              maxWidth: 420,
+              boxShadow: "0 6px 20px rgba(0,0,0,0.3)",
+            }}
           >
-
-            <FloatingControlPanel
-              description="UserPreference Actions"
-              className="grid-toolbar"
-              style={ {
-                pointerEvents: 'auto',
-                width: 360,
-                maxWidth: 420,
-                boxShadow: '0 6px 20px rgba(0,0,0,0.3)'
-              } }
-            >
-                        {/* Handle to toggle in/out */}
+            {/* Handle to toggle in/out */}
             <div
               role="button"
-              aria-label={toolbarOpen ? 'Hide actions' : 'Show actions'}
+              aria-label={toolbarOpen ? "Hide actions" : "Show actions"}
               onClick={() => setToolbarOpen(!toolbarOpen)}
-              style={ {
-                position: 'absolute',
+              style={{
+                position: "absolute",
                 left: -0,
-                top: '50%',
-                transform: 'translate(-100%, -50%)',
+                top: "50%",
+                transform: "translate(-100%, -50%)",
                 width: 48,
                 height: 64,
-                borderRadius: '8px 0 0 8px',
-                background: 'rgba(0,0,0,0.6)',
-                color: '#fff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                boxShadow: '0 4px 10px rgba(0,0,0,0.35)'
-              } }
+                borderRadius: "8px 0 0 8px",
+                background: "rgba(0,0,0,0.6)",
+                color: "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                boxShadow: "0 4px 10px rgba(0,0,0,0.35)",
+              }}
             >
               {toolbarOpen ? <FaChevronRight /> : <FaChevronLeft />}
             </div>
 
-              <div>
-                <ButtonGroup>
-                  <CoolButton 
-                  
-                   variant="secondary" onClick={handleLoadData}>
-                    <FaSync />
-                  </CoolButton>
-                  <CoolButton 
-                    variant="primary" onClick={() => setShowCreateModal(true)} >
-                    <FaPlus />
-                  </CoolButton>
-                  <CoolButton 
-                    disabled={selectedRows.size !== 1}
-                    variant="secondary" onClick={handleCopyRow} >
-                    <FaCopy />
-                  </CoolButton>
-                  <CoolButton 
-                    variant="secondary" onClick={handlePasteRow} >
-                    <FaPaste />
-                  </CoolButton>
-                  <CoolButton 
-                   variant="secondary" onClick={() => setShowQbeModal(true)}>
-                    <FaFilter /> Filter (QBE)
-                  </CoolButton>
-                  <CoolButton 
-                  variant="warning" onClick={handleDelete} 
-                   disabled={selectedRows.size !== 1}
-                  >
-                    <FaTrash />
-                  </CoolButton>
-                  <CoolButton
-                    variant="info"
-                    onClick={handleManagePermissions}
-                    disabled={selectedRows.size !== 1}
-                  >
-                    <FaUserShield />
-                  </CoolButton>
-                </ButtonGroup>
-              </div>
-            </FloatingControlPanel>
-          </div>
-          {/* New/Edit Modal */}
-          <Modal show={showCreateModal} onHide={() => setShowCreateModal(false)} centered size="lg">
-            <Modal.Header closeButton>
-              <Modal.Title>Create UserPreference</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <UserPreferenceForm />
-            </Modal.Body>
-          </Modal>
-          {/* QBE Modal */}
-          <Modal show={showQbeModal} onHide={() => setShowQbeModal(false)} centered size="lg">
-            <Modal.Header closeButton>
-              <Modal.Title>Filter UserPreference (Query By Example)</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <p>Enter a JSON example. Non-null fields will be matched. Strings use case-insensitive contains; exact match for non-strings.</p>
-              <BSForm.Control as="textarea" rows={10} value={qbeText} onChange={(e) => setQbeText(e.target.value)} placeholder='{"name":"acme","status":"active"}' />
-            </Modal.Body>
-            <Modal.Footer>
-              <CoolButton variant="secondary" onClick={() => { setQbeText(''); setQbeExample(null); setShowQbeModal(false); }}>Clear</CoolButton>
-              <CoolButton variant="primary" onClick={() => {
+            <div>
+              <ButtonGroup>
+                <CoolButton variant="secondary" onClick={handleLoadData}>
+                  <FaSync />
+                </CoolButton>
+                <CoolButton
+                  variant="primary"
+                  onClick={() => setShowCreateModal(true)}
+                >
+                  <FaPlus />
+                </CoolButton>
+                <CoolButton
+                  disabled={selectedRows.size !== 1}
+                  variant="secondary"
+                  onClick={handleCopyRow}
+                >
+                  <FaCopy />
+                </CoolButton>
+                <CoolButton variant="secondary" onClick={handlePasteRow}>
+                  <FaPaste />
+                </CoolButton>
+                <CoolButton
+                  variant="secondary"
+                  onClick={() => setShowQbeModal(true)}
+                >
+                  <FaFilter /> Filter (QBE)
+                </CoolButton>
+                <CoolButton
+                  variant="warning"
+                  onClick={handleDelete}
+                  disabled={selectedRows.size !== 1}
+                >
+                  <FaTrash />
+                </CoolButton>
+                <CoolButton
+                  variant="info"
+                  onClick={handleManagePermissions}
+                  disabled={selectedRows.size !== 1}
+                >
+                  <FaUserShield />
+                </CoolButton>
+              </ButtonGroup>
+            </div>
+          </FloatingControlPanel>
+        </div>
+        {/* New/Edit Modal */}
+        <Modal
+          show={showCreateModal}
+          onHide={() => setShowCreateModal(false)}
+          centered
+          size="lg"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Create UserPreference</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <UserPreferenceForm />
+          </Modal.Body>
+        </Modal>
+        {/* QBE Modal */}
+        <Modal
+          show={showQbeModal}
+          onHide={() => setShowQbeModal(false)}
+          centered
+          size="lg"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Filter UserPreference (Query By Example)</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>
+              Enter a JSON example. Non-null fields will be matched. Strings use
+              case-insensitive contains; exact match for non-strings.
+            </p>
+            <BSForm.Control
+              as="textarea"
+              rows={10}
+              value={qbeText}
+              onChange={(e) => setQbeText(e.target.value)}
+              placeholder='{"name":"acme","status":"active"}'
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <CoolButton
+              variant="secondary"
+              onClick={() => {
+                setQbeText("");
+                setQbeExample(null);
+                setShowQbeModal(false);
+              }}
+            >
+              Clear
+            </CoolButton>
+            <CoolButton
+              variant="primary"
+              onClick={() => {
                 try {
                   const obj = qbeText ? JSON.parse(qbeText) : null;
                   setQbeExample(obj);
@@ -730,107 +836,137 @@ const UserPreferenceTable: React.FC = () => {
                   triggerGetPage(arg);
                   setDataLoaded(true);
                 } catch (err) {
-                  alert('Invalid JSON');
+                  alert("Invalid JSON");
                 }
-              }}>Apply</CoolButton>
-            </Modal.Footer>
-          </Modal>
-          {/* Confirm Delete */}
+              }}
+            >
+              Apply
+            </CoolButton>
+          </Modal.Footer>
+        </Modal>
+        {/* Confirm Delete */}
 
-          <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
-            <Modal.Header closeButton>
-              <Modal.Title>Confirm Deletion</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>Are you sure you want to delete the selected rows?</Modal.Body>
-            <Modal.Footer>
-              <CoolButton variant="secondary" onClick={() => setShowDeleteModal(false)} >
-                Cancel
-              </CoolButton>
-              <CoolButton variant="danger" onClick={confirmDelete}>
-                Delete
-              </CoolButton>
-            </Modal.Footer>
-          </Modal>
+        <Modal
+          show={showDeleteModal}
+          onHide={() => setShowDeleteModal(false)}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Confirm Deletion</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Are you sure you want to delete the selected rows?
+          </Modal.Body>
+          <Modal.Footer>
+            <CoolButton
+              variant="secondary"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              Cancel
+            </CoolButton>
+            <CoolButton variant="danger" onClick={confirmDelete}>
+              Delete
+            </CoolButton>
+          </Modal.Footer>
+        </Modal>
 
-          {/* Large text modal */}
-          <Modal show={modalVisible} onHide={() => setModalVisible(false)} centered>
-            <Modal.Header closeButton>
-              <Modal.Title>Editing UserPreference</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              {modalData.value && typeof modalData.value === 'string' ? (
-                <BSForm.Control
-                  as="textarea"
-                  rows={10}
-                  value={modalData.value}
-                  onChange={(e) => handleModalChange(e.target.value)}
-                />
-              ) : (
-                <div>No large text data available or unsupported type.</div>
-              )}
-            </Modal.Body>
-            <Modal.Footer>
-              <CoolButton variant="secondary" onClick={() => setModalVisible(false)}>
-                Cancel
-              </CoolButton>
-              <CoolButton variant="primary" onClick={handleModalSave}>
-                Save
-              </CoolButton>
-            </Modal.Footer>
-          </Modal>
+        {/* Large text modal */}
+        <Modal
+          show={modalVisible}
+          onHide={() => setModalVisible(false)}
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Editing UserPreference</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {modalData.value && typeof modalData.value === "string" ? (
+              <BSForm.Control
+                as="textarea"
+                rows={10}
+                value={modalData.value}
+                onChange={(e) => handleModalChange(e.target.value)}
+              />
+            ) : (
+              <div>No large text data available or unsupported type.</div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <CoolButton
+              variant="secondary"
+              onClick={() => setModalVisible(false)}
+            >
+              Cancel
+            </CoolButton>
+            <CoolButton variant="primary" onClick={handleModalSave}>
+              Save
+            </CoolButton>
+          </Modal.Footer>
+        </Modal>
 
-          {/* Rich Markdown modal (editable with preview) */}
-          <MarkdownEditorModal
-            show={richModal.show}
-            title={`Rich Text: ${richModal.title || ''}`}
-            initialValue={richModal.content}
-            onCancel={() => setRichModal({ show: false, content: '' })}
-            onSave={async (updatedText) => {
-              try {
-                const rid = richModal.rowId;
-                const field = richModal.field as keyof UserPreference;
-                if (!rid || !field) { setRichModal({ show: false, content: '' }); return; }
-                const row = allData.find(r => r.id === rid);
-                if (!row) { setRichModal({ show: false, content: '' }); return; }
-                const updated = { ...row, [field]: updatedText } as any;
-                await updateUserPreference(updated).unwrap();
-                setAllData(prev => prev.map(r => r.id === rid ? updated : r));
-              } catch (e) { console.error('Failed to save markdown field', e); }
-              setRichModal({ show: false, content: '' });
-            }}
-          />
-
-          {/* Permission Management Dialog */}
-          {selectedObjectForPermissions && (
-            <PermissionDialog
-              objectType={selectedObjectForPermissions.objectType}
-              objectId={selectedObjectForPermissions.objectId}
-              isVisible={showPermissionDialog}
-              onClose={handlePermissionDialogClose}
-              onSave={handlePermissionsSave}
-              currentUser={currentUser}
-            />
-          )}
-
-          {/* Error if page=1 fails or subsequent fetch fails */}
-          {isError && (
-            <div style={ { color: 'red', marginTop: 12 }}>
-              Error fetching page {page} of UserPreferences.
-            </div>
-          )}
-        </div>
-        {/* Generic QBE Picker */}
-        <QBEPicker
-          show={qbePicker.show}
-          refType={qbePicker.refType || 'UserPreference'}
-          onCancel={() => setQbePicker({ show: false })}
-          onPick={(val) => {
-            const r = qbePicker.resolve; setQbePicker({ show: false }); r && r(val);
+        {/* Rich Markdown modal (editable with preview) */}
+        <MarkdownEditorModal
+          show={richModal.show}
+          title={`Rich Text: ${richModal.title || ""}`}
+          initialValue={richModal.content}
+          onCancel={() => setRichModal({ show: false, content: "" })}
+          onSave={async (updatedText) => {
+            try {
+              const rid = richModal.rowId;
+              const field = richModal.field as keyof UserPreference;
+              if (!rid || !field) {
+                setRichModal({ show: false, content: "" });
+                return;
+              }
+              const row = allData.find((r) => r.id === rid);
+              if (!row) {
+                setRichModal({ show: false, content: "" });
+                return;
+              }
+              const updated = { ...row, [field]: updatedText } as any;
+              await updateUserPreference(updated).unwrap();
+              setAllData((prev) =>
+                prev.map((r) => (r.id === rid ? updated : r)),
+              );
+            } catch (e) {
+              console.error("Failed to save markdown field", e);
+            }
+            setRichModal({ show: false, content: "" });
           }}
         />
+
+        {/* Permission Management Dialog */}
+        {selectedObjectForPermissions && (
+          <PermissionDialog
+            objectType={selectedObjectForPermissions.objectType}
+            objectId={selectedObjectForPermissions.objectId}
+            isVisible={showPermissionDialog}
+            onClose={handlePermissionDialogClose}
+            onSave={handlePermissionsSave}
+            currentUser={currentUser}
+          />
+        )}
+
+        {/* Error if page=1 fails or subsequent fetch fails */}
+        {isError && (
+          <div style={{ color: "red", marginTop: 12 }}>
+            Error fetching page {page} of UserPreferences.
+          </div>
+        )}
+      </div>
+      {/* Generic QBE Picker */}
+      <QBEPicker
+        show={qbePicker.show}
+        refType={qbePicker.refType || "UserPreference"}
+        onCancel={() => setQbePicker({ show: false })}
+        onPick={(val) => {
+          const r = qbePicker.resolve;
+          setQbePicker({ show: false });
+          r && r(val);
+        }}
+      />
     </>
   );
 };
 
 export default UserPreferenceTable;
-

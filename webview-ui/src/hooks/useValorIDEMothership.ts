@@ -1,6 +1,9 @@
-import { useEffect, useRef, useCallback } from 'react';
-import { useMothership } from '../context/MothershipContext';
-import { ValorIDEMothershipIntegration, ChatAction } from '../services/ValorIDEMothershipIntegration';
+import { useEffect, useRef, useCallback } from "react";
+import { useMothership } from "../context/MothershipContext";
+import {
+  ValorIDEMothershipIntegration,
+  ChatAction,
+} from "../services/ValorIDEMothershipIntegration";
 
 /**
  * Hook that provides ValorIDE-specific mothership integration
@@ -13,7 +16,9 @@ export const useValorIDEMothership = () => {
   // Initialize the integration service
   useEffect(() => {
     if (!integrationRef.current) {
-      integrationRef.current = new ValorIDEMothershipIntegration(mothershipService);
+      integrationRef.current = new ValorIDEMothershipIntegration(
+        mothershipService,
+      );
     } else {
       integrationRef.current.updateMothershipService(mothershipService);
     }
@@ -48,11 +53,14 @@ export const useValorIDEMothership = () => {
   }, []);
 
   // Send remote command to specific instance
-  const sendRemoteCommand = useCallback((targetInstanceId: string, type: string, data: any) => {
-    if (integrationRef.current) {
-      integrationRef.current.sendRemoteCommand(targetInstanceId, type, data);
-    }
-  }, []);
+  const sendRemoteCommand = useCallback(
+    (targetInstanceId: string, type: string, data: any) => {
+      if (integrationRef.current) {
+        integrationRef.current.sendRemoteCommand(targetInstanceId, type, data);
+      }
+    },
+    [],
+  );
 
   // Broadcast to all instances
   const broadcastToAll = useCallback((type: string, data: any) => {
@@ -76,81 +84,99 @@ export const useValorIDEMothership = () => {
   }, []);
 
   // Helper functions for common actions
-  const trackChatMessage = useCallback(async (messageId: string, content: string, taskId?: string) => {
-    await sendChatAction({
-      type: 'chat_message',
-      messageId,
-      taskId,
-      content,
-      metadata: {
-        timestamp: Date.now(),
-        length: content.length,
-      },
-    });
-  }, [sendChatAction]);
+  const trackChatMessage = useCallback(
+    async (messageId: string, content: string, taskId?: string) => {
+      await sendChatAction({
+        type: "chat_message",
+        messageId,
+        taskId,
+        content,
+        metadata: {
+          timestamp: Date.now(),
+          length: content.length,
+        },
+      });
+    },
+    [sendChatAction],
+  );
 
-  const trackToolUse = useCallback(async (toolName: string, args?: any, taskId?: string) => {
-    await sendChatAction({
-      type: 'tool_use',
-      toolName,
-      taskId,
-      metadata: {
-        arguments: args,
-        timestamp: Date.now(),
-      },
-    });
-  }, [sendChatAction]);
+  const trackToolUse = useCallback(
+    async (toolName: string, args?: any, taskId?: string) => {
+      await sendChatAction({
+        type: "tool_use",
+        toolName,
+        taskId,
+        metadata: {
+          arguments: args,
+          timestamp: Date.now(),
+        },
+      });
+    },
+    [sendChatAction],
+  );
 
-  const trackFileEdit = useCallback(async (fileName: string, content?: string, taskId?: string) => {
-    await sendChatAction({
-      type: 'file_edit',
-      fileName,
-      taskId,
-      content,
-      metadata: {
-        timestamp: Date.now(),
-      },
-    });
-  }, [sendChatAction]);
+  const trackFileEdit = useCallback(
+    async (fileName: string, content?: string, taskId?: string) => {
+      await sendChatAction({
+        type: "file_edit",
+        fileName,
+        taskId,
+        content,
+        metadata: {
+          timestamp: Date.now(),
+        },
+      });
+    },
+    [sendChatAction],
+  );
 
-  const trackCommandExecute = useCallback(async (command: string, taskId?: string) => {
-    await sendChatAction({
-      type: 'command_execute',
-      command,
-      taskId,
-      metadata: {
-        timestamp: Date.now(),
-      },
-    });
-  }, [sendChatAction]);
+  const trackCommandExecute = useCallback(
+    async (command: string, taskId?: string) => {
+      await sendChatAction({
+        type: "command_execute",
+        command,
+        taskId,
+        metadata: {
+          timestamp: Date.now(),
+        },
+      });
+    },
+    [sendChatAction],
+  );
 
-  const trackTaskStart = useCallback(async (taskId: string, description?: string) => {
-    await sendChatAction({
-      type: 'task_start',
-      taskId,
-      metadata: {
-        description,
-        timestamp: Date.now(),
-      },
-    });
-  }, [sendChatAction]);
+  const trackTaskStart = useCallback(
+    async (taskId: string, description?: string) => {
+      await sendChatAction({
+        type: "task_start",
+        taskId,
+        metadata: {
+          description,
+          timestamp: Date.now(),
+        },
+      });
+    },
+    [sendChatAction],
+  );
 
-  const trackTaskComplete = useCallback(async (taskId: string, result?: any) => {
-    await sendChatAction({
-      type: 'task_complete',
-      taskId,
-      metadata: {
-        result,
-        timestamp: Date.now(),
-      },
-    });
-  }, [sendChatAction]);
+  const trackTaskComplete = useCallback(
+    async (taskId: string, result?: any) => {
+      await sendChatAction({
+        type: "task_complete",
+        taskId,
+        metadata: {
+          result,
+          timestamp: Date.now(),
+        },
+      });
+    },
+    [sendChatAction],
+  );
 
   return {
     // Connection status
     isConnected,
     instanceId,
-    
+
     // Core integration methods
     sendChatAction,
     setCurrentTask,
@@ -159,7 +185,7 @@ export const useValorIDEMothership = () => {
     sendRemoteCommand,
     broadcastToAll,
     getCurrentState,
-    
+
     // Helper methods for common tracking
     trackChatMessage,
     trackToolUse,

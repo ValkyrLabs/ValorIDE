@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +14,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_WORKFLOW_REQUEST,
-    FETCH_WORKFLOW_REQUEST,
-    LIST_WORKFLOW_REQUEST,
-    UPDATE_WORKFLOW_REQUEST,
-    DELETE_WORKFLOW_REQUEST,
-
-    addWorkflowFailure,
-    addWorkflowSuccess,
-
-    fetchWorkflowFailure,
-    fetchWorkflowSuccess,
-    
-    listWorkflowFailure,
-    listWorkflowSuccess,
-
-    updateWorkflowFailure,
-    updateWorkflowSuccess,
-    
-    deleteWorkflowFailure,
-    deleteWorkflowSuccess,
-    
-} from '../actions/WorkflowApiAction';
+  ADD_WORKFLOW_REQUEST,
+  FETCH_WORKFLOW_REQUEST,
+  LIST_WORKFLOW_REQUEST,
+  UPDATE_WORKFLOW_REQUEST,
+  DELETE_WORKFLOW_REQUEST,
+  addWorkflowFailure,
+  addWorkflowSuccess,
+  fetchWorkflowFailure,
+  fetchWorkflowSuccess,
+  listWorkflowFailure,
+  listWorkflowSuccess,
+  updateWorkflowFailure,
+  updateWorkflowSuccess,
+  deleteWorkflowFailure,
+  deleteWorkflowSuccess,
+} from "../actions/WorkflowApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +48,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: Workflow
 */
 
-
-
-export const WorkflowMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("Workflow MIDDLEWARE: " + JSON.stringify(action) )
+export const WorkflowMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("Workflow MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

@@ -26,7 +26,11 @@ import { BrowserSession } from "@services/browser/BrowserSession";
 import { McpHub } from "@services/mcp/McpHub";
 import { searchWorkspaceFiles } from "@services/search/file-search";
 import { telemetryService } from "@services/telemetry/TelemetryService";
+import { getLLMPromptService } from "@services/llmPromptService";
+import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
+import { StartupAuthService } from "@services/auth/StartupAuthService";
 import { ApiProvider, ModelInfo } from "@shared/api";
+import { LlmDetailsSummary, SelectedLlmDetails } from "@shared/llm";
 import { ChatContent } from "@shared/ChatContent";
 import { ChatSettings } from "@shared/ChatSettings";
 import {
@@ -42,7 +46,10 @@ import {
   McpServer,
 } from "@shared/mcp";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
-import { validateAdvancedSettings, DEFAULT_ADVANCED_SETTINGS } from "@shared/AdvancedSettings";
+import {
+  validateAdvancedSettings,
+  DEFAULT_ADVANCED_SETTINGS,
+} from "@shared/AdvancedSettings";
 import {
   ValorIDECheckpointRestore,
   WebviewMessage,
@@ -51,6 +58,7 @@ import { fileExistsAtPath } from "@utils/fs";
 import { searchCommits } from "@utils/git";
 import { getReadablePath, getWorkspacePath } from "@utils/path";
 import { resolveThorapiFolderPath } from "@utils/thorapi";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { getTotalTasksSize } from "@utils/storage";
 import { openMention } from "../mentions";
 import {
@@ -119,6 +127,14 @@ export class Controller {
       },
     );
 
+    this.disposables.push(
+      vscode.workspace.onDidChangeConfiguration((event) => {
+        if (event.affectsConfiguration("valoride.valkyrai.host")) {
+          void this.handleValkyraiHostConfigChange();
+        }
+      }),
+    );
+
     // Clean up legacy checkpoints
     cleanupLegacyCheckpoints(
       this.context.globalStorageUri.fsPath,
@@ -161,7 +177,9 @@ export class Controller {
       this.workspaceTracker.dispose();
       this.outputChannel.appendLine("Workspace tracker disposed successfully");
     } catch (error) {
-      this.outputChannel.appendLine(`Error disposing workspace tracker: ${error}`);
+      this.outputChannel.appendLine(
+        `Error disposing workspace tracker: ${error}`,
+      );
       console.error("Error disposing workspace tracker:", error);
     }
 
@@ -311,10 +329,10 @@ export class Controller {
         await this.setUserInfo(
           message.user
             ? {
-              username: message.user.name || null,
-              email: null, // Replace with actual email if available
-              avatarUrl: null, // Replace with actual avatar URL if available
-            }
+                username: message.user.name || null,
+                email: null, // Replace with actual email if available
+                avatarUrl: null, // Replace with actual avatar URL if available
+              }
             : undefined,
         );
         await this.postStateToWebview();
@@ -555,6 +573,44 @@ export class Controller {
       case "refreshLLMDetails":
         await this.refreshLLMDetails();
         break;
+      case "testValkyraiHost": {
+        const targetHost = message.valkyraiHost?.trim();
+        if (!targetHost) {
+          await this.postMessageToWebview({
+            type: "valkyraiHostTestResult",
+            host: "",
+            success: false,
+            error: "Host URL is required.",
+          });
+          break;
+        }
+        await this.testValkyraiHostConnection(targetHost);
+        break;
+      }
+      case "updateValkyraiHost": {
+        const nextHost = message.valkyraiHost?.trim();
+        if (!nextHost) {
+          break;
+        }
+        await vscode.workspace
+          .getConfiguration("valoride.valkyrai")
+          .update("host", nextHost, vscode.ConfigurationTarget.Global);
+        await updateGlobalState(this.context, "valkyraiHost", nextHost);
+        await this.postStateToWebview();
+        await this.refreshLLMDetails();
+        try {
+          const startupAuthService = StartupAuthService.getInstance(
+            this.context,
+          );
+          await startupAuthService.restoreAuthentication();
+        } catch (error) {
+          console.warn(
+            "Failed to restore authentication after host change:",
+            error,
+          );
+        }
+        break;
+      }
       case "refreshOpenAiModels":
         const { apiConfiguration } = await getAllExtensionState(this.context);
         const openAiModels = await this.getOpenAiModels(
@@ -961,11 +1017,92 @@ export class Controller {
         await this.postMessageToWebview({ type: "didUpdateSettings" });
         break;
       }
+      case "updateLLMDetails": {
+        try {
+          const selected = message.llmDetails;
+          if (!selected?.id || !selected.initialPrompt) {
+            void vscode.window.showErrorMessage(
+              "Unable to load prompt — missing initial prompt text.",
+            );
+            break;
+          }
+
+          const normalizedSelection: SelectedLlmDetails = {
+            id: selected.id,
+            name: selected.name || selected.id,
+            description: selected.description,
+            tags: selected.tags || [],
+            ratingScore: selected.ratingScore,
+            promptType: selected.promptType ?? "SYSTEM",
+            initialPrompt: selected.initialPrompt,
+            prompt: selected.initialPrompt,
+            mode: (selected.promptType ?? "SYSTEM") as "SYSTEM" | "APPEND",
+            source: "thorapi",
+            updatedAt: Date.now(),
+          };
+
+          await updateGlobalState(
+            this.context,
+            "selectedLlmDetails",
+            normalizedSelection,
+          );
+
+          try {
+            const promptService = getLLMPromptService();
+            promptService.applyManualSelection({
+              llmDetailsId: normalizedSelection.id,
+              name: normalizedSelection.name,
+              prompt: normalizedSelection.prompt,
+              mode: normalizedSelection.mode,
+              tags: normalizedSelection.tags,
+              source: "thorapi",
+            });
+          } catch (error) {
+            console.error("Failed to apply prompt override:", error);
+          }
+
+          try {
+            const broadcaster = getSwarmPromptBroadcaster();
+            const supervisorId = vscode.env.machineId || "valoride-supervisor";
+            const intent = message.taskIntent || "manual-selection";
+            const broadcastMessage = broadcaster.selectPromptForTask(
+              supervisorId,
+              intent,
+              normalizedSelection.id,
+              normalizedSelection.tags || [],
+            );
+            const targets =
+              broadcaster.broadcastPromptSelection(broadcastMessage);
+            targets.forEach((workerId) =>
+              broadcaster.acknowledgePromptReload(
+                workerId,
+                normalizedSelection.id || "",
+              ),
+            );
+            await this.postMessageToWebview({
+              type: "swarm:broadcast",
+              payload: broadcastMessage,
+            });
+          } catch (error) {
+            console.error("Swarm prompt broadcaster unavailable:", error);
+          }
+
+          await this.postStateToWebview();
+          void vscode.window.showInformationMessage(
+            `LLM prompt switched to ${normalizedSelection.name} (${normalizedSelection.mode})`,
+          );
+        } catch (error) {
+          console.error("Failed to update LLMDetails selection:", error);
+          void vscode.window.showErrorMessage(
+            "Failed to update LLM prompt selection.",
+          );
+        }
+        break;
+      }
       case "requestSetBudgetLimit": {
         // Prompt user for USD budget limit and persist without toggling mode
-        const { chatSettings: currentChatSettings } = await getAllExtensionState(
-          this.context,
-        );
+        const { chatSettings: currentChatSettings } =
+          await getAllExtensionState(this.context);
         const valueStr = await vscode.window.showInputBox({
           title: "Set budget limit",
           prompt: "Set budget limit (USD) for this task",
@@ -980,7 +1117,8 @@ export class Controller {
           },
         });
         if (valueStr === undefined) break; // cancelled
-        const nextBudget = valueStr.trim() === "" ? undefined : Number(valueStr);
+        const nextBudget =
+          valueStr.trim() === "" ? undefined : Number(valueStr);
         const nextSettings = {
           ...(currentChatSettings ?? { mode: "act" as const }),
           budgetLimit: nextBudget,
@@ -999,9 +1137,8 @@ export class Controller {
       }
       case "requestSetApiThrottle": {
         // Prompt user for delay between API calls (ms) and persist
-        const { chatSettings: currentChatSettings } = await getAllExtensionState(
-          this.context,
-        );
+        const { chatSettings: currentChatSettings } =
+          await getAllExtensionState(this.context);
         const valueStr = await vscode.window.showInputBox({
           title: "Set API throttle",
           prompt: "Set delay between API calls (ms)",
@@ -1346,7 +1483,9 @@ export class Controller {
                 )
                 .then((choice) => {
                   if (choice === "Open Browser") {
-                    vscode.env.openExternal(vscode.Uri.parse(`http://localhost:${port}`));
+                    vscode.env.openExternal(
+                      vscode.Uri.parse(`http://localhost:${port}`),
+                    );
                   }
                 });
             }, 5000); // Wait 5 seconds for server to start
@@ -1362,7 +1501,7 @@ export class Controller {
       case "uploadOpenAPISpec": {
         try {
           const { filename, fileContent, fileSize } = message;
-          
+
           if (!filename || !fileContent) {
             throw new Error("Missing filename or file content");
           }
@@ -1370,15 +1509,21 @@ export class Controller {
           // Validate file size on backend as well
           const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
           if (fileSize && fileSize > MAX_FILE_SIZE) {
-            throw new Error(`File size exceeds maximum limit of 10MB. Current size: ${(fileSize / 1024 / 1024).toFixed(2)}MB`);
+            throw new Error(
+              `File size exceeds maximum limit of 10MB. Current size: ${(fileSize / 1024 / 1024).toFixed(2)}MB`,
+            );
           }
 
           // Validate content type and structure
           const isJson = filename.toLowerCase().endsWith(".json");
-          const isYaml = filename.toLowerCase().endsWith(".yaml") || filename.toLowerCase().endsWith(".yml");
+          const isYaml =
+            filename.toLowerCase().endsWith(".yaml") ||
+            filename.toLowerCase().endsWith(".yml");
 
           if (!isJson && !isYaml) {
-            throw new Error("Invalid file type. Only JSON and YAML OpenAPI spec files are supported.");
+            throw new Error(
+              "Invalid file type. Only JSON and YAML OpenAPI spec files are supported.",
+            );
           }
 
           // Parse and validate the OpenAPI spec
@@ -1392,37 +1537,56 @@ export class Controller {
                 throw new Error("File is empty.");
               }
               // Check for required OpenAPI fields
-              if (!fileContent.includes("openapi:") && !fileContent.includes("swagger:") &&
-                  !fileContent.includes("\"openapi\"") && !fileContent.includes("\"swagger\"")) {
-                throw new Error("File does not contain OpenAPI specification (missing 'openapi' or 'swagger' key).");
+              if (
+                !fileContent.includes("openapi:") &&
+                !fileContent.includes("swagger:") &&
+                !fileContent.includes('"openapi"') &&
+                !fileContent.includes('"swagger"')
+              ) {
+                throw new Error(
+                  "File does not contain OpenAPI specification (missing 'openapi' or 'swagger' key).",
+                );
               }
               spec = fileContent;
             }
           } catch (parseError) {
-            const errorMsg = parseError instanceof Error ? parseError.message : "Parse error";
+            const errorMsg =
+              parseError instanceof Error ? parseError.message : "Parse error";
             throw new Error(`Failed to parse OpenAPI spec: ${errorMsg}`);
           }
 
           // Validate required OpenAPI structure
           if (isJson) {
             if (!spec.openapi && !spec.swagger) {
-              throw new Error("Invalid OpenAPI spec: missing required 'openapi' or 'swagger' version field.");
+              throw new Error(
+                "Invalid OpenAPI spec: missing required 'openapi' or 'swagger' version field.",
+              );
             }
             if (!spec.info || !spec.info.title) {
-              throw new Error("Invalid OpenAPI spec: missing required 'info.title' field.");
+              throw new Error(
+                "Invalid OpenAPI spec: missing required 'info.title' field.",
+              );
             }
             if (!spec.paths && !spec.components?.schemas) {
-              throw new Error("Invalid OpenAPI spec: missing required 'paths' or 'components.schemas' definitions.");
+              throw new Error(
+                "Invalid OpenAPI spec: missing required 'paths' or 'components.schemas' definitions.",
+              );
             }
           }
 
           // Store the spec in a temporary location for processing
-          const specsDir = path.join(this.context.globalStorageUri.fsPath, "openapi-specs");
+          const specsDir = path.join(
+            this.context.globalStorageUri.fsPath,
+            "openapi-specs",
+          );
           await fs.mkdir(specsDir, { recursive: true });
 
           const timestamp = Date.now();
           const sanitizedFilename = filename.replace(/[^\\w.-]/g, "_");
-          const specPath = path.join(specsDir, `${timestamp}_${sanitizedFilename}`);
+          const specPath = path.join(
+            specsDir,
+            `${timestamp}_${sanitizedFilename}`,
+          );
           await fs.writeFile(specPath, fileContent);
 
           // Send success response back to webview
@@ -1444,7 +1608,7 @@ export class Controller {
           }
 
           // Call ThorAPI /v1/thorapi/specs/import endpoint
-          const apiBaseUrl = process.env.VITE_basePath || "http://localhost:8080/v1";
+          const apiBaseUrl = getValkyraiBasePath();
           const importUrl = `${apiBaseUrl}/thorapi/specs/import`;
 
           try {
@@ -1458,7 +1622,7 @@ export class Controller {
               {
                 headers,
                 timeout: 30000,
-              }
+              },
             );
 
             if (response.data?.success === true || response.status === 200) {
@@ -1468,9 +1632,13 @@ export class Controller {
                 filename: filename,
                 message: `Successfully imported ${filename}. Ready to generate code.`,
               });
-              console.log(`[uploadOpenAPISpec] Imported to ThorAPI: ${filename}`);
+              console.log(
+                `[uploadOpenAPISpec] Imported to ThorAPI: ${filename}`,
+              );
             } else {
-              throw new Error(response.data?.error || "ThorAPI returned unexpected response");
+              throw new Error(
+                response.data?.error || "ThorAPI returned unexpected response",
+              );
             }
           } catch (apiError) {
             let errorMsg = "Failed to import to ThorAPI";
@@ -1487,7 +1655,7 @@ export class Controller {
             } else if (apiError instanceof Error) {
               errorMsg = apiError.message;
             }
-            
+
             await this.postMessageToWebview({
               type: "uploadOpenAPISpecResult",
               success: false,
@@ -1497,11 +1665,16 @@ export class Controller {
             console.error(`[uploadOpenAPISpec] ThorAPI error: ${errorMsg}`);
             throw new Error(errorMsg);
           }
-          console.log(`[uploadOpenAPISpec] Successfully processed: ${filename} (${(fileSize / 1024).toFixed(2)}KB)`);
+          console.log(
+            `[uploadOpenAPISpec] Successfully processed: ${filename} (${(fileSize / 1024).toFixed(2)}KB)`,
+          );
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : "Failed to process OpenAPI spec";
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : "Failed to process OpenAPI spec";
           console.error(`[uploadOpenAPISpec] Error: ${errorMessage}`, error);
-          
+
           await this.postMessageToWebview({
             type: "uploadOpenAPISpecResult",
             success: false,
@@ -1512,13 +1685,8 @@ export class Controller {
         break;
       }
       case "streamToThorapi": {
-        const {
-          blobData,
-          applicationId,
-          applicationName,
-          filename,
-          mimeType,
-        } = message;
+        const { blobData, applicationId, applicationName, filename, mimeType } =
+          message;
 
         const sendProgress = async (step: string, progressMessage: string) => {
           if (!applicationId) {
@@ -1547,12 +1715,12 @@ export class Controller {
           await fs.mkdir(thorapiFolderPath, { recursive: true });
 
           const incomingName =
-            filename?.trim() ||
-            `application-${applicationId}-${Date.now()}`;
-          const sanitizedBaseName = path
-            .basename(incomingName)
-            .replace(/[\\/:*?"<>|]/g, "_")
-            .trim() || `application-${applicationId}-${Date.now()}`;
+            filename?.trim() || `application-${applicationId}-${Date.now()}`;
+          const sanitizedBaseName =
+            path
+              .basename(incomingName)
+              .replace(/[\\/:*?"<>|]/g, "_")
+              .trim() || `application-${applicationId}-${Date.now()}`;
 
           const mime = mimeType?.toLowerCase() ?? "";
           const looksLikeZip = isZipBuffer(binaryData) || mime.includes("zip");
@@ -2203,7 +2371,7 @@ export class Controller {
 
       // Fetch server details from marketplace using same URL pattern as ApplicationService
       const response = await axios.post<McpDownloadResponse>(
-        `${process.env.VITE_basePath || "http://localhost:8080/v1"}/McpServer`,
+        `${getValkyraiBasePath()}/McpServer`,
         { mcpId },
         {
           headers,
@@ -2529,6 +2697,8 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
 
   async refreshLLMDetails() {
     let models: Record<string, any> = {};
+    const llmDetailsList: LlmDetailsSummary[] = [];
+    let lastError: string | undefined;
     try {
       const { apiConfiguration } = await getAllExtensionState(this.context);
 
@@ -2538,6 +2708,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         await this.postMessageToWebview({
           type: "llmDetailsUpdated",
           models: {},
+          llmDetails: [],
         });
         return {};
       }
@@ -2568,9 +2739,28 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
               supportsPromptCache: llmDetail.supportsPromptCache,
               inputPrice: llmDetail.inputPrice,
               outputPrice: llmDetail.outputPrice,
-              description: llmDetail.description || `${llmDetail.provider} ${llmDetail.name}${llmDetail.version ? ` (${llmDetail.version})` : ""}`,
+              description:
+                llmDetail.description ||
+                `${llmDetail.provider} ${llmDetail.name}${llmDetail.version ? ` (${llmDetail.version})` : ""}`,
             };
             models[llmDetail.id] = modelInfo;
+            llmDetailsList.push({
+              id: llmDetail.id,
+              name: llmDetail.name || llmDetail.provider || llmDetail.id,
+              description: llmDetail.description,
+              promptType: (llmDetail.promptType || "SYSTEM") as
+                | "SYSTEM"
+                | "APPEND",
+              initialPrompt: llmDetail.initialPrompt,
+              tags: Array.isArray(llmDetail.tags) ? llmDetail.tags : [],
+              ratingScore:
+                typeof llmDetail.ratingScore === "number"
+                  ? llmDetail.ratingScore
+                  : undefined,
+              provider: llmDetail.provider,
+              version: llmDetail.version,
+              lastModifiedDate: llmDetail.lastModifiedDate,
+            });
           }
         }
         console.log("LLMDetails fetched from ValkyrAI", models);
@@ -2579,13 +2769,63 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       }
     } catch (error) {
       console.error("Error fetching LLMDetails from ValkyrAI:", error);
+      lastError =
+        error instanceof Error ? error.message : "Unknown LLMDetails error";
     }
 
     await this.postMessageToWebview({
       type: "llmDetailsUpdated",
       models,
+      llmDetails: llmDetailsList,
+      error: lastError,
     });
     return models;
+  }
+
+  private async testValkyraiHostConnection(host: string) {
+    let success = false;
+    let errorMessage: string | undefined;
+    const normalizedHost = host.replace(/\/$/, "");
+    const endpoints = [
+      `${normalizedHost}/health`,
+      `${normalizedHost}/status`,
+      normalizedHost,
+    ];
+    for (const endpoint of endpoints) {
+      try {
+        await axios.get(endpoint, { timeout: 5000 });
+        success = true;
+        errorMessage = undefined;
+        break;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          success = true;
+          errorMessage = undefined;
+          break;
+        }
+        errorMessage =
+          error instanceof Error ? error.message : "Unable to reach host.";
+      }
+    }
+    await this.postMessageToWebview({
+      type: "valkyraiHostTestResult",
+      host: normalizedHost,
+      success,
+      error: errorMessage,
+    });
+  }
+
+  private async handleValkyraiHostConfigChange() {
+    try {
+      const configuredHost = vscode.workspace
+        .getConfiguration("valoride.valkyrai")
+        .get<string>("host");
+      await updateGlobalState(this.context, "valkyraiHost", configuredHost);
+      await this.postStateToWebview();
+      await this.refreshLLMDetails();
+    } catch (error) {
+      console.error("Failed to react to ValkyrAI host change:", error);
+    }
   }
 
   // Context menus and code actions
@@ -2916,53 +3156,78 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
     const advancedSettings = validateAdvancedSettings({
       fileProcessing: {
         maxFileSize:
-          (cfg.get<number>("advanced.fileProcessing.maxFileSize") as number | undefined) ??
+          (cfg.get<number>("advanced.fileProcessing.maxFileSize") as
+            | number
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.fileProcessing.maxFileSize,
         warnLargeFiles:
-          (cfg.get<boolean>("advanced.fileProcessing.warnLargeFiles") as boolean | undefined) ??
+          (cfg.get<boolean>("advanced.fileProcessing.warnLargeFiles") as
+            | boolean
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.fileProcessing.warnLargeFiles,
         largeFileThreshold:
-          (cfg.get<number>("advanced.fileProcessing.largeFileThreshold") as number | undefined) ??
+          (cfg.get<number>("advanced.fileProcessing.largeFileThreshold") as
+            | number
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.fileProcessing.largeFileThreshold,
         chunkSize: DEFAULT_ADVANCED_SETTINGS.fileProcessing.chunkSize,
         streamingDelay: DEFAULT_ADVANCED_SETTINGS.fileProcessing.streamingDelay,
-        enableProgressiveLoading: DEFAULT_ADVANCED_SETTINGS.fileProcessing.enableProgressiveLoading,
+        enableProgressiveLoading:
+          DEFAULT_ADVANCED_SETTINGS.fileProcessing.enableProgressiveLoading,
       },
       budgetAlerts: {
         depletedThreshold:
-          (cfg.get<number>("advanced.budgetAlerts.depletedThreshold") as number | undefined) ??
+          (cfg.get<number>("advanced.budgetAlerts.depletedThreshold") as
+            | number
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.budgetAlerts.depletedThreshold,
         criticalThreshold:
-          (cfg.get<number>("advanced.budgetAlerts.criticalThreshold") as number | undefined) ??
+          (cfg.get<number>("advanced.budgetAlerts.criticalThreshold") as
+            | number
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.budgetAlerts.criticalThreshold,
         lowThreshold:
-          (cfg.get<number>("advanced.budgetAlerts.lowThreshold") as number | undefined) ??
-          DEFAULT_ADVANCED_SETTINGS.budgetAlerts.lowThreshold,
+          (cfg.get<number>("advanced.budgetAlerts.lowThreshold") as
+            | number
+            | undefined) ?? DEFAULT_ADVANCED_SETTINGS.budgetAlerts.lowThreshold,
         alertThreshold:
-          (cfg.get<number>("advanced.budgetAlerts.alertThreshold") as number | undefined) ??
+          (cfg.get<number>("advanced.budgetAlerts.alertThreshold") as
+            | number
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.budgetAlerts.alertThreshold,
       },
       debugging: {
         enableVerboseLogging:
-          (cfg.get<boolean>("advanced.debugging.enableVerboseLogging") as boolean | undefined) ??
+          (cfg.get<boolean>("advanced.debugging.enableVerboseLogging") as
+            | boolean
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.debugging.enableVerboseLogging,
         saveFailedMatches:
-          (cfg.get<boolean>("advanced.debugging.saveFailedMatches") as boolean | undefined) ??
+          (cfg.get<boolean>("advanced.debugging.saveFailedMatches") as
+            | boolean
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.debugging.saveFailedMatches,
         enablePerformanceMetrics:
-          (cfg.get<boolean>("advanced.debugging.enablePerformanceMetrics") as boolean | undefined) ??
+          (cfg.get<boolean>("advanced.debugging.enablePerformanceMetrics") as
+            | boolean
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.debugging.enablePerformanceMetrics,
         logOutputFiltering:
-          (cfg.get<boolean>("advanced.debugging.logOutputFiltering") as boolean | undefined) ??
+          (cfg.get<boolean>("advanced.debugging.logOutputFiltering") as
+            | boolean
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.debugging.logOutputFiltering,
         showPsrResultsReport:
-          (cfg.get<boolean>("advanced.debugging.showPsrResultsReport") as boolean | undefined) ??
+          (cfg.get<boolean>("advanced.debugging.showPsrResultsReport") as
+            | boolean
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.debugging.showPsrResultsReport,
       },
       thorapi: {
         outputFolder:
-          (cfg.get<string>("advanced.thorapi.outputFolder") as string | undefined) ??
-          DEFAULT_ADVANCED_SETTINGS.thorapi.outputFolder,
+          (cfg.get<string>("advanced.thorapi.outputFolder") as
+            | string
+            | undefined) ?? DEFAULT_ADVANCED_SETTINGS.thorapi.outputFolder,
       },
     });
     const thorapiFolderPath = resolveThorapiFolderPath(cwd);

@@ -44,9 +44,7 @@ const McpToolRow = ({ tool, serverName }: McpToolRowProps) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
-          <VscSymbolMethod
-            style={{ marginRight: "6px" }}
-          />
+          <VscSymbolMethod style={{ marginRight: "6px" }} />
           <span style={{ fontWeight: 500 }}>{tool.name}</span>
         </div>
         {serverName &&

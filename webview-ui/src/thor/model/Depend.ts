@@ -20,14 +20,15 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,142 +37,161 @@ import { exists, mapValues } from '../src/runtime';
  * @export
  * @interface Depend
  */
-export type Depend  = {
-    /**
-     * 
-     * @type {string}
-     * @memberof Depend
-     */
-    groupId: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Depend
-     */
-    artifactId: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Depend
-     */
-    version: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Depend
-     */
-    scope?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Depend
-     */
-    status?: DependStatusEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof Depend
-     */
-    buildId?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof Depend
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof Depend
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof Depend
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof Depend
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof Depend
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof Depend
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof Depend
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof Depend
-     */
-    lastModifiedDate?: Date;
-}
+export type Depend = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof Depend
+   */
+  groupId: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Depend
+   */
+  artifactId: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Depend
+   */
+  version: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Depend
+   */
+  scope?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Depend
+   */
+  status?: DependStatusEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof Depend
+   */
+  buildId?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Depend
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Depend
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Depend
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Depend
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Depend
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Depend
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Depend
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Depend
+   */
+  lastModifiedDate?: Date;
+};
 
 export function DependFromJSON(json: any): Depend {
-    return {
-        'groupId': json['groupId'],
-        'artifactId': json['artifactId'],
-        'version': json['version'],
-        'scope': !exists(json, 'scope') ? undefined : json['scope'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'buildId': !exists(json, 'buildId') ? undefined : json['buildId'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    groupId: json["groupId"],
+    artifactId: json["artifactId"],
+    version: json["version"],
+    scope: !exists(json, "scope") ? undefined : json["scope"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    buildId: !exists(json, "buildId") ? undefined : json["buildId"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function DependToJSON(value?: Depend): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'groupId': value.groupId,
-        'artifactId': value.artifactId,
-        'version': value.version,
-        'scope': value.scope,
-        'status': value.status,
-        'buildId': value.buildId,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    groupId: value.groupId,
+    artifactId: value.artifactId,
+    version: value.version,
+    scope: value.scope,
+    status: value.status,
+    buildId: value.buildId,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum DependStatusEnum {
-    UPTODATE = 'up_to_date',
-    OUTDATED = 'outdated',
-    MISSING = 'missing'
+  UPTODATE = "up_to_date",
+  OUTDATED = "outdated",
+  MISSING = "missing",
 }
-
-

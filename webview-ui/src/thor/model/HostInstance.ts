@@ -20,14 +20,15 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,167 +37,190 @@ import { exists, mapValues } from '../src/runtime';
  * @export
  * @interface HostInstance
  */
-export type HostInstance  = {
-    /**
-     * Unique application name used for service and subdomain
-     * @type {string}
-     * @memberof HostInstance
-     */
-    name: string;
-    /**
-     * Fully qualified domain (if registered with ALB/Route53)
-     * @type {string}
-     * @memberof HostInstance
-     */
-    domain?: string;
-    /**
-     * ECS cluster name
-     * @type {string}
-     * @memberof HostInstance
-     */
-    cluste?: string;
-    /**
-     * ECS service ARN
-     * @type {string}
-     * @memberof HostInstance
-     */
-    serviceArn?: string;
-    /**
-     * ALB Target Group ARN
-     * @type {string}
-     * @memberof HostInstance
-     */
-    targetGroupArn?: string;
-    /**
-     * ALB Listener Rule ARN (host-based)
-     * @type {string}
-     * @memberof HostInstance
-     */
-    listenerRuleArn?: string;
-    /**
-     * Current lifecycle status
-     * @type {string}
-     * @memberof HostInstance
-     */
-    status?: HostInstanceStatusEnum;
-    /**
-     * Requested CPU units for the task (ECS)
-     * @type {number}
-     * @memberof HostInstance
-     */
-    cpus?: number;
-    /**
-     * Requested memory in MB for the task (ECS)
-     * @type {number}
-     * @memberof HostInstance
-     */
-    memory?: number;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof HostInstance
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof HostInstance
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof HostInstance
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof HostInstance
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof HostInstance
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof HostInstance
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof HostInstance
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof HostInstance
-     */
-    lastModifiedDate?: Date;
-}
+export type HostInstance = DataObject & {
+  /**
+   * Unique application name used for service and subdomain
+   * @type {string}
+   * @memberof HostInstance
+   */
+  name: string;
+  /**
+   * Fully qualified domain (if registered with ALB/Route53)
+   * @type {string}
+   * @memberof HostInstance
+   */
+  domain?: string;
+  /**
+   * ECS cluster name
+   * @type {string}
+   * @memberof HostInstance
+   */
+  cluste?: string;
+  /**
+   * ECS service ARN
+   * @type {string}
+   * @memberof HostInstance
+   */
+  serviceArn?: string;
+  /**
+   * ALB Target Group ARN
+   * @type {string}
+   * @memberof HostInstance
+   */
+  targetGroupArn?: string;
+  /**
+   * ALB Listener Rule ARN (host-based)
+   * @type {string}
+   * @memberof HostInstance
+   */
+  listenerRuleArn?: string;
+  /**
+   * Current lifecycle status
+   * @type {string}
+   * @memberof HostInstance
+   */
+  status?: HostInstanceStatusEnum;
+  /**
+   * Requested CPU units for the task (ECS)
+   * @type {number}
+   * @memberof HostInstance
+   */
+  cpus?: number;
+  /**
+   * Requested memory in MB for the task (ECS)
+   * @type {number}
+   * @memberof HostInstance
+   */
+  memory?: number;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof HostInstance
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof HostInstance
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof HostInstance
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof HostInstance
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof HostInstance
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof HostInstance
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof HostInstance
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof HostInstance
+   */
+  lastModifiedDate?: Date;
+};
 
 export function HostInstanceFromJSON(json: any): HostInstance {
-    return {
-        'name': json['name'],
-        'domain': !exists(json, 'domain') ? undefined : json['domain'],
-        'cluste': !exists(json, 'cluste') ? undefined : json['cluste'],
-        'serviceArn': !exists(json, 'serviceArn') ? undefined : json['serviceArn'],
-        'targetGroupArn': !exists(json, 'targetGroupArn') ? undefined : json['targetGroupArn'],
-        'listenerRuleArn': !exists(json, 'listenerRuleArn') ? undefined : json['listenerRuleArn'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'cpus': !exists(json, 'cpus') ? undefined : json['cpus'],
-        'memory': !exists(json, 'memory') ? undefined : json['memory'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: json["name"],
+    domain: !exists(json, "domain") ? undefined : json["domain"],
+    cluste: !exists(json, "cluste") ? undefined : json["cluste"],
+    serviceArn: !exists(json, "serviceArn") ? undefined : json["serviceArn"],
+    targetGroupArn: !exists(json, "targetGroupArn")
+      ? undefined
+      : json["targetGroupArn"],
+    listenerRuleArn: !exists(json, "listenerRuleArn")
+      ? undefined
+      : json["listenerRuleArn"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    cpus: !exists(json, "cpus") ? undefined : json["cpus"],
+    memory: !exists(json, "memory") ? undefined : json["memory"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function HostInstanceToJSON(value?: HostInstance): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'name': value.name,
-        'domain': value.domain,
-        'cluste': value.cluste,
-        'serviceArn': value.serviceArn,
-        'targetGroupArn': value.targetGroupArn,
-        'listenerRuleArn': value.listenerRuleArn,
-        'status': value.status,
-        'cpus': value.cpus,
-        'memory': value.memory,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    domain: value.domain,
+    cluste: value.cluste,
+    serviceArn: value.serviceArn,
+    targetGroupArn: value.targetGroupArn,
+    listenerRuleArn: value.listenerRuleArn,
+    status: value.status,
+    cpus: value.cpus,
+    memory: value.memory,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum HostInstanceStatusEnum {
-    STARTING = 'starting',
-    RUNNING = 'running',
-    STOPPED = 'stopped',
-    ERROR = 'error'
+  STARTING = "starting",
+  RUNNING = "running",
+  STOPPED = "stopped",
+  ERROR = "error",
 }
-
-

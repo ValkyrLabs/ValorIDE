@@ -20,22 +20,16 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import {
-
-
-    ExecModule,
-    ExecModuleFromJSON,
-    ExecModuleToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { ExecModule, ExecModuleFromJSON, ExecModuleToJSON } from "./";
 
 // thorapi
 
@@ -44,167 +38,190 @@ import {
  * @export
  * @interface IntegrationAccount
  */
-export type IntegrationAccount  = {
-    /**
-     * 
-     * @type {string}
-     * @memberof IntegrationAccount
-     */
-    execModuleId?: string;
-    /**
-     * 
-     * @type {ExecModule}
-     * @memberof IntegrationAccount
-     */
-    execModule?: ExecModule;
-    /**
-     * account name
-     * @type {string}
-     * @memberof IntegrationAccount
-     */
-    accountName?: string;
-    /**
-     * account username
-     * @type {string}
-     * @memberof IntegrationAccount
-     */
-    username?: string;
-    /**
-     * account password - encrypted
-     * @type {string}
-     * @memberof IntegrationAccount
-     */
-    password?: string;
-    /**
-     * account password - encrypted
-     * @type {string}
-     * @memberof IntegrationAccount
-     */
-    apiKey?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof IntegrationAccount
-     */
-    accountId?: string;
-    /**
-     * Integration Connection Status
-     * @type {string}
-     * @memberof IntegrationAccount
-     */
-    status?: IntegrationAccountStatusEnum;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof IntegrationAccount
-     */
-    verified?: boolean;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof IntegrationAccount
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof IntegrationAccount
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof IntegrationAccount
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof IntegrationAccount
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof IntegrationAccount
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof IntegrationAccount
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof IntegrationAccount
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof IntegrationAccount
-     */
-    lastModifiedDate?: Date;
-}
+export type IntegrationAccount = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof IntegrationAccount
+   */
+  execModuleId?: string;
+  /**
+   *
+   * @type {ExecModule}
+   * @memberof IntegrationAccount
+   */
+  execModule?: ExecModule;
+  /**
+   * account name
+   * @type {string}
+   * @memberof IntegrationAccount
+   */
+  accountName?: string;
+  /**
+   * account username
+   * @type {string}
+   * @memberof IntegrationAccount
+   */
+  username?: string;
+  /**
+   * account password - encrypted
+   * @type {string}
+   * @memberof IntegrationAccount
+   */
+  password?: string;
+  /**
+   * account password - encrypted
+   * @type {string}
+   * @memberof IntegrationAccount
+   */
+  apiKey?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof IntegrationAccount
+   */
+  accountId?: string;
+  /**
+   * Integration Connection Status
+   * @type {string}
+   * @memberof IntegrationAccount
+   */
+  status?: IntegrationAccountStatusEnum;
+  /**
+   *
+   * @type {boolean}
+   * @memberof IntegrationAccount
+   */
+  verified?: boolean;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof IntegrationAccount
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof IntegrationAccount
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof IntegrationAccount
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof IntegrationAccount
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof IntegrationAccount
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof IntegrationAccount
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof IntegrationAccount
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof IntegrationAccount
+   */
+  lastModifiedDate?: Date;
+};
 
 export function IntegrationAccountFromJSON(json: any): IntegrationAccount {
-    return {
-        'execModuleId': !exists(json, 'execModuleId') ? undefined : json['execModuleId'],
-        'execModule': !exists(json, 'execModule') ? undefined : ExecModuleFromJSON(json['execModule']),
-        'accountName': !exists(json, 'accountName') ? undefined : json['accountName'],
-        'username': !exists(json, 'username') ? undefined : json['username'],
-        'password': !exists(json, 'password') ? undefined : json['password'],
-        'apiKey': !exists(json, 'apiKey') ? undefined : json['apiKey'],
-        'accountId': !exists(json, 'accountId') ? undefined : json['accountId'],
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'verified': !exists(json, 'verified') ? undefined : json['verified'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    execModuleId: !exists(json, "execModuleId")
+      ? undefined
+      : json["execModuleId"],
+    execModule: !exists(json, "execModule")
+      ? undefined
+      : ExecModuleFromJSON(json["execModule"]),
+    accountName: !exists(json, "accountName") ? undefined : json["accountName"],
+    username: !exists(json, "username") ? undefined : json["username"],
+    password: !exists(json, "password") ? undefined : json["password"],
+    apiKey: !exists(json, "apiKey") ? undefined : json["apiKey"],
+    accountId: !exists(json, "accountId") ? undefined : json["accountId"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    verified: !exists(json, "verified") ? undefined : json["verified"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function IntegrationAccountToJSON(value?: IntegrationAccount): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'execModuleId': value.execModuleId,
-        'execModule': ExecModuleToJSON(value.execModule),
-        'accountName': value.accountName,
-        'username': value.username,
-        'password': value.password,
-        'apiKey': value.apiKey,
-        'accountId': value.accountId,
-        'status': value.status,
-        'verified': value.verified,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    execModuleId: value.execModuleId,
+    execModule: ExecModuleToJSON(value.execModule),
+    accountName: value.accountName,
+    username: value.username,
+    password: value.password,
+    apiKey: value.apiKey,
+    accountId: value.accountId,
+    status: value.status,
+    verified: value.verified,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum IntegrationAccountStatusEnum {
-    READY = 'ready',
-    CLOSED = 'closed',
-    EXECUTED = 'executed',
-    ERROR = 'error'
+  READY = "ready",
+  CLOSED = "closed",
+  EXECUTED = "executed",
+  ERROR = "error",
 }
-
-

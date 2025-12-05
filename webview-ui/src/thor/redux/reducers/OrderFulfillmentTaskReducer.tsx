@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OrderFulfillmentTask } from '@thor/model/OrderFulfillmentTask';
+import { OrderFulfillmentTask } from "@thor/model/OrderFulfillmentTask";
 
 const OrderFulfillmentTaskSlice = createSlice({
   name: "OrderFulfillmentTasks",
@@ -12,20 +12,25 @@ const OrderFulfillmentTaskSlice = createSlice({
     },
 
     OrderFulfillmentTaskValueToggled(state, action) {
-      console.log("OrderFulfillmentTask TOGGLE")
-      console.warn(JSON.stringify(action))
-      const OrderFulfillmentTask:OrderFulfillmentTask = state.find((OrderFulfillmentTask) => OrderFulfillmentTask.id === action.payload.OrderFulfillmentTaskId);
+      console.log("OrderFulfillmentTask TOGGLE");
+      console.warn(JSON.stringify(action));
+      const OrderFulfillmentTask: OrderFulfillmentTask = state.find(
+        (OrderFulfillmentTask) =>
+          OrderFulfillmentTask.id === action.payload.OrderFulfillmentTaskId,
+      );
       if (OrderFulfillmentTask) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     OrderFulfillmentTaskpropertySet(state, action) {
-      const OrderFulfillmentTask = state.find((OrderFulfillmentTask) => OrderFulfillmentTask.id === action.payload.OrderFulfillmentTaskId);
+      const OrderFulfillmentTask = state.find(
+        (OrderFulfillmentTask) =>
+          OrderFulfillmentTask.id === action.payload.OrderFulfillmentTaskId,
+      );
       if (OrderFulfillmentTask) {
-      //  OrderFulfillmentTask[action.property] = action.payload[action.property];
+        //  OrderFulfillmentTask[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const OrderFulfillmentTaskSlice = createSlice({
 export const {
   OrderFulfillmentTaskAdded,
   OrderFulfillmentTaskValueToggled,
-  OrderFulfillmentTaskpropertySet
+  OrderFulfillmentTaskpropertySet,
 } = OrderFulfillmentTaskSlice.actions;
 export default OrderFulfillmentTaskSlice.reducer;

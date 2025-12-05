@@ -20,14 +20,15 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,100 +37,125 @@ import { exists, mapValues } from '../src/runtime';
  * @export
  * @interface RequeueDeadLetterEntryRequest
  */
-export type RequeueDeadLetterEntryRequest  = {
-    /**
-     * JSON value of input overrides to merge with original inputs for replay
-     * @type {string}
-     * @memberof RequeueDeadLetterEntryRequest
-     */
-    inputOverrides?: string;
-    /**
-     * Optional operator notes about the requeue operation
-     * @type {string}
-     * @memberof RequeueDeadLetterEntryRequest
-     */
-    notes?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof RequeueDeadLetterEntryRequest
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof RequeueDeadLetterEntryRequest
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof RequeueDeadLetterEntryRequest
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof RequeueDeadLetterEntryRequest
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof RequeueDeadLetterEntryRequest
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof RequeueDeadLetterEntryRequest
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof RequeueDeadLetterEntryRequest
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof RequeueDeadLetterEntryRequest
-     */
-    lastModifiedDate?: Date;
+export type RequeueDeadLetterEntryRequest = DataObject & {
+  /**
+   * JSON value of input overrides to merge with original inputs for replay
+   * @type {string}
+   * @memberof RequeueDeadLetterEntryRequest
+   */
+  inputOverrides?: string;
+  /**
+   * Optional operator notes about the requeue operation
+   * @type {string}
+   * @memberof RequeueDeadLetterEntryRequest
+   */
+  notes?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof RequeueDeadLetterEntryRequest
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof RequeueDeadLetterEntryRequest
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof RequeueDeadLetterEntryRequest
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof RequeueDeadLetterEntryRequest
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof RequeueDeadLetterEntryRequest
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof RequeueDeadLetterEntryRequest
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof RequeueDeadLetterEntryRequest
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof RequeueDeadLetterEntryRequest
+   */
+  lastModifiedDate?: Date;
+};
+
+export function RequeueDeadLetterEntryRequestFromJSON(
+  json: any,
+): RequeueDeadLetterEntryRequest {
+  return {
+    ...DataObjectFromJSON(json),
+    inputOverrides: !exists(json, "inputOverrides")
+      ? undefined
+      : json["inputOverrides"],
+    notes: !exists(json, "notes") ? undefined : json["notes"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
-export function RequeueDeadLetterEntryRequestFromJSON(json: any): RequeueDeadLetterEntryRequest {
-    return {
-        'inputOverrides': !exists(json, 'inputOverrides') ? undefined : json['inputOverrides'],
-        'notes': !exists(json, 'notes') ? undefined : json['notes'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+export function RequeueDeadLetterEntryRequestToJSON(
+  value?: RequeueDeadLetterEntryRequest,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    inputOverrides: value.inputOverrides,
+    notes: value.notes,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
-
-export function RequeueDeadLetterEntryRequestToJSON(value?: RequeueDeadLetterEntryRequest): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'inputOverrides': value.inputOverrides,
-        'notes': value.notes,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
-}
-
-

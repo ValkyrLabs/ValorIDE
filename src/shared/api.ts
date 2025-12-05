@@ -81,6 +81,9 @@ export interface ApiHandlerOptions {
   thinkingBudgetTokens?: number;
   reasoningEffort?: string;
   sambanovaApiKey?: string;
+  // new Gemini 3 options
+  geminiPlanModeThinkingLevel?: string; // e.g. "standard" | "deep"
+  geminiActModeThinkingLevel?: string; // same enum
   // Valkyrai pass-through settings
   valkyraiHost?: string; // e.g. http://localhost:8080
   valkyraiJwt?: string; // optional bearer
@@ -277,7 +280,8 @@ export const bedrockModels = {
     supportsPromptCache: true, // assume prompt cache is supported
     inputPrice: 3.0, //  per million input tokens
     outputPrice: 15.0, //  per million output tokens
-    description: 'Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)',
+    description:
+      "Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)",
   },
 
   "anthropic.claude-3-7-sonnet-20250219-v1:0": {
@@ -383,7 +387,8 @@ export const vertexModels = {
     supportsPromptCache: true, // assume prompt cache is supported
     inputPrice: 3.0, //  per million input tokens
     outputPrice: 15.0, //  per million output tokens
-    description: 'Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)',
+    description:
+      "Claude Sonnet 4.5 (see docs: https://docs.claude.com/en/docs/about-claude/models/overview)",
   },
 
   "claude-3-7-sonnet@20250219": {
@@ -575,11 +580,32 @@ export const openAiModelInfoSaneDefaults: OpenAiCompatibleModelInfo = {
   temperature: 0,
 };
 
+// can we use IMAGE GEN models?
+// https://ai.google.dev/gemini-api/docs/imagen
+
 // Gemini
 // https://ai.google.dev/gemini-api/docs/models/gemini
 export type GeminiModelId = keyof typeof geminiModels;
-export const geminiDefaultModelId: GeminiModelId = "gemini-2.0-flash-001";
+export const geminiDefaultModelId: GeminiModelId = "gemini-3-pro-preview";
 export const geminiModels = {
+  "gemini-3-pro-preview": {
+    maxTokens: 65_536, // 64k output
+    contextWindow: 1_048_576, // 1M input
+    supportsImages: true,
+    supportsPromptCache: false,
+    inputPriceTiers: [
+      { tokenLimit: 200_000, price: 2.0 }, // <= 200k input tokens
+      { tokenLimit: Infinity, price: 4.0 }, //  > 200k input tokens
+    ],
+    outputPriceTiers: [
+      { tokenLimit: 200_000, price: 12.0 }, // <= 200k output tokens
+      { tokenLimit: Infinity, price: 18.0 }, //  > 200k output tokens
+    ],
+    // Optional: if you want to mirror Cline’s thinking-level UI,
+    // you'll control that via ApiHandlerOptions (planMode / actMode),
+    // not via this ModelInfo.
+  },
+
   "gemini-2.5-flash-lite": {
     maxTokens: 65536,
     contextWindow: 1_048_576,
@@ -714,8 +740,9 @@ export const geminiModels = {
 
 // OpenAI Native
 // https://openai.com/api/pricing/
-export type OpenAiNativeModelId = keyof typeof openAiNativeModels
-export const openAiNativeDefaultModelId: OpenAiNativeModelId = "gpt-5-2025-08-07"
+export type OpenAiNativeModelId = keyof typeof openAiNativeModels;
+export const openAiNativeDefaultModelId: OpenAiNativeModelId =
+  "gpt-5-2025-08-07";
 export const openAiNativeModels = {
   "gpt-5-2025-08-07": {
     maxTokens: 8_192, // 128000 breaks context window truncation
@@ -753,7 +780,7 @@ export const openAiNativeModels = {
     outputPrice: 0,
     cacheReadsPrice: 0,
   },
-  "o3": {
+  o3: {
     maxTokens: 100_000,
     contextWindow: 200_000,
     supportsImages: true,
@@ -808,7 +835,7 @@ export const openAiNativeModels = {
     cacheReadsPrice: 0.55,
   },
   // don't support tool use yet
-  "o1": {
+  o1: {
     maxTokens: 100_000,
     contextWindow: 200_000,
     supportsImages: true,
@@ -869,8 +896,7 @@ export const openAiNativeModels = {
     inputPrice: 75,
     outputPrice: 150,
   },
-} as const satisfies Record<string, ModelInfo>
-
+} as const satisfies Record<string, ModelInfo>;
 
 // Azure OpenAI
 // https://learn.microsoft.com/en-us/azure/ai-services/openai/api-version-deprecation

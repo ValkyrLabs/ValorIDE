@@ -20,25 +20,23 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    ApiMetricSnapshot,
-    ApiMetricSnapshotFromJSON,
-    ApiMetricSnapshotToJSON,
-    ApiTrafficEvent,
-    ApiTrafficEventFromJSON,
-    ApiTrafficEventToJSON,
-} from './';
-
+  ApiMetricSnapshot,
+  ApiMetricSnapshotFromJSON,
+  ApiMetricSnapshotToJSON,
+  ApiTrafficEvent,
+  ApiTrafficEventFromJSON,
+  ApiTrafficEventToJSON,
+} from "./";
 
 // thorapi
 
@@ -47,100 +45,129 @@ import {
  * @export
  * @interface ApiMetricsResponse
  */
-export type ApiMetricsResponse  = {
-    /**
-     * Aggregated metrics sorted by request volume.
-     * @type {Array<ApiMetricSnapshot>}
-     * @memberof ApiMetricsResponse
-     */
-    endpoints?: Array<ApiMetricSnapshot>;
-    /**
-     * Recent API traffic events.
-     * @type {Array<ApiTrafficEvent>}
-     * @memberof ApiMetricsResponse
-     */
-    recent?: Array<ApiTrafficEvent>;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof ApiMetricsResponse
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof ApiMetricsResponse
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof ApiMetricsResponse
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof ApiMetricsResponse
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof ApiMetricsResponse
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof ApiMetricsResponse
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof ApiMetricsResponse
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof ApiMetricsResponse
-     */
-    lastModifiedDate?: Date;
-}
+export type ApiMetricsResponse = DataObject & {
+  /**
+   * Aggregated metrics sorted by request volume.
+   * @type {Array<ApiMetricSnapshot>}
+   * @memberof ApiMetricsResponse
+   */
+  endpoints?: Array<ApiMetricSnapshot>;
+  /**
+   * Recent API traffic events.
+   * @type {Array<ApiTrafficEvent>}
+   * @memberof ApiMetricsResponse
+   */
+  recent?: Array<ApiTrafficEvent>;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof ApiMetricsResponse
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof ApiMetricsResponse
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof ApiMetricsResponse
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof ApiMetricsResponse
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof ApiMetricsResponse
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof ApiMetricsResponse
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof ApiMetricsResponse
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof ApiMetricsResponse
+   */
+  lastModifiedDate?: Date;
+};
 
 export function ApiMetricsResponseFromJSON(json: any): ApiMetricsResponse {
-    return {
-        'endpoints': !exists(json, 'endpoints') ? undefined : (json['endpoints'] as Array<any>).map(ApiMetricSnapshotFromJSON),
-        'recent': !exists(json, 'recent') ? undefined : (json['recent'] as Array<any>).map(ApiTrafficEventFromJSON),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    endpoints: !exists(json, "endpoints")
+      ? undefined
+      : (json["endpoints"] as Array<any>).map(ApiMetricSnapshotFromJSON),
+    recent: !exists(json, "recent")
+      ? undefined
+      : (json["recent"] as Array<any>).map(ApiTrafficEventFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function ApiMetricsResponseToJSON(value?: ApiMetricsResponse): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'endpoints': value.endpoints === undefined ? undefined : (value.endpoints as Array<any>).map(ApiMetricSnapshotToJSON),
-        'recent': value.recent === undefined ? undefined : (value.recent as Array<any>).map(ApiTrafficEventToJSON),
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    endpoints:
+      value.endpoints === undefined
+        ? undefined
+        : (value.endpoints as Array<any>).map(ApiMetricSnapshotToJSON),
+    recent:
+      value.recent === undefined
+        ? undefined
+        : (value.recent as Array<any>).map(ApiTrafficEventToJSON),
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
-
-

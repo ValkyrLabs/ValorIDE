@@ -52,9 +52,7 @@ export class BaseToolHandler {
             case "replace_in_file":
                 return `[${block.name} for '${block.params.path}']`;
             case "search_files":
-                return `[${block.name} for '${block.params.regex}'${block.params.file_pattern
-                    ? ` in '${block.params.file_pattern}'`
-                    : ""}]`;
+                return `[${block.name} for '${block.params.regex}'${block.params.file_pattern ? ` in '${block.params.file_pattern}'` : ""}]`;
             case "list_files":
                 return `[${block.name} for '${block.params.path}']`;
             case "list_code_definition_names":

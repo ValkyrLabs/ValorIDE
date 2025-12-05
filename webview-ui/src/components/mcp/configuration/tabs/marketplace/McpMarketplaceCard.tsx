@@ -3,7 +3,14 @@ import styled from "styled-components";
 import { McpMarketplaceItem, McpServer } from "@shared/mcp";
 import { vscode } from "@/utils/vscode";
 import { useEvent } from "react-use";
-import { FaGithub, FaStar, FaCloudDownloadAlt, FaKey, FaExclamationTriangle } from "react-icons/fa";
+import {
+  FaGithub,
+  FaStar,
+  FaCloudDownloadAlt,
+  FaKey,
+  FaExclamationTriangle,
+  FaExternalLinkAlt,
+} from "react-icons/fa";
 
 interface McpMarketplaceCardProps {
   item: McpMarketplaceItem;
@@ -44,6 +51,22 @@ const McpMarketplaceCard = ({
     return item.githubUrl;
   }, [item.githubUrl]);
 
+  // Link to application detail page if mcpId is available (which could be an app ID),
+  // otherwise fall back to GitHub URL
+  const detailUrl = useMemo(() => {
+    // If this MCP is linked to an application (via mcpId that could be an applicationId)
+    // use the application detail page
+    if ((item as any).applicationId) {
+      return `http://localhost:5173/application-detail/${(item as any).applicationId}`;
+    }
+    // Fall back to GitHub URL for external MCP servers
+    return item.githubUrl;
+  }, [item]);
+
+  const isInternalApp = useMemo(() => {
+    return !!(item as any).applicationId;
+  }, [item]);
+
   return (
     <>
       <style>
@@ -61,7 +84,7 @@ const McpMarketplaceCard = ({
 				`}
       </style>
       <a
-        href={item.githubUrl}
+        href={detailUrl}
         className="mcp-card"
         style={{
           padding: "14px 16px",
@@ -112,9 +135,28 @@ const McpMarketplaceCard = ({
                   margin: 0,
                   fontSize: "13px",
                   fontWeight: 600,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
                 }}
               >
                 {item.name}
+                {isInternalApp && (
+                  <span
+                    style={{
+                      fontSize: "10px",
+                      fontWeight: 700,
+                      color: "#06ffa5",
+                      backgroundColor: "#06ffa515",
+                      padding: "2px 6px",
+                      borderRadius: "2px",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                    }}
+                  >
+                    Internal
+                  </span>
+                )}
               </h3>
               <div
                 onClick={(e) => {
@@ -231,7 +273,7 @@ const McpMarketplaceCard = ({
 
         {/* Description and tags */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {/* {!item.isRecommended && (
+          {/* {!item.isRecommended && (
                         <div
                             style={{
                                 display: "flex",

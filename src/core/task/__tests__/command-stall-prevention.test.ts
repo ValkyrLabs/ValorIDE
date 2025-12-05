@@ -2,38 +2,38 @@
  * Unit tests for command execution anti-stall mechanisms
  * Verifies that long-running commands don't block Valor IDE
  */
-import { jest } from '@jest/globals';
+import { jest } from "@jest/globals";
 
-describe('Command Stall Prevention', () => {
-  describe('2s timeout on command_output asks', () => {
-    it('should auto-approve ask after 2 seconds without user response', async () => {
+describe("Command Stall Prevention", () => {
+  describe("2s timeout on command_output asks", () => {
+    it("should auto-approve ask after 2 seconds without user response", async () => {
       const mockAsk = jest.fn();
       const timeoutMs = 2000;
 
-      const askPromise = mockAsk('command_output', 'chunk');
+      const askPromise = mockAsk("command_output", "chunk");
       const timeoutPromise = new Promise((resolve) => {
         setTimeout(() => {
-          resolve({ response: 'yesButtonClicked', text: '', images: [] });
+          resolve({ response: "yesButtonClicked", text: "", images: [] });
         }, timeoutMs);
       });
 
       const result = await Promise.race([askPromise, timeoutPromise]);
-      
-      expect(result).toEqual({ 
-        response: 'yesButtonClicked', 
-        text: '', 
-        images: [] 
+
+      expect(result).toEqual({
+        response: "yesButtonClicked",
+        text: "",
+        images: [],
       });
     });
 
-    it('should not wait indefinitely for user response', async () => {
+    it("should not wait indefinitely for user response", async () => {
       const startTime = Date.now();
       const timeoutMs = 2000;
       const maxWaitTime = timeoutMs + 500; // allow 500ms buffer
 
       const timeoutPromise = new Promise((resolve) => {
         setTimeout(() => {
-          resolve({ response: 'yesButtonClicked' });
+          resolve({ response: "yesButtonClicked" });
         }, timeoutMs);
       });
 
@@ -44,12 +44,12 @@ describe('Command Stall Prevention', () => {
       const elapsed = Date.now() - startTime;
 
       expect(elapsed).toBeLessThan(maxWaitTime);
-      expect(result).toEqual({ response: 'yesButtonClicked' });
+      expect(result).toEqual({ response: "yesButtonClicked" });
     });
   });
 
-  describe('Progress reporting every 5s', () => {
-    it('should report progress at 5s intervals', async () => {
+  describe("Progress reporting every 5s", () => {
+    it("should report progress at 5s intervals", async () => {
       const PROGRESS_REPORT_INTERVAL = 5000;
       const startTime = Date.now();
       const reports: number[] = [];
@@ -70,25 +70,25 @@ describe('Command Stall Prevention', () => {
       expect(reports.length).toBeGreaterThan(0);
     });
 
-    it('should format progress message with elapsed time', () => {
+    it("should format progress message with elapsed time", () => {
       const elapsed = 45;
       const message = `[Still running for ${elapsed}s...]`;
-      
-      expect(message).toContain('Still running');
-      expect(message).toContain('45');
+
+      expect(message).toContain("Still running");
+      expect(message).toContain("45");
       expect(message).toMatch(/\[\d+s\.\.\.\]/);
     });
   });
 
-  describe('60s Node execution timeout', () => {
-    it('should terminate command after 60 seconds', async () => {
+  describe("60s Node execution timeout", () => {
+    it("should terminate command after 60 seconds", async () => {
       const timeoutMs = 60000;
       let terminated = false;
 
       const timeoutPromise = new Promise<boolean>((_, reject) => {
         setTimeout(() => {
           terminated = true;
-          reject(new Error('Command timeout after 60s'));
+          reject(new Error("Command timeout after 60s"));
         }, timeoutMs);
       });
 
@@ -98,35 +98,35 @@ describe('Command Stall Prevention', () => {
       try {
         await Promise.race([neverEnds, timeoutPromise]);
       } catch (e) {
-        expect(e).toEqual(new Error('Command timeout after 60s'));
+        expect(e).toEqual(new Error("Command timeout after 60s"));
         expect(terminated).toBe(true);
       }
     });
 
-    it('should allow commands to complete before timeout', async () => {
+    it("should allow commands to complete before timeout", async () => {
       const timeoutMs = 60000;
       const completionTime = 5000;
 
       const completingCommand = new Promise((resolve) => {
-        setTimeout(() => resolve('completed'), completionTime);
+        setTimeout(() => resolve("completed"), completionTime);
       });
 
       const timeoutPromise = new Promise<string>((_, reject) => {
         setTimeout(() => {
-          reject(new Error('Timeout'));
+          reject(new Error("Timeout"));
         }, timeoutMs);
       });
 
       const result = await Promise.race([completingCommand, timeoutPromise]);
-      expect(result).toBe('completed');
+      expect(result).toBe("completed");
     });
   });
 
-  describe('Process start tracking', () => {
-    it('should track process start time accurately', () => {
+  describe("Process start tracking", () => {
+    it("should track process start time accurately", () => {
       const startTime = Date.now();
       const process = { startedAt: startTime } as any;
-      
+
       const elapsedMs = Date.now() - process.startedAt;
       const elapsedSeconds = Math.round(elapsedMs / 1000);
 
@@ -134,7 +134,7 @@ describe('Command Stall Prevention', () => {
       expect(elapsedSeconds).toBeLessThanOrEqual(1);
     });
 
-    it('should calculate elapsed time correctly', () => {
+    it("should calculate elapsed time correctly", () => {
       const startTime = Date.now();
       const process = { startedAt: startTime } as any;
 
@@ -146,15 +146,17 @@ describe('Command Stall Prevention', () => {
     });
   });
 
-  describe('Non-blocking output streaming', () => {
-    it('should not await say() calls', async () => {
+  describe("Non-blocking output streaming", () => {
+    it("should not await say() calls", async () => {
       let completed = false;
-      const mockSay = jest.fn<Promise<void>, [string, string]>().mockResolvedValue(undefined);
+      const mockSay = jest
+        .fn<Promise<void>, [string, string]>()
+        .mockResolvedValue(undefined);
 
       // Fire-and-forget call (async but not awaited)
-      const promise = mockSay('command_output', '[Still running for 5s...]');
+      const promise = mockSay("command_output", "[Still running for 5s...]");
       if (promise instanceof Promise) {
-        void (promise as Promise<void>).catch(() => { });
+        void (promise as Promise<void>).catch(() => {});
       }
 
       // Should not block
@@ -164,11 +166,13 @@ describe('Command Stall Prevention', () => {
       expect(mockSay).toHaveBeenCalled();
     });
 
-    it('should handle errors without blocking', async () => {
-      const mockSay = jest.fn<Promise<void>, [string, string]>().mockRejectedValue(new Error('Failed'));
+    it("should handle errors without blocking", async () => {
+      const mockSay = jest
+        .fn<Promise<void>, [string, string]>()
+        .mockRejectedValue(new Error("Failed"));
       let errorHandled = false;
 
-      const promise = mockSay('command_output', 'line');
+      const promise = mockSay("command_output", "line");
       if (promise instanceof Promise) {
         void (promise as Promise<void>).catch((error: any) => {
           errorHandled = true;
@@ -180,8 +184,8 @@ describe('Command Stall Prevention', () => {
     });
   });
 
-  describe('Integration: Long-running command flow', () => {
-    it('should handle 30s command with progress updates', () => {
+  describe("Integration: Long-running command flow", () => {
+    it("should handle 30s command with progress updates", () => {
       const PROGRESS_INTERVAL = 5000;
       const COMMAND_DURATION = 30000;
       const progressUpdates: string[] = [];
@@ -192,7 +196,7 @@ describe('Command Stall Prevention', () => {
       // Simulate command execution
       while (currentTime - startTime < COMMAND_DURATION) {
         const elapsed = Math.round((currentTime - startTime) / 1000);
-        
+
         if ((currentTime - startTime) % PROGRESS_INTERVAL < 100) {
           progressUpdates.push(`[Still running for ${elapsed}s...]`);
         }
@@ -201,16 +205,16 @@ describe('Command Stall Prevention', () => {
       }
 
       expect(progressUpdates.length).toBeGreaterThanOrEqual(5);
-      expect(progressUpdates[0]).toContain('Still running');
+      expect(progressUpdates[0]).toContain("Still running");
     });
 
-    it('should not stall on auto-approved asks', async () => {
+    it("should not stall on auto-approved asks", async () => {
       jest.setTimeout(10000);
       const results: string[] = [];
       const CHUNK_COUNT = 3;
 
       for (let i = 0; i < CHUNK_COUNT; i++) {
-        const autoApprove = Promise.resolve('yesButtonClicked');
+        const autoApprove = Promise.resolve("yesButtonClicked");
         const askPromise = new Promise<string>(() => {});
 
         const result = await Promise.race([askPromise, autoApprove]);
@@ -218,7 +222,7 @@ describe('Command Stall Prevention', () => {
       }
 
       expect(results.length).toBe(CHUNK_COUNT);
-      expect(results.every(r => r === 'yesButtonClicked')).toBe(true);
+      expect(results.every((r) => r === "yesButtonClicked")).toBe(true);
     });
   });
 });

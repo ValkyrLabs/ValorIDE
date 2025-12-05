@@ -1,33 +1,43 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { BalanceResponse } from '@thor/model/BalanceResponse'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { BalanceResponse } from "@thor/model/BalanceResponse";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type BalanceResponseResponse = BalanceResponse[]
+type BalanceResponseResponse = BalanceResponse[];
 
 export const BalanceResponseService = createApi({
-  reducerPath: 'BalanceResponse', // This should remain unique
+  reducerPath: "BalanceResponse", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['BalanceResponse'],
+  tagTypes: ["BalanceResponse"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getBalanceResponsesPaged: build.query<BalanceResponseResponse, { page: number; size?: number; example?: Partial<BalanceResponse> }>({
+    getBalanceResponsesPaged: build.query<
+      BalanceResponseResponse,
+      { page: number; size?: number; example?: Partial<BalanceResponse> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `BalanceResponse?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `BalanceResponse?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'BalanceResponse' as const, id })),
-              { type: 'BalanceResponse', id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({
+                type: "BalanceResponse" as const,
+                id,
+              })),
+              { type: "BalanceResponse", id: `PAGE_${page}` },
             ]
           : [],
     }),
 
     // 2) Simple "get all" Query (optional)
-    getBalanceResponses: build.query<BalanceResponseResponse, { example?: Partial<BalanceResponse> } | void>({
+    getBalanceResponses: build.query<
+      BalanceResponseResponse,
+      { example?: Partial<BalanceResponse> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -38,75 +48,91 @@ export const BalanceResponseService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'BalanceResponse' as const, id })),
-              { type: 'BalanceResponse', id: 'LIST' },
+              ...result.map(({ id }) => ({
+                type: "BalanceResponse" as const,
+                id,
+              })),
+              { type: "BalanceResponse", id: "LIST" },
             ]
-          : [{ type: 'BalanceResponse', id: 'LIST' }],
+          : [{ type: "BalanceResponse", id: "LIST" }],
     }),
 
     // 3) Create
-    addBalanceResponse: build.mutation<BalanceResponse, Partial<BalanceResponse>>({
+    addBalanceResponse: build.mutation<
+      BalanceResponse,
+      Partial<BalanceResponse>
+    >({
       query: (body) => ({
         url: `BalanceResponse`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'BalanceResponse', id: 'LIST' }],
+      invalidatesTags: [{ type: "BalanceResponse", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getBalanceResponse: build.query<BalanceResponse, string>({
       query: (id) => `BalanceResponse/${id}`,
-      providesTags: (result, error, id) => [{ type: 'BalanceResponse', id }],
+      providesTags: (result, error, id) => [{ type: "BalanceResponse", id }],
     }),
 
     // 5) Update
-    updateBalanceResponse: build.mutation<void, Pick<BalanceResponse, 'id'> & Partial<BalanceResponse>>({
+    updateBalanceResponse: build.mutation<
+      void,
+      Pick<BalanceResponse, "id"> & Partial<BalanceResponse>
+    >({
       query: ({ id, ...patch }) => ({
         url: `BalanceResponse/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            BalanceResponseService.util.updateQueryData('getBalanceResponse', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            BalanceResponseService.util.updateQueryData(
+              "getBalanceResponse",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [
-        { type: 'BalanceResponse', id },
-        { type: 'BalanceResponse', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<BalanceResponse, "id">) => [
+        { type: "BalanceResponse", id },
+        { type: "BalanceResponse", id: "LIST" },
       ],
     }),
 
     // 6) Delete
-    deleteBalanceResponse: build.mutation<{ success: boolean; id: string }, number>({
+    deleteBalanceResponse: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
       query(id) {
         return {
           url: `BalanceResponse/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'BalanceResponse', id }],
+      invalidatesTags: (result, error, id) => [{ type: "BalanceResponse", id }],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetBalanceResponsesPagedQuery`
 export const {
-  useGetBalanceResponsesPagedQuery,     // immediate fetch
+  useGetBalanceResponsesPagedQuery, // immediate fetch
   useLazyGetBalanceResponsesPagedQuery, // lazy fetch
   useGetBalanceResponseQuery,
   useGetBalanceResponsesQuery,
   useAddBalanceResponseMutation,
   useUpdateBalanceResponseMutation,
   useDeleteBalanceResponseMutation,
-} = BalanceResponseService
+} = BalanceResponseService;

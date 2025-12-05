@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // AclEntry
 
-export const FETCH_ACLENTRY_REQUEST = 'FETCH_ACLENTRY_REQUEST';
-export const FETCH_ACLENTRY_SUCCESS = 'FETCH_ACLENTRY_SUCCESS';
-export const FETCH_ACLENTRY_FAILURE = 'FETCH_ACLENTRY_FAILURE';
+export const FETCH_ACLENTRY_REQUEST = "FETCH_ACLENTRY_REQUEST";
+export const FETCH_ACLENTRY_SUCCESS = "FETCH_ACLENTRY_SUCCESS";
+export const FETCH_ACLENTRY_FAILURE = "FETCH_ACLENTRY_FAILURE";
 
-export const ADD_ACLENTRY_REQUEST = 'ADD_ACLENTRY_REQUEST';
-export const ADD_ACLENTRY_SUCCESS = 'ADD_ACLENTRY_SUCCESS';
-export const ADD_ACLENTRY_FAILURE = 'ADD_ACLENTRY_FAILURE';
+export const ADD_ACLENTRY_REQUEST = "ADD_ACLENTRY_REQUEST";
+export const ADD_ACLENTRY_SUCCESS = "ADD_ACLENTRY_SUCCESS";
+export const ADD_ACLENTRY_FAILURE = "ADD_ACLENTRY_FAILURE";
 
-export const UPDATE_ACLENTRY_REQUEST = 'UPDATE_ACLENTRY_REQUEST';
-export const UPDATE_ACLENTRY_SUCCESS = 'UPDATE_ACLENTRY_SUCCESS';
-export const UPDATE_ACLENTRY_FAILURE = 'UPDATE_ACLENTRY_FAILURE';
+export const UPDATE_ACLENTRY_REQUEST = "UPDATE_ACLENTRY_REQUEST";
+export const UPDATE_ACLENTRY_SUCCESS = "UPDATE_ACLENTRY_SUCCESS";
+export const UPDATE_ACLENTRY_FAILURE = "UPDATE_ACLENTRY_FAILURE";
 
-export const DELETE_ACLENTRY_REQUEST = 'DELETE_ACLENTRY_REQUEST';
-export const DELETE_ACLENTRY_SUCCESS = 'DELETE_ACLENTRY_SUCCESS';
-export const DELETE_ACLENTRY_FAILURE = 'DELETE_ACLENTRY_FAILURE';
+export const DELETE_ACLENTRY_REQUEST = "DELETE_ACLENTRY_REQUEST";
+export const DELETE_ACLENTRY_SUCCESS = "DELETE_ACLENTRY_SUCCESS";
+export const DELETE_ACLENTRY_FAILURE = "DELETE_ACLENTRY_FAILURE";
 
-export const LIST_ACLENTRY_REQUEST = 'LIST_ACLENTRY_REQUEST';
-export const LIST_ACLENTRY_SUCCESS = 'LIST_ACLENTRY_SUCCESS';
-export const LIST_ACLENTRY_FAILURE = 'LIST_ACLENTRY_FAILURE';
+export const LIST_ACLENTRY_REQUEST = "LIST_ACLENTRY_REQUEST";
+export const LIST_ACLENTRY_SUCCESS = "LIST_ACLENTRY_SUCCESS";
+export const LIST_ACLENTRY_FAILURE = "LIST_ACLENTRY_FAILURE";
 
 export const addAclEntryRequest = () => ({
-    type: ADD_ACLENTRY_REQUEST,
+  type: ADD_ACLENTRY_REQUEST,
 });
 
 export const addAclEntrySuccess = (AclEntrys: any) => ({
-    type: ADD_ACLENTRY_SUCCESS,
-    payload: AclEntrys,
+  type: ADD_ACLENTRY_SUCCESS,
+  payload: AclEntrys,
 });
 
 export const addAclEntryFailure = (error: Error) => ({
-    type: ADD_ACLENTRY_FAILURE,
-    payload: error,
+  type: ADD_ACLENTRY_FAILURE,
+  payload: error,
 });
 
-
 export const fetchAclEntryRequest = () => ({
-    type: FETCH_ACLENTRY_REQUEST,
+  type: FETCH_ACLENTRY_REQUEST,
 });
 
 export const fetchAclEntrySuccess = (AclEntrys: any) => ({
-    type: FETCH_ACLENTRY_SUCCESS,
-    payload: AclEntrys,
+  type: FETCH_ACLENTRY_SUCCESS,
+  payload: AclEntrys,
 });
 
 export const fetchAclEntryFailure = (error: Error) => ({
-    type: FETCH_ACLENTRY_FAILURE,
-    payload: error,
+  type: FETCH_ACLENTRY_FAILURE,
+  payload: error,
 });
 
 export const listAclEntryRequest = () => ({
-    type: LIST_ACLENTRY_REQUEST,
+  type: LIST_ACLENTRY_REQUEST,
 });
 
 export const listAclEntrySuccess = (AclEntrys: any) => ({
-    type: LIST_ACLENTRY_SUCCESS,
-    payload: AclEntrys,
+  type: LIST_ACLENTRY_SUCCESS,
+  payload: AclEntrys,
 });
 
 export const listAclEntryFailure = (error: Error) => ({
-    type: LIST_ACLENTRY_FAILURE,
-    payload: error,
+  type: LIST_ACLENTRY_FAILURE,
+  payload: error,
 });
 
 export const updateAclEntryRequest = (AclEntry: any) => ({
-    type: UPDATE_ACLENTRY_REQUEST,
-    payload: AclEntry,
+  type: UPDATE_ACLENTRY_REQUEST,
+  payload: AclEntry,
 });
 
 export const updateAclEntrySuccess = (AclEntry: any) => ({
-    type: UPDATE_ACLENTRY_SUCCESS,
-    payload: AclEntry,
+  type: UPDATE_ACLENTRY_SUCCESS,
+  payload: AclEntry,
 });
 
 export const updateAclEntryFailure = (error: Error) => ({
-    type: UPDATE_ACLENTRY_FAILURE,
-    payload: error,
+  type: UPDATE_ACLENTRY_FAILURE,
+  payload: error,
 });
 
 export const deleteAclEntryRequest = (AclEntry: any) => ({
-    type: DELETE_ACLENTRY_REQUEST,
-    payload: AclEntry,
+  type: DELETE_ACLENTRY_REQUEST,
+  payload: AclEntry,
 });
 
 export const deleteAclEntrySuccess = (AclEntry: any) => ({
-    type: DELETE_ACLENTRY_SUCCESS,
-    payload: AclEntry,
+  type: DELETE_ACLENTRY_SUCCESS,
+  payload: AclEntry,
 });
 
 export const deleteAclEntryFailure = (error: Error) => ({
-    type: DELETE_ACLENTRY_FAILURE,
-    payload: error,
+  type: DELETE_ACLENTRY_FAILURE,
+  payload: error,
 });

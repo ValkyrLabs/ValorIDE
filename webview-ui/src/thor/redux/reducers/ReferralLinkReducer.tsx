@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ReferralLink } from '@thor/model/ReferralLink';
+import { ReferralLink } from "@thor/model/ReferralLink";
 
 const ReferralLinkSlice = createSlice({
   name: "ReferralLinks",
@@ -12,20 +12,23 @@ const ReferralLinkSlice = createSlice({
     },
 
     ReferralLinkValueToggled(state, action) {
-      console.log("ReferralLink TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ReferralLink:ReferralLink = state.find((ReferralLink) => ReferralLink.id === action.payload.ReferralLinkId);
+      console.log("ReferralLink TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ReferralLink: ReferralLink = state.find(
+        (ReferralLink) => ReferralLink.id === action.payload.ReferralLinkId,
+      );
       if (ReferralLink) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ReferralLinkpropertySet(state, action) {
-      const ReferralLink = state.find((ReferralLink) => ReferralLink.id === action.payload.ReferralLinkId);
+      const ReferralLink = state.find(
+        (ReferralLink) => ReferralLink.id === action.payload.ReferralLinkId,
+      );
       if (ReferralLink) {
-      //  ReferralLink[action.property] = action.payload[action.property];
+        //  ReferralLink[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +37,6 @@ const ReferralLinkSlice = createSlice({
 export const {
   ReferralLinkAdded,
   ReferralLinkValueToggled,
-  ReferralLinkpropertySet
+  ReferralLinkpropertySet,
 } = ReferralLinkSlice.actions;
 export default ReferralLinkSlice.reducer;

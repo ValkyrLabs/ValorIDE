@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,135 +19,180 @@ Template file: typescript-redux-query/apis.mustache
 Description: DeadLetterQueueApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    DiscardDeadLetterEntryRequest,
-    DiscardDeadLetterEntryRequestFromJSON,
-    DiscardDeadLetterEntryRequestToJSON,
-    DiscardDeadLetterEntryResponse,
-    DiscardDeadLetterEntryResponseFromJSON,
-    DiscardDeadLetterEntryResponseToJSON,
-    RequeueDeadLetterEntryRequest,
-    RequeueDeadLetterEntryRequestFromJSON,
-    RequeueDeadLetterEntryRequestToJSON,
-    RequeueDeadLetterEntryResponse,
-    RequeueDeadLetterEntryResponseFromJSON,
-    RequeueDeadLetterEntryResponseToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  DiscardDeadLetterEntryRequest,
+  DiscardDeadLetterEntryRequestFromJSON,
+  DiscardDeadLetterEntryRequestToJSON,
+  DiscardDeadLetterEntryResponse,
+  DiscardDeadLetterEntryResponseFromJSON,
+  DiscardDeadLetterEntryResponseToJSON,
+  RequeueDeadLetterEntryRequest,
+  RequeueDeadLetterEntryRequestFromJSON,
+  RequeueDeadLetterEntryRequestToJSON,
+  RequeueDeadLetterEntryResponse,
+  RequeueDeadLetterEntryResponseFromJSON,
+  RequeueDeadLetterEntryResponseToJSON,
+} from "../model";
 
 export interface DiscardDeadLetterEntryApiRequest {
-    id: string;
-    discardDeadLetterEntryRequest: DiscardDeadLetterEntryRequest;
+  id: string;
+  discardDeadLetterEntryRequest: DiscardDeadLetterEntryRequest;
 }
 
 export interface RequeueDeadLetterEntryApiRequest {
-    id: string;
-    requeueDeadLetterEntryRequest?: RequeueDeadLetterEntryRequest;
+  id: string;
+  requeueDeadLetterEntryRequest?: RequeueDeadLetterEntryRequest;
 }
-
 
 /**
  * Marks the entry as discarded with operator notes and optional reason categorization
  * Discard a DLQ entry permanently
  */
-function discardDeadLetterEntryRaw<T>(requestParameters: DiscardDeadLetterEntryApiRequest, requestConfig: runtime.TypedQueryConfig<T, DiscardDeadLetterEntryResponse> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling discardDeadLetterEntry.');
-    }
+function discardDeadLetterEntryRaw<T>(
+  requestParameters: DiscardDeadLetterEntryApiRequest,
+  requestConfig: runtime.TypedQueryConfig<
+    T,
+    DiscardDeadLetterEntryResponse
+  > = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling discardDeadLetterEntry.",
+    );
+  }
 
-    if (requestParameters.discardDeadLetterEntryRequest === null || requestParameters.discardDeadLetterEntryRequest === undefined) {
-        throw new runtime.RequiredError('discardDeadLetterEntryRequest','Required parameter requestParameters.discardDeadLetterEntryRequest was null or undefined when calling discardDeadLetterEntry.');
-    }
+  if (
+    requestParameters.discardDeadLetterEntryRequest === null ||
+    requestParameters.discardDeadLetterEntryRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "discardDeadLetterEntryRequest",
+      "Required parameter requestParameters.discardDeadLetterEntryRequest was null or undefined when calling discardDeadLetterEntry.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/DeadLetterQueue/{id}/discard`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      DiscardDeadLetterEntryRequestToJSON(
+        requestParameters.discardDeadLetterEntryRequest,
+      ),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(DiscardDeadLetterEntryResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/DeadLetterQueue/{id}/discard`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || DiscardDeadLetterEntryRequestToJSON(requestParameters.discardDeadLetterEntryRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(DiscardDeadLetterEntryResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Marks the entry as discarded with operator notes and optional reason categorization
-* Discard a DLQ entry permanently
-*/
-export function discardDeadLetterEntry<T>(requestParameters: DiscardDeadLetterEntryApiRequest, requestConfig?: runtime.TypedQueryConfig<T, DiscardDeadLetterEntryResponse>): QueryConfig<T> {
-    return discardDeadLetterEntryRaw(requestParameters, requestConfig);
+ * Marks the entry as discarded with operator notes and optional reason categorization
+ * Discard a DLQ entry permanently
+ */
+export function discardDeadLetterEntry<T>(
+  requestParameters: DiscardDeadLetterEntryApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, DiscardDeadLetterEntryResponse>,
+): QueryConfig<T> {
+  return discardDeadLetterEntryRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new Run with optional input overrides and marks DLQ entry as requeued
  * Requeue a DLQ entry for retry
  */
-function requeueDeadLetterEntryRaw<T>(requestParameters: RequeueDeadLetterEntryApiRequest, requestConfig: runtime.TypedQueryConfig<T, RequeueDeadLetterEntryResponse> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling requeueDeadLetterEntry.');
-    }
+function requeueDeadLetterEntryRaw<T>(
+  requestParameters: RequeueDeadLetterEntryApiRequest,
+  requestConfig: runtime.TypedQueryConfig<
+    T,
+    RequeueDeadLetterEntryResponse
+  > = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling requeueDeadLetterEntry.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/DeadLetterQueue/{id}/requeue`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      RequeueDeadLetterEntryRequestToJSON(
+        requestParameters.requeueDeadLetterEntryRequest,
+      ),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(RequeueDeadLetterEntryResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/DeadLetterQueue/{id}/requeue`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || RequeueDeadLetterEntryRequestToJSON(requestParameters.requeueDeadLetterEntryRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(RequeueDeadLetterEntryResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new Run with optional input overrides and marks DLQ entry as requeued
-* Requeue a DLQ entry for retry
-*/
-export function requeueDeadLetterEntry<T>(requestParameters: RequeueDeadLetterEntryApiRequest, requestConfig?: runtime.TypedQueryConfig<T, RequeueDeadLetterEntryResponse>): QueryConfig<T> {
-    return requeueDeadLetterEntryRaw(requestParameters, requestConfig);
+ * Creates a new Run with optional input overrides and marks DLQ entry as requeued
+ * Requeue a DLQ entry for retry
+ */
+export function requeueDeadLetterEntry<T>(
+  requestParameters: RequeueDeadLetterEntryApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, RequeueDeadLetterEntryResponse>,
+): QueryConfig<T> {
+  return requeueDeadLetterEntryRaw(requestParameters, requestConfig);
 }
-

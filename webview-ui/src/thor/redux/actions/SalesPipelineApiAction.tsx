@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // SalesPipeline
 
-export const FETCH_SALESPIPELINE_REQUEST = 'FETCH_SALESPIPELINE_REQUEST';
-export const FETCH_SALESPIPELINE_SUCCESS = 'FETCH_SALESPIPELINE_SUCCESS';
-export const FETCH_SALESPIPELINE_FAILURE = 'FETCH_SALESPIPELINE_FAILURE';
+export const FETCH_SALESPIPELINE_REQUEST = "FETCH_SALESPIPELINE_REQUEST";
+export const FETCH_SALESPIPELINE_SUCCESS = "FETCH_SALESPIPELINE_SUCCESS";
+export const FETCH_SALESPIPELINE_FAILURE = "FETCH_SALESPIPELINE_FAILURE";
 
-export const ADD_SALESPIPELINE_REQUEST = 'ADD_SALESPIPELINE_REQUEST';
-export const ADD_SALESPIPELINE_SUCCESS = 'ADD_SALESPIPELINE_SUCCESS';
-export const ADD_SALESPIPELINE_FAILURE = 'ADD_SALESPIPELINE_FAILURE';
+export const ADD_SALESPIPELINE_REQUEST = "ADD_SALESPIPELINE_REQUEST";
+export const ADD_SALESPIPELINE_SUCCESS = "ADD_SALESPIPELINE_SUCCESS";
+export const ADD_SALESPIPELINE_FAILURE = "ADD_SALESPIPELINE_FAILURE";
 
-export const UPDATE_SALESPIPELINE_REQUEST = 'UPDATE_SALESPIPELINE_REQUEST';
-export const UPDATE_SALESPIPELINE_SUCCESS = 'UPDATE_SALESPIPELINE_SUCCESS';
-export const UPDATE_SALESPIPELINE_FAILURE = 'UPDATE_SALESPIPELINE_FAILURE';
+export const UPDATE_SALESPIPELINE_REQUEST = "UPDATE_SALESPIPELINE_REQUEST";
+export const UPDATE_SALESPIPELINE_SUCCESS = "UPDATE_SALESPIPELINE_SUCCESS";
+export const UPDATE_SALESPIPELINE_FAILURE = "UPDATE_SALESPIPELINE_FAILURE";
 
-export const DELETE_SALESPIPELINE_REQUEST = 'DELETE_SALESPIPELINE_REQUEST';
-export const DELETE_SALESPIPELINE_SUCCESS = 'DELETE_SALESPIPELINE_SUCCESS';
-export const DELETE_SALESPIPELINE_FAILURE = 'DELETE_SALESPIPELINE_FAILURE';
+export const DELETE_SALESPIPELINE_REQUEST = "DELETE_SALESPIPELINE_REQUEST";
+export const DELETE_SALESPIPELINE_SUCCESS = "DELETE_SALESPIPELINE_SUCCESS";
+export const DELETE_SALESPIPELINE_FAILURE = "DELETE_SALESPIPELINE_FAILURE";
 
-export const LIST_SALESPIPELINE_REQUEST = 'LIST_SALESPIPELINE_REQUEST';
-export const LIST_SALESPIPELINE_SUCCESS = 'LIST_SALESPIPELINE_SUCCESS';
-export const LIST_SALESPIPELINE_FAILURE = 'LIST_SALESPIPELINE_FAILURE';
+export const LIST_SALESPIPELINE_REQUEST = "LIST_SALESPIPELINE_REQUEST";
+export const LIST_SALESPIPELINE_SUCCESS = "LIST_SALESPIPELINE_SUCCESS";
+export const LIST_SALESPIPELINE_FAILURE = "LIST_SALESPIPELINE_FAILURE";
 
 export const addSalesPipelineRequest = () => ({
-    type: ADD_SALESPIPELINE_REQUEST,
+  type: ADD_SALESPIPELINE_REQUEST,
 });
 
 export const addSalesPipelineSuccess = (SalesPipelines: any) => ({
-    type: ADD_SALESPIPELINE_SUCCESS,
-    payload: SalesPipelines,
+  type: ADD_SALESPIPELINE_SUCCESS,
+  payload: SalesPipelines,
 });
 
 export const addSalesPipelineFailure = (error: Error) => ({
-    type: ADD_SALESPIPELINE_FAILURE,
-    payload: error,
+  type: ADD_SALESPIPELINE_FAILURE,
+  payload: error,
 });
 
-
 export const fetchSalesPipelineRequest = () => ({
-    type: FETCH_SALESPIPELINE_REQUEST,
+  type: FETCH_SALESPIPELINE_REQUEST,
 });
 
 export const fetchSalesPipelineSuccess = (SalesPipelines: any) => ({
-    type: FETCH_SALESPIPELINE_SUCCESS,
-    payload: SalesPipelines,
+  type: FETCH_SALESPIPELINE_SUCCESS,
+  payload: SalesPipelines,
 });
 
 export const fetchSalesPipelineFailure = (error: Error) => ({
-    type: FETCH_SALESPIPELINE_FAILURE,
-    payload: error,
+  type: FETCH_SALESPIPELINE_FAILURE,
+  payload: error,
 });
 
 export const listSalesPipelineRequest = () => ({
-    type: LIST_SALESPIPELINE_REQUEST,
+  type: LIST_SALESPIPELINE_REQUEST,
 });
 
 export const listSalesPipelineSuccess = (SalesPipelines: any) => ({
-    type: LIST_SALESPIPELINE_SUCCESS,
-    payload: SalesPipelines,
+  type: LIST_SALESPIPELINE_SUCCESS,
+  payload: SalesPipelines,
 });
 
 export const listSalesPipelineFailure = (error: Error) => ({
-    type: LIST_SALESPIPELINE_FAILURE,
-    payload: error,
+  type: LIST_SALESPIPELINE_FAILURE,
+  payload: error,
 });
 
 export const updateSalesPipelineRequest = (SalesPipeline: any) => ({
-    type: UPDATE_SALESPIPELINE_REQUEST,
-    payload: SalesPipeline,
+  type: UPDATE_SALESPIPELINE_REQUEST,
+  payload: SalesPipeline,
 });
 
 export const updateSalesPipelineSuccess = (SalesPipeline: any) => ({
-    type: UPDATE_SALESPIPELINE_SUCCESS,
-    payload: SalesPipeline,
+  type: UPDATE_SALESPIPELINE_SUCCESS,
+  payload: SalesPipeline,
 });
 
 export const updateSalesPipelineFailure = (error: Error) => ({
-    type: UPDATE_SALESPIPELINE_FAILURE,
-    payload: error,
+  type: UPDATE_SALESPIPELINE_FAILURE,
+  payload: error,
 });
 
 export const deleteSalesPipelineRequest = (SalesPipeline: any) => ({
-    type: DELETE_SALESPIPELINE_REQUEST,
-    payload: SalesPipeline,
+  type: DELETE_SALESPIPELINE_REQUEST,
+  payload: SalesPipeline,
 });
 
 export const deleteSalesPipelineSuccess = (SalesPipeline: any) => ({
-    type: DELETE_SALESPIPELINE_SUCCESS,
-    payload: SalesPipeline,
+  type: DELETE_SALESPIPELINE_SUCCESS,
+  payload: SalesPipeline,
 });
 
 export const deleteSalesPipelineFailure = (error: Error) => ({
-    type: DELETE_SALESPIPELINE_FAILURE,
-    payload: error,
+  type: DELETE_SALESPIPELINE_FAILURE,
+  payload: error,
 });

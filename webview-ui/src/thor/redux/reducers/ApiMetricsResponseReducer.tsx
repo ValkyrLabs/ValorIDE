@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { ApiMetricsResponse } from '@thor/model/ApiMetricsResponse';
+import { ApiMetricsResponse } from "@thor/model/ApiMetricsResponse";
 
 const ApiMetricsResponseSlice = createSlice({
   name: "ApiMetricsResponses",
@@ -12,20 +12,25 @@ const ApiMetricsResponseSlice = createSlice({
     },
 
     ApiMetricsResponseValueToggled(state, action) {
-      console.log("ApiMetricsResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const ApiMetricsResponse:ApiMetricsResponse = state.find((ApiMetricsResponse) => ApiMetricsResponse.id === action.payload.ApiMetricsResponseId);
+      console.log("ApiMetricsResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ApiMetricsResponse: ApiMetricsResponse = state.find(
+        (ApiMetricsResponse) =>
+          ApiMetricsResponse.id === action.payload.ApiMetricsResponseId,
+      );
       if (ApiMetricsResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     ApiMetricsResponsepropertySet(state, action) {
-      const ApiMetricsResponse = state.find((ApiMetricsResponse) => ApiMetricsResponse.id === action.payload.ApiMetricsResponseId);
+      const ApiMetricsResponse = state.find(
+        (ApiMetricsResponse) =>
+          ApiMetricsResponse.id === action.payload.ApiMetricsResponseId,
+      );
       if (ApiMetricsResponse) {
-      //  ApiMetricsResponse[action.property] = action.payload[action.property];
+        //  ApiMetricsResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const ApiMetricsResponseSlice = createSlice({
 export const {
   ApiMetricsResponseAdded,
   ApiMetricsResponseValueToggled,
-  ApiMetricsResponsepropertySet
+  ApiMetricsResponsepropertySet,
 } = ApiMetricsResponseSlice.actions;
 export default ApiMetricsResponseSlice.reducer;

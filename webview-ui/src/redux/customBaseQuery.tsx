@@ -1,19 +1,23 @@
 // customBaseQuery.ts
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { BASE_PATH } from "../thor/src";
+import type { BaseQueryFn } from "@reduxjs/toolkit/query";
+import { getValkyraiHost } from "@/utils/valkyraiHost";
 
-const customBaseQuery = fetchBaseQuery({
-  baseUrl: BASE_PATH, // Replace with your base URL
-  prepareHeaders: (headers) => {
-    // Retrieve the token from session storage
-    const token = sessionStorage.getItem("jwtToken");
-    if (token) {
-      //alert("toke:" + token)
-      // Set the Authorization header
-      headers.set("authorization", `Bearer ${token}`);
-    }
-    return headers;
-  },
-});
+const buildBaseQuery = () =>
+  fetchBaseQuery({
+    baseUrl: getValkyraiHost(),
+    prepareHeaders: (headers) => {
+      const token = sessionStorage.getItem("jwtToken");
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  });
+
+const customBaseQuery: BaseQueryFn = (args, api, extraOptions) => {
+  const baseQuery = buildBaseQuery();
+  return baseQuery(args, api, extraOptions);
+};
 
 export default customBaseQuery;

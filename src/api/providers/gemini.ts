@@ -87,7 +87,7 @@ export class GeminiHandler implements ApiHandler {
     // Base generation config - Conditionally include systemInstruction based on cache usage
     const generationConfig: GenerateContentConfig = {
       httpOptions,
-      temperature: 0, // Default temperature
+      temperature: 1, // Gemini 3 recommends 1.0
       // Only include systemInstruction if NOT using the cache
       ...(useCache ? {} : { systemInstruction: systemPrompt }),
     };
@@ -123,7 +123,20 @@ export class GeminiHandler implements ApiHandler {
     let lastUsageMetadata: GenerateContentResponseUsageMetadata | undefined;
 
     // Iterate directly over the stream
+    let thinkingContent = "";
     for await (const chunk of result) {
+      // Handle thinking content from Gemini 3
+      const parts = chunk?.candidates?.[0]?.content?.parts || [];
+      for (const part of parts) {
+        if ((part as any).thought) {
+          thinkingContent += (part as any).thought;
+          yield {
+            type: "reasoning",
+            reasoning: (part as any).thought,
+          };
+        }
+      }
+
       if (chunk.text) {
         yield {
           type: "text",

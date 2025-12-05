@@ -11,6 +11,7 @@ import { BalanceResponseService } from "../thor/redux/services/BalanceResponseSe
 import { UsageTransactionService } from "../thor/redux/services/UsageTransactionService";
 import { PaymentTransactionService } from "../thor/redux/services/PaymentTransactionService";
 import { DigitalProductService } from "./services/DigitalProductService";
+import { creditsApi } from "../services/creditsApi";
 
 // cool!
 import { websocketMiddleware } from "./middleware/websocketMiddleware";
@@ -34,6 +35,7 @@ const rootReducer = combineReducers({
   [UsageTransactionService.reducerPath]: UsageTransactionService.reducer,
   [PaymentTransactionService.reducerPath]: PaymentTransactionService.reducer,
   [DigitalProductService.reducerPath]: DigitalProductService.reducer,
+  [creditsApi.reducerPath]: creditsApi.reducer,
 });
 
 const reducer = rootReducer;
@@ -52,6 +54,7 @@ const store = configureStore({
       .concat(PrincipalService.middleware)
       .concat(ThorHostingService.middleware)
       .concat(DigitalProductService.middleware)
+      .concat(creditsApi.middleware)
       .concat(websocketMiddleware),
 });
 

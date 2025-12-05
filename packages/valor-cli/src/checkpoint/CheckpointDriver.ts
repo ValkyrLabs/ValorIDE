@@ -2,9 +2,9 @@
  * CheckpointDriver - Multi-project checkpoint management (stub for Phase 3)
  */
 
-import { promises as fs } from 'fs';
-import { join } from 'path';
-import { WorkspaceManifest, CheckpointInfo } from '../types';
+import { promises as fs } from "fs";
+import { join } from "path";
+import { WorkspaceManifest, CheckpointInfo } from "../types";
 
 export class CheckpointDriver {
   private manifest: WorkspaceManifest;
@@ -18,14 +18,18 @@ export class CheckpointDriver {
   /**
    * Create checkpoint across all repos (stub)
    */
-  async create(taskId: string, step: string, message?: string): Promise<CheckpointInfo[]> {
+  async create(
+    taskId: string,
+    step: string,
+    message?: string,
+  ): Promise<CheckpointInfo[]> {
     const checkpoints: CheckpointInfo[] = [];
     for (const repo of this.manifest.repos) {
       checkpoints.push({
         task: taskId,
         step,
         repo: repo.name,
-        hash: 'stub-hash',
+        hash: "stub-hash",
         createdAt: Date.now(),
         message,
       });

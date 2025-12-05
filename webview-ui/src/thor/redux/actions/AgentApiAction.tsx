@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // Agent
 
-export const FETCH_AGENT_REQUEST = 'FETCH_AGENT_REQUEST';
-export const FETCH_AGENT_SUCCESS = 'FETCH_AGENT_SUCCESS';
-export const FETCH_AGENT_FAILURE = 'FETCH_AGENT_FAILURE';
+export const FETCH_AGENT_REQUEST = "FETCH_AGENT_REQUEST";
+export const FETCH_AGENT_SUCCESS = "FETCH_AGENT_SUCCESS";
+export const FETCH_AGENT_FAILURE = "FETCH_AGENT_FAILURE";
 
-export const ADD_AGENT_REQUEST = 'ADD_AGENT_REQUEST';
-export const ADD_AGENT_SUCCESS = 'ADD_AGENT_SUCCESS';
-export const ADD_AGENT_FAILURE = 'ADD_AGENT_FAILURE';
+export const ADD_AGENT_REQUEST = "ADD_AGENT_REQUEST";
+export const ADD_AGENT_SUCCESS = "ADD_AGENT_SUCCESS";
+export const ADD_AGENT_FAILURE = "ADD_AGENT_FAILURE";
 
-export const UPDATE_AGENT_REQUEST = 'UPDATE_AGENT_REQUEST';
-export const UPDATE_AGENT_SUCCESS = 'UPDATE_AGENT_SUCCESS';
-export const UPDATE_AGENT_FAILURE = 'UPDATE_AGENT_FAILURE';
+export const UPDATE_AGENT_REQUEST = "UPDATE_AGENT_REQUEST";
+export const UPDATE_AGENT_SUCCESS = "UPDATE_AGENT_SUCCESS";
+export const UPDATE_AGENT_FAILURE = "UPDATE_AGENT_FAILURE";
 
-export const DELETE_AGENT_REQUEST = 'DELETE_AGENT_REQUEST';
-export const DELETE_AGENT_SUCCESS = 'DELETE_AGENT_SUCCESS';
-export const DELETE_AGENT_FAILURE = 'DELETE_AGENT_FAILURE';
+export const DELETE_AGENT_REQUEST = "DELETE_AGENT_REQUEST";
+export const DELETE_AGENT_SUCCESS = "DELETE_AGENT_SUCCESS";
+export const DELETE_AGENT_FAILURE = "DELETE_AGENT_FAILURE";
 
-export const LIST_AGENT_REQUEST = 'LIST_AGENT_REQUEST';
-export const LIST_AGENT_SUCCESS = 'LIST_AGENT_SUCCESS';
-export const LIST_AGENT_FAILURE = 'LIST_AGENT_FAILURE';
+export const LIST_AGENT_REQUEST = "LIST_AGENT_REQUEST";
+export const LIST_AGENT_SUCCESS = "LIST_AGENT_SUCCESS";
+export const LIST_AGENT_FAILURE = "LIST_AGENT_FAILURE";
 
 export const addAgentRequest = () => ({
-    type: ADD_AGENT_REQUEST,
+  type: ADD_AGENT_REQUEST,
 });
 
 export const addAgentSuccess = (Agents: any) => ({
-    type: ADD_AGENT_SUCCESS,
-    payload: Agents,
+  type: ADD_AGENT_SUCCESS,
+  payload: Agents,
 });
 
 export const addAgentFailure = (error: Error) => ({
-    type: ADD_AGENT_FAILURE,
-    payload: error,
+  type: ADD_AGENT_FAILURE,
+  payload: error,
 });
 
-
 export const fetchAgentRequest = () => ({
-    type: FETCH_AGENT_REQUEST,
+  type: FETCH_AGENT_REQUEST,
 });
 
 export const fetchAgentSuccess = (Agents: any) => ({
-    type: FETCH_AGENT_SUCCESS,
-    payload: Agents,
+  type: FETCH_AGENT_SUCCESS,
+  payload: Agents,
 });
 
 export const fetchAgentFailure = (error: Error) => ({
-    type: FETCH_AGENT_FAILURE,
-    payload: error,
+  type: FETCH_AGENT_FAILURE,
+  payload: error,
 });
 
 export const listAgentRequest = () => ({
-    type: LIST_AGENT_REQUEST,
+  type: LIST_AGENT_REQUEST,
 });
 
 export const listAgentSuccess = (Agents: any) => ({
-    type: LIST_AGENT_SUCCESS,
-    payload: Agents,
+  type: LIST_AGENT_SUCCESS,
+  payload: Agents,
 });
 
 export const listAgentFailure = (error: Error) => ({
-    type: LIST_AGENT_FAILURE,
-    payload: error,
+  type: LIST_AGENT_FAILURE,
+  payload: error,
 });
 
 export const updateAgentRequest = (Agent: any) => ({
-    type: UPDATE_AGENT_REQUEST,
-    payload: Agent,
+  type: UPDATE_AGENT_REQUEST,
+  payload: Agent,
 });
 
 export const updateAgentSuccess = (Agent: any) => ({
-    type: UPDATE_AGENT_SUCCESS,
-    payload: Agent,
+  type: UPDATE_AGENT_SUCCESS,
+  payload: Agent,
 });
 
 export const updateAgentFailure = (error: Error) => ({
-    type: UPDATE_AGENT_FAILURE,
-    payload: error,
+  type: UPDATE_AGENT_FAILURE,
+  payload: error,
 });
 
 export const deleteAgentRequest = (Agent: any) => ({
-    type: DELETE_AGENT_REQUEST,
-    payload: Agent,
+  type: DELETE_AGENT_REQUEST,
+  payload: Agent,
 });
 
 export const deleteAgentSuccess = (Agent: any) => ({
-    type: DELETE_AGENT_SUCCESS,
-    payload: Agent,
+  type: DELETE_AGENT_SUCCESS,
+  payload: Agent,
 });
 
 export const deleteAgentFailure = (error: Error) => ({
-    type: DELETE_AGENT_FAILURE,
-    payload: error,
+  type: DELETE_AGENT_FAILURE,
+  payload: error,
 });

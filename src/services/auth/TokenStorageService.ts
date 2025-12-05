@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import axios from "axios";
 import { Logger } from "../logging/Logger";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 
 export interface AuthTokens {
   jwtToken: string;
@@ -34,10 +35,14 @@ export class TokenStorageService {
     this.context = context;
   }
 
-  public static getInstance(context?: vscode.ExtensionContext): TokenStorageService {
+  public static getInstance(
+    context?: vscode.ExtensionContext,
+  ): TokenStorageService {
     if (!TokenStorageService.instance) {
       if (!context) {
-        throw new Error("TokenStorageService requires context for initialization");
+        throw new Error(
+          "TokenStorageService requires context for initialization",
+        );
       }
       TokenStorageService.instance = new TokenStorageService(context);
     }
@@ -47,7 +52,10 @@ export class TokenStorageService {
   /**
    * Store authentication tokens securely
    */
-  async storeAuthTokens(tokens: AuthTokens, user?: AuthenticatedUser): Promise<void> {
+  async storeAuthTokens(
+    tokens: AuthTokens,
+    user?: AuthenticatedUser,
+  ): Promise<void> {
     try {
       // Store JWT token in VSCode secrets (primary storage)
       await this.context.secrets.store("jwtToken", tokens.jwtToken);
@@ -63,21 +71,25 @@ export class TokenStorageService {
       // Store complete auth state for restoration
       const authState: StoredAuthState = {
         tokens,
-        user: user || {} as AuthenticatedUser,
-        timestamp: Date.now()
+        user: user || ({} as AuthenticatedUser),
+        timestamp: Date.now(),
       };
 
       await this.context.secrets.store("authState", JSON.stringify(authState));
 
       // Also store in localStorage if persistence is enabled (for webview access)
       try {
-        const persistSetting = vscode.workspace.getConfiguration("valoride").get<boolean>("persistJwt", true);
+        const persistSetting = vscode.workspace
+          .getConfiguration("valoride")
+          .get<boolean>("persistJwt", true);
         if (persistSetting) {
           // This would be handled by the webview context, but we can set a flag
           await this.context.globalState.update("authPersistenceEnabled", true);
         }
       } catch (error) {
-        Logger.log(`Warning: Could not update localStorage persistence: ${error}`);
+        Logger.log(
+          `Warning: Could not update localStorage persistence: ${error}`,
+        );
       }
 
       Logger.log("Authentication tokens stored successfully");
@@ -117,21 +129,23 @@ export class TokenStorageService {
   /**
    * Validate stored tokens with the backend
    */
-  async validateTokens(tokens: AuthTokens): Promise<{ valid: boolean; user?: AuthenticatedUser }> {
+  async validateTokens(
+    tokens: AuthTokens,
+  ): Promise<{ valid: boolean; user?: AuthenticatedUser }> {
     try {
       // Make a test API call to validate the JWT token
-      const baseUrl = process.env.VITE_basePath || "http://localhost:8080/v1";
+      const baseUrl = getValkyraiBasePath();
       const response = await axios.get(`${baseUrl}/auth/validate`, {
         headers: {
-          "Authorization": `Bearer ${tokens.jwtToken}`,
+          Authorization: `Bearer ${tokens.jwtToken}`,
         },
-        timeout: 10000
+        timeout: 10000,
       });
 
       if (response.status === 200 && response.data.valid) {
         return {
           valid: true,
-          user: response.data.user
+          user: response.data.user,
         };
       }
 
@@ -147,19 +161,23 @@ export class TokenStorageService {
    */
   async refreshTokens(refreshToken: string): Promise<AuthTokens | null> {
     try {
-      const baseUrl = process.env.VITE_basePath || "http://localhost:8080/v1";
-      const response = await axios.post(`${baseUrl}/auth/refresh`, {
-        refreshToken
-      }, {
-        timeout: 10000
-      });
+      const baseUrl = getValkyraiBasePath();
+      const response = await axios.post(
+        `${baseUrl}/auth/refresh`,
+        {
+          refreshToken,
+        },
+        {
+          timeout: 10000,
+        },
+      );
 
       if (response.status === 200 && response.data.token) {
         const newTokens: AuthTokens = {
           jwtToken: response.data.token,
           apiKey: response.data.apiKey,
           refreshToken: response.data.refreshToken || refreshToken,
-          expiresAt: response.data.expiresAt
+          expiresAt: response.data.expiresAt,
         };
 
         return newTokens;
@@ -181,7 +199,10 @@ export class TokenStorageService {
       await this.context.secrets.delete("valorideApiKey");
       await this.context.secrets.delete("refreshToken");
       await this.context.secrets.delete("authState");
-      await this.context.globalState.update("authPersistenceEnabled", undefined);
+      await this.context.globalState.update(
+        "authPersistenceEnabled",
+        undefined,
+      );
 
       Logger.log("All stored authentication tokens cleared");
     } catch (error) {
@@ -195,7 +216,9 @@ export class TokenStorageService {
    */
   async isAuthPersistenceEnabled(): Promise<boolean> {
     try {
-      return vscode.workspace.getConfiguration("valoride").get<boolean>("persistJwt", true);
+      return vscode.workspace
+        .getConfiguration("valoride")
+        .get<boolean>("persistJwt", true);
     } catch {
       return true; // Default to enabled
     }

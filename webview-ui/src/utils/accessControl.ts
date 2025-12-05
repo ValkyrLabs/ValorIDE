@@ -179,9 +179,7 @@ export function storeJwtToken(
  * Hydrate JWT + principal from persistent storage into sessionStorage so the
  * app can treat them as active credentials.
  */
-export function hydrateStoredCredentials(
-  source: string = "hydrate",
-): {
+export function hydrateStoredCredentials(source: string = "hydrate"): {
   token?: string;
   principal?: StoredPrincipal;
 } {

@@ -1,4 +1,4 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 /**
  * Service for tracking API usage and charges, sending data to backend server
  * via the webview's RTQ system
@@ -36,7 +36,7 @@ export class UsageTrackingService {
      */
     async trackUsage(usageData) {
         if (!this.webview) {
-            console.warn('UsageTrackingService: No webview available for tracking usage');
+            console.warn("UsageTrackingService: No webview available for tracking usage");
             return false;
         }
         const transactionId = this.generateTransactionId();
@@ -51,18 +51,18 @@ export class UsageTrackingService {
         try {
             // Send message to webview to submit via RTQ
             this.webview.webview.postMessage({
-                type: 'usage_tracking',
-                action: 'track_usage',
+                type: "usage_tracking",
+                action: "track_usage",
                 data: {
                     transactionId,
-                    usageTransaction
-                }
+                    usageTransaction,
+                },
             });
             // Wait for response with timeout
             return await this.waitForResponse(transactionId, 10000); // 10 second timeout
         }
         catch (error) {
-            console.error('UsageTrackingService: Failed to track usage:', error);
+            console.error("UsageTrackingService: Failed to track usage:", error);
             return false;
         }
     }
@@ -71,17 +71,17 @@ export class UsageTrackingService {
      */
     async requestBalance() {
         if (!this.webview) {
-            console.warn('UsageTrackingService: No webview available for balance request');
+            console.warn("UsageTrackingService: No webview available for balance request");
             return;
         }
         try {
             this.webview.webview.postMessage({
-                type: 'usage_tracking',
-                action: 'request_balance'
+                type: "usage_tracking",
+                action: "request_balance",
             });
         }
         catch (error) {
-            console.error('UsageTrackingService: Failed to request balance:', error);
+            console.error("UsageTrackingService: Failed to request balance:", error);
         }
     }
     /**
@@ -89,13 +89,14 @@ export class UsageTrackingService {
      */
     async trackOpenAIUsage(model, promptTokens, completionTokens, costPerPromptToken = 0.00001, // Default pricing, should be configurable
     costPerCompletionToken = 0.00002) {
-        const credits = (promptTokens * costPerPromptToken) + (completionTokens * costPerCompletionToken);
+        const credits = promptTokens * costPerPromptToken +
+            completionTokens * costPerCompletionToken;
         return this.trackUsage({
-            modelProvider: 'openai',
+            modelProvider: "openai",
             model,
             promptTokens,
             completionTokens,
-            credits
+            credits,
         });
     }
     /**
@@ -103,13 +104,14 @@ export class UsageTrackingService {
      */
     async trackAnthropicUsage(model, promptTokens, completionTokens, costPerPromptToken = 0.000008, // Default pricing for Claude
     costPerCompletionToken = 0.000024) {
-        const credits = (promptTokens * costPerPromptToken) + (completionTokens * costPerCompletionToken);
+        const credits = promptTokens * costPerPromptToken +
+            completionTokens * costPerCompletionToken;
         return this.trackUsage({
-            modelProvider: 'anthropic',
+            modelProvider: "anthropic",
             model,
             promptTokens,
             completionTokens,
-            credits
+            credits,
         });
     }
     /**
@@ -121,7 +123,7 @@ export class UsageTrackingService {
             model,
             promptTokens,
             completionTokens,
-            credits
+            credits,
         });
     }
     /**
@@ -137,12 +139,12 @@ export class UsageTrackingService {
         return new Promise((resolve, reject) => {
             const timeout = setTimeout(() => {
                 this.pendingTransactions.delete(transactionId);
-                reject(new Error('Timeout waiting for usage tracking response'));
+                reject(new Error("Timeout waiting for usage tracking response"));
             }, timeoutMs);
             this.pendingTransactions.set(transactionId, {
                 resolve,
                 reject,
-                timeout
+                timeout,
             });
         });
     }
@@ -150,12 +152,12 @@ export class UsageTrackingService {
      * Handle response from webview
      */
     handleWebviewResponse(message) {
-        if (message.type === 'usage_tracking_response') {
+        if (message.type === "usage_tracking_response") {
             switch (message.action) {
-                case 'transaction_submitted':
+                case "transaction_submitted":
                     this.handleTransactionResponse(message.data);
                     break;
-                case 'balance_updated':
+                case "balance_updated":
                     this.handleBalanceUpdate(message.data);
                     break;
             }
@@ -173,7 +175,7 @@ export class UsageTrackingService {
                 pending.resolve(true);
             }
             else {
-                pending.reject(new Error('Failed to submit usage transaction'));
+                pending.reject(new Error("Failed to submit usage transaction"));
             }
         }
     }
@@ -182,9 +184,9 @@ export class UsageTrackingService {
      */
     handleBalanceUpdate(balanceData) {
         // Emit event or update UI as needed
-        console.log('Balance updated:', balanceData);
+        console.log("Balance updated:", balanceData);
         // Could emit a VSCode event here for other parts of the extension to listen to
-        vscode.commands.executeCommand('valoride.balanceUpdated', balanceData);
+        vscode.commands.executeCommand("valoride.balanceUpdated", balanceData);
     }
     /**
      * Clean up pending transactions
@@ -193,7 +195,7 @@ export class UsageTrackingService {
         // Clear all pending transactions
         for (const [transactionId, pending] of this.pendingTransactions) {
             clearTimeout(pending.timeout);
-            pending.reject(new Error('Service disposed'));
+            pending.reject(new Error("Service disposed"));
         }
         this.pendingTransactions.clear();
     }

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SpaceMember } from '@thor/model/SpaceMember';
+import { SpaceMember } from "@thor/model/SpaceMember";
 
 const SpaceMemberSlice = createSlice({
   name: "SpaceMembers",
@@ -12,20 +12,23 @@ const SpaceMemberSlice = createSlice({
     },
 
     SpaceMemberValueToggled(state, action) {
-      console.log("SpaceMember TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SpaceMember:SpaceMember = state.find((SpaceMember) => SpaceMember.id === action.payload.SpaceMemberId);
+      console.log("SpaceMember TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SpaceMember: SpaceMember = state.find(
+        (SpaceMember) => SpaceMember.id === action.payload.SpaceMemberId,
+      );
       if (SpaceMember) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SpaceMemberpropertySet(state, action) {
-      const SpaceMember = state.find((SpaceMember) => SpaceMember.id === action.payload.SpaceMemberId);
+      const SpaceMember = state.find(
+        (SpaceMember) => SpaceMember.id === action.payload.SpaceMemberId,
+      );
       if (SpaceMember) {
-      //  SpaceMember[action.property] = action.payload[action.property];
+        //  SpaceMember[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +37,6 @@ const SpaceMemberSlice = createSlice({
 export const {
   SpaceMemberAdded,
   SpaceMemberValueToggled,
-  SpaceMemberpropertySet
+  SpaceMemberpropertySet,
 } = SpaceMemberSlice.actions;
 export default SpaceMemberSlice.reducer;

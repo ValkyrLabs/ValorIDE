@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Quota } from '@thor/model/Quota';
+import { Quota } from "@thor/model/Quota";
 
 const QuotaSlice = createSlice({
   name: "Quotas",
@@ -12,28 +12,26 @@ const QuotaSlice = createSlice({
     },
 
     QuotaValueToggled(state, action) {
-      console.log("Quota TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Quota:Quota = state.find((Quota) => Quota.id === action.payload.QuotaId);
+      console.log("Quota TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Quota: Quota = state.find(
+        (Quota) => Quota.id === action.payload.QuotaId,
+      );
       if (Quota) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     QuotapropertySet(state, action) {
       const Quota = state.find((Quota) => Quota.id === action.payload.QuotaId);
       if (Quota) {
-      //  Quota[action.property] = action.payload[action.property];
+        //  Quota[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  QuotaAdded,
-  QuotaValueToggled,
-  QuotapropertySet
-} = QuotaSlice.actions;
+export const { QuotaAdded, QuotaValueToggled, QuotapropertySet } =
+  QuotaSlice.actions;
 export default QuotaSlice.reducer;

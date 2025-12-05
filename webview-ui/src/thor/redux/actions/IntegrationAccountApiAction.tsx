@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,106 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // IntegrationAccount
 
-export const FETCH_INTEGRATIONACCOUNT_REQUEST = 'FETCH_INTEGRATIONACCOUNT_REQUEST';
-export const FETCH_INTEGRATIONACCOUNT_SUCCESS = 'FETCH_INTEGRATIONACCOUNT_SUCCESS';
-export const FETCH_INTEGRATIONACCOUNT_FAILURE = 'FETCH_INTEGRATIONACCOUNT_FAILURE';
+export const FETCH_INTEGRATIONACCOUNT_REQUEST =
+  "FETCH_INTEGRATIONACCOUNT_REQUEST";
+export const FETCH_INTEGRATIONACCOUNT_SUCCESS =
+  "FETCH_INTEGRATIONACCOUNT_SUCCESS";
+export const FETCH_INTEGRATIONACCOUNT_FAILURE =
+  "FETCH_INTEGRATIONACCOUNT_FAILURE";
 
-export const ADD_INTEGRATIONACCOUNT_REQUEST = 'ADD_INTEGRATIONACCOUNT_REQUEST';
-export const ADD_INTEGRATIONACCOUNT_SUCCESS = 'ADD_INTEGRATIONACCOUNT_SUCCESS';
-export const ADD_INTEGRATIONACCOUNT_FAILURE = 'ADD_INTEGRATIONACCOUNT_FAILURE';
+export const ADD_INTEGRATIONACCOUNT_REQUEST = "ADD_INTEGRATIONACCOUNT_REQUEST";
+export const ADD_INTEGRATIONACCOUNT_SUCCESS = "ADD_INTEGRATIONACCOUNT_SUCCESS";
+export const ADD_INTEGRATIONACCOUNT_FAILURE = "ADD_INTEGRATIONACCOUNT_FAILURE";
 
-export const UPDATE_INTEGRATIONACCOUNT_REQUEST = 'UPDATE_INTEGRATIONACCOUNT_REQUEST';
-export const UPDATE_INTEGRATIONACCOUNT_SUCCESS = 'UPDATE_INTEGRATIONACCOUNT_SUCCESS';
-export const UPDATE_INTEGRATIONACCOUNT_FAILURE = 'UPDATE_INTEGRATIONACCOUNT_FAILURE';
+export const UPDATE_INTEGRATIONACCOUNT_REQUEST =
+  "UPDATE_INTEGRATIONACCOUNT_REQUEST";
+export const UPDATE_INTEGRATIONACCOUNT_SUCCESS =
+  "UPDATE_INTEGRATIONACCOUNT_SUCCESS";
+export const UPDATE_INTEGRATIONACCOUNT_FAILURE =
+  "UPDATE_INTEGRATIONACCOUNT_FAILURE";
 
-export const DELETE_INTEGRATIONACCOUNT_REQUEST = 'DELETE_INTEGRATIONACCOUNT_REQUEST';
-export const DELETE_INTEGRATIONACCOUNT_SUCCESS = 'DELETE_INTEGRATIONACCOUNT_SUCCESS';
-export const DELETE_INTEGRATIONACCOUNT_FAILURE = 'DELETE_INTEGRATIONACCOUNT_FAILURE';
+export const DELETE_INTEGRATIONACCOUNT_REQUEST =
+  "DELETE_INTEGRATIONACCOUNT_REQUEST";
+export const DELETE_INTEGRATIONACCOUNT_SUCCESS =
+  "DELETE_INTEGRATIONACCOUNT_SUCCESS";
+export const DELETE_INTEGRATIONACCOUNT_FAILURE =
+  "DELETE_INTEGRATIONACCOUNT_FAILURE";
 
-export const LIST_INTEGRATIONACCOUNT_REQUEST = 'LIST_INTEGRATIONACCOUNT_REQUEST';
-export const LIST_INTEGRATIONACCOUNT_SUCCESS = 'LIST_INTEGRATIONACCOUNT_SUCCESS';
-export const LIST_INTEGRATIONACCOUNT_FAILURE = 'LIST_INTEGRATIONACCOUNT_FAILURE';
+export const LIST_INTEGRATIONACCOUNT_REQUEST =
+  "LIST_INTEGRATIONACCOUNT_REQUEST";
+export const LIST_INTEGRATIONACCOUNT_SUCCESS =
+  "LIST_INTEGRATIONACCOUNT_SUCCESS";
+export const LIST_INTEGRATIONACCOUNT_FAILURE =
+  "LIST_INTEGRATIONACCOUNT_FAILURE";
 
 export const addIntegrationAccountRequest = () => ({
-    type: ADD_INTEGRATIONACCOUNT_REQUEST,
+  type: ADD_INTEGRATIONACCOUNT_REQUEST,
 });
 
 export const addIntegrationAccountSuccess = (IntegrationAccounts: any) => ({
-    type: ADD_INTEGRATIONACCOUNT_SUCCESS,
-    payload: IntegrationAccounts,
+  type: ADD_INTEGRATIONACCOUNT_SUCCESS,
+  payload: IntegrationAccounts,
 });
 
 export const addIntegrationAccountFailure = (error: Error) => ({
-    type: ADD_INTEGRATIONACCOUNT_FAILURE,
-    payload: error,
+  type: ADD_INTEGRATIONACCOUNT_FAILURE,
+  payload: error,
 });
 
-
 export const fetchIntegrationAccountRequest = () => ({
-    type: FETCH_INTEGRATIONACCOUNT_REQUEST,
+  type: FETCH_INTEGRATIONACCOUNT_REQUEST,
 });
 
 export const fetchIntegrationAccountSuccess = (IntegrationAccounts: any) => ({
-    type: FETCH_INTEGRATIONACCOUNT_SUCCESS,
-    payload: IntegrationAccounts,
+  type: FETCH_INTEGRATIONACCOUNT_SUCCESS,
+  payload: IntegrationAccounts,
 });
 
 export const fetchIntegrationAccountFailure = (error: Error) => ({
-    type: FETCH_INTEGRATIONACCOUNT_FAILURE,
-    payload: error,
+  type: FETCH_INTEGRATIONACCOUNT_FAILURE,
+  payload: error,
 });
 
 export const listIntegrationAccountRequest = () => ({
-    type: LIST_INTEGRATIONACCOUNT_REQUEST,
+  type: LIST_INTEGRATIONACCOUNT_REQUEST,
 });
 
 export const listIntegrationAccountSuccess = (IntegrationAccounts: any) => ({
-    type: LIST_INTEGRATIONACCOUNT_SUCCESS,
-    payload: IntegrationAccounts,
+  type: LIST_INTEGRATIONACCOUNT_SUCCESS,
+  payload: IntegrationAccounts,
 });
 
 export const listIntegrationAccountFailure = (error: Error) => ({
-    type: LIST_INTEGRATIONACCOUNT_FAILURE,
-    payload: error,
+  type: LIST_INTEGRATIONACCOUNT_FAILURE,
+  payload: error,
 });
 
 export const updateIntegrationAccountRequest = (IntegrationAccount: any) => ({
-    type: UPDATE_INTEGRATIONACCOUNT_REQUEST,
-    payload: IntegrationAccount,
+  type: UPDATE_INTEGRATIONACCOUNT_REQUEST,
+  payload: IntegrationAccount,
 });
 
 export const updateIntegrationAccountSuccess = (IntegrationAccount: any) => ({
-    type: UPDATE_INTEGRATIONACCOUNT_SUCCESS,
-    payload: IntegrationAccount,
+  type: UPDATE_INTEGRATIONACCOUNT_SUCCESS,
+  payload: IntegrationAccount,
 });
 
 export const updateIntegrationAccountFailure = (error: Error) => ({
-    type: UPDATE_INTEGRATIONACCOUNT_FAILURE,
-    payload: error,
+  type: UPDATE_INTEGRATIONACCOUNT_FAILURE,
+  payload: error,
 });
 
 export const deleteIntegrationAccountRequest = (IntegrationAccount: any) => ({
-    type: DELETE_INTEGRATIONACCOUNT_REQUEST,
-    payload: IntegrationAccount,
+  type: DELETE_INTEGRATIONACCOUNT_REQUEST,
+  payload: IntegrationAccount,
 });
 
 export const deleteIntegrationAccountSuccess = (IntegrationAccount: any) => ({
-    type: DELETE_INTEGRATIONACCOUNT_SUCCESS,
-    payload: IntegrationAccount,
+  type: DELETE_INTEGRATIONACCOUNT_SUCCESS,
+  payload: IntegrationAccount,
 });
 
 export const deleteIntegrationAccountFailure = (error: Error) => ({
-    type: DELETE_INTEGRATIONACCOUNT_FAILURE,
-    payload: error,
+  type: DELETE_INTEGRATIONACCOUNT_FAILURE,
+  payload: error,
 });

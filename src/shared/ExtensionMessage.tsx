@@ -2,6 +2,7 @@
 
 import { GitCommit } from "../utils/git";
 import { ApiConfiguration, ModelInfo } from "./api";
+import { LlmDetailsSummary, SelectedLlmDetails } from "./llm";
 import { AutoApprovalSettings } from "./AutoApprovalSettings";
 import { BrowserSettings } from "./BrowserSettings";
 import { ValorIDEAdvancedSettings } from "./AdvancedSettings";
@@ -32,71 +33,72 @@ export interface RemoteCommand {
 // webview will hold state
 export interface ExtensionMessage {
   type:
-  | "action"
-  | "state"
-  | "selectedImages"
-  | "ollamaModels"
-  | "lmStudioModels"
-  | "theme"
-  | "workspaceUpdated"
-  | "invoke"
-  | "partialMessage"
-  | "openRouterModels"
-  | "openAiModels"
-  | "requestyModels"
-  | "llmDetailsUpdated"
-  | "mcpServers"
-  | "relinquishControl"
-  | "vsCodeLmModels"
-  | "requestVsCodeLmModels"
-  | "authCallback"
-  | "mcpMarketplaceCatalog"
-  | "mcpDownloadDetails"
-  | "commitSearchResults"
-  | "openGraphData"
-  | "isImageUrlResult"
-  | "didUpdateSettings"
-  | "addRemoteServerResult"
-  | "userCreditsBalance"
-  | "userCreditsUsage"
-  | "userCreditsPayments"
-  | "totalTasksSize"
-  | "addToInput"
-  | "browserConnectionResult"
-  | "detectedChromePath"
-  | "scrollToSettings"
-  | "browserRelaunchResult"
-  | "relativePathsResponse" // Handles single and multiple path responses
-  | "fileSearchResults"
-  | "grpc_response" // New type for gRPC responses
-  | "loginSuccess"
-  | "streamToThorapiResult"
-  | "openFileExplorerResult"
-  | "workspaceFiles"
-  | "contentData"
-  | "LIST_APPLICATION_SUCCESS"
-  | "remoteCommand"
-  | "uploadOpenAPISpecResult"
-  | "swarm:task-assignment"
-  | "swarm:task-cancelled"
-  | "swarm:remote-command"
-  | "swarm:broadcast"
-  | "swarm:private-message";
+    | "action"
+    | "state"
+    | "selectedImages"
+    | "ollamaModels"
+    | "lmStudioModels"
+    | "theme"
+    | "workspaceUpdated"
+    | "invoke"
+    | "partialMessage"
+    | "openRouterModels"
+    | "openAiModels"
+    | "requestyModels"
+    | "llmDetailsUpdated"
+    | "mcpServers"
+    | "relinquishControl"
+    | "vsCodeLmModels"
+    | "requestVsCodeLmModels"
+    | "authCallback"
+    | "mcpMarketplaceCatalog"
+    | "mcpDownloadDetails"
+    | "commitSearchResults"
+    | "openGraphData"
+    | "isImageUrlResult"
+    | "didUpdateSettings"
+    | "addRemoteServerResult"
+    | "userCreditsBalance"
+    | "userCreditsUsage"
+    | "userCreditsPayments"
+    | "totalTasksSize"
+    | "addToInput"
+    | "browserConnectionResult"
+    | "detectedChromePath"
+    | "scrollToSettings"
+    | "browserRelaunchResult"
+    | "relativePathsResponse" // Handles single and multiple path responses
+    | "fileSearchResults"
+    | "grpc_response" // New type for gRPC responses
+    | "loginSuccess"
+    | "streamToThorapiResult"
+    | "openFileExplorerResult"
+    | "workspaceFiles"
+    | "contentData"
+    | "LIST_APPLICATION_SUCCESS"
+    | "remoteCommand"
+    | "uploadOpenAPISpecResult"
+    | "swarm:task-assignment"
+    | "swarm:task-cancelled"
+    | "swarm:remote-command"
+    | "swarm:broadcast"
+    | "valkyraiHostTestResult"
+    | "swarm:private-message";
   text?: string;
   path?: string; // Used for openFileExplorerResult
   paths?: (string | null)[]; // Used for relativePathsResponse
   action?:
-  | "chatButtonClicked"
-  | "mcpButtonClicked"
-  | "settingsButtonClicked"
-  | "historyButtonClicked"
-  | "didBecomeVisible"
-  | "accountLoginClicked"
-  | "accountLogoutClicked"
-  | "accountButtonClicked"
-  | "focusChatInput"
-  | "generatedFilesButtonClicked"
-  | "serverConsoleButtonClicked";
+    | "chatButtonClicked"
+    | "mcpButtonClicked"
+    | "settingsButtonClicked"
+    | "historyButtonClicked"
+    | "didBecomeVisible"
+    | "accountLoginClicked"
+    | "accountLogoutClicked"
+    | "accountButtonClicked"
+    | "focusChatInput"
+    | "generatedFilesButtonClicked"
+    | "serverConsoleButtonClicked";
 
   invoke?: Invoke;
   state?: ExtensionState;
@@ -114,7 +116,8 @@ export interface ExtensionMessage {
   openRouterModels?: Record<string, ModelInfo>;
   openAiModels?: string[];
   requestyModels?: Record<string, ModelInfo>;
-  models?: Record<string, any>; // For llmDetailsUpdated
+  models?: Record<string, any>; // For legacy llmDetailsUpdated payloads
+  llmDetails?: LlmDetailsSummary[]; // Preferred llmDetails payload
   payload?: any;
   mcpServers?: McpServer[];
   customToken?: string;
@@ -247,6 +250,7 @@ export interface ExtensionState {
   jwtToken?: string;
   authenticatedPrincipal?: any;
   isLoggedIn?: boolean;
+  selectedLlmDetails?: SelectedLlmDetails;
 }
 
 export type ValorIDEFileChangeStatus =
@@ -332,20 +336,21 @@ export type ValorIDESay =
   | "diff_error"
   | "deleted_api_reqs"
   | "valorideignore_error"
+  | "workspace_access_error"
   | "checkpoint_created"
   | "load_mcp_documentation"
   | "p2p_chat_message";
 
 export interface ValorIDESayTool {
   tool:
-  | "editedExistingFile"
-  | "newFileCreated"
-  | "readFile"
-  | "listFilesTopLevel"
-  | "listFilesRecursive"
-  | "listCodeDefinitionNames"
-  | "searchFiles"
-  | "precisionSearchAndReplace";
+    | "editedExistingFile"
+    | "newFileCreated"
+    | "readFile"
+    | "listFilesTopLevel"
+    | "listFilesRecursive"
+    | "listCodeDefinitionNames"
+    | "searchFiles"
+    | "precisionSearchAndReplace";
   path?: string;
   diff?: string;
   content?: string;

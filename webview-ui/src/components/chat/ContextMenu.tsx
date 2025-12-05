@@ -6,17 +6,17 @@ import {
   SearchResult,
 } from "@/utils/context-mentions";
 import { cleanPathPrefix } from "@/components/common/CodeAccordian";
-import { 
-  FaSpinner, 
-  FaFile, 
-  FaFolder, 
-  FaExclamationTriangle, 
-  FaTerminal, 
-  FaLink, 
-  FaGitAlt, 
-  FaInfoCircle, 
-  FaChevronRight, 
-  FaPlus 
+import {
+  FaSpinner,
+  FaFile,
+  FaFolder,
+  FaExclamationTriangle,
+  FaTerminal,
+  FaLink,
+  FaGitAlt,
+  FaInfoCircle,
+  FaChevronRight,
+  FaPlus,
 } from "react-icons/fa";
 
 interface ContextMenuProps {
@@ -166,7 +166,9 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     }
   };
 
-  const getIconForOption = (option: ContextMenuQueryItem): React.ReactElement => {
+  const getIconForOption = (
+    option: ContextMenuQueryItem,
+  ): React.ReactElement => {
     const iconStyle = {
       marginRight: "8px",
       flexShrink: 0,
@@ -296,14 +298,14 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
                 option.type === ContextMenuOptionType.Folder ||
                 option.type === ContextMenuOptionType.Git) &&
                 option.value)) && (
-                <FaPlus
-                  style={{
-                    fontSize: "14px",
-                    flexShrink: 0,
-                    marginLeft: 8,
-                  }}
-                />
-              )}
+              <FaPlus
+                style={{
+                  fontSize: "14px",
+                  flexShrink: 0,
+                  marginLeft: 8,
+                }}
+              />
+            )}
           </div>
         ))}
       </div>

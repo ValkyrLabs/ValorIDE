@@ -1,0 +1,105 @@
+import { createApi } from "@reduxjs/toolkit/query/react";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+export const PublishRestEndpointRequestService = createApi({
+    reducerPath: "PublishRestEndpointRequest", // This should remain unique
+    baseQuery: customBaseQuery,
+    tagTypes: ["PublishRestEndpointRequest"],
+    endpoints: (build) => ({
+        // 1) Paged Query Endpoint
+        // Standardized pagination: page (0-based), size (page size)
+        getPublishRestEndpointRequestsPaged: build.query({
+            query: ({ page, size = 20, example }) => {
+                const q = [`page=${page}`, `size=${size}`];
+                if (example)
+                    q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+                return `PublishRestEndpointRequest?${q.join("&")}`;
+            },
+            providesTags: (result, error, { page }) => result
+                ? [
+                    ...result.map(({ id }) => ({
+                        type: "PublishRestEndpointRequest",
+                        id,
+                    })),
+                    { type: "PublishRestEndpointRequest", id: `PAGE_${page}` },
+                ]
+                : [],
+        }),
+        // 2) Simple "get all" Query (optional)
+        getPublishRestEndpointRequests: build.query({
+            query: (arg) => {
+                if (arg && arg.example) {
+                    const ex = arg.example;
+                    return `PublishRestEndpointRequest?example=${encodeURIComponent(JSON.stringify(ex))}`;
+                }
+                return `PublishRestEndpointRequest`;
+            },
+            providesTags: (result) => result
+                ? [
+                    ...result.map(({ id }) => ({
+                        type: "PublishRestEndpointRequest",
+                        id,
+                    })),
+                    { type: "PublishRestEndpointRequest", id: "LIST" },
+                ]
+                : [{ type: "PublishRestEndpointRequest", id: "LIST" }],
+        }),
+        // 3) Create
+        addPublishRestEndpointRequest: build.mutation({
+            query: (body) => ({
+                url: `PublishRestEndpointRequest`,
+                method: "POST",
+                body,
+            }),
+            invalidatesTags: [{ type: "PublishRestEndpointRequest", id: "LIST" }],
+        }),
+        // 4) Get single by ID
+        getPublishRestEndpointRequest: build.query({
+            query: (id) => `PublishRestEndpointRequest/${id}`,
+            providesTags: (result, error, id) => [
+                { type: "PublishRestEndpointRequest", id },
+            ],
+        }),
+        // 5) Update
+        updatePublishRestEndpointRequest: build.mutation({
+            query: ({ id, ...patch }) => ({
+                url: `PublishRestEndpointRequest/${id}`,
+                method: "PUT",
+                body: patch,
+            }),
+            async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+                if (id) {
+                    const patchResult = dispatch(PublishRestEndpointRequestService.util.updateQueryData("getPublishRestEndpointRequest", id, (draft) => {
+                        Object.assign(draft, patch);
+                    }));
+                    try {
+                        await queryFulfilled;
+                    }
+                    catch {
+                        patchResult.undo();
+                    }
+                }
+            },
+            invalidatesTags: (result, error, { id }) => [
+                { type: "PublishRestEndpointRequest", id },
+                { type: "PublishRestEndpointRequest", id: "LIST" },
+            ],
+        }),
+        // 6) Delete
+        deletePublishRestEndpointRequest: build.mutation({
+            query(id) {
+                return {
+                    url: `PublishRestEndpointRequest/${id}`,
+                    method: "DELETE",
+                };
+            },
+            invalidatesTags: (result, error, id) => [
+                { type: "PublishRestEndpointRequest", id },
+            ],
+        }),
+    }),
+});
+// Notice we now also export `useLazyGetPublishRestEndpointRequestsPagedQuery`
+export const { useGetPublishRestEndpointRequestsPagedQuery, // immediate fetch
+useLazyGetPublishRestEndpointRequestsPagedQuery, // lazy fetch
+useGetPublishRestEndpointRequestQuery, useGetPublishRestEndpointRequestsQuery, useAddPublishRestEndpointRequestMutation, useUpdatePublishRestEndpointRequestMutation, useDeletePublishRestEndpointRequestMutation, } = PublishRestEndpointRequestService;
+//# sourceMappingURL=PublishRestEndpointRequestService.js.map

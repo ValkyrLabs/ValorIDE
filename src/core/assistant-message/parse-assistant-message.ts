@@ -93,10 +93,7 @@ export function parseAssistantMessage(assistantMessage: string) {
             const paramTagPattern = toolParamNames.join("|");
             const questionText = toolInnerContent
               .replace(
-                new RegExp(
-                  `<(${paramTagPattern})>[\\s\\S]*?<\\/\\1>`,
-                  "g",
-                ),
+                new RegExp(`<(${paramTagPattern})>[\\s\\S]*?<\\/\\1>`, "g"),
                 "",
               )
               .trim();

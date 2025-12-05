@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,294 +19,345 @@ Template file: typescript-redux-query/apis.mustache
 Description: SecureKeyApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    SecureKey,
-    SecureKeyFromJSON,
-    SecureKeyToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { SecureKey, SecureKeyFromJSON, SecureKeyToJSON } from "../model";
 
 export interface DeleteSecureKeyApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetSecureKeyApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetSecureKeyListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PostSecureKeyApiRequest {
-    secureKey: SecureKey;
+  secureKey: SecureKey;
 }
 
 export interface UpdateSecureKeyApiRequest {
-    id: string;
-    secureKey: SecureKey;
+  id: string;
+  secureKey: SecureKey;
 }
-
 
 /**
  * Deletes a specific SecureKey.
  * Delete a SecureKey.
  */
-function deleteSecureKeyRaw<T>(requestParameters: DeleteSecureKeyApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteSecureKey.');
-    }
+function deleteSecureKeyRaw<T>(
+  requestParameters: DeleteSecureKeyApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteSecureKey.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SecureKey/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SecureKey/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific SecureKey.
-* Delete a SecureKey.
-*/
-export function deleteSecureKey<T>(requestParameters: DeleteSecureKeyApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteSecureKeyRaw(requestParameters, requestConfig);
+ * Deletes a specific SecureKey.
+ * Delete a SecureKey.
+ */
+export function deleteSecureKey<T>(
+  requestParameters: DeleteSecureKeyApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteSecureKeyRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single SecureKey for a specific uid.
  * Retrieve a single SecureKey
  */
-function getSecureKeyRaw<T>(requestParameters: GetSecureKeyApiRequest, requestConfig: runtime.TypedQueryConfig<T, SecureKey> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getSecureKey.');
-    }
+function getSecureKeyRaw<T>(
+  requestParameters: GetSecureKeyApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SecureKey> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getSecureKey.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SecureKey/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SecureKeyFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SecureKey/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SecureKeyFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single SecureKey for a specific uid.
-* Retrieve a single SecureKey
-*/
-export function getSecureKey<T>(requestParameters: GetSecureKeyApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SecureKey>): QueryConfig<T> {
-    return getSecureKeyRaw(requestParameters, requestConfig);
+ * Retrieves a single SecureKey for a specific uid.
+ * Retrieve a single SecureKey
+ */
+export function getSecureKey<T>(
+  requestParameters: GetSecureKeyApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SecureKey>,
+): QueryConfig<T> {
+  return getSecureKeyRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of SecureKeys.
  * Retrieve a list of SecureKeys
  */
-function getSecureKeyListRaw<T>(requestParameters: GetSecureKeyListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<SecureKey>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getSecureKeyListRaw<T>(
+  requestParameters: GetSecureKeyListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<SecureKey>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SecureKey`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(SecureKeyFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SecureKey`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(SecureKeyFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of SecureKeys.
-* Retrieve a list of SecureKeys
-*/
-export function getSecureKeyList<T>(requestParameters: GetSecureKeyListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<SecureKey>>): QueryConfig<T> {
-    return getSecureKeyListRaw(requestParameters, requestConfig);
+ * Retrieves a list of SecureKeys.
+ * Retrieve a list of SecureKeys
+ */
+export function getSecureKeyList<T>(
+  requestParameters: GetSecureKeyListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<SecureKey>>,
+): QueryConfig<T> {
+  return getSecureKeyListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new SecureKey.
  * Create a new SecureKey
  */
-function postSecureKeyRaw<T>(requestParameters: PostSecureKeyApiRequest, requestConfig: runtime.TypedQueryConfig<T, SecureKey> = {}): QueryConfig<T> {
-    if (requestParameters.secureKey === null || requestParameters.secureKey === undefined) {
-        throw new runtime.RequiredError('secureKey','Required parameter requestParameters.secureKey was null or undefined when calling postSecureKey.');
-    }
+function postSecureKeyRaw<T>(
+  requestParameters: PostSecureKeyApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SecureKey> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.secureKey === null ||
+    requestParameters.secureKey === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "secureKey",
+      "Required parameter requestParameters.secureKey was null or undefined when calling postSecureKey.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SecureKey`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || SecureKeyToJSON(requestParameters.secureKey),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SecureKeyFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SecureKey`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || SecureKeyToJSON(requestParameters.secureKey),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SecureKeyFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new SecureKey.
-* Create a new SecureKey
-*/
-export function postSecureKey<T>(requestParameters: PostSecureKeyApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SecureKey>): QueryConfig<T> {
-    return postSecureKeyRaw(requestParameters, requestConfig);
+ * Creates a new SecureKey.
+ * Create a new SecureKey
+ */
+export function postSecureKey<T>(
+  requestParameters: PostSecureKeyApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SecureKey>,
+): QueryConfig<T> {
+  return postSecureKeyRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing SecureKey.
  * Update an existing SecureKey
  */
-function updateSecureKeyRaw<T>(requestParameters: UpdateSecureKeyApiRequest, requestConfig: runtime.TypedQueryConfig<T, SecureKey> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateSecureKey.');
-    }
+function updateSecureKeyRaw<T>(
+  requestParameters: UpdateSecureKeyApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SecureKey> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateSecureKey.",
+    );
+  }
 
-    if (requestParameters.secureKey === null || requestParameters.secureKey === undefined) {
-        throw new runtime.RequiredError('secureKey','Required parameter requestParameters.secureKey was null or undefined when calling updateSecureKey.');
-    }
+  if (
+    requestParameters.secureKey === null ||
+    requestParameters.secureKey === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "secureKey",
+      "Required parameter requestParameters.secureKey was null or undefined when calling updateSecureKey.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SecureKey/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || SecureKeyToJSON(requestParameters.secureKey),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SecureKeyFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SecureKey/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || SecureKeyToJSON(requestParameters.secureKey),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SecureKeyFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing SecureKey.
-* Update an existing SecureKey
-*/
-export function updateSecureKey<T>(requestParameters: UpdateSecureKeyApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SecureKey>): QueryConfig<T> {
-    return updateSecureKeyRaw(requestParameters, requestConfig);
+ * Updates an existing SecureKey.
+ * Update an existing SecureKey
+ */
+export function updateSecureKey<T>(
+  requestParameters: UpdateSecureKeyApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SecureKey>,
+): QueryConfig<T> {
+  return updateSecureKeyRaw(requestParameters, requestConfig);
 }
-

@@ -1,0 +1,144 @@
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { CareerOpportunity } from "@thor/model/CareerOpportunity";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+
+type CareerOpportunityResponse = CareerOpportunity[];
+
+export const CareerOpportunityService = createApi({
+  reducerPath: "CareerOpportunity", // This should remain unique
+  baseQuery: customBaseQuery,
+  tagTypes: ["CareerOpportunity"],
+  endpoints: (build) => ({
+    // 1) Paged Query Endpoint
+    // Standardized pagination: page (0-based), size (page size)
+    getCareerOpportunitysPaged: build.query<
+      CareerOpportunityResponse,
+      { page: number; size?: number; example?: Partial<CareerOpportunity> }
+    >({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `CareerOpportunity?${q.join("&")}`;
+      },
+      providesTags: (result, error, { page }) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "CareerOpportunity" as const,
+                id,
+              })),
+              { type: "CareerOpportunity", id: `PAGE_${page}` },
+            ]
+          : [],
+    }),
+
+    // 2) Simple "get all" Query (optional)
+    getCareerOpportunitys: build.query<
+      CareerOpportunityResponse,
+      { example?: Partial<CareerOpportunity> } | void
+    >({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `CareerOpportunity?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `CareerOpportunity`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "CareerOpportunity" as const,
+                id,
+              })),
+              { type: "CareerOpportunity", id: "LIST" },
+            ]
+          : [{ type: "CareerOpportunity", id: "LIST" }],
+    }),
+
+    // 3) Create
+    addCareerOpportunity: build.mutation<
+      CareerOpportunity,
+      Partial<CareerOpportunity>
+    >({
+      query: (body) => ({
+        url: `CareerOpportunity`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "CareerOpportunity", id: "LIST" }],
+    }),
+
+    // 4) Get single by ID
+    getCareerOpportunity: build.query<CareerOpportunity, string>({
+      query: (id) => `CareerOpportunity/${id}`,
+      providesTags: (result, error, id) => [{ type: "CareerOpportunity", id }],
+    }),
+
+    // 5) Update
+    updateCareerOpportunity: build.mutation<
+      void,
+      Pick<CareerOpportunity, "id"> & Partial<CareerOpportunity>
+    >({
+      query: ({ id, ...patch }) => ({
+        url: `CareerOpportunity/${id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        if (id) {
+          const patchResult = dispatch(
+            CareerOpportunityService.util.updateQueryData(
+              "getCareerOpportunity",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        }
+      },
+      invalidatesTags: (
+        result,
+        error,
+        { id }: Pick<CareerOpportunity, "id">,
+      ) => [
+        { type: "CareerOpportunity", id },
+        { type: "CareerOpportunity", id: "LIST" },
+      ],
+    }),
+
+    // 6) Delete
+    deleteCareerOpportunity: build.mutation<
+      { success: boolean; id: string },
+      number
+    >({
+      query(id) {
+        return {
+          url: `CareerOpportunity/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, id) => [
+        { type: "CareerOpportunity", id },
+      ],
+    }),
+  }),
+});
+
+// Notice we now also export `useLazyGetCareerOpportunitysPagedQuery`
+export const {
+  useGetCareerOpportunitysPagedQuery, // immediate fetch
+  useLazyGetCareerOpportunitysPagedQuery, // lazy fetch
+  useGetCareerOpportunityQuery,
+  useGetCareerOpportunitysQuery,
+  useAddCareerOpportunityMutation,
+  useUpdateCareerOpportunityMutation,
+  useDeleteCareerOpportunityMutation,
+} = CareerOpportunityService;

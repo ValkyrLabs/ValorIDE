@@ -1,4 +1,3 @@
-
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 
@@ -16,178 +15,338 @@ Description:
 */
 
 import { Middleware, combineReducers, configureStore } from "@reduxjs/toolkit";
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
 import middlewares from "./middlewares";
 // IMPORTant
-import { AccountBalanceService } from './services/AccountBalanceService';
-import { AclEntryService } from './services/AclEntryService';
-import { AddressService } from './services/AddressService';
-import { AgentService } from './services/AgentService';
-import { AgentEventTriggerService } from './services/AgentEventTriggerService';
-import { ApplicationService } from './services/ApplicationService';
-import { BackupConfigService } from './services/BackupConfigService';
-import { BalanceResponseService } from './services/BalanceResponseService';
-import { BlankRangeService } from './services/BlankRangeService';
-import { BorderService } from './services/BorderService';
-import { BuildService } from './services/BuildService';
-import { BuildOutputService } from './services/BuildOutputService';
-import { CampaignService } from './services/CampaignService';
-import { CellService } from './services/CellService';
-import { ChartService } from './services/ChartService';
-import { ChartSeriesService } from './services/ChartSeriesService';
-import { ChatCompletionRequestService } from './services/ChatCompletionRequestService';
-import { ChatCompletionResponseService } from './services/ChatCompletionResponseService';
-import { ChatMessageService } from './services/ChatMessageService';
-import { ChatResponseService } from './services/ChatResponseService';
-import { ContentDataService } from './services/ContentDataService';
-import { ContentMediaLinkService } from './services/ContentMediaLinkService';
-import { CustomerService } from './services/CustomerService';
-import { DeadLetterQueueService } from './services/DeadLetterQueueService';
-import { DefaultService } from './services/DefaultService';
-import { DiscountService } from './services/DiscountService';
-import { EventLogService } from './services/EventLogService';
-import { ExecModuleService } from './services/ExecModuleService';
-import { FileAuditLogService } from './services/FileAuditLogService';
-import { FileDownloadTokenService } from './services/FileDownloadTokenService';
-import { FileRecordService } from './services/FileRecordService';
-import { FileUploadSessionService } from './services/FileUploadSessionService';
-import { FileVersionService } from './services/FileVersionService';
-import { FormatService } from './services/FormatService';
-import { FormulaService } from './services/FormulaService';
-import { GoalService } from './services/GoalService';
-import { GoalDependencyService } from './services/GoalDependencyService';
-import { HostInstanceService } from './services/HostInstanceService';
-import { IntegrationAccountService } from './services/IntegrationAccountService';
-import { InvoiceService } from './services/InvoiceService';
-import { KeyMetricService } from './services/KeyMetricService';
-import { LineItemService } from './services/LineItemService';
-import { LlmDetailsService } from './services/LlmDetailsService';
-import { LoginService } from './services/LoginService';
-import { LogoutService } from './services/LogoutService';
-import { McpContentService } from './services/McpContentService';
-import { McpDownloadResponseService } from './services/McpDownloadResponseService';
-import { McpMarketplaceCatalogService } from './services/McpMarketplaceCatalogService';
-import { McpMarketplaceItemService } from './services/McpMarketplaceItemService';
-import { McpResourceService } from './services/McpResourceService';
-import { McpResourceResponseService } from './services/McpResourceResponseService';
-import { McpResourceTemplateService } from './services/McpResourceTemplateService';
-import { McpServerService } from './services/McpServerService';
-import { McpToolService } from './services/McpToolService';
-import { McpToolCallResponseService } from './services/McpToolCallResponseService';
-import { MediaObjectService } from './services/MediaObjectService';
-import { MergeRangeService } from './services/MergeRangeService';
-import { NamedRangeService } from './services/NamedRangeService';
-import { NoteService } from './services/NoteService';
-import { OasComponentService } from './services/OasComponentService';
-import { OasEnumService } from './services/OasEnumService';
-import { OasInfoService } from './services/OasInfoService';
-import { OasObjectSchemaService } from './services/OasObjectSchemaService';
-import { OasOpenAPISpecService } from './services/OasOpenAPISpecService';
-import { OasOperationService } from './services/OasOperationService';
-import { OasParameterService } from './services/OasParameterService';
-import { OasPathService } from './services/OasPathService';
-import { OasRequiredService } from './services/OasRequiredService';
-import { OasResponseService } from './services/OasResponseService';
-import { OasSecuritySchemeService } from './services/OasSecuritySchemeService';
-import { OasServerService } from './services/OasServerService';
-import { OpportunityService } from './services/OpportunityService';
-import { OrganizationService } from './services/OrganizationService';
-import { PaymentTransactionService } from './services/PaymentTransactionService';
-import { PivotTableService } from './services/PivotTableService';
-import { PrincipalService } from './services/PrincipalService';
-import { ProductService } from './services/ProductService';
-import { ProductFeatureService } from './services/ProductFeatureService';
-import { ProductFunnelWizardService } from './services/ProductFunnelWizardService';
-import { PtgService } from './services/PtgService';
-import { PtgRefService } from './services/PtgRefService';
-import { RatingService } from './services/RatingService';
-import { ReferralLinkService } from './services/ReferralLinkService';
-import { RoleService } from './services/RoleService';
-import { RunService } from './services/RunService';
-import { SalesActivityService } from './services/SalesActivityService';
-import { SalesOrderService } from './services/SalesOrderService';
-import { SalesPipelineService } from './services/SalesPipelineService';
-import { SecureKeyService } from './services/SecureKeyService';
-import { SheetService } from './services/SheetService';
-import { SheetColumnService } from './services/SheetColumnService';
-import { SheetRowService } from './services/SheetRowService';
-import { SolutionService } from './services/SolutionService';
-import { SpaceService } from './services/SpaceService';
-import { SpaceFileService } from './services/SpaceFileService';
-import { SpaceMemberService } from './services/SpaceMemberService';
-import { StrategicPriorityService } from './services/StrategicPriorityService';
-import { SwarmService } from './services/SwarmService';
-import { TaskService } from './services/TaskService';
-import { UsageTransactionService } from './services/UsageTransactionService';
-import { UserPreferenceService } from './services/UserPreferenceService';
-import { WebsocketMessageService } from './services/WebsocketMessageService';
-import { WebsocketSessionService } from './services/WebsocketSessionService';
-import { WorkbookService } from './services/WorkbookService';
-import { WorkflowService } from './services/WorkflowService';
-import { WorkflowExecutionService } from './services/WorkflowExecutionService';
-import { WorkflowStateService } from './services/WorkflowStateService';
+import { AccountBalanceService } from "./services/AccountBalanceService";
+import { AclClassService } from "./services/AclClassService";
+import { AclEntryService } from "./services/AclEntryService";
+import { AclObjectIdentityService } from "./services/AclObjectIdentityService";
+import { AclSidService } from "./services/AclSidService";
+import { ActivateAgent200ResponseService } from "./services/ActivateAgent200ResponseService";
+import { AddressService } from "./services/AddressService";
+import { AgentService } from "./services/AgentService";
+import { AgentBillingService } from "./services/AgentBillingService";
+import { AgentBillingChargeService } from "./services/AgentBillingChargeService";
+import { AgentChatMessageService } from "./services/AgentChatMessageService";
+import { AgentChatMessageRequestService } from "./services/AgentChatMessageRequestService";
+import { AgentChatMessageResponseService } from "./services/AgentChatMessageResponseService";
+import { AgentDiscoveryItemService } from "./services/AgentDiscoveryItemService";
+import { AgentEventTriggerService } from "./services/AgentEventTriggerService";
+import { AgentHierarchyService } from "./services/AgentHierarchyService";
+import { AgentHierarchyNodeService } from "./services/AgentHierarchyNodeService";
+import { ApiMetricSnapshotService } from "./services/ApiMetricSnapshotService";
+import { ApiMetricsResponseService } from "./services/ApiMetricsResponseService";
+import { ApiTrafficEventService } from "./services/ApiTrafficEventService";
+import { ApplicationService } from "./services/ApplicationService";
+import { AuthorityService } from "./services/AuthorityService";
+import { BackupConfigService } from "./services/BackupConfigService";
+import { BalanceResponseService } from "./services/BalanceResponseService";
+import { BlankRangeService } from "./services/BlankRangeService";
+import { BorderService } from "./services/BorderService";
+import { BudgetService } from "./services/BudgetService";
+import { BuildService } from "./services/BuildService";
+import { BuildOutputService } from "./services/BuildOutputService";
+import { CampaignService } from "./services/CampaignService";
+import { CareerOpportunityService } from "./services/CareerOpportunityService";
+import { CellService } from "./services/CellService";
+import { ChannelSubscriptionService } from "./services/ChannelSubscriptionService";
+import { ChartService } from "./services/ChartService";
+import { ChartSeriesService } from "./services/ChartSeriesService";
+import { ChatCompletionRequestService } from "./services/ChatCompletionRequestService";
+import { ChatCompletionResponseService } from "./services/ChatCompletionResponseService";
+import { ChatMessageService } from "./services/ChatMessageService";
+import { ChatResponseService } from "./services/ChatResponseService";
+import { CircuitBreakerStateService } from "./services/CircuitBreakerStateService";
+import { CompleteUploadRequestService } from "./services/CompleteUploadRequestService";
+import { CompleteUploadRequestPartsInnerService } from "./services/CompleteUploadRequestPartsInnerService";
+import { ConsultingProfileService } from "./services/ConsultingProfileService";
+import { ContentDataService } from "./services/ContentDataService";
+import { ContentMediaLinkService } from "./services/ContentMediaLinkService";
+import { ConversationBranchService } from "./services/ConversationBranchService";
+import { ConversationMemoryNodeService } from "./services/ConversationMemoryNodeService";
+import { CustomerService } from "./services/CustomerService";
+import { DeadLetterQueueService } from "./services/DeadLetterQueueService";
+import { DefaultResponseService } from "./services/DefaultResponseService";
+import { DependService } from "./services/DependService";
+import { DigitalAssetService } from "./services/DigitalAssetService";
+import { DiscardDeadLetterEntryRequestService } from "./services/DiscardDeadLetterEntryRequestService";
+import { DiscardDeadLetterEntryResponseService } from "./services/DiscardDeadLetterEntryResponseService";
+import { DiscountService } from "./services/DiscountService";
+import { DownloadAccessService } from "./services/DownloadAccessService";
+import { EventLogService } from "./services/EventLogService";
+import { ExecModuleService } from "./services/ExecModuleService";
+import { ExecuteModuleRequestService } from "./services/ExecuteModuleRequestService";
+import { ExpenseService } from "./services/ExpenseService";
+import { FileAuditLogService } from "./services/FileAuditLogService";
+import { FileDownloadTokenService } from "./services/FileDownloadTokenService";
+import { FileMetadataService } from "./services/FileMetadataService";
+import { FileProcessingJobService } from "./services/FileProcessingJobService";
+import { FileRecordService } from "./services/FileRecordService";
+import { FileUploadSessionService } from "./services/FileUploadSessionService";
+import { FileVersionService } from "./services/FileVersionService";
+import { FormatService } from "./services/FormatService";
+import { FormulaService } from "./services/FormulaService";
+import { GeneralLedgerEntryService } from "./services/GeneralLedgerEntryService";
+import { GoalService } from "./services/GoalService";
+import { GoalDependencyService } from "./services/GoalDependencyService";
+import { GrantPermissionRequestService } from "./services/GrantPermissionRequestService";
+import { HostInstanceService } from "./services/HostInstanceService";
+import { InitUploadRequestService } from "./services/InitUploadRequestService";
+import { InitUploadResponseService } from "./services/InitUploadResponseService";
+import { IntegrationAccountService } from "./services/IntegrationAccountService";
+import { InvoiceService } from "./services/InvoiceService";
+import { InvokeMcpToolRequestService } from "./services/InvokeMcpToolRequestService";
+import { JobApplicationService } from "./services/JobApplicationService";
+import { JobApplicationRequestService } from "./services/JobApplicationRequestService";
+import { JobApplicationResponseService } from "./services/JobApplicationResponseService";
+import { JobMetadataService } from "./services/JobMetadataService";
+import { JobSeekerService } from "./services/JobSeekerService";
+import { KeyMetricService } from "./services/KeyMetricService";
+import { LegalPrecedentService } from "./services/LegalPrecedentService";
+import { LineItemService } from "./services/LineItemService";
+import { LlmDetailsService } from "./services/LlmDetailsService";
+import { LoginService } from "./services/LoginService";
+import { LogoutService } from "./services/LogoutService";
+import { McpService } from "./services/McpService";
+import { McpContentService } from "./services/McpContentService";
+import { McpDownloadResponseService } from "./services/McpDownloadResponseService";
+import { McpMarketplaceCatalogService } from "./services/McpMarketplaceCatalogService";
+import { McpMarketplaceItemService } from "./services/McpMarketplaceItemService";
+import { McpMarketplaceItemTagService } from "./services/McpMarketplaceItemTagService";
+import { McpResourceService } from "./services/McpResourceService";
+import { McpResourceResponseService } from "./services/McpResourceResponseService";
+import { McpResourceTemplateService } from "./services/McpResourceTemplateService";
+import { McpServerService } from "./services/McpServerService";
+import { McpServiceRegistryService } from "./services/McpServiceRegistryService";
+import { McpServiceResponseService } from "./services/McpServiceResponseService";
+import { McpToolService } from "./services/McpToolService";
+import { McpToolCallResponseService } from "./services/McpToolCallResponseService";
+import { McpToolPresetService } from "./services/McpToolPresetService";
+import { McpTransportConfigService } from "./services/McpTransportConfigService";
+import { MediaObjectService } from "./services/MediaObjectService";
+import { MergeRangeService } from "./services/MergeRangeService";
+import { MetricsService } from "./services/MetricsService";
+import { NamedRangeService } from "./services/NamedRangeService";
+import { NoteService } from "./services/NoteService";
+import { OasComponentService } from "./services/OasComponentService";
+import { OasEnumService } from "./services/OasEnumService";
+import { OasInfoService } from "./services/OasInfoService";
+import { OasObjectSchemaService } from "./services/OasObjectSchemaService";
+import { OasOpenAPISpecService } from "./services/OasOpenAPISpecService";
+import { OasOperationService } from "./services/OasOperationService";
+import { OasParameterService } from "./services/OasParameterService";
+import { OasPathService } from "./services/OasPathService";
+import { OasRequiredService } from "./services/OasRequiredService";
+import { OasResponseService } from "./services/OasResponseService";
+import { OasSecuritySchemeService } from "./services/OasSecuritySchemeService";
+import { OasServerService } from "./services/OasServerService";
+import { OpportunityService } from "./services/OpportunityService";
+import { OrderFulfillmentTaskService } from "./services/OrderFulfillmentTaskService";
+import { OrganizationService } from "./services/OrganizationService";
+import { PaymentTransactionService } from "./services/PaymentTransactionService";
+import { PersistentLoginService } from "./services/PersistentLoginService";
+import { PivotTableService } from "./services/PivotTableService";
+import { PresignRequestService } from "./services/PresignRequestService";
+import { PresignResponseService } from "./services/PresignResponseService";
+import { PrincipalService } from "./services/PrincipalService";
+import { PrincipalRolesService } from "./services/PrincipalRolesService";
+import { ProductService } from "./services/ProductService";
+import { ProductDeliveryConfigService } from "./services/ProductDeliveryConfigService";
+import { ProductFeatureService } from "./services/ProductFeatureService";
+import { ProductFunnelWizardService } from "./services/ProductFunnelWizardService";
+import { ProductLandingPageService } from "./services/ProductLandingPageService";
+import { PromptService } from "./services/PromptService";
+import { PromptRatingService } from "./services/PromptRatingService";
+import { PromptSelectionBroadcastService } from "./services/PromptSelectionBroadcastService";
+import { PtgService } from "./services/PtgService";
+import { PtgRefService } from "./services/PtgRefService";
+import { PublishFunnel200ResponseService } from "./services/PublishFunnel200ResponseService";
+import { PublishRestEndpointRequestService } from "./services/PublishRestEndpointRequestService";
+import { PublishWorkflowRequestService } from "./services/PublishWorkflowRequestService";
+import { QuotaService } from "./services/QuotaService";
+import { RatingService } from "./services/RatingService";
+import { ReactionService } from "./services/ReactionService";
+import { ReferralLinkService } from "./services/ReferralLinkService";
+import { RequeueDeadLetterEntryRequestService } from "./services/RequeueDeadLetterEntryRequestService";
+import { RequeueDeadLetterEntryResponseService } from "./services/RequeueDeadLetterEntryResponseService";
+import { RetryPolicyService } from "./services/RetryPolicyService";
+import { RoleService } from "./services/RoleService";
+import { RunService } from "./services/RunService";
+import { SalesActivityService } from "./services/SalesActivityService";
+import { SalesOrderService } from "./services/SalesOrderService";
+import { SalesPipelineService } from "./services/SalesPipelineService";
+import { SecureKeyService } from "./services/SecureKeyService";
+import { SheetService } from "./services/SheetService";
+import { SheetColumnService } from "./services/SheetColumnService";
+import { SheetRowService } from "./services/SheetRowService";
+import { SkillProfileService } from "./services/SkillProfileService";
+import { SolutionService } from "./services/SolutionService";
+import { SpaceService } from "./services/SpaceService";
+import { SpaceFileService } from "./services/SpaceFileService";
+import { SpaceMemberService } from "./services/SpaceMemberService";
+import { StackService } from "./services/StackService";
+import { StrategicPriorityService } from "./services/StrategicPriorityService";
+import { SwarmService } from "./services/SwarmService";
+import { SwarmAgentSummaryService } from "./services/SwarmAgentSummaryService";
+import { SwarmCommandRequestService } from "./services/SwarmCommandRequestService";
+import { SwarmCommandResponseService } from "./services/SwarmCommandResponseService";
+import { SwarmGraphEdgeService } from "./services/SwarmGraphEdgeService";
+import { SwarmGraphNodeService } from "./services/SwarmGraphNodeService";
+import { SwarmGraphSnapshotService } from "./services/SwarmGraphSnapshotService";
+import { SwarmMessageService } from "./services/SwarmMessageService";
+import { SwarmPayloadService } from "./services/SwarmPayloadService";
+import { SwarmRegisterRequestService } from "./services/SwarmRegisterRequestService";
+import { SwarmRegisterResponseService } from "./services/SwarmRegisterResponseService";
+import { SwarmSecurityService } from "./services/SwarmSecurityService";
+import { SwarmUnregisterRequestService } from "./services/SwarmUnregisterRequestService";
+import { SwarmUnregisterResponseService } from "./services/SwarmUnregisterResponseService";
+import { TagService } from "./services/TagService";
+import { TaskService } from "./services/TaskService";
+import { ToolFailureService } from "./services/ToolFailureService";
+import { UpdateFileRequestService } from "./services/UpdateFileRequestService";
+import { UsageTransactionService } from "./services/UsageTransactionService";
+import { UserPreferenceService } from "./services/UserPreferenceService";
+import { ValkyrJobService } from "./services/ValkyrJobService";
+import { WebsocketMessageService } from "./services/WebsocketMessageService";
+import { WebsocketSessionService } from "./services/WebsocketSessionService";
+import { WizardStartResponseService } from "./services/WizardStartResponseService";
+import { WizardStatusResponseService } from "./services/WizardStatusResponseService";
+import { WorkbookService } from "./services/WorkbookService";
+import { WorkflowService } from "./services/WorkflowService";
+import { WorkflowExecutionService } from "./services/WorkflowExecutionService";
+import { WorkflowStateService } from "./services/WorkflowStateService";
 
 export const getQueries = (state) => state.queries;
 export const getEntities = (state) => state.entities;
 
 export const reducer = {
   [AccountBalanceService.reducerPath]: AccountBalanceService.reducer,
+  [AclClassService.reducerPath]: AclClassService.reducer,
   [AclEntryService.reducerPath]: AclEntryService.reducer,
+  [AclObjectIdentityService.reducerPath]: AclObjectIdentityService.reducer,
+  [AclSidService.reducerPath]: AclSidService.reducer,
+  [ActivateAgent200ResponseService.reducerPath]:
+    ActivateAgent200ResponseService.reducer,
   [AddressService.reducerPath]: AddressService.reducer,
   [AgentService.reducerPath]: AgentService.reducer,
+  [AgentBillingService.reducerPath]: AgentBillingService.reducer,
+  [AgentBillingChargeService.reducerPath]: AgentBillingChargeService.reducer,
+  [AgentChatMessageService.reducerPath]: AgentChatMessageService.reducer,
+  [AgentChatMessageRequestService.reducerPath]:
+    AgentChatMessageRequestService.reducer,
+  [AgentChatMessageResponseService.reducerPath]:
+    AgentChatMessageResponseService.reducer,
+  [AgentDiscoveryItemService.reducerPath]: AgentDiscoveryItemService.reducer,
   [AgentEventTriggerService.reducerPath]: AgentEventTriggerService.reducer,
+  [AgentHierarchyService.reducerPath]: AgentHierarchyService.reducer,
+  [AgentHierarchyNodeService.reducerPath]: AgentHierarchyNodeService.reducer,
+  [ApiMetricSnapshotService.reducerPath]: ApiMetricSnapshotService.reducer,
+  [ApiMetricsResponseService.reducerPath]: ApiMetricsResponseService.reducer,
+  [ApiTrafficEventService.reducerPath]: ApiTrafficEventService.reducer,
   [ApplicationService.reducerPath]: ApplicationService.reducer,
+  [AuthorityService.reducerPath]: AuthorityService.reducer,
   [BackupConfigService.reducerPath]: BackupConfigService.reducer,
   [BalanceResponseService.reducerPath]: BalanceResponseService.reducer,
   [BlankRangeService.reducerPath]: BlankRangeService.reducer,
   [BorderService.reducerPath]: BorderService.reducer,
+  [BudgetService.reducerPath]: BudgetService.reducer,
   [BuildService.reducerPath]: BuildService.reducer,
   [BuildOutputService.reducerPath]: BuildOutputService.reducer,
   [CampaignService.reducerPath]: CampaignService.reducer,
+  [CareerOpportunityService.reducerPath]: CareerOpportunityService.reducer,
   [CellService.reducerPath]: CellService.reducer,
+  [ChannelSubscriptionService.reducerPath]: ChannelSubscriptionService.reducer,
   [ChartService.reducerPath]: ChartService.reducer,
   [ChartSeriesService.reducerPath]: ChartSeriesService.reducer,
-  [ChatCompletionRequestService.reducerPath]: ChatCompletionRequestService.reducer,
-  [ChatCompletionResponseService.reducerPath]: ChatCompletionResponseService.reducer,
+  [ChatCompletionRequestService.reducerPath]:
+    ChatCompletionRequestService.reducer,
+  [ChatCompletionResponseService.reducerPath]:
+    ChatCompletionResponseService.reducer,
   [ChatMessageService.reducerPath]: ChatMessageService.reducer,
   [ChatResponseService.reducerPath]: ChatResponseService.reducer,
+  [CircuitBreakerStateService.reducerPath]: CircuitBreakerStateService.reducer,
+  [CompleteUploadRequestService.reducerPath]:
+    CompleteUploadRequestService.reducer,
+  [CompleteUploadRequestPartsInnerService.reducerPath]:
+    CompleteUploadRequestPartsInnerService.reducer,
+  [ConsultingProfileService.reducerPath]: ConsultingProfileService.reducer,
   [ContentDataService.reducerPath]: ContentDataService.reducer,
   [ContentMediaLinkService.reducerPath]: ContentMediaLinkService.reducer,
+  [ConversationBranchService.reducerPath]: ConversationBranchService.reducer,
+  [ConversationMemoryNodeService.reducerPath]:
+    ConversationMemoryNodeService.reducer,
   [CustomerService.reducerPath]: CustomerService.reducer,
   [DeadLetterQueueService.reducerPath]: DeadLetterQueueService.reducer,
-  [DefaultService.reducerPath]: DefaultService.reducer,
+  [DefaultResponseService.reducerPath]: DefaultResponseService.reducer,
+  [DependService.reducerPath]: DependService.reducer,
+  [DigitalAssetService.reducerPath]: DigitalAssetService.reducer,
+  [DiscardDeadLetterEntryRequestService.reducerPath]:
+    DiscardDeadLetterEntryRequestService.reducer,
+  [DiscardDeadLetterEntryResponseService.reducerPath]:
+    DiscardDeadLetterEntryResponseService.reducer,
   [DiscountService.reducerPath]: DiscountService.reducer,
+  [DownloadAccessService.reducerPath]: DownloadAccessService.reducer,
   [EventLogService.reducerPath]: EventLogService.reducer,
   [ExecModuleService.reducerPath]: ExecModuleService.reducer,
+  [ExecuteModuleRequestService.reducerPath]:
+    ExecuteModuleRequestService.reducer,
+  [ExpenseService.reducerPath]: ExpenseService.reducer,
   [FileAuditLogService.reducerPath]: FileAuditLogService.reducer,
   [FileDownloadTokenService.reducerPath]: FileDownloadTokenService.reducer,
+  [FileMetadataService.reducerPath]: FileMetadataService.reducer,
+  [FileProcessingJobService.reducerPath]: FileProcessingJobService.reducer,
   [FileRecordService.reducerPath]: FileRecordService.reducer,
   [FileUploadSessionService.reducerPath]: FileUploadSessionService.reducer,
   [FileVersionService.reducerPath]: FileVersionService.reducer,
   [FormatService.reducerPath]: FormatService.reducer,
   [FormulaService.reducerPath]: FormulaService.reducer,
+  [GeneralLedgerEntryService.reducerPath]: GeneralLedgerEntryService.reducer,
   [GoalService.reducerPath]: GoalService.reducer,
   [GoalDependencyService.reducerPath]: GoalDependencyService.reducer,
+  [GrantPermissionRequestService.reducerPath]:
+    GrantPermissionRequestService.reducer,
   [HostInstanceService.reducerPath]: HostInstanceService.reducer,
+  [InitUploadRequestService.reducerPath]: InitUploadRequestService.reducer,
+  [InitUploadResponseService.reducerPath]: InitUploadResponseService.reducer,
   [IntegrationAccountService.reducerPath]: IntegrationAccountService.reducer,
   [InvoiceService.reducerPath]: InvoiceService.reducer,
+  [InvokeMcpToolRequestService.reducerPath]:
+    InvokeMcpToolRequestService.reducer,
+  [JobApplicationService.reducerPath]: JobApplicationService.reducer,
+  [JobApplicationRequestService.reducerPath]:
+    JobApplicationRequestService.reducer,
+  [JobApplicationResponseService.reducerPath]:
+    JobApplicationResponseService.reducer,
+  [JobMetadataService.reducerPath]: JobMetadataService.reducer,
+  [JobSeekerService.reducerPath]: JobSeekerService.reducer,
   [KeyMetricService.reducerPath]: KeyMetricService.reducer,
+  [LegalPrecedentService.reducerPath]: LegalPrecedentService.reducer,
   [LineItemService.reducerPath]: LineItemService.reducer,
   [LlmDetailsService.reducerPath]: LlmDetailsService.reducer,
   [LoginService.reducerPath]: LoginService.reducer,
   [LogoutService.reducerPath]: LogoutService.reducer,
+  [McpService.reducerPath]: McpService.reducer,
   [McpContentService.reducerPath]: McpContentService.reducer,
   [McpDownloadResponseService.reducerPath]: McpDownloadResponseService.reducer,
-  [McpMarketplaceCatalogService.reducerPath]: McpMarketplaceCatalogService.reducer,
+  [McpMarketplaceCatalogService.reducerPath]:
+    McpMarketplaceCatalogService.reducer,
   [McpMarketplaceItemService.reducerPath]: McpMarketplaceItemService.reducer,
+  [McpMarketplaceItemTagService.reducerPath]:
+    McpMarketplaceItemTagService.reducer,
   [McpResourceService.reducerPath]: McpResourceService.reducer,
   [McpResourceResponseService.reducerPath]: McpResourceResponseService.reducer,
   [McpResourceTemplateService.reducerPath]: McpResourceTemplateService.reducer,
   [McpServerService.reducerPath]: McpServerService.reducer,
+  [McpServiceRegistryService.reducerPath]: McpServiceRegistryService.reducer,
+  [McpServiceResponseService.reducerPath]: McpServiceResponseService.reducer,
   [McpToolService.reducerPath]: McpToolService.reducer,
   [McpToolCallResponseService.reducerPath]: McpToolCallResponseService.reducer,
+  [McpToolPresetService.reducerPath]: McpToolPresetService.reducer,
+  [McpTransportConfigService.reducerPath]: McpTransportConfigService.reducer,
   [MediaObjectService.reducerPath]: MediaObjectService.reducer,
   [MergeRangeService.reducerPath]: MergeRangeService.reducer,
+  [MetricsService.reducerPath]: MetricsService.reducer,
   [NamedRangeService.reducerPath]: NamedRangeService.reducer,
   [NoteService.reducerPath]: NoteService.reducer,
   [OasComponentService.reducerPath]: OasComponentService.reducer,
@@ -203,17 +362,43 @@ export const reducer = {
   [OasSecuritySchemeService.reducerPath]: OasSecuritySchemeService.reducer,
   [OasServerService.reducerPath]: OasServerService.reducer,
   [OpportunityService.reducerPath]: OpportunityService.reducer,
+  [OrderFulfillmentTaskService.reducerPath]:
+    OrderFulfillmentTaskService.reducer,
   [OrganizationService.reducerPath]: OrganizationService.reducer,
   [PaymentTransactionService.reducerPath]: PaymentTransactionService.reducer,
+  [PersistentLoginService.reducerPath]: PersistentLoginService.reducer,
   [PivotTableService.reducerPath]: PivotTableService.reducer,
+  [PresignRequestService.reducerPath]: PresignRequestService.reducer,
+  [PresignResponseService.reducerPath]: PresignResponseService.reducer,
   [PrincipalService.reducerPath]: PrincipalService.reducer,
+  [PrincipalRolesService.reducerPath]: PrincipalRolesService.reducer,
   [ProductService.reducerPath]: ProductService.reducer,
+  [ProductDeliveryConfigService.reducerPath]:
+    ProductDeliveryConfigService.reducer,
   [ProductFeatureService.reducerPath]: ProductFeatureService.reducer,
   [ProductFunnelWizardService.reducerPath]: ProductFunnelWizardService.reducer,
+  [ProductLandingPageService.reducerPath]: ProductLandingPageService.reducer,
+  [PromptService.reducerPath]: PromptService.reducer,
+  [PromptRatingService.reducerPath]: PromptRatingService.reducer,
+  [PromptSelectionBroadcastService.reducerPath]:
+    PromptSelectionBroadcastService.reducer,
   [PtgService.reducerPath]: PtgService.reducer,
   [PtgRefService.reducerPath]: PtgRefService.reducer,
+  [PublishFunnel200ResponseService.reducerPath]:
+    PublishFunnel200ResponseService.reducer,
+  [PublishRestEndpointRequestService.reducerPath]:
+    PublishRestEndpointRequestService.reducer,
+  [PublishWorkflowRequestService.reducerPath]:
+    PublishWorkflowRequestService.reducer,
+  [QuotaService.reducerPath]: QuotaService.reducer,
   [RatingService.reducerPath]: RatingService.reducer,
+  [ReactionService.reducerPath]: ReactionService.reducer,
   [ReferralLinkService.reducerPath]: ReferralLinkService.reducer,
+  [RequeueDeadLetterEntryRequestService.reducerPath]:
+    RequeueDeadLetterEntryRequestService.reducer,
+  [RequeueDeadLetterEntryResponseService.reducerPath]:
+    RequeueDeadLetterEntryResponseService.reducer,
+  [RetryPolicyService.reducerPath]: RetryPolicyService.reducer,
   [RoleService.reducerPath]: RoleService.reducer,
   [RunService.reducerPath]: RunService.reducer,
   [SalesActivityService.reducerPath]: SalesActivityService.reducer,
@@ -223,17 +408,44 @@ export const reducer = {
   [SheetService.reducerPath]: SheetService.reducer,
   [SheetColumnService.reducerPath]: SheetColumnService.reducer,
   [SheetRowService.reducerPath]: SheetRowService.reducer,
+  [SkillProfileService.reducerPath]: SkillProfileService.reducer,
   [SolutionService.reducerPath]: SolutionService.reducer,
   [SpaceService.reducerPath]: SpaceService.reducer,
   [SpaceFileService.reducerPath]: SpaceFileService.reducer,
   [SpaceMemberService.reducerPath]: SpaceMemberService.reducer,
+  [StackService.reducerPath]: StackService.reducer,
   [StrategicPriorityService.reducerPath]: StrategicPriorityService.reducer,
   [SwarmService.reducerPath]: SwarmService.reducer,
+  [SwarmAgentSummaryService.reducerPath]: SwarmAgentSummaryService.reducer,
+  [SwarmCommandRequestService.reducerPath]: SwarmCommandRequestService.reducer,
+  [SwarmCommandResponseService.reducerPath]:
+    SwarmCommandResponseService.reducer,
+  [SwarmGraphEdgeService.reducerPath]: SwarmGraphEdgeService.reducer,
+  [SwarmGraphNodeService.reducerPath]: SwarmGraphNodeService.reducer,
+  [SwarmGraphSnapshotService.reducerPath]: SwarmGraphSnapshotService.reducer,
+  [SwarmMessageService.reducerPath]: SwarmMessageService.reducer,
+  [SwarmPayloadService.reducerPath]: SwarmPayloadService.reducer,
+  [SwarmRegisterRequestService.reducerPath]:
+    SwarmRegisterRequestService.reducer,
+  [SwarmRegisterResponseService.reducerPath]:
+    SwarmRegisterResponseService.reducer,
+  [SwarmSecurityService.reducerPath]: SwarmSecurityService.reducer,
+  [SwarmUnregisterRequestService.reducerPath]:
+    SwarmUnregisterRequestService.reducer,
+  [SwarmUnregisterResponseService.reducerPath]:
+    SwarmUnregisterResponseService.reducer,
+  [TagService.reducerPath]: TagService.reducer,
   [TaskService.reducerPath]: TaskService.reducer,
+  [ToolFailureService.reducerPath]: ToolFailureService.reducer,
+  [UpdateFileRequestService.reducerPath]: UpdateFileRequestService.reducer,
   [UsageTransactionService.reducerPath]: UsageTransactionService.reducer,
   [UserPreferenceService.reducerPath]: UserPreferenceService.reducer,
+  [ValkyrJobService.reducerPath]: ValkyrJobService.reducer,
   [WebsocketMessageService.reducerPath]: WebsocketMessageService.reducer,
   [WebsocketSessionService.reducerPath]: WebsocketSessionService.reducer,
+  [WizardStartResponseService.reducerPath]: WizardStartResponseService.reducer,
+  [WizardStatusResponseService.reducerPath]:
+    WizardStatusResponseService.reducer,
   [WorkbookService.reducerPath]: WorkbookService.reducer,
   [WorkflowService.reducerPath]: WorkflowService.reducer,
   [WorkflowExecutionService.reducerPath]: WorkflowExecutionService.reducer,
@@ -241,118 +453,207 @@ export const reducer = {
 };
 
 /* use to populate external store */
-export const getMiddleWare : Middleware = () => {
+export const getMiddleWare: Middleware = () => {
   return () =>
     (middlewares as any)
-    .concat(AclEntryService.middleware as Middleware)
-    .concat(AccountBalanceService.middleware as Middleware)
-    .concat(AclEntryService.middleware as Middleware)
-    .concat(AddressService.middleware as Middleware)
-    .concat(AgentService.middleware as Middleware)
-    .concat(AgentEventTriggerService.middleware as Middleware)
-    .concat(ApplicationService.middleware as Middleware)
-    .concat(BackupConfigService.middleware as Middleware)
-    .concat(BalanceResponseService.middleware as Middleware)
-    .concat(BlankRangeService.middleware as Middleware)
-    .concat(BorderService.middleware as Middleware)
-    .concat(BuildService.middleware as Middleware)
-    .concat(BuildOutputService.middleware as Middleware)
-    .concat(CampaignService.middleware as Middleware)
-    .concat(CellService.middleware as Middleware)
-    .concat(ChartService.middleware as Middleware)
-    .concat(ChartSeriesService.middleware as Middleware)
-    .concat(ChatCompletionRequestService.middleware as Middleware)
-    .concat(ChatCompletionResponseService.middleware as Middleware)
-    .concat(ChatMessageService.middleware as Middleware)
-    .concat(ChatResponseService.middleware as Middleware)
-    .concat(ContentDataService.middleware as Middleware)
-    .concat(ContentMediaLinkService.middleware as Middleware)
-    .concat(CustomerService.middleware as Middleware)
-    .concat(DeadLetterQueueService.middleware as Middleware)
-    .concat(DefaultService.middleware as Middleware)
-    .concat(DiscountService.middleware as Middleware)
-    .concat(EventLogService.middleware as Middleware)
-    .concat(ExecModuleService.middleware as Middleware)
-    .concat(FileAuditLogService.middleware as Middleware)
-    .concat(FileDownloadTokenService.middleware as Middleware)
-    .concat(FileRecordService.middleware as Middleware)
-    .concat(FileUploadSessionService.middleware as Middleware)
-    .concat(FileVersionService.middleware as Middleware)
-    .concat(FormatService.middleware as Middleware)
-    .concat(FormulaService.middleware as Middleware)
-    .concat(GoalService.middleware as Middleware)
-    .concat(GoalDependencyService.middleware as Middleware)
-    .concat(HostInstanceService.middleware as Middleware)
-    .concat(IntegrationAccountService.middleware as Middleware)
-    .concat(InvoiceService.middleware as Middleware)
-    .concat(KeyMetricService.middleware as Middleware)
-    .concat(LineItemService.middleware as Middleware)
-    .concat(LlmDetailsService.middleware as Middleware)
-    .concat(LoginService.middleware as Middleware)
-    .concat(LogoutService.middleware as Middleware)
-    .concat(McpContentService.middleware as Middleware)
-    .concat(McpDownloadResponseService.middleware as Middleware)
-    .concat(McpMarketplaceCatalogService.middleware as Middleware)
-    .concat(McpMarketplaceItemService.middleware as Middleware)
-    .concat(McpResourceService.middleware as Middleware)
-    .concat(McpResourceResponseService.middleware as Middleware)
-    .concat(McpResourceTemplateService.middleware as Middleware)
-    .concat(McpServerService.middleware as Middleware)
-    .concat(McpToolService.middleware as Middleware)
-    .concat(McpToolCallResponseService.middleware as Middleware)
-    .concat(MediaObjectService.middleware as Middleware)
-    .concat(MergeRangeService.middleware as Middleware)
-    .concat(NamedRangeService.middleware as Middleware)
-    .concat(NoteService.middleware as Middleware)
-    .concat(OasComponentService.middleware as Middleware)
-    .concat(OasEnumService.middleware as Middleware)
-    .concat(OasInfoService.middleware as Middleware)
-    .concat(OasObjectSchemaService.middleware as Middleware)
-    .concat(OasOpenAPISpecService.middleware as Middleware)
-    .concat(OasOperationService.middleware as Middleware)
-    .concat(OasParameterService.middleware as Middleware)
-    .concat(OasPathService.middleware as Middleware)
-    .concat(OasRequiredService.middleware as Middleware)
-    .concat(OasResponseService.middleware as Middleware)
-    .concat(OasSecuritySchemeService.middleware as Middleware)
-    .concat(OasServerService.middleware as Middleware)
-    .concat(OpportunityService.middleware as Middleware)
-    .concat(OrganizationService.middleware as Middleware)
-    .concat(PaymentTransactionService.middleware as Middleware)
-    .concat(PivotTableService.middleware as Middleware)
-    .concat(PrincipalService.middleware as Middleware)
-    .concat(ProductService.middleware as Middleware)
-    .concat(ProductFeatureService.middleware as Middleware)
-    .concat(ProductFunnelWizardService.middleware as Middleware)
-    .concat(PtgService.middleware as Middleware)
-    .concat(PtgRefService.middleware as Middleware)
-    .concat(RatingService.middleware as Middleware)
-    .concat(ReferralLinkService.middleware as Middleware)
-    .concat(RoleService.middleware as Middleware)
-    .concat(RunService.middleware as Middleware)
-    .concat(SalesActivityService.middleware as Middleware)
-    .concat(SalesOrderService.middleware as Middleware)
-    .concat(SalesPipelineService.middleware as Middleware)
-    .concat(SecureKeyService.middleware as Middleware)
-    .concat(SheetService.middleware as Middleware)
-    .concat(SheetColumnService.middleware as Middleware)
-    .concat(SheetRowService.middleware as Middleware)
-    .concat(SolutionService.middleware as Middleware)
-    .concat(SpaceService.middleware as Middleware)
-    .concat(SpaceFileService.middleware as Middleware)
-    .concat(SpaceMemberService.middleware as Middleware)
-    .concat(StrategicPriorityService.middleware as Middleware)
-    .concat(SwarmService.middleware as Middleware)
-    .concat(TaskService.middleware as Middleware)
-    .concat(UsageTransactionService.middleware as Middleware)
-    .concat(UserPreferenceService.middleware as Middleware)
-    .concat(WebsocketMessageService.middleware as Middleware)
-    .concat(WebsocketSessionService.middleware as Middleware)
-    .concat(WorkbookService.middleware as Middleware)
-    .concat(WorkflowService.middleware as Middleware)
-    .concat(WorkflowExecutionService.middleware as Middleware)
-    .concat(WorkflowStateService.middleware as Middleware)
-;
+      .concat(AccountBalanceService.middleware as Middleware)
+      .concat(AclClassService.middleware as Middleware)
+      .concat(AclEntryService.middleware as Middleware)
+      .concat(AclObjectIdentityService.middleware as Middleware)
+      .concat(AclSidService.middleware as Middleware)
+      .concat(ActivateAgent200ResponseService.middleware as Middleware)
+      .concat(AddressService.middleware as Middleware)
+      .concat(AgentService.middleware as Middleware)
+      .concat(AgentBillingService.middleware as Middleware)
+      .concat(AgentBillingChargeService.middleware as Middleware)
+      .concat(AgentChatMessageService.middleware as Middleware)
+      .concat(AgentChatMessageRequestService.middleware as Middleware)
+      .concat(AgentChatMessageResponseService.middleware as Middleware)
+      .concat(AgentDiscoveryItemService.middleware as Middleware)
+      .concat(AgentEventTriggerService.middleware as Middleware)
+      .concat(AgentHierarchyService.middleware as Middleware)
+      .concat(AgentHierarchyNodeService.middleware as Middleware)
+      .concat(ApiMetricSnapshotService.middleware as Middleware)
+      .concat(ApiMetricsResponseService.middleware as Middleware)
+      .concat(ApiTrafficEventService.middleware as Middleware)
+      .concat(ApplicationService.middleware as Middleware)
+      .concat(AuthorityService.middleware as Middleware)
+      .concat(BackupConfigService.middleware as Middleware)
+      .concat(BalanceResponseService.middleware as Middleware)
+      .concat(BlankRangeService.middleware as Middleware)
+      .concat(BorderService.middleware as Middleware)
+      .concat(BudgetService.middleware as Middleware)
+      .concat(BuildService.middleware as Middleware)
+      .concat(BuildOutputService.middleware as Middleware)
+      .concat(CampaignService.middleware as Middleware)
+      .concat(CareerOpportunityService.middleware as Middleware)
+      .concat(CellService.middleware as Middleware)
+      .concat(ChannelSubscriptionService.middleware as Middleware)
+      .concat(ChartService.middleware as Middleware)
+      .concat(ChartSeriesService.middleware as Middleware)
+      .concat(ChatCompletionRequestService.middleware as Middleware)
+      .concat(ChatCompletionResponseService.middleware as Middleware)
+      .concat(ChatMessageService.middleware as Middleware)
+      .concat(ChatResponseService.middleware as Middleware)
+      .concat(CircuitBreakerStateService.middleware as Middleware)
+      .concat(CompleteUploadRequestService.middleware as Middleware)
+      .concat(CompleteUploadRequestPartsInnerService.middleware as Middleware)
+      .concat(ConsultingProfileService.middleware as Middleware)
+      .concat(ContentDataService.middleware as Middleware)
+      .concat(ContentMediaLinkService.middleware as Middleware)
+      .concat(ConversationBranchService.middleware as Middleware)
+      .concat(ConversationMemoryNodeService.middleware as Middleware)
+      .concat(CustomerService.middleware as Middleware)
+      .concat(DeadLetterQueueService.middleware as Middleware)
+      .concat(DefaultResponseService.middleware as Middleware)
+      .concat(DependService.middleware as Middleware)
+      .concat(DigitalAssetService.middleware as Middleware)
+      .concat(DiscardDeadLetterEntryRequestService.middleware as Middleware)
+      .concat(DiscardDeadLetterEntryResponseService.middleware as Middleware)
+      .concat(DiscountService.middleware as Middleware)
+      .concat(DownloadAccessService.middleware as Middleware)
+      .concat(EventLogService.middleware as Middleware)
+      .concat(ExecModuleService.middleware as Middleware)
+      .concat(ExecuteModuleRequestService.middleware as Middleware)
+      .concat(ExpenseService.middleware as Middleware)
+      .concat(FileAuditLogService.middleware as Middleware)
+      .concat(FileDownloadTokenService.middleware as Middleware)
+      .concat(FileMetadataService.middleware as Middleware)
+      .concat(FileProcessingJobService.middleware as Middleware)
+      .concat(FileRecordService.middleware as Middleware)
+      .concat(FileUploadSessionService.middleware as Middleware)
+      .concat(FileVersionService.middleware as Middleware)
+      .concat(FormatService.middleware as Middleware)
+      .concat(FormulaService.middleware as Middleware)
+      .concat(GeneralLedgerEntryService.middleware as Middleware)
+      .concat(GoalService.middleware as Middleware)
+      .concat(GoalDependencyService.middleware as Middleware)
+      .concat(GrantPermissionRequestService.middleware as Middleware)
+      .concat(HostInstanceService.middleware as Middleware)
+      .concat(InitUploadRequestService.middleware as Middleware)
+      .concat(InitUploadResponseService.middleware as Middleware)
+      .concat(IntegrationAccountService.middleware as Middleware)
+      .concat(InvoiceService.middleware as Middleware)
+      .concat(InvokeMcpToolRequestService.middleware as Middleware)
+      .concat(JobApplicationService.middleware as Middleware)
+      .concat(JobApplicationRequestService.middleware as Middleware)
+      .concat(JobApplicationResponseService.middleware as Middleware)
+      .concat(JobMetadataService.middleware as Middleware)
+      .concat(JobSeekerService.middleware as Middleware)
+      .concat(KeyMetricService.middleware as Middleware)
+      .concat(LegalPrecedentService.middleware as Middleware)
+      .concat(LineItemService.middleware as Middleware)
+      .concat(LlmDetailsService.middleware as Middleware)
+      .concat(LoginService.middleware as Middleware)
+      .concat(LogoutService.middleware as Middleware)
+      .concat(McpService.middleware as Middleware)
+      .concat(McpContentService.middleware as Middleware)
+      .concat(McpDownloadResponseService.middleware as Middleware)
+      .concat(McpMarketplaceCatalogService.middleware as Middleware)
+      .concat(McpMarketplaceItemService.middleware as Middleware)
+      .concat(McpMarketplaceItemTagService.middleware as Middleware)
+      .concat(McpResourceService.middleware as Middleware)
+      .concat(McpResourceResponseService.middleware as Middleware)
+      .concat(McpResourceTemplateService.middleware as Middleware)
+      .concat(McpServerService.middleware as Middleware)
+      .concat(McpServiceRegistryService.middleware as Middleware)
+      .concat(McpServiceResponseService.middleware as Middleware)
+      .concat(McpToolService.middleware as Middleware)
+      .concat(McpToolCallResponseService.middleware as Middleware)
+      .concat(McpToolPresetService.middleware as Middleware)
+      .concat(McpTransportConfigService.middleware as Middleware)
+      .concat(MediaObjectService.middleware as Middleware)
+      .concat(MergeRangeService.middleware as Middleware)
+      .concat(MetricsService.middleware as Middleware)
+      .concat(NamedRangeService.middleware as Middleware)
+      .concat(NoteService.middleware as Middleware)
+      .concat(OasComponentService.middleware as Middleware)
+      .concat(OasEnumService.middleware as Middleware)
+      .concat(OasInfoService.middleware as Middleware)
+      .concat(OasObjectSchemaService.middleware as Middleware)
+      .concat(OasOpenAPISpecService.middleware as Middleware)
+      .concat(OasOperationService.middleware as Middleware)
+      .concat(OasParameterService.middleware as Middleware)
+      .concat(OasPathService.middleware as Middleware)
+      .concat(OasRequiredService.middleware as Middleware)
+      .concat(OasResponseService.middleware as Middleware)
+      .concat(OasSecuritySchemeService.middleware as Middleware)
+      .concat(OasServerService.middleware as Middleware)
+      .concat(OpportunityService.middleware as Middleware)
+      .concat(OrderFulfillmentTaskService.middleware as Middleware)
+      .concat(OrganizationService.middleware as Middleware)
+      .concat(PaymentTransactionService.middleware as Middleware)
+      .concat(PersistentLoginService.middleware as Middleware)
+      .concat(PivotTableService.middleware as Middleware)
+      .concat(PresignRequestService.middleware as Middleware)
+      .concat(PresignResponseService.middleware as Middleware)
+      .concat(PrincipalService.middleware as Middleware)
+      .concat(PrincipalRolesService.middleware as Middleware)
+      .concat(ProductService.middleware as Middleware)
+      .concat(ProductDeliveryConfigService.middleware as Middleware)
+      .concat(ProductFeatureService.middleware as Middleware)
+      .concat(ProductFunnelWizardService.middleware as Middleware)
+      .concat(ProductLandingPageService.middleware as Middleware)
+      .concat(PromptService.middleware as Middleware)
+      .concat(PromptRatingService.middleware as Middleware)
+      .concat(PromptSelectionBroadcastService.middleware as Middleware)
+      .concat(PtgService.middleware as Middleware)
+      .concat(PtgRefService.middleware as Middleware)
+      .concat(PublishFunnel200ResponseService.middleware as Middleware)
+      .concat(PublishRestEndpointRequestService.middleware as Middleware)
+      .concat(PublishWorkflowRequestService.middleware as Middleware)
+      .concat(QuotaService.middleware as Middleware)
+      .concat(RatingService.middleware as Middleware)
+      .concat(ReactionService.middleware as Middleware)
+      .concat(ReferralLinkService.middleware as Middleware)
+      .concat(RequeueDeadLetterEntryRequestService.middleware as Middleware)
+      .concat(RequeueDeadLetterEntryResponseService.middleware as Middleware)
+      .concat(RetryPolicyService.middleware as Middleware)
+      .concat(RoleService.middleware as Middleware)
+      .concat(RunService.middleware as Middleware)
+      .concat(SalesActivityService.middleware as Middleware)
+      .concat(SalesOrderService.middleware as Middleware)
+      .concat(SalesPipelineService.middleware as Middleware)
+      .concat(SecureKeyService.middleware as Middleware)
+      .concat(SheetService.middleware as Middleware)
+      .concat(SheetColumnService.middleware as Middleware)
+      .concat(SheetRowService.middleware as Middleware)
+      .concat(SkillProfileService.middleware as Middleware)
+      .concat(SolutionService.middleware as Middleware)
+      .concat(SpaceService.middleware as Middleware)
+      .concat(SpaceFileService.middleware as Middleware)
+      .concat(SpaceMemberService.middleware as Middleware)
+      .concat(StackService.middleware as Middleware)
+      .concat(StrategicPriorityService.middleware as Middleware)
+      .concat(SwarmService.middleware as Middleware)
+      .concat(SwarmAgentSummaryService.middleware as Middleware)
+      .concat(SwarmCommandRequestService.middleware as Middleware)
+      .concat(SwarmCommandResponseService.middleware as Middleware)
+      .concat(SwarmGraphEdgeService.middleware as Middleware)
+      .concat(SwarmGraphNodeService.middleware as Middleware)
+      .concat(SwarmGraphSnapshotService.middleware as Middleware)
+      .concat(SwarmMessageService.middleware as Middleware)
+      .concat(SwarmPayloadService.middleware as Middleware)
+      .concat(SwarmRegisterRequestService.middleware as Middleware)
+      .concat(SwarmRegisterResponseService.middleware as Middleware)
+      .concat(SwarmSecurityService.middleware as Middleware)
+      .concat(SwarmUnregisterRequestService.middleware as Middleware)
+      .concat(SwarmUnregisterResponseService.middleware as Middleware)
+      .concat(TagService.middleware as Middleware)
+      .concat(TaskService.middleware as Middleware)
+      .concat(ToolFailureService.middleware as Middleware)
+      .concat(UpdateFileRequestService.middleware as Middleware)
+      .concat(UsageTransactionService.middleware as Middleware)
+      .concat(UserPreferenceService.middleware as Middleware)
+      .concat(ValkyrJobService.middleware as Middleware)
+      .concat(WebsocketMessageService.middleware as Middleware)
+      .concat(WebsocketSessionService.middleware as Middleware)
+      .concat(WizardStartResponseService.middleware as Middleware)
+      .concat(WizardStatusResponseService.middleware as Middleware)
+      .concat(WorkbookService.middleware as Middleware)
+      .concat(WorkflowService.middleware as Middleware)
+      .concat(WorkflowExecutionService.middleware as Middleware)
+      .concat(WorkflowStateService.middleware as Middleware);
 };
 
 /*
@@ -361,62 +662,114 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
     .concat(AccountBalanceService.middleware as Middleware)
+    .concat(AclClassService.middleware as Middleware)
     .concat(AclEntryService.middleware as Middleware)
+    .concat(AclObjectIdentityService.middleware as Middleware)
+    .concat(AclSidService.middleware as Middleware)
+    .concat(ActivateAgent200ResponseService.middleware as Middleware)
     .concat(AddressService.middleware as Middleware)
     .concat(AgentService.middleware as Middleware)
+    .concat(AgentBillingService.middleware as Middleware)
+    .concat(AgentBillingChargeService.middleware as Middleware)
+    .concat(AgentChatMessageService.middleware as Middleware)
+    .concat(AgentChatMessageRequestService.middleware as Middleware)
+    .concat(AgentChatMessageResponseService.middleware as Middleware)
+    .concat(AgentDiscoveryItemService.middleware as Middleware)
     .concat(AgentEventTriggerService.middleware as Middleware)
+    .concat(AgentHierarchyService.middleware as Middleware)
+    .concat(AgentHierarchyNodeService.middleware as Middleware)
+    .concat(ApiMetricSnapshotService.middleware as Middleware)
+    .concat(ApiMetricsResponseService.middleware as Middleware)
+    .concat(ApiTrafficEventService.middleware as Middleware)
     .concat(ApplicationService.middleware as Middleware)
+    .concat(AuthorityService.middleware as Middleware)
     .concat(BackupConfigService.middleware as Middleware)
     .concat(BalanceResponseService.middleware as Middleware)
     .concat(BlankRangeService.middleware as Middleware)
     .concat(BorderService.middleware as Middleware)
+    .concat(BudgetService.middleware as Middleware)
     .concat(BuildService.middleware as Middleware)
     .concat(BuildOutputService.middleware as Middleware)
     .concat(CampaignService.middleware as Middleware)
+    .concat(CareerOpportunityService.middleware as Middleware)
     .concat(CellService.middleware as Middleware)
+    .concat(ChannelSubscriptionService.middleware as Middleware)
     .concat(ChartService.middleware as Middleware)
     .concat(ChartSeriesService.middleware as Middleware)
     .concat(ChatCompletionRequestService.middleware as Middleware)
     .concat(ChatCompletionResponseService.middleware as Middleware)
     .concat(ChatMessageService.middleware as Middleware)
     .concat(ChatResponseService.middleware as Middleware)
+    .concat(CircuitBreakerStateService.middleware as Middleware)
+    .concat(CompleteUploadRequestService.middleware as Middleware)
+    .concat(CompleteUploadRequestPartsInnerService.middleware as Middleware)
+    .concat(ConsultingProfileService.middleware as Middleware)
     .concat(ContentDataService.middleware as Middleware)
     .concat(ContentMediaLinkService.middleware as Middleware)
+    .concat(ConversationBranchService.middleware as Middleware)
+    .concat(ConversationMemoryNodeService.middleware as Middleware)
     .concat(CustomerService.middleware as Middleware)
     .concat(DeadLetterQueueService.middleware as Middleware)
-    .concat(DefaultService.middleware as Middleware)
+    .concat(DefaultResponseService.middleware as Middleware)
+    .concat(DependService.middleware as Middleware)
+    .concat(DigitalAssetService.middleware as Middleware)
+    .concat(DiscardDeadLetterEntryRequestService.middleware as Middleware)
+    .concat(DiscardDeadLetterEntryResponseService.middleware as Middleware)
     .concat(DiscountService.middleware as Middleware)
+    .concat(DownloadAccessService.middleware as Middleware)
     .concat(EventLogService.middleware as Middleware)
     .concat(ExecModuleService.middleware as Middleware)
+    .concat(ExecuteModuleRequestService.middleware as Middleware)
+    .concat(ExpenseService.middleware as Middleware)
     .concat(FileAuditLogService.middleware as Middleware)
     .concat(FileDownloadTokenService.middleware as Middleware)
+    .concat(FileMetadataService.middleware as Middleware)
+    .concat(FileProcessingJobService.middleware as Middleware)
     .concat(FileRecordService.middleware as Middleware)
     .concat(FileUploadSessionService.middleware as Middleware)
     .concat(FileVersionService.middleware as Middleware)
     .concat(FormatService.middleware as Middleware)
     .concat(FormulaService.middleware as Middleware)
+    .concat(GeneralLedgerEntryService.middleware as Middleware)
     .concat(GoalService.middleware as Middleware)
     .concat(GoalDependencyService.middleware as Middleware)
+    .concat(GrantPermissionRequestService.middleware as Middleware)
     .concat(HostInstanceService.middleware as Middleware)
+    .concat(InitUploadRequestService.middleware as Middleware)
+    .concat(InitUploadResponseService.middleware as Middleware)
     .concat(IntegrationAccountService.middleware as Middleware)
     .concat(InvoiceService.middleware as Middleware)
+    .concat(InvokeMcpToolRequestService.middleware as Middleware)
+    .concat(JobApplicationService.middleware as Middleware)
+    .concat(JobApplicationRequestService.middleware as Middleware)
+    .concat(JobApplicationResponseService.middleware as Middleware)
+    .concat(JobMetadataService.middleware as Middleware)
+    .concat(JobSeekerService.middleware as Middleware)
     .concat(KeyMetricService.middleware as Middleware)
+    .concat(LegalPrecedentService.middleware as Middleware)
     .concat(LineItemService.middleware as Middleware)
     .concat(LlmDetailsService.middleware as Middleware)
     .concat(LoginService.middleware as Middleware)
     .concat(LogoutService.middleware as Middleware)
+    .concat(McpService.middleware as Middleware)
     .concat(McpContentService.middleware as Middleware)
     .concat(McpDownloadResponseService.middleware as Middleware)
     .concat(McpMarketplaceCatalogService.middleware as Middleware)
     .concat(McpMarketplaceItemService.middleware as Middleware)
+    .concat(McpMarketplaceItemTagService.middleware as Middleware)
     .concat(McpResourceService.middleware as Middleware)
     .concat(McpResourceResponseService.middleware as Middleware)
     .concat(McpResourceTemplateService.middleware as Middleware)
     .concat(McpServerService.middleware as Middleware)
+    .concat(McpServiceRegistryService.middleware as Middleware)
+    .concat(McpServiceResponseService.middleware as Middleware)
     .concat(McpToolService.middleware as Middleware)
     .concat(McpToolCallResponseService.middleware as Middleware)
+    .concat(McpToolPresetService.middleware as Middleware)
+    .concat(McpTransportConfigService.middleware as Middleware)
     .concat(MediaObjectService.middleware as Middleware)
     .concat(MergeRangeService.middleware as Middleware)
+    .concat(MetricsService.middleware as Middleware)
     .concat(NamedRangeService.middleware as Middleware)
     .concat(NoteService.middleware as Middleware)
     .concat(OasComponentService.middleware as Middleware)
@@ -432,17 +785,35 @@ export const store = configureStore({
     .concat(OasSecuritySchemeService.middleware as Middleware)
     .concat(OasServerService.middleware as Middleware)
     .concat(OpportunityService.middleware as Middleware)
+    .concat(OrderFulfillmentTaskService.middleware as Middleware)
     .concat(OrganizationService.middleware as Middleware)
     .concat(PaymentTransactionService.middleware as Middleware)
+    .concat(PersistentLoginService.middleware as Middleware)
     .concat(PivotTableService.middleware as Middleware)
+    .concat(PresignRequestService.middleware as Middleware)
+    .concat(PresignResponseService.middleware as Middleware)
     .concat(PrincipalService.middleware as Middleware)
+    .concat(PrincipalRolesService.middleware as Middleware)
     .concat(ProductService.middleware as Middleware)
+    .concat(ProductDeliveryConfigService.middleware as Middleware)
     .concat(ProductFeatureService.middleware as Middleware)
     .concat(ProductFunnelWizardService.middleware as Middleware)
+    .concat(ProductLandingPageService.middleware as Middleware)
+    .concat(PromptService.middleware as Middleware)
+    .concat(PromptRatingService.middleware as Middleware)
+    .concat(PromptSelectionBroadcastService.middleware as Middleware)
     .concat(PtgService.middleware as Middleware)
     .concat(PtgRefService.middleware as Middleware)
+    .concat(PublishFunnel200ResponseService.middleware as Middleware)
+    .concat(PublishRestEndpointRequestService.middleware as Middleware)
+    .concat(PublishWorkflowRequestService.middleware as Middleware)
+    .concat(QuotaService.middleware as Middleware)
     .concat(RatingService.middleware as Middleware)
+    .concat(ReactionService.middleware as Middleware)
     .concat(ReferralLinkService.middleware as Middleware)
+    .concat(RequeueDeadLetterEntryRequestService.middleware as Middleware)
+    .concat(RequeueDeadLetterEntryResponseService.middleware as Middleware)
+    .concat(RetryPolicyService.middleware as Middleware)
     .concat(RoleService.middleware as Middleware)
     .concat(RunService.middleware as Middleware)
     .concat(SalesActivityService.middleware as Middleware)
@@ -452,17 +823,38 @@ export const store = configureStore({
     .concat(SheetService.middleware as Middleware)
     .concat(SheetColumnService.middleware as Middleware)
     .concat(SheetRowService.middleware as Middleware)
+    .concat(SkillProfileService.middleware as Middleware)
     .concat(SolutionService.middleware as Middleware)
     .concat(SpaceService.middleware as Middleware)
     .concat(SpaceFileService.middleware as Middleware)
     .concat(SpaceMemberService.middleware as Middleware)
+    .concat(StackService.middleware as Middleware)
     .concat(StrategicPriorityService.middleware as Middleware)
     .concat(SwarmService.middleware as Middleware)
+    .concat(SwarmAgentSummaryService.middleware as Middleware)
+    .concat(SwarmCommandRequestService.middleware as Middleware)
+    .concat(SwarmCommandResponseService.middleware as Middleware)
+    .concat(SwarmGraphEdgeService.middleware as Middleware)
+    .concat(SwarmGraphNodeService.middleware as Middleware)
+    .concat(SwarmGraphSnapshotService.middleware as Middleware)
+    .concat(SwarmMessageService.middleware as Middleware)
+    .concat(SwarmPayloadService.middleware as Middleware)
+    .concat(SwarmRegisterRequestService.middleware as Middleware)
+    .concat(SwarmRegisterResponseService.middleware as Middleware)
+    .concat(SwarmSecurityService.middleware as Middleware)
+    .concat(SwarmUnregisterRequestService.middleware as Middleware)
+    .concat(SwarmUnregisterResponseService.middleware as Middleware)
+    .concat(TagService.middleware as Middleware)
     .concat(TaskService.middleware as Middleware)
+    .concat(ToolFailureService.middleware as Middleware)
+    .concat(UpdateFileRequestService.middleware as Middleware)
     .concat(UsageTransactionService.middleware as Middleware)
     .concat(UserPreferenceService.middleware as Middleware)
+    .concat(ValkyrJobService.middleware as Middleware)
     .concat(WebsocketMessageService.middleware as Middleware)
     .concat(WebsocketSessionService.middleware as Middleware)
+    .concat(WizardStartResponseService.middleware as Middleware)
+    .concat(WizardStatusResponseService.middleware as Middleware)
     .concat(WorkbookService.middleware as Middleware)
     .concat(WorkflowService.middleware as Middleware)
     .concat(WorkflowExecutionService.middleware as Middleware)

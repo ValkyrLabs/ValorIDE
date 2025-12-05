@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // Build
 
-export const FETCH_BUILD_REQUEST = 'FETCH_BUILD_REQUEST';
-export const FETCH_BUILD_SUCCESS = 'FETCH_BUILD_SUCCESS';
-export const FETCH_BUILD_FAILURE = 'FETCH_BUILD_FAILURE';
+export const FETCH_BUILD_REQUEST = "FETCH_BUILD_REQUEST";
+export const FETCH_BUILD_SUCCESS = "FETCH_BUILD_SUCCESS";
+export const FETCH_BUILD_FAILURE = "FETCH_BUILD_FAILURE";
 
-export const ADD_BUILD_REQUEST = 'ADD_BUILD_REQUEST';
-export const ADD_BUILD_SUCCESS = 'ADD_BUILD_SUCCESS';
-export const ADD_BUILD_FAILURE = 'ADD_BUILD_FAILURE';
+export const ADD_BUILD_REQUEST = "ADD_BUILD_REQUEST";
+export const ADD_BUILD_SUCCESS = "ADD_BUILD_SUCCESS";
+export const ADD_BUILD_FAILURE = "ADD_BUILD_FAILURE";
 
-export const UPDATE_BUILD_REQUEST = 'UPDATE_BUILD_REQUEST';
-export const UPDATE_BUILD_SUCCESS = 'UPDATE_BUILD_SUCCESS';
-export const UPDATE_BUILD_FAILURE = 'UPDATE_BUILD_FAILURE';
+export const UPDATE_BUILD_REQUEST = "UPDATE_BUILD_REQUEST";
+export const UPDATE_BUILD_SUCCESS = "UPDATE_BUILD_SUCCESS";
+export const UPDATE_BUILD_FAILURE = "UPDATE_BUILD_FAILURE";
 
-export const DELETE_BUILD_REQUEST = 'DELETE_BUILD_REQUEST';
-export const DELETE_BUILD_SUCCESS = 'DELETE_BUILD_SUCCESS';
-export const DELETE_BUILD_FAILURE = 'DELETE_BUILD_FAILURE';
+export const DELETE_BUILD_REQUEST = "DELETE_BUILD_REQUEST";
+export const DELETE_BUILD_SUCCESS = "DELETE_BUILD_SUCCESS";
+export const DELETE_BUILD_FAILURE = "DELETE_BUILD_FAILURE";
 
-export const LIST_BUILD_REQUEST = 'LIST_BUILD_REQUEST';
-export const LIST_BUILD_SUCCESS = 'LIST_BUILD_SUCCESS';
-export const LIST_BUILD_FAILURE = 'LIST_BUILD_FAILURE';
+export const LIST_BUILD_REQUEST = "LIST_BUILD_REQUEST";
+export const LIST_BUILD_SUCCESS = "LIST_BUILD_SUCCESS";
+export const LIST_BUILD_FAILURE = "LIST_BUILD_FAILURE";
 
 export const addBuildRequest = () => ({
-    type: ADD_BUILD_REQUEST,
+  type: ADD_BUILD_REQUEST,
 });
 
 export const addBuildSuccess = (Builds: any) => ({
-    type: ADD_BUILD_SUCCESS,
-    payload: Builds,
+  type: ADD_BUILD_SUCCESS,
+  payload: Builds,
 });
 
 export const addBuildFailure = (error: Error) => ({
-    type: ADD_BUILD_FAILURE,
-    payload: error,
+  type: ADD_BUILD_FAILURE,
+  payload: error,
 });
 
-
 export const fetchBuildRequest = () => ({
-    type: FETCH_BUILD_REQUEST,
+  type: FETCH_BUILD_REQUEST,
 });
 
 export const fetchBuildSuccess = (Builds: any) => ({
-    type: FETCH_BUILD_SUCCESS,
-    payload: Builds,
+  type: FETCH_BUILD_SUCCESS,
+  payload: Builds,
 });
 
 export const fetchBuildFailure = (error: Error) => ({
-    type: FETCH_BUILD_FAILURE,
-    payload: error,
+  type: FETCH_BUILD_FAILURE,
+  payload: error,
 });
 
 export const listBuildRequest = () => ({
-    type: LIST_BUILD_REQUEST,
+  type: LIST_BUILD_REQUEST,
 });
 
 export const listBuildSuccess = (Builds: any) => ({
-    type: LIST_BUILD_SUCCESS,
-    payload: Builds,
+  type: LIST_BUILD_SUCCESS,
+  payload: Builds,
 });
 
 export const listBuildFailure = (error: Error) => ({
-    type: LIST_BUILD_FAILURE,
-    payload: error,
+  type: LIST_BUILD_FAILURE,
+  payload: error,
 });
 
 export const updateBuildRequest = (Build: any) => ({
-    type: UPDATE_BUILD_REQUEST,
-    payload: Build,
+  type: UPDATE_BUILD_REQUEST,
+  payload: Build,
 });
 
 export const updateBuildSuccess = (Build: any) => ({
-    type: UPDATE_BUILD_SUCCESS,
-    payload: Build,
+  type: UPDATE_BUILD_SUCCESS,
+  payload: Build,
 });
 
 export const updateBuildFailure = (error: Error) => ({
-    type: UPDATE_BUILD_FAILURE,
-    payload: error,
+  type: UPDATE_BUILD_FAILURE,
+  payload: error,
 });
 
 export const deleteBuildRequest = (Build: any) => ({
-    type: DELETE_BUILD_REQUEST,
-    payload: Build,
+  type: DELETE_BUILD_REQUEST,
+  payload: Build,
 });
 
 export const deleteBuildSuccess = (Build: any) => ({
-    type: DELETE_BUILD_SUCCESS,
-    payload: Build,
+  type: DELETE_BUILD_SUCCESS,
+  payload: Build,
 });
 
 export const deleteBuildFailure = (error: Error) => ({
-    type: DELETE_BUILD_FAILURE,
-    payload: error,
+  type: DELETE_BUILD_FAILURE,
+  payload: error,
 });

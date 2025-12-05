@@ -23,7 +23,7 @@ export const DEFAULT_MATCHING_CONFIG = {
 export const DEFAULT_OUTPUT_FILTER_CONFIG = {
     maxOutputLength: 5000,
     enableSmartSummarization: true,
-    verbosityLevel: 'normal',
+    verbosityLevel: "normal",
     enableProgressFiltering: true,
     enableStackTraceFiltering: true,
     customPatterns: [],
@@ -62,9 +62,11 @@ export function validateFileProcessingConfig(config) {
         maxFileSize: Math.max(1024, config.maxFileSize ?? DEFAULT_FILE_PROCESSING_CONFIG.maxFileSize),
         chunkSize: Math.max(512, Math.min(config.chunkSize ?? DEFAULT_FILE_PROCESSING_CONFIG.chunkSize, 10240)),
         streamingDelay: Math.max(1, Math.min(config.streamingDelay ?? DEFAULT_FILE_PROCESSING_CONFIG.streamingDelay, 100)),
-        enableProgressiveLoading: config.enableProgressiveLoading ?? DEFAULT_FILE_PROCESSING_CONFIG.enableProgressiveLoading,
+        enableProgressiveLoading: config.enableProgressiveLoading ??
+            DEFAULT_FILE_PROCESSING_CONFIG.enableProgressiveLoading,
         warnLargeFiles: config.warnLargeFiles ?? DEFAULT_FILE_PROCESSING_CONFIG.warnLargeFiles,
-        largeFileThreshold: Math.max(1024, config.largeFileThreshold ?? DEFAULT_FILE_PROCESSING_CONFIG.largeFileThreshold),
+        largeFileThreshold: Math.max(1024, config.largeFileThreshold ??
+            DEFAULT_FILE_PROCESSING_CONFIG.largeFileThreshold),
     };
 }
 export function validateMatchingConfig(config) {
@@ -72,22 +74,31 @@ export function validateMatchingConfig(config) {
         enableFuzzyMatching: config.enableFuzzyMatching ?? DEFAULT_MATCHING_CONFIG.enableFuzzyMatching,
         fuzzyThreshold: Math.max(0.1, Math.min(config.fuzzyThreshold ?? DEFAULT_MATCHING_CONFIG.fuzzyThreshold, 1.0)),
         maxSearchAttempts: Math.max(1, Math.min(config.maxSearchAttempts ?? DEFAULT_MATCHING_CONFIG.maxSearchAttempts, 10)),
-        enableContextualMatching: config.enableContextualMatching ?? DEFAULT_MATCHING_CONFIG.enableContextualMatching,
-        enableWhitespaceNormalization: config.enableWhitespaceNormalization ?? DEFAULT_MATCHING_CONFIG.enableWhitespaceNormalization,
-        enableSemanticMatching: config.enableSemanticMatching ?? DEFAULT_MATCHING_CONFIG.enableSemanticMatching,
+        enableContextualMatching: config.enableContextualMatching ??
+            DEFAULT_MATCHING_CONFIG.enableContextualMatching,
+        enableWhitespaceNormalization: config.enableWhitespaceNormalization ??
+            DEFAULT_MATCHING_CONFIG.enableWhitespaceNormalization,
+        enableSemanticMatching: config.enableSemanticMatching ??
+            DEFAULT_MATCHING_CONFIG.enableSemanticMatching,
     };
 }
 export function validateOutputFilterConfig(config) {
     return {
         maxOutputLength: Math.max(100, config.maxOutputLength ?? DEFAULT_OUTPUT_FILTER_CONFIG.maxOutputLength),
-        enableSmartSummarization: config.enableSmartSummarization ?? DEFAULT_OUTPUT_FILTER_CONFIG.enableSmartSummarization,
-        verbosityLevel: ['minimal', 'normal', 'verbose'].includes(config.verbosityLevel ?? '')
+        enableSmartSummarization: config.enableSmartSummarization ??
+            DEFAULT_OUTPUT_FILTER_CONFIG.enableSmartSummarization,
+        verbosityLevel: ["minimal", "normal", "verbose"].includes(config.verbosityLevel ?? "")
             ? config.verbosityLevel
             : DEFAULT_OUTPUT_FILTER_CONFIG.verbosityLevel,
-        enableProgressFiltering: config.enableProgressFiltering ?? DEFAULT_OUTPUT_FILTER_CONFIG.enableProgressFiltering,
-        enableStackTraceFiltering: config.enableStackTraceFiltering ?? DEFAULT_OUTPUT_FILTER_CONFIG.enableStackTraceFiltering,
-        customPatterns: Array.isArray(config.customPatterns) ? config.customPatterns : DEFAULT_OUTPUT_FILTER_CONFIG.customPatterns,
-        enableCommandSpecificFiltering: config.enableCommandSpecificFiltering ?? DEFAULT_OUTPUT_FILTER_CONFIG.enableCommandSpecificFiltering,
+        enableProgressFiltering: config.enableProgressFiltering ??
+            DEFAULT_OUTPUT_FILTER_CONFIG.enableProgressFiltering,
+        enableStackTraceFiltering: config.enableStackTraceFiltering ??
+            DEFAULT_OUTPUT_FILTER_CONFIG.enableStackTraceFiltering,
+        customPatterns: Array.isArray(config.customPatterns)
+            ? config.customPatterns
+            : DEFAULT_OUTPUT_FILTER_CONFIG.customPatterns,
+        enableCommandSpecificFiltering: config.enableCommandSpecificFiltering ??
+            DEFAULT_OUTPUT_FILTER_CONFIG.enableCommandSpecificFiltering,
     };
 }
 export function validateThorApiConfig(config) {
@@ -102,24 +113,38 @@ export function validateAdvancedSettings(settings) {
         matching: validateMatchingConfig(settings.matching ?? {}),
         outputFilter: validateOutputFilterConfig(settings.outputFilter ?? {}),
         performance: {
-            enableParallelProcessing: settings.performance?.enableParallelProcessing ?? DEFAULT_PERFORMANCE_CONFIG.enableParallelProcessing,
-            maxConcurrentOperations: Math.max(1, Math.min(settings.performance?.maxConcurrentOperations ?? DEFAULT_PERFORMANCE_CONFIG.maxConcurrentOperations, 10)),
-            memoryLimit: Math.max(10, settings.performance?.memoryLimit ?? DEFAULT_PERFORMANCE_CONFIG.memoryLimit),
-            enableProgressiveLoading: settings.performance?.enableProgressiveLoading ?? DEFAULT_PERFORMANCE_CONFIG.enableProgressiveLoading,
-            enableBackgroundPreprocessing: settings.performance?.enableBackgroundPreprocessing ?? DEFAULT_PERFORMANCE_CONFIG.enableBackgroundPreprocessing,
+            enableParallelProcessing: settings.performance?.enableParallelProcessing ??
+                DEFAULT_PERFORMANCE_CONFIG.enableParallelProcessing,
+            maxConcurrentOperations: Math.max(1, Math.min(settings.performance?.maxConcurrentOperations ??
+                DEFAULT_PERFORMANCE_CONFIG.maxConcurrentOperations, 10)),
+            memoryLimit: Math.max(10, settings.performance?.memoryLimit ??
+                DEFAULT_PERFORMANCE_CONFIG.memoryLimit),
+            enableProgressiveLoading: settings.performance?.enableProgressiveLoading ??
+                DEFAULT_PERFORMANCE_CONFIG.enableProgressiveLoading,
+            enableBackgroundPreprocessing: settings.performance?.enableBackgroundPreprocessing ??
+                DEFAULT_PERFORMANCE_CONFIG.enableBackgroundPreprocessing,
         },
         debugging: {
-            enableVerboseLogging: settings.debugging?.enableVerboseLogging ?? DEFAULT_DEBUGGING_CONFIG.enableVerboseLogging,
-            saveFailedMatches: settings.debugging?.saveFailedMatches ?? DEFAULT_DEBUGGING_CONFIG.saveFailedMatches,
-            enablePerformanceMetrics: settings.debugging?.enablePerformanceMetrics ?? DEFAULT_DEBUGGING_CONFIG.enablePerformanceMetrics,
-            logOutputFiltering: settings.debugging?.logOutputFiltering ?? DEFAULT_DEBUGGING_CONFIG.logOutputFiltering,
-            showPsrResultsReport: settings.debugging?.showPsrResultsReport ?? DEFAULT_DEBUGGING_CONFIG.showPsrResultsReport,
+            enableVerboseLogging: settings.debugging?.enableVerboseLogging ??
+                DEFAULT_DEBUGGING_CONFIG.enableVerboseLogging,
+            saveFailedMatches: settings.debugging?.saveFailedMatches ??
+                DEFAULT_DEBUGGING_CONFIG.saveFailedMatches,
+            enablePerformanceMetrics: settings.debugging?.enablePerformanceMetrics ??
+                DEFAULT_DEBUGGING_CONFIG.enablePerformanceMetrics,
+            logOutputFiltering: settings.debugging?.logOutputFiltering ??
+                DEFAULT_DEBUGGING_CONFIG.logOutputFiltering,
+            showPsrResultsReport: settings.debugging?.showPsrResultsReport ??
+                DEFAULT_DEBUGGING_CONFIG.showPsrResultsReport,
         },
         budgetAlerts: {
-            depletedThreshold: Math.max(0, settings.budgetAlerts?.depletedThreshold ?? DEFAULT_BUDGET_ALERT_CONFIG.depletedThreshold),
-            criticalThreshold: Math.max(0, settings.budgetAlerts?.criticalThreshold ?? DEFAULT_BUDGET_ALERT_CONFIG.criticalThreshold),
-            lowThreshold: Math.max(0, settings.budgetAlerts?.lowThreshold ?? DEFAULT_BUDGET_ALERT_CONFIG.lowThreshold),
-            alertThreshold: Math.max(0, settings.budgetAlerts?.alertThreshold ?? DEFAULT_BUDGET_ALERT_CONFIG.alertThreshold),
+            depletedThreshold: Math.max(0, settings.budgetAlerts?.depletedThreshold ??
+                DEFAULT_BUDGET_ALERT_CONFIG.depletedThreshold),
+            criticalThreshold: Math.max(0, settings.budgetAlerts?.criticalThreshold ??
+                DEFAULT_BUDGET_ALERT_CONFIG.criticalThreshold),
+            lowThreshold: Math.max(0, settings.budgetAlerts?.lowThreshold ??
+                DEFAULT_BUDGET_ALERT_CONFIG.lowThreshold),
+            alertThreshold: Math.max(0, settings.budgetAlerts?.alertThreshold ??
+                DEFAULT_BUDGET_ALERT_CONFIG.alertThreshold),
         },
         thorapi: validateThorApiConfig(settings.thorapi ?? {}),
     };

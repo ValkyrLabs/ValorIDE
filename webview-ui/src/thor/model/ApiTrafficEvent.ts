@@ -20,14 +20,15 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,124 +37,143 @@ import { exists, mapValues } from '../src/runtime';
  * @export
  * @interface ApiTrafficEvent
  */
-export type ApiTrafficEvent  = {
-    /**
-     * HTTP method used by the request.
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    method: string;
-    /**
-     * Normalized request path.
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    path: string;
-    /**
-     * HTTP status returned to the client.
-     * @type {number}
-     * @memberof ApiTrafficEvent
-     */
-    status: number;
-    /**
-     * Request latency in milliseconds.
-     * @type {number}
-     * @memberof ApiTrafficEvent
-     */
-    durationMs: number;
-    /**
-     * Timestamp when the request completed.
-     * @type {Date}
-     * @memberof ApiTrafficEvent
-     */
-    timestamp: Date;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof ApiTrafficEvent
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof ApiTrafficEvent
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof ApiTrafficEvent
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof ApiTrafficEvent
-     */
-    lastModifiedDate?: Date;
-}
+export type ApiTrafficEvent = DataObject & {
+  /**
+   * HTTP method used by the request.
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  method: string;
+  /**
+   * Normalized request path.
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  path: string;
+  /**
+   * HTTP status returned to the client.
+   * @type {number}
+   * @memberof ApiTrafficEvent
+   */
+  status: number;
+  /**
+   * Request latency in milliseconds.
+   * @type {number}
+   * @memberof ApiTrafficEvent
+   */
+  durationMs: number;
+  /**
+   * Timestamp when the request completed.
+   * @type {Date}
+   * @memberof ApiTrafficEvent
+   */
+  timestamp: Date;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof ApiTrafficEvent
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof ApiTrafficEvent
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof ApiTrafficEvent
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof ApiTrafficEvent
+   */
+  lastModifiedDate?: Date;
+};
 
 export function ApiTrafficEventFromJSON(json: any): ApiTrafficEvent {
-    return {
-        'method': json['method'],
-        'path': json['path'],
-        'status': json['status'],
-        'durationMs': json['durationMs'],
-        'timestamp': new Date(json['timestamp']),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    method: json["method"],
+    path: json["path"],
+    status: json["status"],
+    durationMs: json["durationMs"],
+    timestamp: new Date(json["timestamp"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function ApiTrafficEventToJSON(value?: ApiTrafficEvent): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'method': value.method,
-        'path': value.path,
-        'status': value.status,
-        'durationMs': value.durationMs,
-        'timestamp': value.timestamp.toISOString(),
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    method: value.method,
+    path: value.path,
+    status: value.status,
+    durationMs: value.durationMs,
+    timestamp: value.timestamp.toISOString(),
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
-
-

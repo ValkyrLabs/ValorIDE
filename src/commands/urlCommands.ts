@@ -62,4 +62,3 @@ export function registerUrlCommands(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(disposable);
 }
-

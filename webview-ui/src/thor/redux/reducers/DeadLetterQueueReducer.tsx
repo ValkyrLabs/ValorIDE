@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { DeadLetterQueue } from '@thor/model/DeadLetterQueue';
+import { DeadLetterQueue } from "@thor/model/DeadLetterQueue";
 
 const DeadLetterQueueSlice = createSlice({
   name: "DeadLetterQueues",
@@ -12,20 +12,25 @@ const DeadLetterQueueSlice = createSlice({
     },
 
     DeadLetterQueueValueToggled(state, action) {
-      console.log("DeadLetterQueue TOGGLE")
-      console.warn(JSON.stringify(action))
-      const DeadLetterQueue:DeadLetterQueue = state.find((DeadLetterQueue) => DeadLetterQueue.id === action.payload.DeadLetterQueueId);
+      console.log("DeadLetterQueue TOGGLE");
+      console.warn(JSON.stringify(action));
+      const DeadLetterQueue: DeadLetterQueue = state.find(
+        (DeadLetterQueue) =>
+          DeadLetterQueue.id === action.payload.DeadLetterQueueId,
+      );
       if (DeadLetterQueue) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     DeadLetterQueuepropertySet(state, action) {
-      const DeadLetterQueue = state.find((DeadLetterQueue) => DeadLetterQueue.id === action.payload.DeadLetterQueueId);
+      const DeadLetterQueue = state.find(
+        (DeadLetterQueue) =>
+          DeadLetterQueue.id === action.payload.DeadLetterQueueId,
+      );
       if (DeadLetterQueue) {
-      //  DeadLetterQueue[action.property] = action.payload[action.property];
+        //  DeadLetterQueue[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const DeadLetterQueueSlice = createSlice({
 export const {
   DeadLetterQueueAdded,
   DeadLetterQueueValueToggled,
-  DeadLetterQueuepropertySet
+  DeadLetterQueuepropertySet,
 } = DeadLetterQueueSlice.actions;
 export default DeadLetterQueueSlice.reducer;

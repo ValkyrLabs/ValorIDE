@@ -1,8 +1,11 @@
 import { memo, useState, useCallback, useEffect, useMemo } from "react";
 
 import { UsageTransaction, PaymentTransaction } from "@/thor/model";
-import { useGetBalanceResponsesQuery } from "@/thor/redux/services/BalanceResponseService";
-import { useAddUsageTransactionMutation, useGetUsageTransactionsQuery } from "@/thor/redux/services/UsageTransactionService";
+import { useGetAccountBalanceQuery } from "@/services/creditsApi";
+import {
+  useAddUsageTransactionMutation,
+  useGetUsageTransactionsQuery,
+} from "@/thor/redux/services/UsageTransactionService";
 import { useGetPaymentTransactionsQuery } from "@/thor/redux/services/PaymentTransactionService";
 import VSCodeButtonLink from "../common/VSCodeButtonLink";
 import ValorIDELogoWhite from "../../assets/ValorIDELogoWhite";
@@ -21,7 +24,13 @@ import {
   VSCodeLink,
 } from "@vscode/webview-ui-toolkit/react";
 import { vscode } from "@/utils/vscode";
-import { FaAppStore, FaBackward, FaFileArchive, FaRecycle, FaUserEdit } from "react-icons/fa";
+import {
+  FaAppStore,
+  FaBackward,
+  FaFileArchive,
+  FaRecycle,
+  FaUserEdit,
+} from "react-icons/fa";
 import CoolButton from "../CoolButton";
 import { Card } from "react-bootstrap";
 import { Login } from "@thor/model";
@@ -46,7 +55,10 @@ const AccountView = ({ onDone }: AccountViewProps) => {
   // Read live messages once at top-level to respect Hooks rules
   const { valorideMessages } = useExtensionState();
   // Compute API metrics from messages once using useMemo
-  const apiMetrics = useMemo(() => getApiMetrics(valorideMessages || []), [valorideMessages]);
+  const apiMetrics = useMemo(
+    () => getApiMetrics(valorideMessages || []),
+    [valorideMessages],
+  );
 
   // Determine authenticated status
   const isAuthenticated = Boolean(
@@ -58,8 +70,8 @@ const AccountView = ({ onDone }: AccountViewProps) => {
     try {
       return Boolean(
         sessionStorage.getItem("jwtToken") ||
-        localStorage.getItem("jwtToken") ||
-        localStorage.getItem("authToken")
+          localStorage.getItem("jwtToken") ||
+          localStorage.getItem("authToken"),
       );
     } catch {
       return false;
@@ -88,16 +100,18 @@ const AccountView = ({ onDone }: AccountViewProps) => {
     data: balanceData,
     isLoading: isBalanceLoading,
     refetch: refetchBalance,
-  } = useGetBalanceResponsesQuery(undefined, {
-    skip: false, // Always attempt to fetch applications
-    // skip: !isAuthenticated,
+  } = useGetAccountBalanceQuery(authenticatedUser?.id ?? "", {
+    skip: !authed || !authenticatedUser?.id,
   });
 
-  const { data: usageData, isLoading: isUsageLoading, refetch: refetchUsage } =
-    useGetUsageTransactionsQuery(undefined, {
-      // Use broader auth signal so queries mount as soon as a token exists
-      skip: !authed,
-    });
+  const {
+    data: usageData,
+    isLoading: isUsageLoading,
+    refetch: refetchUsage,
+  } = useGetUsageTransactionsQuery(undefined, {
+    // Use broader auth signal so queries mount as soon as a token exists
+    skip: !authed,
+  });
   const {
     data: paymentsData,
     isLoading: isPaymentsLoading,
@@ -140,9 +154,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
               })()
             );
           } catch {
-            return `valoride-${Math.random()
-              .toString(36)
-              .substring(2, 12)}`;
+            return `valoride-${Math.random().toString(36).substring(2, 12)}`;
           }
         })();
 
@@ -248,7 +260,9 @@ const AccountView = ({ onDone }: AccountViewProps) => {
         : "Online (Server)"
     : hasError
       ? "Error"
-      : phase === "connecting" ? "Connecting..." : "Offline";
+      : phase === "connecting"
+        ? "Connecting..."
+        : "Offline";
   const kind = ready ? "ok" : hasError ? "error" : "warn";
 
   return (
@@ -269,18 +283,23 @@ const AccountView = ({ onDone }: AccountViewProps) => {
           <div className="mb-2 font-semibold">Active instances</div>
           <div className="flex flex-wrap gap-2">
             {peers.map((id) => (
-              <span key={id} style={{
-                border: "1px solid var(--vscode-panel-border)",
-                borderRadius: 6,
-                padding: "2px 6px",
-                fontSize: 12,
-                background: "var(--vscode-editor-background)",
-              }}>{id}</span>
+              <span
+                key={id}
+                style={{
+                  border: "1px solid var(--vscode-panel-border)",
+                  borderRadius: 6,
+                  padding: "2px 6px",
+                  fontSize: 12,
+                  background: "var(--vscode-editor-background)",
+                }}
+              >
+                {id}
+              </span>
             ))}
           </div>
         </div>
       )}
-      <OfflineBanner />
+
       {/* Tab navigation */}
       <div className="scroll-tabs-container">
         <div className="nav-tabs scroll-tabs">
@@ -331,7 +350,10 @@ const AccountView = ({ onDone }: AccountViewProps) => {
               </Card.Body>
               <Card.Footer>
                 <div
-                  style={{ fontSize: "0.85em", color: "var(--vscode-descriptionForeground)" }}
+                  style={{
+                    fontSize: "0.85em",
+                    color: "var(--vscode-descriptionForeground)",
+                  }}
                 >
                   Don't have an account?{" "}
                   <VSCodeLink
@@ -359,12 +381,14 @@ const AccountView = ({ onDone }: AccountViewProps) => {
       ) : activeTab === "applications" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
           {loading && (
-            <div style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              minHeight: "200px"
-            }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: "200px",
+              }}
+            >
               <LoadingSpinner label="Loading applications..." size={32} />
             </div>
           )}
@@ -372,7 +396,6 @@ const AccountView = ({ onDone }: AccountViewProps) => {
           <div style={{ marginBottom: "1em" }}>
             <OpenAPIFilePicker onFileSelected={handleOpenAPIFileSelected} />
             <ApplicationsList showTitle={true} title="Available Applications" />
-
           </div>
         </div>
       ) : activeTab === "generatedFiles" ? (
@@ -427,12 +450,19 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                 ) : (
                   <>
                     {(() => {
-                      const rawBalance = balanceData?.[0]?.currentBalance || 0;
-                      const effectiveBalance = Math.max(0, rawBalance - (apiMetrics.totalCost || 0));
+                      const rawBalance = balanceData?.currentBalance ?? 0;
+                      const effectiveBalance = Math.max(
+                        0,
+                        rawBalance - (apiMetrics.totalCost || 0),
+                      );
                       return (
                         <>
                           <span>$</span>
-                          <CountUp end={effectiveBalance} duration={0.66} decimals={2} />
+                          <CountUp
+                            end={effectiveBalance}
+                            duration={0.66}
+                            decimals={2}
+                          />
                         </>
                       );
                     })()}
@@ -473,11 +503,9 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                 paymentsData={paymentsData || []}
               />
             </div>
-
           </div>
         </>
       ) : (
-
         <>nothing selected</>
       )}
     </div>

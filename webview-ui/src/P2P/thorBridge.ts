@@ -1,27 +1,14 @@
 import { Client, IMessage } from "@stomp/stompjs";
-import { WEBSOCKET_URL, isValidWsUrl } from "@/websocket/websocket";
+import { getWebsocketUrl, isValidWsUrl } from "@/websocket/websocket";
 import { WebsocketMessageTypeEnum } from "@/thor/model";
-import { BASE_PATH } from "@/thor/src/runtime";
+import {
+  deriveWsUrlFromHost,
+  getValkyraiHost,
+  subscribeToValkyraiHost,
+} from "@/utils/valkyraiHost";
 
-const deriveWsBase = (input?: string): string | undefined => {
-  if (!input) return undefined;
-  const trimmed = input.trim();
-  if (!trimmed) return undefined;
-  if (/^wss?:\/\//i.test(trimmed)) {
-    return trimmed;
-  }
-  try {
-    const url = new URL(trimmed);
-    if (url.protocol === "https:" || url.protocol === "http:") {
-      url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
-    }
-    return url.toString();
-  } catch {
-    return undefined;
-  }
-};
-
-const FALLBACK_WS_BASE = deriveWsBase(BASE_PATH) ?? "ws://localhost:8080";
+const getFallbackWsBase = () =>
+  deriveWsUrlFromHost(getValkyraiHost()) ?? "ws://localhost:8080";
 
 type AppMessage = {
   type: string;
@@ -62,19 +49,32 @@ if (typeof window !== "undefined") {
 
     // Get JWT token from storage for authentication
     const getAuthenticatedBrokerURL = (): string | null => {
-      const baseURL = isValidWsUrl(WEBSOCKET_URL) ? WEBSOCKET_URL : FALLBACK_WS_BASE;
+      const resolvedUrl = getWebsocketUrl();
+      const baseURL = isValidWsUrl(resolvedUrl)
+        ? resolvedUrl
+        : getFallbackWsBase();
       let jwtToken: string | null = null;
       try {
         jwtToken = sessionStorage.getItem("jwtToken");
         if (!jwtToken) {
           // Fall back to localStorage for persisted sessions
-          jwtToken = localStorage.getItem("jwtToken") || localStorage.getItem("authToken");
+          jwtToken =
+            localStorage.getItem("jwtToken") ||
+            localStorage.getItem("authToken");
           if (jwtToken) {
             // Mirror into sessionStorage and notify listeners
             sessionStorage.setItem("jwtToken", jwtToken);
             try {
-              window.dispatchEvent(new CustomEvent("jwt-token-updated", { detail: { token: jwtToken, timestamp: Date.now(), source: "thorBridge-localStorage" } }));
-            } catch { }
+              window.dispatchEvent(
+                new CustomEvent("jwt-token-updated", {
+                  detail: {
+                    token: jwtToken,
+                    timestamp: Date.now(),
+                    source: "thorBridge-localStorage",
+                  },
+                }),
+              );
+            } catch {}
           }
         }
       } catch {
@@ -87,7 +87,7 @@ if (typeof window !== "undefined") {
       }
 
       // Append token as query parameter for authentication
-      const separator = baseURL.includes('?') ? '&' : '?';
+      const separator = baseURL.includes("?") ? "&" : "?";
       return `${baseURL}${separator}token=${jwtToken}`;
     };
 
@@ -140,7 +140,8 @@ if (typeof window !== "undefined") {
           type: decoded.topic,
           payload: decoded.payload,
           senderId: decoded.senderId || "",
-          messageId: decoded.messageId || Math.random().toString(36).slice(2, 12),
+          messageId:
+            decoded.messageId || Math.random().toString(36).slice(2, 12),
           timestamp: decoded.timestamp || Date.now(),
         };
       } catch (e) {
@@ -163,26 +164,33 @@ if (typeof window !== "undefined") {
       return JSON.stringify(thor);
     };
 
-    const postStatus = (phase: "connecting" | "connected" | "disconnected" | "error") => {
+    const postStatus = (
+      phase: "connecting" | "connected" | "disconnected" | "error",
+    ) => {
       try {
-        const evt = new CustomEvent("P2P-status", { detail: { thorConnected: phase === "connected", phase } });
+        const evt = new CustomEvent("P2P-status", {
+          detail: { thorConnected: phase === "connected", phase },
+        });
         window.dispatchEvent(evt);
-      } catch { }
+      } catch {}
     };
 
     let stompClient: Client | null = null;
     let connectionRetryInterval: NodeJS.Timeout | null = null;
+    let hostSubscription: (() => void) | null = null;
 
     const initializeConnection = () => {
       const now = Date.now();
-      if (isConnecting || (now - lastConnectRequestedAt) < 200) {
+      if (isConnecting || now - lastConnectRequestedAt < 200) {
         return;
       }
       lastConnectRequestedAt = now;
       const authenticatedURL = getAuthenticatedBrokerURL();
 
       if (!authenticatedURL) {
-        console.warn("thorBridge: Cannot connect without JWT token, will retry...");
+        console.warn(
+          "thorBridge: Cannot connect without JWT token, will retry...",
+        );
         postStatus("error");
 
         // Retry every 2 seconds until token is available
@@ -205,7 +213,10 @@ if (typeof window !== "undefined") {
         connectionRetryInterval = null;
       }
 
-      console.log("thorBridge: Connecting to authenticated websocket:", authenticatedURL);
+      console.log(
+        "thorBridge: Connecting to authenticated websocket:",
+        authenticatedURL,
+      );
 
       stompClient = new Client({
         brokerURL: authenticatedURL,
@@ -245,18 +256,25 @@ if (typeof window !== "undefined") {
                 messageId: Math.random().toString(36).slice(2, 12),
                 timestamp: Date.now(),
               };
-              stompClient!.publish({ destination: "/app/chat", body: toThorBody(app) });
+              stompClient!.publish({
+                destination: "/app/chat",
+                body: toThorBody(app),
+              });
             };
             announce("presence:join", { id: instanceId });
             announce("auth:ack", { id: instanceId });
-          } catch { }
+          } catch {}
         } catch (e) {
           console.error("thorBridge subscribe error", e);
         }
       };
 
       stompClient.onStompError = (frame) => {
-        console.error("thorBridge STOMP error:", frame.headers["message"], frame.body);
+        console.error(
+          "thorBridge STOMP error:",
+          frame.headers["message"],
+          frame.body,
+        );
         postStatus("error");
         isConnecting = false;
       };
@@ -279,14 +297,20 @@ if (typeof window !== "undefined") {
         const app = ce.detail;
         if (!app || !stompClient) return;
         try {
-          stompClient.publish({ destination: "/app/chat", body: toThorBody(app) });
+          stompClient.publish({
+            destination: "/app/chat",
+            body: toThorBody(app),
+          });
         } catch (e) {
           console.error("thorBridge publish error", e);
         }
       };
 
       if (currentSendListener) {
-        window.removeEventListener("websocket-send", currentSendListener as EventListener);
+        window.removeEventListener(
+          "websocket-send",
+          currentSendListener as EventListener,
+        );
       }
       currentSendListener = sendListener;
       window.addEventListener("websocket-send", sendListener);
@@ -296,12 +320,25 @@ if (typeof window !== "undefined") {
       window.addEventListener("unload", () => {
         try {
           if (currentSendListener) {
-            window.removeEventListener("websocket-send", currentSendListener as EventListener);
+            window.removeEventListener(
+              "websocket-send",
+              currentSendListener as EventListener,
+            );
             currentSendListener = null;
           }
           // Remove explicit connect-broker listener if present
-          window.removeEventListener("P2P-connect-broker", connectBrokerListener as EventListener);
-          window.removeEventListener("jwt-token-updated", jwtUpdatedListener as EventListener);
+          window.removeEventListener(
+            "P2P-connect-broker",
+            connectBrokerListener as EventListener,
+          );
+          window.removeEventListener(
+            "jwt-token-updated",
+            jwtUpdatedListener as EventListener,
+          );
+          if (hostSubscription) {
+            hostSubscription();
+            hostSubscription = null;
+          }
           if (stompClient) {
             stompClient.deactivate();
           }
@@ -313,6 +350,24 @@ if (typeof window !== "undefined") {
         }
       });
     };
+
+    hostSubscription = subscribeToValkyraiHost(() => {
+      try {
+        console.log(
+          "thorBridge: ValkyrAI host changed, reconnecting broker...",
+        );
+        if (connectionRetryInterval) {
+          clearInterval(connectionRetryInterval);
+          connectionRetryInterval = null;
+        }
+        if (stompClient) {
+          stompClient.deactivate();
+        }
+        setTimeout(initializeConnection, 50);
+      } catch (error) {
+        console.warn("thorBridge: failed to handle host change", error);
+      }
+    });
 
     // Start the connection process
     initializeConnection();
@@ -334,7 +389,10 @@ if (typeof window !== "undefined") {
         console.warn("thorBridge: connect-broker failed:", e);
       }
     };
-    window.addEventListener("P2P-connect-broker", connectBrokerListener as EventListener);
+    window.addEventListener(
+      "P2P-connect-broker",
+      connectBrokerListener as EventListener,
+    );
 
     // Also listen for JWT token changes in sessionStorage to reconnect
     window.addEventListener("storage", (event) => {
@@ -369,7 +427,6 @@ if (typeof window !== "undefined") {
       }
     };
     window.addEventListener("jwt-token-updated", jwtUpdatedListener);
-
   } catch (e) {
     console.warn("thorBridge not initialized:", e);
   }

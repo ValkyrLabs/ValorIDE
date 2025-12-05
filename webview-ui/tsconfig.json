@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -22,29 +18,15 @@
     "allowImportingTsExtensions": true, // Add this line
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@shared/*": [
-        "../src/shared/*"
-      ],
-      "@thor/*": [
-        "src/thor/*"
-      ],
-      "@valkyr/component-library/*": [
-        "src/components/*"
-      ],
-      "@thor/redux/services/*": [
-        "src/thor/redux/services/*"
-      ]
+      "@/*": ["src/*"],
+      "@shared/*": ["../src/shared/*"],
+      "@thor/*": ["src/thor/*"],
+      "@valkyr/component-library/*": ["src/components/*"],
+      "@utils/*": ["../src/utils/*"],
+      "@utils/serverValkyraiHost": ["src/utils/serverValkyraiHost.ts"],
+      "@thor/redux/services/*": ["src/thor/redux/services/*"]
     }
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "src/**/*.spec.ts",
-    "setupTests.js",
-    "matchMedia.js"
-  ]
+  "include": ["src"],
+  "exclude": ["src/**/*.spec.ts", "setupTests.js", "matchMedia.js"]
 }

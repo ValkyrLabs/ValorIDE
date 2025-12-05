@@ -1,27 +1,27 @@
-import { ErrorMessage, Field, Formik, FormikHelpers, FormikValues } from 'formik';
-import React, { useState } from 'react';
 import {
-  Form as BSForm,
-  Accordion,
-  Col,
-  Row,
-  Spinner
-} from 'react-bootstrap';
-import LoadingSpinner from '@valkyr/component-library/LoadingSpinner';
-import { FaCheckCircle, FaCogs, FaRegPlusSquare } from 'react-icons/fa';
-import CoolButton from '@valkyr/component-library/CoolButton';
-import * as Yup from 'yup';
-import { SmartField } from '@valkyr/component-library/ForeignKey/SmartField';
+  ErrorMessage,
+  Field,
+  Formik,
+  FormikHelpers,
+  FormikValues,
+} from "formik";
+import React, { useState } from "react";
+import { Form as BSForm, Accordion, Col, Row, Spinner } from "react-bootstrap";
+import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
+import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
+import CoolButton from "@valkyr/component-library/CoolButton";
+import * as Yup from "yup";
+import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 
-import { PermissionDialog } from '@valkyr/component-library/PermissionDialog';
-import { AclGrantRequest, PermissionType } from '@valkyr/component-library/PermissionDialog/types';
-
-
+import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import {
-  KeyMetric,
-} from '@thor/model';
+  AclGrantRequest,
+  PermissionType,
+} from "@valkyr/component-library/PermissionDialog/types";
 
-import { useAddKeyMetricMutation } from '../../services/KeyMetricService';
+import { KeyMetric } from "@thor/model";
+
+import { useAddKeyMetricMutation } from "../../services/KeyMetricService";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -31,7 +31,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelForm.mustache
@@ -50,42 +50,47 @@ A Key Metric for Tracking Strategy Results
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
 const asNumber = (schema: Yup.NumberSchema) =>
-  schema.transform((val, orig) => (orig === '' || orig === null ? undefined : val));
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 
 const validationSchema = Yup.object().shape({
-        goalId: Yup.string(),
-        metricName: Yup.string(),
-        metricValue: asNumber(Yup.number().typeError("metricValue must be a number")),
-        targetValue: asNumber(Yup.number().typeError("targetValue must be a number")),
-        id: Yup.string(),
-        ownerId: Yup.string(),
-        createdDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("createdDate must be a valid date"),
-        keyHash: Yup.string(),
-        lastAccessedById: Yup.string(),
-        lastAccessedDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("lastAccessedDate must be a valid date"),
-        lastModifiedById: Yup.string(),
-        lastModifiedDate: Yup.date()
-          .transform((value, originalValue) => {
-            if (!originalValue) {
-              return value;
-            }
-            const parsed = new Date(originalValue);
-            return Number.isNaN(parsed.getTime()) ? value : parsed;
-          }).typeError("lastModifiedDate must be a valid date"),
+  goalId: Yup.string(),
+  metricName: Yup.string(),
+  metricValue: asNumber(Yup.number().typeError("metricValue must be a number")),
+  targetValue: asNumber(Yup.number().typeError("targetValue must be a number")),
+  id: Yup.string(),
+  ownerId: Yup.string(),
+  createdDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("createdDate must be a valid date"),
+  keyHash: Yup.string(),
+  lastAccessedById: Yup.string(),
+  lastAccessedDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("lastAccessedDate must be a valid date"),
+  lastModifiedById: Yup.string(),
+  lastModifiedDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
+    })
+    .typeError("lastModifiedDate must be a valid date"),
 });
 
 /* -----------------------------------------------------
@@ -100,12 +105,18 @@ const KeyMetricForm: React.FC = () => {
 
   // Mock current user - in real implementation, this would come from auth context
   const currentUser = {
-    username: 'current_user',
+    username: "current_user",
     permissions: {
       isOwner: true,
       isAdmin: true,
       canGrantPermissions: true,
-      permissions: [PermissionType.READ, PermissionType.WRITE, PermissionType.CREATE, PermissionType.DELETE, PermissionType.ADMINISTRATION],
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
     },
   };
 
@@ -113,18 +124,18 @@ const KeyMetricForm: React.FC = () => {
      INITIAL VALUES - only NON read-only fields
   -------------------------------------------------------- */
   const initialValues: Partial<KeyMetric> = {
-          goalId: '',
-          metricName: '',
-          metricValue: 0,
-          targetValue: 0,
-          id: '',
-          ownerId: '',
-          createdDate: new Date(),
-          keyHash: '',
-          lastAccessedById: '',
-          lastAccessedDate: new Date(),
-          lastModifiedById: '',
-          lastModifiedDate: new Date(),
+    goalId: "",
+    metricName: "",
+    metricValue: 0,
+    targetValue: 0,
+    id: "",
+    ownerId: "",
+    createdDate: new Date(),
+    keyHash: "",
+    lastAccessedById: "",
+    lastAccessedDate: new Date(),
+    lastModifiedById: "",
+    lastModifiedDate: new Date(),
   };
 
   // Permission Management Handlers
@@ -139,11 +150,14 @@ const KeyMetricForm: React.FC = () => {
   };
 
   const handlePermissionsSave = (grants: AclGrantRequest[]) => {
-    console.log('Permissions saved for new KeyMetric:', grants);
+    console.log("Permissions saved for new KeyMetric:", grants);
   };
 
   /* SUBMIT HANDLER */
-  const handleSubmit = async (values: FormikValues, { setSubmitting }: FormikHelpers<KeyMetric>) => {
+  const handleSubmit = async (
+    values: FormikValues,
+    { setSubmitting }: FormikHelpers<KeyMetric>,
+  ) => {
     try {
       console.log("KeyMetric form values:", values);
 
@@ -152,7 +166,7 @@ const KeyMetricForm: React.FC = () => {
 
       if (result && result.id && currentUser.permissions.canGrantPermissions) {
         const shouldSetPermissions = window.confirm(
-          `KeyMetric created successfully! Would you like to set permissions for this object?`
+          `KeyMetric created successfully! Would you like to set permissions for this object?`,
         );
         if (shouldSetPermissions) {
           handleManagePermissions(result.id);
@@ -161,7 +175,7 @@ const KeyMetricForm: React.FC = () => {
 
       setSubmitting(false);
     } catch (error) {
-      console.error('Failed to create KeyMetric:', error);
+      console.error("Failed to create KeyMetric:", error);
       setSubmitting(false);
     }
   };
@@ -182,481 +196,449 @@ const KeyMetricForm: React.FC = () => {
           setFieldValue,
           touched,
           setFieldTouched,
-          handleSubmit
+          handleSubmit,
         }) => (
           <form onSubmit={handleSubmit} className="form">
             <Accordion defaultActiveKey="1">
-              
               {/* Editable Fields (NON read-only) */}
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
                   <FaRegPlusSquare size={28} /> &nbsp; Add New KeyMetric
                 </Accordion.Header>
                 <Accordion.Body>
-                    <label htmlFor="goalId" className="nice-form-control">
-                      <b>
-                        Goal Id:
-                        {touched.goalId &&
-                         !errors.goalId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="goalId"
-                            value={values?.goalId}
-                            placeholder="Goal Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="goalId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="metricName" className="nice-form-control">
-                      <b>
-                        Metric Name:
-                        {touched.metricName &&
-                         !errors.metricName && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="metricName"
-                            value={values?.metricName}
-                            placeholder="Metric Name"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="metricName"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="metricValue" className="nice-form-control">
-                      <b>
-                        Metric Value:
-                        {touched.metricValue &&
-                         !errors.metricValue && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-
-
-                          {/* FLOAT FIELD */}
-                          <Field
-                            name="metricValue"
-                            type="number"
-                            step="any"
-                            value={values.metricValue || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('metricValue', true);
-                              const v = e.target.value;
-                              setFieldValue('metricValue', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.metricValue
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="metricValue"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="targetValue" className="nice-form-control">
-                      <b>
-                        Target Value:
-                        {touched.targetValue &&
-                         !errors.targetValue && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-
-
-                          {/* FLOAT FIELD */}
-                          <Field
-                            name="targetValue"
-                            type="number"
-                            step="any"
-                            value={values.targetValue || ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('targetValue', true);
-                              const v = e.target.value;
-                              setFieldValue('targetValue', v === '' ? undefined : Number(v));
-                            }}
-                            className={
-                              errors.targetValue
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="targetValue"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="id" className="nice-form-control">
-                      <b>
-                        Id:
-                        {touched.id &&
-                         !errors.id && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="id"
-                            value={values?.id}
-                            placeholder="Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="id"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="ownerId" className="nice-form-control">
-                      <b>
-                        Owner Id:
-                        {touched.ownerId &&
-                         !errors.ownerId && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="ownerId"
-                            value={values?.ownerId}
-                            placeholder="Owner Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="ownerId"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="createdDate" className="nice-form-control">
-                      <b>
-                        Created Date:
-                        {touched.createdDate &&
-                         !errors.createdDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="createdDate"
-                            type="datetime-local"
-                            value={values.createdDate ? 
-                              new Date(values.createdDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('createdDate', true);
-                              const v = e.target.value;
-                              setFieldValue('createdDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.createdDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-                      <ErrorMessage
-                        className="error"
-                        name="createdDate"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="keyHash" className="nice-form-control">
-                      <b>
-                        Key Hash:
-                        {touched.keyHash &&
-                         !errors.keyHash && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="keyHash"
-                            value={values?.keyHash}
-                            placeholder="Key Hash"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="keyHash"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="lastAccessedById" className="nice-form-control">
-                      <b>
-                        Last Accessed By Id:
-                        {touched.lastAccessedById &&
-                         !errors.lastAccessedById && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="lastAccessedById"
-                            value={values?.lastAccessedById}
-                            placeholder="Last Accessed By Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="lastAccessedById"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="lastAccessedDate" className="nice-form-control">
-                      <b>
-                        Last Accessed Date:
-                        {touched.lastAccessedDate &&
-                         !errors.lastAccessedDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="lastAccessedDate"
-                            type="datetime-local"
-                            value={values.lastAccessedDate ? 
-                              new Date(values.lastAccessedDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('lastAccessedDate', true);
-                              const v = e.target.value;
-                              setFieldValue('lastAccessedDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.lastAccessedDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-                      <ErrorMessage
-                        className="error"
-                        name="lastAccessedDate"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="lastModifiedById" className="nice-form-control">
-                      <b>
-                        Last Modified By Id:
-                        {touched.lastModifiedById &&
-                         !errors.lastModifiedById && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-                          {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
-                          <SmartField
-                            name="lastModifiedById"
-                            value={values?.lastModifiedById}
-                            placeholder="Last Modified By Id"
-                            setFieldValue={setFieldValue}
-                            setFieldTouched={setFieldTouched}
-                          />
-
-
-
-
-
-
-
-                      <ErrorMessage
-                        className="error"
-                        name="lastModifiedById"
-                        component="span"
-                      />
-                    </label>
-                    <br />
-                    <label htmlFor="lastModifiedDate" className="nice-form-control">
-                      <b>
-                        Last Modified Date:
-                        {touched.lastModifiedDate &&
-                         !errors.lastModifiedDate && (
-                          <span className="okCheck"><FaCheckCircle /> looks good!</span>
-                        )}
-                      </b>
-
-
-
-
-
-
-
-
-
-                          {/* DATETIME FIELD */}
-                          <Field
-                            name="lastModifiedDate"
-                            type="datetime-local"
-                            value={values.lastModifiedDate ? 
-                              new Date(values.lastModifiedDate).toISOString().slice(0, 16) : 
-                              ''}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                              setFieldTouched('lastModifiedDate', true);
-                              const v = e.target.value;
-                              setFieldValue('lastModifiedDate', v ? new Date(v).toISOString() : '');
-                            }}
-                            className={
-                              errors.lastModifiedDate
-                                ? 'form-control field-error'
-                                : 'nice-form-control form-control'
-                            }
-                          />
-
-                      <ErrorMessage
-                        className="error"
-                        name="lastModifiedDate"
-                        component="span"
-                      />
-                    </label>
-                    <br />
+                  <label htmlFor="goalId" className="nice-form-control">
+                    <b>
+                      Goal Id:
+                      {touched.goalId && !errors.goalId && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
+
+                    {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                    <SmartField
+                      name="goalId"
+                      value={values?.goalId}
+                      placeholder="Goal Id"
+                      setFieldValue={setFieldValue}
+                      setFieldTouched={setFieldTouched}
+                    />
+
+                    <ErrorMessage
+                      className="error"
+                      name="goalId"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+                  <label htmlFor="metricName" className="nice-form-control">
+                    <b>
+                      Metric Name:
+                      {touched.metricName && !errors.metricName && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
+
+                    {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                    <SmartField
+                      name="metricName"
+                      value={values?.metricName}
+                      placeholder="Metric Name"
+                      setFieldValue={setFieldValue}
+                      setFieldTouched={setFieldTouched}
+                    />
+
+                    <ErrorMessage
+                      className="error"
+                      name="metricName"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+                  <label htmlFor="metricValue" className="nice-form-control">
+                    <b>
+                      Metric Value:
+                      {touched.metricValue && !errors.metricValue && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
+
+                    {/* FLOAT FIELD */}
+                    <Field
+                      name="metricValue"
+                      type="number"
+                      step="any"
+                      value={values.metricValue || ""}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setFieldTouched("metricValue", true);
+                        const v = e.target.value;
+                        setFieldValue(
+                          "metricValue",
+                          v === "" ? undefined : Number(v),
+                        );
+                      }}
+                      className={
+                        errors.metricValue
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
+
+                    <ErrorMessage
+                      className="error"
+                      name="metricValue"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+                  <label htmlFor="targetValue" className="nice-form-control">
+                    <b>
+                      Target Value:
+                      {touched.targetValue && !errors.targetValue && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
+
+                    {/* FLOAT FIELD */}
+                    <Field
+                      name="targetValue"
+                      type="number"
+                      step="any"
+                      value={values.targetValue || ""}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setFieldTouched("targetValue", true);
+                        const v = e.target.value;
+                        setFieldValue(
+                          "targetValue",
+                          v === "" ? undefined : Number(v),
+                        );
+                      }}
+                      className={
+                        errors.targetValue
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
+
+                    <ErrorMessage
+                      className="error"
+                      name="targetValue"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+                  <label htmlFor="id" className="nice-form-control">
+                    <b>
+                      Id:
+                      {touched.id && !errors.id && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
+
+                    {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                    <SmartField
+                      name="id"
+                      value={values?.id}
+                      placeholder="Id"
+                      setFieldValue={setFieldValue}
+                      setFieldTouched={setFieldTouched}
+                    />
+
+                    <ErrorMessage
+                      className="error"
+                      name="id"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+                  <label htmlFor="ownerId" className="nice-form-control">
+                    <b>
+                      Owner Id:
+                      {touched.ownerId && !errors.ownerId && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
+
+                    {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                    <SmartField
+                      name="ownerId"
+                      value={values?.ownerId}
+                      placeholder="Owner Id"
+                      setFieldValue={setFieldValue}
+                      setFieldTouched={setFieldTouched}
+                    />
+
+                    <ErrorMessage
+                      className="error"
+                      name="ownerId"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+                  <label htmlFor="createdDate" className="nice-form-control">
+                    <b>
+                      Created Date:
+                      {touched.createdDate && !errors.createdDate && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
+
+                    {/* DATETIME FIELD */}
+                    <Field
+                      name="createdDate"
+                      type="datetime-local"
+                      value={
+                        values.createdDate
+                          ? new Date(values.createdDate)
+                              .toISOString()
+                              .slice(0, 16)
+                          : ""
+                      }
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setFieldTouched("createdDate", true);
+                        const v = e.target.value;
+                        setFieldValue(
+                          "createdDate",
+                          v ? new Date(v).toISOString() : "",
+                        );
+                      }}
+                      className={
+                        errors.createdDate
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
+
+                    <ErrorMessage
+                      className="error"
+                      name="createdDate"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+                  <label htmlFor="keyHash" className="nice-form-control">
+                    <b>
+                      Key Hash:
+                      {touched.keyHash && !errors.keyHash && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
+
+                    {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                    <SmartField
+                      name="keyHash"
+                      value={values?.keyHash}
+                      placeholder="Key Hash"
+                      setFieldValue={setFieldValue}
+                      setFieldTouched={setFieldTouched}
+                    />
+
+                    <ErrorMessage
+                      className="error"
+                      name="keyHash"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+                  <label
+                    htmlFor="lastAccessedById"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Accessed By Id:
+                      {touched.lastAccessedById && !errors.lastAccessedById && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
+
+                    {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                    <SmartField
+                      name="lastAccessedById"
+                      value={values?.lastAccessedById}
+                      placeholder="Last Accessed By Id"
+                      setFieldValue={setFieldValue}
+                      setFieldTouched={setFieldTouched}
+                    />
+
+                    <ErrorMessage
+                      className="error"
+                      name="lastAccessedById"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+                  <label
+                    htmlFor="lastAccessedDate"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Accessed Date:
+                      {touched.lastAccessedDate && !errors.lastAccessedDate && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
+
+                    {/* DATETIME FIELD */}
+                    <Field
+                      name="lastAccessedDate"
+                      type="datetime-local"
+                      value={
+                        values.lastAccessedDate
+                          ? new Date(values.lastAccessedDate)
+                              .toISOString()
+                              .slice(0, 16)
+                          : ""
+                      }
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setFieldTouched("lastAccessedDate", true);
+                        const v = e.target.value;
+                        setFieldValue(
+                          "lastAccessedDate",
+                          v ? new Date(v).toISOString() : "",
+                        );
+                      }}
+                      className={
+                        errors.lastAccessedDate
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
+
+                    <ErrorMessage
+                      className="error"
+                      name="lastAccessedDate"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+                  <label
+                    htmlFor="lastModifiedById"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Modified By Id:
+                      {touched.lastModifiedById && !errors.lastModifiedById && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
+
+                    {/* SMART FIELD (UUID-aware picker for *Id), fallback text */}
+                    <SmartField
+                      name="lastModifiedById"
+                      value={values?.lastModifiedById}
+                      placeholder="Last Modified By Id"
+                      setFieldValue={setFieldValue}
+                      setFieldTouched={setFieldTouched}
+                    />
+
+                    <ErrorMessage
+                      className="error"
+                      name="lastModifiedById"
+                      component="span"
+                    />
+                  </label>
+                  <br />
+                  <label
+                    htmlFor="lastModifiedDate"
+                    className="nice-form-control"
+                  >
+                    <b>
+                      Last Modified Date:
+                      {touched.lastModifiedDate && !errors.lastModifiedDate && (
+                        <span className="okCheck">
+                          <FaCheckCircle /> looks good!
+                        </span>
+                      )}
+                    </b>
+
+                    {/* DATETIME FIELD */}
+                    <Field
+                      name="lastModifiedDate"
+                      type="datetime-local"
+                      value={
+                        values.lastModifiedDate
+                          ? new Date(values.lastModifiedDate)
+                              .toISOString()
+                              .slice(0, 16)
+                          : ""
+                      }
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setFieldTouched("lastModifiedDate", true);
+                        const v = e.target.value;
+                        setFieldValue(
+                          "lastModifiedDate",
+                          v ? new Date(v).toISOString() : "",
+                        );
+                      }}
+                      className={
+                        errors.lastModifiedDate
+                          ? "form-control field-error"
+                          : "nice-form-control form-control"
+                      }
+                    />
+
+                    <ErrorMessage
+                      className="error"
+                      name="lastModifiedDate"
+                      component="span"
+                    />
+                  </label>
+                  <br />
 
                   {/* SUBMIT BUTTON */}
                   <CoolButton
-                    variant={isValid ? (isSubmitting ? 'disabled' : 'success') : 'warning'}
+                    variant={
+                      isValid
+                        ? isSubmitting
+                          ? "disabled"
+                          : "success"
+                        : "warning"
+                    }
                     type="submit"
                     disabled={!isValid || isSubmitting}
                   >
-                    {isSubmitting && (<span style={ { float: 'left', minHeight: 0 } }><LoadingSpinner label="" size={18} /></span>)}
+                    {isSubmitting && (
+                      <span style={{ float: "left", minHeight: 0 }}>
+                        <LoadingSpinner label="" size={18} />
+                      </span>
+                    )}
                     <FaCheckCircle size={28} /> Create New KeyMetric
                   </CoolButton>
 
                   {addKeyMetricResult.error && (
-                    <div className="error" style={ { marginTop: 12 }}>
-                      {JSON.stringify('data' in (addKeyMetricResult as any).error ? (addKeyMetricResult as any).error.data : (addKeyMetricResult as any).error)}
+                    <div className="error" style={{ marginTop: 12 }}>
+                      {JSON.stringify(
+                        "data" in (addKeyMetricResult as any).error
+                          ? (addKeyMetricResult as any).error.data
+                          : (addKeyMetricResult as any).error,
+                      )}
                     </div>
                   )}
                 </Accordion.Body>
               </Accordion.Item>
 
-            {/* Debug/Dev Accordion */}
+              {/* Debug/Dev Accordion */}
               <Accordion.Item eventKey="0">
                 <Accordion.Header>
                   <FaCogs size={28} /> &nbsp;Server Messages
@@ -667,7 +649,6 @@ const KeyMetricForm: React.FC = () => {
                   addKeyMetricResult: {JSON.stringify(addKeyMetricResult)}
                 </Accordion.Body>
               </Accordion.Item>
-
             </Accordion>
           </form>
         )}
@@ -688,8 +669,5 @@ const KeyMetricForm: React.FC = () => {
   );
 };
 
-
-
 /* Export the generated form */
 export default KeyMetricForm;
-

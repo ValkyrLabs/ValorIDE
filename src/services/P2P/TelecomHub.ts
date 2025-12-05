@@ -17,7 +17,10 @@ type AppMessage = {
  */
 export class TelecomHub {
   private static instance: TelecomHub | null = null;
-  private providers = new Map<WebviewProvider, { id: string; dispose?: () => void }>();
+  private providers = new Map<
+    WebviewProvider,
+    { id: string; dispose?: () => void }
+  >();
 
   static getInstance(): TelecomHub {
     if (!this.instance) this.instance = new TelecomHub();
@@ -76,7 +79,13 @@ export class TelecomHub {
       this.broadcast(leave);
     });
 
-    this.providers.set(provider, { id, dispose: () => { subscription.dispose(); disposeHandle.dispose(); } });
+    this.providers.set(provider, {
+      id,
+      dispose: () => {
+        subscription.dispose();
+        disposeHandle.dispose();
+      },
+    });
 
     // Send current presence snapshot to the new provider
     this.sendPresenceSnapshot(provider, id);

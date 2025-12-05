@@ -65,7 +65,13 @@ export class TelecomHub {
             };
             this.broadcast(leave);
         });
-        this.providers.set(provider, { id, dispose: () => { subscription.dispose(); disposeHandle.dispose(); } });
+        this.providers.set(provider, {
+            id,
+            dispose: () => {
+                subscription.dispose();
+                disposeHandle.dispose();
+            },
+        });
         // Send current presence snapshot to the new provider
         this.sendPresenceSnapshot(provider, id);
         // Broadcast presence join to others

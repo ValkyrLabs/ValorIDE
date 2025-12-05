@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpToolPreset } from '@thor/model/McpToolPreset';
+import { McpToolPreset } from "@thor/model/McpToolPreset";
 
 const McpToolPresetSlice = createSlice({
   name: "McpToolPresets",
@@ -12,20 +12,23 @@ const McpToolPresetSlice = createSlice({
     },
 
     McpToolPresetValueToggled(state, action) {
-      console.log("McpToolPreset TOGGLE")
-      console.warn(JSON.stringify(action))
-      const McpToolPreset:McpToolPreset = state.find((McpToolPreset) => McpToolPreset.id === action.payload.McpToolPresetId);
+      console.log("McpToolPreset TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpToolPreset: McpToolPreset = state.find(
+        (McpToolPreset) => McpToolPreset.id === action.payload.McpToolPresetId,
+      );
       if (McpToolPreset) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     McpToolPresetpropertySet(state, action) {
-      const McpToolPreset = state.find((McpToolPreset) => McpToolPreset.id === action.payload.McpToolPresetId);
+      const McpToolPreset = state.find(
+        (McpToolPreset) => McpToolPreset.id === action.payload.McpToolPresetId,
+      );
       if (McpToolPreset) {
-      //  McpToolPreset[action.property] = action.payload[action.property];
+        //  McpToolPreset[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +37,6 @@ const McpToolPresetSlice = createSlice({
 export const {
   McpToolPresetAdded,
   McpToolPresetValueToggled,
-  McpToolPresetpropertySet
+  McpToolPresetpropertySet,
 } = McpToolPresetSlice.actions;
 export default McpToolPresetSlice.reducer;

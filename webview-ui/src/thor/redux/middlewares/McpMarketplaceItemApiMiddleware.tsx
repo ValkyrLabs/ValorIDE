@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +14,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_MCPMARKETPLACEITEM_REQUEST,
-    FETCH_MCPMARKETPLACEITEM_REQUEST,
-    LIST_MCPMARKETPLACEITEM_REQUEST,
-    UPDATE_MCPMARKETPLACEITEM_REQUEST,
-    DELETE_MCPMARKETPLACEITEM_REQUEST,
-
-    addMcpMarketplaceItemFailure,
-    addMcpMarketplaceItemSuccess,
-
-    fetchMcpMarketplaceItemFailure,
-    fetchMcpMarketplaceItemSuccess,
-    
-    listMcpMarketplaceItemFailure,
-    listMcpMarketplaceItemSuccess,
-
-    updateMcpMarketplaceItemFailure,
-    updateMcpMarketplaceItemSuccess,
-    
-    deleteMcpMarketplaceItemFailure,
-    deleteMcpMarketplaceItemSuccess,
-    
-} from '../actions/McpMarketplaceItemApiAction';
+  ADD_MCPMARKETPLACEITEM_REQUEST,
+  FETCH_MCPMARKETPLACEITEM_REQUEST,
+  LIST_MCPMARKETPLACEITEM_REQUEST,
+  UPDATE_MCPMARKETPLACEITEM_REQUEST,
+  DELETE_MCPMARKETPLACEITEM_REQUEST,
+  addMcpMarketplaceItemFailure,
+  addMcpMarketplaceItemSuccess,
+  fetchMcpMarketplaceItemFailure,
+  fetchMcpMarketplaceItemSuccess,
+  listMcpMarketplaceItemFailure,
+  listMcpMarketplaceItemSuccess,
+  updateMcpMarketplaceItemFailure,
+  updateMcpMarketplaceItemSuccess,
+  deleteMcpMarketplaceItemFailure,
+  deleteMcpMarketplaceItemSuccess,
+} from "../actions/McpMarketplaceItemApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +48,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpMarketplaceItem
 */
 
-
-
-export const McpMarketplaceItemMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("McpMarketplaceItem MIDDLEWARE: " + JSON.stringify(action) )
+export const McpMarketplaceItemMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("McpMarketplaceItem MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

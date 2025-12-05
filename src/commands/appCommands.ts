@@ -152,9 +152,7 @@ async function handleOpenAppFolder(app: Application) {
   const baseDir = require("path").join(homeDir, "valor-projects");
   const fs = require("fs");
   if (!fs.existsSync(baseDir)) {
-    vscode.window.showErrorMessage(
-      `Base folder does not exist: ${baseDir}`,
-    );
+    vscode.window.showErrorMessage(`Base folder does not exist: ${baseDir}`);
     return;
   }
   // Find the most recent versioned folder for this app (pattern: v*.App Name)
@@ -189,9 +187,7 @@ async function handleDeployApp(app: Application) {
   const baseDir = require("path").join(homeDir, "valor-projects");
   const fs = require("fs");
   if (!fs.existsSync(baseDir)) {
-    vscode.window.showErrorMessage(
-      `Base folder does not exist: ${baseDir}`,
-    );
+    vscode.window.showErrorMessage(`Base folder does not exist: ${baseDir}`);
     return;
   }
   const suffix = `.${app.name}`;

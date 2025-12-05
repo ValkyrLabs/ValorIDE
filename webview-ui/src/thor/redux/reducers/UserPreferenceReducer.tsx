@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { UserPreference } from '@thor/model/UserPreference';
+import { UserPreference } from "@thor/model/UserPreference";
 
 const UserPreferenceSlice = createSlice({
   name: "UserPreferences",
@@ -12,20 +12,25 @@ const UserPreferenceSlice = createSlice({
     },
 
     UserPreferenceValueToggled(state, action) {
-      console.log("UserPreference TOGGLE")
-      console.warn(JSON.stringify(action))
-      const UserPreference:UserPreference = state.find((UserPreference) => UserPreference.id === action.payload.UserPreferenceId);
+      console.log("UserPreference TOGGLE");
+      console.warn(JSON.stringify(action));
+      const UserPreference: UserPreference = state.find(
+        (UserPreference) =>
+          UserPreference.id === action.payload.UserPreferenceId,
+      );
       if (UserPreference) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     UserPreferencepropertySet(state, action) {
-      const UserPreference = state.find((UserPreference) => UserPreference.id === action.payload.UserPreferenceId);
+      const UserPreference = state.find(
+        (UserPreference) =>
+          UserPreference.id === action.payload.UserPreferenceId,
+      );
       if (UserPreference) {
-      //  UserPreference[action.property] = action.payload[action.property];
+        //  UserPreference[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const UserPreferenceSlice = createSlice({
 export const {
   UserPreferenceAdded,
   UserPreferenceValueToggled,
-  UserPreferencepropertySet
+  UserPreferencepropertySet,
 } = UserPreferenceSlice.actions;
 export default UserPreferenceSlice.reducer;

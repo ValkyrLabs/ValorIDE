@@ -139,16 +139,16 @@ Um zum Projekt beizutragen, beginnen Sie mit unserem [Beitragsleitfaden](CONTRIB
 
 1. Klonen Sie das Repository _(Erfordert [git-lfs](https://git-lfs.com/))_:
    `bash
-            git clone https://github.com/valkyrlabs/valoride.git
-            `
+git clone https://github.com/valkyrlabs/valoride.git
+`
 2. Öffnen Sie das Projekt in VSCode:
    `bash
-            code valoride
-            `
+code valoride
+`
 3. Installieren Sie die notwendigen Abhängigkeiten für die Erweiterung und das Webview-GUI:
    `bash
-            npm run install:all
-            `
+npm run install:all
+`
 4. Starten Sie durch Drücken von `F5` (oder `Run`->`Start Debugging`), um ein neues VSCode-Fenster mit der geladenen Erweiterung zu öffnen. (Möglicherweise müssen Sie die [esbuild problem matchers extension](https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers) installieren, wenn Sie auf Probleme beim Erstellen des Projekts stoßen.)
 
 </details>

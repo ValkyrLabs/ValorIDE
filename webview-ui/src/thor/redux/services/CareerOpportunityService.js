@@ -1,0 +1,103 @@
+import { createApi } from "@reduxjs/toolkit/query/react";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+export const CareerOpportunityService = createApi({
+    reducerPath: "CareerOpportunity", // This should remain unique
+    baseQuery: customBaseQuery,
+    tagTypes: ["CareerOpportunity"],
+    endpoints: (build) => ({
+        // 1) Paged Query Endpoint
+        // Standardized pagination: page (0-based), size (page size)
+        getCareerOpportunitysPaged: build.query({
+            query: ({ page, size = 20, example }) => {
+                const q = [`page=${page}`, `size=${size}`];
+                if (example)
+                    q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+                return `CareerOpportunity?${q.join("&")}`;
+            },
+            providesTags: (result, error, { page }) => result
+                ? [
+                    ...result.map(({ id }) => ({
+                        type: "CareerOpportunity",
+                        id,
+                    })),
+                    { type: "CareerOpportunity", id: `PAGE_${page}` },
+                ]
+                : [],
+        }),
+        // 2) Simple "get all" Query (optional)
+        getCareerOpportunitys: build.query({
+            query: (arg) => {
+                if (arg && arg.example) {
+                    const ex = arg.example;
+                    return `CareerOpportunity?example=${encodeURIComponent(JSON.stringify(ex))}`;
+                }
+                return `CareerOpportunity`;
+            },
+            providesTags: (result) => result
+                ? [
+                    ...result.map(({ id }) => ({
+                        type: "CareerOpportunity",
+                        id,
+                    })),
+                    { type: "CareerOpportunity", id: "LIST" },
+                ]
+                : [{ type: "CareerOpportunity", id: "LIST" }],
+        }),
+        // 3) Create
+        addCareerOpportunity: build.mutation({
+            query: (body) => ({
+                url: `CareerOpportunity`,
+                method: "POST",
+                body,
+            }),
+            invalidatesTags: [{ type: "CareerOpportunity", id: "LIST" }],
+        }),
+        // 4) Get single by ID
+        getCareerOpportunity: build.query({
+            query: (id) => `CareerOpportunity/${id}`,
+            providesTags: (result, error, id) => [{ type: "CareerOpportunity", id }],
+        }),
+        // 5) Update
+        updateCareerOpportunity: build.mutation({
+            query: ({ id, ...patch }) => ({
+                url: `CareerOpportunity/${id}`,
+                method: "PUT",
+                body: patch,
+            }),
+            async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+                if (id) {
+                    const patchResult = dispatch(CareerOpportunityService.util.updateQueryData("getCareerOpportunity", id, (draft) => {
+                        Object.assign(draft, patch);
+                    }));
+                    try {
+                        await queryFulfilled;
+                    }
+                    catch {
+                        patchResult.undo();
+                    }
+                }
+            },
+            invalidatesTags: (result, error, { id }) => [
+                { type: "CareerOpportunity", id },
+                { type: "CareerOpportunity", id: "LIST" },
+            ],
+        }),
+        // 6) Delete
+        deleteCareerOpportunity: build.mutation({
+            query(id) {
+                return {
+                    url: `CareerOpportunity/${id}`,
+                    method: "DELETE",
+                };
+            },
+            invalidatesTags: (result, error, id) => [
+                { type: "CareerOpportunity", id },
+            ],
+        }),
+    }),
+});
+// Notice we now also export `useLazyGetCareerOpportunitysPagedQuery`
+export const { useGetCareerOpportunitysPagedQuery, // immediate fetch
+useLazyGetCareerOpportunitysPagedQuery, // lazy fetch
+useGetCareerOpportunityQuery, useGetCareerOpportunitysQuery, useAddCareerOpportunityMutation, useUpdateCareerOpportunityMutation, useDeleteCareerOpportunityMutation, } = CareerOpportunityService;
+//# sourceMappingURL=CareerOpportunityService.js.map

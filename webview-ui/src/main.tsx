@@ -10,17 +10,17 @@ import "./P2P/thorBridge";
 
 import { initThemes } from "./themes";
 initThemes();
-import "./themes/valkyr/bootstrap.css"
+import "./themes/valkyr/bootstrap.css";
 import "./App.css";
 import "./index.css";
 import "antd/dist/reset.css";
-
 
 import type { ProviderProps } from "react-redux";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 
-const ReduxProvider = Provider as unknown as JSXElementConstructor<ProviderProps>;
+const ReduxProvider =
+  Provider as unknown as JSXElementConstructor<ProviderProps>;
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,

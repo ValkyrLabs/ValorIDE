@@ -42,18 +42,22 @@ const WelcomeView = memo(() => {
                   src="https://valkyrlabs.com/assets/valorIde-horizontal-DyPXHpke.png"
                 />
               </a>
-
             </div>
             <p>
               <h2>Agentic Coder, Powered by ThorAPI</h2>
-              <VSCodeLink href="https://valkyrlabs.com/v1/docs/Products/ValorIDE" style={{ display: "inline" }}>
+              <VSCodeLink
+                href="https://valkyrlabs.com/v1/docs/Products/ValorIDE"
+                style={{ display: "inline" }}
+              >
                 English Documentation
               </VSCodeLink>
-              <VSCodeLink href="https://valkyrlabs.com/thorapi" style={{ display: "inline" }}>
+              <VSCodeLink
+                href="https://valkyrlabs.com/thorapi"
+                style={{ display: "inline" }}
+              >
                 ThorAPI Full-Stack CodeGen
               </VSCodeLink>
             </p>
-
           </div>
           <p>
             I can do all kinds of tasks thanks to breakthroughs in{" "}
@@ -61,12 +65,12 @@ const WelcomeView = memo(() => {
               href="https://valkyrlabs.com/v1/Products/ValorIDE/getting-started"
               className="inline"
             >
-             Help Getting Started
+              Help Getting Started
             </VSCodeLink>
             agentic coding capabilities and access to tools that let me create &
             edit files, explore complex projects, use a browser, and execute
-            terminal commands <i>(with your permission, of course)</i>. I can even
-            use MCP to create new tools and extend my own capabilities.
+            terminal commands <i>(with your permission, of course)</i>. I can
+            even use MCP to create new tools and extend my own capabilities.
           </p>
 
           <p className="text-[var(--vscode-descriptionForeground)]">

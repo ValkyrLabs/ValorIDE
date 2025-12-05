@@ -8,6 +8,32 @@ import { findLast } from "@shared/array";
 import { UsageTrackingService } from "../../services/usage-tracking/UsageTrackingService";
 import { TelecomHub } from "@services/P2P/TelecomHub";
 import { thorapiSettingChanged } from "@utils/thorapi";
+
+const FALLBACK_VALKYRAI_BASE =
+  (process.env.VITE_basePath && process.env.VITE_basePath.trim()) ||
+  "http://localhost:8080/v1";
+
+const resolveValkyraiBasePath = () => {
+  const configured = vscode.workspace
+    .getConfiguration("valoride.valkyrai")
+    .get<string>("host");
+  const normalized =
+    (configured && configured.trim().replace(/\/+$/, "")) ||
+    FALLBACK_VALKYRAI_BASE.replace(/\/+$/, "");
+  return normalized;
+};
+
+const deriveValkyraiOrigins = (basePath: string) => {
+  try {
+    const parsed = new URL(basePath);
+    const httpOrigin = `${parsed.protocol}//${parsed.host}`;
+    const wsOrigin = `${parsed.protocol === "https:" ? "wss" : "ws"}://${parsed.host}`;
+    return { httpOrigin, wsOrigin };
+  } catch {
+    const fallbackOrigin = basePath.replace(/\/v1$/, "");
+    return { httpOrigin: fallbackOrigin, wsOrigin: undefined };
+  }
+};
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
 https://github.com/KumarVariable/vscode-extension-sidebar-html/blob/master/src/customSidebarViewProvider.ts
@@ -119,10 +145,14 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
     // Initialize bridge services with the active webview
     this.usageTrackingService.setWebview(webviewView);
     try {
-      const { ContentDataBridge } = await import('../../services/content-data/ContentDataBridge');
-      ContentDataBridge.getInstance().setWebviewPanel(webviewView as vscode.WebviewPanel);
+      const { ContentDataBridge } = await import(
+        "../../services/content-data/ContentDataBridge"
+      );
+      ContentDataBridge.getInstance().setWebviewPanel(
+        webviewView as vscode.WebviewPanel,
+      );
     } catch (e) {
-      console.warn('ContentDataBridge not initialized:', e);
+      console.warn("ContentDataBridge not initialized:", e);
     }
 
     // Sets up an event listener to listen for messages passed from the webview view context
@@ -234,15 +264,15 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
 
     // The CSS file from the React build output
     const stylesUri = getUri(webview, this.context.extensionUri, [
-      "webview-ui",
-      "build",
+      "dist",
+      "webview",
       "assets",
       "index.css",
     ]);
     // The JS file from the React build output
     const scriptUri = getUri(webview, this.context.extensionUri, [
-      "webview-ui",
-      "build",
+      "dist",
+      "webview",
       "assets",
       "index.js",
     ]);
@@ -271,10 +301,27 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
     // Tip: Install the es6-string-html VS Code extension to enable code highlighting below
     const cfg = vscode.workspace.getConfiguration("valoride");
     const telecomConfig = {
-      turnServers: cfg.get<any[]>("P2P.turnServers", ["stun:stun.l.google.com:19302"]),
+      turnServers: cfg.get<any[]>("P2P.turnServers", [
+        "stun:stun.l.google.com:19302",
+      ]),
       bonjour: cfg.get<boolean>("P2P.discovery.bonjour", false),
       p2pEnabled: cfg.get<boolean>("P2P.p2pEnabled", true),
     };
+    const valkyraiBasePath = resolveValkyraiBasePath();
+    const { httpOrigin: valkyraiOrigin, wsOrigin: valkyraiWsOrigin } =
+      deriveValkyraiOrigins(valkyraiBasePath);
+    const connectSrcEntries = new Set<string>([
+      valkyraiOrigin || "http://localhost:8080",
+      "https://*.valkyrlabs.com",
+      "wss://*.valkyrlabs.com",
+      "ws://localhost:*",
+      "https://*.posthog.com",
+      "https://*.googleapis.com",
+    ]);
+    if (valkyraiWsOrigin) {
+      connectSrcEntries.add(valkyraiWsOrigin);
+    }
+    const connectSrc = Array.from(connectSrcEntries).filter(Boolean).join(" ");
     return /*html*/ `
         <!DOCTYPE html>
         <html lang="en">
@@ -283,14 +330,17 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
             <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
             <meta name="theme-color" content="#000000">
             <link rel="stylesheet" type="text/css" href="${stylesUri}">
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${process.env.VITE_basePath?.replace('/v1', '') || 'http://localhost:8080'} https://*.valkyrlabs.com wss://*.valkyrlabs.com ws://localhost:* https://*.posthog.com https://*.googleapis.com font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} https: data:; script-src 'nonce-${nonce}' 'unsafe-eval';">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src ${connectSrc}; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} https: data:; script-src 'nonce-${nonce}' 'unsafe-eval';">
             <title>ValorIDE</title>
           </head>
           <body>
             <noscript>You need to enable JavaScript to run this app.</noscript>
             <div id="root"></div>
             <script nonce="${nonce}">
-              try { window.__valorideTelecomConfig = ${JSON.stringify(telecomConfig)}; } catch {}
+              try {
+                window.__valorideTelecomConfig = ${JSON.stringify(telecomConfig)};
+                window.__valorideValkyraiBasePath = ${JSON.stringify(valkyraiBasePath)};
+              } catch {}
             </script>
             <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
           </body>
@@ -322,8 +372,8 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
 
     const nonce = getNonce();
     const stylesUri = getUri(webview, this.context.extensionUri, [
-      "webview-ui",
-      "build",
+      "dist",
+      "webview",
       "assets",
       "index.css",
     ]);
@@ -341,18 +391,34 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
 			</script>
 		`;
 
+    const valkyraiBasePath = resolveValkyraiBasePath();
+    const { httpOrigin: devValkyraiOrigin, wsOrigin: devValkyraiWsOrigin } =
+      deriveValkyraiOrigins(valkyraiBasePath);
+    const connectSrcParts = new Set<string>([
+      devValkyraiOrigin || "",
+      "https://*",
+      `ws://${localServerUrl}`,
+      `ws://0.0.0.0:${localPort}`,
+      `http://${localServerUrl}`,
+      `http://0.0.0.0:${localPort}`,
+    ]);
+    if (devValkyraiWsOrigin) {
+      connectSrcParts.add(devValkyraiWsOrigin);
+    }
     const csp = [
       "default-src 'none'",
       `font-src ${webview.cspSource}`,
       `style-src ${webview.cspSource} 'unsafe-inline' https://* http://${localServerUrl} http://0.0.0.0:${localPort}`,
       `img-src ${webview.cspSource} https: data:`,
       `script-src 'unsafe-eval' https://* http://${localServerUrl} http://0.0.0.0:${localPort} 'nonce-${nonce}'`,
-      `connect-src https://* ws://${localServerUrl} ws://0.0.0.0:${localPort} http://${localServerUrl} http://0.0.0.0:${localPort}`,
+      `connect-src ${Array.from(connectSrcParts).filter(Boolean).join(" ")}`,
     ];
 
     const cfg = vscode.workspace.getConfiguration("valoride");
     const telecomConfig = {
-      turnServers: cfg.get<any[]>("P2P.turnServers", ["stun:stun.l.google.com:19302"]),
+      turnServers: cfg.get<any[]>("P2P.turnServers", [
+        "stun:stun.l.google.com:19302",
+      ]),
       bonjour: cfg.get<boolean>("P2P.discovery.bonjour", false),
       p2pEnabled: cfg.get<boolean>("P2P.p2pEnabled", true),
     };
@@ -370,7 +436,10 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
 					<div id="root"></div>
 					${reactRefresh}
 					<script nonce="${nonce}">
-						try { window.__valorideTelecomConfig = ${JSON.stringify(telecomConfig)}; } catch {}
+						try {
+              window.__valorideTelecomConfig = ${JSON.stringify(telecomConfig)};
+              window.__valorideValkyraiBasePath = ${JSON.stringify(valkyraiBasePath)};
+            } catch {}
 					</script>
 					<script type="module" src="${scriptUri}"></script>
 				</body>

@@ -1,0 +1,107 @@
+import { createApi } from "@reduxjs/toolkit/query/react";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+export const CompleteUploadRequestPartsInnerService = createApi({
+    reducerPath: "CompleteUploadRequestPartsInner", // This should remain unique
+    baseQuery: customBaseQuery,
+    tagTypes: ["CompleteUploadRequestPartsInner"],
+    endpoints: (build) => ({
+        // 1) Paged Query Endpoint
+        // Standardized pagination: page (0-based), size (page size)
+        getCompleteUploadRequestPartsInnersPaged: build.query({
+            query: ({ page, size = 20, example }) => {
+                const q = [`page=${page}`, `size=${size}`];
+                if (example)
+                    q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+                return `CompleteUploadRequestPartsInner?${q.join("&")}`;
+            },
+            providesTags: (result, error, { page }) => result
+                ? [
+                    ...result.map(({ id }) => ({
+                        type: "CompleteUploadRequestPartsInner",
+                        id,
+                    })),
+                    { type: "CompleteUploadRequestPartsInner", id: `PAGE_${page}` },
+                ]
+                : [],
+        }),
+        // 2) Simple "get all" Query (optional)
+        getCompleteUploadRequestPartsInners: build.query({
+            query: (arg) => {
+                if (arg && arg.example) {
+                    const ex = arg.example;
+                    return `CompleteUploadRequestPartsInner?example=${encodeURIComponent(JSON.stringify(ex))}`;
+                }
+                return `CompleteUploadRequestPartsInner`;
+            },
+            providesTags: (result) => result
+                ? [
+                    ...result.map(({ id }) => ({
+                        type: "CompleteUploadRequestPartsInner",
+                        id,
+                    })),
+                    { type: "CompleteUploadRequestPartsInner", id: "LIST" },
+                ]
+                : [{ type: "CompleteUploadRequestPartsInner", id: "LIST" }],
+        }),
+        // 3) Create
+        addCompleteUploadRequestPartsInner: build.mutation({
+            query: (body) => ({
+                url: `CompleteUploadRequestPartsInner`,
+                method: "POST",
+                body,
+            }),
+            invalidatesTags: [
+                { type: "CompleteUploadRequestPartsInner", id: "LIST" },
+            ],
+        }),
+        // 4) Get single by ID
+        getCompleteUploadRequestPartsInner: build.query({
+            query: (id) => `CompleteUploadRequestPartsInner/${id}`,
+            providesTags: (result, error, id) => [
+                { type: "CompleteUploadRequestPartsInner", id },
+            ],
+        }),
+        // 5) Update
+        updateCompleteUploadRequestPartsInner: build.mutation({
+            query: ({ id, ...patch }) => ({
+                url: `CompleteUploadRequestPartsInner/${id}`,
+                method: "PUT",
+                body: patch,
+            }),
+            async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+                if (id) {
+                    const patchResult = dispatch(CompleteUploadRequestPartsInnerService.util.updateQueryData("getCompleteUploadRequestPartsInner", id, (draft) => {
+                        Object.assign(draft, patch);
+                    }));
+                    try {
+                        await queryFulfilled;
+                    }
+                    catch {
+                        patchResult.undo();
+                    }
+                }
+            },
+            invalidatesTags: (result, error, { id }) => [
+                { type: "CompleteUploadRequestPartsInner", id },
+                { type: "CompleteUploadRequestPartsInner", id: "LIST" },
+            ],
+        }),
+        // 6) Delete
+        deleteCompleteUploadRequestPartsInner: build.mutation({
+            query(id) {
+                return {
+                    url: `CompleteUploadRequestPartsInner/${id}`,
+                    method: "DELETE",
+                };
+            },
+            invalidatesTags: (result, error, id) => [
+                { type: "CompleteUploadRequestPartsInner", id },
+            ],
+        }),
+    }),
+});
+// Notice we now also export `useLazyGetCompleteUploadRequestPartsInnersPagedQuery`
+export const { useGetCompleteUploadRequestPartsInnersPagedQuery, // immediate fetch
+useLazyGetCompleteUploadRequestPartsInnersPagedQuery, // lazy fetch
+useGetCompleteUploadRequestPartsInnerQuery, useGetCompleteUploadRequestPartsInnersQuery, useAddCompleteUploadRequestPartsInnerMutation, useUpdateCompleteUploadRequestPartsInnerMutation, useDeleteCompleteUploadRequestPartsInnerMutation, } = CompleteUploadRequestPartsInnerService;
+//# sourceMappingURL=CompleteUploadRequestPartsInnerService.js.map

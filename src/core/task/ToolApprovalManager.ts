@@ -12,8 +12,17 @@ export type ToolResponse = string | Array<any>;
 export class ToolApprovalManager {
   constructor(
     private autoApprovalSettings: AutoApprovalSettings,
-    private ask: (type: ValorIDEAsk, text?: string, partial?: boolean) => Promise<any>,
-    private say: (type: any, text?: string, images?: string[], partial?: boolean) => Promise<any>
+    private ask: (
+      type: ValorIDEAsk,
+      text?: string,
+      partial?: boolean,
+    ) => Promise<any>,
+    private say: (
+      type: any,
+      text?: string,
+      images?: string[],
+      partial?: boolean,
+    ) => Promise<any>,
   ) {}
 
   /**
@@ -37,7 +46,10 @@ export class ToolApprovalManager {
   async askApproval(
     type: ValorIDEAsk,
     partialMessage?: string,
-  ): Promise<{ approved: boolean; feedback?: { text?: string; images?: string[] } }> {
+  ): Promise<{
+    approved: boolean;
+    feedback?: { text?: string; images?: string[] };
+  }> {
     const { response, text, images } = await this.ask(
       type,
       partialMessage,
@@ -54,13 +66,13 @@ export class ToolApprovalManager {
       // User pressed reject button or responded with a message, which we treat as a rejection
       return {
         approved: false,
-        feedback: text || images?.length ? { text, images } : undefined
+        feedback: text || images?.length ? { text, images } : undefined,
       };
     } else {
       // User hit the approve button, and may have provided feedback
       return {
         approved: true,
-        feedback: text || images?.length ? { text, images } : undefined
+        feedback: text || images?.length ? { text, images } : undefined,
       };
     }
   }
@@ -118,13 +130,21 @@ export class ToolApprovalManager {
   async handleToolRejection(
     userMessageContent: any[],
     toolDescription: string,
-    feedback?: { text?: string; images?: string[] }
+    feedback?: { text?: string; images?: string[] },
   ): Promise<void> {
     // User pressed reject button or responded with a message
-    this.pushToolResult(userMessageContent, formatResponse.toolDenied(), toolDescription);
-    
+    this.pushToolResult(
+      userMessageContent,
+      formatResponse.toolDenied(),
+      toolDescription,
+    );
+
     if (feedback?.text || feedback?.images?.length) {
-      this.pushAdditionalToolFeedback(userMessageContent, feedback.text, feedback.images);
+      this.pushAdditionalToolFeedback(
+        userMessageContent,
+        feedback.text,
+        feedback.images,
+      );
       await this.say("user_feedback", feedback.text, feedback.images);
     }
   }
@@ -134,10 +154,14 @@ export class ToolApprovalManager {
    */
   async handleToolApproval(
     userMessageContent: any[],
-    feedback?: { text?: string; images?: string[] }
+    feedback?: { text?: string; images?: string[] },
   ): Promise<void> {
     if (feedback?.text || feedback?.images?.length) {
-      this.pushAdditionalToolFeedback(userMessageContent, feedback.text, feedback.images);
+      this.pushAdditionalToolFeedback(
+        userMessageContent,
+        feedback.text,
+        feedback.images,
+      );
       await this.say("user_feedback", feedback.text, feedback.images);
     }
   }

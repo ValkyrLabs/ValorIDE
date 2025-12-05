@@ -2,9 +2,11 @@ import {
   VSCodeButton,
   VSCodeCheckbox,
   VSCodeLink,
+  VSCodeProgressRing,
   VSCodeTextArea,
+  VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useExtensionState } from "@/context/ExtensionStateContext";
 import { validateApiConfiguration, validateModelId } from "@/utils/validate";
 import { vscode } from "@/utils/vscode";
@@ -14,12 +16,14 @@ import { TabButton } from "../mcp/configuration/McpConfigurationView";
 import { useEvent } from "react-use";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import BrowserSettingsSection from "./BrowserSettingsSection";
+import LLMDetailsSelector from "../LLMDetailsSelector";
 import { VscSettingsGear } from "react-icons/vsc";
 import { FaStar, FaShareAlt, FaCheck, FaTag } from "react-icons/fa";
 import StatusBadge from "@/components/common/StatusBadge";
 import OfflineBanner from "@/components/common/OfflineBanner";
 import SystemAlerts from "@/components/SystemAlerts";
 import { useCommunicationService } from "@/context/CommunicationServiceContext";
+import { DEFAULT_VALKYRAI_HOST } from "@/utils/valkyraiHost";
 
 const { IS_DEV } = process.env;
 
@@ -39,6 +43,8 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
     chatSettings,
     planActSeparateModelsSetting,
     setPlanActSeparateModelsSetting,
+    selectedLlmDetails,
+    isLoggedIn,
   } = useExtensionState();
   const [apiErrorMessage, setApiErrorMessage] = useState<string | undefined>(
     undefined,
@@ -49,6 +55,16 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
   const [pendingTabChange, setPendingTabChange] = useState<
     "plan" | "act" | null
   >(null);
+  const [valkyraiHostInput, setValkyraiHostInput] = useState(
+    apiConfiguration?.valkyraiHost || DEFAULT_VALKYRAI_HOST,
+  );
+  const [valkyraiHostStatus, setValkyraiHostStatus] = useState<string>();
+  const [valkyraiHostStatusKind, setValkyraiHostStatusKind] = useState<
+    "ok" | "warn" | "error" | "idle"
+  >("idle");
+  const [valkyraiHostError, setValkyraiHostError] = useState<string>();
+  const [isTestingValkyraiHost, setIsTestingValkyraiHost] = useState(false);
+  const pendingHostRef = useRef<string>();
 
   // Local-only setting: Remember login (persist JWT to localStorage)
   const [persistJwt, setPersistJwt] = useState<boolean>(() => {
@@ -60,8 +76,18 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
     }
   });
   useEffect(() => {
-    try { localStorage.setItem("valoride.persistJwt", String(persistJwt)); } catch { /* ignore */ }
+    try {
+      localStorage.setItem("valoride.persistJwt", String(persistJwt));
+    } catch {
+      /* ignore */
+    }
   }, [persistJwt]);
+
+  useEffect(() => {
+    setValkyraiHostInput(
+      apiConfiguration?.valkyraiHost || DEFAULT_VALKYRAI_HOST,
+    );
+  }, [apiConfiguration?.valkyraiHost]);
 
   const handleSubmit = (withoutDone: boolean = false) => {
     const apiValidationResult = validateApiConfiguration(apiConfiguration);
@@ -140,6 +166,34 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
             setPendingTabChange(null);
           }
           break;
+        case "valkyraiHostTestResult":
+          if (
+            pendingHostRef.current &&
+            message.host !== pendingHostRef.current
+          ) {
+            break;
+          }
+          setIsTestingValkyraiHost(false);
+          if (message.success) {
+            setValkyraiHostError(undefined);
+            setValkyraiHostStatus("Connected");
+            setValkyraiHostStatusKind("ok");
+            if (message.host) {
+              setValkyraiHostInput(message.host);
+            }
+            vscode.postMessage({
+              type: "updateValkyraiHost",
+              valkyraiHost: message.host,
+            });
+          } else {
+            setValkyraiHostStatus("Unavailable");
+            setValkyraiHostStatusKind("error");
+            setValkyraiHostError(
+              message.error || "Unable to reach ValkyrAI host.",
+            );
+          }
+          pendingHostRef.current = undefined;
+          break;
         case "scrollToSettings":
           setTimeout(() => {
             const elementId = message.text;
@@ -178,6 +232,52 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
     handleSubmit(true);
   };
 
+  const validateValkyraiHost = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return "Host URL is required.";
+    }
+    try {
+      const parsed = new URL(trimmed);
+      if (parsed.protocol !== "https:") {
+        if (
+          parsed.hostname !== "localhost" &&
+          parsed.hostname !== "127.0.0.1"
+        ) {
+          return "HTTPS is required for ValkyrAI hosts.";
+        }
+      }
+      return undefined;
+    } catch {
+      return "Enter a valid HTTPS URL.";
+    }
+  };
+
+  const testAndSaveValkyraiHost = (value?: string) => {
+    const targetHost = (value ?? valkyraiHostInput).trim();
+    const validationError = validateValkyraiHost(targetHost);
+    if (validationError) {
+      setValkyraiHostError(validationError);
+      setValkyraiHostStatus("Validation failed");
+      setValkyraiHostStatusKind("error");
+      return;
+    }
+    setValkyraiHostError(undefined);
+    setValkyraiHostStatus("Testing…");
+    setValkyraiHostStatusKind("warn");
+    setIsTestingValkyraiHost(true);
+    pendingHostRef.current = targetHost.replace(/\/$/, "");
+    vscode.postMessage({
+      type: "testValkyraiHost",
+      valkyraiHost: pendingHostRef.current,
+    });
+  };
+
+  const handleResetValkyraiHost = () => {
+    setValkyraiHostInput(DEFAULT_VALKYRAI_HOST);
+    testAndSaveValkyraiHost(DEFAULT_VALKYRAI_HOST);
+  };
+
   const communicationService = useCommunicationService() as any;
   const [peers, setPeers] = useState<string[]>([]);
   const [phase, setPhase] = useState<string | undefined>(undefined);
@@ -207,12 +307,17 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
         : "Online (Server)"
     : hasError
       ? "Error"
-      : phase === "connecting" ? "Connecting..." : "Offline";
+      : phase === "connecting"
+        ? "Connecting..."
+        : "Offline";
   const kind = ready ? "ok" : hasError ? "error" : "warn";
 
   const [copied, setCopied] = useState(false);
   const handleStar = () => {
-    vscode.postMessage({ type: "openInBrowser", url: "https://github.com/valkyrlabs/valoride" });
+    vscode.postMessage({
+      type: "openInBrowser",
+      url: "https://github.com/valkyrlabs/valoride",
+    });
   };
   const handleShare = async () => {
     try {
@@ -237,23 +342,48 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
         <div className="flex justify-between items-center mb-[13px] pr-[17px]">
           <h3 className="text-[var(--vscode-foreground)] m-0">Settings</h3>
           <div className="flex items-center gap-2">
-            <VSCodeButton appearance="secondary" onClick={handleStar} title="Star us on GitHub">
-              <span className="flex items-center gap-2"><FaStar /> </span>
+            <VSCodeButton
+              appearance="secondary"
+              onClick={handleStar}
+              title="Star us on GitHub"
+            >
+              <span className="flex items-center gap-2">
+                <FaStar />{" "}
+              </span>
             </VSCodeButton>
-            <VSCodeButton appearance="secondary" onClick={handleShare} title="Copy Marketplace link to clipboard">
-              <span className="flex items-center gap-2"><FaShareAlt size={18} /> {copied ? <FaCheck size={18} /> : <FaTag />}</span>
+            <VSCodeButton
+              appearance="secondary"
+              onClick={handleShare}
+              title="Copy Marketplace link to clipboard"
+            >
+              <span className="flex items-center gap-2">
+                <FaShareAlt size={18} />{" "}
+                {copied ? <FaCheck size={18} /> : <FaTag />}
+              </span>
             </VSCodeButton>
-            <StatusBadge label="P2P" value={value} kind={kind as any} title={hasError ? String(communicationService.error) : undefined} />
-            <div className="flex items-center gap-2" title="Store and load the JWT in local storage to avoid logging in every time">
-              <VSCodeCheckbox checked={persistJwt} onChange={(e: any) => setPersistJwt(!!e?.target?.checked)}>
+            <StatusBadge
+              label="P2P"
+              value={value}
+              kind={kind as any}
+              title={hasError ? String(communicationService.error) : undefined}
+            />
+            <div
+              className="flex items-center gap-2"
+              title="Store and load the JWT in local storage to avoid logging in every time"
+            >
+              <VSCodeCheckbox
+                checked={persistJwt}
+                onChange={(e: any) => setPersistJwt(!!e?.target?.checked)}
+              >
                 Remember login
               </VSCodeCheckbox>
             </div>
-            <VSCodeButton onClick={() => handleSubmit(false)}>Save</VSCodeButton>
+            <VSCodeButton onClick={() => handleSubmit(false)}>
+              Save
+            </VSCodeButton>
           </div>
         </div>
         <div className="grow overflow-y-scroll pr-2 flex flex-col">
-
           {/**
           <OfflineBanner />
            */}
@@ -262,13 +392,18 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
               <div className="mb-2 font-semibold">Active instances</div>
               <div className="flex flex-wrap gap-2">
                 {peers.map((id) => (
-                  <span key={id} style={{
-                    border: "1px solid var(--vscode-panel-border)",
-                    borderRadius: 6,
-                    padding: "2px 6px",
-                    fontSize: 12,
-                    background: "var(--vscode-editor-background)",
-                  }}>{id}</span>
+                  <span
+                    key={id}
+                    style={{
+                      border: "1px solid var(--vscode-panel-border)",
+                      borderRadius: 6,
+                      padding: "2px 6px",
+                      fontSize: 12,
+                      background: "var(--vscode-editor-background)",
+                    }}
+                  >
+                    {id}
+                  </span>
                 ))}
               </div>
             </div>
@@ -381,6 +516,88 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
             </p>
           </div>
 
+          <div
+            className="border border-solid border-[var(--vscode-panel-border)] rounded-md p-[10px] mb-[15px] bg-[var(--vscode-panel-background)]"
+            id="valkyrai-backend-section"
+          >
+            <div className="font-semibold mb-2">ValkyrAI Backend</div>
+            <p className="text-xs text-[var(--vscode-descriptionForeground)] mb-2">
+              Configure which ValkyrAI backend this IDE uses. Changes apply
+              immediately and sync via VS Code settings.
+            </p>
+            <VSCodeTextField
+              value={valkyraiHostInput}
+              onInput={(e: any) => setValkyraiHostInput(e.target?.value ?? "")}
+              placeholder="https://api-0.valkyrlabs.com"
+            >
+              Base URL
+            </VSCodeTextField>
+            {valkyraiHostError && (
+              <div
+                className="text-xs mt-1"
+                style={{
+                  color: "var(--vscode-inputValidation-errorForeground)",
+                }}
+              >
+                {valkyraiHostError}
+              </div>
+            )}
+            <div className="flex gap-2 mt-3 items-center flex-wrap">
+              <VSCodeButton
+                onClick={() => testAndSaveValkyraiHost()}
+                disabled={isTestingValkyraiHost}
+                title="Validate and apply this host"
+              >
+                {isTestingValkyraiHost ? <VSCodeProgressRing /> : "Test & Save"}
+              </VSCodeButton>
+              <VSCodeButton
+                appearance="secondary"
+                onClick={handleResetValkyraiHost}
+                disabled={
+                  isTestingValkyraiHost ||
+                  valkyraiHostInput === DEFAULT_VALKYRAI_HOST
+                }
+              >
+                Reset to default
+              </VSCodeButton>
+              <StatusBadge
+                label="Status"
+                value={valkyraiHostStatus || "Not tested"}
+                kind={valkyraiHostStatusKind}
+              />
+            </div>
+            <div className="mt-4">
+              <div className="font-semibold mb-1">LLM Prompt Selection</div>
+              <p className="text-xs text-[var(--vscode-descriptionForeground)] mb-2">
+                Select which ValkyrAI prompt collection this backend should use.
+                Changes apply immediately for the active backend.
+              </p>
+              {selectedLlmDetails && (
+                <div className="text-xs mb-2 text-[var(--vscode-descriptionForeground)] flex items-center gap-2">
+                  <span>
+                    Active prompt: <strong>{selectedLlmDetails.name}</strong>
+                  </span>
+                  <StatusBadge
+                    label="Mode"
+                    value={selectedLlmDetails.mode}
+                    kind={selectedLlmDetails.mode === "SYSTEM" ? "warn" : "ok"}
+                  />
+                </div>
+              )}
+              <LLMDetailsSelector
+                currentSelection={selectedLlmDetails?.id}
+                onSelectionChange={(detail) => {
+                  vscode.postMessage({
+                    type: "updateLLMDetails",
+                    llmDetails: detail,
+                    taskIntent: "code-edit",
+                  });
+                }}
+                taskIntent="code-edit"
+                isLoggedIn={isLoggedIn}
+              />
+            </div>
+          </div>
 
           {/* Browser Settings Section */}
           <BrowserSettingsSection />
@@ -415,7 +632,8 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
 
           <div className="text-center text-[var(--vscode-descriptionForeground)] text-xs leading-[1.2] px-0 py-0 pr-2 pb-[15px] mt-auto">
             <p className="break-words m-0 p-0">
-              If you have any questions or feedback, feel free to open an issue at{" "}
+              If you have any questions or feedback, feel free to open an issue
+              at{" "}
               <VSCodeLink
                 href="https://github.com/valkyrlabs/valoride"
                 className="inline"

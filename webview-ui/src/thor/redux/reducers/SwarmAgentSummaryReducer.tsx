@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SwarmAgentSummary } from '@thor/model/SwarmAgentSummary';
+import { SwarmAgentSummary } from "@thor/model/SwarmAgentSummary";
 
 const SwarmAgentSummarySlice = createSlice({
   name: "SwarmAgentSummarys",
@@ -12,20 +12,25 @@ const SwarmAgentSummarySlice = createSlice({
     },
 
     SwarmAgentSummaryValueToggled(state, action) {
-      console.log("SwarmAgentSummary TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SwarmAgentSummary:SwarmAgentSummary = state.find((SwarmAgentSummary) => SwarmAgentSummary.id === action.payload.SwarmAgentSummaryId);
+      console.log("SwarmAgentSummary TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SwarmAgentSummary: SwarmAgentSummary = state.find(
+        (SwarmAgentSummary) =>
+          SwarmAgentSummary.id === action.payload.SwarmAgentSummaryId,
+      );
       if (SwarmAgentSummary) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SwarmAgentSummarypropertySet(state, action) {
-      const SwarmAgentSummary = state.find((SwarmAgentSummary) => SwarmAgentSummary.id === action.payload.SwarmAgentSummaryId);
+      const SwarmAgentSummary = state.find(
+        (SwarmAgentSummary) =>
+          SwarmAgentSummary.id === action.payload.SwarmAgentSummaryId,
+      );
       if (SwarmAgentSummary) {
-      //  SwarmAgentSummary[action.property] = action.payload[action.property];
+        //  SwarmAgentSummary[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const SwarmAgentSummarySlice = createSlice({
 export const {
   SwarmAgentSummaryAdded,
   SwarmAgentSummaryValueToggled,
-  SwarmAgentSummarypropertySet
+  SwarmAgentSummarypropertySet,
 } = SwarmAgentSummarySlice.actions;
 export default SwarmAgentSummarySlice.reducer;

@@ -20,22 +20,16 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import {
-
-
-    Solution,
-    SolutionFromJSON,
-    SolutionToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { Solution, SolutionFromJSON, SolutionToJSON } from "./";
 
 // thorapi
 
@@ -44,132 +38,163 @@ import {
  * @export
  * @interface BuildOutput
  */
-export type BuildOutput  = {
-    /**
-     * 
-     * @type {string}
-     * @memberof BuildOutput
-     */
-    buildId: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof BuildOutput
-     */
-    success: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof BuildOutput
-     */
-    output: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof BuildOutput
-     */
-    applicationId?: string;
-    /**
-     * 
-     * @type {Date}
-     * @memberof BuildOutput
-     */
-    lastSuccessfulRun?: Date;
-    /**
-     * 
-     * @type {Array<Solution>}
-     * @memberof BuildOutput
-     */
-    solutions?: Array<Solution>;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof BuildOutput
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof BuildOutput
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof BuildOutput
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof BuildOutput
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof BuildOutput
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof BuildOutput
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof BuildOutput
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof BuildOutput
-     */
-    lastModifiedDate?: Date;
-}
+export type BuildOutput = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof BuildOutput
+   */
+  buildId: string;
+  /**
+   *
+   * @type {boolean}
+   * @memberof BuildOutput
+   */
+  success: boolean;
+  /**
+   *
+   * @type {string}
+   * @memberof BuildOutput
+   */
+  output: string;
+  /**
+   *
+   * @type {string}
+   * @memberof BuildOutput
+   */
+  applicationId?: string;
+  /**
+   *
+   * @type {Date}
+   * @memberof BuildOutput
+   */
+  lastSuccessfulRun?: Date;
+  /**
+   *
+   * @type {Array<Solution>}
+   * @memberof BuildOutput
+   */
+  solutions?: Array<Solution>;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof BuildOutput
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof BuildOutput
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof BuildOutput
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof BuildOutput
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof BuildOutput
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof BuildOutput
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof BuildOutput
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof BuildOutput
+   */
+  lastModifiedDate?: Date;
+};
 
 export function BuildOutputFromJSON(json: any): BuildOutput {
-    return {
-        'buildId': json['buildId'],
-        'success': json['success'],
-        'output': json['output'],
-        'applicationId': !exists(json, 'applicationId') ? undefined : json['applicationId'],
-        'lastSuccessfulRun': !exists(json, 'lastSuccessfulRun') ? undefined : new Date(json['lastSuccessfulRun']),
-        'solutions': !exists(json, 'solutions') ? undefined : (json['solutions'] as Array<any>).map(SolutionFromJSON),
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    buildId: json["buildId"],
+    success: json["success"],
+    output: json["output"],
+    applicationId: !exists(json, "applicationId")
+      ? undefined
+      : json["applicationId"],
+    lastSuccessfulRun: !exists(json, "lastSuccessfulRun")
+      ? undefined
+      : new Date(json["lastSuccessfulRun"]),
+    solutions: !exists(json, "solutions")
+      ? undefined
+      : (json["solutions"] as Array<any>).map(SolutionFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function BuildOutputToJSON(value?: BuildOutput): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'buildId': value.buildId,
-        'success': value.success,
-        'output': value.output,
-        'applicationId': value.applicationId,
-        'lastSuccessfulRun': value.lastSuccessfulRun === undefined ? undefined : value.lastSuccessfulRun.toISOString(),
-        'solutions': value.solutions === undefined ? undefined : (value.solutions as Array<any>).map(SolutionToJSON),
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    buildId: value.buildId,
+    success: value.success,
+    output: value.output,
+    applicationId: value.applicationId,
+    lastSuccessfulRun:
+      value.lastSuccessfulRun === undefined
+        ? undefined
+        : value.lastSuccessfulRun.toISOString(),
+    solutions:
+      value.solutions === undefined
+        ? undefined
+        : (value.solutions as Array<any>).map(SolutionToJSON),
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
-
-

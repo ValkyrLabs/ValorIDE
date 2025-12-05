@@ -10,7 +10,12 @@ import React, {
 } from "react";
 import { useSize } from "react-use";
 import styled from "styled-components";
-import { FaSearch, FaGlobe, FaChevronDown, FaChevronRight } from "react-icons/fa";
+import {
+  FaSearch,
+  FaGlobe,
+  FaChevronDown,
+  FaChevronRight,
+} from "react-icons/fa";
 import { BROWSER_VIEWPORT_PRESETS } from "@shared/BrowserSettings";
 import {
   BrowserAction,
@@ -217,8 +222,8 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
           nextAction:
             nextActionMessages.length > 0
               ? {
-                messages: [...nextActionMessages],
-              }
+                  messages: [...nextActionMessages],
+                }
               : undefined,
         });
 
@@ -248,8 +253,8 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
         nextAction:
           nextActionMessages.length > 0
             ? {
-              messages: [...nextActionMessages],
-            }
+                messages: [...nextActionMessages],
+              }
             : undefined,
       });
     }
@@ -314,22 +319,22 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
   // Use latest state if we're on the last page and don't have a state yet
   const displayState = isLastPage
     ? {
-      url: currentPage?.currentState.url || latestState.url || initialUrl,
-      mousePosition:
-        currentPage?.currentState.mousePosition ||
-        latestState.mousePosition ||
-        defaultMousePosition,
-      consoleLogs: currentPage?.currentState.consoleLogs,
-      screenshot:
-        currentPage?.currentState.screenshot || latestState.screenshot,
-    }
+        url: currentPage?.currentState.url || latestState.url || initialUrl,
+        mousePosition:
+          currentPage?.currentState.mousePosition ||
+          latestState.mousePosition ||
+          defaultMousePosition,
+        consoleLogs: currentPage?.currentState.consoleLogs,
+        screenshot:
+          currentPage?.currentState.screenshot || latestState.screenshot,
+      }
     : {
-      url: currentPage?.currentState.url || initialUrl,
-      mousePosition:
-        currentPage?.currentState.mousePosition || defaultMousePosition,
-      consoleLogs: currentPage?.currentState.consoleLogs,
-      screenshot: currentPage?.currentState.screenshot,
-    };
+        url: currentPage?.currentState.url || initialUrl,
+        mousePosition:
+          currentPage?.currentState.mousePosition || defaultMousePosition,
+        consoleLogs: currentPage?.currentState.consoleLogs,
+        screenshot: currentPage?.currentState.screenshot,
+      };
 
   const [actionContent, { height: actionHeight }] = useSize(
     <div>
@@ -399,7 +404,7 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
   // Calculate maxWidth
   const maxWidth =
     browserSettings.viewport.width <
-      BROWSER_VIEWPORT_PRESETS["Small Desktop (900x600)"].width
+    BROWSER_VIEWPORT_PRESETS["Small Desktop (900x600)"].width
       ? 200
       : undefined;
 
@@ -411,9 +416,7 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
         {isBrowsing && !isLastMessageResume ? (
           <ProgressIndicator />
         ) : (
-          <FaSearch
-            style={browserIconStyle}
-          />
+          <FaSearch style={browserIconStyle} />
         )}
         <span style={approveTextStyle}>
           <>
@@ -478,9 +481,7 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
             />
           ) : (
             <div style={noScreenshotContainerStyle}>
-              <FaGlobe
-                style={noScreenshotIconStyle}
-              />
+              <FaGlobe style={noScreenshotIconStyle} />
             </div>
           )}
           {displayState.mousePosition && (

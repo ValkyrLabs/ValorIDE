@@ -110,7 +110,6 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
               onClick={() => handleHistorySelect(item.id)}
             >
               <div style={{ padding: "12px" }}>
-
                 <div
                   style={{
                     fontSize: "var(--vscode-font-size)",
@@ -160,7 +159,10 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
                   {!!item.totalCost && (
                     <>
                       {" • "}
-                      <span><FaDollarSign />API Cost: ${item.totalCost?.toFixed(4)}</span>
+                      <span>
+                        <FaDollarSign />
+                        API Cost: ${item.totalCost?.toFixed(4)}
+                      </span>
                     </>
                   )}
                 </div>

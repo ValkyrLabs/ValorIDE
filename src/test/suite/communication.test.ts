@@ -66,7 +66,10 @@ describe("CommunicationService", () => {
     g.window = mockWin as unknown as Window;
     g.CustomEvent = MockCustomEvent;
 
-    const svc = new CommunicationService({ role: "worker", senderId: "self-id" });
+    const svc = new CommunicationService({
+      role: "worker",
+      senderId: "self-id",
+    });
     svc.connect();
 
     const received: any[] = [];
@@ -80,11 +83,15 @@ describe("CommunicationService", () => {
       messageId: "m1",
       timestamp: Date.now(),
     };
-    mockWin.dispatchEvent(new MockCustomEvent("websocket-message", { detail: otherMsg }));
+    mockWin.dispatchEvent(
+      new MockCustomEvent("websocket-message", { detail: otherMsg }),
+    );
 
     // Should ignore self-message
     const selfMsg = { ...otherMsg, senderId: "self-id", messageId: "m2" };
-    mockWin.dispatchEvent(new MockCustomEvent("websocket-message", { detail: selfMsg }));
+    mockWin.dispatchEvent(
+      new MockCustomEvent("websocket-message", { detail: selfMsg }),
+    );
 
     expect(received.length).to.equal(1);
     expect(received[0].type).to.equal("ping");
@@ -135,4 +142,3 @@ describe("CommunicationService", () => {
     expect(errorCount).to.equal(1);
   });
 });
-

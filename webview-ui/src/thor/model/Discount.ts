@@ -20,22 +20,16 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
-import {
-
-
-    Product,
-    ProductFromJSON,
-    ProductToJSON,
-} from './';
-
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { Product, ProductFromJSON, ProductToJSON } from "./";
 
 // thorapi
 
@@ -44,142 +38,165 @@ import {
  * @export
  * @interface Discount
  */
-export type Discount  = {
-    /**
-     * the discount code -- entered in shopping cart and referral links
-     * @type {string}
-     * @memberof Discount
-     */
-    code?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Discount
-     */
-    lineItemId?: string;
-    /**
-     * whether this discount is applied to an entire order
-     * @type {boolean}
-     * @memberof Discount
-     */
-    orderDiscount?: boolean;
-    /**
-     * 
-     * @type {Product}
-     * @memberof Discount
-     */
-    lineItem?: Product;
-    /**
-     * 
-     * @type {string}
-     * @memberof Discount
-     */
-    type?: DiscountTypeEnum;
-    /**
-     * either a percentage or a fixed amount
-     * @type {number}
-     * @memberof Discount
-     */
-    amount?: number;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof Discount
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof Discount
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof Discount
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof Discount
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof Discount
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof Discount
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof Discount
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof Discount
-     */
-    lastModifiedDate?: Date;
-}
+export type Discount = DataObject & {
+  /**
+   * the discount code -- entered in shopping cart and referral links
+   * @type {string}
+   * @memberof Discount
+   */
+  code?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Discount
+   */
+  lineItemId?: string;
+  /**
+   * whether this discount is applied to an entire order
+   * @type {boolean}
+   * @memberof Discount
+   */
+  orderDiscount?: boolean;
+  /**
+   *
+   * @type {Product}
+   * @memberof Discount
+   */
+  lineItem?: Product;
+  /**
+   *
+   * @type {string}
+   * @memberof Discount
+   */
+  type?: DiscountTypeEnum;
+  /**
+   * either a percentage or a fixed amount
+   * @type {number}
+   * @memberof Discount
+   */
+  amount?: number;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Discount
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Discount
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Discount
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Discount
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Discount
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Discount
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Discount
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Discount
+   */
+  lastModifiedDate?: Date;
+};
 
 export function DiscountFromJSON(json: any): Discount {
-    return {
-        'code': !exists(json, 'code') ? undefined : json['code'],
-        'lineItemId': !exists(json, 'lineItemId') ? undefined : json['lineItemId'],
-        'orderDiscount': !exists(json, 'orderDiscount') ? undefined : json['orderDiscount'],
-        'lineItem': !exists(json, 'lineItem') ? undefined : ProductFromJSON(json['lineItem']),
-        'type': !exists(json, 'type') ? undefined : json['type'],
-        'amount': !exists(json, 'amount') ? undefined : json['amount'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    code: !exists(json, "code") ? undefined : json["code"],
+    lineItemId: !exists(json, "lineItemId") ? undefined : json["lineItemId"],
+    orderDiscount: !exists(json, "orderDiscount")
+      ? undefined
+      : json["orderDiscount"],
+    lineItem: !exists(json, "lineItem")
+      ? undefined
+      : ProductFromJSON(json["lineItem"]),
+    type: !exists(json, "type") ? undefined : json["type"],
+    amount: !exists(json, "amount") ? undefined : json["amount"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function DiscountToJSON(value?: Discount): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'code': value.code,
-        'lineItemId': value.lineItemId,
-        'orderDiscount': value.orderDiscount,
-        'lineItem': ProductToJSON(value.lineItem),
-        'type': value.type,
-        'amount': value.amount,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    code: value.code,
+    lineItemId: value.lineItemId,
+    orderDiscount: value.orderDiscount,
+    lineItem: ProductToJSON(value.lineItem),
+    type: value.type,
+    amount: value.amount,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum DiscountTypeEnum {
-    PERCENTAGE = 'percentage',
-    FIXED = 'fixed',
-    OTHER = 'other'
+  PERCENTAGE = "percentage",
+  FIXED = "fixed",
+  OTHER = "other",
 }
-
-

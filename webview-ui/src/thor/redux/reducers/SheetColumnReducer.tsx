@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SheetColumn } from '@thor/model/SheetColumn';
+import { SheetColumn } from "@thor/model/SheetColumn";
 
 const SheetColumnSlice = createSlice({
   name: "SheetColumns",
@@ -12,20 +12,23 @@ const SheetColumnSlice = createSlice({
     },
 
     SheetColumnValueToggled(state, action) {
-      console.log("SheetColumn TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SheetColumn:SheetColumn = state.find((SheetColumn) => SheetColumn.id === action.payload.SheetColumnId);
+      console.log("SheetColumn TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SheetColumn: SheetColumn = state.find(
+        (SheetColumn) => SheetColumn.id === action.payload.SheetColumnId,
+      );
       if (SheetColumn) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SheetColumnpropertySet(state, action) {
-      const SheetColumn = state.find((SheetColumn) => SheetColumn.id === action.payload.SheetColumnId);
+      const SheetColumn = state.find(
+        (SheetColumn) => SheetColumn.id === action.payload.SheetColumnId,
+      );
       if (SheetColumn) {
-      //  SheetColumn[action.property] = action.payload[action.property];
+        //  SheetColumn[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +37,6 @@ const SheetColumnSlice = createSlice({
 export const {
   SheetColumnAdded,
   SheetColumnValueToggled,
-  SheetColumnpropertySet
+  SheetColumnpropertySet,
 } = SheetColumnSlice.actions;
 export default SheetColumnSlice.reducer;

@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { Login, Principal } from "../../thor/model";
 import customBaseQuery from "../../thor/redux/customBaseQuery";
+import { getValkyraiHost } from "@/utils/valkyraiHost";
 
 type NormalizedLoginResponse = { token: string; user?: Principal };
 
@@ -36,7 +37,7 @@ export const AuthService = createApi({
     // Login call to backend. Normalizes response into { token, user }
     loginUser: build.mutation<NormalizedLoginResponse, Partial<Login>>({
       query: (body) => ({
-        url: `${import.meta.env.VITE_basePath || "http://localhost:8080/v1"}/auth/login`,
+        url: `${getValkyraiHost().replace(/\/+$/, "")}/auth/login`,
         method: "POST",
         body,
       }),

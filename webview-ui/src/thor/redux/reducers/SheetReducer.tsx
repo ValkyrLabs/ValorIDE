@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { Sheet } from '@thor/model/Sheet';
+import { Sheet } from "@thor/model/Sheet";
 
 const SheetSlice = createSlice({
   name: "Sheets",
@@ -12,28 +12,26 @@ const SheetSlice = createSlice({
     },
 
     SheetValueToggled(state, action) {
-      console.log("Sheet TOGGLE")
-      console.warn(JSON.stringify(action))
-      const Sheet:Sheet = state.find((Sheet) => Sheet.id === action.payload.SheetId);
+      console.log("Sheet TOGGLE");
+      console.warn(JSON.stringify(action));
+      const Sheet: Sheet = state.find(
+        (Sheet) => Sheet.id === action.payload.SheetId,
+      );
       if (Sheet) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SheetpropertySet(state, action) {
       const Sheet = state.find((Sheet) => Sheet.id === action.payload.SheetId);
       if (Sheet) {
-      //  Sheet[action.property] = action.payload[action.property];
+        //  Sheet[action.property] = action.payload[action.property];
       }
     },
   },
 });
 
-export const {
-  SheetAdded,
-  SheetValueToggled,
-  SheetpropertySet
-} = SheetSlice.actions;
+export const { SheetAdded, SheetValueToggled, SheetpropertySet } =
+  SheetSlice.actions;
 export default SheetSlice.reducer;

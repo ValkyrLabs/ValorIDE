@@ -25,6 +25,7 @@ import {
   FaRegSave,
 } from "react-icons/fa";
 import CoolButton from "../CoolButton";
+import { getValkyraiHost } from "@/utils/valkyraiHost";
 
 interface ObjectTreeViewProps {
   data: any;
@@ -54,7 +55,9 @@ const ObjectTreeView: React.FC<ObjectTreeViewProps> = ({
   useEffect(() => {
     const fetchOpenApiSpec = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_basePath || "http://localhost:8080/v1"}/api-docs`);
+        const response = await fetch(
+          `${getValkyraiHost().replace(/\/+$/, "")}/api-docs`,
+        );
         const spec = await response.json();
         setOpenApiSpec(spec);
       } catch (error) {
@@ -334,7 +337,10 @@ const ObjectTreeView: React.FC<ObjectTreeViewProps> = ({
           </Badge>
         </Col>
         <Col md={1}>
-          <OverlayTrigger placement="top" overlay={(props) => React.cloneElement(tooltip, props)}>
+          <OverlayTrigger
+            placement="top"
+            overlay={(props) => React.cloneElement(tooltip, props)}
+          >
             <span style={{ cursor: "help", marginRight: "5px" }}>
               <FaInfoCircle color="#777" size={20} />
             </span>
@@ -344,7 +350,10 @@ const ObjectTreeView: React.FC<ObjectTreeViewProps> = ({
     );
   };
 
-  const renderChildren = (node: any, parentKey: string): React.ReactElement[] => {
+  const renderChildren = (
+    node: any,
+    parentKey: string,
+  ): React.ReactElement[] => {
     const entries = Object.entries(node).filter(([k]) => {
       return !(hideExtraFields && fieldsToHide.includes(k));
     });

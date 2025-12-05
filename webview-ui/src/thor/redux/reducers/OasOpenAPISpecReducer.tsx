@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { OasOpenAPISpec } from '@thor/model/OasOpenAPISpec';
+import { OasOpenAPISpec } from "@thor/model/OasOpenAPISpec";
 
 const OasOpenAPISpecSlice = createSlice({
   name: "OasOpenAPISpecs",
@@ -12,20 +12,25 @@ const OasOpenAPISpecSlice = createSlice({
     },
 
     OasOpenAPISpecValueToggled(state, action) {
-      console.log("OasOpenAPISpec TOGGLE")
-      console.warn(JSON.stringify(action))
-      const OasOpenAPISpec:OasOpenAPISpec = state.find((OasOpenAPISpec) => OasOpenAPISpec.id === action.payload.OasOpenAPISpecId);
+      console.log("OasOpenAPISpec TOGGLE");
+      console.warn(JSON.stringify(action));
+      const OasOpenAPISpec: OasOpenAPISpec = state.find(
+        (OasOpenAPISpec) =>
+          OasOpenAPISpec.id === action.payload.OasOpenAPISpecId,
+      );
       if (OasOpenAPISpec) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     OasOpenAPISpecpropertySet(state, action) {
-      const OasOpenAPISpec = state.find((OasOpenAPISpec) => OasOpenAPISpec.id === action.payload.OasOpenAPISpecId);
+      const OasOpenAPISpec = state.find(
+        (OasOpenAPISpec) =>
+          OasOpenAPISpec.id === action.payload.OasOpenAPISpecId,
+      );
       if (OasOpenAPISpec) {
-      //  OasOpenAPISpec[action.property] = action.payload[action.property];
+        //  OasOpenAPISpec[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const OasOpenAPISpecSlice = createSlice({
 export const {
   OasOpenAPISpecAdded,
   OasOpenAPISpecValueToggled,
-  OasOpenAPISpecpropertySet
+  OasOpenAPISpecpropertySet,
 } = OasOpenAPISpecSlice.actions;
 export default OasOpenAPISpecSlice.reducer;

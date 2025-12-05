@@ -11,39 +11,39 @@ import { normalizeEol } from "@utils/string";
 
 export type PSREdit =
   | {
-    kind: "ts-ast";
-    intent: "replacePropertyChain";
-    from: string;
-    to: string;
-    fallback?: string;
-  }
+      kind: "ts-ast";
+      intent: "replacePropertyChain";
+      from: string;
+      to: string;
+      fallback?: string;
+    }
   | {
-    kind: "ts-ast";
-    intent: "insertOptionalChaining";
-    target: string;
-  }
+      kind: "ts-ast";
+      intent: "insertOptionalChaining";
+      target: string;
+    }
   | {
-    kind: "ts-ast";
-    intent: "renameProperty";
-    from: string;
-    to: string;
-  }
+      kind: "ts-ast";
+      intent: "renameProperty";
+      from: string;
+      to: string;
+    }
   | {
-    kind: "contextual";
-    find: string;
-    replace: string;
-    flags?: string;
-    occurrence?: "first" | "all" | number;
-    contextBefore?: number;
-    contextAfter?: number;
-    checksumPolicy?: "require" | "relax";
-  }
+      kind: "contextual";
+      find: string;
+      replace: string;
+      flags?: string;
+      occurrence?: "first" | "all" | number;
+      contextBefore?: number;
+      contextAfter?: number;
+      checksumPolicy?: "require" | "relax";
+    }
   | {
-    kind: "byte";
-    findHex: string;
-    replaceHex: string;
-    occurrence?: "first" | "all" | number;
-  };
+      kind: "byte";
+      findHex: string;
+      replaceHex: string;
+      occurrence?: "first" | "all" | number;
+    };
 
 export interface PSROptions {
   dryRun?: boolean;
@@ -81,7 +81,7 @@ export async function precisionSearchAndReplace(
   relPath: string,
   edits: PSREdit[],
   pathAccess: PathAccess,
-  opts: PSROptions = {}
+  opts: PSROptions = {},
 ): Promise<PSRResult> {
   const encoding = opts.encoding ?? "utf8";
   if (!pathAccess.validateAccess(relPath)) {
@@ -97,7 +97,9 @@ export async function precisionSearchAndReplace(
   } catch (error) {
     const err = error as NodeJS.ErrnoException;
     if (err?.code === "ENOENT") {
-      throw new Error(`File not found for precision_search_and_replace: ${relPath}`);
+      throw new Error(
+        `File not found for precision_search_and_replace: ${relPath}`,
+      );
     }
     throw error;
   }
@@ -115,7 +117,10 @@ export async function precisionSearchAndReplace(
     applied: new Set<number>(),
   };
 
-  const annotated: AnnotatedEdit[] = edits.map((edit, index) => ({ edit, index }));
+  const annotated: AnnotatedEdit[] = edits.map((edit, index) => ({
+    edit,
+    index,
+  }));
   const maxAst = opts.maxFileBytesForAst ?? 5_000_000;
 
   const astEdits = annotated.filter(
@@ -136,13 +141,17 @@ export async function precisionSearchAndReplace(
   }
 
   const contextualEdits = annotated.filter(
-    (entry): entry is AnnotatedEdit<ContextualEdit> => entry.edit.kind === "contextual",
+    (entry): entry is AnnotatedEdit<ContextualEdit> =>
+      entry.edit.kind === "contextual",
   );
   if (contextualEdits.length) {
     ctx = await applyContextualPatches(ctx, contextualEdits);
   }
 
-  let outBuf = Buffer.from(ctx.text.replaceAll("\n", originalEol ?? EOL), encoding) as Buffer;
+  let outBuf = Buffer.from(
+    ctx.text.replaceAll("\n", originalEol ?? EOL),
+    encoding,
+  ) as Buffer;
 
   const byteEdits = annotated.filter(
     (entry): entry is AnnotatedEdit<ByteEdit> => entry.edit.kind === "byte",
@@ -179,7 +188,15 @@ export async function precisionSearchAndReplace(
   }
 
   if (opts.makeBackup && changed) {
-    await writeBackupFile(cwd, relPath, baseHash, raw, stat.mode, opts, ctx.warnings);
+    await writeBackupFile(
+      cwd,
+      relPath,
+      baseHash,
+      raw,
+      stat.mode,
+      opts,
+      ctx.warnings,
+    );
   }
 
   if (changed) {
@@ -198,7 +215,10 @@ function coalesceSkips(entries: Array<{ index: number; reason: string }>) {
   }
 
   return Array.from(map.entries())
-    .map(([index, reasons]) => ({ index, reason: Array.from(reasons).join(", ") }))
+    .map(([index, reasons]) => ({
+      index,
+      reason: Array.from(reasons).join(", "),
+    }))
     .sort((a, b) => a.index - b.index);
 }
 
@@ -261,7 +281,10 @@ async function writeFileAtomically(
 ) {
   const dir = path.dirname(targetPath);
   const unique = `${Date.now()}-${process.pid}-${Math.random().toString(16).slice(2, 10)}`;
-  const tempPath = path.join(dir, `.${path.basename(targetPath)}.${unique}.tmp`);
+  const tempPath = path.join(
+    dir,
+    `.${path.basename(targetPath)}.${unique}.tmp`,
+  );
 
   let handle: fsp.FileHandle | undefined;
   try {

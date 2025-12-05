@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { GeneralLedgerEntry } from '@thor/model/GeneralLedgerEntry';
+import { GeneralLedgerEntry } from "@thor/model/GeneralLedgerEntry";
 
 const GeneralLedgerEntrySlice = createSlice({
   name: "GeneralLedgerEntrys",
@@ -12,20 +12,25 @@ const GeneralLedgerEntrySlice = createSlice({
     },
 
     GeneralLedgerEntryValueToggled(state, action) {
-      console.log("GeneralLedgerEntry TOGGLE")
-      console.warn(JSON.stringify(action))
-      const GeneralLedgerEntry:GeneralLedgerEntry = state.find((GeneralLedgerEntry) => GeneralLedgerEntry.id === action.payload.GeneralLedgerEntryId);
+      console.log("GeneralLedgerEntry TOGGLE");
+      console.warn(JSON.stringify(action));
+      const GeneralLedgerEntry: GeneralLedgerEntry = state.find(
+        (GeneralLedgerEntry) =>
+          GeneralLedgerEntry.id === action.payload.GeneralLedgerEntryId,
+      );
       if (GeneralLedgerEntry) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     GeneralLedgerEntrypropertySet(state, action) {
-      const GeneralLedgerEntry = state.find((GeneralLedgerEntry) => GeneralLedgerEntry.id === action.payload.GeneralLedgerEntryId);
+      const GeneralLedgerEntry = state.find(
+        (GeneralLedgerEntry) =>
+          GeneralLedgerEntry.id === action.payload.GeneralLedgerEntryId,
+      );
       if (GeneralLedgerEntry) {
-      //  GeneralLedgerEntry[action.property] = action.payload[action.property];
+        //  GeneralLedgerEntry[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const GeneralLedgerEntrySlice = createSlice({
 export const {
   GeneralLedgerEntryAdded,
   GeneralLedgerEntryValueToggled,
-  GeneralLedgerEntrypropertySet
+  GeneralLedgerEntrypropertySet,
 } = GeneralLedgerEntrySlice.actions;
 export default GeneralLedgerEntrySlice.reducer;

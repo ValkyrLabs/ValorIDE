@@ -21,17 +21,13 @@ describe("PathAccess", () => {
 
   it("allows workspace files when no .valoriderules is present", () => {
     const access = new PathAccess({ workspaceRoot });
-    expect(
-      access.validateAccess("node_modules/package/index.js"),
-    ).toBeTruthy();
+    expect(access.validateAccess("node_modules/package/index.js")).toBeTruthy();
   });
 
   it("blocks default deny globs once .valoriderules exists", async () => {
     await fsp.writeFile(path.join(workspaceRoot, ".valoriderules"), "");
     const access = new PathAccess({ workspaceRoot });
-    expect(
-      access.validateAccess("node_modules/package/index.js"),
-    ).toBeFalsy();
+    expect(access.validateAccess("node_modules/package/index.js")).toBeFalsy();
   });
 
   it("respects .valorideignore patterns even without .valoriderules", async () => {

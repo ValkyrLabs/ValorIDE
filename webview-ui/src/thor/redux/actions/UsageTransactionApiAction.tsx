@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,100 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // UsageTransaction
 
-export const FETCH_USAGETRANSACTION_REQUEST = 'FETCH_USAGETRANSACTION_REQUEST';
-export const FETCH_USAGETRANSACTION_SUCCESS = 'FETCH_USAGETRANSACTION_SUCCESS';
-export const FETCH_USAGETRANSACTION_FAILURE = 'FETCH_USAGETRANSACTION_FAILURE';
+export const FETCH_USAGETRANSACTION_REQUEST = "FETCH_USAGETRANSACTION_REQUEST";
+export const FETCH_USAGETRANSACTION_SUCCESS = "FETCH_USAGETRANSACTION_SUCCESS";
+export const FETCH_USAGETRANSACTION_FAILURE = "FETCH_USAGETRANSACTION_FAILURE";
 
-export const ADD_USAGETRANSACTION_REQUEST = 'ADD_USAGETRANSACTION_REQUEST';
-export const ADD_USAGETRANSACTION_SUCCESS = 'ADD_USAGETRANSACTION_SUCCESS';
-export const ADD_USAGETRANSACTION_FAILURE = 'ADD_USAGETRANSACTION_FAILURE';
+export const ADD_USAGETRANSACTION_REQUEST = "ADD_USAGETRANSACTION_REQUEST";
+export const ADD_USAGETRANSACTION_SUCCESS = "ADD_USAGETRANSACTION_SUCCESS";
+export const ADD_USAGETRANSACTION_FAILURE = "ADD_USAGETRANSACTION_FAILURE";
 
-export const UPDATE_USAGETRANSACTION_REQUEST = 'UPDATE_USAGETRANSACTION_REQUEST';
-export const UPDATE_USAGETRANSACTION_SUCCESS = 'UPDATE_USAGETRANSACTION_SUCCESS';
-export const UPDATE_USAGETRANSACTION_FAILURE = 'UPDATE_USAGETRANSACTION_FAILURE';
+export const UPDATE_USAGETRANSACTION_REQUEST =
+  "UPDATE_USAGETRANSACTION_REQUEST";
+export const UPDATE_USAGETRANSACTION_SUCCESS =
+  "UPDATE_USAGETRANSACTION_SUCCESS";
+export const UPDATE_USAGETRANSACTION_FAILURE =
+  "UPDATE_USAGETRANSACTION_FAILURE";
 
-export const DELETE_USAGETRANSACTION_REQUEST = 'DELETE_USAGETRANSACTION_REQUEST';
-export const DELETE_USAGETRANSACTION_SUCCESS = 'DELETE_USAGETRANSACTION_SUCCESS';
-export const DELETE_USAGETRANSACTION_FAILURE = 'DELETE_USAGETRANSACTION_FAILURE';
+export const DELETE_USAGETRANSACTION_REQUEST =
+  "DELETE_USAGETRANSACTION_REQUEST";
+export const DELETE_USAGETRANSACTION_SUCCESS =
+  "DELETE_USAGETRANSACTION_SUCCESS";
+export const DELETE_USAGETRANSACTION_FAILURE =
+  "DELETE_USAGETRANSACTION_FAILURE";
 
-export const LIST_USAGETRANSACTION_REQUEST = 'LIST_USAGETRANSACTION_REQUEST';
-export const LIST_USAGETRANSACTION_SUCCESS = 'LIST_USAGETRANSACTION_SUCCESS';
-export const LIST_USAGETRANSACTION_FAILURE = 'LIST_USAGETRANSACTION_FAILURE';
+export const LIST_USAGETRANSACTION_REQUEST = "LIST_USAGETRANSACTION_REQUEST";
+export const LIST_USAGETRANSACTION_SUCCESS = "LIST_USAGETRANSACTION_SUCCESS";
+export const LIST_USAGETRANSACTION_FAILURE = "LIST_USAGETRANSACTION_FAILURE";
 
 export const addUsageTransactionRequest = () => ({
-    type: ADD_USAGETRANSACTION_REQUEST,
+  type: ADD_USAGETRANSACTION_REQUEST,
 });
 
 export const addUsageTransactionSuccess = (UsageTransactions: any) => ({
-    type: ADD_USAGETRANSACTION_SUCCESS,
-    payload: UsageTransactions,
+  type: ADD_USAGETRANSACTION_SUCCESS,
+  payload: UsageTransactions,
 });
 
 export const addUsageTransactionFailure = (error: Error) => ({
-    type: ADD_USAGETRANSACTION_FAILURE,
-    payload: error,
+  type: ADD_USAGETRANSACTION_FAILURE,
+  payload: error,
 });
 
-
 export const fetchUsageTransactionRequest = () => ({
-    type: FETCH_USAGETRANSACTION_REQUEST,
+  type: FETCH_USAGETRANSACTION_REQUEST,
 });
 
 export const fetchUsageTransactionSuccess = (UsageTransactions: any) => ({
-    type: FETCH_USAGETRANSACTION_SUCCESS,
-    payload: UsageTransactions,
+  type: FETCH_USAGETRANSACTION_SUCCESS,
+  payload: UsageTransactions,
 });
 
 export const fetchUsageTransactionFailure = (error: Error) => ({
-    type: FETCH_USAGETRANSACTION_FAILURE,
-    payload: error,
+  type: FETCH_USAGETRANSACTION_FAILURE,
+  payload: error,
 });
 
 export const listUsageTransactionRequest = () => ({
-    type: LIST_USAGETRANSACTION_REQUEST,
+  type: LIST_USAGETRANSACTION_REQUEST,
 });
 
 export const listUsageTransactionSuccess = (UsageTransactions: any) => ({
-    type: LIST_USAGETRANSACTION_SUCCESS,
-    payload: UsageTransactions,
+  type: LIST_USAGETRANSACTION_SUCCESS,
+  payload: UsageTransactions,
 });
 
 export const listUsageTransactionFailure = (error: Error) => ({
-    type: LIST_USAGETRANSACTION_FAILURE,
-    payload: error,
+  type: LIST_USAGETRANSACTION_FAILURE,
+  payload: error,
 });
 
 export const updateUsageTransactionRequest = (UsageTransaction: any) => ({
-    type: UPDATE_USAGETRANSACTION_REQUEST,
-    payload: UsageTransaction,
+  type: UPDATE_USAGETRANSACTION_REQUEST,
+  payload: UsageTransaction,
 });
 
 export const updateUsageTransactionSuccess = (UsageTransaction: any) => ({
-    type: UPDATE_USAGETRANSACTION_SUCCESS,
-    payload: UsageTransaction,
+  type: UPDATE_USAGETRANSACTION_SUCCESS,
+  payload: UsageTransaction,
 });
 
 export const updateUsageTransactionFailure = (error: Error) => ({
-    type: UPDATE_USAGETRANSACTION_FAILURE,
-    payload: error,
+  type: UPDATE_USAGETRANSACTION_FAILURE,
+  payload: error,
 });
 
 export const deleteUsageTransactionRequest = (UsageTransaction: any) => ({
-    type: DELETE_USAGETRANSACTION_REQUEST,
-    payload: UsageTransaction,
+  type: DELETE_USAGETRANSACTION_REQUEST,
+  payload: UsageTransaction,
 });
 
 export const deleteUsageTransactionSuccess = (UsageTransaction: any) => ({
-    type: DELETE_USAGETRANSACTION_SUCCESS,
-    payload: UsageTransaction,
+  type: DELETE_USAGETRANSACTION_SUCCESS,
+  payload: UsageTransaction,
 });
 
 export const deleteUsageTransactionFailure = (error: Error) => ({
-    type: DELETE_USAGETRANSACTION_FAILURE,
-    payload: error,
+  type: DELETE_USAGETRANSACTION_FAILURE,
+  payload: error,
 });

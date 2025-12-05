@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/apiRest.mustache
@@ -14,34 +14,23 @@ Template file: typescript-redux-query/apiRest.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 
-
-
-
-
 import {
-
-    ADD_MCPMARKETPLACECATALOG_REQUEST,
-    FETCH_MCPMARKETPLACECATALOG_REQUEST,
-    LIST_MCPMARKETPLACECATALOG_REQUEST,
-    UPDATE_MCPMARKETPLACECATALOG_REQUEST,
-    DELETE_MCPMARKETPLACECATALOG_REQUEST,
-
-    addMcpMarketplaceCatalogFailure,
-    addMcpMarketplaceCatalogSuccess,
-
-    fetchMcpMarketplaceCatalogFailure,
-    fetchMcpMarketplaceCatalogSuccess,
-    
-    listMcpMarketplaceCatalogFailure,
-    listMcpMarketplaceCatalogSuccess,
-
-    updateMcpMarketplaceCatalogFailure,
-    updateMcpMarketplaceCatalogSuccess,
-    
-    deleteMcpMarketplaceCatalogFailure,
-    deleteMcpMarketplaceCatalogSuccess,
-    
-} from '../actions/McpMarketplaceCatalogApiAction';
+  ADD_MCPMARKETPLACECATALOG_REQUEST,
+  FETCH_MCPMARKETPLACECATALOG_REQUEST,
+  LIST_MCPMARKETPLACECATALOG_REQUEST,
+  UPDATE_MCPMARKETPLACECATALOG_REQUEST,
+  DELETE_MCPMARKETPLACECATALOG_REQUEST,
+  addMcpMarketplaceCatalogFailure,
+  addMcpMarketplaceCatalogSuccess,
+  fetchMcpMarketplaceCatalogFailure,
+  fetchMcpMarketplaceCatalogSuccess,
+  listMcpMarketplaceCatalogFailure,
+  listMcpMarketplaceCatalogSuccess,
+  updateMcpMarketplaceCatalogFailure,
+  updateMcpMarketplaceCatalogSuccess,
+  deleteMcpMarketplaceCatalogFailure,
+  deleteMcpMarketplaceCatalogSuccess,
+} from "../actions/McpMarketplaceCatalogApiAction";
 
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -59,15 +48,15 @@ Template file: typescript-redux-query/apiREST.mustache
 Description: McpMarketplaceCatalog
 */
 
-
-
-export const McpMarketplaceCatalogMiddleware = ({ dispatch }) => (next) => async (action) => {
-    console.log("McpMarketplaceCatalog MIDDLEWARE: " + JSON.stringify(action) )
+export const McpMarketplaceCatalogMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
+    console.log("McpMarketplaceCatalog MIDDLEWARE: " + JSON.stringify(action));
     next(action);
 
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
-
+  };

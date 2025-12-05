@@ -12,8 +12,8 @@ export class OutputFilterService {
         if (!output)
             return output;
         // Handle legacy config or check verbosity level
-        const isVerbose = ('enableVerboseFiltering' in config && config.enableVerboseFiltering) ||
-            ('verbosityLevel' in config && config.verbosityLevel === 'verbose');
+        const isVerbose = ("enableVerboseFiltering" in config && config.enableVerboseFiltering) ||
+            ("verbosityLevel" in config && config.verbosityLevel === "verbose");
         // If verbose, show all output (except progress/download lines)
         if (isVerbose) {
             let filtered = output;
@@ -22,15 +22,15 @@ export class OutputFilterService {
             filtered = filtered.replace(/^\s*[\r\n]+/gm, "\n");
             return this.truncateOutput(filtered, config.maxOutputLength);
         }
-        const lines = output.split('\n');
+        const lines = output.split("\n");
         const importantLines = [];
         const infoLines = [];
         let buildStatusLine = null;
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             // Always show errors and warnings
-            if (line.includes('[ERROR]') ||
-                line.includes('[WARNING]') ||
+            if (line.includes("[ERROR]") ||
+                line.includes("[WARNING]") ||
                 /BUILD (FAILURE|SUCCESS)/.test(line)) {
                 importantLines.push(line);
                 if (/BUILD (FAILURE|SUCCESS)/.test(line)) {
@@ -39,21 +39,22 @@ export class OutputFilterService {
                 continue;
             }
             // Remove download/progress lines
-            if (/^(Download(ing|ed)|Progress)/.test(line) || /^\d+\/\d+ [kKmM]?B/.test(line)) {
+            if (/^(Download(ing|ed)|Progress)/.test(line) ||
+                /^\d+\/\d+ [kKmM]?B/.test(line)) {
                 continue;
             }
             // Collect [INFO] lines for possible summarization
-            if (line.includes('[INFO]')) {
+            if (line.includes("[INFO]")) {
                 infoLines.push(line);
                 continue;
             }
             // Show any other non-empty lines
-            if (line.trim() !== '') {
+            if (line.trim() !== "") {
                 importantLines.push(line);
             }
         }
         // Show last 5 [INFO] lines (for context), and any with "BUILD"
-        const infoToShow = infoLines.filter(l => /BUILD/.test(l));
+        const infoToShow = infoLines.filter((l) => /BUILD/.test(l));
         const lastInfo = infoLines.slice(-5);
         for (const l of lastInfo) {
             if (!infoToShow.includes(l))
@@ -61,19 +62,19 @@ export class OutputFilterService {
         }
         // Remove duplicates, preserve order
         const seen = new Set();
-        const infoFinal = infoToShow.filter(l => {
+        const infoFinal = infoToShow.filter((l) => {
             if (seen.has(l))
                 return false;
             seen.add(l);
             return true;
         });
-        let filtered = '';
+        let filtered = "";
         if (importantLines.length === 0 && infoFinal.length === 0) {
             // fallback: show last 10 lines
-            filtered = lines.slice(-10).join('\n');
+            filtered = lines.slice(-10).join("\n");
         }
         else {
-            filtered = [...importantLines, ...infoFinal].join('\n');
+            filtered = [...importantLines, ...infoFinal].join("\n");
             if (infoLines.length > infoFinal.length) {
                 filtered += `\n[${infoLines.length - infoFinal.length} Maven [INFO] lines hidden for brevity]`;
             }
@@ -116,17 +117,17 @@ export class OutputFilterService {
         // Remove pip download progress
         filtered = filtered.replace(/^\s*\|[█▌▏\s]+\|.*$/gm, "");
         // Remove "Collecting" lines unless they fail
-        const lines = filtered.split('\n');
+        const lines = filtered.split("\n");
         const filteredLines = lines.filter((line, index) => {
-            if (line.startsWith('Collecting') || line.startsWith('Downloading')) {
+            if (line.startsWith("Collecting") || line.startsWith("Downloading")) {
                 // Check if next few lines contain an error
-                const nextFewLines = lines.slice(index + 1, index + 5).join(' ');
-                return nextFewLines.toLowerCase().includes('error') ||
-                    nextFewLines.toLowerCase().includes('failed');
+                const nextFewLines = lines.slice(index + 1, index + 5).join(" ");
+                return (nextFewLines.toLowerCase().includes("error") ||
+                    nextFewLines.toLowerCase().includes("failed"));
             }
             return true;
         });
-        filtered = filteredLines.join('\n');
+        filtered = filteredLines.join("\n");
         return this.truncateOutput(filtered, config.maxOutputLength);
     }
     /**
@@ -136,13 +137,15 @@ export class OutputFilterService {
         if (!output)
             return output;
         // Detect the type of command and apply specific filters
-        if (command.includes('mvn') || command.includes('maven')) {
+        if (command.includes("mvn") || command.includes("maven")) {
             return this.filterMavenOutput(output, config);
         }
-        else if (command.includes('npm') || command.includes('yarn') || command.includes('pnpm')) {
+        else if (command.includes("npm") ||
+            command.includes("yarn") ||
+            command.includes("pnpm")) {
             return this.filterNpmOutput(output, config);
         }
-        else if (command.includes('pip') || command.includes('python')) {
+        else if (command.includes("pip") || command.includes("python")) {
             return this.filterPythonOutput(output, config);
         }
         // Generic filtering for unknown commands
@@ -154,7 +157,7 @@ export class OutputFilterService {
     static filterGenericOutput(output, config = {}) {
         let filtered = output;
         // Remove ANSI escape codes
-        filtered = filtered.replace(/\x1b\[[0-9;]*m/g, '');
+        filtered = filtered.replace(/\x1b\[[0-9;]*m/g, "");
         // Remove excessive whitespace
         filtered = filtered.replace(/^\s*[\r\n]+/gm, "\n");
         // If output is very repetitive, summarize it
@@ -165,20 +168,20 @@ export class OutputFilterService {
      * Extracts only "Caused by" exceptions from Java stack traces
      */
     static extractCausedByExceptions(output) {
-        const lines = output.split('\n');
+        const lines = output.split("\n");
         const relevantLines = [];
         let inStackTrace = false;
         let captureNext = 0;
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             // Detect start of exception
-            if (line.includes('Exception') || line.includes('Error')) {
+            if (line.includes("Exception") || line.includes("Error")) {
                 inStackTrace = true;
                 relevantLines.push(line);
                 captureNext = 2; // Capture next 2 lines for context
             }
             // Capture "Caused by" lines
-            else if (line.trim().startsWith('Caused by:')) {
+            else if (line.trim().startsWith("Caused by:")) {
                 relevantLines.push(line);
                 captureNext = 3; // Capture more context for root cause
             }
@@ -188,11 +191,11 @@ export class OutputFilterService {
                 captureNext--;
             }
             // Skip stack trace details
-            else if (inStackTrace && line.trim().startsWith('at ')) {
+            else if (inStackTrace && line.trim().startsWith("at ")) {
                 continue;
             }
             // End of stack trace
-            else if (inStackTrace && line.trim() === '') {
+            else if (inStackTrace && line.trim() === "") {
                 inStackTrace = false;
             }
             // Normal output
@@ -200,16 +203,16 @@ export class OutputFilterService {
                 relevantLines.push(line);
             }
         }
-        return relevantLines.join('\n');
+        return relevantLines.join("\n");
     }
     /**
      * Summarizes repetitive output patterns
      */
     static summarizeRepetitiveOutput(output) {
-        const lines = output.split('\n');
+        const lines = output.split("\n");
         const lineCount = new Map();
         const result = [];
-        let lastLine = '';
+        let lastLine = "";
         let repeatCount = 0;
         for (const line of lines) {
             const trimmedLine = line.trim();
@@ -220,7 +223,7 @@ export class OutputFilterService {
                     repeatCount = 0;
                 }
                 result.push(line);
-                lastLine = '';
+                lastLine = "";
                 continue;
             }
             if (trimmedLine === lastLine) {
@@ -238,7 +241,7 @@ export class OutputFilterService {
         if (repeatCount > 1) {
             result.push(`[Previous line repeated ${repeatCount} times]`);
         }
-        return result.join('\n');
+        return result.join("\n");
     }
     /**
      * Truncates output if it exceeds the maximum length
@@ -249,7 +252,7 @@ export class OutputFilterService {
             return output;
         }
         // Try to truncate at a sensible point (end of line)
-        const truncatePoint = output.lastIndexOf('\n', limit);
+        const truncatePoint = output.lastIndexOf("\n", limit);
         const actualTruncatePoint = truncatePoint > limit * 0.8 ? truncatePoint : limit;
         return output.substring(actualTruncatePoint) + this.TRUNCATION_MESSAGE;
     }

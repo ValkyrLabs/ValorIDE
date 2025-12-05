@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,231 +19,288 @@ Template file: typescript-redux-query/apis.mustache
 Description: ProductFunnelWizardApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    ProductFunnelWizard,
-    ProductFunnelWizardFromJSON,
-    ProductFunnelWizardToJSON,
-    PublishFunnel200Response,
-    PublishFunnel200ResponseFromJSON,
-    PublishFunnel200ResponseToJSON,
-    WizardStartResponse,
-    WizardStartResponseFromJSON,
-    WizardStartResponseToJSON,
-    WizardStatusResponse,
-    WizardStatusResponseFromJSON,
-    WizardStatusResponseToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  ProductFunnelWizard,
+  ProductFunnelWizardFromJSON,
+  ProductFunnelWizardToJSON,
+  PublishFunnel200Response,
+  PublishFunnel200ResponseFromJSON,
+  PublishFunnel200ResponseToJSON,
+  WizardStartResponse,
+  WizardStartResponseFromJSON,
+  WizardStartResponseToJSON,
+  WizardStatusResponse,
+  WizardStatusResponseFromJSON,
+  WizardStatusResponseToJSON,
+} from "../model";
 
 export interface GetWizardStatusApiRequest {
-    wizardId: string;
+  wizardId: string;
 }
 
 export interface PreviewFunnelApiRequest {
-    wizardId: string;
+  wizardId: string;
 }
 
 export interface PublishFunnelApiRequest {
-    wizardId: string;
+  wizardId: string;
 }
 
 export interface StartFunnelWizardApiRequest {
-    productFunnelWizard: ProductFunnelWizard;
+  productFunnelWizard: ProductFunnelWizard;
 }
-
 
 /**
  * Returns the current status, progress, and generated asset references.
  * Get wizard status and progress
  */
-function getWizardStatusRaw<T>(requestParameters: GetWizardStatusApiRequest, requestConfig: runtime.TypedQueryConfig<T, WizardStatusResponse> = {}): QueryConfig<T> {
-    if (requestParameters.wizardId === null || requestParameters.wizardId === undefined) {
-        throw new runtime.RequiredError('wizardId','Required parameter requestParameters.wizardId was null or undefined when calling getWizardStatus.');
-    }
+function getWizardStatusRaw<T>(
+  requestParameters: GetWizardStatusApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, WizardStatusResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.wizardId === null ||
+    requestParameters.wizardId === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "wizardId",
+      "Required parameter requestParameters.wizardId was null or undefined when calling getWizardStatus.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/productFunnelWizard/{wizardId}/status`.replace(
+      `{${"wizardId"}}`,
+      encodeURIComponent(String(requestParameters.wizardId)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(WizardStatusResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/productFunnelWizard/{wizardId}/status`.replace(`{${"wizardId"}}`, encodeURIComponent(String(requestParameters.wizardId))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WizardStatusResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Returns the current status, progress, and generated asset references.
-* Get wizard status and progress
-*/
-export function getWizardStatus<T>(requestParameters: GetWizardStatusApiRequest, requestConfig?: runtime.TypedQueryConfig<T, WizardStatusResponse>): QueryConfig<T> {
-    return getWizardStatusRaw(requestParameters, requestConfig);
+ * Returns the current status, progress, and generated asset references.
+ * Get wizard status and progress
+ */
+export function getWizardStatus<T>(
+  requestParameters: GetWizardStatusApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, WizardStatusResponse>,
+): QueryConfig<T> {
+  return getWizardStatusRaw(requestParameters, requestConfig);
 }
 
 /**
  * Returns an HTML preview of the generated landing page for review.
  * Preview generated landing page HTML
  */
-function previewFunnelRaw<T>(requestParameters: PreviewFunnelApiRequest, requestConfig: runtime.TypedQueryConfig<T, string> = {}): QueryConfig<T> {
-    if (requestParameters.wizardId === null || requestParameters.wizardId === undefined) {
-        throw new runtime.RequiredError('wizardId','Required parameter requestParameters.wizardId was null or undefined when calling previewFunnel.');
-    }
+function previewFunnelRaw<T>(
+  requestParameters: PreviewFunnelApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, string> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.wizardId === null ||
+    requestParameters.wizardId === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "wizardId",
+      "Required parameter requestParameters.wizardId was null or undefined when calling previewFunnel.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/productFunnelWizard/{wizardId}/preview`.replace(
+      `{${"wizardId"}}`,
+      encodeURIComponent(String(requestParameters.wizardId)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    throw "OH NO";
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/productFunnelWizard/{wizardId}/preview`.replace(`{${"wizardId"}}`, encodeURIComponent(String(requestParameters.wizardId))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        throw "OH NO";
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Returns an HTML preview of the generated landing page for review.
-* Preview generated landing page HTML
-*/
-export function previewFunnel<T>(requestParameters: PreviewFunnelApiRequest, requestConfig?: runtime.TypedQueryConfig<T, string>): QueryConfig<T> {
-    return previewFunnelRaw(requestParameters, requestConfig);
+ * Returns an HTML preview of the generated landing page for review.
+ * Preview generated landing page HTML
+ */
+export function previewFunnel<T>(
+  requestParameters: PreviewFunnelApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, string>,
+): QueryConfig<T> {
+  return previewFunnelRaw(requestParameters, requestConfig);
 }
 
 /**
  * Marks the generated landing page as published and returns the public URL.
  * Publish generated funnel
  */
-function publishFunnelRaw<T>(requestParameters: PublishFunnelApiRequest, requestConfig: runtime.TypedQueryConfig<T, PublishFunnel200Response> = {}): QueryConfig<T> {
-    if (requestParameters.wizardId === null || requestParameters.wizardId === undefined) {
-        throw new runtime.RequiredError('wizardId','Required parameter requestParameters.wizardId was null or undefined when calling publishFunnel.');
-    }
+function publishFunnelRaw<T>(
+  requestParameters: PublishFunnelApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, PublishFunnel200Response> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.wizardId === null ||
+    requestParameters.wizardId === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "wizardId",
+      "Required parameter requestParameters.wizardId was null or undefined when calling publishFunnel.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/productFunnelWizard/{wizardId}/publish`.replace(
+      `{${"wizardId"}}`,
+      encodeURIComponent(String(requestParameters.wizardId)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(PublishFunnel200ResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/productFunnelWizard/{wizardId}/publish`.replace(`{${"wizardId"}}`, encodeURIComponent(String(requestParameters.wizardId))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(PublishFunnel200ResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Marks the generated landing page as published and returns the public URL.
-* Publish generated funnel
-*/
-export function publishFunnel<T>(requestParameters: PublishFunnelApiRequest, requestConfig?: runtime.TypedQueryConfig<T, PublishFunnel200Response>): QueryConfig<T> {
-    return publishFunnelRaw(requestParameters, requestConfig);
+ * Marks the generated landing page as published and returns the public URL.
+ * Publish generated funnel
+ */
+export function publishFunnel<T>(
+  requestParameters: PublishFunnelApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, PublishFunnel200Response>,
+): QueryConfig<T> {
+  return publishFunnelRaw(requestParameters, requestConfig);
 }
 
 /**
  * Begins asynchronous funnel generation using the FunnelGenerator workflow.
  * Start funnel generation wizard for a product
  */
-function startFunnelWizardRaw<T>(requestParameters: StartFunnelWizardApiRequest, requestConfig: runtime.TypedQueryConfig<T, WizardStartResponse> = {}): QueryConfig<T> {
-    if (requestParameters.productFunnelWizard === null || requestParameters.productFunnelWizard === undefined) {
-        throw new runtime.RequiredError('productFunnelWizard','Required parameter requestParameters.productFunnelWizard was null or undefined when calling startFunnelWizard.');
-    }
+function startFunnelWizardRaw<T>(
+  requestParameters: StartFunnelWizardApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, WizardStartResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.productFunnelWizard === null ||
+    requestParameters.productFunnelWizard === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "productFunnelWizard",
+      "Required parameter requestParameters.productFunnelWizard was null or undefined when calling startFunnelWizard.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/productFunnelWizard/start`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      ProductFunnelWizardToJSON(requestParameters.productFunnelWizard),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(WizardStartResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/productFunnelWizard/start`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || ProductFunnelWizardToJSON(requestParameters.productFunnelWizard),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(WizardStartResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Begins asynchronous funnel generation using the FunnelGenerator workflow.
-* Start funnel generation wizard for a product
-*/
-export function startFunnelWizard<T>(requestParameters: StartFunnelWizardApiRequest, requestConfig?: runtime.TypedQueryConfig<T, WizardStartResponse>): QueryConfig<T> {
-    return startFunnelWizardRaw(requestParameters, requestConfig);
+ * Begins asynchronous funnel generation using the FunnelGenerator workflow.
+ * Start funnel generation wizard for a product
+ */
+export function startFunnelWizard<T>(
+  requestParameters: StartFunnelWizardApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, WizardStartResponse>,
+): QueryConfig<T> {
+  return startFunnelWizardRaw(requestParameters, requestConfig);
 }
-

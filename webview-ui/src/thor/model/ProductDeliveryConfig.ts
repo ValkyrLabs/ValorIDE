@@ -20,195 +20,226 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    Product,
-    ProductFromJSON,
-    ProductToJSON,
-    Workflow,
-    WorkflowFromJSON,
-    WorkflowToJSON,
-} from './';
-
+  Product,
+  ProductFromJSON,
+  ProductToJSON,
+  Workflow,
+  WorkflowFromJSON,
+  WorkflowToJSON,
+} from "./";
 
 // thorapi
 
 /**
- * Per-Product configuration for digital or physical fulfillment automation. Directs ValkyrAI workflow selection and execution behavior. 
+ * Per-Product configuration for digital or physical fulfillment automation. Directs ValkyrAI workflow selection and execution behavior.
  * @export
  * @interface ProductDeliveryConfig
  */
-export type ProductDeliveryConfig  = {
-    /**
-     * Product this configuration applies to.
-     * @type {string}
-     * @memberof ProductDeliveryConfig
-     */
-    productId: string;
-    /**
-     * Primary fulfillment strategy for this product.
-     * @type {string}
-     * @memberof ProductDeliveryConfig
-     */
-    deliveryType: ProductDeliveryConfigDeliveryTypeEnum;
-    /**
-     * 
-     * @type {Product}
-     * @memberof ProductDeliveryConfig
-     */
-    product?: Product;
-    /**
-     * If true, automatically trigger fulfillment workflow upon order payment confirmation. If false, manual intervention required. 
-     * @type {boolean}
-     * @memberof ProductDeliveryConfig
-     */
-    autoFulfill?: boolean;
-    /**
-     * ValkyrAI Workflow to execute for orders of this product. If null, use default workflow for deliveryType. 
-     * @type {string}
-     * @memberof ProductDeliveryConfig
-     */
-    fulfillmentWorkflowId?: string;
-    /**
-     * 
-     * @type {Workflow}
-     * @memberof ProductDeliveryConfig
-     */
-    fulfillmentWorkflow?: Workflow;
-    /**
-     * ContentData slug for the fulfillment notification email/message. Rendered with order context and download link (for digital products). 
-     * @type {string}
-     * @memberof ProductDeliveryConfig
-     */
-    notificationTemplate?: string;
-    /**
-     * Throttle for parallel fulfillment task execution.
-     * @type {number}
-     * @memberof ProductDeliveryConfig
-     */
-    maxConcurrentFulfillments?: number;
-    /**
-     * Retry configuration (maxAttempts, backoffMultiplier, etc.). Applied by workflow execution engine. 
-     * @type {string}
-     * @memberof ProductDeliveryConfig
-     */
-    retryPolicy?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof ProductDeliveryConfig
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof ProductDeliveryConfig
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof ProductDeliveryConfig
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof ProductDeliveryConfig
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof ProductDeliveryConfig
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof ProductDeliveryConfig
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof ProductDeliveryConfig
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof ProductDeliveryConfig
-     */
-    lastModifiedDate?: Date;
+export type ProductDeliveryConfig = DataObject & {
+  /**
+   * Product this configuration applies to.
+   * @type {string}
+   * @memberof ProductDeliveryConfig
+   */
+  productId: string;
+  /**
+   * Primary fulfillment strategy for this product.
+   * @type {string}
+   * @memberof ProductDeliveryConfig
+   */
+  deliveryType: ProductDeliveryConfigDeliveryTypeEnum;
+  /**
+   *
+   * @type {Product}
+   * @memberof ProductDeliveryConfig
+   */
+  product?: Product;
+  /**
+   * If true, automatically trigger fulfillment workflow upon order payment confirmation. If false, manual intervention required.
+   * @type {boolean}
+   * @memberof ProductDeliveryConfig
+   */
+  autoFulfill?: boolean;
+  /**
+   * ValkyrAI Workflow to execute for orders of this product. If null, use default workflow for deliveryType.
+   * @type {string}
+   * @memberof ProductDeliveryConfig
+   */
+  fulfillmentWorkflowId?: string;
+  /**
+   *
+   * @type {Workflow}
+   * @memberof ProductDeliveryConfig
+   */
+  fulfillmentWorkflow?: Workflow;
+  /**
+   * ContentData slug for the fulfillment notification email/message. Rendered with order context and download link (for digital products).
+   * @type {string}
+   * @memberof ProductDeliveryConfig
+   */
+  notificationTemplate?: string;
+  /**
+   * Throttle for parallel fulfillment task execution.
+   * @type {number}
+   * @memberof ProductDeliveryConfig
+   */
+  maxConcurrentFulfillments?: number;
+  /**
+   * Retry configuration (maxAttempts, backoffMultiplier, etc.). Applied by workflow execution engine.
+   * @type {string}
+   * @memberof ProductDeliveryConfig
+   */
+  retryPolicy?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof ProductDeliveryConfig
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof ProductDeliveryConfig
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof ProductDeliveryConfig
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof ProductDeliveryConfig
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof ProductDeliveryConfig
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof ProductDeliveryConfig
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof ProductDeliveryConfig
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof ProductDeliveryConfig
+   */
+  lastModifiedDate?: Date;
+};
+
+export function ProductDeliveryConfigFromJSON(
+  json: any,
+): ProductDeliveryConfig {
+  return {
+    ...DataObjectFromJSON(json),
+    productId: json["productId"],
+    deliveryType: json["deliveryType"],
+    product: !exists(json, "product")
+      ? undefined
+      : ProductFromJSON(json["product"]),
+    autoFulfill: !exists(json, "autoFulfill") ? undefined : json["autoFulfill"],
+    fulfillmentWorkflowId: !exists(json, "fulfillmentWorkflowId")
+      ? undefined
+      : json["fulfillmentWorkflowId"],
+    fulfillmentWorkflow: !exists(json, "fulfillmentWorkflow")
+      ? undefined
+      : WorkflowFromJSON(json["fulfillmentWorkflow"]),
+    notificationTemplate: !exists(json, "notificationTemplate")
+      ? undefined
+      : json["notificationTemplate"],
+    maxConcurrentFulfillments: !exists(json, "maxConcurrentFulfillments")
+      ? undefined
+      : json["maxConcurrentFulfillments"],
+    retryPolicy: !exists(json, "retryPolicy") ? undefined : json["retryPolicy"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
-export function ProductDeliveryConfigFromJSON(json: any): ProductDeliveryConfig {
-    return {
-        'productId': json['productId'],
-        'deliveryType': json['deliveryType'],
-        'product': !exists(json, 'product') ? undefined : ProductFromJSON(json['product']),
-        'autoFulfill': !exists(json, 'autoFulfill') ? undefined : json['autoFulfill'],
-        'fulfillmentWorkflowId': !exists(json, 'fulfillmentWorkflowId') ? undefined : json['fulfillmentWorkflowId'],
-        'fulfillmentWorkflow': !exists(json, 'fulfillmentWorkflow') ? undefined : WorkflowFromJSON(json['fulfillmentWorkflow']),
-        'notificationTemplate': !exists(json, 'notificationTemplate') ? undefined : json['notificationTemplate'],
-        'maxConcurrentFulfillments': !exists(json, 'maxConcurrentFulfillments') ? undefined : json['maxConcurrentFulfillments'],
-        'retryPolicy': !exists(json, 'retryPolicy') ? undefined : json['retryPolicy'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
-}
-
-export function ProductDeliveryConfigToJSON(value?: ProductDeliveryConfig): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'productId': value.productId,
-        'deliveryType': value.deliveryType,
-        'product': ProductToJSON(value.product),
-        'autoFulfill': value.autoFulfill,
-        'fulfillmentWorkflowId': value.fulfillmentWorkflowId,
-        'fulfillmentWorkflow': WorkflowToJSON(value.fulfillmentWorkflow),
-        'notificationTemplate': value.notificationTemplate,
-        'maxConcurrentFulfillments': value.maxConcurrentFulfillments,
-        'retryPolicy': value.retryPolicy,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+export function ProductDeliveryConfigToJSON(
+  value?: ProductDeliveryConfig,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    productId: value.productId,
+    deliveryType: value.deliveryType,
+    product: ProductToJSON(value.product),
+    autoFulfill: value.autoFulfill,
+    fulfillmentWorkflowId: value.fulfillmentWorkflowId,
+    fulfillmentWorkflow: WorkflowToJSON(value.fulfillmentWorkflow),
+    notificationTemplate: value.notificationTemplate,
+    maxConcurrentFulfillments: value.maxConcurrentFulfillments,
+    retryPolicy: value.retryPolicy,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum ProductDeliveryConfigDeliveryTypeEnum {
-    INSTANTDIGITAL = 'instant_digital',
-    SCHEDULEDDIGITAL = 'scheduled_digital',
-    MANUALREVIEW = 'manual_review',
-    PHYSICALSHIPMENT = 'physical_shipment',
-    HYBRID = 'hybrid'
+  INSTANTDIGITAL = "instant_digital",
+  SCHEDULEDDIGITAL = "scheduled_digital",
+  MANUALREVIEW = "manual_review",
+  PHYSICALSHIPMENT = "physical_shipment",
+  HYBRID = "hybrid",
 }
-
-

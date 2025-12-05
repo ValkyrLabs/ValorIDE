@@ -9,20 +9,21 @@ const fadedOverlayDecorationType = vscode.window.createTextEditorDecorationType(
 );
 
 // New frosted glass overlay for blocking user interaction during ValorIDE editing
-const frostedGlassOverlayDecorationType = vscode.window.createTextEditorDecorationType({
-  backgroundColor: "rgba(100, 100, 100, 0.7)",
-  opacity: "0.8",
-  isWholeLine: true,
-  after: {
-    contentText: "",
-    backgroundColor: "rgba(50, 50, 50, 0.9)",
-    border: "2px solid rgba(100, 150, 255, 0.6)",
-  },
-  // Make the overlay more prominent and block-like
-  outline: "1px solid rgba(100, 150, 255, 0.4)",
-  outlineWidth: "1px",
-  outlineStyle: "solid",
-});
+const frostedGlassOverlayDecorationType =
+  vscode.window.createTextEditorDecorationType({
+    backgroundColor: "rgba(100, 100, 100, 0.7)",
+    opacity: "0.8",
+    isWholeLine: true,
+    after: {
+      contentText: "",
+      backgroundColor: "rgba(50, 50, 50, 0.9)",
+      border: "2px solid rgba(100, 150, 255, 0.6)",
+    },
+    // Make the overlay more prominent and block-like
+    outline: "1px solid rgba(100, 150, 255, 0.4)",
+    outlineWidth: "1px",
+    outlineStyle: "solid",
+  });
 
 const activeLineDecorationType = vscode.window.createTextEditorDecorationType({
   backgroundColor: "rgba(255, 255, 0, 0.3)",
@@ -112,7 +113,7 @@ export class DecorationController {
     if (this.decorationType !== "frostedGlassOverlay") {
       return;
     }
-    
+
     const totalLines = this.editor.document.lineCount;
     if (totalLines > 0) {
       this.ranges = [

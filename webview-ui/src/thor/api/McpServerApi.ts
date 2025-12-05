@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,294 +19,345 @@ Template file: typescript-redux-query/apis.mustache
 Description: McpServerApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    McpServer,
-    McpServerFromJSON,
-    McpServerToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { McpServer, McpServerFromJSON, McpServerToJSON } from "../model";
 
 export interface DeleteMcpServerApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetMcpServerApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetMcpServerListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PostMcpServerApiRequest {
-    mcpServer: McpServer;
+  mcpServer: McpServer;
 }
 
 export interface UpdateMcpServerApiRequest {
-    id: string;
-    mcpServer: McpServer;
+  id: string;
+  mcpServer: McpServer;
 }
-
 
 /**
  * Deletes a specific McpServer.
  * Delete a McpServer.
  */
-function deleteMcpServerRaw<T>(requestParameters: DeleteMcpServerApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteMcpServer.');
-    }
+function deleteMcpServerRaw<T>(
+  requestParameters: DeleteMcpServerApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteMcpServer.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpServer/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/McpServer/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific McpServer.
-* Delete a McpServer.
-*/
-export function deleteMcpServer<T>(requestParameters: DeleteMcpServerApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteMcpServerRaw(requestParameters, requestConfig);
+ * Deletes a specific McpServer.
+ * Delete a McpServer.
+ */
+export function deleteMcpServer<T>(
+  requestParameters: DeleteMcpServerApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteMcpServerRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single McpServer for a specific uid.
  * Retrieve a single McpServer
  */
-function getMcpServerRaw<T>(requestParameters: GetMcpServerApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpServer> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getMcpServer.');
-    }
+function getMcpServerRaw<T>(
+  requestParameters: GetMcpServerApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpServer> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getMcpServer.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpServer/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpServerFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/McpServer/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpServerFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single McpServer for a specific uid.
-* Retrieve a single McpServer
-*/
-export function getMcpServer<T>(requestParameters: GetMcpServerApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpServer>): QueryConfig<T> {
-    return getMcpServerRaw(requestParameters, requestConfig);
+ * Retrieves a single McpServer for a specific uid.
+ * Retrieve a single McpServer
+ */
+export function getMcpServer<T>(
+  requestParameters: GetMcpServerApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpServer>,
+): QueryConfig<T> {
+  return getMcpServerRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of McpServers.
  * Retrieve a list of McpServers
  */
-function getMcpServerListRaw<T>(requestParameters: GetMcpServerListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<McpServer>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getMcpServerListRaw<T>(
+  requestParameters: GetMcpServerListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<McpServer>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpServer`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(McpServerFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/McpServer`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(McpServerFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of McpServers.
-* Retrieve a list of McpServers
-*/
-export function getMcpServerList<T>(requestParameters: GetMcpServerListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<McpServer>>): QueryConfig<T> {
-    return getMcpServerListRaw(requestParameters, requestConfig);
+ * Retrieves a list of McpServers.
+ * Retrieve a list of McpServers
+ */
+export function getMcpServerList<T>(
+  requestParameters: GetMcpServerListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<McpServer>>,
+): QueryConfig<T> {
+  return getMcpServerListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new McpServer.
  * Create a new McpServer
  */
-function postMcpServerRaw<T>(requestParameters: PostMcpServerApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpServer> = {}): QueryConfig<T> {
-    if (requestParameters.mcpServer === null || requestParameters.mcpServer === undefined) {
-        throw new runtime.RequiredError('mcpServer','Required parameter requestParameters.mcpServer was null or undefined when calling postMcpServer.');
-    }
+function postMcpServerRaw<T>(
+  requestParameters: PostMcpServerApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpServer> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.mcpServer === null ||
+    requestParameters.mcpServer === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mcpServer",
+      "Required parameter requestParameters.mcpServer was null or undefined when calling postMcpServer.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpServer`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || McpServerToJSON(requestParameters.mcpServer),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpServerFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/McpServer`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || McpServerToJSON(requestParameters.mcpServer),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpServerFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new McpServer.
-* Create a new McpServer
-*/
-export function postMcpServer<T>(requestParameters: PostMcpServerApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpServer>): QueryConfig<T> {
-    return postMcpServerRaw(requestParameters, requestConfig);
+ * Creates a new McpServer.
+ * Create a new McpServer
+ */
+export function postMcpServer<T>(
+  requestParameters: PostMcpServerApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpServer>,
+): QueryConfig<T> {
+  return postMcpServerRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing McpServer.
  * Update an existing McpServer
  */
-function updateMcpServerRaw<T>(requestParameters: UpdateMcpServerApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpServer> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateMcpServer.');
-    }
+function updateMcpServerRaw<T>(
+  requestParameters: UpdateMcpServerApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpServer> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateMcpServer.",
+    );
+  }
 
-    if (requestParameters.mcpServer === null || requestParameters.mcpServer === undefined) {
-        throw new runtime.RequiredError('mcpServer','Required parameter requestParameters.mcpServer was null or undefined when calling updateMcpServer.');
-    }
+  if (
+    requestParameters.mcpServer === null ||
+    requestParameters.mcpServer === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mcpServer",
+      "Required parameter requestParameters.mcpServer was null or undefined when calling updateMcpServer.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpServer/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || McpServerToJSON(requestParameters.mcpServer),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpServerFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/McpServer/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || McpServerToJSON(requestParameters.mcpServer),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpServerFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing McpServer.
-* Update an existing McpServer
-*/
-export function updateMcpServer<T>(requestParameters: UpdateMcpServerApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpServer>): QueryConfig<T> {
-    return updateMcpServerRaw(requestParameters, requestConfig);
+ * Updates an existing McpServer.
+ * Update an existing McpServer
+ */
+export function updateMcpServer<T>(
+  requestParameters: UpdateMcpServerApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpServer>,
+): QueryConfig<T> {
+  return updateMcpServerRaw(requestParameters, requestConfig);
 }
-

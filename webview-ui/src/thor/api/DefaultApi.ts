@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,189 +19,318 @@ Template file: typescript-redux-query/apis.mustache
 Description: DefaultApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    SwarmCommandRequest,
-    SwarmCommandRequestFromJSON,
-    SwarmCommandRequestToJSON,
-    SwarmCommandResponse,
-    SwarmCommandResponseFromJSON,
-    SwarmCommandResponseToJSON,
-    SwarmRegisterRequest,
-    SwarmRegisterRequestFromJSON,
-    SwarmRegisterRequestToJSON,
-    SwarmRegisterResponse,
-    SwarmRegisterResponseFromJSON,
-    SwarmRegisterResponseToJSON,
-    SwarmUnregisterRequest,
-    SwarmUnregisterRequestFromJSON,
-    SwarmUnregisterRequestToJSON,
-    SwarmUnregisterResponse,
-    SwarmUnregisterResponseFromJSON,
-    SwarmUnregisterResponseToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import {
+  AgentChatMessageRequest,
+  AgentChatMessageRequestFromJSON,
+  AgentChatMessageRequestToJSON,
+  AgentChatMessageResponse,
+  AgentChatMessageResponseFromJSON,
+  AgentChatMessageResponseToJSON,
+  SwarmCommandRequest,
+  SwarmCommandRequestFromJSON,
+  SwarmCommandRequestToJSON,
+  SwarmCommandResponse,
+  SwarmCommandResponseFromJSON,
+  SwarmCommandResponseToJSON,
+  SwarmRegisterRequest,
+  SwarmRegisterRequestFromJSON,
+  SwarmRegisterRequestToJSON,
+  SwarmRegisterResponse,
+  SwarmRegisterResponseFromJSON,
+  SwarmRegisterResponseToJSON,
+  SwarmUnregisterRequest,
+  SwarmUnregisterRequestFromJSON,
+  SwarmUnregisterRequestToJSON,
+  SwarmUnregisterResponse,
+  SwarmUnregisterResponseFromJSON,
+  SwarmUnregisterResponseToJSON,
+} from "../model";
 
 export interface ForwardSwarmCommandApiRequest {
-    swarmCommandRequest: SwarmCommandRequest;
+  swarmCommandRequest: SwarmCommandRequest;
 }
 
 export interface RegisterSwarmAgentApiRequest {
-    swarmRegisterRequest: SwarmRegisterRequest;
+  swarmRegisterRequest: SwarmRegisterRequest;
+}
+
+export interface SendAgentChatMessageApiRequest {
+  agentId: string;
+  agentChatMessageRequest: AgentChatMessageRequest;
 }
 
 export interface UnregisterSwarmAgentApiRequest {
-    swarmUnregisterRequest: SwarmUnregisterRequest;
+  swarmUnregisterRequest: SwarmUnregisterRequest;
 }
-
 
 /**
  * Forwards a command message to a specific agent instance or broadcasts to all agents.
  * Forward a swarm command
  */
-function forwardSwarmCommandRaw<T>(requestParameters: ForwardSwarmCommandApiRequest, requestConfig: runtime.TypedQueryConfig<T, SwarmCommandResponse> = {}): QueryConfig<T> {
-    if (requestParameters.swarmCommandRequest === null || requestParameters.swarmCommandRequest === undefined) {
-        throw new runtime.RequiredError('swarmCommandRequest','Required parameter requestParameters.swarmCommandRequest was null or undefined when calling forwardSwarmCommand.');
-    }
+function forwardSwarmCommandRaw<T>(
+  requestParameters: ForwardSwarmCommandApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SwarmCommandResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.swarmCommandRequest === null ||
+    requestParameters.swarmCommandRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "swarmCommandRequest",
+      "Required parameter requestParameters.swarmCommandRequest was null or undefined when calling forwardSwarmCommand.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SwarmOps/command`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      SwarmCommandRequestToJSON(requestParameters.swarmCommandRequest),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SwarmCommandResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SwarmOps/command`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || SwarmCommandRequestToJSON(requestParameters.swarmCommandRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SwarmCommandResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Forwards a command message to a specific agent instance or broadcasts to all agents.
-* Forward a swarm command
-*/
-export function forwardSwarmCommand<T>(requestParameters: ForwardSwarmCommandApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SwarmCommandResponse>): QueryConfig<T> {
-    return forwardSwarmCommandRaw(requestParameters, requestConfig);
+ * Forwards a command message to a specific agent instance or broadcasts to all agents.
+ * Forward a swarm command
+ */
+export function forwardSwarmCommand<T>(
+  requestParameters: ForwardSwarmCommandApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SwarmCommandResponse>,
+): QueryConfig<T> {
+  return forwardSwarmCommandRaw(requestParameters, requestConfig);
 }
 
 /**
- * Registers an agent instance with the swarm registry and updates its metadata.
+ * Registers an agent instance with the swarm registry and updates its metadata. Subject to ACL and billing constraints.
  * Register or refresh a swarm agent
  */
-function registerSwarmAgentRaw<T>(requestParameters: RegisterSwarmAgentApiRequest, requestConfig: runtime.TypedQueryConfig<T, SwarmRegisterResponse> = {}): QueryConfig<T> {
-    if (requestParameters.swarmRegisterRequest === null || requestParameters.swarmRegisterRequest === undefined) {
-        throw new runtime.RequiredError('swarmRegisterRequest','Required parameter requestParameters.swarmRegisterRequest was null or undefined when calling registerSwarmAgent.');
-    }
+function registerSwarmAgentRaw<T>(
+  requestParameters: RegisterSwarmAgentApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SwarmRegisterResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.swarmRegisterRequest === null ||
+    requestParameters.swarmRegisterRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "swarmRegisterRequest",
+      "Required parameter requestParameters.swarmRegisterRequest was null or undefined when calling registerSwarmAgent.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SwarmOps/register`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      SwarmRegisterRequestToJSON(requestParameters.swarmRegisterRequest),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SwarmRegisterResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SwarmOps/register`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || SwarmRegisterRequestToJSON(requestParameters.swarmRegisterRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SwarmRegisterResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Registers an agent instance with the swarm registry and updates its metadata.
-* Register or refresh a swarm agent
-*/
-export function registerSwarmAgent<T>(requestParameters: RegisterSwarmAgentApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SwarmRegisterResponse>): QueryConfig<T> {
-    return registerSwarmAgentRaw(requestParameters, requestConfig);
+ * Registers an agent instance with the swarm registry and updates its metadata. Subject to ACL and billing constraints.
+ * Register or refresh a swarm agent
+ */
+export function registerSwarmAgent<T>(
+  requestParameters: RegisterSwarmAgentApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SwarmRegisterResponse>,
+): QueryConfig<T> {
+  return registerSwarmAgentRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Sends a chat message to a specific agent instance. Messages are persisted and encrypted.
+ * Send chat message to agent
+ */
+function sendAgentChatMessageRaw<T>(
+  requestParameters: SendAgentChatMessageApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, AgentChatMessageResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.agentId === null ||
+    requestParameters.agentId === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "agentId",
+      "Required parameter requestParameters.agentId was null or undefined when calling sendAgentChatMessage.",
+    );
+  }
+
+  if (
+    requestParameters.agentChatMessageRequest === null ||
+    requestParameters.agentChatMessageRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "agentChatMessageRequest",
+      "Required parameter requestParameters.agentChatMessageRequest was null or undefined when calling sendAgentChatMessage.",
+    );
+  }
+
+  let queryParameters = null;
+
+  const headerParameters: runtime.HttpHeaders = {};
+
+  headerParameters["Content-Type"] = "application/json";
+
+  const { meta = {} } = requestConfig;
+
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SwarmOps/agent/{agentId}/chat`.replace(
+      `{${"agentId"}}`,
+      encodeURIComponent(String(requestParameters.agentId)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      AgentChatMessageRequestToJSON(requestParameters.agentChatMessageRequest),
+  };
+
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(AgentChatMessageResponseFromJSON(body), text);
+  }
+
+  return config;
+}
+
+/**
+ * Sends a chat message to a specific agent instance. Messages are persisted and encrypted.
+ * Send chat message to agent
+ */
+export function sendAgentChatMessage<T>(
+  requestParameters: SendAgentChatMessageApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, AgentChatMessageResponse>,
+): QueryConfig<T> {
+  return sendAgentChatMessageRaw(requestParameters, requestConfig);
 }
 
 /**
  * Removes an agent instance from the swarm registry.
  * Unregister a swarm agent
  */
-function unregisterSwarmAgentRaw<T>(requestParameters: UnregisterSwarmAgentApiRequest, requestConfig: runtime.TypedQueryConfig<T, SwarmUnregisterResponse> = {}): QueryConfig<T> {
-    if (requestParameters.swarmUnregisterRequest === null || requestParameters.swarmUnregisterRequest === undefined) {
-        throw new runtime.RequiredError('swarmUnregisterRequest','Required parameter requestParameters.swarmUnregisterRequest was null or undefined when calling unregisterSwarmAgent.');
-    }
+function unregisterSwarmAgentRaw<T>(
+  requestParameters: UnregisterSwarmAgentApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SwarmUnregisterResponse> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.swarmUnregisterRequest === null ||
+    requestParameters.swarmUnregisterRequest === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "swarmUnregisterRequest",
+      "Required parameter requestParameters.swarmUnregisterRequest was null or undefined when calling unregisterSwarmAgent.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SwarmOps/unregister`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body:
+      queryParameters ||
+      SwarmUnregisterRequestToJSON(requestParameters.swarmUnregisterRequest),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SwarmUnregisterResponseFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SwarmOps/unregister`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || SwarmUnregisterRequestToJSON(requestParameters.swarmUnregisterRequest),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SwarmUnregisterResponseFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Removes an agent instance from the swarm registry.
-* Unregister a swarm agent
-*/
-export function unregisterSwarmAgent<T>(requestParameters: UnregisterSwarmAgentApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SwarmUnregisterResponse>): QueryConfig<T> {
-    return unregisterSwarmAgentRaw(requestParameters, requestConfig);
+ * Removes an agent instance from the swarm registry.
+ * Unregister a swarm agent
+ */
+export function unregisterSwarmAgent<T>(
+  requestParameters: UnregisterSwarmAgentApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SwarmUnregisterResponse>,
+): QueryConfig<T> {
+  return unregisterSwarmAgentRaw(requestParameters, requestConfig);
 }
-

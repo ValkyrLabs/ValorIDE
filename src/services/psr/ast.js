@@ -3,7 +3,10 @@ import { Project, SyntaxKind } from "ts-morph";
 export async function applyAstEdits(ctx, edits) {
     if (!edits.length)
         return ctx;
-    const proj = new Project({ useInMemoryFileSystem: true, skipAddingFilesFromTsConfig: true });
+    const proj = new Project({
+        useInMemoryFileSystem: true,
+        skipAddingFilesFromTsConfig: true,
+    });
     const file = proj.createSourceFile("f.tsx", ctx.text, { overwrite: true });
     for (const { edit, index } of edits) {
         let applied = false;
@@ -29,7 +32,10 @@ export async function applyAstEdits(ctx, edits) {
                     ctx.applied.add(index);
                 }
                 else {
-                    ctx.skipped.push({ index, reason: touched ? "already_applied" : "ast_no_match" });
+                    ctx.skipped.push({
+                        index,
+                        reason: touched ? "already_applied" : "ast_no_match",
+                    });
                 }
                 break;
             }
@@ -56,7 +62,10 @@ export async function applyAstEdits(ctx, edits) {
                     ctx.applied.add(index);
                 }
                 else {
-                    ctx.skipped.push({ index, reason: touched ? "already_applied" : "ast_no_chain_match" });
+                    ctx.skipped.push({
+                        index,
+                        reason: touched ? "already_applied" : "ast_no_chain_match",
+                    });
                 }
                 break;
             }
@@ -78,7 +87,10 @@ export async function applyAstEdits(ctx, edits) {
                     ctx.applied.add(index);
                 }
                 else {
-                    ctx.skipped.push({ index, reason: touched ? "already_applied" : "ast_no_property_match" });
+                    ctx.skipped.push({
+                        index,
+                        reason: touched ? "already_applied" : "ast_no_property_match",
+                    });
                 }
                 break;
             }

@@ -4,7 +4,6 @@
 //   protoc               v3.19.1
 // source: file.proto
 
-
 import { Empty, StringRequest } from "./common";
 
 export const protobufPackage = "valoride";

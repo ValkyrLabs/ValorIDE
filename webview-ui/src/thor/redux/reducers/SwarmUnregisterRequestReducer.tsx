@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SwarmUnregisterRequest } from '@thor/model/SwarmUnregisterRequest';
+import { SwarmUnregisterRequest } from "@thor/model/SwarmUnregisterRequest";
 
 const SwarmUnregisterRequestSlice = createSlice({
   name: "SwarmUnregisterRequests",
@@ -12,20 +12,25 @@ const SwarmUnregisterRequestSlice = createSlice({
     },
 
     SwarmUnregisterRequestValueToggled(state, action) {
-      console.log("SwarmUnregisterRequest TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SwarmUnregisterRequest:SwarmUnregisterRequest = state.find((SwarmUnregisterRequest) => SwarmUnregisterRequest.id === action.payload.SwarmUnregisterRequestId);
+      console.log("SwarmUnregisterRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SwarmUnregisterRequest: SwarmUnregisterRequest = state.find(
+        (SwarmUnregisterRequest) =>
+          SwarmUnregisterRequest.id === action.payload.SwarmUnregisterRequestId,
+      );
       if (SwarmUnregisterRequest) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SwarmUnregisterRequestpropertySet(state, action) {
-      const SwarmUnregisterRequest = state.find((SwarmUnregisterRequest) => SwarmUnregisterRequest.id === action.payload.SwarmUnregisterRequestId);
+      const SwarmUnregisterRequest = state.find(
+        (SwarmUnregisterRequest) =>
+          SwarmUnregisterRequest.id === action.payload.SwarmUnregisterRequestId,
+      );
       if (SwarmUnregisterRequest) {
-      //  SwarmUnregisterRequest[action.property] = action.payload[action.property];
+        //  SwarmUnregisterRequest[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const SwarmUnregisterRequestSlice = createSlice({
 export const {
   SwarmUnregisterRequestAdded,
   SwarmUnregisterRequestValueToggled,
-  SwarmUnregisterRequestpropertySet
+  SwarmUnregisterRequestpropertySet,
 } = SwarmUnregisterRequestSlice.actions;
 export default SwarmUnregisterRequestSlice.reducer;

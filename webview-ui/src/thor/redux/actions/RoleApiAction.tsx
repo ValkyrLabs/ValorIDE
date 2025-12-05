@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // Role
 
-export const FETCH_ROLE_REQUEST = 'FETCH_ROLE_REQUEST';
-export const FETCH_ROLE_SUCCESS = 'FETCH_ROLE_SUCCESS';
-export const FETCH_ROLE_FAILURE = 'FETCH_ROLE_FAILURE';
+export const FETCH_ROLE_REQUEST = "FETCH_ROLE_REQUEST";
+export const FETCH_ROLE_SUCCESS = "FETCH_ROLE_SUCCESS";
+export const FETCH_ROLE_FAILURE = "FETCH_ROLE_FAILURE";
 
-export const ADD_ROLE_REQUEST = 'ADD_ROLE_REQUEST';
-export const ADD_ROLE_SUCCESS = 'ADD_ROLE_SUCCESS';
-export const ADD_ROLE_FAILURE = 'ADD_ROLE_FAILURE';
+export const ADD_ROLE_REQUEST = "ADD_ROLE_REQUEST";
+export const ADD_ROLE_SUCCESS = "ADD_ROLE_SUCCESS";
+export const ADD_ROLE_FAILURE = "ADD_ROLE_FAILURE";
 
-export const UPDATE_ROLE_REQUEST = 'UPDATE_ROLE_REQUEST';
-export const UPDATE_ROLE_SUCCESS = 'UPDATE_ROLE_SUCCESS';
-export const UPDATE_ROLE_FAILURE = 'UPDATE_ROLE_FAILURE';
+export const UPDATE_ROLE_REQUEST = "UPDATE_ROLE_REQUEST";
+export const UPDATE_ROLE_SUCCESS = "UPDATE_ROLE_SUCCESS";
+export const UPDATE_ROLE_FAILURE = "UPDATE_ROLE_FAILURE";
 
-export const DELETE_ROLE_REQUEST = 'DELETE_ROLE_REQUEST';
-export const DELETE_ROLE_SUCCESS = 'DELETE_ROLE_SUCCESS';
-export const DELETE_ROLE_FAILURE = 'DELETE_ROLE_FAILURE';
+export const DELETE_ROLE_REQUEST = "DELETE_ROLE_REQUEST";
+export const DELETE_ROLE_SUCCESS = "DELETE_ROLE_SUCCESS";
+export const DELETE_ROLE_FAILURE = "DELETE_ROLE_FAILURE";
 
-export const LIST_ROLE_REQUEST = 'LIST_ROLE_REQUEST';
-export const LIST_ROLE_SUCCESS = 'LIST_ROLE_SUCCESS';
-export const LIST_ROLE_FAILURE = 'LIST_ROLE_FAILURE';
+export const LIST_ROLE_REQUEST = "LIST_ROLE_REQUEST";
+export const LIST_ROLE_SUCCESS = "LIST_ROLE_SUCCESS";
+export const LIST_ROLE_FAILURE = "LIST_ROLE_FAILURE";
 
 export const addRoleRequest = () => ({
-    type: ADD_ROLE_REQUEST,
+  type: ADD_ROLE_REQUEST,
 });
 
 export const addRoleSuccess = (Roles: any) => ({
-    type: ADD_ROLE_SUCCESS,
-    payload: Roles,
+  type: ADD_ROLE_SUCCESS,
+  payload: Roles,
 });
 
 export const addRoleFailure = (error: Error) => ({
-    type: ADD_ROLE_FAILURE,
-    payload: error,
+  type: ADD_ROLE_FAILURE,
+  payload: error,
 });
 
-
 export const fetchRoleRequest = () => ({
-    type: FETCH_ROLE_REQUEST,
+  type: FETCH_ROLE_REQUEST,
 });
 
 export const fetchRoleSuccess = (Roles: any) => ({
-    type: FETCH_ROLE_SUCCESS,
-    payload: Roles,
+  type: FETCH_ROLE_SUCCESS,
+  payload: Roles,
 });
 
 export const fetchRoleFailure = (error: Error) => ({
-    type: FETCH_ROLE_FAILURE,
-    payload: error,
+  type: FETCH_ROLE_FAILURE,
+  payload: error,
 });
 
 export const listRoleRequest = () => ({
-    type: LIST_ROLE_REQUEST,
+  type: LIST_ROLE_REQUEST,
 });
 
 export const listRoleSuccess = (Roles: any) => ({
-    type: LIST_ROLE_SUCCESS,
-    payload: Roles,
+  type: LIST_ROLE_SUCCESS,
+  payload: Roles,
 });
 
 export const listRoleFailure = (error: Error) => ({
-    type: LIST_ROLE_FAILURE,
-    payload: error,
+  type: LIST_ROLE_FAILURE,
+  payload: error,
 });
 
 export const updateRoleRequest = (Role: any) => ({
-    type: UPDATE_ROLE_REQUEST,
-    payload: Role,
+  type: UPDATE_ROLE_REQUEST,
+  payload: Role,
 });
 
 export const updateRoleSuccess = (Role: any) => ({
-    type: UPDATE_ROLE_SUCCESS,
-    payload: Role,
+  type: UPDATE_ROLE_SUCCESS,
+  payload: Role,
 });
 
 export const updateRoleFailure = (error: Error) => ({
-    type: UPDATE_ROLE_FAILURE,
-    payload: error,
+  type: UPDATE_ROLE_FAILURE,
+  payload: error,
 });
 
 export const deleteRoleRequest = (Role: any) => ({
-    type: DELETE_ROLE_REQUEST,
-    payload: Role,
+  type: DELETE_ROLE_REQUEST,
+  payload: Role,
 });
 
 export const deleteRoleSuccess = (Role: any) => ({
-    type: DELETE_ROLE_SUCCESS,
-    payload: Role,
+  type: DELETE_ROLE_SUCCESS,
+  payload: Role,
 });
 
 export const deleteRoleFailure = (error: Error) => ({
-    type: DELETE_ROLE_FAILURE,
-    payload: error,
+  type: DELETE_ROLE_FAILURE,
+  payload: error,
 });

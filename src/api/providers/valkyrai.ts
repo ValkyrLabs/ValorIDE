@@ -1,8 +1,13 @@
 import { Anthropic } from "@anthropic-ai/sdk";
 import { ApiHandler } from "..";
-import { ApiHandlerOptions, ModelInfo, openAiModelInfoSaneDefaults } from "@shared/api";
+import {
+  ApiHandlerOptions,
+  ModelInfo,
+  openAiModelInfoSaneDefaults,
+} from "@shared/api";
 import { ApiStream } from "../transform/stream";
 import { callValkyraiLlm } from "../../services/ValkyraiLlmService";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 
 function extractUserText(
   message: Anthropic.Messages.MessageParam | undefined,
@@ -47,11 +52,9 @@ export class ValkyraiHandler implements ApiHandler {
     _systemPrompt: string,
     messages: Anthropic.Messages.MessageParam[],
   ): ApiStream {
-    const host =
-      this.options.valkyraiHost ||
-      process.env.VITE_basePath ||
-      "https://api-0.valkyrlabs.com/v1";
-    const serviceId = this.options.valkyraiServiceId || this.options.apiModelId || "";
+    const host = this.options.valkyraiHost || getValkyraiBasePath();
+    const serviceId =
+      this.options.valkyraiServiceId || this.options.apiModelId || "";
     const jwt = this.options.valkyraiJwt;
 
     const lastUser = [...messages].reverse().find((m) => m.role === "user");
@@ -60,15 +63,20 @@ export class ValkyraiHandler implements ApiHandler {
     if (!host || !serviceId || !content) {
       throw new Error(
         "ValkyrAI: missing host, serviceId or content:" +
-        host +
-        "," +
-        serviceId +
-        "," +
-        content
+          host +
+          "," +
+          serviceId +
+          "," +
+          content,
       );
     }
 
-    const res = await callValkyraiLlm({ host, serviceId, jwt, prompt: content });
+    const res = await callValkyraiLlm({
+      host,
+      serviceId,
+      jwt,
+      prompt: content,
+    });
     yield { type: "text", text: res.content };
   }
 

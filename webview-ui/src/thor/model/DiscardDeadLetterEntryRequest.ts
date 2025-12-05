@@ -20,14 +20,15 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
@@ -36,112 +37,135 @@ import { exists, mapValues } from '../src/runtime';
  * @export
  * @interface DiscardDeadLetterEntryRequest
  */
-export type DiscardDeadLetterEntryRequest  = {
-    /**
-     * Operator notes explaining why the entry was discarded
-     * @type {string}
-     * @memberof DiscardDeadLetterEntryRequest
-     */
-    notes: string;
-    /**
-     * Categorized reason for discarding the entry
-     * @type {string}
-     * @memberof DiscardDeadLetterEntryRequest
-     */
-    reason?: DiscardDeadLetterEntryRequestReasonEnum;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof DiscardDeadLetterEntryRequest
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof DiscardDeadLetterEntryRequest
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof DiscardDeadLetterEntryRequest
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof DiscardDeadLetterEntryRequest
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof DiscardDeadLetterEntryRequest
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof DiscardDeadLetterEntryRequest
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof DiscardDeadLetterEntryRequest
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof DiscardDeadLetterEntryRequest
-     */
-    lastModifiedDate?: Date;
+export type DiscardDeadLetterEntryRequest = DataObject & {
+  /**
+   * Operator notes explaining why the entry was discarded
+   * @type {string}
+   * @memberof DiscardDeadLetterEntryRequest
+   */
+  notes: string;
+  /**
+   * Categorized reason for discarding the entry
+   * @type {string}
+   * @memberof DiscardDeadLetterEntryRequest
+   */
+  reason?: DiscardDeadLetterEntryRequestReasonEnum;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof DiscardDeadLetterEntryRequest
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof DiscardDeadLetterEntryRequest
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof DiscardDeadLetterEntryRequest
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof DiscardDeadLetterEntryRequest
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof DiscardDeadLetterEntryRequest
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof DiscardDeadLetterEntryRequest
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof DiscardDeadLetterEntryRequest
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof DiscardDeadLetterEntryRequest
+   */
+  lastModifiedDate?: Date;
+};
+
+export function DiscardDeadLetterEntryRequestFromJSON(
+  json: any,
+): DiscardDeadLetterEntryRequest {
+  return {
+    ...DataObjectFromJSON(json),
+    notes: json["notes"],
+    reason: !exists(json, "reason") ? undefined : json["reason"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
-export function DiscardDeadLetterEntryRequestFromJSON(json: any): DiscardDeadLetterEntryRequest {
-    return {
-        'notes': json['notes'],
-        'reason': !exists(json, 'reason') ? undefined : json['reason'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
-}
-
-export function DiscardDeadLetterEntryRequestToJSON(value?: DiscardDeadLetterEntryRequest): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'notes': value.notes,
-        'reason': value.reason,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+export function DiscardDeadLetterEntryRequestToJSON(
+  value?: DiscardDeadLetterEntryRequest,
+): any {
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    notes: value.notes,
+    reason: value.reason,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum DiscardDeadLetterEntryRequestReasonEnum {
-    DUPLICATE = 'duplicate',
-    INVALIDDATA = 'invalid_data',
-    NOLONGERRELEVANT = 'no_longer_relevant',
-    FIXEDMANUALLY = 'fixed_manually',
-    OTHER = 'other'
+  DUPLICATE = "duplicate",
+  INVALIDDATA = "invalid_data",
+  NOLONGERRELEVANT = "no_longer_relevant",
+  FIXEDMANUALLY = "fixed_manually",
+  OTHER = "other",
 }
-
-

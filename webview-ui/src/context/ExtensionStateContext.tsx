@@ -37,6 +37,7 @@ import {
   storeJwtToken,
   writeStoredPrincipal,
 } from "@/utils/accessControl";
+import { DEFAULT_VALKYRAI_HOST, setValkyraiHost } from "@/utils/valkyraiHost";
 
 interface ExtensionStateContextType extends ExtensionState {
   didHydrateState: boolean;
@@ -86,10 +87,8 @@ const normalizePrincipal = (value: unknown): Principal | undefined => {
   const candidate = value as Record<string, any>;
   return {
     ...candidate,
-    username:
-      typeof candidate.username === "string" ? candidate.username : "",
-    password:
-      typeof candidate.password === "string" ? candidate.password : "",
+    username: typeof candidate.username === "string" ? candidate.username : "",
+    password: typeof candidate.password === "string" ? candidate.password : "",
     email: typeof candidate.email === "string" ? candidate.email : "",
     roleList: Array.isArray(candidate.roleList) ? candidate.roleList : [],
   } as Principal;
@@ -211,6 +210,15 @@ export const ExtensionStateContextProvider: React.FC<{
           // Ignore storage errors in webview sandbox
         }
 
+        // Update global ValkyrAI host before React consumers run effects
+        try {
+          const nextHost =
+            incoming.apiConfiguration?.valkyraiHost || DEFAULT_VALKYRAI_HOST;
+          setValkyraiHost(nextHost);
+        } catch (error) {
+          console.warn("Failed to update ValkyrAI host", error);
+        }
+
         // 2) Update the main extension state via a PURE updater (no side-effects here)
         setState((prevState) => {
           // Prevent unnecessary updates if state is the same
@@ -233,28 +241,28 @@ export const ExtensionStateContextProvider: React.FC<{
         const config = incoming.apiConfiguration;
         const hasKey = config
           ? [
-            config.apiKey,
-            config.openRouterApiKey,
-            config.awsRegion,
-            config.vertexProjectId,
-            config.openAiApiKey,
-            config.ollamaModelId,
-            config.lmStudioModelId,
-            config.liteLlmApiKey,
-            config.geminiApiKey,
-            config.openAiNativeApiKey,
-            config.deepSeekApiKey,
-            config.requestyApiKey,
-            config.togetherApiKey,
-            config.qwenApiKey,
-            config.doubaoApiKey,
-            config.mistralApiKey,
-            config.vsCodeLmModelSelector,
-            config.valorideApiKey,
-            config.asksageApiKey,
-            config.xaiApiKey,
-            config.sambanovaApiKey,
-          ].some((key) => key !== undefined)
+              config.apiKey,
+              config.openRouterApiKey,
+              config.awsRegion,
+              config.vertexProjectId,
+              config.openAiApiKey,
+              config.ollamaModelId,
+              config.lmStudioModelId,
+              config.liteLlmApiKey,
+              config.geminiApiKey,
+              config.openAiNativeApiKey,
+              config.deepSeekApiKey,
+              config.requestyApiKey,
+              config.togetherApiKey,
+              config.qwenApiKey,
+              config.doubaoApiKey,
+              config.mistralApiKey,
+              config.vsCodeLmModelSelector,
+              config.valorideApiKey,
+              config.asksageApiKey,
+              config.xaiApiKey,
+              config.sambanovaApiKey,
+            ].some((key) => key !== undefined)
           : false;
         setShowWelcome(!hasKey);
         setDidHydrateState(true);
@@ -446,8 +454,7 @@ export const ExtensionStateContextProvider: React.FC<{
   }, []);
 
   // Determine authentication status - prioritize backend state, fallback to local state
-  const isAuthenticated =
-    state.isLoggedIn ?? !!(jwtToken || authenticatedUser);
+  const isAuthenticated = state.isLoggedIn ?? !!(jwtToken || authenticatedUser);
   const normalizedAuthenticatedUser = normalizePrincipal(authenticatedUser);
   const normalizedStateUser = normalizePrincipal(state.userInfo);
   const currentUser = normalizedAuthenticatedUser ?? normalizedStateUser;

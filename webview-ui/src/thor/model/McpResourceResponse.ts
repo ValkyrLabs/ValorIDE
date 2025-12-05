@@ -20,140 +20,164 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 
 // thorapi
 
 /**
- * 
+ *
  * @export
  * @interface McpResourceResponse
  */
-export type McpResourceResponse  = {
-    /**
-     * 
-     * @type {string}
-     * @memberof McpResourceResponse
-     */
-    uri: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpResourceResponse
-     */
-    mcpResourceResponseId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpResourceResponse
-     */
-    mimeType?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpResourceResponse
-     */
-    text?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof McpResourceResponse
-     */
-    binaryContent?: string;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof McpResourceResponse
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof McpResourceResponse
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof McpResourceResponse
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof McpResourceResponse
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof McpResourceResponse
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof McpResourceResponse
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof McpResourceResponse
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof McpResourceResponse
-     */
-    lastModifiedDate?: Date;
-}
+export type McpResourceResponse = DataObject & {
+  /**
+   *
+   * @type {string}
+   * @memberof McpResourceResponse
+   */
+  uri: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpResourceResponse
+   */
+  mcpResourceResponseId?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpResourceResponse
+   */
+  mimeType?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpResourceResponse
+   */
+  text?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof McpResourceResponse
+   */
+  binaryContent?: string;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof McpResourceResponse
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof McpResourceResponse
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof McpResourceResponse
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof McpResourceResponse
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof McpResourceResponse
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof McpResourceResponse
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof McpResourceResponse
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof McpResourceResponse
+   */
+  lastModifiedDate?: Date;
+};
 
 export function McpResourceResponseFromJSON(json: any): McpResourceResponse {
-    return {
-        'uri': json['uri'],
-        'mcpResourceResponseId': !exists(json, 'mcpResourceResponseId') ? undefined : json['mcpResourceResponseId'],
-        'mimeType': !exists(json, 'mimeType') ? undefined : json['mimeType'],
-        'text': !exists(json, 'text') ? undefined : json['text'],
-        'binaryContent': !exists(json, 'binaryContent') ? undefined : json['binaryContent'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    uri: json["uri"],
+    mcpResourceResponseId: !exists(json, "mcpResourceResponseId")
+      ? undefined
+      : json["mcpResourceResponseId"],
+    mimeType: !exists(json, "mimeType") ? undefined : json["mimeType"],
+    text: !exists(json, "text") ? undefined : json["text"],
+    binaryContent: !exists(json, "binaryContent")
+      ? undefined
+      : json["binaryContent"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function McpResourceResponseToJSON(value?: McpResourceResponse): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'uri': value.uri,
-        'mcpResourceResponseId': value.mcpResourceResponseId,
-        'mimeType': value.mimeType,
-        'text': value.text,
-        'binaryContent': value.binaryContent,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    uri: value.uri,
+    mcpResourceResponseId: value.mcpResourceResponseId,
+    mimeType: value.mimeType,
+    text: value.text,
+    binaryContent: value.binaryContent,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
-
-

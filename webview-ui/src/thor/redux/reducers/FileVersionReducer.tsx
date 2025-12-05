@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { FileVersion } from '@thor/model/FileVersion';
+import { FileVersion } from "@thor/model/FileVersion";
 
 const FileVersionSlice = createSlice({
   name: "FileVersions",
@@ -12,20 +12,23 @@ const FileVersionSlice = createSlice({
     },
 
     FileVersionValueToggled(state, action) {
-      console.log("FileVersion TOGGLE")
-      console.warn(JSON.stringify(action))
-      const FileVersion:FileVersion = state.find((FileVersion) => FileVersion.id === action.payload.FileVersionId);
+      console.log("FileVersion TOGGLE");
+      console.warn(JSON.stringify(action));
+      const FileVersion: FileVersion = state.find(
+        (FileVersion) => FileVersion.id === action.payload.FileVersionId,
+      );
       if (FileVersion) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     FileVersionpropertySet(state, action) {
-      const FileVersion = state.find((FileVersion) => FileVersion.id === action.payload.FileVersionId);
+      const FileVersion = state.find(
+        (FileVersion) => FileVersion.id === action.payload.FileVersionId,
+      );
       if (FileVersion) {
-      //  FileVersion[action.property] = action.payload[action.property];
+        //  FileVersion[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +37,6 @@ const FileVersionSlice = createSlice({
 export const {
   FileVersionAdded,
   FileVersionValueToggled,
-  FileVersionpropertySet
+  FileVersionpropertySet,
 } = FileVersionSlice.actions;
 export default FileVersionSlice.reducer;

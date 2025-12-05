@@ -48,7 +48,7 @@ const Login = (props) => {
                 <Col md={3}>
                   <Nav.Link>
                     <Link to="/sign-up">
-                      <CoolButton variant="dark">
+                      <CoolButton>
                         <FiUserPlus size={30} /> Free Signup Now
                       </CoolButton>
                     </Link>
@@ -56,7 +56,7 @@ const Login = (props) => {
                   <br />
                   <Nav.Link>
                     <Link to="/forgot-password">
-                      <CoolButton variant="dark">
+                      <CoolButton>
                         <FiUserCheck size={30} /> Reset Password
                       </CoolButton>
                     </Link>

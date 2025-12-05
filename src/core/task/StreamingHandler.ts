@@ -1,7 +1,11 @@
 import { Anthropic } from "@anthropic-ai/sdk";
 import cloneDeep from "clone-deep";
 import pWaitFor from "p-wait-for";
-import { AssistantMessageContent, parseAssistantMessage, ToolParamName } from "@core/assistant-message";
+import {
+  AssistantMessageContent,
+  parseAssistantMessage,
+  ToolParamName,
+} from "@core/assistant-message";
 import { MessageHandler } from "./MessageHandler";
 
 /**
@@ -24,9 +28,7 @@ export class StreamingHandler {
   private didAlreadyUseTool = false;
   private didCompleteReadingStream = false;
 
-  constructor(
-    private messageHandler: MessageHandler,
-  ) {}
+  constructor(private messageHandler: MessageHandler) {}
 
   resetStreamingState(): void {
     this.currentStreamingContentIndex = 0;
@@ -40,7 +42,10 @@ export class StreamingHandler {
     this.presentAssistantMessageHasPendingUpdates = false;
   }
 
-  getUserMessageContent(): (Anthropic.TextBlockParam | Anthropic.ImageBlockParam)[] {
+  getUserMessageContent(): (
+    | Anthropic.TextBlockParam
+    | Anthropic.ImageBlockParam
+  )[] {
     return this.userMessageContent;
   }
 
@@ -84,7 +89,9 @@ export class StreamingHandler {
     return this.assistantMessageContent;
   }
 
-  addUserMessageContent(content: Anthropic.TextBlockParam | Anthropic.ImageBlockParam): void {
+  addUserMessageContent(
+    content: Anthropic.TextBlockParam | Anthropic.ImageBlockParam,
+  ): void {
     this.userMessageContent.push(content);
   }
 
@@ -95,7 +102,9 @@ export class StreamingHandler {
     });
   }
 
-  pushContentBlocks(content: (Anthropic.TextBlockParam | Anthropic.ImageBlockParam)[]): void {
+  pushContentBlocks(
+    content: (Anthropic.TextBlockParam | Anthropic.ImageBlockParam)[],
+  ): void {
     this.userMessageContent.push(...content);
   }
 
@@ -114,7 +123,7 @@ export class StreamingHandler {
 
   finishStreaming(): void {
     this.didCompleteReadingStream = true;
-    
+
     // set any blocks to be complete to allow presentAssistantMessage to finish and set userMessageContentReady to true
     const partialBlocks = this.assistantMessageContent.filter(
       (block) => block.partial,
@@ -143,8 +152,7 @@ export class StreamingHandler {
         // Check if tagContent is likely an incomplete tag name (letters and underscores only)
         const isLikelyTagName = /^[a-zA-Z_]+$/.test(tagContent);
         // Preemptively remove < or </ to keep from these artifacts showing up in chat (also handles closing thinking tags)
-        const isOpeningOrClosing =
-          possibleTag === "<" || possibleTag === "</";
+        const isOpeningOrClosing = possibleTag === "<" || possibleTag === "</";
         // If the tag is incomplete and at the end, remove it from the content
         if (isOpeningOrClosing || isLikelyTagName) {
           content = content.slice(0, lastOpenBracketIndex).trim();
@@ -158,12 +166,12 @@ export class StreamingHandler {
     if (this.didRejectTool || this.didAlreadyUseTool) {
       return;
     }
-    
+
     // Type guard to ensure we're working with a TextContent block
     if (block.type !== "text") {
       return;
     }
-    
+
     let content = block.content;
     if (content) {
       // Remove all instances of <thinking> (with optional line break after) and </thinking> (with optional line break before)
@@ -188,7 +196,8 @@ export class StreamingHandler {
 
   // If block is partial, remove partial closing tag so its not presented to user
   removeClosingTag(tag: ToolParamName, text?: string): string {
-    const block = this.assistantMessageContent[this.currentStreamingContentIndex];
+    const block =
+      this.assistantMessageContent[this.currentStreamingContentIndex];
     if (!block?.partial) {
       return text || "";
     }
@@ -217,7 +226,9 @@ export class StreamingHandler {
     this.presentAssistantMessageLocked = true;
     this.presentAssistantMessageHasPendingUpdates = false;
 
-    if (this.currentStreamingContentIndex >= this.assistantMessageContent.length) {
+    if (
+      this.currentStreamingContentIndex >= this.assistantMessageContent.length
+    ) {
       if (this.didCompleteReadingStream) {
         this.userMessageContentReady = true;
       }
@@ -243,13 +254,18 @@ export class StreamingHandler {
     this.presentAssistantMessageLocked = false;
 
     if (!block.partial || this.didRejectTool || this.didAlreadyUseTool) {
-      if (this.currentStreamingContentIndex === this.assistantMessageContent.length - 1) {
+      if (
+        this.currentStreamingContentIndex ===
+        this.assistantMessageContent.length - 1
+      ) {
         this.userMessageContentReady = true;
       }
 
       this.currentStreamingContentIndex++;
 
-      if (this.currentStreamingContentIndex < this.assistantMessageContent.length) {
+      if (
+        this.currentStreamingContentIndex < this.assistantMessageContent.length
+      ) {
         this.presentNextContent();
         return;
       }

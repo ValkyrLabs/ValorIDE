@@ -23,7 +23,8 @@ describe("OfflineBanner", () => {
 
     // Mock the useCommunicationService hook to return our mock instance
     (
-      require("@/context/CommunicationServiceContext").useCommunicationService as jest.Mock
+      require("@/context/CommunicationServiceContext")
+        .useCommunicationService as jest.Mock
     ).mockReturnValue(mockSvc);
 
     // Use fake timers for setTimeout
@@ -45,7 +46,9 @@ describe("OfflineBanner", () => {
     mockSvc.isNoop = true; // Simulate service being unavailable
     render(<OfflineBanner />);
     expect(screen.getByRole("status")).toBeInTheDocument();
-    expect(screen.getByText("Communication service unreachable. Features limited.")).toBeVisible();
+    expect(
+      screen.getByText("Communication service unreachable. Features limited."),
+    ).toBeVisible();
   });
 
   it("should hide after 5 seconds if communication service is noop", () => {

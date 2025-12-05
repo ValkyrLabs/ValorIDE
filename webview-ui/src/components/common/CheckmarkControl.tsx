@@ -286,9 +286,9 @@ const DottedLine = styled.div<{ small?: boolean; $isCheckedOut?: boolean }>`
   background-image: linear-gradient(
     to right,
     ${(props) =>
-    props.$isCheckedOut
-      ? "var(--vscode-textLink-foreground)"
-      : "var(--vscode-descriptionForeground)"}
+        props.$isCheckedOut
+          ? "var(--vscode-textLink-foreground)"
+          : "var(--vscode-descriptionForeground)"}
       50%,
     transparent 50%
   );
@@ -335,16 +335,16 @@ const CustomButton = styled.button<{
     bottom: 0;
     border-radius: 1px;
     background-image: ${(props) =>
-    props.isActive || props.disabled
-      ? "none"
-      : `linear-gradient(to right, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%),
+      props.isActive || props.disabled
+        ? "none"
+        : `linear-gradient(to right, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%),
 			linear-gradient(to bottom, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%),
 			linear-gradient(to right, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%),
 			linear-gradient(to bottom, ${props.$isCheckedOut ? "var(--vscode-textLink-foreground)" : "var(--vscode-descriptionForeground)"} 50%, transparent 50%)`};
     background-size: ${(props) =>
-    props.isActive || props.disabled
-      ? "auto"
-      : `4px 1px, 1px 4px, 4px 1px, 1px 4px`};
+      props.isActive || props.disabled
+        ? "auto"
+        : `4px 1px, 1px 4px, 4px 1px, 1px 4px`};
     background-repeat: repeat-x, repeat-y, repeat-x, repeat-y;
     background-position:
       0 0,
@@ -355,9 +355,9 @@ const CustomButton = styled.button<{
 
   &:hover:not(:disabled) {
     background: ${(props) =>
-    props.$isCheckedOut
-      ? "var(--vscode-textLink-foreground)"
-      : "var(--vscode-descriptionForeground)"};
+      props.$isCheckedOut
+        ? "var(--vscode-textLink-foreground)"
+        : "var(--vscode-descriptionForeground)"};
     color: var(--vscode-editor-background);
     &::before {
       display: none;

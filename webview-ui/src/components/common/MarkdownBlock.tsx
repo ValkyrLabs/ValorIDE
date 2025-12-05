@@ -218,10 +218,41 @@ const StyledPre = styled.pre<{ theme: any }>`
 const rehypeFlattenInvalidBlocks = () => {
   // List of block-level elements per HTML5 spec
   const BLOCK_TAGS = new Set([
-    "address", "article", "aside", "blockquote", "canvas", "dd", "div", "dl", "dt", "fieldset",
-    "figcaption", "figure", "footer", "form", "h1", "h2", "h3", "h4", "h5", "h6", "header",
-    "hr", "li", "main", "nav", "noscript", "ol", "output", "p", "pre", "section", "table",
-    "tfoot", "ul", "video"
+    "address",
+    "article",
+    "aside",
+    "blockquote",
+    "canvas",
+    "dd",
+    "div",
+    "dl",
+    "dt",
+    "fieldset",
+    "figcaption",
+    "figure",
+    "footer",
+    "form",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "header",
+    "hr",
+    "li",
+    "main",
+    "nav",
+    "noscript",
+    "ol",
+    "output",
+    "p",
+    "pre",
+    "section",
+    "table",
+    "tfoot",
+    "ul",
+    "video",
   ]);
   return (tree: any) => {
     visit(tree, (node: any, index: number, parent: any) => {
@@ -234,7 +265,8 @@ const rehypeFlattenInvalidBlocks = () => {
         !(
           (parent.tagName === "ul" && node.tagName === "li") ||
           (parent.tagName === "ol" && node.tagName === "li") ||
-          (parent.tagName === "dl" && (node.tagName === "dt" || node.tagName === "dd"))
+          (parent.tagName === "dl" &&
+            (node.tagName === "dt" || node.tagName === "dd"))
         )
       ) {
         // Move this node out to be a sibling of its parent

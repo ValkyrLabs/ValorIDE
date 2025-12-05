@@ -2,11 +2,11 @@
  * Role Definitions - System prompts and configuration for each agent role
  */
 
-import { AgentRole } from '../types';
+import { AgentRole } from "../types";
 
 export const ROLE_DEFINITIONS: Record<string, AgentRole> = {
   planner: {
-    name: 'planner',
+    name: "planner",
     systemPrompt: `You are the Planning Agent. Your role is to:
 1. Analyze the task requirements
 2. Break down into subtasks (max 10)
@@ -22,7 +22,7 @@ Be concise. Output only valid JSON.`,
   },
 
   coder: {
-    name: 'coder',
+    name: "coder",
     systemPrompt: `You are the Coding Agent. Your role is to:
 1. Receive plan from PLANNER
 2. Execute subtasks sequentially
@@ -43,7 +43,7 @@ Be efficient. Output only valid JSON.`,
   },
 
   tester: {
-    name: 'tester',
+    name: "tester",
     systemPrompt: `You are the Testing Agent. Your role is to:
 1. Receive implementation from CODER
 2. Create and run test cases
@@ -59,7 +59,7 @@ Focus on edge cases and error paths. Output only valid JSON.`,
   },
 
   docs: {
-    name: 'docs',
+    name: "docs",
     systemPrompt: `You are the Documentation Agent. Your role is to:
 1. Receive test report from TESTER
 2. Generate/update README, API docs, examples
@@ -75,7 +75,7 @@ Be clear and thorough. Output only valid JSON.`,
   },
 
   integrator: {
-    name: 'integrator',
+    name: "integrator",
     systemPrompt: `You are the Integration Agent. Your role is to:
 1. Receive docs from DOCS
 2. Verify all artifacts are ready
@@ -102,7 +102,7 @@ export function getRoleDefinition(roleName: string): AgentRole | null {
  * Get all role names in execution order
  */
 export function getRoleExecutionOrder(): string[] {
-  return ['planner', 'coder', 'tester', 'docs', 'integrator'];
+  return ["planner", "coder", "tester", "docs", "integrator"];
 }
 
 /**

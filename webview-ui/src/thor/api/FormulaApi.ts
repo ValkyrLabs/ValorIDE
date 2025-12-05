@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,294 +19,345 @@ Template file: typescript-redux-query/apis.mustache
 Description: FormulaApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    Formula,
-    FormulaFromJSON,
-    FormulaToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { Formula, FormulaFromJSON, FormulaToJSON } from "../model";
 
 export interface DeleteFormulaApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetFormulaApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetFormulaListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PostFormulaApiRequest {
-    formula: Formula;
+  formula: Formula;
 }
 
 export interface UpdateFormulaApiRequest {
-    id: string;
-    formula: Formula;
+  id: string;
+  formula: Formula;
 }
-
 
 /**
  * Deletes a specific Formula.
  * Delete a Formula.
  */
-function deleteFormulaRaw<T>(requestParameters: DeleteFormulaApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteFormula.');
-    }
+function deleteFormulaRaw<T>(
+  requestParameters: DeleteFormulaApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteFormula.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Formula/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Formula/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific Formula.
-* Delete a Formula.
-*/
-export function deleteFormula<T>(requestParameters: DeleteFormulaApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteFormulaRaw(requestParameters, requestConfig);
+ * Deletes a specific Formula.
+ * Delete a Formula.
+ */
+export function deleteFormula<T>(
+  requestParameters: DeleteFormulaApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteFormulaRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single Formula for a specific uid.
  * Retrieve a single Formula
  */
-function getFormulaRaw<T>(requestParameters: GetFormulaApiRequest, requestConfig: runtime.TypedQueryConfig<T, Formula> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getFormula.');
-    }
+function getFormulaRaw<T>(
+  requestParameters: GetFormulaApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Formula> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getFormula.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Formula/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(FormulaFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Formula/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FormulaFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single Formula for a specific uid.
-* Retrieve a single Formula
-*/
-export function getFormula<T>(requestParameters: GetFormulaApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Formula>): QueryConfig<T> {
-    return getFormulaRaw(requestParameters, requestConfig);
+ * Retrieves a single Formula for a specific uid.
+ * Retrieve a single Formula
+ */
+export function getFormula<T>(
+  requestParameters: GetFormulaApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Formula>,
+): QueryConfig<T> {
+  return getFormulaRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of Formulas.
  * Retrieve a list of Formulas
  */
-function getFormulaListRaw<T>(requestParameters: GetFormulaListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<Formula>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getFormulaListRaw<T>(
+  requestParameters: GetFormulaListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<Formula>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Formula`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(FormulaFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Formula`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(FormulaFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of Formulas.
-* Retrieve a list of Formulas
-*/
-export function getFormulaList<T>(requestParameters: GetFormulaListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<Formula>>): QueryConfig<T> {
-    return getFormulaListRaw(requestParameters, requestConfig);
+ * Retrieves a list of Formulas.
+ * Retrieve a list of Formulas
+ */
+export function getFormulaList<T>(
+  requestParameters: GetFormulaListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<Formula>>,
+): QueryConfig<T> {
+  return getFormulaListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new Formula.
  * Create a new Formula
  */
-function postFormulaRaw<T>(requestParameters: PostFormulaApiRequest, requestConfig: runtime.TypedQueryConfig<T, Formula> = {}): QueryConfig<T> {
-    if (requestParameters.formula === null || requestParameters.formula === undefined) {
-        throw new runtime.RequiredError('formula','Required parameter requestParameters.formula was null or undefined when calling postFormula.');
-    }
+function postFormulaRaw<T>(
+  requestParameters: PostFormulaApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Formula> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.formula === null ||
+    requestParameters.formula === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "formula",
+      "Required parameter requestParameters.formula was null or undefined when calling postFormula.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Formula`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || FormulaToJSON(requestParameters.formula),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(FormulaFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Formula`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || FormulaToJSON(requestParameters.formula),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FormulaFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new Formula.
-* Create a new Formula
-*/
-export function postFormula<T>(requestParameters: PostFormulaApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Formula>): QueryConfig<T> {
-    return postFormulaRaw(requestParameters, requestConfig);
+ * Creates a new Formula.
+ * Create a new Formula
+ */
+export function postFormula<T>(
+  requestParameters: PostFormulaApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Formula>,
+): QueryConfig<T> {
+  return postFormulaRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing Formula.
  * Update an existing Formula
  */
-function updateFormulaRaw<T>(requestParameters: UpdateFormulaApiRequest, requestConfig: runtime.TypedQueryConfig<T, Formula> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateFormula.');
-    }
+function updateFormulaRaw<T>(
+  requestParameters: UpdateFormulaApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Formula> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateFormula.",
+    );
+  }
 
-    if (requestParameters.formula === null || requestParameters.formula === undefined) {
-        throw new runtime.RequiredError('formula','Required parameter requestParameters.formula was null or undefined when calling updateFormula.');
-    }
+  if (
+    requestParameters.formula === null ||
+    requestParameters.formula === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "formula",
+      "Required parameter requestParameters.formula was null or undefined when calling updateFormula.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/Formula/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || FormulaToJSON(requestParameters.formula),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(FormulaFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/Formula/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || FormulaToJSON(requestParameters.formula),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(FormulaFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing Formula.
-* Update an existing Formula
-*/
-export function updateFormula<T>(requestParameters: UpdateFormulaApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Formula>): QueryConfig<T> {
-    return updateFormulaRaw(requestParameters, requestConfig);
+ * Updates an existing Formula.
+ * Update an existing Formula
+ */
+export function updateFormula<T>(
+  requestParameters: UpdateFormulaApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Formula>,
+): QueryConfig<T> {
+  return updateFormulaRaw(requestParameters, requestConfig);
 }
-

@@ -16,7 +16,12 @@ export class ToolExecutionManager {
     private terminalManager: TerminalManager,
     private cwd: string,
     private ask: (type: string, text?: string) => Promise<any>,
-    private say: (type: string, text?: string, images?: string[], partial?: boolean) => Promise<void>,
+    private say: (
+      type: string,
+      text?: string,
+      images?: string[],
+      partial?: boolean,
+    ) => Promise<void>,
   ) {}
 
   /**
@@ -24,7 +29,9 @@ export class ToolExecutionManager {
    * This is used in test mode to capture the full output without using the VS Code terminal
    * Commands are automatically terminated after 30 seconds using Promise.race
    */
-  private async executeCommandInNode(command: string): Promise<[boolean, ToolResponse]> {
+  private async executeCommandInNode(
+    command: string,
+  ): Promise<[boolean, ToolResponse]> {
     try {
       // Create a child process
       const childProcess = execa(command, {
@@ -83,9 +90,14 @@ export class ToolExecutionManager {
       }
 
       // Filter the output to reduce verbosity
-      const filteredOutput = OutputFilterService.filterCommandOutput(output, command);
-      
-      Logger.info(`Command executed in Node: ${command}\nOutput:\n${filteredOutput}`);
+      const filteredOutput = OutputFilterService.filterCommandOutput(
+        output,
+        command,
+      );
+
+      Logger.info(
+        `Command executed in Node: ${command}\nOutput:\n${filteredOutput}`,
+      );
 
       // Format the result similar to terminal output
       return [
@@ -96,7 +108,8 @@ export class ToolExecutionManager {
       ];
     } catch (error) {
       // Handle any errors that might occur
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       return [false, `Error executing command: ${errorMessage}`];
     }
   }
@@ -112,7 +125,9 @@ export class ToolExecutionManager {
     }
     Logger.info("Executing command in VS code terminal: " + command);
 
-    const terminalInfo = await this.terminalManager.getOrCreateTerminal(this.cwd);
+    const terminalInfo = await this.terminalManager.getOrCreateTerminal(
+      this.cwd,
+    );
     terminalInfo.terminal.show(); // weird visual bug when creating new terminals (even manually) where there's an empty space at the top.
     const process = this.terminalManager.runCommand(terminalInfo, command);
 
@@ -142,7 +157,10 @@ export class ToolExecutionManager {
       outputBufferSize = 0;
       chunkEnroute = true;
       try {
-        const { response, text, images } = await this.ask("command_output", chunk);
+        const { response, text, images } = await this.ask(
+          "command_output",
+          chunk,
+        );
         if (response === "yesButtonClicked") {
           // proceed while running
         } else {
@@ -170,7 +188,7 @@ export class ToolExecutionManager {
 
     let result = "";
     let fullOutput = ""; // Keep track of full output for filtering
-    
+
     process.on("line", (line) => {
       result += line + "\n";
       fullOutput += line + "\n";
@@ -219,8 +237,11 @@ export class ToolExecutionManager {
     await setTimeoutPromise(50);
 
     // Filter the full output before using it
-    const filteredOutput = OutputFilterService.filterCommandOutput(fullOutput, command);
-    
+    const filteredOutput = OutputFilterService.filterCommandOutput(
+      fullOutput,
+      command,
+    );
+
     result = result.trim();
 
     if (userFeedback) {
@@ -229,7 +250,9 @@ export class ToolExecutionManager {
         true,
         formatResponse.toolResult(
           `Command is still running in the user's terminal.${
-            filteredOutput.length > 0 ? `\nHere's the output so far:\n${filteredOutput}` : ""
+            filteredOutput.length > 0
+              ? `\nHere's the output so far:\n${filteredOutput}`
+              : ""
           }\n\nThe user provided the following feedback:\n<feedback>\n${userFeedback.text}\n</feedback>`,
           userFeedback.images,
         ),
@@ -245,7 +268,9 @@ export class ToolExecutionManager {
       return [
         false,
         `Command is still running in the user's terminal.${
-          filteredOutput.length > 0 ? `\nHere's the output so far:\n${filteredOutput}` : ""
+          filteredOutput.length > 0
+            ? `\nHere's the output so far:\n${filteredOutput}`
+            : ""
         }\n\nYou will be updated on the terminal status and new output in the future.`,
       ];
     }

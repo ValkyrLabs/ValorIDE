@@ -16,11 +16,11 @@ export class ContentDataTool {
 
   constructor(
     postMessageToWebview: (message: ExtensionMessage) => Promise<void>,
-    getValorIDEApiKey: () => Promise<string | undefined>
+    getValorIDEApiKey: () => Promise<string | undefined>,
   ) {
     this.accountService = new ValorIDEAccountService(
       postMessageToWebview,
-      getValorIDEApiKey
+      getValorIDEApiKey,
     );
   }
 
@@ -35,23 +35,24 @@ export class ContentDataTool {
   }> {
     try {
       const contentData = await this.accountService.fetchContentData();
-      
+
       if (contentData) {
         return {
           success: true,
-          data: contentData
+          data: contentData,
         };
       } else {
         return {
           success: false,
-          error: "No data received from ContentData endpoint"
+          error: "No data received from ContentData endpoint",
         };
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       return {
         success: false,
-        error: `Failed to fetch ContentData: ${errorMessage}`
+        error: `Failed to fetch ContentData: ${errorMessage}`,
       };
     }
   }
@@ -62,12 +63,13 @@ export class ContentDataTool {
   static getToolDefinition() {
     return {
       name: "fetch_content_data",
-      description: "Fetch data from the ContentData endpoint using JWT authentication",
+      description:
+        "Fetch data from the ContentData endpoint using JWT authentication",
       inputSchema: {
         type: "object",
         properties: {},
-        required: []
-      }
+        required: [],
+      },
     };
   }
 }
@@ -78,7 +80,7 @@ export class ContentDataTool {
  */
 export function createContentDataTool(
   postMessageToWebview: (message: ExtensionMessage) => Promise<void>,
-  getValorIDEApiKey: () => Promise<string | undefined>
+  getValorIDEApiKey: () => Promise<string | undefined>,
 ): ContentDataTool {
   return new ContentDataTool(postMessageToWebview, getValorIDEApiKey);
 }
@@ -89,20 +91,20 @@ export function createContentDataTool(
 export async function exampleUsage(): Promise<void> {
   // This would typically be called from the extension's main code
   console.log("Example: Using ContentData Tool");
-  
+
   // Mock functions for demonstration
   const mockPostMessage = async (message: ExtensionMessage): Promise<void> => {
     console.log("Mock: Posting message to webview:", message.type);
   };
-  
+
   const mockGetApiKey = async (): Promise<string | undefined> => {
     console.log("Mock: Getting API key from secure storage");
     return undefined; // In real usage, this would return the actual JWT token
   };
-  
+
   // Create and use the tool
   const tool = createContentDataTool(mockPostMessage, mockGetApiKey);
   const result = await tool.fetchContentData();
-  
+
   console.log("Tool result:", result);
 }

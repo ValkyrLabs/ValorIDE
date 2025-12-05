@@ -14,7 +14,16 @@ import { formatSize } from "@/utils/format";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import { useEvent } from "react-use";
 import DangerButton from "@/components/common/DangerButton";
-import { FaSearch, FaTimes, FaTrash, FaArrowUp, FaArrowDown, FaDatabase, FaArrowRight, FaRobot } from "react-icons/fa";
+import {
+  FaSearch,
+  FaTimes,
+  FaTrash,
+  FaArrowUp,
+  FaArrowDown,
+  FaDatabase,
+  FaArrowRight,
+  FaRobot,
+} from "react-icons/fa";
 import StatusBadge from "@/components/common/StatusBadge";
 import OfflineBanner from "@/components/common/OfflineBanner";
 import SystemAlerts from "@/components/SystemAlerts";
@@ -65,10 +74,13 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
     }
   }, [searchQuery, sortOption, lastNonRelevantSort]);
 
-  const handleHistorySelect = useCallback((id: string) => {
-    vscode.postMessage({ type: "showTaskWithId", text: id });
-    onDone();
-  }, [onDone]);
+  const handleHistorySelect = useCallback(
+    (id: string) => {
+      vscode.postMessage({ type: "showTaskWithId", text: id });
+      onDone();
+    },
+    [onDone],
+  );
 
   const handleDeleteHistoryItem = useCallback((id: string) => {
     vscode.postMessage({ type: "deleteTaskWithId", text: id });
@@ -178,11 +190,16 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
             History
           </h3>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <StatusBadge label="P2P" value={value} kind={kind as any} title={hasError ? String(communicationService.error) : undefined} />
+            <StatusBadge
+              label="P2P"
+              value={value}
+              kind={kind as any}
+              title={hasError ? String(communicationService.error) : undefined}
+            />
             <VSCodeButton onClick={onDone}>Done</VSCodeButton>
           </div>
         </div>
-        <OfflineBanner style={{ marginTop: 0, marginLeft: 20, marginRight: 17 }} />
+
         <div style={{ padding: "5px 17px 6px 17px" }}>
           <div
             style={{

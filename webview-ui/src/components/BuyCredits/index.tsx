@@ -2,17 +2,14 @@ import React, { useState } from "react";
 import { Card, Form, InputGroup, Button, Alert } from "react-bootstrap";
 import { FaCreditCard, FaShoppingCart, FaDollarSign } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
-import { useAddLineItemMutation } from "@thor/redux/services/LineItemService";
-import { useAddSalesOrderMutation } from "@thor/redux/services/SalesOrderService";
-import { LineItem, LineItemTypeEnum } from "@thor/model/LineItem";
-import { SalesOrder, SalesOrderStatusEnum } from "@thor/model/SalesOrder";
-import {
-  Product,
-  ProductStatusEnum,
-  ProductTypeEnum,
-} from "@thor/model/Product";
-import { Customer, CustomerStatusEnum } from "@thor/model/Customer";
+import { useRecordPaymentTransactionMutation } from "@/services/creditsApi";
 
+/**
+ * BuyCredits: Premium UI for purchasing platform credits.
+ *
+ * Integrated with the unified credit system to record payments directly.
+ * Supports quick-purchase buttons and manual amount entry.
+ */
 interface BuyCreditsProps {
   authenticatedPrincipal?: any;
   onPurchaseSuccess?: (amount: number) => void;
@@ -33,9 +30,7 @@ const BuyCredits: React.FC<BuyCreditsProps> = ({
     text: string;
   } | null>(null);
 
-  // RTK Query mutations
-  const [addLineItem] = useAddLineItemMutation();
-  const [addSalesOrder] = useAddSalesOrderMutation();
+  const [recordPaymentTransaction] = useRecordPaymentTransactionMutation();
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
@@ -48,9 +43,52 @@ const BuyCredits: React.FC<BuyCreditsProps> = ({
     setAmount(quickAmount);
   };
 
+  const extractAccountId = (): string | null => {
+    // First try direct principal properties
+    if (
+      authenticatedPrincipal?.id ||
+      authenticatedPrincipal?.principalId ||
+      authenticatedPrincipal?.ownerId ||
+      authenticatedPrincipal?.userId
+    ) {
+      return (
+        authenticatedPrincipal.id ||
+        authenticatedPrincipal.principalId ||
+        authenticatedPrincipal.ownerId ||
+        authenticatedPrincipal.userId
+      );
+    }
+
+    // Fall back to JWT token parsing
+    const token = sessionStorage.getItem("jwtToken");
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        return payload.sub || payload.userId || payload.principalId;
+      } catch {
+        // JWT parsing failed, continue
+      }
+    }
+
+    return null;
+  };
+
   const handlePurchase = async () => {
     if (!authenticatedPrincipal || amount < 1) {
       setMessage({ type: "error", text: "Please enter a valid amount" });
+      return;
+    }
+
+    const accountId = extractAccountId();
+    if (!accountId) {
+      console.error(
+        "Unable to determine account ID from principal:",
+        authenticatedPrincipal,
+      );
+      setMessage({
+        type: "error",
+        text: "Unable to determine account ID. Please log in again.",
+      });
       return;
     }
 
@@ -58,64 +96,31 @@ const BuyCredits: React.FC<BuyCreditsProps> = ({
     setMessage(null);
 
     try {
-      // Create a customer if needed
-      const customerData: Partial<Customer> = {
-        ownerId: authenticatedPrincipal.id,
-        status: CustomerStatusEnum.ACTIVE,
-        principal: authenticatedPrincipal,
+      const paymentTx = {
+        paidAt: new Date().toISOString(),
+        amountCents: Math.round(amount * 100),
+        credits: amount,
       };
+      const idempotencyKey =
+        globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
 
-      // Create a sales order for the credits purchase
-      const salesOrderData: Partial<SalesOrder> = {
-        ownerId: authenticatedPrincipal.id,
-        totalAmount: amount,
-        status: SalesOrderStatusEnum.PENDING, // Will be updated after payment processing
-        orderDate: new Date(),
-        customer: customerData as Customer,
-      };
-
-      const salesOrderResult = await addSalesOrder(salesOrderData).unwrap();
-
-      // Create line item for the credits
-      const product: Product = {
-        id: "CREDITS_PRODUCT_ID", // This should be a real product ID from your catalog
-        name: "Platform Credits",
-        description: `${amount} credits for ValkyrAI platform usage`,
-        price: amount,
-        status: ProductStatusEnum.AVAILABLE,
-        type: ProductTypeEnum.CREDITS,
-      };
-
-      const lineItemData: Partial<LineItem> = {
-        salesOrderId: salesOrderResult.id,
-        product: product,
-        lineItemAmount: amount,
-        quantity: 1,
-        type: LineItemTypeEnum.PRODUCT,
-        ownerId: authenticatedPrincipal.id,
-      };
-
-      await addLineItem(lineItemData).unwrap();
+      await recordPaymentTransaction({
+        accountId,
+        payment: paymentTx,
+        idempotencyKey,
+      }).unwrap();
 
       setMessage({
         type: "success",
-        text: `Successfully added $${amount} credits to cart. Processing payment...`,
+        text: `Successfully added $${amount} credits! Your balance has been updated.`,
       });
 
-      // Call success callback
       onPurchaseSuccess?.(amount);
-
-      // Reset form
       setAmount(10);
 
-      // Here you would typically integrate with Stripe or another payment processor
-      // For now, we'll simulate the payment processing
       setTimeout(() => {
-        setMessage({
-          type: "success",
-          text: "Payment processed successfully! Credits added to your account.",
-        });
-      }, 2000);
+        setMessage(null);
+      }, 3000);
     } catch (error: any) {
       console.error("Purchase failed:", error);
       setMessage({

@@ -85,9 +85,9 @@ const SwitchOption = styled.div<{ isActive: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-    !props.isActive
-      ? "var(--vscode-toolbar-hoverBackground)"
-      : "transparent"};
+      !props.isActive
+        ? "var(--vscode-toolbar-hoverBackground)"
+        : "transparent"};
   }
 `;
 
@@ -217,18 +217,18 @@ const ModelDisplayButton = styled.a<{ isActive?: boolean; disabled?: boolean }>`
   &:hover,
   &:focus {
     color: ${(props) =>
-    props.disabled
-      ? "var(--vscode-descriptionForeground)"
-      : "var(--vscode-foreground)"};
+      props.disabled
+        ? "var(--vscode-descriptionForeground)"
+        : "var(--vscode-foreground)"};
     text-decoration: ${(props) => (props.disabled ? "none" : "underline")};
     outline: none;
   }
 
   &:active {
     color: ${(props) =>
-    props.disabled
-      ? "var(--vscode-descriptionForeground)"
-      : "var(--vscode-foreground)"};
+      props.disabled
+        ? "var(--vscode-descriptionForeground)"
+        : "var(--vscode-foreground)"};
     text-decoration: ${(props) => (props.disabled ? "none" : "underline")};
     outline: none;
   }
@@ -357,7 +357,6 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
             }
           }, 0);
         }
-
       } else if (curr < prev) {
         // Images were removed, hide toast immediately
         setImagesToastVisible(false);
@@ -1490,7 +1489,10 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
                 const last = msgs[msgs.length - 1] as any;
 
                 if (last) {
-                  if ((last.type === "ask" && last.ask === "api_req_failed") || (last.type === "say" && last.say === "error")) {
+                  if (
+                    (last.type === "ask" && last.ask === "api_req_failed") ||
+                    (last.type === "say" && last.say === "error")
+                  ) {
                     return "sad" as const;
                   }
                 }
@@ -1500,13 +1502,27 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
                 let lastFinished = -1;
                 for (let i = msgs.length - 1; i >= 0; i--) {
                   const m: any = msgs[i];
-                  if (lastStarted === -1 && m.type === "say" && m.say === "api_req_started") lastStarted = i;
-                  if (lastFinished === -1 && m.type === "say" && (m.say === "api_req_finished" || m.say === "api_req_retried")) lastFinished = i;
+                  if (
+                    lastStarted === -1 &&
+                    m.type === "say" &&
+                    m.say === "api_req_started"
+                  )
+                    lastStarted = i;
+                  if (
+                    lastFinished === -1 &&
+                    m.type === "say" &&
+                    (m.say === "api_req_finished" ||
+                      m.say === "api_req_retried")
+                  )
+                    lastFinished = i;
                   if (lastStarted !== -1 && lastFinished !== -1) break;
                 }
 
-                const hasOngoing = lastStarted !== -1 && (lastFinished === -1 || lastStarted > lastFinished);
-                const isPartialAsk = last?.type === "ask" && last?.partial === true;
+                const hasOngoing =
+                  lastStarted !== -1 &&
+                  (lastFinished === -1 || lastStarted > lastFinished);
+                const isPartialAsk =
+                  last?.type === "ask" && last?.partial === true;
                 if (hasOngoing || isPartialAsk) {
                   return "waiting" as const;
                 }
@@ -1518,9 +1534,12 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
             })()}
             isExtendedThinking={(() => {
               try {
-                const { selectedModelId, selectedModelInfo } = normalizeApiConfiguration(apiConfiguration);
+                const { selectedModelId, selectedModelInfo } =
+                  normalizeApiConfiguration(apiConfiguration);
                 const hasThinkingConfig = !!selectedModelInfo?.thinkingConfig;
-                const idImpliesThinking = /:thinking/i.test(selectedModelId || "");
+                const idImpliesThinking = /:thinking/i.test(
+                  selectedModelId || "",
+                );
                 const budget = apiConfiguration?.thinkingBudgetTokens || 0;
                 return (hasThinkingConfig || idImpliesThinking) && budget > 0;
               } catch {
@@ -1569,7 +1588,6 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
               //borderLeft: 0,
               //borderRight: 0,
               // borderTop: 0,
-
 
               //borderBottom: `${thumbnailsHeight + 6}px solid transparent`,
               //borderColor: "transparent",
@@ -1621,7 +1639,14 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
               }}
             >
               <button
-                style={{ cursor: "pointer", padding: "4px", width: "30px", height: "28px", backgroundColor: "var(--vscode-textCodeBlock-background)", borderRadius: "15px" }}
+                style={{
+                  cursor: "pointer",
+                  padding: "4px",
+                  width: "30px",
+                  height: "28px",
+                  backgroundColor: "var(--vscode-textCodeBlock-background)",
+                  borderRadius: "15px",
+                }}
                 data-testid="send-button"
                 disabled={textAreaDisabled}
                 onClick={() => {
@@ -1629,11 +1654,12 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
                     setIsTextAreaFocused(false);
                     onSend(inputValue, selectedImages);
                     // Ensure images clear immediately after sending
-                    try { setSelectedImages([]); } catch { }
+                    try {
+                      setSelectedImages([]);
+                    } catch {}
                   }
                 }}
               >
-
                 <FaPaperPlane />
               </button>
             </div>
@@ -1725,7 +1751,10 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
                 style={{ padding: "0px 6px", height: 20, marginLeft: 4 }}
               >
                 <ButtonContainer>
-                  <FaAngry className="flex items-center" style={{ fontSize: 12, marginBottom: -2 }} />
+                  <FaAngry
+                    className="flex items-center"
+                    style={{ fontSize: 12, marginBottom: -2 }}
+                  />
                 </ButtonContainer>
               </VSCodeButton>
             </Tooltip>

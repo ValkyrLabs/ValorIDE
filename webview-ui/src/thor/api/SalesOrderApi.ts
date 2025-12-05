@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,294 +19,345 @@ Template file: typescript-redux-query/apis.mustache
 Description: SalesOrderApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    SalesOrder,
-    SalesOrderFromJSON,
-    SalesOrderToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { SalesOrder, SalesOrderFromJSON, SalesOrderToJSON } from "../model";
 
 export interface DeleteSalesOrderApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetSalesOrderApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetSalesOrderListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PostSalesOrderApiRequest {
-    salesOrder: SalesOrder;
+  salesOrder: SalesOrder;
 }
 
 export interface UpdateSalesOrderApiRequest {
-    id: string;
-    salesOrder: SalesOrder;
+  id: string;
+  salesOrder: SalesOrder;
 }
-
 
 /**
  * Deletes a specific SalesOrder.
  * Delete a SalesOrder.
  */
-function deleteSalesOrderRaw<T>(requestParameters: DeleteSalesOrderApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteSalesOrder.');
-    }
+function deleteSalesOrderRaw<T>(
+  requestParameters: DeleteSalesOrderApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteSalesOrder.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SalesOrder/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SalesOrder/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific SalesOrder.
-* Delete a SalesOrder.
-*/
-export function deleteSalesOrder<T>(requestParameters: DeleteSalesOrderApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteSalesOrderRaw(requestParameters, requestConfig);
+ * Deletes a specific SalesOrder.
+ * Delete a SalesOrder.
+ */
+export function deleteSalesOrder<T>(
+  requestParameters: DeleteSalesOrderApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteSalesOrderRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single SalesOrder for a specific uid.
  * Retrieve a single SalesOrder
  */
-function getSalesOrderRaw<T>(requestParameters: GetSalesOrderApiRequest, requestConfig: runtime.TypedQueryConfig<T, SalesOrder> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getSalesOrder.');
-    }
+function getSalesOrderRaw<T>(
+  requestParameters: GetSalesOrderApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SalesOrder> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getSalesOrder.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SalesOrder/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SalesOrderFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SalesOrder/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SalesOrderFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single SalesOrder for a specific uid.
-* Retrieve a single SalesOrder
-*/
-export function getSalesOrder<T>(requestParameters: GetSalesOrderApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SalesOrder>): QueryConfig<T> {
-    return getSalesOrderRaw(requestParameters, requestConfig);
+ * Retrieves a single SalesOrder for a specific uid.
+ * Retrieve a single SalesOrder
+ */
+export function getSalesOrder<T>(
+  requestParameters: GetSalesOrderApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SalesOrder>,
+): QueryConfig<T> {
+  return getSalesOrderRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of SalesOrders.
  * Retrieve a list of SalesOrders
  */
-function getSalesOrderListRaw<T>(requestParameters: GetSalesOrderListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<SalesOrder>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getSalesOrderListRaw<T>(
+  requestParameters: GetSalesOrderListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<SalesOrder>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SalesOrder`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(SalesOrderFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SalesOrder`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(SalesOrderFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of SalesOrders.
-* Retrieve a list of SalesOrders
-*/
-export function getSalesOrderList<T>(requestParameters: GetSalesOrderListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<SalesOrder>>): QueryConfig<T> {
-    return getSalesOrderListRaw(requestParameters, requestConfig);
+ * Retrieves a list of SalesOrders.
+ * Retrieve a list of SalesOrders
+ */
+export function getSalesOrderList<T>(
+  requestParameters: GetSalesOrderListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<SalesOrder>>,
+): QueryConfig<T> {
+  return getSalesOrderListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new SalesOrder.
  * Create a new SalesOrder
  */
-function postSalesOrderRaw<T>(requestParameters: PostSalesOrderApiRequest, requestConfig: runtime.TypedQueryConfig<T, SalesOrder> = {}): QueryConfig<T> {
-    if (requestParameters.salesOrder === null || requestParameters.salesOrder === undefined) {
-        throw new runtime.RequiredError('salesOrder','Required parameter requestParameters.salesOrder was null or undefined when calling postSalesOrder.');
-    }
+function postSalesOrderRaw<T>(
+  requestParameters: PostSalesOrderApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SalesOrder> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.salesOrder === null ||
+    requestParameters.salesOrder === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "salesOrder",
+      "Required parameter requestParameters.salesOrder was null or undefined when calling postSalesOrder.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SalesOrder`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || SalesOrderToJSON(requestParameters.salesOrder),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SalesOrderFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SalesOrder`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || SalesOrderToJSON(requestParameters.salesOrder),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SalesOrderFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new SalesOrder.
-* Create a new SalesOrder
-*/
-export function postSalesOrder<T>(requestParameters: PostSalesOrderApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SalesOrder>): QueryConfig<T> {
-    return postSalesOrderRaw(requestParameters, requestConfig);
+ * Creates a new SalesOrder.
+ * Create a new SalesOrder
+ */
+export function postSalesOrder<T>(
+  requestParameters: PostSalesOrderApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SalesOrder>,
+): QueryConfig<T> {
+  return postSalesOrderRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing SalesOrder.
  * Update an existing SalesOrder
  */
-function updateSalesOrderRaw<T>(requestParameters: UpdateSalesOrderApiRequest, requestConfig: runtime.TypedQueryConfig<T, SalesOrder> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateSalesOrder.');
-    }
+function updateSalesOrderRaw<T>(
+  requestParameters: UpdateSalesOrderApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SalesOrder> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateSalesOrder.",
+    );
+  }
 
-    if (requestParameters.salesOrder === null || requestParameters.salesOrder === undefined) {
-        throw new runtime.RequiredError('salesOrder','Required parameter requestParameters.salesOrder was null or undefined when calling updateSalesOrder.');
-    }
+  if (
+    requestParameters.salesOrder === null ||
+    requestParameters.salesOrder === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "salesOrder",
+      "Required parameter requestParameters.salesOrder was null or undefined when calling updateSalesOrder.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SalesOrder/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || SalesOrderToJSON(requestParameters.salesOrder),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SalesOrderFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SalesOrder/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || SalesOrderToJSON(requestParameters.salesOrder),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SalesOrderFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing SalesOrder.
-* Update an existing SalesOrder
-*/
-export function updateSalesOrder<T>(requestParameters: UpdateSalesOrderApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SalesOrder>): QueryConfig<T> {
-    return updateSalesOrderRaw(requestParameters, requestConfig);
+ * Updates an existing SalesOrder.
+ * Update an existing SalesOrder
+ */
+export function updateSalesOrder<T>(
+  requestParameters: UpdateSalesOrderApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SalesOrder>,
+): QueryConfig<T> {
+  return updateSalesOrderRaw(requestParameters, requestConfig);
 }
-

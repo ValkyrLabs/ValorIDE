@@ -10,7 +10,21 @@ import { vscode } from "@/utils/vscode";
 import Thumbnails from "@/components/common/Thumbnails";
 import { normalizeApiConfiguration } from "@/components/settings/ApiOptions";
 import { validateSlashCommand } from "@/utils/slash-commands";
-import { FaArrowUp, FaArrowDown, FaDatabase, FaArrowRight, FaTrash, FaChevronDown, FaChevronRight, FaTimes, FaExclamationTriangle, FaCopy, FaCheck, FaDollarSign, FaClock } from "react-icons/fa";
+import {
+  FaArrowUp,
+  FaArrowDown,
+  FaDatabase,
+  FaArrowRight,
+  FaTrash,
+  FaChevronDown,
+  FaChevronRight,
+  FaTimes,
+  FaExclamationTriangle,
+  FaCopy,
+  FaCheck,
+  FaDollarSign,
+  FaClock,
+} from "react-icons/fa";
 import StatusBadge from "../common/StatusBadge";
 
 interface TaskHeaderProps {
@@ -202,7 +216,6 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
       <div
         style={{
           backgroundColor: "var(--vscode-sideBar-border)",
-
 
           borderRadius: "10px",
           padding: "9px 10px 9px 14px",
@@ -582,7 +595,6 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-
                   {isCostAvailable && (
                     <div
                       style={{
@@ -645,40 +657,40 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                     {checkpointTrackerErrorMessage.endsWith(
                       "disabling checkpoints.",
                     ) && (
-                        <>
-                          <a
-                            onClick={() => {
-                              vscode.postMessage({
-                                type: "openExtensionSettings",
-                                text: "enableCheckpoints",
-                              });
-                            }}
-                            style={{
-                              color: "inherit",
-                              textDecoration: "underline",
-                              cursor: "pointer",
-                            }}
-                          >
-                            disabling checkpoints.
-                          </a>
-                        </>
-                      )}
+                      <>
+                        <a
+                          onClick={() => {
+                            vscode.postMessage({
+                              type: "openExtensionSettings",
+                              text: "enableCheckpoints",
+                            });
+                          }}
+                          style={{
+                            color: "inherit",
+                            textDecoration: "underline",
+                            cursor: "pointer",
+                          }}
+                        >
+                          disabling checkpoints.
+                        </a>
+                      </>
+                    )}
                     {checkpointTrackerErrorMessage.includes(
                       "Git must be installed to use checkpoints.",
                     ) && (
-                        <>
-                          {" "}
-                          <a
-                            href="https://github.com/valkyrlabs/valoride/wiki/Installing-Git-for-Checkpoints"
-                            style={{
-                              color: "inherit",
-                              textDecoration: "underline",
-                            }}
-                          >
-                            See here for instructions.
-                          </a>
-                        </>
-                      )}
+                      <>
+                        {" "}
+                        <a
+                          href="https://github.com/valkyrlabs/valoride/wiki/Installing-Git-for-Checkpoints"
+                          style={{
+                            color: "inherit",
+                            textDecoration: "underline",
+                          }}
+                        >
+                          See here for instructions.
+                        </a>
+                      </>
+                    )}
                   </span>
                 </div>
               )}

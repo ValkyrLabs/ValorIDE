@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { SwarmUnregisterResponse } from '@thor/model/SwarmUnregisterResponse';
+import { SwarmUnregisterResponse } from "@thor/model/SwarmUnregisterResponse";
 
 const SwarmUnregisterResponseSlice = createSlice({
   name: "SwarmUnregisterResponses",
@@ -12,20 +12,27 @@ const SwarmUnregisterResponseSlice = createSlice({
     },
 
     SwarmUnregisterResponseValueToggled(state, action) {
-      console.log("SwarmUnregisterResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const SwarmUnregisterResponse:SwarmUnregisterResponse = state.find((SwarmUnregisterResponse) => SwarmUnregisterResponse.id === action.payload.SwarmUnregisterResponseId);
+      console.log("SwarmUnregisterResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SwarmUnregisterResponse: SwarmUnregisterResponse = state.find(
+        (SwarmUnregisterResponse) =>
+          SwarmUnregisterResponse.id ===
+          action.payload.SwarmUnregisterResponseId,
+      );
       if (SwarmUnregisterResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     SwarmUnregisterResponsepropertySet(state, action) {
-      const SwarmUnregisterResponse = state.find((SwarmUnregisterResponse) => SwarmUnregisterResponse.id === action.payload.SwarmUnregisterResponseId);
+      const SwarmUnregisterResponse = state.find(
+        (SwarmUnregisterResponse) =>
+          SwarmUnregisterResponse.id ===
+          action.payload.SwarmUnregisterResponseId,
+      );
       if (SwarmUnregisterResponse) {
-      //  SwarmUnregisterResponse[action.property] = action.payload[action.property];
+        //  SwarmUnregisterResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +41,6 @@ const SwarmUnregisterResponseSlice = createSlice({
 export const {
   SwarmUnregisterResponseAdded,
   SwarmUnregisterResponseValueToggled,
-  SwarmUnregisterResponsepropertySet
+  SwarmUnregisterResponsepropertySet,
 } = SwarmUnregisterResponseSlice.actions;
 export default SwarmUnregisterResponseSlice.reducer;

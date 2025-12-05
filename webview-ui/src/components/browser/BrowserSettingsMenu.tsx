@@ -5,7 +5,13 @@ import { useExtensionState } from "@/context/ExtensionStateContext";
 import { vscode } from "@/utils/vscode";
 import { CODE_BLOCK_BG_COLOR } from "../common/CodeBlock";
 import { BrowserServiceClient } from "../../services/grpc-client";
-import { FaBroadcastTower, FaCog, FaWifi, FaDesktop, FaInfoCircle } from "react-icons/fa";
+import {
+  FaBroadcastTower,
+  FaCog,
+  FaWifi,
+  FaDesktop,
+  FaInfoCircle,
+} from "react-icons/fa";
 
 interface ConnectionInfo {
   isConnected: boolean;
@@ -210,9 +216,7 @@ export const BrowserSettingsMenu = () => {
       )}
 
       <VSCodeButton appearance="icon" onClick={openBrowserSettings}>
-        <FaCog
-          style={{ fontSize: "14.5px" }}
-        />
+        <FaCog style={{ fontSize: "14.5px" }} />
       </VSCodeButton>
     </div>
   );

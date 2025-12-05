@@ -1,0 +1,105 @@
+import { createApi } from "@reduxjs/toolkit/query/react";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+export const ConversationMemoryNodeService = createApi({
+    reducerPath: "ConversationMemoryNode", // This should remain unique
+    baseQuery: customBaseQuery,
+    tagTypes: ["ConversationMemoryNode"],
+    endpoints: (build) => ({
+        // 1) Paged Query Endpoint
+        // Standardized pagination: page (0-based), size (page size)
+        getConversationMemoryNodesPaged: build.query({
+            query: ({ page, size = 20, example }) => {
+                const q = [`page=${page}`, `size=${size}`];
+                if (example)
+                    q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+                return `ConversationMemoryNode?${q.join("&")}`;
+            },
+            providesTags: (result, error, { page }) => result
+                ? [
+                    ...result.map(({ id }) => ({
+                        type: "ConversationMemoryNode",
+                        id,
+                    })),
+                    { type: "ConversationMemoryNode", id: `PAGE_${page}` },
+                ]
+                : [],
+        }),
+        // 2) Simple "get all" Query (optional)
+        getConversationMemoryNodes: build.query({
+            query: (arg) => {
+                if (arg && arg.example) {
+                    const ex = arg.example;
+                    return `ConversationMemoryNode?example=${encodeURIComponent(JSON.stringify(ex))}`;
+                }
+                return `ConversationMemoryNode`;
+            },
+            providesTags: (result) => result
+                ? [
+                    ...result.map(({ id }) => ({
+                        type: "ConversationMemoryNode",
+                        id,
+                    })),
+                    { type: "ConversationMemoryNode", id: "LIST" },
+                ]
+                : [{ type: "ConversationMemoryNode", id: "LIST" }],
+        }),
+        // 3) Create
+        addConversationMemoryNode: build.mutation({
+            query: (body) => ({
+                url: `ConversationMemoryNode`,
+                method: "POST",
+                body,
+            }),
+            invalidatesTags: [{ type: "ConversationMemoryNode", id: "LIST" }],
+        }),
+        // 4) Get single by ID
+        getConversationMemoryNode: build.query({
+            query: (id) => `ConversationMemoryNode/${id}`,
+            providesTags: (result, error, id) => [
+                { type: "ConversationMemoryNode", id },
+            ],
+        }),
+        // 5) Update
+        updateConversationMemoryNode: build.mutation({
+            query: ({ id, ...patch }) => ({
+                url: `ConversationMemoryNode/${id}`,
+                method: "PUT",
+                body: patch,
+            }),
+            async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+                if (id) {
+                    const patchResult = dispatch(ConversationMemoryNodeService.util.updateQueryData("getConversationMemoryNode", id, (draft) => {
+                        Object.assign(draft, patch);
+                    }));
+                    try {
+                        await queryFulfilled;
+                    }
+                    catch {
+                        patchResult.undo();
+                    }
+                }
+            },
+            invalidatesTags: (result, error, { id }) => [
+                { type: "ConversationMemoryNode", id },
+                { type: "ConversationMemoryNode", id: "LIST" },
+            ],
+        }),
+        // 6) Delete
+        deleteConversationMemoryNode: build.mutation({
+            query(id) {
+                return {
+                    url: `ConversationMemoryNode/${id}`,
+                    method: "DELETE",
+                };
+            },
+            invalidatesTags: (result, error, id) => [
+                { type: "ConversationMemoryNode", id },
+            ],
+        }),
+    }),
+});
+// Notice we now also export `useLazyGetConversationMemoryNodesPagedQuery`
+export const { useGetConversationMemoryNodesPagedQuery, // immediate fetch
+useLazyGetConversationMemoryNodesPagedQuery, // lazy fetch
+useGetConversationMemoryNodeQuery, useGetConversationMemoryNodesQuery, useAddConversationMemoryNodeMutation, useUpdateConversationMemoryNodeMutation, useDeleteConversationMemoryNodeMutation, } = ConversationMemoryNodeService;
+//# sourceMappingURL=ConversationMemoryNodeService.js.map

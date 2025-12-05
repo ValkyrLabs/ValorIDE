@@ -1,0 +1,128 @@
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { JobMetadata } from "@thor/model/JobMetadata";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
+
+type JobMetadataResponse = JobMetadata[];
+
+export const JobMetadataService = createApi({
+  reducerPath: "JobMetadata", // This should remain unique
+  baseQuery: customBaseQuery,
+  tagTypes: ["JobMetadata"],
+  endpoints: (build) => ({
+    // 1) Paged Query Endpoint
+    // Standardized pagination: page (0-based), size (page size)
+    getJobMetadatasPaged: build.query<
+      JobMetadataResponse,
+      { page: number; size?: number; example?: Partial<JobMetadata> }
+    >({
+      query: ({ page, size = 20, example }) => {
+        const q: string[] = [`page=${page}`, `size=${size}`];
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `JobMetadata?${q.join("&")}`;
+      },
+      providesTags: (result, error, { page }) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "JobMetadata" as const, id })),
+              { type: "JobMetadata", id: `PAGE_${page}` },
+            ]
+          : [],
+    }),
+
+    // 2) Simple "get all" Query (optional)
+    getJobMetadatas: build.query<
+      JobMetadataResponse,
+      { example?: Partial<JobMetadata> } | void
+    >({
+      query: (arg) => {
+        if (arg && (arg as any).example) {
+          const ex = (arg as any).example;
+          return `JobMetadata?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `JobMetadata`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "JobMetadata" as const, id })),
+              { type: "JobMetadata", id: "LIST" },
+            ]
+          : [{ type: "JobMetadata", id: "LIST" }],
+    }),
+
+    // 3) Create
+    addJobMetadata: build.mutation<JobMetadata, Partial<JobMetadata>>({
+      query: (body) => ({
+        url: `JobMetadata`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "JobMetadata", id: "LIST" }],
+    }),
+
+    // 4) Get single by ID
+    getJobMetadata: build.query<JobMetadata, string>({
+      query: (id) => `JobMetadata/${id}`,
+      providesTags: (result, error, id) => [{ type: "JobMetadata", id }],
+    }),
+
+    // 5) Update
+    updateJobMetadata: build.mutation<
+      void,
+      Pick<JobMetadata, "id"> & Partial<JobMetadata>
+    >({
+      query: ({ id, ...patch }) => ({
+        url: `JobMetadata/${id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        if (id) {
+          const patchResult = dispatch(
+            JobMetadataService.util.updateQueryData(
+              "getJobMetadata",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        }
+      },
+      invalidatesTags: (result, error, { id }: Pick<JobMetadata, "id">) => [
+        { type: "JobMetadata", id },
+        { type: "JobMetadata", id: "LIST" },
+      ],
+    }),
+
+    // 6) Delete
+    deleteJobMetadata: build.mutation<{ success: boolean; id: string }, number>(
+      {
+        query(id) {
+          return {
+            url: `JobMetadata/${id}`,
+            method: "DELETE",
+          };
+        },
+        invalidatesTags: (result, error, id) => [{ type: "JobMetadata", id }],
+      },
+    ),
+  }),
+});
+
+// Notice we now also export `useLazyGetJobMetadatasPagedQuery`
+export const {
+  useGetJobMetadatasPagedQuery, // immediate fetch
+  useLazyGetJobMetadatasPagedQuery, // lazy fetch
+  useGetJobMetadataQuery,
+  useGetJobMetadatasQuery,
+  useAddJobMetadataMutation,
+  useUpdateJobMetadataMutation,
+  useDeleteJobMetadataMutation,
+} = JobMetadataService;

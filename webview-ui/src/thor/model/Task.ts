@@ -20,25 +20,23 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { exists, mapValues } from '../src/runtime';
+import { exists, mapValues } from "../src/runtime";
+import { DataObject, DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import {
-
-
-    ExecModule,
-    ExecModuleFromJSON,
-    ExecModuleToJSON,
-    Workflow,
-    WorkflowFromJSON,
-    WorkflowToJSON,
-} from './';
-
+  ExecModule,
+  ExecModuleFromJSON,
+  ExecModuleToJSON,
+  Workflow,
+  WorkflowFromJSON,
+  WorkflowToJSON,
+} from "./";
 
 // thorapi
 
@@ -47,170 +45,216 @@ import {
  * @export
  * @interface Task
  */
-export type Task  = {
-    /**
-     * Name of the task
-     * @type {string}
-     * @memberof Task
-     */
-    name?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Task
-     */
-    description?: string;
-    /**
-     * The workflow this state is participating in
-     * @type {string}
-     * @memberof Task
-     */
-    workflowId?: string;
-    /**
-     * 
-     * @type {Workflow}
-     * @memberof Task
-     */
-    workflow?: Workflow;
-    /**
-     * override the workflow role for specific task -login to a system- the role with permissions -temporary user is created
-     * @type {string}
-     * @memberof Task
-     */
-    role?: TaskRoleEnum;
-    /**
-     * the order in which the module is executed (low to high)
-     * @type {number}
-     * @memberof Task
-     */
-    taskOrder?: number;
-    /**
-     * an array of ExecModules to be processed
-     * @type {Array<ExecModule>}
-     * @memberof Task
-     */
-    modules?: Array<ExecModule>;
-    /**
-     * last known status of the task
-     * @type {string}
-     * @memberof Task
-     */
-    status?: TaskStatusEnum;
-    /**
-     * Unique identifier for object in the system
-     * @type {string}
-     * @memberof Task
-     */
-    id?: string;
-    /**
-     * UUID of owner of the object in the system
-     * @type {string}
-     * @memberof Task
-     */
-    ownerId?: string;
-    /**
-     * Date of object creation
-     * @type {Date}
-     * @memberof Task
-     */
-    createdDate?: Date;
-    /**
-     * Data, including hash of the key(s) used to encrypt this record.
-     * @type {string}
-     * @memberof Task
-     */
-    keyHash?: string;
-    /**
-     * Last user to access object
-     * @type {string}
-     * @memberof Task
-     */
-    lastAccessedById?: string;
-    /**
-     * Timestamp of last access of object
-     * @type {Date}
-     * @memberof Task
-     */
-    lastAccessedDate?: Date;
-    /**
-     * Unique identifier for user who last modifed the object in the system
-     * @type {string}
-     * @memberof Task
-     */
-    lastModifiedById?: string;
-    /**
-     * Date of last object modification
-     * @type {Date}
-     * @memberof Task
-     */
-    lastModifiedDate?: Date;
-}
+export type Task = DataObject & {
+  /**
+   * Name of the task
+   * @type {string}
+   * @memberof Task
+   */
+  name?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Task
+   */
+  description?: string;
+  /**
+   * The workflow this state is participating in
+   * @type {string}
+   * @memberof Task
+   */
+  workflowId?: string;
+  /**
+   *
+   * @type {Workflow}
+   * @memberof Task
+   */
+  workflow?: Workflow;
+  /**
+   * override the workflow role for specific task -login to a system- the role with permissions -temporary user is created
+   * @type {string}
+   * @memberof Task
+   */
+  role?: TaskRoleEnum;
+  /**
+   * the order in which the module is executed (low to high)
+   * @type {number}
+   * @memberof Task
+   */
+  taskOrder?: number;
+  /**
+   * an array of ExecModules to be processed
+   * @type {Array<ExecModule>}
+   * @memberof Task
+   */
+  modules?: Array<ExecModule>;
+  /**
+   * last known status of the task
+   * @type {string}
+   * @memberof Task
+   */
+  status?: TaskStatusEnum;
+  /**
+   * priority level of the task
+   * @type {string}
+   * @memberof Task
+   */
+  priorityLevel?: TaskPriorityLevelEnum;
+  /**
+   * Unique identifier for object in the system
+   * @type {string}
+   * @memberof Task
+   */
+  id?: string;
+  /**
+   * UUID of owner of the object in the system
+   * @type {string}
+   * @memberof Task
+   */
+  ownerId?: string;
+  /**
+   * Date of object creation
+   * @type {Date}
+   * @memberof Task
+   */
+  createdDate?: Date;
+  /**
+   * Data, including hash of the key(s) used to encrypt this record.
+   * @type {string}
+   * @memberof Task
+   */
+  keyHash?: string;
+  /**
+   * Last user to access object
+   * @type {string}
+   * @memberof Task
+   */
+  lastAccessedById?: string;
+  /**
+   * Timestamp of last access of object
+   * @type {Date}
+   * @memberof Task
+   */
+  lastAccessedDate?: Date;
+  /**
+   * Unique identifier for user who last modifed the object in the system
+   * @type {string}
+   * @memberof Task
+   */
+  lastModifiedById?: string;
+  /**
+   * Date of last object modification
+   * @type {Date}
+   * @memberof Task
+   */
+  lastModifiedDate?: Date;
+};
 
 export function TaskFromJSON(json: any): Task {
-    return {
-        'name': !exists(json, 'name') ? undefined : json['name'],
-        'description': !exists(json, 'description') ? undefined : json['description'],
-        'workflowId': !exists(json, 'workflowId') ? undefined : json['workflowId'],
-        'workflow': !exists(json, 'workflow') ? undefined : WorkflowFromJSON(json['workflow']),
-        'role': !exists(json, 'role') ? undefined : json['role'],
-        'taskOrder': !exists(json, 'taskOrder') ? undefined : json['taskOrder'],
-        'modules': !exists(json, 'modules') ? undefined : (json['modules'] as Array<any>).map(ExecModuleFromJSON),
-        'status': !exists(json, 'status') ? undefined : json['status'],
-        'id': !exists(json, 'id') ? undefined : json['id'],
-        'ownerId': !exists(json, 'ownerId') ? undefined : json['ownerId'],
-        'createdDate': !exists(json, 'createdDate') ? undefined : new Date(json['createdDate']),
-        'keyHash': !exists(json, 'keyHash') ? undefined : json['keyHash'],
-        'lastAccessedById': !exists(json, 'lastAccessedById') ? undefined : json['lastAccessedById'],
-        'lastAccessedDate': !exists(json, 'lastAccessedDate') ? undefined : new Date(json['lastAccessedDate']),
-        'lastModifiedById': !exists(json, 'lastModifiedById') ? undefined : json['lastModifiedById'],
-        'lastModifiedDate': !exists(json, 'lastModifiedDate') ? undefined : new Date(json['lastModifiedDate']),
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: !exists(json, "name") ? undefined : json["name"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    workflowId: !exists(json, "workflowId") ? undefined : json["workflowId"],
+    workflow: !exists(json, "workflow")
+      ? undefined
+      : WorkflowFromJSON(json["workflow"]),
+    role: !exists(json, "role") ? undefined : json["role"],
+    taskOrder: !exists(json, "taskOrder") ? undefined : json["taskOrder"],
+    modules: !exists(json, "modules")
+      ? undefined
+      : (json["modules"] as Array<any>).map(ExecModuleFromJSON),
+    status: !exists(json, "status") ? undefined : json["status"],
+    priorityLevel: !exists(json, "priorityLevel")
+      ? undefined
+      : json["priorityLevel"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 
 export function TaskToJSON(value?: Task): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        'name': value.name,
-        'description': value.description,
-        'workflowId': value.workflowId,
-        'workflow': WorkflowToJSON(value.workflow),
-        'role': value.role,
-        'taskOrder': value.taskOrder,
-        'modules': value.modules === undefined ? undefined : (value.modules as Array<any>).map(ExecModuleToJSON),
-        'status': value.status,
-        'id': value.id,
-        'ownerId': value.ownerId,
-        'createdDate': value.createdDate === undefined ? undefined : value.createdDate.toISOString(),
-        'keyHash': value.keyHash,
-        'lastAccessedById': value.lastAccessedById,
-        'lastAccessedDate': value.lastAccessedDate === undefined ? undefined : value.lastAccessedDate.toISOString(),
-        'lastModifiedById': value.lastModifiedById,
-        'lastModifiedDate': value.lastModifiedDate === undefined ? undefined : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    description: value.description,
+    workflowId: value.workflowId,
+    workflow: WorkflowToJSON(value.workflow),
+    role: value.role,
+    taskOrder: value.taskOrder,
+    modules:
+      value.modules === undefined
+        ? undefined
+        : (value.modules as Array<any>).map(ExecModuleToJSON),
+    status: value.status,
+    priorityLevel: value.priorityLevel,
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum TaskRoleEnum {
-    USER = 'user',
-    ASSISTANT = 'assistant'
+  USER = "user",
+  ASSISTANT = "assistant",
 }
 /**
-* @export
-* @enum {string}
-*/
+ * @export
+ * @enum {string}
+ */
 export enum TaskStatusEnum {
-    RUNNING = 'running',
-    STOPPED = 'stopped',
-    READY = 'ready',
-    GOOD = 'good',
-    WARNING = 'warning',
-    ERROR = 'error',
-    DISABLED = 'disabled'
+  RUNNING = "running",
+  STOPPED = "stopped",
+  READY = "ready",
+  GOOD = "good",
+  WARNING = "warning",
+  ERROR = "error",
+  DISABLED = "disabled",
 }
-
-
+/**
+ * @export
+ * @enum {string}
+ */
+export enum TaskPriorityLevelEnum {
+  CRITICAL = "critical",
+  HIGH = "high",
+  NORMAL = "normal",
+  LOW = "low",
+}

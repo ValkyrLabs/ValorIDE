@@ -67,152 +67,157 @@ const AppContent = () => {
     sendChatAction,
   } = useValorIDEMothership();
 
-  console.log(`🚀 ValorIDE Mothership Status: Connected=${mothershipConnected}, InstanceId=${instanceId}`);
+  console.log(
+    `🚀 ValorIDE Mothership Status: Connected=${mothershipConnected}, InstanceId=${instanceId}`,
+  );
 
-  const handleMessage = useCallback((e: MessageEvent) => {
-    const message: ExtensionMessage = e.data;
+  const handleMessage = useCallback(
+    (e: MessageEvent) => {
+      const message: ExtensionMessage = e.data;
 
-    // Track different message types to mothership
-    switch (message.type) {
-      case "loginSuccess":
-        // After successful login, show the Account view and keep File Explorer visible
-        setShowSettings(false);
-        setShowHistory(false);
-        setShowMcp(false);
-        setShowAccount(true);
-        setShowGeneratedFiles(false);
-        setShowApplicationProgress(false);
-        setShowFileExplorer(true);
-        
-        // Track login success as a task start
-        trackTaskStart("user-session", "User logged in successfully");
-        break;
+      // Track different message types to mothership
+      switch (message.type) {
+        case "loginSuccess":
+          // After successful login, show the Account view and keep File Explorer visible
+          setShowSettings(false);
+          setShowHistory(false);
+          setShowMcp(false);
+          setShowAccount(true);
+          setShowGeneratedFiles(false);
+          setShowApplicationProgress(false);
+          setShowFileExplorer(true);
 
-      case "action":
-        switch (message.action!) {
-          case "settingsButtonClicked":
-            setShowSettings(true);
-            setShowHistory(false);
-            setShowMcp(false);
-            setShowAccount(false);
-            setShowGeneratedFiles(false);
-            setShowServerConsole(false);
-            setShowApplicationProgress(false);
-            break;
-          case "historyButtonClicked":
-            setShowSettings(false);
-            setShowHistory(true);
-            setShowMcp(false);
-            setShowAccount(false);
-            setShowGeneratedFiles(false);
-            setShowServerConsole(false);
-            setShowApplicationProgress(false);
-            break;
-          case "mcpButtonClicked":
-            setShowSettings(false);
-            setShowHistory(false);
-            if (message.tab) {
-              setMcpTab(message.tab);
-            }
-            setShowMcp(true);
-            setShowAccount(false);
-            setShowGeneratedFiles(false);
-            setShowServerConsole(false);
-            setShowApplicationProgress(false);
-            break;
-          case "accountButtonClicked":
-            setShowSettings(false);
-            setShowHistory(false);
-            setShowMcp(false);
-            setShowAccount(true);
-            setShowGeneratedFiles(false);
-            setShowServerConsole(false);
-            setShowApplicationProgress(false);
-            break;
-          case "chatButtonClicked":
-            setShowSettings(false);
-            setShowHistory(false);
-            setShowMcp(false);
-            setShowAccount(false);
-            setShowGeneratedFiles(false);
-            setShowServerConsole(false);
-            setShowApplicationProgress(false);
-            break;
-          case "generatedFilesButtonClicked":
-            setShowSettings(false);
-            setShowHistory(false);
-            setShowMcp(false);
-            setShowAccount(false);
-            setShowGeneratedFiles(true);
-            setShowServerConsole(false);
-            setShowApplicationProgress(false);
-            break;
-          case "serverConsoleButtonClicked":
-            setShowSettings(false);
-            setShowHistory(false);
-            setShowMcp(false);
-            setShowAccount(false);
-            setShowGeneratedFiles(false);
-            setShowServerConsole(true);
-            setShowApplicationProgress(false);
-            break;
-        }
-        break;
+          // Track login success as a task start
+          trackTaskStart("user-session", "User logged in successfully");
+          break;
 
-      case "streamToThorapiResult":
-        // Handle application generation progress
-        if (message.streamToThorapiResult) {
-          const result = message.streamToThorapiResult;
-          if (result.applicationId) {
-            setCurrentApplicationId(result.applicationId);
-            setShowApplicationProgress(false);
-            // File explorer is already visible, just ensure it stays visible
-            setShowFileExplorer(true);
-            // Hide other views but keep file explorer
-            setShowSettings(false);
-            setShowHistory(false);
-            setShowMcp(false);
-            setShowAccount(true);
-            setShowGeneratedFiles(false);
+        case "action":
+          switch (message.action!) {
+            case "settingsButtonClicked":
+              setShowSettings(true);
+              setShowHistory(false);
+              setShowMcp(false);
+              setShowAccount(false);
+              setShowGeneratedFiles(false);
+              setShowServerConsole(false);
+              setShowApplicationProgress(false);
+              break;
+            case "historyButtonClicked":
+              setShowSettings(false);
+              setShowHistory(true);
+              setShowMcp(false);
+              setShowAccount(false);
+              setShowGeneratedFiles(false);
+              setShowServerConsole(false);
+              setShowApplicationProgress(false);
+              break;
+            case "mcpButtonClicked":
+              setShowSettings(false);
+              setShowHistory(false);
+              if (message.tab) {
+                setMcpTab(message.tab);
+              }
+              setShowMcp(true);
+              setShowAccount(false);
+              setShowGeneratedFiles(false);
+              setShowServerConsole(false);
+              setShowApplicationProgress(false);
+              break;
+            case "accountButtonClicked":
+              setShowSettings(false);
+              setShowHistory(false);
+              setShowMcp(false);
+              setShowAccount(true);
+              setShowGeneratedFiles(false);
+              setShowServerConsole(false);
+              setShowApplicationProgress(false);
+              break;
+            case "chatButtonClicked":
+              setShowSettings(false);
+              setShowHistory(false);
+              setShowMcp(false);
+              setShowAccount(false);
+              setShowGeneratedFiles(false);
+              setShowServerConsole(false);
+              setShowApplicationProgress(false);
+              break;
+            case "generatedFilesButtonClicked":
+              setShowSettings(false);
+              setShowHistory(false);
+              setShowMcp(false);
+              setShowAccount(false);
+              setShowGeneratedFiles(true);
+              setShowServerConsole(false);
+              setShowApplicationProgress(false);
+              break;
+            case "serverConsoleButtonClicked":
+              setShowSettings(false);
+              setShowHistory(false);
+              setShowMcp(false);
+              setShowAccount(false);
+              setShowGeneratedFiles(false);
+              setShowServerConsole(true);
+              setShowApplicationProgress(false);
+              break;
           }
-        }
-        break;
+          break;
 
-      // Track other extension messages as generic actions
-      case "invoke":
-        // Track tool invocations
-        sendChatAction({
-          type: 'tool_use',
-          metadata: {
-            action: 'invoke',
-            timestamp: Date.now(),
-          },
-        });
-        break;
+        case "streamToThorapiResult":
+          // Handle application generation progress
+          if (message.streamToThorapiResult) {
+            const result = message.streamToThorapiResult;
+            if (result.applicationId) {
+              setCurrentApplicationId(result.applicationId);
+              setShowApplicationProgress(false);
+              // File explorer is already visible, just ensure it stays visible
+              setShowFileExplorer(true);
+              // Hide other views but keep file explorer
+              setShowSettings(false);
+              setShowHistory(false);
+              setShowMcp(false);
+              setShowAccount(true);
+              setShowGeneratedFiles(false);
+            }
+          }
+          break;
 
-      case "partialMessage":
-        // Track partial messages (streaming)
-        sendChatAction({
-          type: 'api_data',
-          metadata: {
-            action: 'partial_message',
-            timestamp: Date.now(),
-          },
-        });
-        break;
+        // Track other extension messages as generic actions
+        case "invoke":
+          // Track tool invocations
+          sendChatAction({
+            type: "tool_use",
+            metadata: {
+              action: "invoke",
+              timestamp: Date.now(),
+            },
+          });
+          break;
 
-      default:
-        // Track any other message types as generic activity
-        sendChatAction({
-          type: 'api_data',
-          metadata: {
-            messageType: message.type,
-            timestamp: Date.now(),
-          },
-        });
-        break;
-    }
-  }, [trackTaskStart, sendChatAction]);
+        case "partialMessage":
+          // Track partial messages (streaming)
+          sendChatAction({
+            type: "api_data",
+            metadata: {
+              action: "partial_message",
+              timestamp: Date.now(),
+            },
+          });
+          break;
+
+        default:
+          // Track any other message types as generic activity
+          sendChatAction({
+            type: "api_data",
+            metadata: {
+              messageType: message.type,
+              timestamp: Date.now(),
+            },
+          });
+          break;
+      }
+    },
+    [trackTaskStart, sendChatAction],
+  );
 
   useEvent("message", handleMessage);
 
@@ -253,7 +258,12 @@ const AppContent = () => {
   }
 
   const isMainViewHidden =
-    showSettings || showHistory || showMcp || showAccount || showGeneratedFiles || showServerConsole;
+    showSettings ||
+    showHistory ||
+    showMcp ||
+    showAccount ||
+    showGeneratedFiles ||
+    showServerConsole;
 
   return (
     <>
@@ -294,7 +304,11 @@ const AppContent = () => {
 
           {/* Show chat view when not in other views */}
           {!isMainViewHidden && (
-            <ChatErrorBoundary errorTitle="Chat failed to render" errorBody="Please reload the view or check connection settings." height="100%">
+            <ChatErrorBoundary
+              errorTitle="Chat failed to render"
+              errorBody="Please reload the view or check connection settings."
+              height="100%"
+            >
               <ChatView
                 showHistoryView={() => {
                   setShowSettings(false);

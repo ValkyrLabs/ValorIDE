@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelAction.mustache
@@ -18,95 +18,94 @@ Template file: typescript-redux-query/modelAction.mustache
 
 // AccountBalance
 
-export const FETCH_ACCOUNTBALANCE_REQUEST = 'FETCH_ACCOUNTBALANCE_REQUEST';
-export const FETCH_ACCOUNTBALANCE_SUCCESS = 'FETCH_ACCOUNTBALANCE_SUCCESS';
-export const FETCH_ACCOUNTBALANCE_FAILURE = 'FETCH_ACCOUNTBALANCE_FAILURE';
+export const FETCH_ACCOUNTBALANCE_REQUEST = "FETCH_ACCOUNTBALANCE_REQUEST";
+export const FETCH_ACCOUNTBALANCE_SUCCESS = "FETCH_ACCOUNTBALANCE_SUCCESS";
+export const FETCH_ACCOUNTBALANCE_FAILURE = "FETCH_ACCOUNTBALANCE_FAILURE";
 
-export const ADD_ACCOUNTBALANCE_REQUEST = 'ADD_ACCOUNTBALANCE_REQUEST';
-export const ADD_ACCOUNTBALANCE_SUCCESS = 'ADD_ACCOUNTBALANCE_SUCCESS';
-export const ADD_ACCOUNTBALANCE_FAILURE = 'ADD_ACCOUNTBALANCE_FAILURE';
+export const ADD_ACCOUNTBALANCE_REQUEST = "ADD_ACCOUNTBALANCE_REQUEST";
+export const ADD_ACCOUNTBALANCE_SUCCESS = "ADD_ACCOUNTBALANCE_SUCCESS";
+export const ADD_ACCOUNTBALANCE_FAILURE = "ADD_ACCOUNTBALANCE_FAILURE";
 
-export const UPDATE_ACCOUNTBALANCE_REQUEST = 'UPDATE_ACCOUNTBALANCE_REQUEST';
-export const UPDATE_ACCOUNTBALANCE_SUCCESS = 'UPDATE_ACCOUNTBALANCE_SUCCESS';
-export const UPDATE_ACCOUNTBALANCE_FAILURE = 'UPDATE_ACCOUNTBALANCE_FAILURE';
+export const UPDATE_ACCOUNTBALANCE_REQUEST = "UPDATE_ACCOUNTBALANCE_REQUEST";
+export const UPDATE_ACCOUNTBALANCE_SUCCESS = "UPDATE_ACCOUNTBALANCE_SUCCESS";
+export const UPDATE_ACCOUNTBALANCE_FAILURE = "UPDATE_ACCOUNTBALANCE_FAILURE";
 
-export const DELETE_ACCOUNTBALANCE_REQUEST = 'DELETE_ACCOUNTBALANCE_REQUEST';
-export const DELETE_ACCOUNTBALANCE_SUCCESS = 'DELETE_ACCOUNTBALANCE_SUCCESS';
-export const DELETE_ACCOUNTBALANCE_FAILURE = 'DELETE_ACCOUNTBALANCE_FAILURE';
+export const DELETE_ACCOUNTBALANCE_REQUEST = "DELETE_ACCOUNTBALANCE_REQUEST";
+export const DELETE_ACCOUNTBALANCE_SUCCESS = "DELETE_ACCOUNTBALANCE_SUCCESS";
+export const DELETE_ACCOUNTBALANCE_FAILURE = "DELETE_ACCOUNTBALANCE_FAILURE";
 
-export const LIST_ACCOUNTBALANCE_REQUEST = 'LIST_ACCOUNTBALANCE_REQUEST';
-export const LIST_ACCOUNTBALANCE_SUCCESS = 'LIST_ACCOUNTBALANCE_SUCCESS';
-export const LIST_ACCOUNTBALANCE_FAILURE = 'LIST_ACCOUNTBALANCE_FAILURE';
+export const LIST_ACCOUNTBALANCE_REQUEST = "LIST_ACCOUNTBALANCE_REQUEST";
+export const LIST_ACCOUNTBALANCE_SUCCESS = "LIST_ACCOUNTBALANCE_SUCCESS";
+export const LIST_ACCOUNTBALANCE_FAILURE = "LIST_ACCOUNTBALANCE_FAILURE";
 
 export const addAccountBalanceRequest = () => ({
-    type: ADD_ACCOUNTBALANCE_REQUEST,
+  type: ADD_ACCOUNTBALANCE_REQUEST,
 });
 
 export const addAccountBalanceSuccess = (AccountBalances: any) => ({
-    type: ADD_ACCOUNTBALANCE_SUCCESS,
-    payload: AccountBalances,
+  type: ADD_ACCOUNTBALANCE_SUCCESS,
+  payload: AccountBalances,
 });
 
 export const addAccountBalanceFailure = (error: Error) => ({
-    type: ADD_ACCOUNTBALANCE_FAILURE,
-    payload: error,
+  type: ADD_ACCOUNTBALANCE_FAILURE,
+  payload: error,
 });
 
-
 export const fetchAccountBalanceRequest = () => ({
-    type: FETCH_ACCOUNTBALANCE_REQUEST,
+  type: FETCH_ACCOUNTBALANCE_REQUEST,
 });
 
 export const fetchAccountBalanceSuccess = (AccountBalances: any) => ({
-    type: FETCH_ACCOUNTBALANCE_SUCCESS,
-    payload: AccountBalances,
+  type: FETCH_ACCOUNTBALANCE_SUCCESS,
+  payload: AccountBalances,
 });
 
 export const fetchAccountBalanceFailure = (error: Error) => ({
-    type: FETCH_ACCOUNTBALANCE_FAILURE,
-    payload: error,
+  type: FETCH_ACCOUNTBALANCE_FAILURE,
+  payload: error,
 });
 
 export const listAccountBalanceRequest = () => ({
-    type: LIST_ACCOUNTBALANCE_REQUEST,
+  type: LIST_ACCOUNTBALANCE_REQUEST,
 });
 
 export const listAccountBalanceSuccess = (AccountBalances: any) => ({
-    type: LIST_ACCOUNTBALANCE_SUCCESS,
-    payload: AccountBalances,
+  type: LIST_ACCOUNTBALANCE_SUCCESS,
+  payload: AccountBalances,
 });
 
 export const listAccountBalanceFailure = (error: Error) => ({
-    type: LIST_ACCOUNTBALANCE_FAILURE,
-    payload: error,
+  type: LIST_ACCOUNTBALANCE_FAILURE,
+  payload: error,
 });
 
 export const updateAccountBalanceRequest = (AccountBalance: any) => ({
-    type: UPDATE_ACCOUNTBALANCE_REQUEST,
-    payload: AccountBalance,
+  type: UPDATE_ACCOUNTBALANCE_REQUEST,
+  payload: AccountBalance,
 });
 
 export const updateAccountBalanceSuccess = (AccountBalance: any) => ({
-    type: UPDATE_ACCOUNTBALANCE_SUCCESS,
-    payload: AccountBalance,
+  type: UPDATE_ACCOUNTBALANCE_SUCCESS,
+  payload: AccountBalance,
 });
 
 export const updateAccountBalanceFailure = (error: Error) => ({
-    type: UPDATE_ACCOUNTBALANCE_FAILURE,
-    payload: error,
+  type: UPDATE_ACCOUNTBALANCE_FAILURE,
+  payload: error,
 });
 
 export const deleteAccountBalanceRequest = (AccountBalance: any) => ({
-    type: DELETE_ACCOUNTBALANCE_REQUEST,
-    payload: AccountBalance,
+  type: DELETE_ACCOUNTBALANCE_REQUEST,
+  payload: AccountBalance,
 });
 
 export const deleteAccountBalanceSuccess = (AccountBalance: any) => ({
-    type: DELETE_ACCOUNTBALANCE_SUCCESS,
-    payload: AccountBalance,
+  type: DELETE_ACCOUNTBALANCE_SUCCESS,
+  payload: AccountBalance,
 });
 
 export const deleteAccountBalanceFailure = (error: Error) => ({
-    type: DELETE_ACCOUNTBALANCE_FAILURE,
-    payload: error,
+  type: DELETE_ACCOUNTBALANCE_FAILURE,
+  payload: error,
 });

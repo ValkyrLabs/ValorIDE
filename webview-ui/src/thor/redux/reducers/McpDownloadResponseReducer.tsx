@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { McpDownloadResponse } from '@thor/model/McpDownloadResponse';
+import { McpDownloadResponse } from "@thor/model/McpDownloadResponse";
 
 const McpDownloadResponseSlice = createSlice({
   name: "McpDownloadResponses",
@@ -12,20 +12,25 @@ const McpDownloadResponseSlice = createSlice({
     },
 
     McpDownloadResponseValueToggled(state, action) {
-      console.log("McpDownloadResponse TOGGLE")
-      console.warn(JSON.stringify(action))
-      const McpDownloadResponse:McpDownloadResponse = state.find((McpDownloadResponse) => McpDownloadResponse.id === action.payload.McpDownloadResponseId);
+      console.log("McpDownloadResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpDownloadResponse: McpDownloadResponse = state.find(
+        (McpDownloadResponse) =>
+          McpDownloadResponse.id === action.payload.McpDownloadResponseId,
+      );
       if (McpDownloadResponse) {
         if (action.payload.target === "SOMETHING") {
-          
         }
       }
     },
-    
+
     McpDownloadResponsepropertySet(state, action) {
-      const McpDownloadResponse = state.find((McpDownloadResponse) => McpDownloadResponse.id === action.payload.McpDownloadResponseId);
+      const McpDownloadResponse = state.find(
+        (McpDownloadResponse) =>
+          McpDownloadResponse.id === action.payload.McpDownloadResponseId,
+      );
       if (McpDownloadResponse) {
-      //  McpDownloadResponse[action.property] = action.payload[action.property];
+        //  McpDownloadResponse[action.property] = action.payload[action.property];
       }
     },
   },
@@ -34,6 +39,6 @@ const McpDownloadResponseSlice = createSlice({
 export const {
   McpDownloadResponseAdded,
   McpDownloadResponseValueToggled,
-  McpDownloadResponsepropertySet
+  McpDownloadResponsepropertySet,
 } = McpDownloadResponseSlice.actions;
 export default McpDownloadResponseSlice.reducer;

@@ -11,7 +11,7 @@ import { MessageHandler } from "./MessageHandler";
 export class CheckpointHandler {
   private checkpointTracker?: CheckpointTracker;
   checkpointTrackerErrorMessage?: string;
-  
+
   constructor(
     private taskId: string,
     private context: vscode.ExtensionContext,
@@ -21,7 +21,7 @@ export class CheckpointHandler {
     private postMessageToWebview: (message: any) => Promise<void>,
     private reinitExistingTaskFromId: (taskId: string) => Promise<void>,
     private cancelTask: () => Promise<void>,
-    private saveValorIDEMessagesAndUpdateHistory: () => Promise<void>
+    private saveValorIDEMessagesAndUpdateHistory: () => Promise<void>,
   ) {}
 
   getCheckpointTracker(): CheckpointTracker | undefined {
@@ -58,9 +58,11 @@ export class CheckpointHandler {
     }
   }
 
-  async saveCheckpoint(isAttemptCompletionMessage: boolean = false): Promise<void> {
+  async saveCheckpoint(
+    isAttemptCompletionMessage: boolean = false,
+  ): Promise<void> {
     const valorideMessages = this.messageHandler.getValorIDEMessages();
-    
+
     // Set isCheckpointCheckedOut to false for all checkpoint_created messages
     valorideMessages.forEach((message) => {
       if (message.say === "checkpoint_created") {
@@ -109,8 +111,7 @@ export class CheckpointHandler {
   ): Promise<void> {
     const valorideMessages = this.messageHandler.getValorIDEMessages();
     const messageIndex =
-      valorideMessages.findIndex((m) => m.ts === messageTs) -
-      (offset || 0);
+      valorideMessages.findIndex((m) => m.ts === messageTs) - (offset || 0);
     // Find the last message before messageIndex that has a lastCheckpointHash
     const lastHashIndex = findLastIndex(
       valorideMessages.slice(0, messageIndex),
@@ -210,9 +211,7 @@ export class CheckpointHandler {
 
     const valorideMessages = this.messageHandler.getValorIDEMessages();
     console.log("presentMultifileDiff", messageTs);
-    const messageIndex = valorideMessages.findIndex(
-      (m) => m.ts === messageTs,
-    );
+    const messageIndex = valorideMessages.findIndex((m) => m.ts === messageTs);
     const message = valorideMessages[messageIndex];
     if (!message) {
       console.error("Message not found");
@@ -244,7 +243,7 @@ export class CheckpointHandler {
           valorideMessages.slice(0, messageIndex),
           (m) => m.say === "completion_result",
         )?.lastCheckpointHash;
-        
+
         const firstCheckpointMessageCheckpointHash = valorideMessages.find(
           (m) => m.say === "checkpoint_created",
         )?.lastCheckpointHash;
@@ -335,7 +334,7 @@ export class CheckpointHandler {
     try {
       const lastTaskCompletedMessageCheckpointHash =
         lastTaskCompletedMessage?.lastCheckpointHash;
-      
+
       const firstCheckpointMessageCheckpointHash = valorideMessages.find(
         (m) => m.say === "checkpoint_created",
       )?.lastCheckpointHash;

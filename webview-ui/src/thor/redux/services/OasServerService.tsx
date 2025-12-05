@@ -1,33 +1,40 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { OasServer } from '@thor/model/OasServer'
-import customBaseQuery from '../customBaseQuery'; // Import the custom base query
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { OasServer } from "@thor/model/OasServer";
+import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 
-type OasServerResponse = OasServer[]
+type OasServerResponse = OasServer[];
 
 export const OasServerService = createApi({
-  reducerPath: 'OasServer', // This should remain unique
+  reducerPath: "OasServer", // This should remain unique
   baseQuery: customBaseQuery,
-  tagTypes: ['OasServer'],
+  tagTypes: ["OasServer"],
   endpoints: (build) => ({
     // 1) Paged Query Endpoint
     // Standardized pagination: page (0-based), size (page size)
-    getOasServersPaged: build.query<OasServerResponse, { page: number; size?: number; example?: Partial<OasServer> }>({
+    getOasServersPaged: build.query<
+      OasServerResponse,
+      { page: number; size?: number; example?: Partial<OasServer> }
+    >({
       query: ({ page, size = 20, example }) => {
         const q: string[] = [`page=${page}`, `size=${size}`];
-        if (example) q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-        return `OasServer?${q.join('&')}`;
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasServer?${q.join("&")}`;
       },
       providesTags: (result, error, { page }) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'OasServer' as const, id })),
-              { type: 'OasServer', id: `PAGE_${page}` },
+              ...result.map(({ id }) => ({ type: "OasServer" as const, id })),
+              { type: "OasServer", id: `PAGE_${page}` },
             ]
           : [],
     }),
 
     // 2) Simple "get all" Query (optional)
-    getOasServers: build.query<OasServerResponse, { example?: Partial<OasServer> } | void>({
+    getOasServers: build.query<
+      OasServerResponse,
+      { example?: Partial<OasServer> } | void
+    >({
       query: (arg) => {
         if (arg && (arg as any).example) {
           const ex = (arg as any).example;
@@ -38,52 +45,59 @@ export const OasServerService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'OasServer' as const, id })),
-              { type: 'OasServer', id: 'LIST' },
+              ...result.map(({ id }) => ({ type: "OasServer" as const, id })),
+              { type: "OasServer", id: "LIST" },
             ]
-          : [{ type: 'OasServer', id: 'LIST' }],
+          : [{ type: "OasServer", id: "LIST" }],
     }),
 
     // 3) Create
     addOasServer: build.mutation<OasServer, Partial<OasServer>>({
       query: (body) => ({
         url: `OasServer`,
-        method: 'POST',
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: 'OasServer', id: 'LIST' }],
+      invalidatesTags: [{ type: "OasServer", id: "LIST" }],
     }),
 
     // 4) Get single by ID
     getOasServer: build.query<OasServer, string>({
       query: (id) => `OasServer/${id}`,
-      providesTags: (result, error, id) => [{ type: 'OasServer', id }],
+      providesTags: (result, error, id) => [{ type: "OasServer", id }],
     }),
 
     // 5) Update
-    updateOasServer: build.mutation<void, Pick<OasServer, 'id'> & Partial<OasServer>>({
+    updateOasServer: build.mutation<
+      void,
+      Pick<OasServer, "id"> & Partial<OasServer>
+    >({
       query: ({ id, ...patch }) => ({
         url: `OasServer/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: patch,
       }),
       async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
         if (id) {
           const patchResult = dispatch(
-            OasServerService.util.updateQueryData('getOasServer', id, (draft) => {
-              Object.assign(draft, patch)
-            })
-          )
+            OasServerService.util.updateQueryData(
+              "getOasServer",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
           try {
-            await queryFulfilled
+            await queryFulfilled;
           } catch {
-            patchResult.undo()
+            patchResult.undo();
           }
         }
       },
-      invalidatesTags: (result, error, { id }) => [
-        { type: 'OasServer', id },
-        { type: 'OasServer', id: 'LIST' },
+      invalidatesTags: (result, error, { id }: Pick<OasServer, "id">) => [
+        { type: "OasServer", id },
+        { type: "OasServer", id: "LIST" },
       ],
     }),
 
@@ -92,21 +106,21 @@ export const OasServerService = createApi({
       query(id) {
         return {
           url: `OasServer/${id}`,
-          method: 'DELETE',
-        }
+          method: "DELETE",
+        };
       },
-      invalidatesTags: (result, error, id) => [{ type: 'OasServer', id }],
+      invalidatesTags: (result, error, id) => [{ type: "OasServer", id }],
     }),
   }),
-})
+});
 
 // Notice we now also export `useLazyGetOasServersPagedQuery`
 export const {
-  useGetOasServersPagedQuery,     // immediate fetch
+  useGetOasServersPagedQuery, // immediate fetch
   useLazyGetOasServersPagedQuery, // lazy fetch
   useGetOasServerQuery,
   useGetOasServersQuery,
   useAddOasServerMutation,
   useUpdateOasServerMutation,
   useDeleteOasServerMutation,
-} = OasServerService
+} = OasServerService;

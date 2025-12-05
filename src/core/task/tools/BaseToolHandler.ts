@@ -10,12 +10,18 @@ import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
 import { Anthropic } from "@anthropic-ai/sdk";
 import { AssistantMessageContent } from "@core/assistant-message";
 import { ValorIDEAskResponse } from "@shared/WebviewMessage";
-import { ValorIDEMessage, ValorIDESay, ValorIDEAsk } from "@shared/ExtensionMessage";
+import {
+  ValorIDEMessage,
+  ValorIDESay,
+  ValorIDEAsk,
+} from "@shared/ExtensionMessage";
 import { AutoApprovalSettings } from "@shared/AutoApprovalSettings";
 import { ApiHandler } from "@api/index";
 import CheckpointTracker from "@integrations/checkpoints/CheckpointTracker";
 
-export type ToolResponse = string | Array<Anthropic.TextBlockParam | Anthropic.ImageBlockParam>;
+export type ToolResponse =
+  | string
+  | Array<Anthropic.TextBlockParam | Anthropic.ImageBlockParam>;
 
 export interface ToolContext {
   // Core services
@@ -39,8 +45,17 @@ export interface ToolContext {
   consecutiveAutoApprovedRequestsCount: number;
 
   // Callbacks
-  say: (type: ValorIDESay, text?: string, images?: string[], partial?: boolean) => Promise<undefined>;
-  ask: (type: ValorIDEAsk, text?: string, partial?: boolean) => Promise<{
+  say: (
+    type: ValorIDESay,
+    text?: string,
+    images?: string[],
+    partial?: boolean,
+  ) => Promise<undefined>;
+  ask: (
+    type: ValorIDEAsk,
+    text?: string,
+    partial?: boolean,
+  ) => Promise<{
     response: ValorIDEAskResponse;
     text?: string;
     images?: string[];
@@ -48,8 +63,15 @@ export interface ToolContext {
   saveCheckpoint: () => Promise<void>;
   shouldAutoApproveTool: (toolName: string) => boolean | [boolean, boolean];
   shouldAutoApproveToolWithPath: (toolName: string, path?: string) => boolean;
-  sayAndCreateMissingParamError: (toolName: string, paramName: string, relPath?: string) => Promise<ToolResponse>;
-  removeLastPartialMessageIfExistsWithType: (type: "ask" | "say", askOrSay: ValorIDEAsk | ValorIDESay) => Promise<void>;
+  sayAndCreateMissingParamError: (
+    toolName: string,
+    paramName: string,
+    relPath?: string,
+  ) => Promise<ToolResponse>;
+  removeLastPartialMessageIfExistsWithType: (
+    type: "ask" | "say",
+    askOrSay: ValorIDEAsk | ValorIDESay,
+  ) => Promise<void>;
 
   // Flags
   didRejectTool: boolean;
@@ -74,13 +96,20 @@ export abstract class BaseToolHandler {
     this.context = context;
   }
 
-  abstract execute(block: AssistantMessageContent, partial: boolean): Promise<ToolExecutionResult>;
+  abstract execute(
+    block: AssistantMessageContent,
+    partial: boolean,
+  ): Promise<ToolExecutionResult>;
 
-  protected removeClosingTag(tag: string, text?: string, partial: boolean = false): string {
+  protected removeClosingTag(
+    tag: string,
+    text?: string,
+    partial: boolean = false,
+  ): string {
     if (!text || !partial) {
       return text || "";
     }
-    
+
     const tagRegex = new RegExp(
       `\\s?</?${tag
         .split("")
@@ -91,7 +120,10 @@ export abstract class BaseToolHandler {
     return text.replace(tagRegex, "");
   }
 
-  protected async handleError(action: string, error: Error): Promise<ToolResponse> {
+  protected async handleError(
+    action: string,
+    error: Error,
+  ): Promise<ToolResponse> {
     const errorString = `Error ${action}: ${JSON.stringify(error, null, 2)}`;
     await this.context.say(
       "error",
@@ -132,7 +164,7 @@ export abstract class BaseToolHandler {
 
   protected getToolDescription(block: AssistantMessageContent): string {
     if (block.type !== "tool_use") return "";
-    
+
     switch (block.name) {
       case "execute_command":
         return `[${block.name} for '${block.params.command}']`;
@@ -144,9 +176,7 @@ export abstract class BaseToolHandler {
         return `[${block.name} for '${block.params.path}']`;
       case "search_files":
         return `[${block.name} for '${block.params.regex}'${
-          block.params.file_pattern
-            ? ` in '${block.params.file_pattern}'`
-            : ""
+          block.params.file_pattern ? ` in '${block.params.file_pattern}'` : ""
         }]`;
       case "list_files":
         return `[${block.name} for '${block.params.path}']`;

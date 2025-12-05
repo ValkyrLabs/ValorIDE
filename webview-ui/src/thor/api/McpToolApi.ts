@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,294 +19,345 @@ Template file: typescript-redux-query/apis.mustache
 Description: McpToolApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    McpTool,
-    McpToolFromJSON,
-    McpToolToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { McpTool, McpToolFromJSON, McpToolToJSON } from "../model";
 
 export interface DeleteMcpToolApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetMcpToolApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetMcpToolListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PostMcpToolApiRequest {
-    mcpTool: McpTool;
+  mcpTool: McpTool;
 }
 
 export interface UpdateMcpToolApiRequest {
-    id: string;
-    mcpTool: McpTool;
+  id: string;
+  mcpTool: McpTool;
 }
-
 
 /**
  * Deletes a specific McpTool.
  * Delete a McpTool.
  */
-function deleteMcpToolRaw<T>(requestParameters: DeleteMcpToolApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteMcpTool.');
-    }
+function deleteMcpToolRaw<T>(
+  requestParameters: DeleteMcpToolApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteMcpTool.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpTool/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/McpTool/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific McpTool.
-* Delete a McpTool.
-*/
-export function deleteMcpTool<T>(requestParameters: DeleteMcpToolApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteMcpToolRaw(requestParameters, requestConfig);
+ * Deletes a specific McpTool.
+ * Delete a McpTool.
+ */
+export function deleteMcpTool<T>(
+  requestParameters: DeleteMcpToolApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteMcpToolRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single McpTool for a specific uid.
  * Retrieve a single McpTool
  */
-function getMcpToolRaw<T>(requestParameters: GetMcpToolApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpTool> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getMcpTool.');
-    }
+function getMcpToolRaw<T>(
+  requestParameters: GetMcpToolApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpTool> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getMcpTool.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpTool/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpToolFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/McpTool/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpToolFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single McpTool for a specific uid.
-* Retrieve a single McpTool
-*/
-export function getMcpTool<T>(requestParameters: GetMcpToolApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpTool>): QueryConfig<T> {
-    return getMcpToolRaw(requestParameters, requestConfig);
+ * Retrieves a single McpTool for a specific uid.
+ * Retrieve a single McpTool
+ */
+export function getMcpTool<T>(
+  requestParameters: GetMcpToolApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpTool>,
+): QueryConfig<T> {
+  return getMcpToolRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of McpTools.
  * Retrieve a list of McpTools
  */
-function getMcpToolListRaw<T>(requestParameters: GetMcpToolListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<McpTool>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getMcpToolListRaw<T>(
+  requestParameters: GetMcpToolListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<McpTool>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpTool`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(McpToolFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/McpTool`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(McpToolFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of McpTools.
-* Retrieve a list of McpTools
-*/
-export function getMcpToolList<T>(requestParameters: GetMcpToolListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<McpTool>>): QueryConfig<T> {
-    return getMcpToolListRaw(requestParameters, requestConfig);
+ * Retrieves a list of McpTools.
+ * Retrieve a list of McpTools
+ */
+export function getMcpToolList<T>(
+  requestParameters: GetMcpToolListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<McpTool>>,
+): QueryConfig<T> {
+  return getMcpToolListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new McpTool.
  * Create a new McpTool
  */
-function postMcpToolRaw<T>(requestParameters: PostMcpToolApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpTool> = {}): QueryConfig<T> {
-    if (requestParameters.mcpTool === null || requestParameters.mcpTool === undefined) {
-        throw new runtime.RequiredError('mcpTool','Required parameter requestParameters.mcpTool was null or undefined when calling postMcpTool.');
-    }
+function postMcpToolRaw<T>(
+  requestParameters: PostMcpToolApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpTool> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.mcpTool === null ||
+    requestParameters.mcpTool === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mcpTool",
+      "Required parameter requestParameters.mcpTool was null or undefined when calling postMcpTool.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpTool`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || McpToolToJSON(requestParameters.mcpTool),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpToolFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/McpTool`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || McpToolToJSON(requestParameters.mcpTool),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpToolFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new McpTool.
-* Create a new McpTool
-*/
-export function postMcpTool<T>(requestParameters: PostMcpToolApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpTool>): QueryConfig<T> {
-    return postMcpToolRaw(requestParameters, requestConfig);
+ * Creates a new McpTool.
+ * Create a new McpTool
+ */
+export function postMcpTool<T>(
+  requestParameters: PostMcpToolApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpTool>,
+): QueryConfig<T> {
+  return postMcpToolRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing McpTool.
  * Update an existing McpTool
  */
-function updateMcpToolRaw<T>(requestParameters: UpdateMcpToolApiRequest, requestConfig: runtime.TypedQueryConfig<T, McpTool> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateMcpTool.');
-    }
+function updateMcpToolRaw<T>(
+  requestParameters: UpdateMcpToolApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, McpTool> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateMcpTool.",
+    );
+  }
 
-    if (requestParameters.mcpTool === null || requestParameters.mcpTool === undefined) {
-        throw new runtime.RequiredError('mcpTool','Required parameter requestParameters.mcpTool was null or undefined when calling updateMcpTool.');
-    }
+  if (
+    requestParameters.mcpTool === null ||
+    requestParameters.mcpTool === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "mcpTool",
+      "Required parameter requestParameters.mcpTool was null or undefined when calling updateMcpTool.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/McpTool/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || McpToolToJSON(requestParameters.mcpTool),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(McpToolFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/McpTool/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || McpToolToJSON(requestParameters.mcpTool),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(McpToolFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing McpTool.
-* Update an existing McpTool
-*/
-export function updateMcpTool<T>(requestParameters: UpdateMcpToolApiRequest, requestConfig?: runtime.TypedQueryConfig<T, McpTool>): QueryConfig<T> {
-    return updateMcpToolRaw(requestParameters, requestConfig);
+ * Updates an existing McpTool.
+ * Update an existing McpTool
+ */
+export function updateMcpTool<T>(
+  requestParameters: UpdateMcpToolApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, McpTool>,
+): QueryConfig<T> {
+  return updateMcpToolRaw(requestParameters, requestConfig);
 }
-

@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-10-30T14:43:21.527935-07:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -19,294 +19,345 @@ Template file: typescript-redux-query/apis.mustache
 Description: SpaceMemberApi
 */
 
-import { HttpMethods, QueryConfig, ResponseBody, ResponseText } from 'redux-query';
-import * as runtime from '../src/runtime';
 import {
-    SpaceMember,
-    SpaceMemberFromJSON,
-    SpaceMemberToJSON,
-} from '../model';
+  HttpMethods,
+  QueryConfig,
+  ResponseBody,
+  ResponseText,
+} from "redux-query";
+import * as runtime from "../src/runtime";
+import { SpaceMember, SpaceMemberFromJSON, SpaceMemberToJSON } from "../model";
 
 export interface DeleteSpaceMemberApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetSpaceMemberApiRequest {
-    id: string;
+  id: string;
 }
 
 export interface GetSpaceMemberListApiRequest {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
+  page?: number;
+  size?: number;
+  sort?: Array<string>;
 }
 
 export interface PostSpaceMemberApiRequest {
-    spaceMember: SpaceMember;
+  spaceMember: SpaceMember;
 }
 
 export interface UpdateSpaceMemberApiRequest {
-    id: string;
-    spaceMember: SpaceMember;
+  id: string;
+  spaceMember: SpaceMember;
 }
-
 
 /**
  * Deletes a specific SpaceMember.
  * Delete a SpaceMember.
  */
-function deleteSpaceMemberRaw<T>(requestParameters: DeleteSpaceMemberApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteSpaceMember.');
-    }
+function deleteSpaceMemberRaw<T>(
+  requestParameters: DeleteSpaceMemberApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, void> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling deleteSpaceMember.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SpaceMember/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "DELETE",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SpaceMember/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'DELETE',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Deletes a specific SpaceMember.
-* Delete a SpaceMember.
-*/
-export function deleteSpaceMember<T>(requestParameters: DeleteSpaceMemberApiRequest, requestConfig?: runtime.TypedQueryConfig<T, void>): QueryConfig<T> {
-    return deleteSpaceMemberRaw(requestParameters, requestConfig);
+ * Deletes a specific SpaceMember.
+ * Delete a SpaceMember.
+ */
+export function deleteSpaceMember<T>(
+  requestParameters: DeleteSpaceMemberApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, void>,
+): QueryConfig<T> {
+  return deleteSpaceMemberRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a single SpaceMember for a specific uid.
  * Retrieve a single SpaceMember
  */
-function getSpaceMemberRaw<T>(requestParameters: GetSpaceMemberApiRequest, requestConfig: runtime.TypedQueryConfig<T, SpaceMember> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getSpaceMember.');
-    }
+function getSpaceMemberRaw<T>(
+  requestParameters: GetSpaceMemberApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SpaceMember> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling getSpaceMember.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SpaceMember/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SpaceMemberFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SpaceMember/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SpaceMemberFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a single SpaceMember for a specific uid.
-* Retrieve a single SpaceMember
-*/
-export function getSpaceMember<T>(requestParameters: GetSpaceMemberApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SpaceMember>): QueryConfig<T> {
-    return getSpaceMemberRaw(requestParameters, requestConfig);
+ * Retrieves a single SpaceMember for a specific uid.
+ * Retrieve a single SpaceMember
+ */
+export function getSpaceMember<T>(
+  requestParameters: GetSpaceMemberApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SpaceMember>,
+): QueryConfig<T> {
+  return getSpaceMemberRaw(requestParameters, requestConfig);
 }
 
 /**
  * Retrieves a list of SpaceMembers.
  * Retrieve a list of SpaceMembers
  */
-function getSpaceMemberListRaw<T>(requestParameters: GetSpaceMemberListApiRequest, requestConfig: runtime.TypedQueryConfig<T, Array<SpaceMember>> = {}): QueryConfig<T> {
-    let queryParameters = null;
+function getSpaceMemberListRaw<T>(
+  requestParameters: GetSpaceMemberListApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Array<SpaceMember>> = {},
+): QueryConfig<T> {
+  let queryParameters = null;
 
-    queryParameters = {};
+  queryParameters = {};
 
+  if (requestParameters.page !== undefined) {
+    queryParameters["page"] = requestParameters.page;
+  }
 
-    if (requestParameters.page !== undefined) {
-        queryParameters['page'] = requestParameters.page;
-    }
+  if (requestParameters.size !== undefined) {
+    queryParameters["size"] = requestParameters.size;
+  }
 
+  if (requestParameters.sort) {
+    queryParameters["sort"] = requestParameters.sort;
+  }
 
-    if (requestParameters.size !== undefined) {
-        queryParameters['size'] = requestParameters.size;
-    }
+  const headerParameters: runtime.HttpHeaders = {};
 
+  const { meta = {} } = requestConfig;
 
-    if (requestParameters.sort) {
-        queryParameters['sort'] = requestParameters.sort;
-    }
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SpaceMember`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "GET",
+      headers: headerParameters,
+    },
+    body: queryParameters,
+  };
 
-    const headerParameters : runtime.HttpHeaders = {};
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(body.map(SpaceMemberFromJSON), text);
+  }
 
-
-    const { meta = {} } = requestConfig;
-
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SpaceMember`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'GET',
-            headers: headerParameters,
-        },
-        body: queryParameters,
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(body.map(SpaceMemberFromJSON), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Retrieves a list of SpaceMembers.
-* Retrieve a list of SpaceMembers
-*/
-export function getSpaceMemberList<T>(requestParameters: GetSpaceMemberListApiRequest, requestConfig?: runtime.TypedQueryConfig<T, Array<SpaceMember>>): QueryConfig<T> {
-    return getSpaceMemberListRaw(requestParameters, requestConfig);
+ * Retrieves a list of SpaceMembers.
+ * Retrieve a list of SpaceMembers
+ */
+export function getSpaceMemberList<T>(
+  requestParameters: GetSpaceMemberListApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Array<SpaceMember>>,
+): QueryConfig<T> {
+  return getSpaceMemberListRaw(requestParameters, requestConfig);
 }
 
 /**
  * Creates a new SpaceMember.
  * Create a new SpaceMember
  */
-function postSpaceMemberRaw<T>(requestParameters: PostSpaceMemberApiRequest, requestConfig: runtime.TypedQueryConfig<T, SpaceMember> = {}): QueryConfig<T> {
-    if (requestParameters.spaceMember === null || requestParameters.spaceMember === undefined) {
-        throw new runtime.RequiredError('spaceMember','Required parameter requestParameters.spaceMember was null or undefined when calling postSpaceMember.');
-    }
+function postSpaceMemberRaw<T>(
+  requestParameters: PostSpaceMemberApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SpaceMember> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.spaceMember === null ||
+    requestParameters.spaceMember === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "spaceMember",
+      "Required parameter requestParameters.spaceMember was null or undefined when calling postSpaceMember.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SpaceMember`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: queryParameters || SpaceMemberToJSON(requestParameters.spaceMember),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SpaceMemberFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SpaceMember`,
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'POST',
-            headers: headerParameters,
-        },
-        body: queryParameters || SpaceMemberToJSON(requestParameters.spaceMember),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SpaceMemberFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Creates a new SpaceMember.
-* Create a new SpaceMember
-*/
-export function postSpaceMember<T>(requestParameters: PostSpaceMemberApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SpaceMember>): QueryConfig<T> {
-    return postSpaceMemberRaw(requestParameters, requestConfig);
+ * Creates a new SpaceMember.
+ * Create a new SpaceMember
+ */
+export function postSpaceMember<T>(
+  requestParameters: PostSpaceMemberApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SpaceMember>,
+): QueryConfig<T> {
+  return postSpaceMemberRaw(requestParameters, requestConfig);
 }
 
 /**
  * Updates an existing SpaceMember.
  * Update an existing SpaceMember
  */
-function updateSpaceMemberRaw<T>(requestParameters: UpdateSpaceMemberApiRequest, requestConfig: runtime.TypedQueryConfig<T, SpaceMember> = {}): QueryConfig<T> {
-    if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateSpaceMember.');
-    }
+function updateSpaceMemberRaw<T>(
+  requestParameters: UpdateSpaceMemberApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, SpaceMember> = {},
+): QueryConfig<T> {
+  if (requestParameters.id === null || requestParameters.id === undefined) {
+    throw new runtime.RequiredError(
+      "id",
+      "Required parameter requestParameters.id was null or undefined when calling updateSpaceMember.",
+    );
+  }
 
-    if (requestParameters.spaceMember === null || requestParameters.spaceMember === undefined) {
-        throw new runtime.RequiredError('spaceMember','Required parameter requestParameters.spaceMember was null or undefined when calling updateSpaceMember.');
-    }
+  if (
+    requestParameters.spaceMember === null ||
+    requestParameters.spaceMember === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "spaceMember",
+      "Required parameter requestParameters.spaceMember was null or undefined when calling updateSpaceMember.",
+    );
+  }
 
-    let queryParameters = null;
+  let queryParameters = null;
 
+  const headerParameters: runtime.HttpHeaders = {};
 
-    const headerParameters : runtime.HttpHeaders = {};
+  headerParameters["Content-Type"] = "application/json";
 
-    headerParameters['Content-Type'] = 'application/json';
+  const { meta = {} } = requestConfig;
 
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/SpaceMember/{id}`.replace(
+      `{${"id"}}`,
+      encodeURIComponent(String(requestParameters.id)),
+    ),
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "PUT",
+      headers: headerParameters,
+    },
+    body: queryParameters || SpaceMemberToJSON(requestParameters.spaceMember),
+  };
 
-    const { meta = {} } = requestConfig;
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(SpaceMemberFromJSON(body), text);
+  }
 
-    const config: QueryConfig<T> = {
-        url: `${runtime.Configuration.basePath}/SpaceMember/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
-        meta,
-        update: requestConfig.update,
-        queryKey: requestConfig.queryKey,
-        optimisticUpdate: requestConfig.optimisticUpdate,
-        force: requestConfig.force,
-        rollback: requestConfig.rollback,
-        options: {
-            method: 'PUT',
-            headers: headerParameters,
-        },
-        body: queryParameters || SpaceMemberToJSON(requestParameters.spaceMember),
-    };
-
-    const { transform: requestTransform } = requestConfig;
-    if (requestTransform) {
-        config.transform = (body: ResponseBody, text: ResponseBody) => requestTransform(SpaceMemberFromJSON(body), text);
-    }
-
-    return config;
+  return config;
 }
 
 /**
-* Updates an existing SpaceMember.
-* Update an existing SpaceMember
-*/
-export function updateSpaceMember<T>(requestParameters: UpdateSpaceMemberApiRequest, requestConfig?: runtime.TypedQueryConfig<T, SpaceMember>): QueryConfig<T> {
-    return updateSpaceMemberRaw(requestParameters, requestConfig);
+ * Updates an existing SpaceMember.
+ * Update an existing SpaceMember
+ */
+export function updateSpaceMember<T>(
+  requestParameters: UpdateSpaceMemberApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, SpaceMember>,
+): QueryConfig<T> {
+  return updateSpaceMemberRaw(requestParameters, requestConfig);
 }
-
