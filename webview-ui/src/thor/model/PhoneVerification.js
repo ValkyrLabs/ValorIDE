@@ -30,61 +30,61 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { PrincipalFromJSON, PrincipalToJSON } from "./";
 export function PhoneVerificationFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        principalId: json["principalId"],
-        phoneNumber: json["phoneNumber"],
-        principal: !exists(json, "principal")
-            ? undefined
-            : PrincipalFromJSON(json["principal"]),
-        verified: !exists(json, "verified") ? undefined : json["verified"],
-        verificationCode: !exists(json, "verificationCode")
-            ? undefined
-            : json["verificationCode"],
-        verificationCodeExpiresAt: !exists(json, "verificationCodeExpiresAt")
-            ? undefined
-            : new Date(json["verificationCodeExpiresAt"]),
-        verifiedAt: !exists(json, "verifiedAt")
-            ? undefined
-            : new Date(json["verifiedAt"]),
-        usedFor2FA: !exists(json, "usedFor2FA") ? undefined : json["usedFor2FA"],
-        createdAt: !exists(json, "createdAt")
-            ? undefined
-            : new Date(json["createdAt"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    principalId: json["principalId"],
+    phoneNumber: json["phoneNumber"],
+    principal: !exists(json, "principal")
+      ? undefined
+      : PrincipalFromJSON(json["principal"]),
+    verified: !exists(json, "verified") ? undefined : json["verified"],
+    verificationCode: !exists(json, "verificationCode")
+      ? undefined
+      : json["verificationCode"],
+    verificationCodeExpiresAt: !exists(json, "verificationCodeExpiresAt")
+      ? undefined
+      : new Date(json["verificationCodeExpiresAt"]),
+    verifiedAt: !exists(json, "verifiedAt")
+      ? undefined
+      : new Date(json["verifiedAt"]),
+    usedFor2FA: !exists(json, "usedFor2FA") ? undefined : json["usedFor2FA"],
+    createdAt: !exists(json, "createdAt")
+      ? undefined
+      : new Date(json["createdAt"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function PhoneVerificationToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        principalId: value.principalId,
-        phoneNumber: value.phoneNumber,
-        principal: PrincipalToJSON(value.principal),
-        verified: value.verified,
-        verificationCode: value.verificationCode,
-        usedFor2FA: value.usedFor2FA,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    principalId: value.principalId,
+    phoneNumber: value.phoneNumber,
+    principal: PrincipalToJSON(value.principal),
+    verified: value.verified,
+    verificationCode: value.verificationCode,
+    usedFor2FA: value.usedFor2FA,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=PhoneVerification.js.map

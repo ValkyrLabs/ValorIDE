@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: FileUploadSession
 */
-export const FileUploadSessionMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const FileUploadSessionMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("FileUploadSession MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=FileUploadSessionApiMiddleware.js.map

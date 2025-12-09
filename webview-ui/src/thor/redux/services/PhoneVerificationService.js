@@ -17,117 +17,131 @@ Template file: typescript-redux-query/modelService.mustache
 import { createApi } from "@reduxjs/toolkit/query/react";
 import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 export const PhoneVerificationService = createApi({
-    reducerPath: "PhoneVerification", // This should remain unique
-    baseQuery: customBaseQuery,
-    tagTypes: ["PhoneVerification"],
-    endpoints: (build) => ({
-        // 1) Paged Query Endpoint
-        // Standardized pagination: page (0-based), size (page size)
-        getPhoneVerificationsPaged: build.query({
-            query: ({ page, size = 20, example }) => {
-                const q = [`page=${page}`, `size=${size}`];
-                if (example)
-                    q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-                return `PhoneVerification?${q.join("&")}`;
-            },
-            providesTags: (result, error, { page }) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "PhoneVerification",
-                        id,
-                    })),
-                    { type: "PhoneVerification", id: `PAGE_${page}` },
-                ]
-                : [],
-        }),
-        // 2) Simple "get all" Query (optional)
-        getPhoneVerifications: build.query({
-            query: (arg) => {
-                if (arg && arg.example) {
-                    const ex = arg.example;
-                    return `PhoneVerification?example=${encodeURIComponent(JSON.stringify(ex))}`;
-                }
-                return `PhoneVerification`;
-            },
-            providesTags: (result) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "PhoneVerification",
-                        id,
-                    })),
-                    { type: "PhoneVerification", id: "LIST" },
-                ]
-                : [{ type: "PhoneVerification", id: "LIST" }],
-        }),
-        // 3) Create
-        addPhoneVerification: build.mutation({
-            query: (body) => ({
-                url: `PhoneVerification`,
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "PhoneVerification", id: "LIST" }],
-        }),
-        // 4) Get single by ID
-        getPhoneVerification: build.query({
-            query: (id) => `PhoneVerification/${id}`,
-            providesTags: (result, error, id) => [{ type: "PhoneVerification", id }],
-        }),
-        // 5) Update
-        updatePhoneVerification: build.mutation({
-            query: ({ id, ...patch }) => ({
-                url: `PhoneVerification/${id}`,
-                method: "PUT",
-                body: patch,
-            }),
-            async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-                if (id) {
-                    const patchResult = dispatch(PhoneVerificationService.util.updateQueryData("getPhoneVerification", id, (draft) => {
-                        Object.assign(draft, patch);
-                    }));
-                    try {
-                        await queryFulfilled;
-                    }
-                    catch {
-                        patchResult.undo();
-                    }
-                }
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "PhoneVerification", id },
-                { type: "PhoneVerification", id: "LIST" },
-            ],
-        }),
-        // 6) Delete
-        deletePhoneVerification: build.mutation({
-            query(id) {
-                return {
-                    url: `PhoneVerification/${id}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, id) => [
-                { type: "PhoneVerification", id },
-            ],
-        }),
-        // 7) Cascade / soft-delete (marks trashed, cascades children)
-        deletePhoneVerificationCascade: build.mutation({
-            query({ id, cascade = true, trash = true }) {
-                const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
-                return {
-                    url: `PhoneVerification/${id}?${params}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "PhoneVerification", id },
-                { type: "PhoneVerification", id: "LIST" },
-            ],
-        }),
+  reducerPath: "PhoneVerification", // This should remain unique
+  baseQuery: customBaseQuery,
+  tagTypes: ["PhoneVerification"],
+  endpoints: (build) => ({
+    // 1) Paged Query Endpoint
+    // Standardized pagination: page (0-based), size (page size)
+    getPhoneVerificationsPaged: build.query({
+      query: ({ page, size = 20, example }) => {
+        const q = [`page=${page}`, `size=${size}`];
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `PhoneVerification?${q.join("&")}`;
+      },
+      providesTags: (result, error, { page }) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "PhoneVerification",
+                id,
+              })),
+              { type: "PhoneVerification", id: `PAGE_${page}` },
+            ]
+          : [],
     }),
+    // 2) Simple "get all" Query (optional)
+    getPhoneVerifications: build.query({
+      query: (arg) => {
+        if (arg && arg.example) {
+          const ex = arg.example;
+          return `PhoneVerification?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `PhoneVerification`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "PhoneVerification",
+                id,
+              })),
+              { type: "PhoneVerification", id: "LIST" },
+            ]
+          : [{ type: "PhoneVerification", id: "LIST" }],
+    }),
+    // 3) Create
+    addPhoneVerification: build.mutation({
+      query: (body) => ({
+        url: `PhoneVerification`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "PhoneVerification", id: "LIST" }],
+    }),
+    // 4) Get single by ID
+    getPhoneVerification: build.query({
+      query: (id) => `PhoneVerification/${id}`,
+      providesTags: (result, error, id) => [{ type: "PhoneVerification", id }],
+    }),
+    // 5) Update
+    updatePhoneVerification: build.mutation({
+      query: ({ id, ...patch }) => ({
+        url: `PhoneVerification/${id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        if (id) {
+          const patchResult = dispatch(
+            PhoneVerificationService.util.updateQueryData(
+              "getPhoneVerification",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        }
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "PhoneVerification", id },
+        { type: "PhoneVerification", id: "LIST" },
+      ],
+    }),
+    // 6) Delete
+    deletePhoneVerification: build.mutation({
+      query(id) {
+        return {
+          url: `PhoneVerification/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, id) => [
+        { type: "PhoneVerification", id },
+      ],
+    }),
+    // 7) Cascade / soft-delete (marks trashed, cascades children)
+    deletePhoneVerificationCascade: build.mutation({
+      query({ id, cascade = true, trash = true }) {
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        return {
+          url: `PhoneVerification/${id}?${params}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "PhoneVerification", id },
+        { type: "PhoneVerification", id: "LIST" },
+      ],
+    }),
+  }),
 });
 // Notice we now also export `useLazyGetPhoneVerificationsPagedQuery`
-export const { useGetPhoneVerificationsPagedQuery, // immediate fetch
-useLazyGetPhoneVerificationsPagedQuery, // lazy fetch
-useGetPhoneVerificationQuery, useGetPhoneVerificationsQuery, useAddPhoneVerificationMutation, useUpdatePhoneVerificationMutation, useDeletePhoneVerificationMutation, useDeletePhoneVerificationCascadeMutation, } = PhoneVerificationService;
+export const {
+  useGetPhoneVerificationsPagedQuery, // immediate fetch
+  useLazyGetPhoneVerificationsPagedQuery, // lazy fetch
+  useGetPhoneVerificationQuery,
+  useGetPhoneVerificationsQuery,
+  useAddPhoneVerificationMutation,
+  useUpdatePhoneVerificationMutation,
+  useDeletePhoneVerificationMutation,
+  useDeletePhoneVerificationCascadeMutation,
+} = PhoneVerificationService;
 //# sourceMappingURL=PhoneVerificationService.js.map

@@ -28,65 +28,71 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { ExecModuleFromJSON, ExecModuleToJSON, WorkflowFromJSON, WorkflowToJSON, } from "./";
+import {
+  ExecModuleFromJSON,
+  ExecModuleToJSON,
+  WorkflowFromJSON,
+  WorkflowToJSON,
+} from "./";
 export function TaskFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: !exists(json, "name") ? undefined : json["name"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        workflowId: !exists(json, "workflowId") ? undefined : json["workflowId"],
-        workflow: !exists(json, "workflow")
-            ? undefined
-            : WorkflowFromJSON(json["workflow"]),
-        role: !exists(json, "role") ? undefined : json["role"],
-        taskOrder: !exists(json, "taskOrder") ? undefined : json["taskOrder"],
-        modules: !exists(json, "modules")
-            ? undefined
-            : json["modules"].map(ExecModuleFromJSON),
-        status: !exists(json, "status") ? undefined : json["status"],
-        priorityLevel: !exists(json, "priorityLevel")
-            ? undefined
-            : json["priorityLevel"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: !exists(json, "name") ? undefined : json["name"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    workflowId: !exists(json, "workflowId") ? undefined : json["workflowId"],
+    workflow: !exists(json, "workflow")
+      ? undefined
+      : WorkflowFromJSON(json["workflow"]),
+    role: !exists(json, "role") ? undefined : json["role"],
+    taskOrder: !exists(json, "taskOrder") ? undefined : json["taskOrder"],
+    modules: !exists(json, "modules")
+      ? undefined
+      : json["modules"].map(ExecModuleFromJSON),
+    status: !exists(json, "status") ? undefined : json["status"],
+    priorityLevel: !exists(json, "priorityLevel")
+      ? undefined
+      : json["priorityLevel"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function TaskToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        description: value.description,
-        workflowId: value.workflowId,
-        workflow: WorkflowToJSON(value.workflow),
-        role: value.role,
-        taskOrder: value.taskOrder,
-        modules: value.modules === undefined
-            ? undefined
-            : value.modules.map(ExecModuleToJSON),
-        status: value.status,
-        priorityLevel: value.priorityLevel,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    description: value.description,
+    workflowId: value.workflowId,
+    workflow: WorkflowToJSON(value.workflow),
+    role: value.role,
+    taskOrder: value.taskOrder,
+    modules:
+      value.modules === undefined
+        ? undefined
+        : value.modules.map(ExecModuleToJSON),
+    status: value.status,
+    priorityLevel: value.priorityLevel,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -94,8 +100,8 @@ export function TaskToJSON(value) {
  */
 export var TaskRoleEnum;
 (function (TaskRoleEnum) {
-    TaskRoleEnum["USER"] = "user";
-    TaskRoleEnum["ASSISTANT"] = "assistant";
+  TaskRoleEnum["USER"] = "user";
+  TaskRoleEnum["ASSISTANT"] = "assistant";
 })(TaskRoleEnum || (TaskRoleEnum = {}));
 /**
  * @export
@@ -103,13 +109,13 @@ export var TaskRoleEnum;
  */
 export var TaskStatusEnum;
 (function (TaskStatusEnum) {
-    TaskStatusEnum["RUNNING"] = "running";
-    TaskStatusEnum["STOPPED"] = "stopped";
-    TaskStatusEnum["READY"] = "ready";
-    TaskStatusEnum["GOOD"] = "good";
-    TaskStatusEnum["WARNING"] = "warning";
-    TaskStatusEnum["ERROR"] = "error";
-    TaskStatusEnum["DISABLED"] = "disabled";
+  TaskStatusEnum["RUNNING"] = "running";
+  TaskStatusEnum["STOPPED"] = "stopped";
+  TaskStatusEnum["READY"] = "ready";
+  TaskStatusEnum["GOOD"] = "good";
+  TaskStatusEnum["WARNING"] = "warning";
+  TaskStatusEnum["ERROR"] = "error";
+  TaskStatusEnum["DISABLED"] = "disabled";
 })(TaskStatusEnum || (TaskStatusEnum = {}));
 /**
  * @export
@@ -117,9 +123,9 @@ export var TaskStatusEnum;
  */
 export var TaskPriorityLevelEnum;
 (function (TaskPriorityLevelEnum) {
-    TaskPriorityLevelEnum["CRITICAL"] = "critical";
-    TaskPriorityLevelEnum["HIGH"] = "high";
-    TaskPriorityLevelEnum["NORMAL"] = "normal";
-    TaskPriorityLevelEnum["LOW"] = "low";
+  TaskPriorityLevelEnum["CRITICAL"] = "critical";
+  TaskPriorityLevelEnum["HIGH"] = "high";
+  TaskPriorityLevelEnum["NORMAL"] = "normal";
+  TaskPriorityLevelEnum["LOW"] = "low";
 })(TaskPriorityLevelEnum || (TaskPriorityLevelEnum = {}));
 //# sourceMappingURL=Task.js.map

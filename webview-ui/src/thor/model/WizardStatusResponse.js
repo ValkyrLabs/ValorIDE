@@ -29,65 +29,65 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function WizardStatusResponseFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        wizardId: json["wizardId"],
-        status: json["status"],
-        progress: !exists(json, "progress") ? undefined : json["progress"],
-        currentStep: !exists(json, "currentStep") ? undefined : json["currentStep"],
-        errorMessage: !exists(json, "errorMessage")
-            ? undefined
-            : json["errorMessage"],
-        generatedAssets: !exists(json, "generatedAssets")
-            ? undefined
-            : json["generatedAssets"],
-        contentDataId: !exists(json, "contentDataId")
-            ? undefined
-            : json["contentDataId"],
-        landingPageId: !exists(json, "landingPageId")
-            ? undefined
-            : json["landingPageId"],
-        landingPageUrl: !exists(json, "landingPageUrl")
-            ? undefined
-            : json["landingPageUrl"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    wizardId: json["wizardId"],
+    status: json["status"],
+    progress: !exists(json, "progress") ? undefined : json["progress"],
+    currentStep: !exists(json, "currentStep") ? undefined : json["currentStep"],
+    errorMessage: !exists(json, "errorMessage")
+      ? undefined
+      : json["errorMessage"],
+    generatedAssets: !exists(json, "generatedAssets")
+      ? undefined
+      : json["generatedAssets"],
+    contentDataId: !exists(json, "contentDataId")
+      ? undefined
+      : json["contentDataId"],
+    landingPageId: !exists(json, "landingPageId")
+      ? undefined
+      : json["landingPageId"],
+    landingPageUrl: !exists(json, "landingPageUrl")
+      ? undefined
+      : json["landingPageUrl"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function WizardStatusResponseToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        wizardId: value.wizardId,
-        status: value.status,
-        progress: value.progress,
-        currentStep: value.currentStep,
-        errorMessage: value.errorMessage,
-        generatedAssets: value.generatedAssets,
-        contentDataId: value.contentDataId,
-        landingPageId: value.landingPageId,
-        landingPageUrl: value.landingPageUrl,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    wizardId: value.wizardId,
+    status: value.status,
+    progress: value.progress,
+    currentStep: value.currentStep,
+    errorMessage: value.errorMessage,
+    generatedAssets: value.generatedAssets,
+    contentDataId: value.contentDataId,
+    landingPageId: value.landingPageId,
+    landingPageUrl: value.landingPageUrl,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -95,9 +95,9 @@ export function WizardStatusResponseToJSON(value) {
  */
 export var WizardStatusResponseStatusEnum;
 (function (WizardStatusResponseStatusEnum) {
-    WizardStatusResponseStatusEnum["STARTED"] = "started";
-    WizardStatusResponseStatusEnum["GENERATING"] = "generating";
-    WizardStatusResponseStatusEnum["COMPLETED"] = "completed";
-    WizardStatusResponseStatusEnum["FAILED"] = "failed";
+  WizardStatusResponseStatusEnum["STARTED"] = "started";
+  WizardStatusResponseStatusEnum["GENERATING"] = "generating";
+  WizardStatusResponseStatusEnum["COMPLETED"] = "completed";
+  WizardStatusResponseStatusEnum["FAILED"] = "failed";
 })(WizardStatusResponseStatusEnum || (WizardStatusResponseStatusEnum = {}));
 //# sourceMappingURL=WizardStatusResponse.js.map

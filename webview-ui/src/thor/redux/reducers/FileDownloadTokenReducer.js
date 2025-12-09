@@ -16,29 +16,39 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const FileDownloadTokenSlice = createSlice({
-    name: "FileDownloadTokens",
-    initialState: [],
-    reducers: {
-        FileDownloadTokenAdded(state, action) {
-            state.push(action.payload);
-        },
-        FileDownloadTokenValueToggled(state, action) {
-            console.log("FileDownloadToken TOGGLE");
-            console.warn(JSON.stringify(action));
-            const FileDownloadToken = state.find((FileDownloadToken) => FileDownloadToken.id === action.payload.FileDownloadTokenId);
-            if (FileDownloadToken) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        FileDownloadTokenpropertySet(state, action) {
-            const FileDownloadToken = state.find((FileDownloadToken) => FileDownloadToken.id === action.payload.FileDownloadTokenId);
-            if (FileDownloadToken) {
-                //  FileDownloadToken[action.property] = action.payload[action.property];
-            }
-        },
+  name: "FileDownloadTokens",
+  initialState: [],
+  reducers: {
+    FileDownloadTokenAdded(state, action) {
+      state.push(action.payload);
     },
+    FileDownloadTokenValueToggled(state, action) {
+      console.log("FileDownloadToken TOGGLE");
+      console.warn(JSON.stringify(action));
+      const FileDownloadToken = state.find(
+        (FileDownloadToken) =>
+          FileDownloadToken.id === action.payload.FileDownloadTokenId,
+      );
+      if (FileDownloadToken) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    FileDownloadTokenpropertySet(state, action) {
+      const FileDownloadToken = state.find(
+        (FileDownloadToken) =>
+          FileDownloadToken.id === action.payload.FileDownloadTokenId,
+      );
+      if (FileDownloadToken) {
+        //  FileDownloadToken[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { FileDownloadTokenAdded, FileDownloadTokenValueToggled, FileDownloadTokenpropertySet, } = FileDownloadTokenSlice.actions;
+export const {
+  FileDownloadTokenAdded,
+  FileDownloadTokenValueToggled,
+  FileDownloadTokenpropertySet,
+} = FileDownloadTokenSlice.actions;
 export default FileDownloadTokenSlice.reducer;
 //# sourceMappingURL=FileDownloadTokenReducer.js.map

@@ -15,76 +15,91 @@ Template file: typescript-redux-query/modelAction.mustache
 */
 // defines the Redux Actions for McpDownloadResponse
 // McpDownloadResponse
-export const FETCH_MCPDOWNLOADRESPONSE_REQUEST = "FETCH_MCPDOWNLOADRESPONSE_REQUEST";
-export const FETCH_MCPDOWNLOADRESPONSE_SUCCESS = "FETCH_MCPDOWNLOADRESPONSE_SUCCESS";
-export const FETCH_MCPDOWNLOADRESPONSE_FAILURE = "FETCH_MCPDOWNLOADRESPONSE_FAILURE";
-export const ADD_MCPDOWNLOADRESPONSE_REQUEST = "ADD_MCPDOWNLOADRESPONSE_REQUEST";
-export const ADD_MCPDOWNLOADRESPONSE_SUCCESS = "ADD_MCPDOWNLOADRESPONSE_SUCCESS";
-export const ADD_MCPDOWNLOADRESPONSE_FAILURE = "ADD_MCPDOWNLOADRESPONSE_FAILURE";
-export const UPDATE_MCPDOWNLOADRESPONSE_REQUEST = "UPDATE_MCPDOWNLOADRESPONSE_REQUEST";
-export const UPDATE_MCPDOWNLOADRESPONSE_SUCCESS = "UPDATE_MCPDOWNLOADRESPONSE_SUCCESS";
-export const UPDATE_MCPDOWNLOADRESPONSE_FAILURE = "UPDATE_MCPDOWNLOADRESPONSE_FAILURE";
-export const DELETE_MCPDOWNLOADRESPONSE_REQUEST = "DELETE_MCPDOWNLOADRESPONSE_REQUEST";
-export const DELETE_MCPDOWNLOADRESPONSE_SUCCESS = "DELETE_MCPDOWNLOADRESPONSE_SUCCESS";
-export const DELETE_MCPDOWNLOADRESPONSE_FAILURE = "DELETE_MCPDOWNLOADRESPONSE_FAILURE";
-export const LIST_MCPDOWNLOADRESPONSE_REQUEST = "LIST_MCPDOWNLOADRESPONSE_REQUEST";
-export const LIST_MCPDOWNLOADRESPONSE_SUCCESS = "LIST_MCPDOWNLOADRESPONSE_SUCCESS";
-export const LIST_MCPDOWNLOADRESPONSE_FAILURE = "LIST_MCPDOWNLOADRESPONSE_FAILURE";
+export const FETCH_MCPDOWNLOADRESPONSE_REQUEST =
+  "FETCH_MCPDOWNLOADRESPONSE_REQUEST";
+export const FETCH_MCPDOWNLOADRESPONSE_SUCCESS =
+  "FETCH_MCPDOWNLOADRESPONSE_SUCCESS";
+export const FETCH_MCPDOWNLOADRESPONSE_FAILURE =
+  "FETCH_MCPDOWNLOADRESPONSE_FAILURE";
+export const ADD_MCPDOWNLOADRESPONSE_REQUEST =
+  "ADD_MCPDOWNLOADRESPONSE_REQUEST";
+export const ADD_MCPDOWNLOADRESPONSE_SUCCESS =
+  "ADD_MCPDOWNLOADRESPONSE_SUCCESS";
+export const ADD_MCPDOWNLOADRESPONSE_FAILURE =
+  "ADD_MCPDOWNLOADRESPONSE_FAILURE";
+export const UPDATE_MCPDOWNLOADRESPONSE_REQUEST =
+  "UPDATE_MCPDOWNLOADRESPONSE_REQUEST";
+export const UPDATE_MCPDOWNLOADRESPONSE_SUCCESS =
+  "UPDATE_MCPDOWNLOADRESPONSE_SUCCESS";
+export const UPDATE_MCPDOWNLOADRESPONSE_FAILURE =
+  "UPDATE_MCPDOWNLOADRESPONSE_FAILURE";
+export const DELETE_MCPDOWNLOADRESPONSE_REQUEST =
+  "DELETE_MCPDOWNLOADRESPONSE_REQUEST";
+export const DELETE_MCPDOWNLOADRESPONSE_SUCCESS =
+  "DELETE_MCPDOWNLOADRESPONSE_SUCCESS";
+export const DELETE_MCPDOWNLOADRESPONSE_FAILURE =
+  "DELETE_MCPDOWNLOADRESPONSE_FAILURE";
+export const LIST_MCPDOWNLOADRESPONSE_REQUEST =
+  "LIST_MCPDOWNLOADRESPONSE_REQUEST";
+export const LIST_MCPDOWNLOADRESPONSE_SUCCESS =
+  "LIST_MCPDOWNLOADRESPONSE_SUCCESS";
+export const LIST_MCPDOWNLOADRESPONSE_FAILURE =
+  "LIST_MCPDOWNLOADRESPONSE_FAILURE";
 export const addMcpDownloadResponseRequest = () => ({
-    type: ADD_MCPDOWNLOADRESPONSE_REQUEST,
+  type: ADD_MCPDOWNLOADRESPONSE_REQUEST,
 });
 export const addMcpDownloadResponseSuccess = (McpDownloadResponses) => ({
-    type: ADD_MCPDOWNLOADRESPONSE_SUCCESS,
-    payload: McpDownloadResponses,
+  type: ADD_MCPDOWNLOADRESPONSE_SUCCESS,
+  payload: McpDownloadResponses,
 });
 export const addMcpDownloadResponseFailure = (error) => ({
-    type: ADD_MCPDOWNLOADRESPONSE_FAILURE,
-    payload: error,
+  type: ADD_MCPDOWNLOADRESPONSE_FAILURE,
+  payload: error,
 });
 export const fetchMcpDownloadResponseRequest = () => ({
-    type: FETCH_MCPDOWNLOADRESPONSE_REQUEST,
+  type: FETCH_MCPDOWNLOADRESPONSE_REQUEST,
 });
 export const fetchMcpDownloadResponseSuccess = (McpDownloadResponses) => ({
-    type: FETCH_MCPDOWNLOADRESPONSE_SUCCESS,
-    payload: McpDownloadResponses,
+  type: FETCH_MCPDOWNLOADRESPONSE_SUCCESS,
+  payload: McpDownloadResponses,
 });
 export const fetchMcpDownloadResponseFailure = (error) => ({
-    type: FETCH_MCPDOWNLOADRESPONSE_FAILURE,
-    payload: error,
+  type: FETCH_MCPDOWNLOADRESPONSE_FAILURE,
+  payload: error,
 });
 export const listMcpDownloadResponseRequest = () => ({
-    type: LIST_MCPDOWNLOADRESPONSE_REQUEST,
+  type: LIST_MCPDOWNLOADRESPONSE_REQUEST,
 });
 export const listMcpDownloadResponseSuccess = (McpDownloadResponses) => ({
-    type: LIST_MCPDOWNLOADRESPONSE_SUCCESS,
-    payload: McpDownloadResponses,
+  type: LIST_MCPDOWNLOADRESPONSE_SUCCESS,
+  payload: McpDownloadResponses,
 });
 export const listMcpDownloadResponseFailure = (error) => ({
-    type: LIST_MCPDOWNLOADRESPONSE_FAILURE,
-    payload: error,
+  type: LIST_MCPDOWNLOADRESPONSE_FAILURE,
+  payload: error,
 });
 export const updateMcpDownloadResponseRequest = (McpDownloadResponse) => ({
-    type: UPDATE_MCPDOWNLOADRESPONSE_REQUEST,
-    payload: McpDownloadResponse,
+  type: UPDATE_MCPDOWNLOADRESPONSE_REQUEST,
+  payload: McpDownloadResponse,
 });
 export const updateMcpDownloadResponseSuccess = (McpDownloadResponse) => ({
-    type: UPDATE_MCPDOWNLOADRESPONSE_SUCCESS,
-    payload: McpDownloadResponse,
+  type: UPDATE_MCPDOWNLOADRESPONSE_SUCCESS,
+  payload: McpDownloadResponse,
 });
 export const updateMcpDownloadResponseFailure = (error) => ({
-    type: UPDATE_MCPDOWNLOADRESPONSE_FAILURE,
-    payload: error,
+  type: UPDATE_MCPDOWNLOADRESPONSE_FAILURE,
+  payload: error,
 });
 export const deleteMcpDownloadResponseRequest = (McpDownloadResponse) => ({
-    type: DELETE_MCPDOWNLOADRESPONSE_REQUEST,
-    payload: McpDownloadResponse,
+  type: DELETE_MCPDOWNLOADRESPONSE_REQUEST,
+  payload: McpDownloadResponse,
 });
 export const deleteMcpDownloadResponseSuccess = (McpDownloadResponse) => ({
-    type: DELETE_MCPDOWNLOADRESPONSE_SUCCESS,
-    payload: McpDownloadResponse,
+  type: DELETE_MCPDOWNLOADRESPONSE_SUCCESS,
+  payload: McpDownloadResponse,
 });
 export const deleteMcpDownloadResponseFailure = (error) => ({
-    type: DELETE_MCPDOWNLOADRESPONSE_FAILURE,
-    payload: error,
+  type: DELETE_MCPDOWNLOADRESPONSE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=McpDownloadResponseApiAction.js.map

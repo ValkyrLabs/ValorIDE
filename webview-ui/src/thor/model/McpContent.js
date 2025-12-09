@@ -29,44 +29,44 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function McpContentFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        mcpToolCallResponseId: !exists(json, "mcpToolCallResponseId")
-            ? undefined
-            : json["mcpToolCallResponseId"],
-        contentType: !exists(json, "contentType") ? undefined : json["contentType"],
-        text: !exists(json, "text") ? undefined : json["text"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    mcpToolCallResponseId: !exists(json, "mcpToolCallResponseId")
+      ? undefined
+      : json["mcpToolCallResponseId"],
+    contentType: !exists(json, "contentType") ? undefined : json["contentType"],
+    text: !exists(json, "text") ? undefined : json["text"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function McpContentToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        mcpToolCallResponseId: value.mcpToolCallResponseId,
-        contentType: value.contentType,
-        text: value.text,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    mcpToolCallResponseId: value.mcpToolCallResponseId,
+    contentType: value.contentType,
+    text: value.text,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=McpContent.js.map

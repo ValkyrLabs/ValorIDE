@@ -29,49 +29,49 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function LoginResponseFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        status: json["status"],
-        token: !exists(json, "token") ? undefined : json["token"],
-        tempToken: !exists(json, "tempToken") ? undefined : json["tempToken"],
-        message: !exists(json, "message") ? undefined : json["message"],
-        twoFactorMethods: !exists(json, "twoFactorMethods")
-            ? undefined
-            : json["twoFactorMethods"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    status: json["status"],
+    token: !exists(json, "token") ? undefined : json["token"],
+    tempToken: !exists(json, "tempToken") ? undefined : json["tempToken"],
+    message: !exists(json, "message") ? undefined : json["message"],
+    twoFactorMethods: !exists(json, "twoFactorMethods")
+      ? undefined
+      : json["twoFactorMethods"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function LoginResponseToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        status: value.status,
-        token: value.token,
-        tempToken: value.tempToken,
-        message: value.message,
-        twoFactorMethods: value.twoFactorMethods,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    status: value.status,
+    token: value.token,
+    tempToken: value.tempToken,
+    message: value.message,
+    twoFactorMethods: value.twoFactorMethods,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -79,9 +79,9 @@ export function LoginResponseToJSON(value) {
  */
 export var LoginResponseStatusEnum;
 (function (LoginResponseStatusEnum) {
-    LoginResponseStatusEnum["SUCCESS"] = "success";
-    LoginResponseStatusEnum["REQUIRES2FA"] = "requires_2fa";
-    LoginResponseStatusEnum["INVALIDCREDENTIALS"] = "invalid_credentials";
-    LoginResponseStatusEnum["ACCOUNTLOCKED"] = "account_locked";
+  LoginResponseStatusEnum["SUCCESS"] = "success";
+  LoginResponseStatusEnum["REQUIRES2FA"] = "requires_2fa";
+  LoginResponseStatusEnum["INVALIDCREDENTIALS"] = "invalid_credentials";
+  LoginResponseStatusEnum["ACCOUNTLOCKED"] = "account_locked";
 })(LoginResponseStatusEnum || (LoginResponseStatusEnum = {}));
 //# sourceMappingURL=LoginResponse.js.map

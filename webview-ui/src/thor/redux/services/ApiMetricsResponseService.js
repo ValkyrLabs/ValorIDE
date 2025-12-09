@@ -17,117 +17,131 @@ Template file: typescript-redux-query/modelService.mustache
 import { createApi } from "@reduxjs/toolkit/query/react";
 import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 export const ApiMetricsResponseService = createApi({
-    reducerPath: "ApiMetricsResponse", // This should remain unique
-    baseQuery: customBaseQuery,
-    tagTypes: ["ApiMetricsResponse"],
-    endpoints: (build) => ({
-        // 1) Paged Query Endpoint
-        // Standardized pagination: page (0-based), size (page size)
-        getApiMetricsResponsesPaged: build.query({
-            query: ({ page, size = 20, example }) => {
-                const q = [`page=${page}`, `size=${size}`];
-                if (example)
-                    q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-                return `ApiMetricsResponse?${q.join("&")}`;
-            },
-            providesTags: (result, error, { page }) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "ApiMetricsResponse",
-                        id,
-                    })),
-                    { type: "ApiMetricsResponse", id: `PAGE_${page}` },
-                ]
-                : [],
-        }),
-        // 2) Simple "get all" Query (optional)
-        getApiMetricsResponses: build.query({
-            query: (arg) => {
-                if (arg && arg.example) {
-                    const ex = arg.example;
-                    return `ApiMetricsResponse?example=${encodeURIComponent(JSON.stringify(ex))}`;
-                }
-                return `ApiMetricsResponse`;
-            },
-            providesTags: (result) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "ApiMetricsResponse",
-                        id,
-                    })),
-                    { type: "ApiMetricsResponse", id: "LIST" },
-                ]
-                : [{ type: "ApiMetricsResponse", id: "LIST" }],
-        }),
-        // 3) Create
-        addApiMetricsResponse: build.mutation({
-            query: (body) => ({
-                url: `ApiMetricsResponse`,
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "ApiMetricsResponse", id: "LIST" }],
-        }),
-        // 4) Get single by ID
-        getApiMetricsResponse: build.query({
-            query: (id) => `ApiMetricsResponse/${id}`,
-            providesTags: (result, error, id) => [{ type: "ApiMetricsResponse", id }],
-        }),
-        // 5) Update
-        updateApiMetricsResponse: build.mutation({
-            query: ({ id, ...patch }) => ({
-                url: `ApiMetricsResponse/${id}`,
-                method: "PUT",
-                body: patch,
-            }),
-            async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-                if (id) {
-                    const patchResult = dispatch(ApiMetricsResponseService.util.updateQueryData("getApiMetricsResponse", id, (draft) => {
-                        Object.assign(draft, patch);
-                    }));
-                    try {
-                        await queryFulfilled;
-                    }
-                    catch {
-                        patchResult.undo();
-                    }
-                }
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "ApiMetricsResponse", id },
-                { type: "ApiMetricsResponse", id: "LIST" },
-            ],
-        }),
-        // 6) Delete
-        deleteApiMetricsResponse: build.mutation({
-            query(id) {
-                return {
-                    url: `ApiMetricsResponse/${id}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, id) => [
-                { type: "ApiMetricsResponse", id },
-            ],
-        }),
-        // 7) Cascade / soft-delete (marks trashed, cascades children)
-        deleteApiMetricsResponseCascade: build.mutation({
-            query({ id, cascade = true, trash = true }) {
-                const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
-                return {
-                    url: `ApiMetricsResponse/${id}?${params}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "ApiMetricsResponse", id },
-                { type: "ApiMetricsResponse", id: "LIST" },
-            ],
-        }),
+  reducerPath: "ApiMetricsResponse", // This should remain unique
+  baseQuery: customBaseQuery,
+  tagTypes: ["ApiMetricsResponse"],
+  endpoints: (build) => ({
+    // 1) Paged Query Endpoint
+    // Standardized pagination: page (0-based), size (page size)
+    getApiMetricsResponsesPaged: build.query({
+      query: ({ page, size = 20, example }) => {
+        const q = [`page=${page}`, `size=${size}`];
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `ApiMetricsResponse?${q.join("&")}`;
+      },
+      providesTags: (result, error, { page }) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "ApiMetricsResponse",
+                id,
+              })),
+              { type: "ApiMetricsResponse", id: `PAGE_${page}` },
+            ]
+          : [],
     }),
+    // 2) Simple "get all" Query (optional)
+    getApiMetricsResponses: build.query({
+      query: (arg) => {
+        if (arg && arg.example) {
+          const ex = arg.example;
+          return `ApiMetricsResponse?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `ApiMetricsResponse`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "ApiMetricsResponse",
+                id,
+              })),
+              { type: "ApiMetricsResponse", id: "LIST" },
+            ]
+          : [{ type: "ApiMetricsResponse", id: "LIST" }],
+    }),
+    // 3) Create
+    addApiMetricsResponse: build.mutation({
+      query: (body) => ({
+        url: `ApiMetricsResponse`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "ApiMetricsResponse", id: "LIST" }],
+    }),
+    // 4) Get single by ID
+    getApiMetricsResponse: build.query({
+      query: (id) => `ApiMetricsResponse/${id}`,
+      providesTags: (result, error, id) => [{ type: "ApiMetricsResponse", id }],
+    }),
+    // 5) Update
+    updateApiMetricsResponse: build.mutation({
+      query: ({ id, ...patch }) => ({
+        url: `ApiMetricsResponse/${id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        if (id) {
+          const patchResult = dispatch(
+            ApiMetricsResponseService.util.updateQueryData(
+              "getApiMetricsResponse",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        }
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ApiMetricsResponse", id },
+        { type: "ApiMetricsResponse", id: "LIST" },
+      ],
+    }),
+    // 6) Delete
+    deleteApiMetricsResponse: build.mutation({
+      query(id) {
+        return {
+          url: `ApiMetricsResponse/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, id) => [
+        { type: "ApiMetricsResponse", id },
+      ],
+    }),
+    // 7) Cascade / soft-delete (marks trashed, cascades children)
+    deleteApiMetricsResponseCascade: build.mutation({
+      query({ id, cascade = true, trash = true }) {
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        return {
+          url: `ApiMetricsResponse/${id}?${params}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "ApiMetricsResponse", id },
+        { type: "ApiMetricsResponse", id: "LIST" },
+      ],
+    }),
+  }),
 });
 // Notice we now also export `useLazyGetApiMetricsResponsesPagedQuery`
-export const { useGetApiMetricsResponsesPagedQuery, // immediate fetch
-useLazyGetApiMetricsResponsesPagedQuery, // lazy fetch
-useGetApiMetricsResponseQuery, useGetApiMetricsResponsesQuery, useAddApiMetricsResponseMutation, useUpdateApiMetricsResponseMutation, useDeleteApiMetricsResponseMutation, useDeleteApiMetricsResponseCascadeMutation, } = ApiMetricsResponseService;
+export const {
+  useGetApiMetricsResponsesPagedQuery, // immediate fetch
+  useLazyGetApiMetricsResponsesPagedQuery, // lazy fetch
+  useGetApiMetricsResponseQuery,
+  useGetApiMetricsResponsesQuery,
+  useAddApiMetricsResponseMutation,
+  useUpdateApiMetricsResponseMutation,
+  useDeleteApiMetricsResponseMutation,
+  useDeleteApiMetricsResponseCascadeMutation,
+} = ApiMetricsResponseService;
 //# sourceMappingURL=ApiMetricsResponseService.js.map

@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Note
 */
-export const NoteMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const NoteMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Note MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=NoteApiMiddleware.js.map

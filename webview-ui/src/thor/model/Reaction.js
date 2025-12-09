@@ -29,41 +29,41 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function ReactionFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        targetObject: json["targetObject"],
-        reaction: !exists(json, "reaction") ? undefined : json["reaction"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    targetObject: json["targetObject"],
+    reaction: !exists(json, "reaction") ? undefined : json["reaction"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ReactionToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        targetObject: value.targetObject,
-        reaction: value.reaction,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    targetObject: value.targetObject,
+    reaction: value.reaction,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -71,11 +71,11 @@ export function ReactionToJSON(value) {
  */
 export var ReactionReactionEnum;
 (function (ReactionReactionEnum) {
-    ReactionReactionEnum["LIKE"] = "like";
-    ReactionReactionEnum["DISLIKE"] = "dislike";
-    ReactionReactionEnum["NEUTRAL"] = "neutral";
-    ReactionReactionEnum["ANGRY"] = "angry";
-    ReactionReactionEnum["SAD"] = "sad";
-    ReactionReactionEnum["QUESTION"] = "question";
+  ReactionReactionEnum["LIKE"] = "like";
+  ReactionReactionEnum["DISLIKE"] = "dislike";
+  ReactionReactionEnum["NEUTRAL"] = "neutral";
+  ReactionReactionEnum["ANGRY"] = "angry";
+  ReactionReactionEnum["SAD"] = "sad";
+  ReactionReactionEnum["QUESTION"] = "question";
 })(ReactionReactionEnum || (ReactionReactionEnum = {}));
 //# sourceMappingURL=Reaction.js.map

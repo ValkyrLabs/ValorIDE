@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: McpResourceTemplate
 */
-export const McpResourceTemplateMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const McpResourceTemplateMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("McpResourceTemplate MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=McpResourceTemplateApiMiddleware.js.map

@@ -28,59 +28,66 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { SwarmFromJSON, SwarmToJSON, SwarmPayloadFromJSON, SwarmPayloadToJSON, SwarmSecurityFromJSON, SwarmSecurityToJSON, } from "./";
+import {
+  SwarmFromJSON,
+  SwarmToJSON,
+  SwarmPayloadFromJSON,
+  SwarmPayloadToJSON,
+  SwarmSecurityFromJSON,
+  SwarmSecurityToJSON,
+} from "./";
 export function SwarmMessageFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        type: json["type"],
-        from: SwarmFromJSON(json["from"]),
-        to: SwarmFromJSON(json["to"]),
-        timestamp: new Date(json["timestamp"]),
-        payload: SwarmPayloadFromJSON(json["payload"]),
-        ackId: !exists(json, "ackId") ? undefined : json["ackId"],
-        security: !exists(json, "security")
-            ? undefined
-            : SwarmSecurityFromJSON(json["security"]),
-        ttl: !exists(json, "ttl") ? undefined : json["ttl"],
-        priority: !exists(json, "priority") ? undefined : json["priority"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    type: json["type"],
+    from: SwarmFromJSON(json["from"]),
+    to: SwarmFromJSON(json["to"]),
+    timestamp: new Date(json["timestamp"]),
+    payload: SwarmPayloadFromJSON(json["payload"]),
+    ackId: !exists(json, "ackId") ? undefined : json["ackId"],
+    security: !exists(json, "security")
+      ? undefined
+      : SwarmSecurityFromJSON(json["security"]),
+    ttl: !exists(json, "ttl") ? undefined : json["ttl"],
+    priority: !exists(json, "priority") ? undefined : json["priority"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function SwarmMessageToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        type: value.type,
-        from: SwarmToJSON(value.from),
-        to: SwarmToJSON(value.to),
-        timestamp: value.timestamp.toISOString(),
-        payload: SwarmPayloadToJSON(value.payload),
-        ackId: value.ackId,
-        security: SwarmSecurityToJSON(value.security),
-        ttl: value.ttl,
-        priority: value.priority,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    type: value.type,
+    from: SwarmToJSON(value.from),
+    to: SwarmToJSON(value.to),
+    timestamp: value.timestamp.toISOString(),
+    payload: SwarmPayloadToJSON(value.payload),
+    ackId: value.ackId,
+    security: SwarmSecurityToJSON(value.security),
+    ttl: value.ttl,
+    priority: value.priority,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -88,12 +95,12 @@ export function SwarmMessageToJSON(value) {
  */
 export var SwarmMessageTypeEnum;
 (function (SwarmMessageTypeEnum) {
-    SwarmMessageTypeEnum["COMMAND"] = "command";
-    SwarmMessageTypeEnum["RESPONSE"] = "response";
-    SwarmMessageTypeEnum["BROADCAST"] = "broadcast";
-    SwarmMessageTypeEnum["EVENT"] = "event";
-    SwarmMessageTypeEnum["ACK"] = "ack";
-    SwarmMessageTypeEnum["NACK"] = "nack";
+  SwarmMessageTypeEnum["COMMAND"] = "command";
+  SwarmMessageTypeEnum["RESPONSE"] = "response";
+  SwarmMessageTypeEnum["BROADCAST"] = "broadcast";
+  SwarmMessageTypeEnum["EVENT"] = "event";
+  SwarmMessageTypeEnum["ACK"] = "ack";
+  SwarmMessageTypeEnum["NACK"] = "nack";
 })(SwarmMessageTypeEnum || (SwarmMessageTypeEnum = {}));
 /**
  * @export
@@ -101,9 +108,9 @@ export var SwarmMessageTypeEnum;
  */
 export var SwarmMessagePriorityEnum;
 (function (SwarmMessagePriorityEnum) {
-    SwarmMessagePriorityEnum["LOW"] = "low";
-    SwarmMessagePriorityEnum["NORMAL"] = "normal";
-    SwarmMessagePriorityEnum["HIGH"] = "high";
-    SwarmMessagePriorityEnum["URGENT"] = "urgent";
+  SwarmMessagePriorityEnum["LOW"] = "low";
+  SwarmMessagePriorityEnum["NORMAL"] = "normal";
+  SwarmMessagePriorityEnum["HIGH"] = "high";
+  SwarmMessagePriorityEnum["URGENT"] = "urgent";
 })(SwarmMessagePriorityEnum || (SwarmMessagePriorityEnum = {}));
 //# sourceMappingURL=SwarmMessage.js.map

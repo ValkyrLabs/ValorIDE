@@ -1,4 +1,8 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import {
+  jsx as _jsx,
+  jsxs as _jsxs,
+  Fragment as _Fragment,
+} from "react/jsx-runtime";
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -15,16 +19,16 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, } from "formik";
+import { ErrorMessage, Field, Formik } from "formik";
 import { useState } from "react";
-import { Form as BSForm, Accordion, Alert, } from "react-bootstrap";
+import { Form as BSForm, Accordion, Alert } from "react-bootstrap";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import * as Yup from "yup";
 import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import { PermissionType, } from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionType } from "@valkyr/component-library/PermissionDialog/types";
 import { useAddProductDeliveryConfigMutation } from "../../services/ProductDeliveryConfigService";
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,140 +52,528 @@ Per-Product configuration for digital or physical fulfillment automation. Direct
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const DeliveryTypeValidation = () => {
-    return [
-        "instant_digital",
-        "scheduled_digital",
-        "manual_review",
-        "physical_shipment",
-        "hybrid",
-    ];
+  return [
+    "instant_digital",
+    "scheduled_digital",
+    "manual_review",
+    "physical_shipment",
+    "hybrid",
+  ];
 };
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
-const asNumber = (schema) => schema.transform((val, orig) => orig === "" || orig === null ? undefined : val);
+const asNumber = (schema) =>
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 const validationSchema = Yup.object().shape({
-    productId: Yup.string().required("productId is required."),
-    deliveryType: Yup.mixed()
-        .oneOf(DeliveryTypeValidation(), "Invalid value for deliveryType")
-        .required("deliveryType is required."),
-    autoFulfill: Yup.boolean(),
-    fulfillmentWorkflowId: Yup.string(),
-    notificationTemplate: Yup.string(),
-    maxConcurrentFulfillments: asNumber(Yup.number()
-        .integer()
-        .typeError("maxConcurrentFulfillments must be a number")),
-    retryPolicy: Yup.string(),
-    trashed: Yup.boolean(),
+  productId: Yup.string().required("productId is required."),
+  deliveryType: Yup.mixed()
+    .oneOf(DeliveryTypeValidation(), "Invalid value for deliveryType")
+    .required("deliveryType is required."),
+  autoFulfill: Yup.boolean(),
+  fulfillmentWorkflowId: Yup.string(),
+  notificationTemplate: Yup.string(),
+  maxConcurrentFulfillments: asNumber(
+    Yup.number()
+      .integer()
+      .typeError("maxConcurrentFulfillments must be a number"),
+  ),
+  retryPolicy: Yup.string(),
+  trashed: Yup.boolean(),
 });
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ProductDeliveryConfigForm = () => {
-    const [addProductDeliveryConfig, addProductDeliveryConfigResult] = useAddProductDeliveryConfigMutation();
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
-    // Permission Management State
-    const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-    const [createdObjectId, setCreatedObjectId] = useState(null);
-    // Mock current user - in real implementation, this would come from auth context
-    const currentUser = {
-        username: "current_user",
-        permissions: {
-            isOwner: true,
-            isAdmin: true,
-            canGrantPermissions: true,
-            permissions: [
-                PermissionType.READ,
-                PermissionType.WRITE,
-                PermissionType.CREATE,
-                PermissionType.DELETE,
-                PermissionType.ADMINISTRATION,
-            ],
-        },
-    };
-    /* -----------------------------------------------------
+  const [addProductDeliveryConfig, addProductDeliveryConfigResult] =
+    useAddProductDeliveryConfigMutation();
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState(null);
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: "current_user",
+    permissions: {
+      isOwner: true,
+      isAdmin: true,
+      canGrantPermissions: true,
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
+    },
+  };
+  /* -----------------------------------------------------
        INITIAL VALUES - only NON read-only fields
     -------------------------------------------------------- */
-    const initialValues = {
-        productId: "",
-        deliveryType: undefined,
-        autoFulfill: false,
-        fulfillmentWorkflowId: "",
-        notificationTemplate: "",
-        maxConcurrentFulfillments: 0,
-        retryPolicy: "",
-        trashed: false,
-    };
-    // Permission Management Handlers
-    const handleManagePermissions = (objectId) => {
-        setCreatedObjectId(objectId);
-        setShowPermissionDialog(true);
-    };
-    const handlePermissionDialogClose = () => {
-        setShowPermissionDialog(false);
-        setCreatedObjectId(null);
-    };
-    const handlePermissionsSave = (grants) => {
-        console.log("Permissions saved for new ProductDeliveryConfig:", grants);
-    };
-    /* SUBMIT HANDLER */
-    const handleSubmit = async (values, { setSubmitting }) => {
-        try {
-            setSuccessMessage(null);
-            setErrorMessage(null);
-            console.log("ProductDeliveryConfig form values:", values);
-            // NOTE: depending on your generated endpoint, you may need { body: values }
-            const result = await addProductDeliveryConfig(values).unwrap();
-            if (result && result.id && currentUser.permissions.canGrantPermissions) {
-                const shouldSetPermissions = window.confirm(`ProductDeliveryConfig created successfully! Would you like to set permissions for this object?`);
-                if (shouldSetPermissions) {
-                    handleManagePermissions(result.id);
-                }
-            }
-            setSuccessMessage("Saved successfully.");
+  const initialValues = {
+    productId: "",
+    deliveryType: undefined,
+    autoFulfill: false,
+    fulfillmentWorkflowId: "",
+    notificationTemplate: "",
+    maxConcurrentFulfillments: 0,
+    retryPolicy: "",
+    trashed: false,
+  };
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+  const handlePermissionsSave = (grants) => {
+    console.log("Permissions saved for new ProductDeliveryConfig:", grants);
+  };
+  /* SUBMIT HANDLER */
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      setSuccessMessage(null);
+      setErrorMessage(null);
+      console.log("ProductDeliveryConfig form values:", values);
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addProductDeliveryConfig(values).unwrap();
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `ProductDeliveryConfig created successfully! Would you like to set permissions for this object?`,
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
         }
-        catch (error) {
-            console.error("Failed to create ProductDeliveryConfig:", error);
-            setErrorMessage("Failed to save. Please try again.");
-        }
-        setSubmitting(false);
-    };
-    return (_jsxs("div", { children: [_jsx(Formik, { validateOnBlur: true, initialValues: initialValues, validationSchema: validationSchema, onSubmit: handleSubmit, children: ({ isSubmitting, isValid, errors, values, setFieldValue, touched, setFieldTouched, handleSubmit, }) => {
-                    const isSaving = isSubmitting || addProductDeliveryConfigResult.isLoading;
-                    return (_jsx("form", { onSubmit: handleSubmit, className: "form", children: _jsxs(Accordion, { defaultActiveKey: "1", children: [_jsxs(Accordion.Item, { eventKey: "1", children: [_jsxs(Accordion.Header, { children: [_jsx(FaRegPlusSquare, { size: 28 }), " \u00A0 Add New ProductDeliveryConfig"] }), _jsxs(Accordion.Body, { children: [_jsxs("label", { htmlFor: "productId", className: "nice-form-control", children: [_jsxs("b", { children: ["Product Id:", touched.productId && !errors.productId && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "productId", value: values?.productId, placeholder: "Product Id", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "productId", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "deliveryType", className: "nice-form-control", children: [_jsxs("b", { children: ["Delivery Type:", touched.deliveryType && !errors.deliveryType && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "deliveryType", value: values.deliveryType || "", className: errors.deliveryType
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("deliveryType", true);
-                                                                setFieldValue("deliveryType", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Delivery Type" }), _jsx(DeliveryTypeLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "deliveryType", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "autoFulfill", className: "nice-form-control", children: [_jsxs("b", { children: ["Auto Fulfill:", touched.autoFulfill && !errors.autoFulfill && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "autoFulfill", name: "autoFulfill", checked: values.autoFulfill || false, onChange: (e) => {
-                                                                setFieldTouched("autoFulfill", true);
-                                                                setFieldValue("autoFulfill", e.target.checked);
-                                                            }, isInvalid: !!errors.autoFulfill, className: errors.autoFulfill ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "autoFulfill", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "fulfillmentWorkflowId", className: "nice-form-control", children: [_jsxs("b", { children: ["Fulfillment Workflow Id:", touched.fulfillmentWorkflowId &&
-                                                                    !errors.fulfillmentWorkflowId && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "fulfillmentWorkflowId", value: values?.fulfillmentWorkflowId, placeholder: "Fulfillment Workflow Id", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "fulfillmentWorkflowId", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "notificationTemplate", className: "nice-form-control", children: [_jsxs("b", { children: ["Notification Template:", touched.notificationTemplate &&
-                                                                    !errors.notificationTemplate && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "notificationTemplate", value: values?.notificationTemplate, placeholder: "Notification Template", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "notificationTemplate", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "maxConcurrentFulfillments", className: "nice-form-control", children: [_jsxs("b", { children: ["Max Concurrent Fulfillments:", touched.maxConcurrentFulfillments &&
-                                                                    !errors.maxConcurrentFulfillments && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "maxConcurrentFulfillments", type: "number", value: values.maxConcurrentFulfillments || "", onChange: (e) => {
-                                                                setFieldTouched("maxConcurrentFulfillments", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("maxConcurrentFulfillments", v === "" ? undefined : Number(v));
-                                                            }, className: errors.maxConcurrentFulfillments
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "maxConcurrentFulfillments", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "retryPolicy", className: "nice-form-control", children: [_jsxs("b", { children: ["Retry Policy:", touched.retryPolicy && !errors.retryPolicy && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "retryPolicy", value: values?.retryPolicy, placeholder: "Retry Policy", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "retryPolicy", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "trashed", className: "nice-form-control", children: [_jsxs("b", { children: ["Trashed:", touched.trashed && !errors.trashed && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "trashed", name: "trashed", checked: values.trashed || false, onChange: (e) => {
-                                                                setFieldTouched("trashed", true);
-                                                                setFieldValue("trashed", e.target.checked);
-                                                            }, isInvalid: !!errors.trashed, className: errors.trashed ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "trashed", component: "span" })] }), _jsx("br", {}), _jsxs(CoolButton, { variant: isValid
-                                                        ? isSaving
-                                                            ? "disabled"
-                                                            : "success"
-                                                        : "warning", type: "submit", disabled: !isValid || isSaving, children: [isSaving && (_jsx("span", { style: { float: "left", minHeight: 0 }, children: _jsx(LoadingSpinner, { label: "", size: 18 }) })), _jsx(FaCheckCircle, { size: 28 }), " Create New ProductDeliveryConfig"] }), (addProductDeliveryConfigResult.isError ||
-                                                    errorMessage) && (_jsx(Alert, { variant: "danger", className: "mt-3", children: errorMessage ||
-                                                        JSON.stringify("data" in
-                                                            addProductDeliveryConfigResult.error
-                                                            ? addProductDeliveryConfigResult.error
-                                                                .data
-                                                            : addProductDeliveryConfigResult.error) })), (addProductDeliveryConfigResult.isSuccess ||
-                                                    successMessage) && (_jsx(Alert, { variant: "success", className: "mt-3", children: successMessage || "Saved successfully." }))] })] }), _jsxs(Accordion.Item, { eventKey: "0", children: [_jsxs(Accordion.Header, { children: [_jsx(FaCogs, { size: 28 }), " \u00A0Server Messages"] }), _jsxs(Accordion.Body, { children: ["errors: ", JSON.stringify(errors), _jsx("br", {}), "addProductDeliveryConfigResult:", " ", JSON.stringify(addProductDeliveryConfigResult)] })] })] }) }));
-                } }), createdObjectId && (_jsx(PermissionDialog, { objectType: "com.valkyrlabs.model.ProductDeliveryConfig", objectId: createdObjectId, isVisible: showPermissionDialog, onClose: handlePermissionDialogClose, onSave: handlePermissionsSave, currentUser: currentUser }))] }));
+      }
+      setSuccessMessage("Saved successfully.");
+    } catch (error) {
+      console.error("Failed to create ProductDeliveryConfig:", error);
+      setErrorMessage("Failed to save. Please try again.");
+    }
+    setSubmitting(false);
+  };
+  return _jsxs("div", {
+    children: [
+      _jsx(Formik, {
+        validateOnBlur: true,
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: handleSubmit,
+        children: ({
+          isSubmitting,
+          isValid,
+          errors,
+          values,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => {
+          const isSaving =
+            isSubmitting || addProductDeliveryConfigResult.isLoading;
+          return _jsx("form", {
+            onSubmit: handleSubmit,
+            className: "form",
+            children: _jsxs(Accordion, {
+              defaultActiveKey: "1",
+              children: [
+                _jsxs(Accordion.Item, {
+                  eventKey: "1",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaRegPlusSquare, { size: 28 }),
+                        " \u00A0 Add New ProductDeliveryConfig",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        _jsxs("label", {
+                          htmlFor: "productId",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Product Id:",
+                                touched.productId &&
+                                  !errors.productId &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "productId",
+                              value: values?.productId,
+                              placeholder: "Product Id",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "productId",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "deliveryType",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Delivery Type:",
+                                touched.deliveryType &&
+                                  !errors.deliveryType &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "deliveryType",
+                              value: values.deliveryType || "",
+                              className: errors.deliveryType
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("deliveryType", true);
+                                setFieldValue(
+                                  "deliveryType",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Delivery Type",
+                                }),
+                                _jsx(DeliveryTypeLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "deliveryType",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "autoFulfill",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Auto Fulfill:",
+                                touched.autoFulfill &&
+                                  !errors.autoFulfill &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "autoFulfill",
+                              name: "autoFulfill",
+                              checked: values.autoFulfill || false,
+                              onChange: (e) => {
+                                setFieldTouched("autoFulfill", true);
+                                setFieldValue("autoFulfill", e.target.checked);
+                              },
+                              isInvalid: !!errors.autoFulfill,
+                              className: errors.autoFulfill ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "autoFulfill",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "fulfillmentWorkflowId",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Fulfillment Workflow Id:",
+                                touched.fulfillmentWorkflowId &&
+                                  !errors.fulfillmentWorkflowId &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "fulfillmentWorkflowId",
+                              value: values?.fulfillmentWorkflowId,
+                              placeholder: "Fulfillment Workflow Id",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "fulfillmentWorkflowId",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "notificationTemplate",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Notification Template:",
+                                touched.notificationTemplate &&
+                                  !errors.notificationTemplate &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "notificationTemplate",
+                              value: values?.notificationTemplate,
+                              placeholder: "Notification Template",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "notificationTemplate",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "maxConcurrentFulfillments",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Max Concurrent Fulfillments:",
+                                touched.maxConcurrentFulfillments &&
+                                  !errors.maxConcurrentFulfillments &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "maxConcurrentFulfillments",
+                              type: "number",
+                              value: values.maxConcurrentFulfillments || "",
+                              onChange: (e) => {
+                                setFieldTouched(
+                                  "maxConcurrentFulfillments",
+                                  true,
+                                );
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "maxConcurrentFulfillments",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.maxConcurrentFulfillments
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "maxConcurrentFulfillments",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "retryPolicy",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Retry Policy:",
+                                touched.retryPolicy &&
+                                  !errors.retryPolicy &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "retryPolicy",
+                              value: values?.retryPolicy,
+                              placeholder: "Retry Policy",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "retryPolicy",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "trashed",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Trashed:",
+                                touched.trashed &&
+                                  !errors.trashed &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "trashed",
+                              name: "trashed",
+                              checked: values.trashed || false,
+                              onChange: (e) => {
+                                setFieldTouched("trashed", true);
+                                setFieldValue("trashed", e.target.checked);
+                              },
+                              isInvalid: !!errors.trashed,
+                              className: errors.trashed ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "trashed",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs(CoolButton, {
+                          variant: isValid
+                            ? isSaving
+                              ? "disabled"
+                              : "success"
+                            : "warning",
+                          type: "submit",
+                          disabled: !isValid || isSaving,
+                          children: [
+                            isSaving &&
+                              _jsx("span", {
+                                style: { float: "left", minHeight: 0 },
+                                children: _jsx(LoadingSpinner, {
+                                  label: "",
+                                  size: 18,
+                                }),
+                              }),
+                            _jsx(FaCheckCircle, { size: 28 }),
+                            " Create New ProductDeliveryConfig",
+                          ],
+                        }),
+                        (addProductDeliveryConfigResult.isError ||
+                          errorMessage) &&
+                          _jsx(Alert, {
+                            variant: "danger",
+                            className: "mt-3",
+                            children:
+                              errorMessage ||
+                              JSON.stringify(
+                                "data" in addProductDeliveryConfigResult.error
+                                  ? addProductDeliveryConfigResult.error.data
+                                  : addProductDeliveryConfigResult.error,
+                              ),
+                          }),
+                        (addProductDeliveryConfigResult.isSuccess ||
+                          successMessage) &&
+                          _jsx(Alert, {
+                            variant: "success",
+                            className: "mt-3",
+                            children: successMessage || "Saved successfully.",
+                          }),
+                      ],
+                    }),
+                  ],
+                }),
+                _jsxs(Accordion.Item, {
+                  eventKey: "0",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaCogs, { size: 28 }),
+                        " \u00A0Server Messages",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        "errors: ",
+                        JSON.stringify(errors),
+                        _jsx("br", {}),
+                        "addProductDeliveryConfigResult:",
+                        " ",
+                        JSON.stringify(addProductDeliveryConfigResult),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          });
+        },
+      }),
+      createdObjectId &&
+        _jsx(PermissionDialog, {
+          objectType: "com.valkyrlabs.model.ProductDeliveryConfig",
+          objectId: createdObjectId,
+          isVisible: showPermissionDialog,
+          onClose: handlePermissionDialogClose,
+          onSave: handlePermissionsSave,
+          currentUser: currentUser,
+        }),
+    ],
+  });
 };
 /*
 lowercase deliverytypelookup
@@ -192,7 +584,21 @@ camelcase deliveryTypeLookup
 kebabcase delivery-type-lookup
 */
 const DeliveryTypeLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "instant_digital", label: "Instant Digital" }), _jsx("option", { value: "scheduled_digital", label: "Scheduled Digital" }), _jsx("option", { value: "manual_review", label: "Manual Review" }), _jsx("option", { value: "physical_shipment", label: "Physical Shipment" }), _jsx("option", { value: "hybrid", label: "Hybrid" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "instant_digital", label: "Instant Digital" }),
+      _jsx("option", {
+        value: "scheduled_digital",
+        label: "Scheduled Digital",
+      }),
+      _jsx("option", { value: "manual_review", label: "Manual Review" }),
+      _jsx("option", {
+        value: "physical_shipment",
+        label: "Physical Shipment",
+      }),
+      _jsx("option", { value: "hybrid", label: "Hybrid" }),
+    ],
+  });
 };
 /* Export the generated form */
 export default ProductDeliveryConfigForm;

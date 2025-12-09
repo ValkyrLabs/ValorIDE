@@ -31,60 +31,60 @@ export const LIST_CHART_REQUEST = "LIST_CHART_REQUEST";
 export const LIST_CHART_SUCCESS = "LIST_CHART_SUCCESS";
 export const LIST_CHART_FAILURE = "LIST_CHART_FAILURE";
 export const addChartRequest = () => ({
-    type: ADD_CHART_REQUEST,
+  type: ADD_CHART_REQUEST,
 });
 export const addChartSuccess = (Charts) => ({
-    type: ADD_CHART_SUCCESS,
-    payload: Charts,
+  type: ADD_CHART_SUCCESS,
+  payload: Charts,
 });
 export const addChartFailure = (error) => ({
-    type: ADD_CHART_FAILURE,
-    payload: error,
+  type: ADD_CHART_FAILURE,
+  payload: error,
 });
 export const fetchChartRequest = () => ({
-    type: FETCH_CHART_REQUEST,
+  type: FETCH_CHART_REQUEST,
 });
 export const fetchChartSuccess = (Charts) => ({
-    type: FETCH_CHART_SUCCESS,
-    payload: Charts,
+  type: FETCH_CHART_SUCCESS,
+  payload: Charts,
 });
 export const fetchChartFailure = (error) => ({
-    type: FETCH_CHART_FAILURE,
-    payload: error,
+  type: FETCH_CHART_FAILURE,
+  payload: error,
 });
 export const listChartRequest = () => ({
-    type: LIST_CHART_REQUEST,
+  type: LIST_CHART_REQUEST,
 });
 export const listChartSuccess = (Charts) => ({
-    type: LIST_CHART_SUCCESS,
-    payload: Charts,
+  type: LIST_CHART_SUCCESS,
+  payload: Charts,
 });
 export const listChartFailure = (error) => ({
-    type: LIST_CHART_FAILURE,
-    payload: error,
+  type: LIST_CHART_FAILURE,
+  payload: error,
 });
 export const updateChartRequest = (Chart) => ({
-    type: UPDATE_CHART_REQUEST,
-    payload: Chart,
+  type: UPDATE_CHART_REQUEST,
+  payload: Chart,
 });
 export const updateChartSuccess = (Chart) => ({
-    type: UPDATE_CHART_SUCCESS,
-    payload: Chart,
+  type: UPDATE_CHART_SUCCESS,
+  payload: Chart,
 });
 export const updateChartFailure = (error) => ({
-    type: UPDATE_CHART_FAILURE,
-    payload: error,
+  type: UPDATE_CHART_FAILURE,
+  payload: error,
 });
 export const deleteChartRequest = (Chart) => ({
-    type: DELETE_CHART_REQUEST,
-    payload: Chart,
+  type: DELETE_CHART_REQUEST,
+  payload: Chart,
 });
 export const deleteChartSuccess = (Chart) => ({
-    type: DELETE_CHART_SUCCESS,
-    payload: Chart,
+  type: DELETE_CHART_SUCCESS,
+  payload: Chart,
 });
 export const deleteChartFailure = (error) => ({
-    type: DELETE_CHART_FAILURE,
-    payload: error,
+  type: DELETE_CHART_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=ChartApiAction.js.map

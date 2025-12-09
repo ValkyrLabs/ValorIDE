@@ -31,60 +31,60 @@ export const LIST_CHATRESPONSE_REQUEST = "LIST_CHATRESPONSE_REQUEST";
 export const LIST_CHATRESPONSE_SUCCESS = "LIST_CHATRESPONSE_SUCCESS";
 export const LIST_CHATRESPONSE_FAILURE = "LIST_CHATRESPONSE_FAILURE";
 export const addChatResponseRequest = () => ({
-    type: ADD_CHATRESPONSE_REQUEST,
+  type: ADD_CHATRESPONSE_REQUEST,
 });
 export const addChatResponseSuccess = (ChatResponses) => ({
-    type: ADD_CHATRESPONSE_SUCCESS,
-    payload: ChatResponses,
+  type: ADD_CHATRESPONSE_SUCCESS,
+  payload: ChatResponses,
 });
 export const addChatResponseFailure = (error) => ({
-    type: ADD_CHATRESPONSE_FAILURE,
-    payload: error,
+  type: ADD_CHATRESPONSE_FAILURE,
+  payload: error,
 });
 export const fetchChatResponseRequest = () => ({
-    type: FETCH_CHATRESPONSE_REQUEST,
+  type: FETCH_CHATRESPONSE_REQUEST,
 });
 export const fetchChatResponseSuccess = (ChatResponses) => ({
-    type: FETCH_CHATRESPONSE_SUCCESS,
-    payload: ChatResponses,
+  type: FETCH_CHATRESPONSE_SUCCESS,
+  payload: ChatResponses,
 });
 export const fetchChatResponseFailure = (error) => ({
-    type: FETCH_CHATRESPONSE_FAILURE,
-    payload: error,
+  type: FETCH_CHATRESPONSE_FAILURE,
+  payload: error,
 });
 export const listChatResponseRequest = () => ({
-    type: LIST_CHATRESPONSE_REQUEST,
+  type: LIST_CHATRESPONSE_REQUEST,
 });
 export const listChatResponseSuccess = (ChatResponses) => ({
-    type: LIST_CHATRESPONSE_SUCCESS,
-    payload: ChatResponses,
+  type: LIST_CHATRESPONSE_SUCCESS,
+  payload: ChatResponses,
 });
 export const listChatResponseFailure = (error) => ({
-    type: LIST_CHATRESPONSE_FAILURE,
-    payload: error,
+  type: LIST_CHATRESPONSE_FAILURE,
+  payload: error,
 });
 export const updateChatResponseRequest = (ChatResponse) => ({
-    type: UPDATE_CHATRESPONSE_REQUEST,
-    payload: ChatResponse,
+  type: UPDATE_CHATRESPONSE_REQUEST,
+  payload: ChatResponse,
 });
 export const updateChatResponseSuccess = (ChatResponse) => ({
-    type: UPDATE_CHATRESPONSE_SUCCESS,
-    payload: ChatResponse,
+  type: UPDATE_CHATRESPONSE_SUCCESS,
+  payload: ChatResponse,
 });
 export const updateChatResponseFailure = (error) => ({
-    type: UPDATE_CHATRESPONSE_FAILURE,
-    payload: error,
+  type: UPDATE_CHATRESPONSE_FAILURE,
+  payload: error,
 });
 export const deleteChatResponseRequest = (ChatResponse) => ({
-    type: DELETE_CHATRESPONSE_REQUEST,
-    payload: ChatResponse,
+  type: DELETE_CHATRESPONSE_REQUEST,
+  payload: ChatResponse,
 });
 export const deleteChatResponseSuccess = (ChatResponse) => ({
-    type: DELETE_CHATRESPONSE_SUCCESS,
-    payload: ChatResponse,
+  type: DELETE_CHATRESPONSE_SUCCESS,
+  payload: ChatResponse,
 });
 export const deleteChatResponseFailure = (error) => ({
-    type: DELETE_CHATRESPONSE_FAILURE,
-    payload: error,
+  type: DELETE_CHATRESPONSE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=ChatResponseApiAction.js.map

@@ -31,60 +31,60 @@ export const LIST_SUBSCRIBERLIST_REQUEST = "LIST_SUBSCRIBERLIST_REQUEST";
 export const LIST_SUBSCRIBERLIST_SUCCESS = "LIST_SUBSCRIBERLIST_SUCCESS";
 export const LIST_SUBSCRIBERLIST_FAILURE = "LIST_SUBSCRIBERLIST_FAILURE";
 export const addSubscriberListRequest = () => ({
-    type: ADD_SUBSCRIBERLIST_REQUEST,
+  type: ADD_SUBSCRIBERLIST_REQUEST,
 });
 export const addSubscriberListSuccess = (SubscriberLists) => ({
-    type: ADD_SUBSCRIBERLIST_SUCCESS,
-    payload: SubscriberLists,
+  type: ADD_SUBSCRIBERLIST_SUCCESS,
+  payload: SubscriberLists,
 });
 export const addSubscriberListFailure = (error) => ({
-    type: ADD_SUBSCRIBERLIST_FAILURE,
-    payload: error,
+  type: ADD_SUBSCRIBERLIST_FAILURE,
+  payload: error,
 });
 export const fetchSubscriberListRequest = () => ({
-    type: FETCH_SUBSCRIBERLIST_REQUEST,
+  type: FETCH_SUBSCRIBERLIST_REQUEST,
 });
 export const fetchSubscriberListSuccess = (SubscriberLists) => ({
-    type: FETCH_SUBSCRIBERLIST_SUCCESS,
-    payload: SubscriberLists,
+  type: FETCH_SUBSCRIBERLIST_SUCCESS,
+  payload: SubscriberLists,
 });
 export const fetchSubscriberListFailure = (error) => ({
-    type: FETCH_SUBSCRIBERLIST_FAILURE,
-    payload: error,
+  type: FETCH_SUBSCRIBERLIST_FAILURE,
+  payload: error,
 });
 export const listSubscriberListRequest = () => ({
-    type: LIST_SUBSCRIBERLIST_REQUEST,
+  type: LIST_SUBSCRIBERLIST_REQUEST,
 });
 export const listSubscriberListSuccess = (SubscriberLists) => ({
-    type: LIST_SUBSCRIBERLIST_SUCCESS,
-    payload: SubscriberLists,
+  type: LIST_SUBSCRIBERLIST_SUCCESS,
+  payload: SubscriberLists,
 });
 export const listSubscriberListFailure = (error) => ({
-    type: LIST_SUBSCRIBERLIST_FAILURE,
-    payload: error,
+  type: LIST_SUBSCRIBERLIST_FAILURE,
+  payload: error,
 });
 export const updateSubscriberListRequest = (SubscriberList) => ({
-    type: UPDATE_SUBSCRIBERLIST_REQUEST,
-    payload: SubscriberList,
+  type: UPDATE_SUBSCRIBERLIST_REQUEST,
+  payload: SubscriberList,
 });
 export const updateSubscriberListSuccess = (SubscriberList) => ({
-    type: UPDATE_SUBSCRIBERLIST_SUCCESS,
-    payload: SubscriberList,
+  type: UPDATE_SUBSCRIBERLIST_SUCCESS,
+  payload: SubscriberList,
 });
 export const updateSubscriberListFailure = (error) => ({
-    type: UPDATE_SUBSCRIBERLIST_FAILURE,
-    payload: error,
+  type: UPDATE_SUBSCRIBERLIST_FAILURE,
+  payload: error,
 });
 export const deleteSubscriberListRequest = (SubscriberList) => ({
-    type: DELETE_SUBSCRIBERLIST_REQUEST,
-    payload: SubscriberList,
+  type: DELETE_SUBSCRIBERLIST_REQUEST,
+  payload: SubscriberList,
 });
 export const deleteSubscriberListSuccess = (SubscriberList) => ({
-    type: DELETE_SUBSCRIBERLIST_SUCCESS,
-    payload: SubscriberList,
+  type: DELETE_SUBSCRIBERLIST_SUCCESS,
+  payload: SubscriberList,
 });
 export const deleteSubscriberListFailure = (error) => ({
-    type: DELETE_SUBSCRIBERLIST_FAILURE,
-    payload: error,
+  type: DELETE_SUBSCRIBERLIST_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=SubscriberListApiAction.js.map

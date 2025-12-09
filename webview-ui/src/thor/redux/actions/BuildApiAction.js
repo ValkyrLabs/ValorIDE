@@ -31,60 +31,60 @@ export const LIST_BUILD_REQUEST = "LIST_BUILD_REQUEST";
 export const LIST_BUILD_SUCCESS = "LIST_BUILD_SUCCESS";
 export const LIST_BUILD_FAILURE = "LIST_BUILD_FAILURE";
 export const addBuildRequest = () => ({
-    type: ADD_BUILD_REQUEST,
+  type: ADD_BUILD_REQUEST,
 });
 export const addBuildSuccess = (Builds) => ({
-    type: ADD_BUILD_SUCCESS,
-    payload: Builds,
+  type: ADD_BUILD_SUCCESS,
+  payload: Builds,
 });
 export const addBuildFailure = (error) => ({
-    type: ADD_BUILD_FAILURE,
-    payload: error,
+  type: ADD_BUILD_FAILURE,
+  payload: error,
 });
 export const fetchBuildRequest = () => ({
-    type: FETCH_BUILD_REQUEST,
+  type: FETCH_BUILD_REQUEST,
 });
 export const fetchBuildSuccess = (Builds) => ({
-    type: FETCH_BUILD_SUCCESS,
-    payload: Builds,
+  type: FETCH_BUILD_SUCCESS,
+  payload: Builds,
 });
 export const fetchBuildFailure = (error) => ({
-    type: FETCH_BUILD_FAILURE,
-    payload: error,
+  type: FETCH_BUILD_FAILURE,
+  payload: error,
 });
 export const listBuildRequest = () => ({
-    type: LIST_BUILD_REQUEST,
+  type: LIST_BUILD_REQUEST,
 });
 export const listBuildSuccess = (Builds) => ({
-    type: LIST_BUILD_SUCCESS,
-    payload: Builds,
+  type: LIST_BUILD_SUCCESS,
+  payload: Builds,
 });
 export const listBuildFailure = (error) => ({
-    type: LIST_BUILD_FAILURE,
-    payload: error,
+  type: LIST_BUILD_FAILURE,
+  payload: error,
 });
 export const updateBuildRequest = (Build) => ({
-    type: UPDATE_BUILD_REQUEST,
-    payload: Build,
+  type: UPDATE_BUILD_REQUEST,
+  payload: Build,
 });
 export const updateBuildSuccess = (Build) => ({
-    type: UPDATE_BUILD_SUCCESS,
-    payload: Build,
+  type: UPDATE_BUILD_SUCCESS,
+  payload: Build,
 });
 export const updateBuildFailure = (error) => ({
-    type: UPDATE_BUILD_FAILURE,
-    payload: error,
+  type: UPDATE_BUILD_FAILURE,
+  payload: error,
 });
 export const deleteBuildRequest = (Build) => ({
-    type: DELETE_BUILD_REQUEST,
-    payload: Build,
+  type: DELETE_BUILD_REQUEST,
+  payload: Build,
 });
 export const deleteBuildSuccess = (Build) => ({
-    type: DELETE_BUILD_SUCCESS,
-    payload: Build,
+  type: DELETE_BUILD_SUCCESS,
+  payload: Build,
 });
 export const deleteBuildFailure = (error) => ({
-    type: DELETE_BUILD_FAILURE,
-    payload: error,
+  type: DELETE_BUILD_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=BuildApiAction.js.map

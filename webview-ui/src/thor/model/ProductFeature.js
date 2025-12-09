@@ -29,47 +29,47 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function ProductFeatureFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        productId: !exists(json, "productId") ? undefined : json["productId"],
-        price: !exists(json, "price") ? undefined : json["price"],
-        type: !exists(json, "type") ? undefined : json["type"],
-        name: !exists(json, "name") ? undefined : json["name"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    productId: !exists(json, "productId") ? undefined : json["productId"],
+    price: !exists(json, "price") ? undefined : json["price"],
+    type: !exists(json, "type") ? undefined : json["type"],
+    name: !exists(json, "name") ? undefined : json["name"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ProductFeatureToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        productId: value.productId,
-        price: value.price,
-        type: value.type,
-        name: value.name,
-        description: value.description,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    productId: value.productId,
+    price: value.price,
+    type: value.type,
+    name: value.name,
+    description: value.description,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -77,7 +77,7 @@ export function ProductFeatureToJSON(value) {
  */
 export var ProductFeatureTypeEnum;
 (function (ProductFeatureTypeEnum) {
-    ProductFeatureTypeEnum["PERCENTAGE"] = "percentage";
-    ProductFeatureTypeEnum["FIXED"] = "fixed";
+  ProductFeatureTypeEnum["PERCENTAGE"] = "percentage";
+  ProductFeatureTypeEnum["FIXED"] = "fixed";
 })(ProductFeatureTypeEnum || (ProductFeatureTypeEnum = {}));
 //# sourceMappingURL=ProductFeature.js.map

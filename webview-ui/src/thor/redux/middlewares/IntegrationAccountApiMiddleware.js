@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: IntegrationAccount
 */
-export const IntegrationAccountMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const IntegrationAccountMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("IntegrationAccount MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=IntegrationAccountApiMiddleware.js.map

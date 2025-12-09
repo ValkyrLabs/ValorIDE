@@ -16,29 +16,37 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const LoginResponseSlice = createSlice({
-    name: "LoginResponses",
-    initialState: [],
-    reducers: {
-        LoginResponseAdded(state, action) {
-            state.push(action.payload);
-        },
-        LoginResponseValueToggled(state, action) {
-            console.log("LoginResponse TOGGLE");
-            console.warn(JSON.stringify(action));
-            const LoginResponse = state.find((LoginResponse) => LoginResponse.id === action.payload.LoginResponseId);
-            if (LoginResponse) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        LoginResponsepropertySet(state, action) {
-            const LoginResponse = state.find((LoginResponse) => LoginResponse.id === action.payload.LoginResponseId);
-            if (LoginResponse) {
-                //  LoginResponse[action.property] = action.payload[action.property];
-            }
-        },
+  name: "LoginResponses",
+  initialState: [],
+  reducers: {
+    LoginResponseAdded(state, action) {
+      state.push(action.payload);
     },
+    LoginResponseValueToggled(state, action) {
+      console.log("LoginResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const LoginResponse = state.find(
+        (LoginResponse) => LoginResponse.id === action.payload.LoginResponseId,
+      );
+      if (LoginResponse) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    LoginResponsepropertySet(state, action) {
+      const LoginResponse = state.find(
+        (LoginResponse) => LoginResponse.id === action.payload.LoginResponseId,
+      );
+      if (LoginResponse) {
+        //  LoginResponse[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { LoginResponseAdded, LoginResponseValueToggled, LoginResponsepropertySet, } = LoginResponseSlice.actions;
+export const {
+  LoginResponseAdded,
+  LoginResponseValueToggled,
+  LoginResponsepropertySet,
+} = LoginResponseSlice.actions;
 export default LoginResponseSlice.reducer;
 //# sourceMappingURL=LoginResponseReducer.js.map

@@ -30,65 +30,68 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { FileRecordFromJSON, FileRecordToJSON } from "./";
 export function FileProcessingJobFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        type: json["type"],
-        status: json["status"],
-        progress: !exists(json, "progress") ? undefined : json["progress"],
-        metadata: !exists(json, "metadata") ? undefined : json["metadata"],
-        result: !exists(json, "result") ? undefined : json["result"],
-        error: !exists(json, "error") ? undefined : json["error"],
-        relatedFiles: !exists(json, "relatedFiles")
-            ? undefined
-            : json["relatedFiles"].map(FileRecordFromJSON),
-        startedAt: !exists(json, "startedAt")
-            ? undefined
-            : new Date(json["startedAt"]),
-        completedAt: !exists(json, "completedAt")
-            ? undefined
-            : new Date(json["completedAt"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    type: json["type"],
+    status: json["status"],
+    progress: !exists(json, "progress") ? undefined : json["progress"],
+    metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+    result: !exists(json, "result") ? undefined : json["result"],
+    error: !exists(json, "error") ? undefined : json["error"],
+    relatedFiles: !exists(json, "relatedFiles")
+      ? undefined
+      : json["relatedFiles"].map(FileRecordFromJSON),
+    startedAt: !exists(json, "startedAt")
+      ? undefined
+      : new Date(json["startedAt"]),
+    completedAt: !exists(json, "completedAt")
+      ? undefined
+      : new Date(json["completedAt"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function FileProcessingJobToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        type: value.type,
-        status: value.status,
-        progress: value.progress,
-        metadata: value.metadata,
-        result: value.result,
-        error: value.error,
-        relatedFiles: value.relatedFiles === undefined
-            ? undefined
-            : value.relatedFiles.map(FileRecordToJSON),
-        startedAt: value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
-        completedAt: value.completedAt === undefined
-            ? undefined
-            : value.completedAt.toISOString(),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    type: value.type,
+    status: value.status,
+    progress: value.progress,
+    metadata: value.metadata,
+    result: value.result,
+    error: value.error,
+    relatedFiles:
+      value.relatedFiles === undefined
+        ? undefined
+        : value.relatedFiles.map(FileRecordToJSON),
+    startedAt:
+      value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
+    completedAt:
+      value.completedAt === undefined
+        ? undefined
+        : value.completedAt.toISOString(),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -96,11 +99,11 @@ export function FileProcessingJobToJSON(value) {
  */
 export var FileProcessingJobTypeEnum;
 (function (FileProcessingJobTypeEnum) {
-    FileProcessingJobTypeEnum["FILEPROCESSING"] = "file_processing";
-    FileProcessingJobTypeEnum["BULKUPLOAD"] = "bulk_upload";
-    FileProcessingJobTypeEnum["EXPORT"] = "export";
-    FileProcessingJobTypeEnum["VIRUSSCAN"] = "virus_scan";
-    FileProcessingJobTypeEnum["THUMBNAILGENERATION"] = "thumbnail_generation";
+  FileProcessingJobTypeEnum["FILEPROCESSING"] = "file_processing";
+  FileProcessingJobTypeEnum["BULKUPLOAD"] = "bulk_upload";
+  FileProcessingJobTypeEnum["EXPORT"] = "export";
+  FileProcessingJobTypeEnum["VIRUSSCAN"] = "virus_scan";
+  FileProcessingJobTypeEnum["THUMBNAILGENERATION"] = "thumbnail_generation";
 })(FileProcessingJobTypeEnum || (FileProcessingJobTypeEnum = {}));
 /**
  * @export
@@ -108,10 +111,10 @@ export var FileProcessingJobTypeEnum;
  */
 export var FileProcessingJobStatusEnum;
 (function (FileProcessingJobStatusEnum) {
-    FileProcessingJobStatusEnum["PENDING"] = "pending";
-    FileProcessingJobStatusEnum["RUNNING"] = "running";
-    FileProcessingJobStatusEnum["COMPLETED"] = "completed";
-    FileProcessingJobStatusEnum["FAILED"] = "failed";
-    FileProcessingJobStatusEnum["CANCELLED"] = "cancelled";
+  FileProcessingJobStatusEnum["PENDING"] = "pending";
+  FileProcessingJobStatusEnum["RUNNING"] = "running";
+  FileProcessingJobStatusEnum["COMPLETED"] = "completed";
+  FileProcessingJobStatusEnum["FAILED"] = "failed";
+  FileProcessingJobStatusEnum["CANCELLED"] = "cancelled";
 })(FileProcessingJobStatusEnum || (FileProcessingJobStatusEnum = {}));
 //# sourceMappingURL=FileProcessingJob.js.map

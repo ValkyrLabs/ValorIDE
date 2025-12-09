@@ -22,10 +22,10 @@ import customBaseQuery from "../customBaseQuery";
  * was emitted. Provides a valid reducer/middleware surface without endpoints.
  */
 export const DefaultService = createApi({
-    reducerPath: "Default",
-    baseQuery: customBaseQuery,
-    tagTypes: [],
-    endpoints: () => ({}),
+  reducerPath: "Default",
+  baseQuery: customBaseQuery,
+  tagTypes: [],
+  endpoints: () => ({}),
 });
 // Maintain backwards-compatibility with the long-standing typo.
 export const DefualtService = DefaultService;

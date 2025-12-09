@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: McpToolCallResponse
 */
-export const McpToolCallResponseMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const McpToolCallResponseMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("McpToolCallResponse MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=McpToolCallResponseApiMiddleware.js.map

@@ -22,6 +22,7 @@ import {
 } from "@shared/combineCommandSequences";
 import { getApiMetrics } from "@shared/getApiMetrics";
 import { normalizeApiConfiguration } from "@/components/settings/ApiOptions";
+import { TaskPhase, deriveTaskProgress } from "@/utils/taskPhase";
 import TaskHeader from "@/components/chat/TaskHeader";
 import BrowserSessionRow from "@/components/chat/BrowserSessionRow";
 import ChatRow from "@/components/chat/ChatRow";
@@ -76,6 +77,7 @@ interface TaskViewProps {
   apiConfiguration: any;
   inputValue: string;
   setInputValue: (value: string) => void;
+  sendMessageFromChatRow: (text: string, images?: string[]) => void;
   isChatLoading: boolean;
   lastApiReqTotalTokens?: number;
 
@@ -98,6 +100,7 @@ const TaskView: React.FC<TaskViewProps> = ({
   apiConfiguration,
   inputValue,
   setInputValue,
+  sendMessageFromChatRow,
   isChatLoading,
   lastApiReqTotalTokens,
   valorideAsk,
@@ -243,6 +246,30 @@ const TaskView: React.FC<TaskViewProps> = ({
     return result;
   }, [visibleMessages]);
 
+  const scrollToPhase = useCallback(
+    (phase: TaskPhase) => {
+      const targetTs = taskPhaseAnchors[phase];
+      if (!targetTs || !virtuosoRef.current) return;
+
+      const targetIndex = groupedMessages.findIndex((messageOrGroup) => {
+        if (Array.isArray(messageOrGroup)) {
+          return messageOrGroup.some((m) => m.ts === targetTs);
+        }
+        return messageOrGroup.ts === targetTs;
+      });
+
+      if (targetIndex >= 0) {
+        disableAutoScrollRef.current = true;
+        virtuosoRef.current.scrollToIndex({
+          index: targetIndex,
+          align: "start",
+          behavior: "smooth",
+        });
+      }
+    },
+    [groupedMessages, taskPhaseAnchors],
+  );
+
   useEffect(() => {
     const last = modifiedMessages.at(-1);
     if (!last) return;
@@ -301,7 +328,7 @@ const TaskView: React.FC<TaskViewProps> = ({
           onHeightChange={() => {}}
           inputValue={inputValue}
           setInputValue={setInputValue}
-          sendMessageFromChatRow={() => {}}
+          sendMessageFromChatRow={sendMessageFromChatRow}
         />
       );
     },
@@ -311,6 +338,7 @@ const TaskView: React.FC<TaskViewProps> = ({
       groupedMessages.length,
       inputValue,
       setInputValue,
+      sendMessageFromChatRow,
     ],
   );
 
@@ -343,6 +371,13 @@ const TaskView: React.FC<TaskViewProps> = ({
     }
   }, [groupedMessages.length]);
 
+  const {
+    phase: taskPhase,
+    ratio: taskPhaseRatio,
+    confidence: taskPhaseConfidence,
+    anchors: taskPhaseAnchors,
+  } = useMemo(() => deriveTaskProgress(messages), [messages]);
+
   return (
     <>
       <TaskHeader
@@ -354,6 +389,11 @@ const TaskView: React.FC<TaskViewProps> = ({
         cacheReads={apiMetrics.totalCacheReads}
         totalCost={apiMetrics.totalCost}
         lastApiReqTotalTokens={lastApiReqTotalTokens}
+        phase={taskPhase}
+        phaseRatio={taskPhaseRatio}
+        phaseAnchors={taskPhaseAnchors}
+        phaseConfidence={taskPhaseConfidence}
+        onPhaseSelect={scrollToPhase}
         onClose={onTaskClose}
       />
 

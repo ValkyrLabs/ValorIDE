@@ -30,58 +30,58 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { OasOperationFromJSON, OasOperationToJSON } from "./";
 export function OasPathFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        path: !exists(json, "path") ? undefined : json["path"],
-        oasOpenAPISpecId: !exists(json, "oasOpenAPISpecId")
-            ? undefined
-            : json["oasOpenAPISpecId"],
-        summary: !exists(json, "summary") ? undefined : json["summary"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        get: !exists(json, "get") ? undefined : OasOperationFromJSON(json["get"]),
-        put: !exists(json, "put") ? undefined : OasOperationFromJSON(json["put"]),
-        post: !exists(json, "post")
-            ? undefined
-            : OasOperationFromJSON(json["post"]),
-        _delete: !exists(json, "delete")
-            ? undefined
-            : OasOperationFromJSON(json["delete"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    path: !exists(json, "path") ? undefined : json["path"],
+    oasOpenAPISpecId: !exists(json, "oasOpenAPISpecId")
+      ? undefined
+      : json["oasOpenAPISpecId"],
+    summary: !exists(json, "summary") ? undefined : json["summary"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    get: !exists(json, "get") ? undefined : OasOperationFromJSON(json["get"]),
+    put: !exists(json, "put") ? undefined : OasOperationFromJSON(json["put"]),
+    post: !exists(json, "post")
+      ? undefined
+      : OasOperationFromJSON(json["post"]),
+    _delete: !exists(json, "delete")
+      ? undefined
+      : OasOperationFromJSON(json["delete"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function OasPathToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        path: value.path,
-        oasOpenAPISpecId: value.oasOpenAPISpecId,
-        summary: value.summary,
-        description: value.description,
-        get: OasOperationToJSON(value.get),
-        put: OasOperationToJSON(value.put),
-        post: OasOperationToJSON(value.post),
-        delete: OasOperationToJSON(value._delete),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    path: value.path,
+    oasOpenAPISpecId: value.oasOpenAPISpecId,
+    summary: value.summary,
+    description: value.description,
+    get: OasOperationToJSON(value.get),
+    put: OasOperationToJSON(value.put),
+    post: OasOperationToJSON(value.post),
+    delete: OasOperationToJSON(value._delete),
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=OasPath.js.map

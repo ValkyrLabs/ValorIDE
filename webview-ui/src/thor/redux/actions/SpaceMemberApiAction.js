@@ -31,60 +31,60 @@ export const LIST_SPACEMEMBER_REQUEST = "LIST_SPACEMEMBER_REQUEST";
 export const LIST_SPACEMEMBER_SUCCESS = "LIST_SPACEMEMBER_SUCCESS";
 export const LIST_SPACEMEMBER_FAILURE = "LIST_SPACEMEMBER_FAILURE";
 export const addSpaceMemberRequest = () => ({
-    type: ADD_SPACEMEMBER_REQUEST,
+  type: ADD_SPACEMEMBER_REQUEST,
 });
 export const addSpaceMemberSuccess = (SpaceMembers) => ({
-    type: ADD_SPACEMEMBER_SUCCESS,
-    payload: SpaceMembers,
+  type: ADD_SPACEMEMBER_SUCCESS,
+  payload: SpaceMembers,
 });
 export const addSpaceMemberFailure = (error) => ({
-    type: ADD_SPACEMEMBER_FAILURE,
-    payload: error,
+  type: ADD_SPACEMEMBER_FAILURE,
+  payload: error,
 });
 export const fetchSpaceMemberRequest = () => ({
-    type: FETCH_SPACEMEMBER_REQUEST,
+  type: FETCH_SPACEMEMBER_REQUEST,
 });
 export const fetchSpaceMemberSuccess = (SpaceMembers) => ({
-    type: FETCH_SPACEMEMBER_SUCCESS,
-    payload: SpaceMembers,
+  type: FETCH_SPACEMEMBER_SUCCESS,
+  payload: SpaceMembers,
 });
 export const fetchSpaceMemberFailure = (error) => ({
-    type: FETCH_SPACEMEMBER_FAILURE,
-    payload: error,
+  type: FETCH_SPACEMEMBER_FAILURE,
+  payload: error,
 });
 export const listSpaceMemberRequest = () => ({
-    type: LIST_SPACEMEMBER_REQUEST,
+  type: LIST_SPACEMEMBER_REQUEST,
 });
 export const listSpaceMemberSuccess = (SpaceMembers) => ({
-    type: LIST_SPACEMEMBER_SUCCESS,
-    payload: SpaceMembers,
+  type: LIST_SPACEMEMBER_SUCCESS,
+  payload: SpaceMembers,
 });
 export const listSpaceMemberFailure = (error) => ({
-    type: LIST_SPACEMEMBER_FAILURE,
-    payload: error,
+  type: LIST_SPACEMEMBER_FAILURE,
+  payload: error,
 });
 export const updateSpaceMemberRequest = (SpaceMember) => ({
-    type: UPDATE_SPACEMEMBER_REQUEST,
-    payload: SpaceMember,
+  type: UPDATE_SPACEMEMBER_REQUEST,
+  payload: SpaceMember,
 });
 export const updateSpaceMemberSuccess = (SpaceMember) => ({
-    type: UPDATE_SPACEMEMBER_SUCCESS,
-    payload: SpaceMember,
+  type: UPDATE_SPACEMEMBER_SUCCESS,
+  payload: SpaceMember,
 });
 export const updateSpaceMemberFailure = (error) => ({
-    type: UPDATE_SPACEMEMBER_FAILURE,
-    payload: error,
+  type: UPDATE_SPACEMEMBER_FAILURE,
+  payload: error,
 });
 export const deleteSpaceMemberRequest = (SpaceMember) => ({
-    type: DELETE_SPACEMEMBER_REQUEST,
-    payload: SpaceMember,
+  type: DELETE_SPACEMEMBER_REQUEST,
+  payload: SpaceMember,
 });
 export const deleteSpaceMemberSuccess = (SpaceMember) => ({
-    type: DELETE_SPACEMEMBER_SUCCESS,
-    payload: SpaceMember,
+  type: DELETE_SPACEMEMBER_SUCCESS,
+  payload: SpaceMember,
 });
 export const deleteSpaceMemberFailure = (error) => ({
-    type: DELETE_SPACEMEMBER_FAILURE,
-    payload: error,
+  type: DELETE_SPACEMEMBER_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=SpaceMemberApiAction.js.map

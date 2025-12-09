@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Formula
 */
-export const FormulaMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const FormulaMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Formula MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=FormulaApiMiddleware.js.map

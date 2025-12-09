@@ -6,6 +6,13 @@ Bring Cline's CLI agent mode, multi-agent orchestration, and multi-project check
 
 ## 📊 Status: Phase 1 COMPLETE ✅
 
+### Latest Updates (2025-12-09)
+
+- Inline browsing now defaults to VS Code Simple Browser for Stripe payments, dashboard, docs, and all external links; falls back to the system browser only when necessary.
+- Chat UX: follow-up/plan option buttons execute immediately (no more staging text); API request rows show request + usage details and stop spinners once responses land; overlapping spinners trimmed.
+- Account view: balance refresh fixed on the recycle icon; post-purchase refetch hooks balance/usage/payments.
+- Buy Credits and help/doc links route through the centralized `openInBrowser` message → Simple Browser helper.
+
 ### Phase 1: CLI Foundation (COMPLETE)
 
 **Effort**: 70h → 2h scaffolding complete  

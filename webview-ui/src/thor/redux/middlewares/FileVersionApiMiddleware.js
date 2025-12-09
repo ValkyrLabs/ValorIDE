@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: FileVersion
 */
-export const FileVersionMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const FileVersionMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("FileVersion MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=FileVersionApiMiddleware.js.map

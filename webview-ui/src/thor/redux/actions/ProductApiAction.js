@@ -31,60 +31,60 @@ export const LIST_PRODUCT_REQUEST = "LIST_PRODUCT_REQUEST";
 export const LIST_PRODUCT_SUCCESS = "LIST_PRODUCT_SUCCESS";
 export const LIST_PRODUCT_FAILURE = "LIST_PRODUCT_FAILURE";
 export const addProductRequest = () => ({
-    type: ADD_PRODUCT_REQUEST,
+  type: ADD_PRODUCT_REQUEST,
 });
 export const addProductSuccess = (Products) => ({
-    type: ADD_PRODUCT_SUCCESS,
-    payload: Products,
+  type: ADD_PRODUCT_SUCCESS,
+  payload: Products,
 });
 export const addProductFailure = (error) => ({
-    type: ADD_PRODUCT_FAILURE,
-    payload: error,
+  type: ADD_PRODUCT_FAILURE,
+  payload: error,
 });
 export const fetchProductRequest = () => ({
-    type: FETCH_PRODUCT_REQUEST,
+  type: FETCH_PRODUCT_REQUEST,
 });
 export const fetchProductSuccess = (Products) => ({
-    type: FETCH_PRODUCT_SUCCESS,
-    payload: Products,
+  type: FETCH_PRODUCT_SUCCESS,
+  payload: Products,
 });
 export const fetchProductFailure = (error) => ({
-    type: FETCH_PRODUCT_FAILURE,
-    payload: error,
+  type: FETCH_PRODUCT_FAILURE,
+  payload: error,
 });
 export const listProductRequest = () => ({
-    type: LIST_PRODUCT_REQUEST,
+  type: LIST_PRODUCT_REQUEST,
 });
 export const listProductSuccess = (Products) => ({
-    type: LIST_PRODUCT_SUCCESS,
-    payload: Products,
+  type: LIST_PRODUCT_SUCCESS,
+  payload: Products,
 });
 export const listProductFailure = (error) => ({
-    type: LIST_PRODUCT_FAILURE,
-    payload: error,
+  type: LIST_PRODUCT_FAILURE,
+  payload: error,
 });
 export const updateProductRequest = (Product) => ({
-    type: UPDATE_PRODUCT_REQUEST,
-    payload: Product,
+  type: UPDATE_PRODUCT_REQUEST,
+  payload: Product,
 });
 export const updateProductSuccess = (Product) => ({
-    type: UPDATE_PRODUCT_SUCCESS,
-    payload: Product,
+  type: UPDATE_PRODUCT_SUCCESS,
+  payload: Product,
 });
 export const updateProductFailure = (error) => ({
-    type: UPDATE_PRODUCT_FAILURE,
-    payload: error,
+  type: UPDATE_PRODUCT_FAILURE,
+  payload: error,
 });
 export const deleteProductRequest = (Product) => ({
-    type: DELETE_PRODUCT_REQUEST,
-    payload: Product,
+  type: DELETE_PRODUCT_REQUEST,
+  payload: Product,
 });
 export const deleteProductSuccess = (Product) => ({
-    type: DELETE_PRODUCT_SUCCESS,
-    payload: Product,
+  type: DELETE_PRODUCT_SUCCESS,
+  payload: Product,
 });
 export const deleteProductFailure = (error) => ({
-    type: DELETE_PRODUCT_FAILURE,
-    payload: error,
+  type: DELETE_PRODUCT_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=ProductApiAction.js.map

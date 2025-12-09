@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: SalesActivity
 */
-export const SalesActivityMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const SalesActivityMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("SalesActivity MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=SalesActivityApiMiddleware.js.map

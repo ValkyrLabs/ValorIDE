@@ -29,65 +29,65 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function AddressFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: json["name"],
-        street1: json["street1"],
-        city: json["city"],
-        state: json["state"],
-        postalCode: json["postal_code"],
-        hasWifi: !exists(json, "hasWifi") ? undefined : json["hasWifi"],
-        principalId: !exists(json, "principalId") ? undefined : json["principalId"],
-        addressType: !exists(json, "addressType") ? undefined : json["addressType"],
-        gpsCoordinateLat: !exists(json, "gps_coordinate_lat")
-            ? undefined
-            : json["gps_coordinate_lat"],
-        gpsCoordinateLong: !exists(json, "gps_coordinate_long")
-            ? undefined
-            : json["gps_coordinate_long"],
-        street2: !exists(json, "street2") ? undefined : json["street2"],
-        country: !exists(json, "country") ? undefined : json["country"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: json["name"],
+    street1: json["street1"],
+    city: json["city"],
+    state: json["state"],
+    postalCode: json["postal_code"],
+    hasWifi: !exists(json, "hasWifi") ? undefined : json["hasWifi"],
+    principalId: !exists(json, "principalId") ? undefined : json["principalId"],
+    addressType: !exists(json, "addressType") ? undefined : json["addressType"],
+    gpsCoordinateLat: !exists(json, "gps_coordinate_lat")
+      ? undefined
+      : json["gps_coordinate_lat"],
+    gpsCoordinateLong: !exists(json, "gps_coordinate_long")
+      ? undefined
+      : json["gps_coordinate_long"],
+    street2: !exists(json, "street2") ? undefined : json["street2"],
+    country: !exists(json, "country") ? undefined : json["country"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function AddressToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        street1: value.street1,
-        city: value.city,
-        state: value.state,
-        postal_code: value.postalCode,
-        hasWifi: value.hasWifi,
-        principalId: value.principalId,
-        addressType: value.addressType,
-        gps_coordinate_lat: value.gpsCoordinateLat,
-        gps_coordinate_long: value.gpsCoordinateLong,
-        street2: value.street2,
-        country: value.country,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    street1: value.street1,
+    city: value.city,
+    state: value.state,
+    postal_code: value.postalCode,
+    hasWifi: value.hasWifi,
+    principalId: value.principalId,
+    addressType: value.addressType,
+    gps_coordinate_lat: value.gpsCoordinateLat,
+    gps_coordinate_long: value.gpsCoordinateLong,
+    street2: value.street2,
+    country: value.country,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -95,10 +95,10 @@ export function AddressToJSON(value) {
  */
 export var AddressAddressTypeEnum;
 (function (AddressAddressTypeEnum) {
-    AddressAddressTypeEnum["HOME"] = "home";
-    AddressAddressTypeEnum["MAIL"] = "mail";
-    AddressAddressTypeEnum["WORK"] = "work";
-    AddressAddressTypeEnum["SCHOOL"] = "school";
-    AddressAddressTypeEnum["OTHER"] = "other";
+  AddressAddressTypeEnum["HOME"] = "home";
+  AddressAddressTypeEnum["MAIL"] = "mail";
+  AddressAddressTypeEnum["WORK"] = "work";
+  AddressAddressTypeEnum["SCHOOL"] = "school";
+  AddressAddressTypeEnum["OTHER"] = "other";
 })(AddressAddressTypeEnum || (AddressAddressTypeEnum = {}));
 //# sourceMappingURL=Address.js.map

@@ -28,58 +28,63 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { AclObjectIdentityFromJSON, AclObjectIdentityToJSON, AclSidFromJSON, AclSidToJSON, } from "./";
+import {
+  AclObjectIdentityFromJSON,
+  AclObjectIdentityToJSON,
+  AclSidFromJSON,
+  AclSidToJSON,
+} from "./";
 export function AclEntryFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        aclObjectIdentity: AclObjectIdentityFromJSON(json["aclObjectIdentity"]),
-        aceOrder: json["aceOrder"],
-        aclSid: AclSidFromJSON(json["aclSid"]),
-        mask: json["mask"],
-        granting: json["granting"],
-        auditSuccess: !exists(json, "auditSuccess")
-            ? undefined
-            : json["auditSuccess"],
-        auditFailure: !exists(json, "auditFailure")
-            ? undefined
-            : json["auditFailure"],
-        sid: !exists(json, "sid") ? undefined : json["sid"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    aclObjectIdentity: AclObjectIdentityFromJSON(json["aclObjectIdentity"]),
+    aceOrder: json["aceOrder"],
+    aclSid: AclSidFromJSON(json["aclSid"]),
+    mask: json["mask"],
+    granting: json["granting"],
+    auditSuccess: !exists(json, "auditSuccess")
+      ? undefined
+      : json["auditSuccess"],
+    auditFailure: !exists(json, "auditFailure")
+      ? undefined
+      : json["auditFailure"],
+    sid: !exists(json, "sid") ? undefined : json["sid"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function AclEntryToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        aclObjectIdentity: AclObjectIdentityToJSON(value.aclObjectIdentity),
-        aceOrder: value.aceOrder,
-        aclSid: AclSidToJSON(value.aclSid),
-        mask: value.mask,
-        granting: value.granting,
-        auditSuccess: value.auditSuccess,
-        auditFailure: value.auditFailure,
-        sid: value.sid,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    aclObjectIdentity: AclObjectIdentityToJSON(value.aclObjectIdentity),
+    aceOrder: value.aceOrder,
+    aclSid: AclSidToJSON(value.aclSid),
+    mask: value.mask,
+    granting: value.granting,
+    auditSuccess: value.auditSuccess,
+    auditFailure: value.auditFailure,
+    sid: value.sid,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=AclEntry.js.map

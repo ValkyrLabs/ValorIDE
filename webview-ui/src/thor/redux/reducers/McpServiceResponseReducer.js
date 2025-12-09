@@ -16,29 +16,39 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const McpServiceResponseSlice = createSlice({
-    name: "McpServiceResponses",
-    initialState: [],
-    reducers: {
-        McpServiceResponseAdded(state, action) {
-            state.push(action.payload);
-        },
-        McpServiceResponseValueToggled(state, action) {
-            console.log("McpServiceResponse TOGGLE");
-            console.warn(JSON.stringify(action));
-            const McpServiceResponse = state.find((McpServiceResponse) => McpServiceResponse.id === action.payload.McpServiceResponseId);
-            if (McpServiceResponse) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        McpServiceResponsepropertySet(state, action) {
-            const McpServiceResponse = state.find((McpServiceResponse) => McpServiceResponse.id === action.payload.McpServiceResponseId);
-            if (McpServiceResponse) {
-                //  McpServiceResponse[action.property] = action.payload[action.property];
-            }
-        },
+  name: "McpServiceResponses",
+  initialState: [],
+  reducers: {
+    McpServiceResponseAdded(state, action) {
+      state.push(action.payload);
     },
+    McpServiceResponseValueToggled(state, action) {
+      console.log("McpServiceResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const McpServiceResponse = state.find(
+        (McpServiceResponse) =>
+          McpServiceResponse.id === action.payload.McpServiceResponseId,
+      );
+      if (McpServiceResponse) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    McpServiceResponsepropertySet(state, action) {
+      const McpServiceResponse = state.find(
+        (McpServiceResponse) =>
+          McpServiceResponse.id === action.payload.McpServiceResponseId,
+      );
+      if (McpServiceResponse) {
+        //  McpServiceResponse[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { McpServiceResponseAdded, McpServiceResponseValueToggled, McpServiceResponsepropertySet, } = McpServiceResponseSlice.actions;
+export const {
+  McpServiceResponseAdded,
+  McpServiceResponseValueToggled,
+  McpServiceResponsepropertySet,
+} = McpServiceResponseSlice.actions;
 export default McpServiceResponseSlice.reducer;
 //# sourceMappingURL=McpServiceResponseReducer.js.map

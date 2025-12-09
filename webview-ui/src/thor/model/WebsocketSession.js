@@ -28,61 +28,63 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { WebsocketMessageFromJSON, WebsocketMessageToJSON, } from "./";
+import { WebsocketMessageFromJSON, WebsocketMessageToJSON } from "./";
 export function WebsocketSessionFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        execModuleId: !exists(json, "execModuleId")
-            ? undefined
-            : json["execModuleId"],
-        state: !exists(json, "state") ? undefined : json["state"],
-        type: !exists(json, "type") ? undefined : json["type"],
-        connected: !exists(json, "connected") ? undefined : json["connected"],
-        statuses: !exists(json, "statuses")
-            ? undefined
-            : json["statuses"].map(WebsocketMessageFromJSON),
-        messages: !exists(json, "messages")
-            ? undefined
-            : json["messages"].map(WebsocketMessageFromJSON),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    execModuleId: !exists(json, "execModuleId")
+      ? undefined
+      : json["execModuleId"],
+    state: !exists(json, "state") ? undefined : json["state"],
+    type: !exists(json, "type") ? undefined : json["type"],
+    connected: !exists(json, "connected") ? undefined : json["connected"],
+    statuses: !exists(json, "statuses")
+      ? undefined
+      : json["statuses"].map(WebsocketMessageFromJSON),
+    messages: !exists(json, "messages")
+      ? undefined
+      : json["messages"].map(WebsocketMessageFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function WebsocketSessionToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        execModuleId: value.execModuleId,
-        state: value.state,
-        type: value.type,
-        connected: value.connected,
-        statuses: value.statuses === undefined
-            ? undefined
-            : value.statuses.map(WebsocketMessageToJSON),
-        messages: value.messages === undefined
-            ? undefined
-            : value.messages.map(WebsocketMessageToJSON),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    execModuleId: value.execModuleId,
+    state: value.state,
+    type: value.type,
+    connected: value.connected,
+    statuses:
+      value.statuses === undefined
+        ? undefined
+        : value.statuses.map(WebsocketMessageToJSON),
+    messages:
+      value.messages === undefined
+        ? undefined
+        : value.messages.map(WebsocketMessageToJSON),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -90,10 +92,10 @@ export function WebsocketSessionToJSON(value) {
  */
 export var WebsocketSessionStateEnum;
 (function (WebsocketSessionStateEnum) {
-    WebsocketSessionStateEnum["BROADCAST"] = "broadcast";
-    WebsocketSessionStateEnum["ROOM"] = "room";
-    WebsocketSessionStateEnum["PRIVATE"] = "private";
-    WebsocketSessionStateEnum["AGENT"] = "agent";
+  WebsocketSessionStateEnum["BROADCAST"] = "broadcast";
+  WebsocketSessionStateEnum["ROOM"] = "room";
+  WebsocketSessionStateEnum["PRIVATE"] = "private";
+  WebsocketSessionStateEnum["AGENT"] = "agent";
 })(WebsocketSessionStateEnum || (WebsocketSessionStateEnum = {}));
 /**
  * @export
@@ -101,9 +103,9 @@ export var WebsocketSessionStateEnum;
  */
 export var WebsocketSessionTypeEnum;
 (function (WebsocketSessionTypeEnum) {
-    WebsocketSessionTypeEnum["BROADCAST"] = "broadcast";
-    WebsocketSessionTypeEnum["ROOM"] = "room";
-    WebsocketSessionTypeEnum["PRIVATE"] = "private";
-    WebsocketSessionTypeEnum["AGENT"] = "agent";
+  WebsocketSessionTypeEnum["BROADCAST"] = "broadcast";
+  WebsocketSessionTypeEnum["ROOM"] = "room";
+  WebsocketSessionTypeEnum["PRIVATE"] = "private";
+  WebsocketSessionTypeEnum["AGENT"] = "agent";
 })(WebsocketSessionTypeEnum || (WebsocketSessionTypeEnum = {}));
 //# sourceMappingURL=WebsocketSession.js.map

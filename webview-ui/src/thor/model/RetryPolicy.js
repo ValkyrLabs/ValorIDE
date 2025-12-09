@@ -29,57 +29,57 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function RetryPolicyFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        maxAttempts: !exists(json, "maxAttempts") ? undefined : json["maxAttempts"],
-        backoffStrategy: !exists(json, "backoffStrategy")
-            ? undefined
-            : json["backoffStrategy"],
-        initialDelayMs: !exists(json, "initialDelayMs")
-            ? undefined
-            : json["initialDelayMs"],
-        maxDelayMs: !exists(json, "maxDelayMs") ? undefined : json["maxDelayMs"],
-        multiplier: !exists(json, "multiplier") ? undefined : json["multiplier"],
-        jitter: !exists(json, "jitter") ? undefined : json["jitter"],
-        retryableErrors: !exists(json, "retryableErrors")
-            ? undefined
-            : json["retryableErrors"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    maxAttempts: !exists(json, "maxAttempts") ? undefined : json["maxAttempts"],
+    backoffStrategy: !exists(json, "backoffStrategy")
+      ? undefined
+      : json["backoffStrategy"],
+    initialDelayMs: !exists(json, "initialDelayMs")
+      ? undefined
+      : json["initialDelayMs"],
+    maxDelayMs: !exists(json, "maxDelayMs") ? undefined : json["maxDelayMs"],
+    multiplier: !exists(json, "multiplier") ? undefined : json["multiplier"],
+    jitter: !exists(json, "jitter") ? undefined : json["jitter"],
+    retryableErrors: !exists(json, "retryableErrors")
+      ? undefined
+      : json["retryableErrors"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function RetryPolicyToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        maxAttempts: value.maxAttempts,
-        backoffStrategy: value.backoffStrategy,
-        initialDelayMs: value.initialDelayMs,
-        maxDelayMs: value.maxDelayMs,
-        multiplier: value.multiplier,
-        jitter: value.jitter,
-        retryableErrors: value.retryableErrors,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    maxAttempts: value.maxAttempts,
+    backoffStrategy: value.backoffStrategy,
+    initialDelayMs: value.initialDelayMs,
+    maxDelayMs: value.maxDelayMs,
+    multiplier: value.multiplier,
+    jitter: value.jitter,
+    retryableErrors: value.retryableErrors,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -87,8 +87,8 @@ export function RetryPolicyToJSON(value) {
  */
 export var RetryPolicyBackoffStrategyEnum;
 (function (RetryPolicyBackoffStrategyEnum) {
-    RetryPolicyBackoffStrategyEnum["FIXED"] = "fixed";
-    RetryPolicyBackoffStrategyEnum["EXPONENTIAL"] = "exponential";
-    RetryPolicyBackoffStrategyEnum["LINEAR"] = "linear";
+  RetryPolicyBackoffStrategyEnum["FIXED"] = "fixed";
+  RetryPolicyBackoffStrategyEnum["EXPONENTIAL"] = "exponential";
+  RetryPolicyBackoffStrategyEnum["LINEAR"] = "linear";
 })(RetryPolicyBackoffStrategyEnum || (RetryPolicyBackoffStrategyEnum = {}));
 //# sourceMappingURL=RetryPolicy.js.map

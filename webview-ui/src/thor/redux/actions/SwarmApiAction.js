@@ -31,60 +31,60 @@ export const LIST_SWARM_REQUEST = "LIST_SWARM_REQUEST";
 export const LIST_SWARM_SUCCESS = "LIST_SWARM_SUCCESS";
 export const LIST_SWARM_FAILURE = "LIST_SWARM_FAILURE";
 export const addSwarmRequest = () => ({
-    type: ADD_SWARM_REQUEST,
+  type: ADD_SWARM_REQUEST,
 });
 export const addSwarmSuccess = (Swarms) => ({
-    type: ADD_SWARM_SUCCESS,
-    payload: Swarms,
+  type: ADD_SWARM_SUCCESS,
+  payload: Swarms,
 });
 export const addSwarmFailure = (error) => ({
-    type: ADD_SWARM_FAILURE,
-    payload: error,
+  type: ADD_SWARM_FAILURE,
+  payload: error,
 });
 export const fetchSwarmRequest = () => ({
-    type: FETCH_SWARM_REQUEST,
+  type: FETCH_SWARM_REQUEST,
 });
 export const fetchSwarmSuccess = (Swarms) => ({
-    type: FETCH_SWARM_SUCCESS,
-    payload: Swarms,
+  type: FETCH_SWARM_SUCCESS,
+  payload: Swarms,
 });
 export const fetchSwarmFailure = (error) => ({
-    type: FETCH_SWARM_FAILURE,
-    payload: error,
+  type: FETCH_SWARM_FAILURE,
+  payload: error,
 });
 export const listSwarmRequest = () => ({
-    type: LIST_SWARM_REQUEST,
+  type: LIST_SWARM_REQUEST,
 });
 export const listSwarmSuccess = (Swarms) => ({
-    type: LIST_SWARM_SUCCESS,
-    payload: Swarms,
+  type: LIST_SWARM_SUCCESS,
+  payload: Swarms,
 });
 export const listSwarmFailure = (error) => ({
-    type: LIST_SWARM_FAILURE,
-    payload: error,
+  type: LIST_SWARM_FAILURE,
+  payload: error,
 });
 export const updateSwarmRequest = (Swarm) => ({
-    type: UPDATE_SWARM_REQUEST,
-    payload: Swarm,
+  type: UPDATE_SWARM_REQUEST,
+  payload: Swarm,
 });
 export const updateSwarmSuccess = (Swarm) => ({
-    type: UPDATE_SWARM_SUCCESS,
-    payload: Swarm,
+  type: UPDATE_SWARM_SUCCESS,
+  payload: Swarm,
 });
 export const updateSwarmFailure = (error) => ({
-    type: UPDATE_SWARM_FAILURE,
-    payload: error,
+  type: UPDATE_SWARM_FAILURE,
+  payload: error,
 });
 export const deleteSwarmRequest = (Swarm) => ({
-    type: DELETE_SWARM_REQUEST,
-    payload: Swarm,
+  type: DELETE_SWARM_REQUEST,
+  payload: Swarm,
 });
 export const deleteSwarmSuccess = (Swarm) => ({
-    type: DELETE_SWARM_SUCCESS,
-    payload: Swarm,
+  type: DELETE_SWARM_SUCCESS,
+  payload: Swarm,
 });
 export const deleteSwarmFailure = (error) => ({
-    type: DELETE_SWARM_FAILURE,
-    payload: error,
+  type: DELETE_SWARM_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=SwarmApiAction.js.map

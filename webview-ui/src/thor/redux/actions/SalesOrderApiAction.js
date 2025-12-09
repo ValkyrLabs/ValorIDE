@@ -31,60 +31,60 @@ export const LIST_SALESORDER_REQUEST = "LIST_SALESORDER_REQUEST";
 export const LIST_SALESORDER_SUCCESS = "LIST_SALESORDER_SUCCESS";
 export const LIST_SALESORDER_FAILURE = "LIST_SALESORDER_FAILURE";
 export const addSalesOrderRequest = () => ({
-    type: ADD_SALESORDER_REQUEST,
+  type: ADD_SALESORDER_REQUEST,
 });
 export const addSalesOrderSuccess = (SalesOrders) => ({
-    type: ADD_SALESORDER_SUCCESS,
-    payload: SalesOrders,
+  type: ADD_SALESORDER_SUCCESS,
+  payload: SalesOrders,
 });
 export const addSalesOrderFailure = (error) => ({
-    type: ADD_SALESORDER_FAILURE,
-    payload: error,
+  type: ADD_SALESORDER_FAILURE,
+  payload: error,
 });
 export const fetchSalesOrderRequest = () => ({
-    type: FETCH_SALESORDER_REQUEST,
+  type: FETCH_SALESORDER_REQUEST,
 });
 export const fetchSalesOrderSuccess = (SalesOrders) => ({
-    type: FETCH_SALESORDER_SUCCESS,
-    payload: SalesOrders,
+  type: FETCH_SALESORDER_SUCCESS,
+  payload: SalesOrders,
 });
 export const fetchSalesOrderFailure = (error) => ({
-    type: FETCH_SALESORDER_FAILURE,
-    payload: error,
+  type: FETCH_SALESORDER_FAILURE,
+  payload: error,
 });
 export const listSalesOrderRequest = () => ({
-    type: LIST_SALESORDER_REQUEST,
+  type: LIST_SALESORDER_REQUEST,
 });
 export const listSalesOrderSuccess = (SalesOrders) => ({
-    type: LIST_SALESORDER_SUCCESS,
-    payload: SalesOrders,
+  type: LIST_SALESORDER_SUCCESS,
+  payload: SalesOrders,
 });
 export const listSalesOrderFailure = (error) => ({
-    type: LIST_SALESORDER_FAILURE,
-    payload: error,
+  type: LIST_SALESORDER_FAILURE,
+  payload: error,
 });
 export const updateSalesOrderRequest = (SalesOrder) => ({
-    type: UPDATE_SALESORDER_REQUEST,
-    payload: SalesOrder,
+  type: UPDATE_SALESORDER_REQUEST,
+  payload: SalesOrder,
 });
 export const updateSalesOrderSuccess = (SalesOrder) => ({
-    type: UPDATE_SALESORDER_SUCCESS,
-    payload: SalesOrder,
+  type: UPDATE_SALESORDER_SUCCESS,
+  payload: SalesOrder,
 });
 export const updateSalesOrderFailure = (error) => ({
-    type: UPDATE_SALESORDER_FAILURE,
-    payload: error,
+  type: UPDATE_SALESORDER_FAILURE,
+  payload: error,
 });
 export const deleteSalesOrderRequest = (SalesOrder) => ({
-    type: DELETE_SALESORDER_REQUEST,
-    payload: SalesOrder,
+  type: DELETE_SALESORDER_REQUEST,
+  payload: SalesOrder,
 });
 export const deleteSalesOrderSuccess = (SalesOrder) => ({
-    type: DELETE_SALESORDER_SUCCESS,
-    payload: SalesOrder,
+  type: DELETE_SALESORDER_SUCCESS,
+  payload: SalesOrder,
 });
 export const deleteSalesOrderFailure = (error) => ({
-    type: DELETE_SALESORDER_FAILURE,
-    payload: error,
+  type: DELETE_SALESORDER_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=SalesOrderApiAction.js.map

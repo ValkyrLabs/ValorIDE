@@ -15,16 +15,16 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, } from "formik";
+import { ErrorMessage, Field, Formik } from "formik";
 import { useState } from "react";
-import { Form as BSForm, Accordion, Alert, } from "react-bootstrap";
+import { Form as BSForm, Accordion, Alert } from "react-bootstrap";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import * as Yup from "yup";
 import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import { PermissionType, } from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionType } from "@valkyr/component-library/PermissionDialog/types";
 import { useAddFileDownloadTokenMutation } from "../../services/FileDownloadTokenService";
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -50,136 +50,523 @@ Time-bound access token for authorized file downloads.
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
-const asNumber = (schema) => schema.transform((val, orig) => orig === "" || orig === null ? undefined : val);
+const asNumber = (schema) =>
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 const validationSchema = Yup.object().shape({
-    token: Yup.string().required("token is required."),
-    fileId: Yup.string().required("fileId is required."),
-    expiresAt: Yup.date()
-        .transform((value, originalValue) => {
-        if (!originalValue) {
-            return value;
-        }
-        const parsed = new Date(originalValue);
-        return Number.isNaN(parsed.getTime()) ? value : parsed;
+  token: Yup.string().required("token is required."),
+  fileId: Yup.string().required("fileId is required."),
+  expiresAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
     })
-        .required("expiresAt is required.")
-        .typeError("expiresAt must be a valid date"),
-    downloadCount: asNumber(Yup.number().integer().typeError("downloadCount must be a number")),
-    maxDownloads: asNumber(Yup.number().integer().typeError("maxDownloads must be a number")),
-    issuedToId: Yup.string(),
-    ipAddress: Yup.string(),
-    trashed: Yup.boolean(),
+    .required("expiresAt is required.")
+    .typeError("expiresAt must be a valid date"),
+  downloadCount: asNumber(
+    Yup.number().integer().typeError("downloadCount must be a number"),
+  ),
+  maxDownloads: asNumber(
+    Yup.number().integer().typeError("maxDownloads must be a number"),
+  ),
+  issuedToId: Yup.string(),
+  ipAddress: Yup.string(),
+  trashed: Yup.boolean(),
 });
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const FileDownloadTokenForm = () => {
-    const [addFileDownloadToken, addFileDownloadTokenResult] = useAddFileDownloadTokenMutation();
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
-    // Permission Management State
-    const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-    const [createdObjectId, setCreatedObjectId] = useState(null);
-    // Mock current user - in real implementation, this would come from auth context
-    const currentUser = {
-        username: "current_user",
-        permissions: {
-            isOwner: true,
-            isAdmin: true,
-            canGrantPermissions: true,
-            permissions: [
-                PermissionType.READ,
-                PermissionType.WRITE,
-                PermissionType.CREATE,
-                PermissionType.DELETE,
-                PermissionType.ADMINISTRATION,
-            ],
-        },
-    };
-    /* -----------------------------------------------------
+  const [addFileDownloadToken, addFileDownloadTokenResult] =
+    useAddFileDownloadTokenMutation();
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState(null);
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: "current_user",
+    permissions: {
+      isOwner: true,
+      isAdmin: true,
+      canGrantPermissions: true,
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
+    },
+  };
+  /* -----------------------------------------------------
        INITIAL VALUES - only NON read-only fields
     -------------------------------------------------------- */
-    const initialValues = {
-        token: "",
-        fileId: "",
-        expiresAt: new Date(),
-        downloadCount: 0,
-        maxDownloads: 0,
-        issuedToId: "",
-        ipAddress: "",
-        trashed: false,
-    };
-    // Permission Management Handlers
-    const handleManagePermissions = (objectId) => {
-        setCreatedObjectId(objectId);
-        setShowPermissionDialog(true);
-    };
-    const handlePermissionDialogClose = () => {
-        setShowPermissionDialog(false);
-        setCreatedObjectId(null);
-    };
-    const handlePermissionsSave = (grants) => {
-        console.log("Permissions saved for new FileDownloadToken:", grants);
-    };
-    /* SUBMIT HANDLER */
-    const handleSubmit = async (values, { setSubmitting }) => {
-        try {
-            setSuccessMessage(null);
-            setErrorMessage(null);
-            console.log("FileDownloadToken form values:", values);
-            // NOTE: depending on your generated endpoint, you may need { body: values }
-            const result = await addFileDownloadToken(values).unwrap();
-            if (result && result.id && currentUser.permissions.canGrantPermissions) {
-                const shouldSetPermissions = window.confirm(`FileDownloadToken created successfully! Would you like to set permissions for this object?`);
-                if (shouldSetPermissions) {
-                    handleManagePermissions(result.id);
-                }
-            }
-            setSuccessMessage("Saved successfully.");
+  const initialValues = {
+    token: "",
+    fileId: "",
+    expiresAt: new Date(),
+    downloadCount: 0,
+    maxDownloads: 0,
+    issuedToId: "",
+    ipAddress: "",
+    trashed: false,
+  };
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+  const handlePermissionsSave = (grants) => {
+    console.log("Permissions saved for new FileDownloadToken:", grants);
+  };
+  /* SUBMIT HANDLER */
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      setSuccessMessage(null);
+      setErrorMessage(null);
+      console.log("FileDownloadToken form values:", values);
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addFileDownloadToken(values).unwrap();
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `FileDownloadToken created successfully! Would you like to set permissions for this object?`,
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
         }
-        catch (error) {
-            console.error("Failed to create FileDownloadToken:", error);
-            setErrorMessage("Failed to save. Please try again.");
-        }
-        setSubmitting(false);
-    };
-    return (_jsxs("div", { children: [_jsx(Formik, { validateOnBlur: true, initialValues: initialValues, validationSchema: validationSchema, onSubmit: handleSubmit, children: ({ isSubmitting, isValid, errors, values, setFieldValue, touched, setFieldTouched, handleSubmit, }) => {
-                    const isSaving = isSubmitting || addFileDownloadTokenResult.isLoading;
-                    return (_jsx("form", { onSubmit: handleSubmit, className: "form", children: _jsxs(Accordion, { defaultActiveKey: "1", children: [_jsxs(Accordion.Item, { eventKey: "1", children: [_jsxs(Accordion.Header, { children: [_jsx(FaRegPlusSquare, { size: 28 }), " \u00A0 Add New FileDownloadToken"] }), _jsxs(Accordion.Body, { children: [_jsxs("label", { htmlFor: "token", className: "nice-form-control", children: [_jsxs("b", { children: ["Token:", touched.token && !errors.token && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "token", value: values?.token, placeholder: "Token", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "token", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "fileId", className: "nice-form-control", children: [_jsxs("b", { children: ["File Id:", touched.fileId && !errors.fileId && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "fileId", value: values?.fileId, placeholder: "File Id", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "fileId", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "expiresAt", className: "nice-form-control", children: [_jsxs("b", { children: ["Expires At:", touched.expiresAt && !errors.expiresAt && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "expiresAt", type: "datetime-local", value: values.expiresAt
-                                                                ? new Date(values.expiresAt)
-                                                                    .toISOString()
-                                                                    .slice(0, 16)
-                                                                : "", onChange: (e) => {
-                                                                setFieldTouched("expiresAt", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("expiresAt", v ? new Date(v).toISOString() : "");
-                                                            }, className: errors.expiresAt
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "expiresAt", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "downloadCount", className: "nice-form-control", children: [_jsxs("b", { children: ["Download Count:", touched.downloadCount && !errors.downloadCount && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "downloadCount", type: "number", value: values.downloadCount || "", onChange: (e) => {
-                                                                setFieldTouched("downloadCount", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("downloadCount", v === "" ? undefined : Number(v));
-                                                            }, className: errors.downloadCount
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "downloadCount", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "maxDownloads", className: "nice-form-control", children: [_jsxs("b", { children: ["Max Downloads:", touched.maxDownloads && !errors.maxDownloads && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "maxDownloads", type: "number", value: values.maxDownloads || "", onChange: (e) => {
-                                                                setFieldTouched("maxDownloads", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("maxDownloads", v === "" ? undefined : Number(v));
-                                                            }, className: errors.maxDownloads
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "maxDownloads", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "issuedToId", className: "nice-form-control", children: [_jsxs("b", { children: ["Issued To Id:", touched.issuedToId && !errors.issuedToId && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "issuedToId", value: values?.issuedToId, placeholder: "Issued To Id", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "issuedToId", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "ipAddress", className: "nice-form-control", children: [_jsxs("b", { children: ["Ip Address:", touched.ipAddress && !errors.ipAddress && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "ipAddress", value: values?.ipAddress, placeholder: "Ip Address", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "ipAddress", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "trashed", className: "nice-form-control", children: [_jsxs("b", { children: ["Trashed:", touched.trashed && !errors.trashed && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "trashed", name: "trashed", checked: values.trashed || false, onChange: (e) => {
-                                                                setFieldTouched("trashed", true);
-                                                                setFieldValue("trashed", e.target.checked);
-                                                            }, isInvalid: !!errors.trashed, className: errors.trashed ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "trashed", component: "span" })] }), _jsx("br", {}), _jsxs(CoolButton, { variant: isValid
-                                                        ? isSaving
-                                                            ? "disabled"
-                                                            : "success"
-                                                        : "warning", type: "submit", disabled: !isValid || isSaving, children: [isSaving && (_jsx("span", { style: { float: "left", minHeight: 0 }, children: _jsx(LoadingSpinner, { label: "", size: 18 }) })), _jsx(FaCheckCircle, { size: 28 }), " Create New FileDownloadToken"] }), (addFileDownloadTokenResult.isError || errorMessage) && (_jsx(Alert, { variant: "danger", className: "mt-3", children: errorMessage ||
-                                                        JSON.stringify("data" in addFileDownloadTokenResult.error
-                                                            ? addFileDownloadTokenResult.error.data
-                                                            : addFileDownloadTokenResult.error) })), (addFileDownloadTokenResult.isSuccess ||
-                                                    successMessage) && (_jsx(Alert, { variant: "success", className: "mt-3", children: successMessage || "Saved successfully." }))] })] }), _jsxs(Accordion.Item, { eventKey: "0", children: [_jsxs(Accordion.Header, { children: [_jsx(FaCogs, { size: 28 }), " \u00A0Server Messages"] }), _jsxs(Accordion.Body, { children: ["errors: ", JSON.stringify(errors), _jsx("br", {}), "addFileDownloadTokenResult:", " ", JSON.stringify(addFileDownloadTokenResult)] })] })] }) }));
-                } }), createdObjectId && (_jsx(PermissionDialog, { objectType: "com.valkyrlabs.model.FileDownloadToken", objectId: createdObjectId, isVisible: showPermissionDialog, onClose: handlePermissionDialogClose, onSave: handlePermissionsSave, currentUser: currentUser }))] }));
+      }
+      setSuccessMessage("Saved successfully.");
+    } catch (error) {
+      console.error("Failed to create FileDownloadToken:", error);
+      setErrorMessage("Failed to save. Please try again.");
+    }
+    setSubmitting(false);
+  };
+  return _jsxs("div", {
+    children: [
+      _jsx(Formik, {
+        validateOnBlur: true,
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: handleSubmit,
+        children: ({
+          isSubmitting,
+          isValid,
+          errors,
+          values,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => {
+          const isSaving = isSubmitting || addFileDownloadTokenResult.isLoading;
+          return _jsx("form", {
+            onSubmit: handleSubmit,
+            className: "form",
+            children: _jsxs(Accordion, {
+              defaultActiveKey: "1",
+              children: [
+                _jsxs(Accordion.Item, {
+                  eventKey: "1",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaRegPlusSquare, { size: 28 }),
+                        " \u00A0 Add New FileDownloadToken",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        _jsxs("label", {
+                          htmlFor: "token",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Token:",
+                                touched.token &&
+                                  !errors.token &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "token",
+                              value: values?.token,
+                              placeholder: "Token",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "token",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "fileId",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "File Id:",
+                                touched.fileId &&
+                                  !errors.fileId &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "fileId",
+                              value: values?.fileId,
+                              placeholder: "File Id",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "fileId",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "expiresAt",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Expires At:",
+                                touched.expiresAt &&
+                                  !errors.expiresAt &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "expiresAt",
+                              type: "datetime-local",
+                              value: values.expiresAt
+                                ? new Date(values.expiresAt)
+                                    .toISOString()
+                                    .slice(0, 16)
+                                : "",
+                              onChange: (e) => {
+                                setFieldTouched("expiresAt", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "expiresAt",
+                                  v ? new Date(v).toISOString() : "",
+                                );
+                              },
+                              className: errors.expiresAt
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "expiresAt",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "downloadCount",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Download Count:",
+                                touched.downloadCount &&
+                                  !errors.downloadCount &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "downloadCount",
+                              type: "number",
+                              value: values.downloadCount || "",
+                              onChange: (e) => {
+                                setFieldTouched("downloadCount", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "downloadCount",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.downloadCount
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "downloadCount",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "maxDownloads",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Max Downloads:",
+                                touched.maxDownloads &&
+                                  !errors.maxDownloads &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "maxDownloads",
+                              type: "number",
+                              value: values.maxDownloads || "",
+                              onChange: (e) => {
+                                setFieldTouched("maxDownloads", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "maxDownloads",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.maxDownloads
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "maxDownloads",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "issuedToId",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Issued To Id:",
+                                touched.issuedToId &&
+                                  !errors.issuedToId &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "issuedToId",
+                              value: values?.issuedToId,
+                              placeholder: "Issued To Id",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "issuedToId",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "ipAddress",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Ip Address:",
+                                touched.ipAddress &&
+                                  !errors.ipAddress &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "ipAddress",
+                              value: values?.ipAddress,
+                              placeholder: "Ip Address",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "ipAddress",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "trashed",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Trashed:",
+                                touched.trashed &&
+                                  !errors.trashed &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "trashed",
+                              name: "trashed",
+                              checked: values.trashed || false,
+                              onChange: (e) => {
+                                setFieldTouched("trashed", true);
+                                setFieldValue("trashed", e.target.checked);
+                              },
+                              isInvalid: !!errors.trashed,
+                              className: errors.trashed ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "trashed",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs(CoolButton, {
+                          variant: isValid
+                            ? isSaving
+                              ? "disabled"
+                              : "success"
+                            : "warning",
+                          type: "submit",
+                          disabled: !isValid || isSaving,
+                          children: [
+                            isSaving &&
+                              _jsx("span", {
+                                style: { float: "left", minHeight: 0 },
+                                children: _jsx(LoadingSpinner, {
+                                  label: "",
+                                  size: 18,
+                                }),
+                              }),
+                            _jsx(FaCheckCircle, { size: 28 }),
+                            " Create New FileDownloadToken",
+                          ],
+                        }),
+                        (addFileDownloadTokenResult.isError || errorMessage) &&
+                          _jsx(Alert, {
+                            variant: "danger",
+                            className: "mt-3",
+                            children:
+                              errorMessage ||
+                              JSON.stringify(
+                                "data" in addFileDownloadTokenResult.error
+                                  ? addFileDownloadTokenResult.error.data
+                                  : addFileDownloadTokenResult.error,
+                              ),
+                          }),
+                        (addFileDownloadTokenResult.isSuccess ||
+                          successMessage) &&
+                          _jsx(Alert, {
+                            variant: "success",
+                            className: "mt-3",
+                            children: successMessage || "Saved successfully.",
+                          }),
+                      ],
+                    }),
+                  ],
+                }),
+                _jsxs(Accordion.Item, {
+                  eventKey: "0",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaCogs, { size: 28 }),
+                        " \u00A0Server Messages",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        "errors: ",
+                        JSON.stringify(errors),
+                        _jsx("br", {}),
+                        "addFileDownloadTokenResult:",
+                        " ",
+                        JSON.stringify(addFileDownloadTokenResult),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          });
+        },
+      }),
+      createdObjectId &&
+        _jsx(PermissionDialog, {
+          objectType: "com.valkyrlabs.model.FileDownloadToken",
+          objectId: createdObjectId,
+          isVisible: showPermissionDialog,
+          onClose: handlePermissionDialogClose,
+          onSave: handlePermissionsSave,
+          currentUser: currentUser,
+        }),
+    ],
+  });
 };
 /* Export the generated form */
 export default FileDownloadTokenForm;

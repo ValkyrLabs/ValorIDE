@@ -30,45 +30,45 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { PrincipalFromJSON, PrincipalToJSON } from "./";
 export function CustomerFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        principal: !exists(json, "principal")
-            ? undefined
-            : PrincipalFromJSON(json["principal"]),
-        status: !exists(json, "status") ? undefined : json["status"],
-        role: !exists(json, "role") ? undefined : json["role"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    principal: !exists(json, "principal")
+      ? undefined
+      : PrincipalFromJSON(json["principal"]),
+    status: !exists(json, "status") ? undefined : json["status"],
+    role: !exists(json, "role") ? undefined : json["role"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function CustomerToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        principal: PrincipalToJSON(value.principal),
-        status: value.status,
-        role: value.role,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    principal: PrincipalToJSON(value.principal),
+    status: value.status,
+    role: value.role,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -76,9 +76,9 @@ export function CustomerToJSON(value) {
  */
 export var CustomerStatusEnum;
 (function (CustomerStatusEnum) {
-    CustomerStatusEnum["ACTIVE"] = "active";
-    CustomerStatusEnum["INACTIVE"] = "inactive";
-    CustomerStatusEnum["PROSPECT"] = "prospect";
+  CustomerStatusEnum["ACTIVE"] = "active";
+  CustomerStatusEnum["INACTIVE"] = "inactive";
+  CustomerStatusEnum["PROSPECT"] = "prospect";
 })(CustomerStatusEnum || (CustomerStatusEnum = {}));
 /**
  * @export
@@ -86,28 +86,28 @@ export var CustomerStatusEnum;
  */
 export var CustomerRoleEnum;
 (function (CustomerRoleEnum) {
-    CustomerRoleEnum["CXO"] = "cxo";
-    CustomerRoleEnum["ENGINEERING"] = "engineering";
-    CustomerRoleEnum["PROJECTMANAGEMENT"] = "project management";
-    CustomerRoleEnum["MANAGEMENT"] = "management";
-    CustomerRoleEnum["SUPPORT"] = "support";
-    CustomerRoleEnum["QA"] = "qa";
-    CustomerRoleEnum["SELFEMPLOYED"] = "self-employed";
-    CustomerRoleEnum["CONSULTING"] = "consulting";
-    CustomerRoleEnum["CONTRACT"] = "contract";
-    CustomerRoleEnum["PARTNER"] = "partner";
-    CustomerRoleEnum["ASSOCIATE"] = "associate";
-    CustomerRoleEnum["RESELLER"] = "reseller";
-    CustomerRoleEnum["HOBBYIST"] = "hobbyist";
-    CustomerRoleEnum["STUDENT"] = "student";
-    CustomerRoleEnum["LEGAL"] = "legal";
-    CustomerRoleEnum["ASSESSMENT"] = "assessment";
-    CustomerRoleEnum["REGULATORY"] = "regulatory";
-    CustomerRoleEnum["FINANCIAL"] = "financial";
-    CustomerRoleEnum["MANAGEMENT2"] = "management";
-    CustomerRoleEnum["MARKETING"] = "marketing";
-    CustomerRoleEnum["SALES"] = "sales";
-    CustomerRoleEnum["PROCUREMENT"] = "procurement";
-    CustomerRoleEnum["TECHNICAL"] = "technical";
+  CustomerRoleEnum["CXO"] = "cxo";
+  CustomerRoleEnum["ENGINEERING"] = "engineering";
+  CustomerRoleEnum["PROJECTMANAGEMENT"] = "project management";
+  CustomerRoleEnum["MANAGEMENT"] = "management";
+  CustomerRoleEnum["SUPPORT"] = "support";
+  CustomerRoleEnum["QA"] = "qa";
+  CustomerRoleEnum["SELFEMPLOYED"] = "self-employed";
+  CustomerRoleEnum["CONSULTING"] = "consulting";
+  CustomerRoleEnum["CONTRACT"] = "contract";
+  CustomerRoleEnum["PARTNER"] = "partner";
+  CustomerRoleEnum["ASSOCIATE"] = "associate";
+  CustomerRoleEnum["RESELLER"] = "reseller";
+  CustomerRoleEnum["HOBBYIST"] = "hobbyist";
+  CustomerRoleEnum["STUDENT"] = "student";
+  CustomerRoleEnum["LEGAL"] = "legal";
+  CustomerRoleEnum["ASSESSMENT"] = "assessment";
+  CustomerRoleEnum["REGULATORY"] = "regulatory";
+  CustomerRoleEnum["FINANCIAL"] = "financial";
+  CustomerRoleEnum["MANAGEMENT2"] = "management";
+  CustomerRoleEnum["MARKETING"] = "marketing";
+  CustomerRoleEnum["SALES"] = "sales";
+  CustomerRoleEnum["PROCUREMENT"] = "procurement";
+  CustomerRoleEnum["TECHNICAL"] = "technical";
 })(CustomerRoleEnum || (CustomerRoleEnum = {}));
 //# sourceMappingURL=Customer.js.map

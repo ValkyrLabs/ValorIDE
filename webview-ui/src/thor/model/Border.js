@@ -29,43 +29,43 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function BorderFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        formatId: !exists(json, "formatId") ? undefined : json["formatId"],
-        style: !exists(json, "style") ? undefined : json["style"],
-        color: !exists(json, "color") ? undefined : json["color"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    formatId: !exists(json, "formatId") ? undefined : json["formatId"],
+    style: !exists(json, "style") ? undefined : json["style"],
+    color: !exists(json, "color") ? undefined : json["color"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function BorderToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        formatId: value.formatId,
-        style: value.style,
-        color: value.color,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    formatId: value.formatId,
+    style: value.style,
+    color: value.color,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -73,20 +73,20 @@ export function BorderToJSON(value) {
  */
 export var BorderStyleEnum;
 (function (BorderStyleEnum) {
-    BorderStyleEnum["BORDERNONE"] = "none";
-    BorderStyleEnum["BORDERTHIN"] = "thin";
-    BorderStyleEnum["BORDERMEDIUM"] = "medium";
-    BorderStyleEnum["BORDERDASHED"] = "dashed";
-    BorderStyleEnum["BORDERDOTTED"] = "dotted";
-    BorderStyleEnum["BORDERTHICK"] = "thick";
-    BorderStyleEnum["BORDERDOUBLE"] = "double";
-    BorderStyleEnum["BORDERHAIR"] = "hair";
-    BorderStyleEnum["BORDERMEDIUMDASHED"] = "mediumdashed";
-    BorderStyleEnum["BORDERDASHDOT"] = "dashdot";
-    BorderStyleEnum["BORDERMEDIUMDASHDOT"] = "mediumdashdot";
-    BorderStyleEnum["BORDERDASHDOTDOT"] = "dashdotdot";
-    BorderStyleEnum["BORDERMEDIUMDASHDOTDOT"] = "mediumdashdotdot";
-    BorderStyleEnum["BORDERSLANTEDDASHDOT"] = "slanteddashdot";
+  BorderStyleEnum["BORDERNONE"] = "none";
+  BorderStyleEnum["BORDERTHIN"] = "thin";
+  BorderStyleEnum["BORDERMEDIUM"] = "medium";
+  BorderStyleEnum["BORDERDASHED"] = "dashed";
+  BorderStyleEnum["BORDERDOTTED"] = "dotted";
+  BorderStyleEnum["BORDERTHICK"] = "thick";
+  BorderStyleEnum["BORDERDOUBLE"] = "double";
+  BorderStyleEnum["BORDERHAIR"] = "hair";
+  BorderStyleEnum["BORDERMEDIUMDASHED"] = "mediumdashed";
+  BorderStyleEnum["BORDERDASHDOT"] = "dashdot";
+  BorderStyleEnum["BORDERMEDIUMDASHDOT"] = "mediumdashdot";
+  BorderStyleEnum["BORDERDASHDOTDOT"] = "dashdotdot";
+  BorderStyleEnum["BORDERMEDIUMDASHDOTDOT"] = "mediumdashdotdot";
+  BorderStyleEnum["BORDERSLANTEDDASHDOT"] = "slanteddashdot";
 })(BorderStyleEnum || (BorderStyleEnum = {}));
 /**
  * @export
@@ -94,12 +94,12 @@ export var BorderStyleEnum;
  */
 export var BorderColorEnum;
 (function (BorderColorEnum) {
-    BorderColorEnum["COLORBLACK"] = "black";
-    BorderColorEnum["COLORRED"] = "red";
-    BorderColorEnum["COLORBLUE"] = "blue";
-    BorderColorEnum["COLORYELLOW"] = "yellow";
-    BorderColorEnum["COLORGREEN"] = "green";
-    BorderColorEnum["COLORTEAL"] = "teal";
-    BorderColorEnum["COLORGRAY50"] = "gray50";
+  BorderColorEnum["COLORBLACK"] = "black";
+  BorderColorEnum["COLORRED"] = "red";
+  BorderColorEnum["COLORBLUE"] = "blue";
+  BorderColorEnum["COLORYELLOW"] = "yellow";
+  BorderColorEnum["COLORGREEN"] = "green";
+  BorderColorEnum["COLORTEAL"] = "teal";
+  BorderColorEnum["COLORGRAY50"] = "gray50";
 })(BorderColorEnum || (BorderColorEnum = {}));
 //# sourceMappingURL=Border.js.map

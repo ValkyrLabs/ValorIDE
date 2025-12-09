@@ -28,58 +28,65 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { OasParameterFromJSON, OasParameterToJSON, OasResponseFromJSON, OasResponseToJSON, } from "./";
+import {
+  OasParameterFromJSON,
+  OasParameterToJSON,
+  OasResponseFromJSON,
+  OasResponseToJSON,
+} from "./";
 export function OasOperationFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        description: !exists(json, "description") ? undefined : json["description"],
-        oasPathId: !exists(json, "oasPathId") ? undefined : json["oasPathId"],
-        summary: !exists(json, "summary") ? undefined : json["summary"],
-        operationId: !exists(json, "operationId") ? undefined : json["operationId"],
-        parameters: !exists(json, "parameters")
-            ? undefined
-            : json["parameters"].map(OasParameterFromJSON),
-        responses: !exists(json, "responses")
-            ? undefined
-            : json["responses"].map(OasResponseFromJSON),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    description: !exists(json, "description") ? undefined : json["description"],
+    oasPathId: !exists(json, "oasPathId") ? undefined : json["oasPathId"],
+    summary: !exists(json, "summary") ? undefined : json["summary"],
+    operationId: !exists(json, "operationId") ? undefined : json["operationId"],
+    parameters: !exists(json, "parameters")
+      ? undefined
+      : json["parameters"].map(OasParameterFromJSON),
+    responses: !exists(json, "responses")
+      ? undefined
+      : json["responses"].map(OasResponseFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function OasOperationToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        description: value.description,
-        oasPathId: value.oasPathId,
-        summary: value.summary,
-        operationId: value.operationId,
-        parameters: value.parameters === undefined
-            ? undefined
-            : value.parameters.map(OasParameterToJSON),
-        responses: value.responses === undefined
-            ? undefined
-            : value.responses.map(OasResponseToJSON),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    description: value.description,
+    oasPathId: value.oasPathId,
+    summary: value.summary,
+    operationId: value.operationId,
+    parameters:
+      value.parameters === undefined
+        ? undefined
+        : value.parameters.map(OasParameterToJSON),
+    responses:
+      value.responses === undefined
+        ? undefined
+        : value.responses.map(OasResponseToJSON),
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=OasOperation.js.map

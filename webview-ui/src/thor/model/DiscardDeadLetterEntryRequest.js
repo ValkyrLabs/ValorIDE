@@ -29,41 +29,41 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function DiscardDeadLetterEntryRequestFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        notes: json["notes"],
-        reason: !exists(json, "reason") ? undefined : json["reason"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    notes: json["notes"],
+    reason: !exists(json, "reason") ? undefined : json["reason"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function DiscardDeadLetterEntryRequestToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        notes: value.notes,
-        reason: value.reason,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    notes: value.notes,
+    reason: value.reason,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -71,10 +71,14 @@ export function DiscardDeadLetterEntryRequestToJSON(value) {
  */
 export var DiscardDeadLetterEntryRequestReasonEnum;
 (function (DiscardDeadLetterEntryRequestReasonEnum) {
-    DiscardDeadLetterEntryRequestReasonEnum["DUPLICATE"] = "duplicate";
-    DiscardDeadLetterEntryRequestReasonEnum["INVALIDDATA"] = "invalid_data";
-    DiscardDeadLetterEntryRequestReasonEnum["NOLONGERRELEVANT"] = "no_longer_relevant";
-    DiscardDeadLetterEntryRequestReasonEnum["FIXEDMANUALLY"] = "fixed_manually";
-    DiscardDeadLetterEntryRequestReasonEnum["OTHER"] = "other";
-})(DiscardDeadLetterEntryRequestReasonEnum || (DiscardDeadLetterEntryRequestReasonEnum = {}));
+  DiscardDeadLetterEntryRequestReasonEnum["DUPLICATE"] = "duplicate";
+  DiscardDeadLetterEntryRequestReasonEnum["INVALIDDATA"] = "invalid_data";
+  DiscardDeadLetterEntryRequestReasonEnum["NOLONGERRELEVANT"] =
+    "no_longer_relevant";
+  DiscardDeadLetterEntryRequestReasonEnum["FIXEDMANUALLY"] = "fixed_manually";
+  DiscardDeadLetterEntryRequestReasonEnum["OTHER"] = "other";
+})(
+  DiscardDeadLetterEntryRequestReasonEnum ||
+    (DiscardDeadLetterEntryRequestReasonEnum = {}),
+);
 //# sourceMappingURL=DiscardDeadLetterEntryRequest.js.map

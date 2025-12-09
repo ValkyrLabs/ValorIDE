@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: UsageTransaction
 */
-export const UsageTransactionMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const UsageTransactionMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("UsageTransaction MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=UsageTransactionApiMiddleware.js.map

@@ -17,117 +17,131 @@ Template file: typescript-redux-query/modelService.mustache
 import { createApi } from "@reduxjs/toolkit/query/react";
 import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 export const PasswordResetTokenService = createApi({
-    reducerPath: "PasswordResetToken", // This should remain unique
-    baseQuery: customBaseQuery,
-    tagTypes: ["PasswordResetToken"],
-    endpoints: (build) => ({
-        // 1) Paged Query Endpoint
-        // Standardized pagination: page (0-based), size (page size)
-        getPasswordResetTokensPaged: build.query({
-            query: ({ page, size = 20, example }) => {
-                const q = [`page=${page}`, `size=${size}`];
-                if (example)
-                    q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-                return `PasswordResetToken?${q.join("&")}`;
-            },
-            providesTags: (result, error, { page }) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "PasswordResetToken",
-                        id,
-                    })),
-                    { type: "PasswordResetToken", id: `PAGE_${page}` },
-                ]
-                : [],
-        }),
-        // 2) Simple "get all" Query (optional)
-        getPasswordResetTokens: build.query({
-            query: (arg) => {
-                if (arg && arg.example) {
-                    const ex = arg.example;
-                    return `PasswordResetToken?example=${encodeURIComponent(JSON.stringify(ex))}`;
-                }
-                return `PasswordResetToken`;
-            },
-            providesTags: (result) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "PasswordResetToken",
-                        id,
-                    })),
-                    { type: "PasswordResetToken", id: "LIST" },
-                ]
-                : [{ type: "PasswordResetToken", id: "LIST" }],
-        }),
-        // 3) Create
-        addPasswordResetToken: build.mutation({
-            query: (body) => ({
-                url: `PasswordResetToken`,
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "PasswordResetToken", id: "LIST" }],
-        }),
-        // 4) Get single by ID
-        getPasswordResetToken: build.query({
-            query: (id) => `PasswordResetToken/${id}`,
-            providesTags: (result, error, id) => [{ type: "PasswordResetToken", id }],
-        }),
-        // 5) Update
-        updatePasswordResetToken: build.mutation({
-            query: ({ id, ...patch }) => ({
-                url: `PasswordResetToken/${id}`,
-                method: "PUT",
-                body: patch,
-            }),
-            async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-                if (id) {
-                    const patchResult = dispatch(PasswordResetTokenService.util.updateQueryData("getPasswordResetToken", id, (draft) => {
-                        Object.assign(draft, patch);
-                    }));
-                    try {
-                        await queryFulfilled;
-                    }
-                    catch {
-                        patchResult.undo();
-                    }
-                }
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "PasswordResetToken", id },
-                { type: "PasswordResetToken", id: "LIST" },
-            ],
-        }),
-        // 6) Delete
-        deletePasswordResetToken: build.mutation({
-            query(id) {
-                return {
-                    url: `PasswordResetToken/${id}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, id) => [
-                { type: "PasswordResetToken", id },
-            ],
-        }),
-        // 7) Cascade / soft-delete (marks trashed, cascades children)
-        deletePasswordResetTokenCascade: build.mutation({
-            query({ id, cascade = true, trash = true }) {
-                const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
-                return {
-                    url: `PasswordResetToken/${id}?${params}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "PasswordResetToken", id },
-                { type: "PasswordResetToken", id: "LIST" },
-            ],
-        }),
+  reducerPath: "PasswordResetToken", // This should remain unique
+  baseQuery: customBaseQuery,
+  tagTypes: ["PasswordResetToken"],
+  endpoints: (build) => ({
+    // 1) Paged Query Endpoint
+    // Standardized pagination: page (0-based), size (page size)
+    getPasswordResetTokensPaged: build.query({
+      query: ({ page, size = 20, example }) => {
+        const q = [`page=${page}`, `size=${size}`];
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `PasswordResetToken?${q.join("&")}`;
+      },
+      providesTags: (result, error, { page }) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "PasswordResetToken",
+                id,
+              })),
+              { type: "PasswordResetToken", id: `PAGE_${page}` },
+            ]
+          : [],
     }),
+    // 2) Simple "get all" Query (optional)
+    getPasswordResetTokens: build.query({
+      query: (arg) => {
+        if (arg && arg.example) {
+          const ex = arg.example;
+          return `PasswordResetToken?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `PasswordResetToken`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "PasswordResetToken",
+                id,
+              })),
+              { type: "PasswordResetToken", id: "LIST" },
+            ]
+          : [{ type: "PasswordResetToken", id: "LIST" }],
+    }),
+    // 3) Create
+    addPasswordResetToken: build.mutation({
+      query: (body) => ({
+        url: `PasswordResetToken`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "PasswordResetToken", id: "LIST" }],
+    }),
+    // 4) Get single by ID
+    getPasswordResetToken: build.query({
+      query: (id) => `PasswordResetToken/${id}`,
+      providesTags: (result, error, id) => [{ type: "PasswordResetToken", id }],
+    }),
+    // 5) Update
+    updatePasswordResetToken: build.mutation({
+      query: ({ id, ...patch }) => ({
+        url: `PasswordResetToken/${id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        if (id) {
+          const patchResult = dispatch(
+            PasswordResetTokenService.util.updateQueryData(
+              "getPasswordResetToken",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        }
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "PasswordResetToken", id },
+        { type: "PasswordResetToken", id: "LIST" },
+      ],
+    }),
+    // 6) Delete
+    deletePasswordResetToken: build.mutation({
+      query(id) {
+        return {
+          url: `PasswordResetToken/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, id) => [
+        { type: "PasswordResetToken", id },
+      ],
+    }),
+    // 7) Cascade / soft-delete (marks trashed, cascades children)
+    deletePasswordResetTokenCascade: build.mutation({
+      query({ id, cascade = true, trash = true }) {
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        return {
+          url: `PasswordResetToken/${id}?${params}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "PasswordResetToken", id },
+        { type: "PasswordResetToken", id: "LIST" },
+      ],
+    }),
+  }),
 });
 // Notice we now also export `useLazyGetPasswordResetTokensPagedQuery`
-export const { useGetPasswordResetTokensPagedQuery, // immediate fetch
-useLazyGetPasswordResetTokensPagedQuery, // lazy fetch
-useGetPasswordResetTokenQuery, useGetPasswordResetTokensQuery, useAddPasswordResetTokenMutation, useUpdatePasswordResetTokenMutation, useDeletePasswordResetTokenMutation, useDeletePasswordResetTokenCascadeMutation, } = PasswordResetTokenService;
+export const {
+  useGetPasswordResetTokensPagedQuery, // immediate fetch
+  useLazyGetPasswordResetTokensPagedQuery, // lazy fetch
+  useGetPasswordResetTokenQuery,
+  useGetPasswordResetTokensQuery,
+  useAddPasswordResetTokenMutation,
+  useUpdatePasswordResetTokenMutation,
+  useDeletePasswordResetTokenMutation,
+  useDeletePasswordResetTokenCascadeMutation,
+} = PasswordResetTokenService;
 //# sourceMappingURL=PasswordResetTokenService.js.map

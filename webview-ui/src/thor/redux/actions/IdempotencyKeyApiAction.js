@@ -31,60 +31,60 @@ export const LIST_IDEMPOTENCYKEY_REQUEST = "LIST_IDEMPOTENCYKEY_REQUEST";
 export const LIST_IDEMPOTENCYKEY_SUCCESS = "LIST_IDEMPOTENCYKEY_SUCCESS";
 export const LIST_IDEMPOTENCYKEY_FAILURE = "LIST_IDEMPOTENCYKEY_FAILURE";
 export const addIdempotencyKeyRequest = () => ({
-    type: ADD_IDEMPOTENCYKEY_REQUEST,
+  type: ADD_IDEMPOTENCYKEY_REQUEST,
 });
 export const addIdempotencyKeySuccess = (IdempotencyKeys) => ({
-    type: ADD_IDEMPOTENCYKEY_SUCCESS,
-    payload: IdempotencyKeys,
+  type: ADD_IDEMPOTENCYKEY_SUCCESS,
+  payload: IdempotencyKeys,
 });
 export const addIdempotencyKeyFailure = (error) => ({
-    type: ADD_IDEMPOTENCYKEY_FAILURE,
-    payload: error,
+  type: ADD_IDEMPOTENCYKEY_FAILURE,
+  payload: error,
 });
 export const fetchIdempotencyKeyRequest = () => ({
-    type: FETCH_IDEMPOTENCYKEY_REQUEST,
+  type: FETCH_IDEMPOTENCYKEY_REQUEST,
 });
 export const fetchIdempotencyKeySuccess = (IdempotencyKeys) => ({
-    type: FETCH_IDEMPOTENCYKEY_SUCCESS,
-    payload: IdempotencyKeys,
+  type: FETCH_IDEMPOTENCYKEY_SUCCESS,
+  payload: IdempotencyKeys,
 });
 export const fetchIdempotencyKeyFailure = (error) => ({
-    type: FETCH_IDEMPOTENCYKEY_FAILURE,
-    payload: error,
+  type: FETCH_IDEMPOTENCYKEY_FAILURE,
+  payload: error,
 });
 export const listIdempotencyKeyRequest = () => ({
-    type: LIST_IDEMPOTENCYKEY_REQUEST,
+  type: LIST_IDEMPOTENCYKEY_REQUEST,
 });
 export const listIdempotencyKeySuccess = (IdempotencyKeys) => ({
-    type: LIST_IDEMPOTENCYKEY_SUCCESS,
-    payload: IdempotencyKeys,
+  type: LIST_IDEMPOTENCYKEY_SUCCESS,
+  payload: IdempotencyKeys,
 });
 export const listIdempotencyKeyFailure = (error) => ({
-    type: LIST_IDEMPOTENCYKEY_FAILURE,
-    payload: error,
+  type: LIST_IDEMPOTENCYKEY_FAILURE,
+  payload: error,
 });
 export const updateIdempotencyKeyRequest = (IdempotencyKey) => ({
-    type: UPDATE_IDEMPOTENCYKEY_REQUEST,
-    payload: IdempotencyKey,
+  type: UPDATE_IDEMPOTENCYKEY_REQUEST,
+  payload: IdempotencyKey,
 });
 export const updateIdempotencyKeySuccess = (IdempotencyKey) => ({
-    type: UPDATE_IDEMPOTENCYKEY_SUCCESS,
-    payload: IdempotencyKey,
+  type: UPDATE_IDEMPOTENCYKEY_SUCCESS,
+  payload: IdempotencyKey,
 });
 export const updateIdempotencyKeyFailure = (error) => ({
-    type: UPDATE_IDEMPOTENCYKEY_FAILURE,
-    payload: error,
+  type: UPDATE_IDEMPOTENCYKEY_FAILURE,
+  payload: error,
 });
 export const deleteIdempotencyKeyRequest = (IdempotencyKey) => ({
-    type: DELETE_IDEMPOTENCYKEY_REQUEST,
-    payload: IdempotencyKey,
+  type: DELETE_IDEMPOTENCYKEY_REQUEST,
+  payload: IdempotencyKey,
 });
 export const deleteIdempotencyKeySuccess = (IdempotencyKey) => ({
-    type: DELETE_IDEMPOTENCYKEY_SUCCESS,
-    payload: IdempotencyKey,
+  type: DELETE_IDEMPOTENCYKEY_SUCCESS,
+  payload: IdempotencyKey,
 });
 export const deleteIdempotencyKeyFailure = (error) => ({
-    type: DELETE_IDEMPOTENCYKEY_FAILURE,
-    payload: error,
+  type: DELETE_IDEMPOTENCYKEY_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=IdempotencyKeyApiAction.js.map

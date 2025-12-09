@@ -29,67 +29,70 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function JobMetadataFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        type: json["type"],
-        status: json["status"],
-        createdAt: new Date(json["createdAt"]),
-        id: json["id"],
-        inputJson: !exists(json, "inputJson") ? undefined : json["inputJson"],
-        outputJson: !exists(json, "outputJson") ? undefined : json["outputJson"],
-        error: !exists(json, "error") ? undefined : json["error"],
-        updatedAt: !exists(json, "updatedAt")
-            ? undefined
-            : new Date(json["updatedAt"]),
-        startedAt: !exists(json, "startedAt")
-            ? undefined
-            : new Date(json["startedAt"]),
-        finishedAt: !exists(json, "finishedAt")
-            ? undefined
-            : new Date(json["finishedAt"]),
-        idempotencyKey: !exists(json, "idempotencyKey")
-            ? undefined
-            : json["idempotencyKey"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    type: json["type"],
+    status: json["status"],
+    createdAt: new Date(json["createdAt"]),
+    id: json["id"],
+    inputJson: !exists(json, "inputJson") ? undefined : json["inputJson"],
+    outputJson: !exists(json, "outputJson") ? undefined : json["outputJson"],
+    error: !exists(json, "error") ? undefined : json["error"],
+    updatedAt: !exists(json, "updatedAt")
+      ? undefined
+      : new Date(json["updatedAt"]),
+    startedAt: !exists(json, "startedAt")
+      ? undefined
+      : new Date(json["startedAt"]),
+    finishedAt: !exists(json, "finishedAt")
+      ? undefined
+      : new Date(json["finishedAt"]),
+    idempotencyKey: !exists(json, "idempotencyKey")
+      ? undefined
+      : json["idempotencyKey"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function JobMetadataToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        type: value.type,
-        status: value.status,
-        createdAt: value.createdAt.toISOString(),
-        inputJson: value.inputJson,
-        outputJson: value.outputJson,
-        error: value.error,
-        updatedAt: value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
-        startedAt: value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
-        finishedAt: value.finishedAt === undefined
-            ? undefined
-            : value.finishedAt.toISOString(),
-        idempotencyKey: value.idempotencyKey,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    type: value.type,
+    status: value.status,
+    createdAt: value.createdAt.toISOString(),
+    inputJson: value.inputJson,
+    outputJson: value.outputJson,
+    error: value.error,
+    updatedAt:
+      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
+    startedAt:
+      value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
+    finishedAt:
+      value.finishedAt === undefined
+        ? undefined
+        : value.finishedAt.toISOString(),
+    idempotencyKey: value.idempotencyKey,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -97,10 +100,10 @@ export function JobMetadataToJSON(value) {
  */
 export var JobMetadataStatusEnum;
 (function (JobMetadataStatusEnum) {
-    JobMetadataStatusEnum["QUEUED"] = "queued";
-    JobMetadataStatusEnum["RUNNING"] = "running";
-    JobMetadataStatusEnum["COMPLETED"] = "completed";
-    JobMetadataStatusEnum["FAILED"] = "failed";
-    JobMetadataStatusEnum["CANCELLED"] = "cancelled";
+  JobMetadataStatusEnum["QUEUED"] = "queued";
+  JobMetadataStatusEnum["RUNNING"] = "running";
+  JobMetadataStatusEnum["COMPLETED"] = "completed";
+  JobMetadataStatusEnum["FAILED"] = "failed";
+  JobMetadataStatusEnum["CANCELLED"] = "cancelled";
 })(JobMetadataStatusEnum || (JobMetadataStatusEnum = {}));
 //# sourceMappingURL=JobMetadata.js.map

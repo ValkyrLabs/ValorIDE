@@ -17,115 +17,129 @@ Template file: typescript-redux-query/modelService.mustache
 import { createApi } from "@reduxjs/toolkit/query/react";
 import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 export const OasComponentService = createApi({
-    reducerPath: "OasComponent", // This should remain unique
-    baseQuery: customBaseQuery,
-    tagTypes: ["OasComponent"],
-    endpoints: (build) => ({
-        // 1) Paged Query Endpoint
-        // Standardized pagination: page (0-based), size (page size)
-        getOasComponentsPaged: build.query({
-            query: ({ page, size = 20, example }) => {
-                const q = [`page=${page}`, `size=${size}`];
-                if (example)
-                    q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-                return `OasComponent?${q.join("&")}`;
-            },
-            providesTags: (result, error, { page }) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "OasComponent",
-                        id,
-                    })),
-                    { type: "OasComponent", id: `PAGE_${page}` },
-                ]
-                : [],
-        }),
-        // 2) Simple "get all" Query (optional)
-        getOasComponents: build.query({
-            query: (arg) => {
-                if (arg && arg.example) {
-                    const ex = arg.example;
-                    return `OasComponent?example=${encodeURIComponent(JSON.stringify(ex))}`;
-                }
-                return `OasComponent`;
-            },
-            providesTags: (result) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "OasComponent",
-                        id,
-                    })),
-                    { type: "OasComponent", id: "LIST" },
-                ]
-                : [{ type: "OasComponent", id: "LIST" }],
-        }),
-        // 3) Create
-        addOasComponent: build.mutation({
-            query: (body) => ({
-                url: `OasComponent`,
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "OasComponent", id: "LIST" }],
-        }),
-        // 4) Get single by ID
-        getOasComponent: build.query({
-            query: (id) => `OasComponent/${id}`,
-            providesTags: (result, error, id) => [{ type: "OasComponent", id }],
-        }),
-        // 5) Update
-        updateOasComponent: build.mutation({
-            query: ({ id, ...patch }) => ({
-                url: `OasComponent/${id}`,
-                method: "PUT",
-                body: patch,
-            }),
-            async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-                if (id) {
-                    const patchResult = dispatch(OasComponentService.util.updateQueryData("getOasComponent", id, (draft) => {
-                        Object.assign(draft, patch);
-                    }));
-                    try {
-                        await queryFulfilled;
-                    }
-                    catch {
-                        patchResult.undo();
-                    }
-                }
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "OasComponent", id },
-                { type: "OasComponent", id: "LIST" },
-            ],
-        }),
-        // 6) Delete
-        deleteOasComponent: build.mutation({
-            query(id) {
-                return {
-                    url: `OasComponent/${id}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, id) => [{ type: "OasComponent", id }],
-        }),
-        // 7) Cascade / soft-delete (marks trashed, cascades children)
-        deleteOasComponentCascade: build.mutation({
-            query({ id, cascade = true, trash = true }) {
-                const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
-                return {
-                    url: `OasComponent/${id}?${params}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "OasComponent", id },
-                { type: "OasComponent", id: "LIST" },
-            ],
-        }),
+  reducerPath: "OasComponent", // This should remain unique
+  baseQuery: customBaseQuery,
+  tagTypes: ["OasComponent"],
+  endpoints: (build) => ({
+    // 1) Paged Query Endpoint
+    // Standardized pagination: page (0-based), size (page size)
+    getOasComponentsPaged: build.query({
+      query: ({ page, size = 20, example }) => {
+        const q = [`page=${page}`, `size=${size}`];
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `OasComponent?${q.join("&")}`;
+      },
+      providesTags: (result, error, { page }) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "OasComponent",
+                id,
+              })),
+              { type: "OasComponent", id: `PAGE_${page}` },
+            ]
+          : [],
     }),
+    // 2) Simple "get all" Query (optional)
+    getOasComponents: build.query({
+      query: (arg) => {
+        if (arg && arg.example) {
+          const ex = arg.example;
+          return `OasComponent?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `OasComponent`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "OasComponent",
+                id,
+              })),
+              { type: "OasComponent", id: "LIST" },
+            ]
+          : [{ type: "OasComponent", id: "LIST" }],
+    }),
+    // 3) Create
+    addOasComponent: build.mutation({
+      query: (body) => ({
+        url: `OasComponent`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "OasComponent", id: "LIST" }],
+    }),
+    // 4) Get single by ID
+    getOasComponent: build.query({
+      query: (id) => `OasComponent/${id}`,
+      providesTags: (result, error, id) => [{ type: "OasComponent", id }],
+    }),
+    // 5) Update
+    updateOasComponent: build.mutation({
+      query: ({ id, ...patch }) => ({
+        url: `OasComponent/${id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        if (id) {
+          const patchResult = dispatch(
+            OasComponentService.util.updateQueryData(
+              "getOasComponent",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        }
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "OasComponent", id },
+        { type: "OasComponent", id: "LIST" },
+      ],
+    }),
+    // 6) Delete
+    deleteOasComponent: build.mutation({
+      query(id) {
+        return {
+          url: `OasComponent/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, id) => [{ type: "OasComponent", id }],
+    }),
+    // 7) Cascade / soft-delete (marks trashed, cascades children)
+    deleteOasComponentCascade: build.mutation({
+      query({ id, cascade = true, trash = true }) {
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        return {
+          url: `OasComponent/${id}?${params}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "OasComponent", id },
+        { type: "OasComponent", id: "LIST" },
+      ],
+    }),
+  }),
 });
 // Notice we now also export `useLazyGetOasComponentsPagedQuery`
-export const { useGetOasComponentsPagedQuery, // immediate fetch
-useLazyGetOasComponentsPagedQuery, // lazy fetch
-useGetOasComponentQuery, useGetOasComponentsQuery, useAddOasComponentMutation, useUpdateOasComponentMutation, useDeleteOasComponentMutation, useDeleteOasComponentCascadeMutation, } = OasComponentService;
+export const {
+  useGetOasComponentsPagedQuery, // immediate fetch
+  useLazyGetOasComponentsPagedQuery, // lazy fetch
+  useGetOasComponentQuery,
+  useGetOasComponentsQuery,
+  useAddOasComponentMutation,
+  useUpdateOasComponentMutation,
+  useDeleteOasComponentMutation,
+  useDeleteOasComponentCascadeMutation,
+} = OasComponentService;
 //# sourceMappingURL=OasComponentService.js.map

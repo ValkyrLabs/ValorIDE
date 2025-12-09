@@ -266,7 +266,9 @@ export const ExtensionStateContextProvider: React.FC<{
           : false;
         // Show welcome only if NO API keys AND NOT authenticated (both backend + local storage)
         const isAuthed = incoming.isLoggedIn || incoming.authenticatedPrincipal;
-        const hasStoredAuth = !!(sessionStorage.getItem("jwtToken") || localStorage.getItem("jwtToken"));
+        const hasStoredAuth = !!(
+          sessionStorage.getItem("jwtToken") || localStorage.getItem("jwtToken")
+        );
         setShowWelcome(!hasKey && !isAuthed && !hasStoredAuth);
         setDidHydrateState(true);
         break;

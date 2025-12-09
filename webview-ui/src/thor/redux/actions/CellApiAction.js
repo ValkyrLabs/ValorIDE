@@ -31,60 +31,60 @@ export const LIST_CELL_REQUEST = "LIST_CELL_REQUEST";
 export const LIST_CELL_SUCCESS = "LIST_CELL_SUCCESS";
 export const LIST_CELL_FAILURE = "LIST_CELL_FAILURE";
 export const addCellRequest = () => ({
-    type: ADD_CELL_REQUEST,
+  type: ADD_CELL_REQUEST,
 });
 export const addCellSuccess = (Cells) => ({
-    type: ADD_CELL_SUCCESS,
-    payload: Cells,
+  type: ADD_CELL_SUCCESS,
+  payload: Cells,
 });
 export const addCellFailure = (error) => ({
-    type: ADD_CELL_FAILURE,
-    payload: error,
+  type: ADD_CELL_FAILURE,
+  payload: error,
 });
 export const fetchCellRequest = () => ({
-    type: FETCH_CELL_REQUEST,
+  type: FETCH_CELL_REQUEST,
 });
 export const fetchCellSuccess = (Cells) => ({
-    type: FETCH_CELL_SUCCESS,
-    payload: Cells,
+  type: FETCH_CELL_SUCCESS,
+  payload: Cells,
 });
 export const fetchCellFailure = (error) => ({
-    type: FETCH_CELL_FAILURE,
-    payload: error,
+  type: FETCH_CELL_FAILURE,
+  payload: error,
 });
 export const listCellRequest = () => ({
-    type: LIST_CELL_REQUEST,
+  type: LIST_CELL_REQUEST,
 });
 export const listCellSuccess = (Cells) => ({
-    type: LIST_CELL_SUCCESS,
-    payload: Cells,
+  type: LIST_CELL_SUCCESS,
+  payload: Cells,
 });
 export const listCellFailure = (error) => ({
-    type: LIST_CELL_FAILURE,
-    payload: error,
+  type: LIST_CELL_FAILURE,
+  payload: error,
 });
 export const updateCellRequest = (Cell) => ({
-    type: UPDATE_CELL_REQUEST,
-    payload: Cell,
+  type: UPDATE_CELL_REQUEST,
+  payload: Cell,
 });
 export const updateCellSuccess = (Cell) => ({
-    type: UPDATE_CELL_SUCCESS,
-    payload: Cell,
+  type: UPDATE_CELL_SUCCESS,
+  payload: Cell,
 });
 export const updateCellFailure = (error) => ({
-    type: UPDATE_CELL_FAILURE,
-    payload: error,
+  type: UPDATE_CELL_FAILURE,
+  payload: error,
 });
 export const deleteCellRequest = (Cell) => ({
-    type: DELETE_CELL_REQUEST,
-    payload: Cell,
+  type: DELETE_CELL_REQUEST,
+  payload: Cell,
 });
 export const deleteCellSuccess = (Cell) => ({
-    type: DELETE_CELL_SUCCESS,
-    payload: Cell,
+  type: DELETE_CELL_SUCCESS,
+  payload: Cell,
 });
 export const deleteCellFailure = (error) => ({
-    type: DELETE_CELL_FAILURE,
-    payload: error,
+  type: DELETE_CELL_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=CellApiAction.js.map

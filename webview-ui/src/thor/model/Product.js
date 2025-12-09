@@ -28,71 +28,78 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { ContentDataFromJSON, ContentDataToJSON, ProductFeatureFromJSON, ProductFeatureToJSON, } from "./";
+import {
+  ContentDataFromJSON,
+  ContentDataToJSON,
+  ProductFeatureFromJSON,
+  ProductFeatureToJSON,
+} from "./";
 export function ProductFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: json["name"],
-        price: json["price"],
-        status: json["status"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        salePrice: !exists(json, "salePrice") ? undefined : json["salePrice"],
-        taxRate: !exists(json, "taxRate") ? undefined : json["taxRate"],
-        duration: !exists(json, "duration") ? undefined : json["duration"],
-        productContentData: !exists(json, "productContentData")
-            ? undefined
-            : json["productContentData"].map(ContentDataFromJSON),
-        type: !exists(json, "type") ? undefined : json["type"],
-        features: !exists(json, "features")
-            ? undefined
-            : json["features"].map(ProductFeatureFromJSON),
-        countryOfOrigin: !exists(json, "countryOfOrigin")
-            ? undefined
-            : json["countryOfOrigin"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: json["name"],
+    price: json["price"],
+    status: json["status"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    salePrice: !exists(json, "salePrice") ? undefined : json["salePrice"],
+    taxRate: !exists(json, "taxRate") ? undefined : json["taxRate"],
+    duration: !exists(json, "duration") ? undefined : json["duration"],
+    productContentData: !exists(json, "productContentData")
+      ? undefined
+      : json["productContentData"].map(ContentDataFromJSON),
+    type: !exists(json, "type") ? undefined : json["type"],
+    features: !exists(json, "features")
+      ? undefined
+      : json["features"].map(ProductFeatureFromJSON),
+    countryOfOrigin: !exists(json, "countryOfOrigin")
+      ? undefined
+      : json["countryOfOrigin"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ProductToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        price: value.price,
-        status: value.status,
-        description: value.description,
-        salePrice: value.salePrice,
-        taxRate: value.taxRate,
-        duration: value.duration,
-        productContentData: value.productContentData === undefined
-            ? undefined
-            : value.productContentData.map(ContentDataToJSON),
-        type: value.type,
-        features: value.features === undefined
-            ? undefined
-            : value.features.map(ProductFeatureToJSON),
-        countryOfOrigin: value.countryOfOrigin,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    price: value.price,
+    status: value.status,
+    description: value.description,
+    salePrice: value.salePrice,
+    taxRate: value.taxRate,
+    duration: value.duration,
+    productContentData:
+      value.productContentData === undefined
+        ? undefined
+        : value.productContentData.map(ContentDataToJSON),
+    type: value.type,
+    features:
+      value.features === undefined
+        ? undefined
+        : value.features.map(ProductFeatureToJSON),
+    countryOfOrigin: value.countryOfOrigin,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -100,12 +107,12 @@ export function ProductToJSON(value) {
  */
 export var ProductStatusEnum;
 (function (ProductStatusEnum) {
-    ProductStatusEnum["PENDING"] = "pending";
-    ProductStatusEnum["SALE"] = "sale";
-    ProductStatusEnum["CLEARANCE"] = "clearance";
-    ProductStatusEnum["AVAILABLE"] = "available";
-    ProductStatusEnum["DISCONTINUED"] = "discontinued";
-    ProductStatusEnum["OUTOFSTOCK"] = "out_of_stock";
+  ProductStatusEnum["PENDING"] = "pending";
+  ProductStatusEnum["SALE"] = "sale";
+  ProductStatusEnum["CLEARANCE"] = "clearance";
+  ProductStatusEnum["AVAILABLE"] = "available";
+  ProductStatusEnum["DISCONTINUED"] = "discontinued";
+  ProductStatusEnum["OUTOFSTOCK"] = "out_of_stock";
 })(ProductStatusEnum || (ProductStatusEnum = {}));
 /**
  * @export
@@ -113,17 +120,17 @@ export var ProductStatusEnum;
  */
 export var ProductTypeEnum;
 (function (ProductTypeEnum) {
-    ProductTypeEnum["PHYSICAL"] = "physical";
-    ProductTypeEnum["SUBSCRIPTION"] = "subscription";
-    ProductTypeEnum["CREDITS"] = "credits";
-    ProductTypeEnum["BESPOKE"] = "bespoke";
-    ProductTypeEnum["CONSULTING"] = "consulting";
-    ProductTypeEnum["SUPPORT"] = "support";
-    ProductTypeEnum["CLOUD"] = "cloud";
-    ProductTypeEnum["DOWNLOAD"] = "download";
-    ProductTypeEnum["SERVICE"] = "service";
-    ProductTypeEnum["MEDIA"] = "media";
-    ProductTypeEnum["PERFORMANCE"] = "performance";
-    ProductTypeEnum["OTHER"] = "other";
+  ProductTypeEnum["PHYSICAL"] = "physical";
+  ProductTypeEnum["SUBSCRIPTION"] = "subscription";
+  ProductTypeEnum["CREDITS"] = "credits";
+  ProductTypeEnum["BESPOKE"] = "bespoke";
+  ProductTypeEnum["CONSULTING"] = "consulting";
+  ProductTypeEnum["SUPPORT"] = "support";
+  ProductTypeEnum["CLOUD"] = "cloud";
+  ProductTypeEnum["DOWNLOAD"] = "download";
+  ProductTypeEnum["SERVICE"] = "service";
+  ProductTypeEnum["MEDIA"] = "media";
+  ProductTypeEnum["PERFORMANCE"] = "performance";
+  ProductTypeEnum["OTHER"] = "other";
 })(ProductTypeEnum || (ProductTypeEnum = {}));
 //# sourceMappingURL=Product.js.map

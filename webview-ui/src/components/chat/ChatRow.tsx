@@ -400,7 +400,7 @@ interface ChatRowProps {
   sendMessageFromChatRow?: (text: string, images: string[]) => void;
 }
 
-interface ChatRowContentProps extends Omit<ChatRowProps, "onHeightChange"> { }
+interface ChatRowContentProps extends Omit<ChatRowProps, "onHeightChange"> {}
 
 export const ProgressIndicator = () => (
   <div
@@ -768,6 +768,14 @@ export const ChatRowContent = ({
             />
           </div>
         );
+        const apiReqInfo = safeParseJSON<ValorIDEApiReqInfo>(message.text);
+        const hasRequest = Boolean(apiReqInfo?.request);
+        const apiRequestCompleted =
+          !isLast ||
+          cost != null ||
+          apiReqCancelReason != null ||
+          apiRequestFailedMessage != null ||
+          apiReqStreamingFailedMessage != null;
         return [
           apiReqCancelReason != null ? (
             apiReqCancelReason === "user_cancelled" ? (
@@ -775,10 +783,10 @@ export const ChatRowContent = ({
             ) : (
               getIconSpan(VscError, errorColor)
             )
-          ) : cost != null ? (
-            getIconSpan(VscCheck, successColor)
           ) : apiRequestFailedMessage ? (
             getIconSpan(VscError, errorColor)
+          ) : apiRequestCompleted ? (
+            getIconSpan(VscCheck, successColor)
           ) : (
             <ProgressIndicator />
           ),
@@ -1295,9 +1303,11 @@ export const ChatRowContent = ({
       };
     };
 
-    const { command: rawCommand, output, hadDelimiter } = splitMessage(
-      message.text || "",
-    );
+    const {
+      command: rawCommand,
+      output,
+      hadDelimiter,
+    } = splitMessage(message.text || "");
 
     const isOutputOnly =
       (message.ask === "command_output" || message.say === "command_output") &&
@@ -1376,7 +1386,9 @@ export const ChatRowContent = ({
                     flexWrap: "wrap",
                   }}
                 >
-                  <span>{isOutputOnly ? "Command Output" : "Command Output"}</span>
+                  <span>
+                    {isOutputOnly ? "Command Output" : "Command Output"}
+                  </span>
                   {!isExpanded && (
                     <span
                       style={{
@@ -1390,9 +1402,7 @@ export const ChatRowContent = ({
                 </span>
               </div>
               {isExpanded && (
-                <CodeBlock
-                  source={`${"```"}shell\n${outputBody}\n${"```"}`}
-                />
+                <CodeBlock source={`${"```"}shell\n${outputBody}\n${"```"}`} />
               )}
             </div>
           )}
@@ -1506,6 +1516,8 @@ export const ChatRowContent = ({
     case "say":
       switch (message.say) {
         case "api_req_started":
+          // Parse API request info for rendering details (safeParseJSON returns undefined on bad data)
+          const apiReqInfo = safeParseJSON<ValorIDEApiReqInfo>(message.text);
           return (
             <>
               <div
@@ -1513,7 +1525,7 @@ export const ChatRowContent = ({
                   ...headerStyle,
                   marginBottom:
                     (cost == null && apiRequestFailedMessage) ||
-                      apiReqStreamingFailedMessage
+                    apiReqStreamingFailedMessage
                       ? 10
                       : 0,
                   justifyContent: "space-between",
@@ -1547,76 +1559,97 @@ export const ChatRowContent = ({
               </div>
               {((cost == null && apiRequestFailedMessage) ||
                 apiReqStreamingFailedMessage) && (
-                  <>
-                    {(() => {
-                      // Try to parse the error message as JSON for credit limit error
-                      const errorData = parseErrorText(apiRequestFailedMessage);
-                      if (errorData) {
-                        if (
-                          errorData.code === "insufficient_credits" &&
-                          typeof errorData.current_balance === "number" &&
-                          typeof errorData.total_spent === "number" &&
-                          typeof errorData.total_promotions === "number" &&
-                          typeof errorData.message === "string"
-                        ) {
-                          return (
-                            <CreditLimitError
-                              currentBalance={errorData.current_balance}
-                              totalSpent={errorData.total_spent}
-                              totalPromotions={errorData.total_promotions}
-                              message={errorData.message}
-                            />
-                          );
-                        }
+                <>
+                  {(() => {
+                    // Try to parse the error message as JSON for credit limit error
+                    const errorData = parseErrorText(apiRequestFailedMessage);
+                    if (errorData) {
+                      if (
+                        errorData.code === "insufficient_credits" &&
+                        typeof errorData.current_balance === "number" &&
+                        typeof errorData.total_spent === "number" &&
+                        typeof errorData.total_promotions === "number" &&
+                        typeof errorData.message === "string"
+                      ) {
+                        return (
+                          <CreditLimitError
+                            currentBalance={errorData.current_balance}
+                            totalSpent={errorData.total_spent}
+                            totalPromotions={errorData.total_promotions}
+                            message={errorData.message}
+                          />
+                        );
                       }
+                    }
 
-                      // Default error display
-                      return (
-                        <p
-                          style={{
-                            ...pStyle,
-                            color: "var(--vscode-errorForeground)",
-                          }}
-                        >
-                          {apiRequestFailedMessage ||
-                            apiReqStreamingFailedMessage}
-                          {apiRequestFailedMessage
-                            ?.toLowerCase()
-                            .includes("powershell") && (
-                              <>
-                                <br />
-                                <br />
-                                It seems like you're having Windows PowerShell
-                                issues, please see this{" "}
-                                <a
-                                  href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
-                                  style={{
-                                    color: "inherit",
-                                    textDecoration: "underline",
-                                  }}
-                                >
-                                  troubleshooting guide
-                                </a>
-                                .
-                              </>
-                            )}
-                        </p>
-                      );
-                    })()}
-                  </>
-                )}
+                    // Default error display
+                    return (
+                      <p
+                        style={{
+                          ...pStyle,
+                          color: "var(--vscode-errorForeground)",
+                        }}
+                      >
+                        {apiRequestFailedMessage ||
+                          apiReqStreamingFailedMessage}
+                        {apiRequestFailedMessage
+                          ?.toLowerCase()
+                          .includes("powershell") && (
+                          <>
+                            <br />
+                            <br />
+                            It seems like you're having Windows PowerShell
+                            issues, please see this{" "}
+                            <a
+                              href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
+                              style={{
+                                color: "inherit",
+                                textDecoration: "underline",
+                              }}
+                            >
+                              troubleshooting guide
+                            </a>
+                            .
+                          </>
+                        )}
+                      </p>
+                    );
+                  })()}
+                </>
+              )}
 
               {isExpanded && (
-                <div style={{ marginTop: "10px" }}>
-                  <CodeAccordian
-                    code={
-                      (safeParseJSON<{ request?: string }>(message.text)
-                        ?.request as string) || ""
-                    }
-                    language="markdown"
-                    isExpanded={true}
-                    onToggleExpand={onToggleExpand}
-                  />
+                <div style={{ marginTop: "10px", display: "flex", gap: 10 }}>
+                  <div style={{ flex: 1 }}>
+                    <CodeAccordian
+                      code={
+                        (apiReqInfo?.request as string) ||
+                        "Request details unavailable."
+                      }
+                      language="markdown"
+                      isExpanded={true}
+                      onToggleExpand={onToggleExpand}
+                    />
+                  </div>
+                  <div style={{ minWidth: 180 }}>
+                    <div style={{ fontWeight: 600, marginBottom: 6 }}>
+                      Usage
+                    </div>
+                    <div style={{ fontSize: 12, lineHeight: 1.5 }}>
+                      <div>In: {apiReqInfo?.tokensIn ?? 0} tokens</div>
+                      <div>Out: {apiReqInfo?.tokensOut ?? 0} tokens</div>
+                      <div>Cache writes: {apiReqInfo?.cacheWrites ?? 0}</div>
+                      <div>Cache reads: {apiReqInfo?.cacheReads ?? 0}</div>
+                      <div>
+                        Cost:{" "}
+                        {cost != null
+                          ? `$${cost.toFixed(4)}`
+                          : apiReqInfo?.cost != null
+                            ? `$${apiReqInfo.cost.toFixed(4)}`
+                            : "—"}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </>
@@ -1659,7 +1692,7 @@ export const ChatRowContent = ({
               >
                 <FaBrain color="var(--vscode-charts-yellow)" />
                 <span style={{ fontWeight: 700, fontSize: 12 }}>
-                  {message.partial ? "Thinking..." : "Comments"}
+                  {message.partial ? "Thinking..." : "Thoughts"}
                 </span>
                 <span
                   style={{
@@ -1995,7 +2028,7 @@ export const ChatRowContent = ({
                   or PowerShell (<code>CMD/CTRL + Shift + P</code> → "Terminal:
                   Select Default Profile").{" "}
                   <a
-                    href="https://github.com/valkyrlabs/valoride/wiki/Troubleshooting-%E2%80%90-Shell-Integration-Unavailable"
+                    href="https://valkyrlabs.com/v1/Products/ValorIDE/tools/cline-tools-guide"
                     style={{
                       color: "inherit",
                       textDecoration: "underline",
@@ -2159,7 +2192,13 @@ export const ChatRowContent = ({
                   selected={selected}
                   isActive={isLast && message.ask === "followup"}
                   inputValue={inputValue}
-                  onSelectOption={setInputValue}
+                  onSelectOption={(text) => {
+                    if (sendMessageFromChatRow) {
+                      sendMessageFromChatRow(text, []);
+                    } else if (setInputValue) {
+                      setInputValue(text);
+                    }
+                  }}
                 />
               </div>
             </>
@@ -2212,7 +2251,13 @@ export const ChatRowContent = ({
                 selected={selected}
                 isActive={isLast && message.ask === "plan_mode_respond"}
                 inputValue={inputValue}
-                onSelectOption={setInputValue}
+                onSelectOption={(text) => {
+                  if (sendMessageFromChatRow) {
+                    sendMessageFromChatRow(text, []);
+                  } else if (setInputValue) {
+                    setInputValue(text);
+                  }
+                }}
               />
             </div>
           );

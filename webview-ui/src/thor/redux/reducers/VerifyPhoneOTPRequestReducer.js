@@ -16,29 +16,39 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const VerifyPhoneOTPRequestSlice = createSlice({
-    name: "VerifyPhoneOTPRequests",
-    initialState: [],
-    reducers: {
-        VerifyPhoneOTPRequestAdded(state, action) {
-            state.push(action.payload);
-        },
-        VerifyPhoneOTPRequestValueToggled(state, action) {
-            console.log("VerifyPhoneOTPRequest TOGGLE");
-            console.warn(JSON.stringify(action));
-            const VerifyPhoneOTPRequest = state.find((VerifyPhoneOTPRequest) => VerifyPhoneOTPRequest.id === action.payload.VerifyPhoneOTPRequestId);
-            if (VerifyPhoneOTPRequest) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        VerifyPhoneOTPRequestpropertySet(state, action) {
-            const VerifyPhoneOTPRequest = state.find((VerifyPhoneOTPRequest) => VerifyPhoneOTPRequest.id === action.payload.VerifyPhoneOTPRequestId);
-            if (VerifyPhoneOTPRequest) {
-                //  VerifyPhoneOTPRequest[action.property] = action.payload[action.property];
-            }
-        },
+  name: "VerifyPhoneOTPRequests",
+  initialState: [],
+  reducers: {
+    VerifyPhoneOTPRequestAdded(state, action) {
+      state.push(action.payload);
     },
+    VerifyPhoneOTPRequestValueToggled(state, action) {
+      console.log("VerifyPhoneOTPRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const VerifyPhoneOTPRequest = state.find(
+        (VerifyPhoneOTPRequest) =>
+          VerifyPhoneOTPRequest.id === action.payload.VerifyPhoneOTPRequestId,
+      );
+      if (VerifyPhoneOTPRequest) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    VerifyPhoneOTPRequestpropertySet(state, action) {
+      const VerifyPhoneOTPRequest = state.find(
+        (VerifyPhoneOTPRequest) =>
+          VerifyPhoneOTPRequest.id === action.payload.VerifyPhoneOTPRequestId,
+      );
+      if (VerifyPhoneOTPRequest) {
+        //  VerifyPhoneOTPRequest[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { VerifyPhoneOTPRequestAdded, VerifyPhoneOTPRequestValueToggled, VerifyPhoneOTPRequestpropertySet, } = VerifyPhoneOTPRequestSlice.actions;
+export const {
+  VerifyPhoneOTPRequestAdded,
+  VerifyPhoneOTPRequestValueToggled,
+  VerifyPhoneOTPRequestpropertySet,
+} = VerifyPhoneOTPRequestSlice.actions;
 export default VerifyPhoneOTPRequestSlice.reducer;
 //# sourceMappingURL=VerifyPhoneOTPRequestReducer.js.map

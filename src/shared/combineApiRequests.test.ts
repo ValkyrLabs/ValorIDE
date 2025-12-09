@@ -23,8 +23,8 @@ describe("combineApiRequests", () => {
       combined = combineApiRequests(messages);
     }).not.toThrow();
 
-    expect(combined.find((msg) => msg.say === "api_req_started")?.text).toContain(
-      '"cost":0.5',
-    );
+    expect(
+      combined.find((msg) => msg.say === "api_req_started")?.text,
+    ).toContain('"cost":0.5');
   });
 });

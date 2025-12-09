@@ -29,46 +29,46 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function McpResourceTemplateFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        uriTemplate: json["uriTemplate"],
-        name: json["name"],
-        mcpServerId: !exists(json, "mcpServerId") ? undefined : json["mcpServerId"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        mimeType: !exists(json, "mimeType") ? undefined : json["mimeType"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    uriTemplate: json["uriTemplate"],
+    name: json["name"],
+    mcpServerId: !exists(json, "mcpServerId") ? undefined : json["mcpServerId"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    mimeType: !exists(json, "mimeType") ? undefined : json["mimeType"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function McpResourceTemplateToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        uriTemplate: value.uriTemplate,
-        name: value.name,
-        mcpServerId: value.mcpServerId,
-        description: value.description,
-        mimeType: value.mimeType,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    uriTemplate: value.uriTemplate,
+    name: value.name,
+    mcpServerId: value.mcpServerId,
+    description: value.description,
+    mimeType: value.mimeType,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=McpResourceTemplate.js.map

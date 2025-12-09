@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: WebsocketSession
 */
-export const WebsocketSessionMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const WebsocketSessionMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("WebsocketSession MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=WebsocketSessionApiMiddleware.js.map

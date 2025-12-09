@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Format
 */
-export const FormatMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const FormatMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Format MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=FormatApiMiddleware.js.map

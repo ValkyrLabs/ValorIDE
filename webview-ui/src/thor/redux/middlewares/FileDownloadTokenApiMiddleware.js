@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: FileDownloadToken
 */
-export const FileDownloadTokenMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const FileDownloadTokenMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("FileDownloadToken MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=FileDownloadTokenApiMiddleware.js.map

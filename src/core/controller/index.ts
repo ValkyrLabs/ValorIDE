@@ -58,6 +58,7 @@ import {
 import { fileExistsAtPath } from "@utils/fs";
 import { searchCommits } from "@utils/git";
 import { getReadablePath, getWorkspacePath } from "@utils/path";
+import { openUrlWithSimpleBrowser } from "@utils/openUrl";
 import { resolveThorapiFolderPath } from "@utils/thorapi";
 import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { getTotalTasksSize } from "@utils/storage";
@@ -636,7 +637,7 @@ export class Controller {
         break;
       case "openInBrowser":
         if (message.url) {
-          vscode.env.openExternal(vscode.Uri.parse(message.url));
+          await openUrlWithSimpleBrowser(message.url);
         }
         break;
       case "fetchOpenGraphData":
@@ -724,7 +725,7 @@ export class Controller {
         const uriScheme = vscode.env.uriScheme;
 
         const authUrl = vscode.Uri.parse(`https://valkyrlabs.com/sign-up`);
-        vscode.env.openExternal(authUrl);
+        await openUrlWithSimpleBrowser(authUrl.toString());
         break;
       }
       case "accountLogoutClicked": {
@@ -1491,8 +1492,9 @@ export class Controller {
                 )
                 .then((choice) => {
                   if (choice === "Open Browser") {
-                    vscode.env.openExternal(
-                      vscode.Uri.parse(`http://localhost:${port}`),
+                    void openUrlWithSimpleBrowser(
+                      `http://localhost:${port}`,
+                      undefined,
                     );
                   }
                 });

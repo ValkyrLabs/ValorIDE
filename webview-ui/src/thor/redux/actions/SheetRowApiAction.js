@@ -31,60 +31,60 @@ export const LIST_SHEETROW_REQUEST = "LIST_SHEETROW_REQUEST";
 export const LIST_SHEETROW_SUCCESS = "LIST_SHEETROW_SUCCESS";
 export const LIST_SHEETROW_FAILURE = "LIST_SHEETROW_FAILURE";
 export const addSheetRowRequest = () => ({
-    type: ADD_SHEETROW_REQUEST,
+  type: ADD_SHEETROW_REQUEST,
 });
 export const addSheetRowSuccess = (SheetRows) => ({
-    type: ADD_SHEETROW_SUCCESS,
-    payload: SheetRows,
+  type: ADD_SHEETROW_SUCCESS,
+  payload: SheetRows,
 });
 export const addSheetRowFailure = (error) => ({
-    type: ADD_SHEETROW_FAILURE,
-    payload: error,
+  type: ADD_SHEETROW_FAILURE,
+  payload: error,
 });
 export const fetchSheetRowRequest = () => ({
-    type: FETCH_SHEETROW_REQUEST,
+  type: FETCH_SHEETROW_REQUEST,
 });
 export const fetchSheetRowSuccess = (SheetRows) => ({
-    type: FETCH_SHEETROW_SUCCESS,
-    payload: SheetRows,
+  type: FETCH_SHEETROW_SUCCESS,
+  payload: SheetRows,
 });
 export const fetchSheetRowFailure = (error) => ({
-    type: FETCH_SHEETROW_FAILURE,
-    payload: error,
+  type: FETCH_SHEETROW_FAILURE,
+  payload: error,
 });
 export const listSheetRowRequest = () => ({
-    type: LIST_SHEETROW_REQUEST,
+  type: LIST_SHEETROW_REQUEST,
 });
 export const listSheetRowSuccess = (SheetRows) => ({
-    type: LIST_SHEETROW_SUCCESS,
-    payload: SheetRows,
+  type: LIST_SHEETROW_SUCCESS,
+  payload: SheetRows,
 });
 export const listSheetRowFailure = (error) => ({
-    type: LIST_SHEETROW_FAILURE,
-    payload: error,
+  type: LIST_SHEETROW_FAILURE,
+  payload: error,
 });
 export const updateSheetRowRequest = (SheetRow) => ({
-    type: UPDATE_SHEETROW_REQUEST,
-    payload: SheetRow,
+  type: UPDATE_SHEETROW_REQUEST,
+  payload: SheetRow,
 });
 export const updateSheetRowSuccess = (SheetRow) => ({
-    type: UPDATE_SHEETROW_SUCCESS,
-    payload: SheetRow,
+  type: UPDATE_SHEETROW_SUCCESS,
+  payload: SheetRow,
 });
 export const updateSheetRowFailure = (error) => ({
-    type: UPDATE_SHEETROW_FAILURE,
-    payload: error,
+  type: UPDATE_SHEETROW_FAILURE,
+  payload: error,
 });
 export const deleteSheetRowRequest = (SheetRow) => ({
-    type: DELETE_SHEETROW_REQUEST,
-    payload: SheetRow,
+  type: DELETE_SHEETROW_REQUEST,
+  payload: SheetRow,
 });
 export const deleteSheetRowSuccess = (SheetRow) => ({
-    type: DELETE_SHEETROW_SUCCESS,
-    payload: SheetRow,
+  type: DELETE_SHEETROW_SUCCESS,
+  payload: SheetRow,
 });
 export const deleteSheetRowFailure = (error) => ({
-    type: DELETE_SHEETROW_FAILURE,
-    payload: error,
+  type: DELETE_SHEETROW_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=SheetRowApiAction.js.map

@@ -19,28 +19,31 @@ export const BASE_PATH = import.meta.env.VITE_basePath.replace(/\/+$/, "");
 // un-comment for Create REact APp apps
 // export const BASE_PATH = process.env.REACT_APP_BASE_PATH.replace(/\/+$/, "");
 export const Configuration = {
-    basePath: BASE_PATH, // This is the value that will be prepended to all endpoints.  For compatibility with
-    // previous versions, the default is an empty string.  Other generators typically use
-    // BASE_PATH as the default.
+  basePath: BASE_PATH, // This is the value that will be prepended to all endpoints.  For compatibility with
+  // previous versions, the default is an empty string.  Other generators typically use
+  // BASE_PATH as the default.
 };
 export class RequiredError extends Error {
-    field;
-    constructor(field, msg) {
-        super(msg);
-        this.field = field;
-    }
+  field;
+  constructor(field, msg) {
+    super(msg);
+    this.field = field;
+  }
 }
 export const COLLECTION_FORMATS = {
-    csv: ",",
-    ssv: " ",
-    tsv: "\t",
-    pipes: "|",
+  csv: ",",
+  ssv: " ",
+  tsv: "\t",
+  pipes: "|",
 };
 export function exists(json, key) {
-    const value = json[key];
-    return value !== null && value !== undefined;
+  const value = json[key];
+  return value !== null && value !== undefined;
 }
 export function mapValues(data, fn) {
-    return Object.keys(data).reduce((acc, key) => ({ ...acc, [key]: fn(data[key]) }), {});
+  return Object.keys(data).reduce(
+    (acc, key) => ({ ...acc, [key]: fn(data[key]) }),
+    {},
+  );
 }
 //# sourceMappingURL=runtime.js.map

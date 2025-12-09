@@ -16,29 +16,37 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const LoginAuditSlice = createSlice({
-    name: "LoginAudits",
-    initialState: [],
-    reducers: {
-        LoginAuditAdded(state, action) {
-            state.push(action.payload);
-        },
-        LoginAuditValueToggled(state, action) {
-            console.log("LoginAudit TOGGLE");
-            console.warn(JSON.stringify(action));
-            const LoginAudit = state.find((LoginAudit) => LoginAudit.id === action.payload.LoginAuditId);
-            if (LoginAudit) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        LoginAuditpropertySet(state, action) {
-            const LoginAudit = state.find((LoginAudit) => LoginAudit.id === action.payload.LoginAuditId);
-            if (LoginAudit) {
-                //  LoginAudit[action.property] = action.payload[action.property];
-            }
-        },
+  name: "LoginAudits",
+  initialState: [],
+  reducers: {
+    LoginAuditAdded(state, action) {
+      state.push(action.payload);
     },
+    LoginAuditValueToggled(state, action) {
+      console.log("LoginAudit TOGGLE");
+      console.warn(JSON.stringify(action));
+      const LoginAudit = state.find(
+        (LoginAudit) => LoginAudit.id === action.payload.LoginAuditId,
+      );
+      if (LoginAudit) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    LoginAuditpropertySet(state, action) {
+      const LoginAudit = state.find(
+        (LoginAudit) => LoginAudit.id === action.payload.LoginAuditId,
+      );
+      if (LoginAudit) {
+        //  LoginAudit[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { LoginAuditAdded, LoginAuditValueToggled, LoginAuditpropertySet, } = LoginAuditSlice.actions;
+export const {
+  LoginAuditAdded,
+  LoginAuditValueToggled,
+  LoginAuditpropertySet,
+} = LoginAuditSlice.actions;
 export default LoginAuditSlice.reducer;
 //# sourceMappingURL=LoginAuditReducer.js.map

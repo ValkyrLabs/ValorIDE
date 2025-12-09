@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: LineItem
 */
-export const LineItemMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const LineItemMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("LineItem MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=LineItemApiMiddleware.js.map

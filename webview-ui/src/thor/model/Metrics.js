@@ -29,54 +29,54 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function MetricsFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        endpoint: json["endpoint"],
-        method: json["method"],
-        count: !exists(json, "count") ? undefined : json["count"],
-        errorCount: !exists(json, "errorCount") ? undefined : json["errorCount"],
-        averageLatencyMs: !exists(json, "averageLatencyMs")
-            ? undefined
-            : json["averageLatencyMs"],
-        maxLatencyMs: !exists(json, "maxLatencyMs")
-            ? undefined
-            : json["maxLatencyMs"],
-        lastStatus: !exists(json, "lastStatus") ? undefined : json["lastStatus"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    endpoint: json["endpoint"],
+    method: json["method"],
+    count: !exists(json, "count") ? undefined : json["count"],
+    errorCount: !exists(json, "errorCount") ? undefined : json["errorCount"],
+    averageLatencyMs: !exists(json, "averageLatencyMs")
+      ? undefined
+      : json["averageLatencyMs"],
+    maxLatencyMs: !exists(json, "maxLatencyMs")
+      ? undefined
+      : json["maxLatencyMs"],
+    lastStatus: !exists(json, "lastStatus") ? undefined : json["lastStatus"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function MetricsToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        endpoint: value.endpoint,
-        method: value.method,
-        count: value.count,
-        errorCount: value.errorCount,
-        averageLatencyMs: value.averageLatencyMs,
-        maxLatencyMs: value.maxLatencyMs,
-        lastStatus: value.lastStatus,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    endpoint: value.endpoint,
+    method: value.method,
+    count: value.count,
+    errorCount: value.errorCount,
+    averageLatencyMs: value.averageLatencyMs,
+    maxLatencyMs: value.maxLatencyMs,
+    lastStatus: value.lastStatus,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=Metrics.js.map

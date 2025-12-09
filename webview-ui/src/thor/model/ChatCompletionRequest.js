@@ -30,46 +30,46 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { ChatMessageFromJSON, ChatMessageToJSON } from "./";
 export function ChatCompletionRequestFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        model: json["model"],
-        messages: json["messages"].map(ChatMessageFromJSON),
-        prompt: !exists(json, "prompt") ? undefined : json["prompt"],
-        temperature: !exists(json, "temperature") ? undefined : json["temperature"],
-        stream: !exists(json, "stream") ? undefined : json["stream"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    model: json["model"],
+    messages: json["messages"].map(ChatMessageFromJSON),
+    prompt: !exists(json, "prompt") ? undefined : json["prompt"],
+    temperature: !exists(json, "temperature") ? undefined : json["temperature"],
+    stream: !exists(json, "stream") ? undefined : json["stream"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ChatCompletionRequestToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        model: value.model,
-        messages: value.messages.map(ChatMessageToJSON),
-        prompt: value.prompt,
-        temperature: value.temperature,
-        stream: value.stream,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    model: value.model,
+    messages: value.messages.map(ChatMessageToJSON),
+    prompt: value.prompt,
+    temperature: value.temperature,
+    stream: value.stream,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=ChatCompletionRequest.js.map

@@ -29,51 +29,51 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function SpaceFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: json["name"],
-        type: json["type"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        settings: !exists(json, "settings") ? undefined : json["settings"],
-        parentSpaceId: !exists(json, "parentSpaceId")
-            ? undefined
-            : json["parentSpaceId"],
-        isActive: !exists(json, "isActive") ? undefined : json["isActive"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: json["name"],
+    type: json["type"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    settings: !exists(json, "settings") ? undefined : json["settings"],
+    parentSpaceId: !exists(json, "parentSpaceId")
+      ? undefined
+      : json["parentSpaceId"],
+    isActive: !exists(json, "isActive") ? undefined : json["isActive"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function SpaceToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        type: value.type,
-        description: value.description,
-        settings: value.settings,
-        parentSpaceId: value.parentSpaceId,
-        isActive: value.isActive,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    type: value.type,
+    description: value.description,
+    settings: value.settings,
+    parentSpaceId: value.parentSpaceId,
+    isActive: value.isActive,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -81,9 +81,9 @@ export function SpaceToJSON(value) {
  */
 export var SpaceTypeEnum;
 (function (SpaceTypeEnum) {
-    SpaceTypeEnum["PERSONAL"] = "personal";
-    SpaceTypeEnum["SHARED"] = "shared";
-    SpaceTypeEnum["PUBLIC"] = "public";
-    SpaceTypeEnum["DATAROOM"] = "data_room";
+  SpaceTypeEnum["PERSONAL"] = "personal";
+  SpaceTypeEnum["SHARED"] = "shared";
+  SpaceTypeEnum["PUBLIC"] = "public";
+  SpaceTypeEnum["DATAROOM"] = "data_room";
 })(SpaceTypeEnum || (SpaceTypeEnum = {}));
 //# sourceMappingURL=Space.js.map

@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: BalanceResponse
 */
-export const BalanceResponseMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const BalanceResponseMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("BalanceResponse MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=BalanceResponseApiMiddleware.js.map

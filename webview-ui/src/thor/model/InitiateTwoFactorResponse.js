@@ -29,48 +29,48 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function InitiateTwoFactorResponseFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        secretId: json["secretId"],
-        qrCodeUrl: json["qrCodeUrl"],
-        manualEntryKey: !exists(json, "manualEntryKey")
-            ? undefined
-            : json["manualEntryKey"],
-        backupCodes: !exists(json, "backupCodes") ? undefined : json["backupCodes"],
-        message: !exists(json, "message") ? undefined : json["message"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    secretId: json["secretId"],
+    qrCodeUrl: json["qrCodeUrl"],
+    manualEntryKey: !exists(json, "manualEntryKey")
+      ? undefined
+      : json["manualEntryKey"],
+    backupCodes: !exists(json, "backupCodes") ? undefined : json["backupCodes"],
+    message: !exists(json, "message") ? undefined : json["message"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function InitiateTwoFactorResponseToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        secretId: value.secretId,
-        qrCodeUrl: value.qrCodeUrl,
-        manualEntryKey: value.manualEntryKey,
-        backupCodes: value.backupCodes,
-        message: value.message,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    secretId: value.secretId,
+    qrCodeUrl: value.qrCodeUrl,
+    manualEntryKey: value.manualEntryKey,
+    backupCodes: value.backupCodes,
+    message: value.message,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=InitiateTwoFactorResponse.js.map

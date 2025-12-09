@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: BackupConfig
 */
-export const BackupConfigMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const BackupConfigMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("BackupConfig MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=BackupConfigApiMiddleware.js.map

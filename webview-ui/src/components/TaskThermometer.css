@@ -1,0 +1,97 @@
+:root {
+  --task-thermo-bg: var(--vscode-editorWidget-background, #1e1e1e);
+  --task-thermo-fill: var(--vscode-terminal-ansiGreen, #3fb950);
+  --task-thermo-fill-warning: var(--vscode-editorWarning-foreground, #f6a700);
+  --task-thermo-border: var(--vscode-editorWidget-border, #3c3c3c);
+  --task-thermo-text: var(--vscode-foreground, #cccccc);
+  --task-thermo-text-on: var(--vscode-editor-foreground, #ffffff);
+}
+
+.task-thermo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 0;
+}
+
+.task-thermo__labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  user-select: none;
+  color: var(--task-thermo-text);
+}
+
+.task-thermo__label {
+  letter-spacing: 0.3px;
+  color: inherit;
+}
+
+.task-thermo__label.clickable {
+  cursor: pointer;
+  text-decoration: underline dashed transparent 1px;
+}
+
+.task-thermo__label.clickable:hover {
+  text-decoration-color: currentColor;
+}
+
+.task-thermo__label.on {
+  color: var(--task-thermo-text-on);
+  font-weight: 600;
+}
+
+.task-thermo__bar {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.06)),
+    var(--task-thermo-bg);
+  border: 1px solid var(--task-thermo-border);
+  overflow: hidden;
+}
+
+.task-thermo__fill {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(63, 185, 80, 0.05) 0%,
+      rgba(63, 185, 80, 0.25) 15%,
+      rgba(63, 185, 80, 0.5) 35%,
+      rgba(63, 185, 80, 0.9) 100%
+    ),
+    var(--task-thermo-fill);
+  transition: width 180ms ease-out;
+}
+
+.task-thermo--warning .task-thermo__fill {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(246, 167, 0, 0.08) 0%,
+      rgba(246, 167, 0, 0.3) 25%,
+      rgba(246, 167, 0, 0.65) 55%,
+      rgba(246, 167, 0, 0.95) 100%
+    ),
+    var(--task-thermo-fill-warning);
+}
+
+@media (prefers-contrast: more) {
+  .task-thermo__fill {
+    filter: saturate(1.1) brightness(1.05);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --task-thermo-bg: #f5f5f5;
+    --task-thermo-border: #d0d0d0;
+    --task-thermo-text: #666;
+    --task-thermo-text-on: #111;
+  }
+}

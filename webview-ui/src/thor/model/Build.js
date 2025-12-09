@@ -28,67 +28,74 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { BuildOutputFromJSON, BuildOutputToJSON, DependFromJSON, DependToJSON, } from "./";
+import {
+  BuildOutputFromJSON,
+  BuildOutputToJSON,
+  DependFromJSON,
+  DependToJSON,
+} from "./";
 export function BuildFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: json["name"],
-        status: json["status"],
-        projectPath: json["projectPath"],
-        mavenHome: json["mavenHome"],
-        applicationId: !exists(json, "applicationId")
-            ? undefined
-            : json["applicationId"],
-        testEnumCodegen: !exists(json, "testEnumCodegen")
-            ? undefined
-            : json["testEnumCodegen"],
-        outputs: !exists(json, "outputs")
-            ? undefined
-            : json["outputs"].map(BuildOutputFromJSON),
-        dependencies: !exists(json, "dependencies")
-            ? undefined
-            : json["dependencies"].map(DependFromJSON),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: json["name"],
+    status: json["status"],
+    projectPath: json["projectPath"],
+    mavenHome: json["mavenHome"],
+    applicationId: !exists(json, "applicationId")
+      ? undefined
+      : json["applicationId"],
+    testEnumCodegen: !exists(json, "testEnumCodegen")
+      ? undefined
+      : json["testEnumCodegen"],
+    outputs: !exists(json, "outputs")
+      ? undefined
+      : json["outputs"].map(BuildOutputFromJSON),
+    dependencies: !exists(json, "dependencies")
+      ? undefined
+      : json["dependencies"].map(DependFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function BuildToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        status: value.status,
-        projectPath: value.projectPath,
-        mavenHome: value.mavenHome,
-        applicationId: value.applicationId,
-        testEnumCodegen: value.testEnumCodegen,
-        outputs: value.outputs === undefined
-            ? undefined
-            : value.outputs.map(BuildOutputToJSON),
-        dependencies: value.dependencies === undefined
-            ? undefined
-            : value.dependencies.map(DependToJSON),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    status: value.status,
+    projectPath: value.projectPath,
+    mavenHome: value.mavenHome,
+    applicationId: value.applicationId,
+    testEnumCodegen: value.testEnumCodegen,
+    outputs:
+      value.outputs === undefined
+        ? undefined
+        : value.outputs.map(BuildOutputToJSON),
+    dependencies:
+      value.dependencies === undefined
+        ? undefined
+        : value.dependencies.map(DependToJSON),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -96,10 +103,10 @@ export function BuildToJSON(value) {
  */
 export var BuildStatusEnum;
 (function (BuildStatusEnum) {
-    BuildStatusEnum["PENDING"] = "pending";
-    BuildStatusEnum["RUNNING"] = "running";
-    BuildStatusEnum["SUCCESS"] = "success";
-    BuildStatusEnum["FAILURE"] = "failure";
+  BuildStatusEnum["PENDING"] = "pending";
+  BuildStatusEnum["RUNNING"] = "running";
+  BuildStatusEnum["SUCCESS"] = "success";
+  BuildStatusEnum["FAILURE"] = "failure";
 })(BuildStatusEnum || (BuildStatusEnum = {}));
 /**
  * @export
@@ -107,8 +114,8 @@ export var BuildStatusEnum;
  */
 export var BuildTestEnumCodegenEnum;
 (function (BuildTestEnumCodegenEnum) {
-    BuildTestEnumCodegenEnum[BuildTestEnumCodegenEnum["BROKE"] = 0] = "BROKE";
-    BuildTestEnumCodegenEnum[BuildTestEnumCodegenEnum["POOR"] = 10] = "POOR";
-    BuildTestEnumCodegenEnum[BuildTestEnumCodegenEnum["RICH"] = 1000] = "RICH";
+  BuildTestEnumCodegenEnum[(BuildTestEnumCodegenEnum["BROKE"] = 0)] = "BROKE";
+  BuildTestEnumCodegenEnum[(BuildTestEnumCodegenEnum["POOR"] = 10)] = "POOR";
+  BuildTestEnumCodegenEnum[(BuildTestEnumCodegenEnum["RICH"] = 1000)] = "RICH";
 })(BuildTestEnumCodegenEnum || (BuildTestEnumCodegenEnum = {}));
 //# sourceMappingURL=Build.js.map

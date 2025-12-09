@@ -6,16 +6,15 @@ import getFolderSize from "get-folder-size";
  * @returns The total size in bytes, or null if calculation fails
  */
 export async function getTotalTasksSize(storagePath) {
-    const tasksDir = path.join(storagePath, "tasks");
-    const checkpointsDir = path.join(storagePath, "checkpoints");
-    try {
-        const tasksSize = await getFolderSize.loose(tasksDir);
-        const checkpointsSize = await getFolderSize.loose(checkpointsDir);
-        return tasksSize + checkpointsSize;
-    }
-    catch (error) {
-        console.error("Failed to calculate total task size:", error);
-        return null;
-    }
+  const tasksDir = path.join(storagePath, "tasks");
+  const checkpointsDir = path.join(storagePath, "checkpoints");
+  try {
+    const tasksSize = await getFolderSize.loose(tasksDir);
+    const checkpointsSize = await getFolderSize.loose(checkpointsDir);
+    return tasksSize + checkpointsSize;
+  } catch (error) {
+    console.error("Failed to calculate total task size:", error);
+    return null;
+  }
 }
 //# sourceMappingURL=storage.js.map

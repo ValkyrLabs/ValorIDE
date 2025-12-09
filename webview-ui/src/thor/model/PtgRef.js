@@ -29,45 +29,45 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function PtgRefFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
-        formulaId: !exists(json, "formulaId") ? undefined : json["formulaId"],
-        reference: !exists(json, "reference") ? undefined : json["reference"],
-        type: !exists(json, "type") ? undefined : json["type"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
+    formulaId: !exists(json, "formulaId") ? undefined : json["formulaId"],
+    reference: !exists(json, "reference") ? undefined : json["reference"],
+    type: !exists(json, "type") ? undefined : json["type"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function PtgRefToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        sheetId: value.sheetId,
-        formulaId: value.formulaId,
-        reference: value.reference,
-        type: value.type,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    sheetId: value.sheetId,
+    formulaId: value.formulaId,
+    reference: value.reference,
+    type: value.type,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -75,9 +75,9 @@ export function PtgRefToJSON(value) {
  */
 export var PtgRefTypeEnum;
 (function (PtgRefTypeEnum) {
-    PtgRefTypeEnum["PTGADD"] = "ptgadd";
-    PtgRefTypeEnum["PTGSUB"] = "ptgsub";
-    PtgRefTypeEnum["PTGMUL"] = "ptgmul";
-    PtgRefTypeEnum["PTGDIV"] = "ptgdiv";
+  PtgRefTypeEnum["PTGADD"] = "ptgadd";
+  PtgRefTypeEnum["PTGSUB"] = "ptgsub";
+  PtgRefTypeEnum["PTGMUL"] = "ptgmul";
+  PtgRefTypeEnum["PTGDIV"] = "ptgdiv";
 })(PtgRefTypeEnum || (PtgRefTypeEnum = {}));
 //# sourceMappingURL=PtgRef.js.map

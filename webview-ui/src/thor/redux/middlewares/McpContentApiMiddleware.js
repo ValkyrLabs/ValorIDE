@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: McpContent
 */
-export const McpContentMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const McpContentMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("McpContent MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=McpContentApiMiddleware.js.map

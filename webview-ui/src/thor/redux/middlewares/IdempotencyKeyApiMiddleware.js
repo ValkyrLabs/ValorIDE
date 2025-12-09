@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: IdempotencyKey
 */
-export const IdempotencyKeyMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const IdempotencyKeyMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("IdempotencyKey MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=IdempotencyKeyApiMiddleware.js.map

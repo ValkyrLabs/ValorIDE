@@ -31,60 +31,60 @@ export const LIST_GOALDEPENDENCY_REQUEST = "LIST_GOALDEPENDENCY_REQUEST";
 export const LIST_GOALDEPENDENCY_SUCCESS = "LIST_GOALDEPENDENCY_SUCCESS";
 export const LIST_GOALDEPENDENCY_FAILURE = "LIST_GOALDEPENDENCY_FAILURE";
 export const addGoalDependencyRequest = () => ({
-    type: ADD_GOALDEPENDENCY_REQUEST,
+  type: ADD_GOALDEPENDENCY_REQUEST,
 });
 export const addGoalDependencySuccess = (GoalDependencys) => ({
-    type: ADD_GOALDEPENDENCY_SUCCESS,
-    payload: GoalDependencys,
+  type: ADD_GOALDEPENDENCY_SUCCESS,
+  payload: GoalDependencys,
 });
 export const addGoalDependencyFailure = (error) => ({
-    type: ADD_GOALDEPENDENCY_FAILURE,
-    payload: error,
+  type: ADD_GOALDEPENDENCY_FAILURE,
+  payload: error,
 });
 export const fetchGoalDependencyRequest = () => ({
-    type: FETCH_GOALDEPENDENCY_REQUEST,
+  type: FETCH_GOALDEPENDENCY_REQUEST,
 });
 export const fetchGoalDependencySuccess = (GoalDependencys) => ({
-    type: FETCH_GOALDEPENDENCY_SUCCESS,
-    payload: GoalDependencys,
+  type: FETCH_GOALDEPENDENCY_SUCCESS,
+  payload: GoalDependencys,
 });
 export const fetchGoalDependencyFailure = (error) => ({
-    type: FETCH_GOALDEPENDENCY_FAILURE,
-    payload: error,
+  type: FETCH_GOALDEPENDENCY_FAILURE,
+  payload: error,
 });
 export const listGoalDependencyRequest = () => ({
-    type: LIST_GOALDEPENDENCY_REQUEST,
+  type: LIST_GOALDEPENDENCY_REQUEST,
 });
 export const listGoalDependencySuccess = (GoalDependencys) => ({
-    type: LIST_GOALDEPENDENCY_SUCCESS,
-    payload: GoalDependencys,
+  type: LIST_GOALDEPENDENCY_SUCCESS,
+  payload: GoalDependencys,
 });
 export const listGoalDependencyFailure = (error) => ({
-    type: LIST_GOALDEPENDENCY_FAILURE,
-    payload: error,
+  type: LIST_GOALDEPENDENCY_FAILURE,
+  payload: error,
 });
 export const updateGoalDependencyRequest = (GoalDependency) => ({
-    type: UPDATE_GOALDEPENDENCY_REQUEST,
-    payload: GoalDependency,
+  type: UPDATE_GOALDEPENDENCY_REQUEST,
+  payload: GoalDependency,
 });
 export const updateGoalDependencySuccess = (GoalDependency) => ({
-    type: UPDATE_GOALDEPENDENCY_SUCCESS,
-    payload: GoalDependency,
+  type: UPDATE_GOALDEPENDENCY_SUCCESS,
+  payload: GoalDependency,
 });
 export const updateGoalDependencyFailure = (error) => ({
-    type: UPDATE_GOALDEPENDENCY_FAILURE,
-    payload: error,
+  type: UPDATE_GOALDEPENDENCY_FAILURE,
+  payload: error,
 });
 export const deleteGoalDependencyRequest = (GoalDependency) => ({
-    type: DELETE_GOALDEPENDENCY_REQUEST,
-    payload: GoalDependency,
+  type: DELETE_GOALDEPENDENCY_REQUEST,
+  payload: GoalDependency,
 });
 export const deleteGoalDependencySuccess = (GoalDependency) => ({
-    type: DELETE_GOALDEPENDENCY_SUCCESS,
-    payload: GoalDependency,
+  type: DELETE_GOALDEPENDENCY_SUCCESS,
+  payload: GoalDependency,
 });
 export const deleteGoalDependencyFailure = (error) => ({
-    type: DELETE_GOALDEPENDENCY_FAILURE,
-    payload: error,
+  type: DELETE_GOALDEPENDENCY_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=GoalDependencyApiAction.js.map

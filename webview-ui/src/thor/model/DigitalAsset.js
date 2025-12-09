@@ -28,65 +28,70 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { FileRecordFromJSON, FileRecordToJSON, ProductFromJSON, ProductToJSON, } from "./";
+import {
+  FileRecordFromJSON,
+  FileRecordToJSON,
+  ProductFromJSON,
+  ProductToJSON,
+} from "./";
 export function DigitalAssetFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        productId: json["productId"],
-        fileId: json["fileId"],
-        deliveryMethod: json["deliveryMethod"],
-        product: !exists(json, "product")
-            ? undefined
-            : ProductFromJSON(json["product"]),
-        file: !exists(json, "file") ? undefined : FileRecordFromJSON(json["file"]),
-        accessModel: !exists(json, "accessModel") ? undefined : json["accessModel"],
-        maxDownloads: !exists(json, "maxDownloads")
-            ? undefined
-            : json["maxDownloads"],
-        expiresAfterDays: !exists(json, "expiresAfterDays")
-            ? undefined
-            : json["expiresAfterDays"],
-        notifyCustomerOnExpiry: !exists(json, "notifyCustomerOnExpiry")
-            ? undefined
-            : json["notifyCustomerOnExpiry"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    productId: json["productId"],
+    fileId: json["fileId"],
+    deliveryMethod: json["deliveryMethod"],
+    product: !exists(json, "product")
+      ? undefined
+      : ProductFromJSON(json["product"]),
+    file: !exists(json, "file") ? undefined : FileRecordFromJSON(json["file"]),
+    accessModel: !exists(json, "accessModel") ? undefined : json["accessModel"],
+    maxDownloads: !exists(json, "maxDownloads")
+      ? undefined
+      : json["maxDownloads"],
+    expiresAfterDays: !exists(json, "expiresAfterDays")
+      ? undefined
+      : json["expiresAfterDays"],
+    notifyCustomerOnExpiry: !exists(json, "notifyCustomerOnExpiry")
+      ? undefined
+      : json["notifyCustomerOnExpiry"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function DigitalAssetToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        productId: value.productId,
-        fileId: value.fileId,
-        deliveryMethod: value.deliveryMethod,
-        product: ProductToJSON(value.product),
-        file: FileRecordToJSON(value.file),
-        accessModel: value.accessModel,
-        maxDownloads: value.maxDownloads,
-        expiresAfterDays: value.expiresAfterDays,
-        notifyCustomerOnExpiry: value.notifyCustomerOnExpiry,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    productId: value.productId,
+    fileId: value.fileId,
+    deliveryMethod: value.deliveryMethod,
+    product: ProductToJSON(value.product),
+    file: FileRecordToJSON(value.file),
+    accessModel: value.accessModel,
+    maxDownloads: value.maxDownloads,
+    expiresAfterDays: value.expiresAfterDays,
+    notifyCustomerOnExpiry: value.notifyCustomerOnExpiry,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -94,11 +99,11 @@ export function DigitalAssetToJSON(value) {
  */
 export var DigitalAssetDeliveryMethodEnum;
 (function (DigitalAssetDeliveryMethodEnum) {
-    DigitalAssetDeliveryMethodEnum["DIRECTDOWNLOAD"] = "direct_download";
-    DigitalAssetDeliveryMethodEnum["EMAILDELIVERY"] = "email_delivery";
-    DigitalAssetDeliveryMethodEnum["PORTALACCESS"] = "portal_access";
-    DigitalAssetDeliveryMethodEnum["STREAMING"] = "streaming";
-    DigitalAssetDeliveryMethodEnum["APIKEY"] = "api_key";
+  DigitalAssetDeliveryMethodEnum["DIRECTDOWNLOAD"] = "direct_download";
+  DigitalAssetDeliveryMethodEnum["EMAILDELIVERY"] = "email_delivery";
+  DigitalAssetDeliveryMethodEnum["PORTALACCESS"] = "portal_access";
+  DigitalAssetDeliveryMethodEnum["STREAMING"] = "streaming";
+  DigitalAssetDeliveryMethodEnum["APIKEY"] = "api_key";
 })(DigitalAssetDeliveryMethodEnum || (DigitalAssetDeliveryMethodEnum = {}));
 /**
  * @export
@@ -106,10 +111,10 @@ export var DigitalAssetDeliveryMethodEnum;
  */
 export var DigitalAssetAccessModelEnum;
 (function (DigitalAssetAccessModelEnum) {
-    DigitalAssetAccessModelEnum["PERPETUAL"] = "perpetual";
-    DigitalAssetAccessModelEnum["SUBSCRIPTION"] = "subscription";
-    DigitalAssetAccessModelEnum["TRIAL"] = "trial";
-    DigitalAssetAccessModelEnum["LICENSEKEY"] = "license_key";
-    DigitalAssetAccessModelEnum["ONETIME"] = "one_time";
+  DigitalAssetAccessModelEnum["PERPETUAL"] = "perpetual";
+  DigitalAssetAccessModelEnum["SUBSCRIPTION"] = "subscription";
+  DigitalAssetAccessModelEnum["TRIAL"] = "trial";
+  DigitalAssetAccessModelEnum["LICENSEKEY"] = "license_key";
+  DigitalAssetAccessModelEnum["ONETIME"] = "one_time";
 })(DigitalAssetAccessModelEnum || (DigitalAssetAccessModelEnum = {}));
 //# sourceMappingURL=DigitalAsset.js.map

@@ -31,60 +31,60 @@ export const LIST_BALANCERESPONSE_REQUEST = "LIST_BALANCERESPONSE_REQUEST";
 export const LIST_BALANCERESPONSE_SUCCESS = "LIST_BALANCERESPONSE_SUCCESS";
 export const LIST_BALANCERESPONSE_FAILURE = "LIST_BALANCERESPONSE_FAILURE";
 export const addBalanceResponseRequest = () => ({
-    type: ADD_BALANCERESPONSE_REQUEST,
+  type: ADD_BALANCERESPONSE_REQUEST,
 });
 export const addBalanceResponseSuccess = (BalanceResponses) => ({
-    type: ADD_BALANCERESPONSE_SUCCESS,
-    payload: BalanceResponses,
+  type: ADD_BALANCERESPONSE_SUCCESS,
+  payload: BalanceResponses,
 });
 export const addBalanceResponseFailure = (error) => ({
-    type: ADD_BALANCERESPONSE_FAILURE,
-    payload: error,
+  type: ADD_BALANCERESPONSE_FAILURE,
+  payload: error,
 });
 export const fetchBalanceResponseRequest = () => ({
-    type: FETCH_BALANCERESPONSE_REQUEST,
+  type: FETCH_BALANCERESPONSE_REQUEST,
 });
 export const fetchBalanceResponseSuccess = (BalanceResponses) => ({
-    type: FETCH_BALANCERESPONSE_SUCCESS,
-    payload: BalanceResponses,
+  type: FETCH_BALANCERESPONSE_SUCCESS,
+  payload: BalanceResponses,
 });
 export const fetchBalanceResponseFailure = (error) => ({
-    type: FETCH_BALANCERESPONSE_FAILURE,
-    payload: error,
+  type: FETCH_BALANCERESPONSE_FAILURE,
+  payload: error,
 });
 export const listBalanceResponseRequest = () => ({
-    type: LIST_BALANCERESPONSE_REQUEST,
+  type: LIST_BALANCERESPONSE_REQUEST,
 });
 export const listBalanceResponseSuccess = (BalanceResponses) => ({
-    type: LIST_BALANCERESPONSE_SUCCESS,
-    payload: BalanceResponses,
+  type: LIST_BALANCERESPONSE_SUCCESS,
+  payload: BalanceResponses,
 });
 export const listBalanceResponseFailure = (error) => ({
-    type: LIST_BALANCERESPONSE_FAILURE,
-    payload: error,
+  type: LIST_BALANCERESPONSE_FAILURE,
+  payload: error,
 });
 export const updateBalanceResponseRequest = (BalanceResponse) => ({
-    type: UPDATE_BALANCERESPONSE_REQUEST,
-    payload: BalanceResponse,
+  type: UPDATE_BALANCERESPONSE_REQUEST,
+  payload: BalanceResponse,
 });
 export const updateBalanceResponseSuccess = (BalanceResponse) => ({
-    type: UPDATE_BALANCERESPONSE_SUCCESS,
-    payload: BalanceResponse,
+  type: UPDATE_BALANCERESPONSE_SUCCESS,
+  payload: BalanceResponse,
 });
 export const updateBalanceResponseFailure = (error) => ({
-    type: UPDATE_BALANCERESPONSE_FAILURE,
-    payload: error,
+  type: UPDATE_BALANCERESPONSE_FAILURE,
+  payload: error,
 });
 export const deleteBalanceResponseRequest = (BalanceResponse) => ({
-    type: DELETE_BALANCERESPONSE_REQUEST,
-    payload: BalanceResponse,
+  type: DELETE_BALANCERESPONSE_REQUEST,
+  payload: BalanceResponse,
 });
 export const deleteBalanceResponseSuccess = (BalanceResponse) => ({
-    type: DELETE_BALANCERESPONSE_SUCCESS,
-    payload: BalanceResponse,
+  type: DELETE_BALANCERESPONSE_SUCCESS,
+  payload: BalanceResponse,
 });
 export const deleteBalanceResponseFailure = (error) => ({
-    type: DELETE_BALANCERESPONSE_FAILURE,
-    payload: error,
+  type: DELETE_BALANCERESPONSE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=BalanceResponseApiAction.js.map

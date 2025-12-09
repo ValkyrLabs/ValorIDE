@@ -1,4 +1,8 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import {
+  jsx as _jsx,
+  jsxs as _jsxs,
+  Fragment as _Fragment,
+} from "react/jsx-runtime";
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -15,16 +19,16 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, } from "formik";
+import { ErrorMessage, Field, Formik } from "formik";
 import { useState } from "react";
-import { Form as BSForm, Accordion, Alert, } from "react-bootstrap";
+import { Form as BSForm, Accordion, Alert } from "react-bootstrap";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import * as Yup from "yup";
 import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import { PermissionType, } from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionType } from "@valkyr/component-library/PermissionDialog/types";
 import { useAddSwarmMessageMutation } from "../../services/SwarmMessageService";
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,145 +52,479 @@ Structured message envelope for agentic swarm coordination.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const TypeValidation = () => {
-    return ["COMMAND", "RESPONSE", "BROADCAST", "EVENT", "ACK", "NACK"];
+  return ["COMMAND", "RESPONSE", "BROADCAST", "EVENT", "ACK", "NACK"];
 };
 const PriorityValidation = () => {
-    return ["LOW", "NORMAL", "HIGH", "URGENT"];
+  return ["LOW", "NORMAL", "HIGH", "URGENT"];
 };
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
-const asNumber = (schema) => schema.transform((val, orig) => orig === "" || orig === null ? undefined : val);
+const asNumber = (schema) =>
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 const validationSchema = Yup.object().shape({
-    type: Yup.mixed()
-        .oneOf(TypeValidation(), "Invalid value for type")
-        .required("type is required."),
-    timestamp: Yup.date()
-        .transform((value, originalValue) => {
-        if (!originalValue) {
-            return value;
-        }
-        const parsed = new Date(originalValue);
-        return Number.isNaN(parsed.getTime()) ? value : parsed;
+  type: Yup.mixed()
+    .oneOf(TypeValidation(), "Invalid value for type")
+    .required("type is required."),
+  timestamp: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
     })
-        .required("timestamp is required.")
-        .typeError("timestamp must be a valid date"),
-    ackId: Yup.string(),
-    ttl: asNumber(Yup.number().integer().typeError("ttl must be a number")),
-    priority: Yup.mixed().oneOf(PriorityValidation(), "Invalid value for priority"),
-    trashed: Yup.boolean(),
+    .required("timestamp is required.")
+    .typeError("timestamp must be a valid date"),
+  ackId: Yup.string(),
+  ttl: asNumber(Yup.number().integer().typeError("ttl must be a number")),
+  priority: Yup.mixed().oneOf(
+    PriorityValidation(),
+    "Invalid value for priority",
+  ),
+  trashed: Yup.boolean(),
 });
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const SwarmMessageForm = () => {
-    const [addSwarmMessage, addSwarmMessageResult] = useAddSwarmMessageMutation();
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
-    // Permission Management State
-    const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-    const [createdObjectId, setCreatedObjectId] = useState(null);
-    // Mock current user - in real implementation, this would come from auth context
-    const currentUser = {
-        username: "current_user",
-        permissions: {
-            isOwner: true,
-            isAdmin: true,
-            canGrantPermissions: true,
-            permissions: [
-                PermissionType.READ,
-                PermissionType.WRITE,
-                PermissionType.CREATE,
-                PermissionType.DELETE,
-                PermissionType.ADMINISTRATION,
-            ],
-        },
-    };
-    /* -----------------------------------------------------
+  const [addSwarmMessage, addSwarmMessageResult] = useAddSwarmMessageMutation();
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState(null);
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: "current_user",
+    permissions: {
+      isOwner: true,
+      isAdmin: true,
+      canGrantPermissions: true,
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
+    },
+  };
+  /* -----------------------------------------------------
        INITIAL VALUES - only NON read-only fields
     -------------------------------------------------------- */
-    const initialValues = {
-        type: undefined,
-        timestamp: new Date(),
-        ackId: "",
-        ttl: 0,
-        priority: undefined,
-        trashed: false,
-    };
-    // Permission Management Handlers
-    const handleManagePermissions = (objectId) => {
-        setCreatedObjectId(objectId);
-        setShowPermissionDialog(true);
-    };
-    const handlePermissionDialogClose = () => {
-        setShowPermissionDialog(false);
-        setCreatedObjectId(null);
-    };
-    const handlePermissionsSave = (grants) => {
-        console.log("Permissions saved for new SwarmMessage:", grants);
-    };
-    /* SUBMIT HANDLER */
-    const handleSubmit = async (values, { setSubmitting }) => {
-        try {
-            setSuccessMessage(null);
-            setErrorMessage(null);
-            console.log("SwarmMessage form values:", values);
-            // NOTE: depending on your generated endpoint, you may need { body: values }
-            const result = await addSwarmMessage(values).unwrap();
-            if (result && result.id && currentUser.permissions.canGrantPermissions) {
-                const shouldSetPermissions = window.confirm(`SwarmMessage created successfully! Would you like to set permissions for this object?`);
-                if (shouldSetPermissions) {
-                    handleManagePermissions(result.id);
-                }
-            }
-            setSuccessMessage("Saved successfully.");
+  const initialValues = {
+    type: undefined,
+    timestamp: new Date(),
+    ackId: "",
+    ttl: 0,
+    priority: undefined,
+    trashed: false,
+  };
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+  const handlePermissionsSave = (grants) => {
+    console.log("Permissions saved for new SwarmMessage:", grants);
+  };
+  /* SUBMIT HANDLER */
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      setSuccessMessage(null);
+      setErrorMessage(null);
+      console.log("SwarmMessage form values:", values);
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addSwarmMessage(values).unwrap();
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `SwarmMessage created successfully! Would you like to set permissions for this object?`,
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
         }
-        catch (error) {
-            console.error("Failed to create SwarmMessage:", error);
-            setErrorMessage("Failed to save. Please try again.");
-        }
-        setSubmitting(false);
-    };
-    return (_jsxs("div", { children: [_jsx(Formik, { validateOnBlur: true, initialValues: initialValues, validationSchema: validationSchema, onSubmit: handleSubmit, children: ({ isSubmitting, isValid, errors, values, setFieldValue, touched, setFieldTouched, handleSubmit, }) => {
-                    const isSaving = isSubmitting || addSwarmMessageResult.isLoading;
-                    return (_jsx("form", { onSubmit: handleSubmit, className: "form", children: _jsxs(Accordion, { defaultActiveKey: "1", children: [_jsxs(Accordion.Item, { eventKey: "1", children: [_jsxs(Accordion.Header, { children: [_jsx(FaRegPlusSquare, { size: 28 }), " \u00A0 Add New SwarmMessage"] }), _jsxs(Accordion.Body, { children: [_jsxs("label", { htmlFor: "type", className: "nice-form-control", children: [_jsxs("b", { children: ["Type:", touched.type && !errors.type && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "type", value: values.type || "", className: errors.type
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("type", true);
-                                                                setFieldValue("type", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Type" }), _jsx(TypeLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "type", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "timestamp", className: "nice-form-control", children: [_jsxs("b", { children: ["Timestamp:", touched.timestamp && !errors.timestamp && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "timestamp", type: "datetime-local", value: values.timestamp
-                                                                ? new Date(values.timestamp)
-                                                                    .toISOString()
-                                                                    .slice(0, 16)
-                                                                : "", onChange: (e) => {
-                                                                setFieldTouched("timestamp", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("timestamp", v ? new Date(v).toISOString() : "");
-                                                            }, className: errors.timestamp
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "timestamp", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "ackId", className: "nice-form-control", children: [_jsxs("b", { children: ["Ack Id:", touched.ackId && !errors.ackId && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "ackId", value: values?.ackId, placeholder: "Ack Id", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "ackId", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "ttl", className: "nice-form-control", children: [_jsxs("b", { children: ["Ttl:", touched.ttl && !errors.ttl && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "ttl", type: "number", value: values.ttl || "", onChange: (e) => {
-                                                                setFieldTouched("ttl", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("ttl", v === "" ? undefined : Number(v));
-                                                            }, className: errors.ttl
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "ttl", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "priority", className: "nice-form-control", children: [_jsxs("b", { children: ["Priority:", touched.priority && !errors.priority && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "priority", value: values.priority || "", className: errors.priority
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("priority", true);
-                                                                setFieldValue("priority", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Priority" }), _jsx(PriorityLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "priority", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "trashed", className: "nice-form-control", children: [_jsxs("b", { children: ["Trashed:", touched.trashed && !errors.trashed && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "trashed", name: "trashed", checked: values.trashed || false, onChange: (e) => {
-                                                                setFieldTouched("trashed", true);
-                                                                setFieldValue("trashed", e.target.checked);
-                                                            }, isInvalid: !!errors.trashed, className: errors.trashed ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "trashed", component: "span" })] }), _jsx("br", {}), _jsxs(CoolButton, { variant: isValid
-                                                        ? isSaving
-                                                            ? "disabled"
-                                                            : "success"
-                                                        : "warning", type: "submit", disabled: !isValid || isSaving, children: [isSaving && (_jsx("span", { style: { float: "left", minHeight: 0 }, children: _jsx(LoadingSpinner, { label: "", size: 18 }) })), _jsx(FaCheckCircle, { size: 28 }), " Create New SwarmMessage"] }), (addSwarmMessageResult.isError || errorMessage) && (_jsx(Alert, { variant: "danger", className: "mt-3", children: errorMessage ||
-                                                        JSON.stringify("data" in addSwarmMessageResult.error
-                                                            ? addSwarmMessageResult.error.data
-                                                            : addSwarmMessageResult.error) })), (addSwarmMessageResult.isSuccess || successMessage) && (_jsx(Alert, { variant: "success", className: "mt-3", children: successMessage || "Saved successfully." }))] })] }), _jsxs(Accordion.Item, { eventKey: "0", children: [_jsxs(Accordion.Header, { children: [_jsx(FaCogs, { size: 28 }), " \u00A0Server Messages"] }), _jsxs(Accordion.Body, { children: ["errors: ", JSON.stringify(errors), _jsx("br", {}), "addSwarmMessageResult:", " ", JSON.stringify(addSwarmMessageResult)] })] })] }) }));
-                } }), createdObjectId && (_jsx(PermissionDialog, { objectType: "com.valkyrlabs.model.SwarmMessage", objectId: createdObjectId, isVisible: showPermissionDialog, onClose: handlePermissionDialogClose, onSave: handlePermissionsSave, currentUser: currentUser }))] }));
+      }
+      setSuccessMessage("Saved successfully.");
+    } catch (error) {
+      console.error("Failed to create SwarmMessage:", error);
+      setErrorMessage("Failed to save. Please try again.");
+    }
+    setSubmitting(false);
+  };
+  return _jsxs("div", {
+    children: [
+      _jsx(Formik, {
+        validateOnBlur: true,
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: handleSubmit,
+        children: ({
+          isSubmitting,
+          isValid,
+          errors,
+          values,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => {
+          const isSaving = isSubmitting || addSwarmMessageResult.isLoading;
+          return _jsx("form", {
+            onSubmit: handleSubmit,
+            className: "form",
+            children: _jsxs(Accordion, {
+              defaultActiveKey: "1",
+              children: [
+                _jsxs(Accordion.Item, {
+                  eventKey: "1",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaRegPlusSquare, { size: 28 }),
+                        " \u00A0 Add New SwarmMessage",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        _jsxs("label", {
+                          htmlFor: "type",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Type:",
+                                touched.type &&
+                                  !errors.type &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "type",
+                              value: values.type || "",
+                              className: errors.type
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("type", true);
+                                setFieldValue(
+                                  "type",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Type",
+                                }),
+                                _jsx(TypeLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "type",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "timestamp",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Timestamp:",
+                                touched.timestamp &&
+                                  !errors.timestamp &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "timestamp",
+                              type: "datetime-local",
+                              value: values.timestamp
+                                ? new Date(values.timestamp)
+                                    .toISOString()
+                                    .slice(0, 16)
+                                : "",
+                              onChange: (e) => {
+                                setFieldTouched("timestamp", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "timestamp",
+                                  v ? new Date(v).toISOString() : "",
+                                );
+                              },
+                              className: errors.timestamp
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "timestamp",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "ackId",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Ack Id:",
+                                touched.ackId &&
+                                  !errors.ackId &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "ackId",
+                              value: values?.ackId,
+                              placeholder: "Ack Id",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "ackId",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "ttl",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Ttl:",
+                                touched.ttl &&
+                                  !errors.ttl &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "ttl",
+                              type: "number",
+                              value: values.ttl || "",
+                              onChange: (e) => {
+                                setFieldTouched("ttl", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "ttl",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.ttl
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "ttl",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "priority",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Priority:",
+                                touched.priority &&
+                                  !errors.priority &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "priority",
+                              value: values.priority || "",
+                              className: errors.priority
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("priority", true);
+                                setFieldValue(
+                                  "priority",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Priority",
+                                }),
+                                _jsx(PriorityLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "priority",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "trashed",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Trashed:",
+                                touched.trashed &&
+                                  !errors.trashed &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "trashed",
+                              name: "trashed",
+                              checked: values.trashed || false,
+                              onChange: (e) => {
+                                setFieldTouched("trashed", true);
+                                setFieldValue("trashed", e.target.checked);
+                              },
+                              isInvalid: !!errors.trashed,
+                              className: errors.trashed ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "trashed",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs(CoolButton, {
+                          variant: isValid
+                            ? isSaving
+                              ? "disabled"
+                              : "success"
+                            : "warning",
+                          type: "submit",
+                          disabled: !isValid || isSaving,
+                          children: [
+                            isSaving &&
+                              _jsx("span", {
+                                style: { float: "left", minHeight: 0 },
+                                children: _jsx(LoadingSpinner, {
+                                  label: "",
+                                  size: 18,
+                                }),
+                              }),
+                            _jsx(FaCheckCircle, { size: 28 }),
+                            " Create New SwarmMessage",
+                          ],
+                        }),
+                        (addSwarmMessageResult.isError || errorMessage) &&
+                          _jsx(Alert, {
+                            variant: "danger",
+                            className: "mt-3",
+                            children:
+                              errorMessage ||
+                              JSON.stringify(
+                                "data" in addSwarmMessageResult.error
+                                  ? addSwarmMessageResult.error.data
+                                  : addSwarmMessageResult.error,
+                              ),
+                          }),
+                        (addSwarmMessageResult.isSuccess || successMessage) &&
+                          _jsx(Alert, {
+                            variant: "success",
+                            className: "mt-3",
+                            children: successMessage || "Saved successfully.",
+                          }),
+                      ],
+                    }),
+                  ],
+                }),
+                _jsxs(Accordion.Item, {
+                  eventKey: "0",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaCogs, { size: 28 }),
+                        " \u00A0Server Messages",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        "errors: ",
+                        JSON.stringify(errors),
+                        _jsx("br", {}),
+                        "addSwarmMessageResult:",
+                        " ",
+                        JSON.stringify(addSwarmMessageResult),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          });
+        },
+      }),
+      createdObjectId &&
+        _jsx(PermissionDialog, {
+          objectType: "com.valkyrlabs.model.SwarmMessage",
+          objectId: createdObjectId,
+          isVisible: showPermissionDialog,
+          onClose: handlePermissionDialogClose,
+          onSave: handlePermissionsSave,
+          currentUser: currentUser,
+        }),
+    ],
+  });
 };
 /*
 lowercase typelookup
@@ -197,7 +535,16 @@ camelcase typeLookup
 kebabcase type-lookup
 */
 const TypeLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "COMMAND", label: "COMMAND" }), _jsx("option", { value: "RESPONSE", label: "RESPONSE" }), _jsx("option", { value: "BROADCAST", label: "BROADCAST" }), _jsx("option", { value: "EVENT", label: "EVENT" }), _jsx("option", { value: "ACK", label: "ACK" }), _jsx("option", { value: "NACK", label: "NACK" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "COMMAND", label: "COMMAND" }),
+      _jsx("option", { value: "RESPONSE", label: "RESPONSE" }),
+      _jsx("option", { value: "BROADCAST", label: "BROADCAST" }),
+      _jsx("option", { value: "EVENT", label: "EVENT" }),
+      _jsx("option", { value: "ACK", label: "ACK" }),
+      _jsx("option", { value: "NACK", label: "NACK" }),
+    ],
+  });
 };
 /*
 lowercase prioritylookup
@@ -208,7 +555,14 @@ camelcase priorityLookup
 kebabcase priority-lookup
 */
 const PriorityLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "LOW", label: "LOW" }), _jsx("option", { value: "NORMAL", label: "NORMAL" }), _jsx("option", { value: "HIGH", label: "HIGH" }), _jsx("option", { value: "URGENT", label: "URGENT" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "LOW", label: "LOW" }),
+      _jsx("option", { value: "NORMAL", label: "NORMAL" }),
+      _jsx("option", { value: "HIGH", label: "HIGH" }),
+      _jsx("option", { value: "URGENT", label: "URGENT" }),
+    ],
+  });
 };
 /* Export the generated form */
 export default SwarmMessageForm;

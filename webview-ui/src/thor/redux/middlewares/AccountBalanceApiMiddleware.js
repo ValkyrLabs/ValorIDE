@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: AccountBalance
 */
-export const AccountBalanceMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const AccountBalanceMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("AccountBalance MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=AccountBalanceApiMiddleware.js.map

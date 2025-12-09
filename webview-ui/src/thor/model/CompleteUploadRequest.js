@@ -28,50 +28,53 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { CompleteUploadRequestPartsInnerFromJSON, CompleteUploadRequestPartsInnerToJSON, } from "./";
+import {
+  CompleteUploadRequestPartsInnerFromJSON,
+  CompleteUploadRequestPartsInnerToJSON,
+} from "./";
 export function CompleteUploadRequestFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        sessionId: json["sessionId"],
-        uploadId: json["uploadId"],
-        checksumSha256: json["checksumSha256"],
-        parts: json["parts"].map(CompleteUploadRequestPartsInnerFromJSON),
-        providerEtag: !exists(json, "providerEtag")
-            ? undefined
-            : json["providerEtag"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    sessionId: json["sessionId"],
+    uploadId: json["uploadId"],
+    checksumSha256: json["checksumSha256"],
+    parts: json["parts"].map(CompleteUploadRequestPartsInnerFromJSON),
+    providerEtag: !exists(json, "providerEtag")
+      ? undefined
+      : json["providerEtag"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function CompleteUploadRequestToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        sessionId: value.sessionId,
-        uploadId: value.uploadId,
-        checksumSha256: value.checksumSha256,
-        parts: value.parts.map(CompleteUploadRequestPartsInnerToJSON),
-        providerEtag: value.providerEtag,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    sessionId: value.sessionId,
+    uploadId: value.uploadId,
+    checksumSha256: value.checksumSha256,
+    parts: value.parts.map(CompleteUploadRequestPartsInnerToJSON),
+    providerEtag: value.providerEtag,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=CompleteUploadRequest.js.map

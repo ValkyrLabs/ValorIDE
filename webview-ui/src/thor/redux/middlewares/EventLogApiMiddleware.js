@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: EventLog
 */
-export const EventLogMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const EventLogMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("EventLog MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=EventLogApiMiddleware.js.map

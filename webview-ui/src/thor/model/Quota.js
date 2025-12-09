@@ -29,75 +29,77 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function QuotaFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        principalId: !exists(json, "principalId") ? undefined : json["principalId"],
-        resourceType: !exists(json, "resourceType")
-            ? undefined
-            : json["resourceType"],
-        maxConcurrent: !exists(json, "maxConcurrent")
-            ? undefined
-            : json["maxConcurrent"],
-        maxPerHour: !exists(json, "maxPerHour") ? undefined : json["maxPerHour"],
-        maxPerDay: !exists(json, "maxPerDay") ? undefined : json["maxPerDay"],
-        currentConcurrent: !exists(json, "currentConcurrent")
-            ? undefined
-            : json["currentConcurrent"],
-        currentHourCount: !exists(json, "currentHourCount")
-            ? undefined
-            : json["currentHourCount"],
-        currentDayCount: !exists(json, "currentDayCount")
-            ? undefined
-            : json["currentDayCount"],
-        hourResetAt: !exists(json, "hourResetAt")
-            ? undefined
-            : new Date(json["hourResetAt"]),
-        dayResetAt: !exists(json, "dayResetAt")
-            ? undefined
-            : new Date(json["dayResetAt"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    principalId: !exists(json, "principalId") ? undefined : json["principalId"],
+    resourceType: !exists(json, "resourceType")
+      ? undefined
+      : json["resourceType"],
+    maxConcurrent: !exists(json, "maxConcurrent")
+      ? undefined
+      : json["maxConcurrent"],
+    maxPerHour: !exists(json, "maxPerHour") ? undefined : json["maxPerHour"],
+    maxPerDay: !exists(json, "maxPerDay") ? undefined : json["maxPerDay"],
+    currentConcurrent: !exists(json, "currentConcurrent")
+      ? undefined
+      : json["currentConcurrent"],
+    currentHourCount: !exists(json, "currentHourCount")
+      ? undefined
+      : json["currentHourCount"],
+    currentDayCount: !exists(json, "currentDayCount")
+      ? undefined
+      : json["currentDayCount"],
+    hourResetAt: !exists(json, "hourResetAt")
+      ? undefined
+      : new Date(json["hourResetAt"]),
+    dayResetAt: !exists(json, "dayResetAt")
+      ? undefined
+      : new Date(json["dayResetAt"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function QuotaToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        principalId: value.principalId,
-        resourceType: value.resourceType,
-        maxConcurrent: value.maxConcurrent,
-        maxPerHour: value.maxPerHour,
-        maxPerDay: value.maxPerDay,
-        currentConcurrent: value.currentConcurrent,
-        currentHourCount: value.currentHourCount,
-        currentDayCount: value.currentDayCount,
-        hourResetAt: value.hourResetAt === undefined
-            ? undefined
-            : value.hourResetAt.toISOString(),
-        dayResetAt: value.dayResetAt === undefined
-            ? undefined
-            : value.dayResetAt.toISOString(),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    principalId: value.principalId,
+    resourceType: value.resourceType,
+    maxConcurrent: value.maxConcurrent,
+    maxPerHour: value.maxPerHour,
+    maxPerDay: value.maxPerDay,
+    currentConcurrent: value.currentConcurrent,
+    currentHourCount: value.currentHourCount,
+    currentDayCount: value.currentDayCount,
+    hourResetAt:
+      value.hourResetAt === undefined
+        ? undefined
+        : value.hourResetAt.toISOString(),
+    dayResetAt:
+      value.dayResetAt === undefined
+        ? undefined
+        : value.dayResetAt.toISOString(),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -105,10 +107,10 @@ export function QuotaToJSON(value) {
  */
 export var QuotaResourceTypeEnum;
 (function (QuotaResourceTypeEnum) {
-    QuotaResourceTypeEnum["WORKFLOWEXECUTION"] = "workflow_execution";
-    QuotaResourceTypeEnum["APICALL"] = "api_call";
-    QuotaResourceTypeEnum["LLMREQUEST"] = "llm_request";
-    QuotaResourceTypeEnum["EMAILSEND"] = "email_send";
-    QuotaResourceTypeEnum["FILEUPLOAD"] = "file_upload";
+  QuotaResourceTypeEnum["WORKFLOWEXECUTION"] = "workflow_execution";
+  QuotaResourceTypeEnum["APICALL"] = "api_call";
+  QuotaResourceTypeEnum["LLMREQUEST"] = "llm_request";
+  QuotaResourceTypeEnum["EMAILSEND"] = "email_send";
+  QuotaResourceTypeEnum["FILEUPLOAD"] = "file_upload";
 })(QuotaResourceTypeEnum || (QuotaResourceTypeEnum = {}));
 //# sourceMappingURL=Quota.js.map

@@ -31,60 +31,60 @@ export const LIST_MERGERANGE_REQUEST = "LIST_MERGERANGE_REQUEST";
 export const LIST_MERGERANGE_SUCCESS = "LIST_MERGERANGE_SUCCESS";
 export const LIST_MERGERANGE_FAILURE = "LIST_MERGERANGE_FAILURE";
 export const addMergeRangeRequest = () => ({
-    type: ADD_MERGERANGE_REQUEST,
+  type: ADD_MERGERANGE_REQUEST,
 });
 export const addMergeRangeSuccess = (MergeRanges) => ({
-    type: ADD_MERGERANGE_SUCCESS,
-    payload: MergeRanges,
+  type: ADD_MERGERANGE_SUCCESS,
+  payload: MergeRanges,
 });
 export const addMergeRangeFailure = (error) => ({
-    type: ADD_MERGERANGE_FAILURE,
-    payload: error,
+  type: ADD_MERGERANGE_FAILURE,
+  payload: error,
 });
 export const fetchMergeRangeRequest = () => ({
-    type: FETCH_MERGERANGE_REQUEST,
+  type: FETCH_MERGERANGE_REQUEST,
 });
 export const fetchMergeRangeSuccess = (MergeRanges) => ({
-    type: FETCH_MERGERANGE_SUCCESS,
-    payload: MergeRanges,
+  type: FETCH_MERGERANGE_SUCCESS,
+  payload: MergeRanges,
 });
 export const fetchMergeRangeFailure = (error) => ({
-    type: FETCH_MERGERANGE_FAILURE,
-    payload: error,
+  type: FETCH_MERGERANGE_FAILURE,
+  payload: error,
 });
 export const listMergeRangeRequest = () => ({
-    type: LIST_MERGERANGE_REQUEST,
+  type: LIST_MERGERANGE_REQUEST,
 });
 export const listMergeRangeSuccess = (MergeRanges) => ({
-    type: LIST_MERGERANGE_SUCCESS,
-    payload: MergeRanges,
+  type: LIST_MERGERANGE_SUCCESS,
+  payload: MergeRanges,
 });
 export const listMergeRangeFailure = (error) => ({
-    type: LIST_MERGERANGE_FAILURE,
-    payload: error,
+  type: LIST_MERGERANGE_FAILURE,
+  payload: error,
 });
 export const updateMergeRangeRequest = (MergeRange) => ({
-    type: UPDATE_MERGERANGE_REQUEST,
-    payload: MergeRange,
+  type: UPDATE_MERGERANGE_REQUEST,
+  payload: MergeRange,
 });
 export const updateMergeRangeSuccess = (MergeRange) => ({
-    type: UPDATE_MERGERANGE_SUCCESS,
-    payload: MergeRange,
+  type: UPDATE_MERGERANGE_SUCCESS,
+  payload: MergeRange,
 });
 export const updateMergeRangeFailure = (error) => ({
-    type: UPDATE_MERGERANGE_FAILURE,
-    payload: error,
+  type: UPDATE_MERGERANGE_FAILURE,
+  payload: error,
 });
 export const deleteMergeRangeRequest = (MergeRange) => ({
-    type: DELETE_MERGERANGE_REQUEST,
-    payload: MergeRange,
+  type: DELETE_MERGERANGE_REQUEST,
+  payload: MergeRange,
 });
 export const deleteMergeRangeSuccess = (MergeRange) => ({
-    type: DELETE_MERGERANGE_SUCCESS,
-    payload: MergeRange,
+  type: DELETE_MERGERANGE_SUCCESS,
+  payload: MergeRange,
 });
 export const deleteMergeRangeFailure = (error) => ({
-    type: DELETE_MERGERANGE_FAILURE,
-    payload: error,
+  type: DELETE_MERGERANGE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=MergeRangeApiAction.js.map

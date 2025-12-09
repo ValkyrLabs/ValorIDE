@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: ContentMediaLink
 */
-export const ContentMediaLinkMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const ContentMediaLinkMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("ContentMediaLink MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=ContentMediaLinkApiMiddleware.js.map

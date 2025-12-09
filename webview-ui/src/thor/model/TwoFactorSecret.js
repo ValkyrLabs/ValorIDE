@@ -30,65 +30,65 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { PrincipalFromJSON, PrincipalToJSON } from "./";
 export function TwoFactorSecretFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        principalId: json["principalId"],
-        secretKey: json["secretKey"],
-        algorithm: json["algorithm"],
-        digits: json["digits"],
-        period: json["period"],
-        principal: !exists(json, "principal")
-            ? undefined
-            : PrincipalFromJSON(json["principal"]),
-        qrCodeUrl: !exists(json, "qrCodeUrl") ? undefined : json["qrCodeUrl"],
-        backupCodes: !exists(json, "backupCodes") ? undefined : json["backupCodes"],
-        enabled: !exists(json, "enabled") ? undefined : json["enabled"],
-        createdAt: !exists(json, "createdAt")
-            ? undefined
-            : new Date(json["createdAt"]),
-        lastUsedAt: !exists(json, "lastUsedAt")
-            ? undefined
-            : new Date(json["lastUsedAt"]),
-        verifiedAt: !exists(json, "verifiedAt")
-            ? undefined
-            : new Date(json["verifiedAt"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    principalId: json["principalId"],
+    secretKey: json["secretKey"],
+    algorithm: json["algorithm"],
+    digits: json["digits"],
+    period: json["period"],
+    principal: !exists(json, "principal")
+      ? undefined
+      : PrincipalFromJSON(json["principal"]),
+    qrCodeUrl: !exists(json, "qrCodeUrl") ? undefined : json["qrCodeUrl"],
+    backupCodes: !exists(json, "backupCodes") ? undefined : json["backupCodes"],
+    enabled: !exists(json, "enabled") ? undefined : json["enabled"],
+    createdAt: !exists(json, "createdAt")
+      ? undefined
+      : new Date(json["createdAt"]),
+    lastUsedAt: !exists(json, "lastUsedAt")
+      ? undefined
+      : new Date(json["lastUsedAt"]),
+    verifiedAt: !exists(json, "verifiedAt")
+      ? undefined
+      : new Date(json["verifiedAt"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function TwoFactorSecretToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        principalId: value.principalId,
-        secretKey: value.secretKey,
-        algorithm: value.algorithm,
-        digits: value.digits,
-        period: value.period,
-        principal: PrincipalToJSON(value.principal),
-        backupCodes: value.backupCodes,
-        enabled: value.enabled,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    principalId: value.principalId,
+    secretKey: value.secretKey,
+    algorithm: value.algorithm,
+    digits: value.digits,
+    period: value.period,
+    principal: PrincipalToJSON(value.principal),
+    backupCodes: value.backupCodes,
+    enabled: value.enabled,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -96,8 +96,8 @@ export function TwoFactorSecretToJSON(value) {
  */
 export var TwoFactorSecretAlgorithmEnum;
 (function (TwoFactorSecretAlgorithmEnum) {
-    TwoFactorSecretAlgorithmEnum["HMACSHA1"] = "hmacsha1";
-    TwoFactorSecretAlgorithmEnum["HMACSHA256"] = "hmacsha256";
-    TwoFactorSecretAlgorithmEnum["HMACSHA512"] = "hmacsha512";
+  TwoFactorSecretAlgorithmEnum["HMACSHA1"] = "hmacsha1";
+  TwoFactorSecretAlgorithmEnum["HMACSHA256"] = "hmacsha256";
+  TwoFactorSecretAlgorithmEnum["HMACSHA512"] = "hmacsha512";
 })(TwoFactorSecretAlgorithmEnum || (TwoFactorSecretAlgorithmEnum = {}));
 //# sourceMappingURL=TwoFactorSecret.js.map

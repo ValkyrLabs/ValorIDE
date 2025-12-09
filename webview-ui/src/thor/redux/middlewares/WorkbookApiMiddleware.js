@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Workbook
 */
-export const WorkbookMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const WorkbookMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Workbook MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=WorkbookApiMiddleware.js.map

@@ -29,50 +29,50 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function McpResourceResponseFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        uri: json["uri"],
-        mcpResourceResponseId: !exists(json, "mcpResourceResponseId")
-            ? undefined
-            : json["mcpResourceResponseId"],
-        mimeType: !exists(json, "mimeType") ? undefined : json["mimeType"],
-        text: !exists(json, "text") ? undefined : json["text"],
-        binaryContent: !exists(json, "binaryContent")
-            ? undefined
-            : json["binaryContent"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    uri: json["uri"],
+    mcpResourceResponseId: !exists(json, "mcpResourceResponseId")
+      ? undefined
+      : json["mcpResourceResponseId"],
+    mimeType: !exists(json, "mimeType") ? undefined : json["mimeType"],
+    text: !exists(json, "text") ? undefined : json["text"],
+    binaryContent: !exists(json, "binaryContent")
+      ? undefined
+      : json["binaryContent"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function McpResourceResponseToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        uri: value.uri,
-        mcpResourceResponseId: value.mcpResourceResponseId,
-        mimeType: value.mimeType,
-        text: value.text,
-        binaryContent: value.binaryContent,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    uri: value.uri,
+    mcpResourceResponseId: value.mcpResourceResponseId,
+    mimeType: value.mimeType,
+    text: value.text,
+    binaryContent: value.binaryContent,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=McpResourceResponse.js.map

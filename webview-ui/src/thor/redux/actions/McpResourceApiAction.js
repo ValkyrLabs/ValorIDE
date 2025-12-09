@@ -31,60 +31,60 @@ export const LIST_MCPRESOURCE_REQUEST = "LIST_MCPRESOURCE_REQUEST";
 export const LIST_MCPRESOURCE_SUCCESS = "LIST_MCPRESOURCE_SUCCESS";
 export const LIST_MCPRESOURCE_FAILURE = "LIST_MCPRESOURCE_FAILURE";
 export const addMcpResourceRequest = () => ({
-    type: ADD_MCPRESOURCE_REQUEST,
+  type: ADD_MCPRESOURCE_REQUEST,
 });
 export const addMcpResourceSuccess = (McpResources) => ({
-    type: ADD_MCPRESOURCE_SUCCESS,
-    payload: McpResources,
+  type: ADD_MCPRESOURCE_SUCCESS,
+  payload: McpResources,
 });
 export const addMcpResourceFailure = (error) => ({
-    type: ADD_MCPRESOURCE_FAILURE,
-    payload: error,
+  type: ADD_MCPRESOURCE_FAILURE,
+  payload: error,
 });
 export const fetchMcpResourceRequest = () => ({
-    type: FETCH_MCPRESOURCE_REQUEST,
+  type: FETCH_MCPRESOURCE_REQUEST,
 });
 export const fetchMcpResourceSuccess = (McpResources) => ({
-    type: FETCH_MCPRESOURCE_SUCCESS,
-    payload: McpResources,
+  type: FETCH_MCPRESOURCE_SUCCESS,
+  payload: McpResources,
 });
 export const fetchMcpResourceFailure = (error) => ({
-    type: FETCH_MCPRESOURCE_FAILURE,
-    payload: error,
+  type: FETCH_MCPRESOURCE_FAILURE,
+  payload: error,
 });
 export const listMcpResourceRequest = () => ({
-    type: LIST_MCPRESOURCE_REQUEST,
+  type: LIST_MCPRESOURCE_REQUEST,
 });
 export const listMcpResourceSuccess = (McpResources) => ({
-    type: LIST_MCPRESOURCE_SUCCESS,
-    payload: McpResources,
+  type: LIST_MCPRESOURCE_SUCCESS,
+  payload: McpResources,
 });
 export const listMcpResourceFailure = (error) => ({
-    type: LIST_MCPRESOURCE_FAILURE,
-    payload: error,
+  type: LIST_MCPRESOURCE_FAILURE,
+  payload: error,
 });
 export const updateMcpResourceRequest = (McpResource) => ({
-    type: UPDATE_MCPRESOURCE_REQUEST,
-    payload: McpResource,
+  type: UPDATE_MCPRESOURCE_REQUEST,
+  payload: McpResource,
 });
 export const updateMcpResourceSuccess = (McpResource) => ({
-    type: UPDATE_MCPRESOURCE_SUCCESS,
-    payload: McpResource,
+  type: UPDATE_MCPRESOURCE_SUCCESS,
+  payload: McpResource,
 });
 export const updateMcpResourceFailure = (error) => ({
-    type: UPDATE_MCPRESOURCE_FAILURE,
-    payload: error,
+  type: UPDATE_MCPRESOURCE_FAILURE,
+  payload: error,
 });
 export const deleteMcpResourceRequest = (McpResource) => ({
-    type: DELETE_MCPRESOURCE_REQUEST,
-    payload: McpResource,
+  type: DELETE_MCPRESOURCE_REQUEST,
+  payload: McpResource,
 });
 export const deleteMcpResourceSuccess = (McpResource) => ({
-    type: DELETE_MCPRESOURCE_SUCCESS,
-    payload: McpResource,
+  type: DELETE_MCPRESOURCE_SUCCESS,
+  payload: McpResource,
 });
 export const deleteMcpResourceFailure = (error) => ({
-    type: DELETE_MCPRESOURCE_FAILURE,
-    payload: error,
+  type: DELETE_MCPRESOURCE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=McpResourceApiAction.js.map

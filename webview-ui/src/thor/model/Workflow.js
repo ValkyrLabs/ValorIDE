@@ -28,60 +28,66 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { TaskFromJSON, TaskToJSON, WorkflowStateFromJSON, WorkflowStateToJSON, } from "./";
+import {
+  TaskFromJSON,
+  TaskToJSON,
+  WorkflowStateFromJSON,
+  WorkflowStateToJSON,
+} from "./";
 export function WorkflowFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        tasks: json["tasks"].map(TaskFromJSON),
-        name: !exists(json, "name") ? undefined : json["name"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        role: !exists(json, "role") ? undefined : json["role"],
-        schedule: !exists(json, "schedule") ? undefined : json["schedule"],
-        meta: !exists(json, "meta") ? undefined : json["meta"],
-        version: !exists(json, "version") ? undefined : json["version"],
-        workflowState: !exists(json, "workflow_state")
-            ? undefined
-            : json["workflow_state"].map(WorkflowStateFromJSON),
-        status: !exists(json, "status") ? undefined : json["status"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    tasks: json["tasks"].map(TaskFromJSON),
+    name: !exists(json, "name") ? undefined : json["name"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    role: !exists(json, "role") ? undefined : json["role"],
+    schedule: !exists(json, "schedule") ? undefined : json["schedule"],
+    meta: !exists(json, "meta") ? undefined : json["meta"],
+    version: !exists(json, "version") ? undefined : json["version"],
+    workflowState: !exists(json, "workflow_state")
+      ? undefined
+      : json["workflow_state"].map(WorkflowStateFromJSON),
+    status: !exists(json, "status") ? undefined : json["status"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function WorkflowToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        tasks: value.tasks.map(TaskToJSON),
-        name: value.name,
-        description: value.description,
-        role: value.role,
-        schedule: value.schedule,
-        meta: value.meta,
-        workflow_state: value.workflowState === undefined
-            ? undefined
-            : value.workflowState.map(WorkflowStateToJSON),
-        status: value.status,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    tasks: value.tasks.map(TaskToJSON),
+    name: value.name,
+    description: value.description,
+    role: value.role,
+    schedule: value.schedule,
+    meta: value.meta,
+    workflow_state:
+      value.workflowState === undefined
+        ? undefined
+        : value.workflowState.map(WorkflowStateToJSON),
+    status: value.status,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -89,9 +95,9 @@ export function WorkflowToJSON(value) {
  */
 export var WorkflowRoleEnum;
 (function (WorkflowRoleEnum) {
-    WorkflowRoleEnum["USER"] = "user";
-    WorkflowRoleEnum["ASSISTANT"] = "assistant";
-    WorkflowRoleEnum["SYSTEM"] = "system";
+  WorkflowRoleEnum["USER"] = "user";
+  WorkflowRoleEnum["ASSISTANT"] = "assistant";
+  WorkflowRoleEnum["SYSTEM"] = "system";
 })(WorkflowRoleEnum || (WorkflowRoleEnum = {}));
 /**
  * @export
@@ -99,12 +105,12 @@ export var WorkflowRoleEnum;
  */
 export var WorkflowStatusEnum;
 (function (WorkflowStatusEnum) {
-    WorkflowStatusEnum["RUNNING"] = "running";
-    WorkflowStatusEnum["STOPPED"] = "stopped";
-    WorkflowStatusEnum["PAUSED"] = "paused";
-    WorkflowStatusEnum["READY"] = "ready";
-    WorkflowStatusEnum["WARNING"] = "warning";
-    WorkflowStatusEnum["ERROR"] = "error";
-    WorkflowStatusEnum["DISABLED"] = "disabled";
+  WorkflowStatusEnum["RUNNING"] = "running";
+  WorkflowStatusEnum["STOPPED"] = "stopped";
+  WorkflowStatusEnum["PAUSED"] = "paused";
+  WorkflowStatusEnum["READY"] = "ready";
+  WorkflowStatusEnum["WARNING"] = "warning";
+  WorkflowStatusEnum["ERROR"] = "error";
+  WorkflowStatusEnum["DISABLED"] = "disabled";
 })(WorkflowStatusEnum || (WorkflowStatusEnum = {}));
 //# sourceMappingURL=Workflow.js.map

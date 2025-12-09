@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: SubscriberList
 */
-export const SubscriberListMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const SubscriberListMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("SubscriberList MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=SubscriberListApiMiddleware.js.map

@@ -31,60 +31,60 @@ export const LIST_HOSTINSTANCE_REQUEST = "LIST_HOSTINSTANCE_REQUEST";
 export const LIST_HOSTINSTANCE_SUCCESS = "LIST_HOSTINSTANCE_SUCCESS";
 export const LIST_HOSTINSTANCE_FAILURE = "LIST_HOSTINSTANCE_FAILURE";
 export const addHostInstanceRequest = () => ({
-    type: ADD_HOSTINSTANCE_REQUEST,
+  type: ADD_HOSTINSTANCE_REQUEST,
 });
 export const addHostInstanceSuccess = (HostInstances) => ({
-    type: ADD_HOSTINSTANCE_SUCCESS,
-    payload: HostInstances,
+  type: ADD_HOSTINSTANCE_SUCCESS,
+  payload: HostInstances,
 });
 export const addHostInstanceFailure = (error) => ({
-    type: ADD_HOSTINSTANCE_FAILURE,
-    payload: error,
+  type: ADD_HOSTINSTANCE_FAILURE,
+  payload: error,
 });
 export const fetchHostInstanceRequest = () => ({
-    type: FETCH_HOSTINSTANCE_REQUEST,
+  type: FETCH_HOSTINSTANCE_REQUEST,
 });
 export const fetchHostInstanceSuccess = (HostInstances) => ({
-    type: FETCH_HOSTINSTANCE_SUCCESS,
-    payload: HostInstances,
+  type: FETCH_HOSTINSTANCE_SUCCESS,
+  payload: HostInstances,
 });
 export const fetchHostInstanceFailure = (error) => ({
-    type: FETCH_HOSTINSTANCE_FAILURE,
-    payload: error,
+  type: FETCH_HOSTINSTANCE_FAILURE,
+  payload: error,
 });
 export const listHostInstanceRequest = () => ({
-    type: LIST_HOSTINSTANCE_REQUEST,
+  type: LIST_HOSTINSTANCE_REQUEST,
 });
 export const listHostInstanceSuccess = (HostInstances) => ({
-    type: LIST_HOSTINSTANCE_SUCCESS,
-    payload: HostInstances,
+  type: LIST_HOSTINSTANCE_SUCCESS,
+  payload: HostInstances,
 });
 export const listHostInstanceFailure = (error) => ({
-    type: LIST_HOSTINSTANCE_FAILURE,
-    payload: error,
+  type: LIST_HOSTINSTANCE_FAILURE,
+  payload: error,
 });
 export const updateHostInstanceRequest = (HostInstance) => ({
-    type: UPDATE_HOSTINSTANCE_REQUEST,
-    payload: HostInstance,
+  type: UPDATE_HOSTINSTANCE_REQUEST,
+  payload: HostInstance,
 });
 export const updateHostInstanceSuccess = (HostInstance) => ({
-    type: UPDATE_HOSTINSTANCE_SUCCESS,
-    payload: HostInstance,
+  type: UPDATE_HOSTINSTANCE_SUCCESS,
+  payload: HostInstance,
 });
 export const updateHostInstanceFailure = (error) => ({
-    type: UPDATE_HOSTINSTANCE_FAILURE,
-    payload: error,
+  type: UPDATE_HOSTINSTANCE_FAILURE,
+  payload: error,
 });
 export const deleteHostInstanceRequest = (HostInstance) => ({
-    type: DELETE_HOSTINSTANCE_REQUEST,
-    payload: HostInstance,
+  type: DELETE_HOSTINSTANCE_REQUEST,
+  payload: HostInstance,
 });
 export const deleteHostInstanceSuccess = (HostInstance) => ({
-    type: DELETE_HOSTINSTANCE_SUCCESS,
-    payload: HostInstance,
+  type: DELETE_HOSTINSTANCE_SUCCESS,
+  payload: HostInstance,
 });
 export const deleteHostInstanceFailure = (error) => ({
-    type: DELETE_HOSTINSTANCE_FAILURE,
-    payload: error,
+  type: DELETE_HOSTINSTANCE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=HostInstanceApiAction.js.map

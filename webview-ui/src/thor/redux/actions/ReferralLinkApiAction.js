@@ -31,60 +31,60 @@ export const LIST_REFERRALLINK_REQUEST = "LIST_REFERRALLINK_REQUEST";
 export const LIST_REFERRALLINK_SUCCESS = "LIST_REFERRALLINK_SUCCESS";
 export const LIST_REFERRALLINK_FAILURE = "LIST_REFERRALLINK_FAILURE";
 export const addReferralLinkRequest = () => ({
-    type: ADD_REFERRALLINK_REQUEST,
+  type: ADD_REFERRALLINK_REQUEST,
 });
 export const addReferralLinkSuccess = (ReferralLinks) => ({
-    type: ADD_REFERRALLINK_SUCCESS,
-    payload: ReferralLinks,
+  type: ADD_REFERRALLINK_SUCCESS,
+  payload: ReferralLinks,
 });
 export const addReferralLinkFailure = (error) => ({
-    type: ADD_REFERRALLINK_FAILURE,
-    payload: error,
+  type: ADD_REFERRALLINK_FAILURE,
+  payload: error,
 });
 export const fetchReferralLinkRequest = () => ({
-    type: FETCH_REFERRALLINK_REQUEST,
+  type: FETCH_REFERRALLINK_REQUEST,
 });
 export const fetchReferralLinkSuccess = (ReferralLinks) => ({
-    type: FETCH_REFERRALLINK_SUCCESS,
-    payload: ReferralLinks,
+  type: FETCH_REFERRALLINK_SUCCESS,
+  payload: ReferralLinks,
 });
 export const fetchReferralLinkFailure = (error) => ({
-    type: FETCH_REFERRALLINK_FAILURE,
-    payload: error,
+  type: FETCH_REFERRALLINK_FAILURE,
+  payload: error,
 });
 export const listReferralLinkRequest = () => ({
-    type: LIST_REFERRALLINK_REQUEST,
+  type: LIST_REFERRALLINK_REQUEST,
 });
 export const listReferralLinkSuccess = (ReferralLinks) => ({
-    type: LIST_REFERRALLINK_SUCCESS,
-    payload: ReferralLinks,
+  type: LIST_REFERRALLINK_SUCCESS,
+  payload: ReferralLinks,
 });
 export const listReferralLinkFailure = (error) => ({
-    type: LIST_REFERRALLINK_FAILURE,
-    payload: error,
+  type: LIST_REFERRALLINK_FAILURE,
+  payload: error,
 });
 export const updateReferralLinkRequest = (ReferralLink) => ({
-    type: UPDATE_REFERRALLINK_REQUEST,
-    payload: ReferralLink,
+  type: UPDATE_REFERRALLINK_REQUEST,
+  payload: ReferralLink,
 });
 export const updateReferralLinkSuccess = (ReferralLink) => ({
-    type: UPDATE_REFERRALLINK_SUCCESS,
-    payload: ReferralLink,
+  type: UPDATE_REFERRALLINK_SUCCESS,
+  payload: ReferralLink,
 });
 export const updateReferralLinkFailure = (error) => ({
-    type: UPDATE_REFERRALLINK_FAILURE,
-    payload: error,
+  type: UPDATE_REFERRALLINK_FAILURE,
+  payload: error,
 });
 export const deleteReferralLinkRequest = (ReferralLink) => ({
-    type: DELETE_REFERRALLINK_REQUEST,
-    payload: ReferralLink,
+  type: DELETE_REFERRALLINK_REQUEST,
+  payload: ReferralLink,
 });
 export const deleteReferralLinkSuccess = (ReferralLink) => ({
-    type: DELETE_REFERRALLINK_SUCCESS,
-    payload: ReferralLink,
+  type: DELETE_REFERRALLINK_SUCCESS,
+  payload: ReferralLink,
 });
 export const deleteReferralLinkFailure = (error) => ({
-    type: DELETE_REFERRALLINK_FAILURE,
-    payload: error,
+  type: DELETE_REFERRALLINK_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=ReferralLinkApiAction.js.map

@@ -29,53 +29,54 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function AgentDiscoveryItemFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        agentId: !exists(json, "agentId") ? undefined : json["agentId"],
-        instanceId: !exists(json, "instanceId") ? undefined : json["instanceId"],
-        username: !exists(json, "username") ? undefined : json["username"],
-        status: !exists(json, "status") ? undefined : json["status"],
-        lastSeen: !exists(json, "lastSeen")
-            ? undefined
-            : new Date(json["lastSeen"]),
-        location: !exists(json, "location") ? undefined : json["location"],
-        metadata: !exists(json, "metadata") ? undefined : json["metadata"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    agentId: !exists(json, "agentId") ? undefined : json["agentId"],
+    instanceId: !exists(json, "instanceId") ? undefined : json["instanceId"],
+    username: !exists(json, "username") ? undefined : json["username"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    lastSeen: !exists(json, "lastSeen")
+      ? undefined
+      : new Date(json["lastSeen"]),
+    location: !exists(json, "location") ? undefined : json["location"],
+    metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function AgentDiscoveryItemToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        agentId: value.agentId,
-        instanceId: value.instanceId,
-        username: value.username,
-        status: value.status,
-        lastSeen: value.lastSeen === undefined ? undefined : value.lastSeen.toISOString(),
-        location: value.location,
-        metadata: value.metadata,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    agentId: value.agentId,
+    instanceId: value.instanceId,
+    username: value.username,
+    status: value.status,
+    lastSeen:
+      value.lastSeen === undefined ? undefined : value.lastSeen.toISOString(),
+    location: value.location,
+    metadata: value.metadata,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -83,10 +84,10 @@ export function AgentDiscoveryItemToJSON(value) {
  */
 export var AgentDiscoveryItemStatusEnum;
 (function (AgentDiscoveryItemStatusEnum) {
-    AgentDiscoveryItemStatusEnum["ONLINE"] = "online";
-    AgentDiscoveryItemStatusEnum["OFFLINE"] = "offline";
-    AgentDiscoveryItemStatusEnum["IDLE"] = "idle";
-    AgentDiscoveryItemStatusEnum["BUSY"] = "busy";
-    AgentDiscoveryItemStatusEnum["ERROR"] = "error";
+  AgentDiscoveryItemStatusEnum["ONLINE"] = "online";
+  AgentDiscoveryItemStatusEnum["OFFLINE"] = "offline";
+  AgentDiscoveryItemStatusEnum["IDLE"] = "idle";
+  AgentDiscoveryItemStatusEnum["BUSY"] = "busy";
+  AgentDiscoveryItemStatusEnum["ERROR"] = "error";
 })(AgentDiscoveryItemStatusEnum || (AgentDiscoveryItemStatusEnum = {}));
 //# sourceMappingURL=AgentDiscoveryItem.js.map

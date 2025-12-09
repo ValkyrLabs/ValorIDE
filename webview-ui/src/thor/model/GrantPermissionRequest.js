@@ -29,43 +29,43 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function GrantPermissionRequestFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        subjectType: json["subjectType"],
-        subjectId: json["subjectId"],
-        permission: !exists(json, "permission") ? undefined : json["permission"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    subjectType: json["subjectType"],
+    subjectId: json["subjectId"],
+    permission: !exists(json, "permission") ? undefined : json["permission"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function GrantPermissionRequestToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        subjectType: value.subjectType,
-        subjectId: value.subjectId,
-        permission: value.permission,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    subjectType: value.subjectType,
+    subjectId: value.subjectId,
+    permission: value.permission,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -73,21 +73,27 @@ export function GrantPermissionRequestToJSON(value) {
  */
 export var GrantPermissionRequestSubjectTypeEnum;
 (function (GrantPermissionRequestSubjectTypeEnum) {
-    GrantPermissionRequestSubjectTypeEnum["USER"] = "user";
-    GrantPermissionRequestSubjectTypeEnum["ORG"] = "org";
-    GrantPermissionRequestSubjectTypeEnum["SPACE"] = "space";
-    GrantPermissionRequestSubjectTypeEnum["ROLE"] = "role";
-})(GrantPermissionRequestSubjectTypeEnum || (GrantPermissionRequestSubjectTypeEnum = {}));
+  GrantPermissionRequestSubjectTypeEnum["USER"] = "user";
+  GrantPermissionRequestSubjectTypeEnum["ORG"] = "org";
+  GrantPermissionRequestSubjectTypeEnum["SPACE"] = "space";
+  GrantPermissionRequestSubjectTypeEnum["ROLE"] = "role";
+})(
+  GrantPermissionRequestSubjectTypeEnum ||
+    (GrantPermissionRequestSubjectTypeEnum = {}),
+);
 /**
  * @export
  * @enum {string}
  */
 export var GrantPermissionRequestPermissionEnum;
 (function (GrantPermissionRequestPermissionEnum) {
-    GrantPermissionRequestPermissionEnum["READ"] = "read";
-    GrantPermissionRequestPermissionEnum["WRITE"] = "write";
-    GrantPermissionRequestPermissionEnum["SHARE"] = "share";
-    GrantPermissionRequestPermissionEnum["DELETE"] = "delete";
-    GrantPermissionRequestPermissionEnum["ADMIN"] = "admin";
-})(GrantPermissionRequestPermissionEnum || (GrantPermissionRequestPermissionEnum = {}));
+  GrantPermissionRequestPermissionEnum["READ"] = "read";
+  GrantPermissionRequestPermissionEnum["WRITE"] = "write";
+  GrantPermissionRequestPermissionEnum["SHARE"] = "share";
+  GrantPermissionRequestPermissionEnum["DELETE"] = "delete";
+  GrantPermissionRequestPermissionEnum["ADMIN"] = "admin";
+})(
+  GrantPermissionRequestPermissionEnum ||
+    (GrantPermissionRequestPermissionEnum = {}),
+);
 //# sourceMappingURL=GrantPermissionRequest.js.map

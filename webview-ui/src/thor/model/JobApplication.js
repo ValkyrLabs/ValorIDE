@@ -29,83 +29,85 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function JobApplicationFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        jobSeekerId: json["jobSeekerId"],
-        opportunityId: !exists(json, "opportunityId")
-            ? undefined
-            : json["opportunityId"],
-        appliedDate: !exists(json, "appliedDate")
-            ? undefined
-            : new Date(json["appliedDate"]),
-        resumeAttachmentUrl: !exists(json, "resumeAttachmentUrl")
-            ? undefined
-            : json["resumeAttachmentUrl"],
-        coverLetterText: !exists(json, "coverLetterText")
-            ? undefined
-            : json["coverLetterText"],
-        status: !exists(json, "status") ? undefined : json["status"],
-        matchScore: !exists(json, "matchScore") ? undefined : json["matchScore"],
-        matchReasons: !exists(json, "matchReasons")
-            ? undefined
-            : json["matchReasons"],
-        recommendedNextSteps: !exists(json, "recommendedNextSteps")
-            ? undefined
-            : json["recommendedNextSteps"],
-        assignedRecruiter: !exists(json, "assignedRecruiter")
-            ? undefined
-            : json["assignedRecruiter"],
-        internalNotes: !exists(json, "internalNotes")
-            ? undefined
-            : json["internalNotes"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        updatedDate: !exists(json, "updatedDate")
-            ? undefined
-            : new Date(json["updatedDate"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    jobSeekerId: json["jobSeekerId"],
+    opportunityId: !exists(json, "opportunityId")
+      ? undefined
+      : json["opportunityId"],
+    appliedDate: !exists(json, "appliedDate")
+      ? undefined
+      : new Date(json["appliedDate"]),
+    resumeAttachmentUrl: !exists(json, "resumeAttachmentUrl")
+      ? undefined
+      : json["resumeAttachmentUrl"],
+    coverLetterText: !exists(json, "coverLetterText")
+      ? undefined
+      : json["coverLetterText"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    matchScore: !exists(json, "matchScore") ? undefined : json["matchScore"],
+    matchReasons: !exists(json, "matchReasons")
+      ? undefined
+      : json["matchReasons"],
+    recommendedNextSteps: !exists(json, "recommendedNextSteps")
+      ? undefined
+      : json["recommendedNextSteps"],
+    assignedRecruiter: !exists(json, "assignedRecruiter")
+      ? undefined
+      : json["assignedRecruiter"],
+    internalNotes: !exists(json, "internalNotes")
+      ? undefined
+      : json["internalNotes"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    updatedDate: !exists(json, "updatedDate")
+      ? undefined
+      : new Date(json["updatedDate"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function JobApplicationToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        jobSeekerId: value.jobSeekerId,
-        opportunityId: value.opportunityId,
-        appliedDate: value.appliedDate === undefined
-            ? undefined
-            : value.appliedDate.toISOString(),
-        resumeAttachmentUrl: value.resumeAttachmentUrl,
-        coverLetterText: value.coverLetterText,
-        status: value.status,
-        matchScore: value.matchScore,
-        matchReasons: value.matchReasons,
-        recommendedNextSteps: value.recommendedNextSteps,
-        assignedRecruiter: value.assignedRecruiter,
-        internalNotes: value.internalNotes,
-        updatedDate: value.updatedDate === undefined
-            ? undefined
-            : value.updatedDate.toISOString(),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    jobSeekerId: value.jobSeekerId,
+    opportunityId: value.opportunityId,
+    appliedDate:
+      value.appliedDate === undefined
+        ? undefined
+        : value.appliedDate.toISOString(),
+    resumeAttachmentUrl: value.resumeAttachmentUrl,
+    coverLetterText: value.coverLetterText,
+    status: value.status,
+    matchScore: value.matchScore,
+    matchReasons: value.matchReasons,
+    recommendedNextSteps: value.recommendedNextSteps,
+    assignedRecruiter: value.assignedRecruiter,
+    internalNotes: value.internalNotes,
+    updatedDate:
+      value.updatedDate === undefined
+        ? undefined
+        : value.updatedDate.toISOString(),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -113,11 +115,11 @@ export function JobApplicationToJSON(value) {
  */
 export var JobApplicationStatusEnum;
 (function (JobApplicationStatusEnum) {
-    JobApplicationStatusEnum["SUBMITTED"] = "submitted";
-    JobApplicationStatusEnum["REVIEWED"] = "reviewed";
-    JobApplicationStatusEnum["INTERVIEW_SCHEDULED"] = "interview_scheduled";
-    JobApplicationStatusEnum["REJECTED"] = "rejected";
-    JobApplicationStatusEnum["OFFER_SENT"] = "offer_sent";
-    JobApplicationStatusEnum["HIRED"] = "hired";
+  JobApplicationStatusEnum["SUBMITTED"] = "submitted";
+  JobApplicationStatusEnum["REVIEWED"] = "reviewed";
+  JobApplicationStatusEnum["INTERVIEW_SCHEDULED"] = "interview_scheduled";
+  JobApplicationStatusEnum["REJECTED"] = "rejected";
+  JobApplicationStatusEnum["OFFER_SENT"] = "offer_sent";
+  JobApplicationStatusEnum["HIRED"] = "hired";
 })(JobApplicationStatusEnum || (JobApplicationStatusEnum = {}));
 //# sourceMappingURL=JobApplication.js.map

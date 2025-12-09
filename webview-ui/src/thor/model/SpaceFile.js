@@ -30,52 +30,53 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { FileRecordFromJSON, FileRecordToJSON } from "./";
 export function SpaceFileFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        spaceId: json["spaceId"],
-        fileRecordId: json["fileRecordId"],
-        fileRecord: !exists(json, "fileRecord")
-            ? undefined
-            : FileRecordFromJSON(json["fileRecord"]),
-        addedDate: !exists(json, "addedDate")
-            ? undefined
-            : new Date(json["addedDate"]),
-        isPinned: !exists(json, "isPinned") ? undefined : json["isPinned"],
-        pinnedById: !exists(json, "pinnedById") ? undefined : json["pinnedById"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    spaceId: json["spaceId"],
+    fileRecordId: json["fileRecordId"],
+    fileRecord: !exists(json, "fileRecord")
+      ? undefined
+      : FileRecordFromJSON(json["fileRecord"]),
+    addedDate: !exists(json, "addedDate")
+      ? undefined
+      : new Date(json["addedDate"]),
+    isPinned: !exists(json, "isPinned") ? undefined : json["isPinned"],
+    pinnedById: !exists(json, "pinnedById") ? undefined : json["pinnedById"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function SpaceFileToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        spaceId: value.spaceId,
-        fileRecordId: value.fileRecordId,
-        fileRecord: FileRecordToJSON(value.fileRecord),
-        addedDate: value.addedDate === undefined ? undefined : value.addedDate.toISOString(),
-        isPinned: value.isPinned,
-        pinnedById: value.pinnedById,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    spaceId: value.spaceId,
+    fileRecordId: value.fileRecordId,
+    fileRecord: FileRecordToJSON(value.fileRecord),
+    addedDate:
+      value.addedDate === undefined ? undefined : value.addedDate.toISOString(),
+    isPinned: value.isPinned,
+    pinnedById: value.pinnedById,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=SpaceFile.js.map

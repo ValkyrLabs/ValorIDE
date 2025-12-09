@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Discount
 */
-export const DiscountMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const DiscountMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Discount MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=DiscountApiMiddleware.js.map

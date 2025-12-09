@@ -29,69 +29,70 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function CareerOpportunityFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        title: json["title"],
-        opportunityType: json["opportunityType"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        requiredSkills: !exists(json, "requiredSkills")
-            ? undefined
-            : json["requiredSkills"],
-        preferredSkills: !exists(json, "preferredSkills")
-            ? undefined
-            : json["preferredSkills"],
-        experienceYearsMin: !exists(json, "experienceYearsMin")
-            ? undefined
-            : json["experienceYearsMin"],
-        experienceYearsMax: !exists(json, "experienceYearsMax")
-            ? undefined
-            : json["experienceYearsMax"],
-        commitment: !exists(json, "commitment") ? undefined : json["commitment"],
-        isActive: !exists(json, "isActive") ? undefined : json["isActive"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        updatedDate: !exists(json, "updatedDate")
-            ? undefined
-            : new Date(json["updatedDate"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    title: json["title"],
+    opportunityType: json["opportunityType"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    requiredSkills: !exists(json, "requiredSkills")
+      ? undefined
+      : json["requiredSkills"],
+    preferredSkills: !exists(json, "preferredSkills")
+      ? undefined
+      : json["preferredSkills"],
+    experienceYearsMin: !exists(json, "experienceYearsMin")
+      ? undefined
+      : json["experienceYearsMin"],
+    experienceYearsMax: !exists(json, "experienceYearsMax")
+      ? undefined
+      : json["experienceYearsMax"],
+    commitment: !exists(json, "commitment") ? undefined : json["commitment"],
+    isActive: !exists(json, "isActive") ? undefined : json["isActive"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    updatedDate: !exists(json, "updatedDate")
+      ? undefined
+      : new Date(json["updatedDate"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function CareerOpportunityToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        title: value.title,
-        opportunityType: value.opportunityType,
-        description: value.description,
-        requiredSkills: value.requiredSkills,
-        preferredSkills: value.preferredSkills,
-        experienceYearsMin: value.experienceYearsMin,
-        experienceYearsMax: value.experienceYearsMax,
-        commitment: value.commitment,
-        isActive: value.isActive,
-        updatedDate: value.updatedDate === undefined
-            ? undefined
-            : value.updatedDate.toISOString(),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    title: value.title,
+    opportunityType: value.opportunityType,
+    description: value.description,
+    requiredSkills: value.requiredSkills,
+    preferredSkills: value.preferredSkills,
+    experienceYearsMin: value.experienceYearsMin,
+    experienceYearsMax: value.experienceYearsMax,
+    commitment: value.commitment,
+    isActive: value.isActive,
+    updatedDate:
+      value.updatedDate === undefined
+        ? undefined
+        : value.updatedDate.toISOString(),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -99,20 +100,25 @@ export function CareerOpportunityToJSON(value) {
  */
 export var CareerOpportunityOpportunityTypeEnum;
 (function (CareerOpportunityOpportunityTypeEnum) {
-    CareerOpportunityOpportunityTypeEnum["DIRECT_HIRE"] = "direct_hire";
-    CareerOpportunityOpportunityTypeEnum["CONSULTING_ENGAGEMENT"] = "consulting_engagement";
-    CareerOpportunityOpportunityTypeEnum["RESELLER_PARTNER"] = "reseller_partner";
-    CareerOpportunityOpportunityTypeEnum["OPEN_SOURCE_CONTRIBUTOR"] = "open_source_contributor";
-})(CareerOpportunityOpportunityTypeEnum || (CareerOpportunityOpportunityTypeEnum = {}));
+  CareerOpportunityOpportunityTypeEnum["DIRECT_HIRE"] = "direct_hire";
+  CareerOpportunityOpportunityTypeEnum["CONSULTING_ENGAGEMENT"] =
+    "consulting_engagement";
+  CareerOpportunityOpportunityTypeEnum["RESELLER_PARTNER"] = "reseller_partner";
+  CareerOpportunityOpportunityTypeEnum["OPEN_SOURCE_CONTRIBUTOR"] =
+    "open_source_contributor";
+})(
+  CareerOpportunityOpportunityTypeEnum ||
+    (CareerOpportunityOpportunityTypeEnum = {}),
+);
 /**
  * @export
  * @enum {string}
  */
 export var CareerOpportunityCommitmentEnum;
 (function (CareerOpportunityCommitmentEnum) {
-    CareerOpportunityCommitmentEnum["FULL_TIME"] = "full_time";
-    CareerOpportunityCommitmentEnum["PART_TIME"] = "part_time";
-    CareerOpportunityCommitmentEnum["CONTRACT"] = "contract";
-    CareerOpportunityCommitmentEnum["HOURLY"] = "hourly";
+  CareerOpportunityCommitmentEnum["FULL_TIME"] = "full_time";
+  CareerOpportunityCommitmentEnum["PART_TIME"] = "part_time";
+  CareerOpportunityCommitmentEnum["CONTRACT"] = "contract";
+  CareerOpportunityCommitmentEnum["HOURLY"] = "hourly";
 })(CareerOpportunityCommitmentEnum || (CareerOpportunityCommitmentEnum = {}));
 //# sourceMappingURL=CareerOpportunity.js.map

@@ -28,79 +28,87 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { IntegrationAccountFromJSON, IntegrationAccountToJSON, OasOpenAPISpecFromJSON, OasOpenAPISpecToJSON, } from "./";
+import {
+  IntegrationAccountFromJSON,
+  IntegrationAccountToJSON,
+  OasOpenAPISpecFromJSON,
+  OasOpenAPISpecToJSON,
+} from "./";
 export function ExecModuleFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        systemId: !exists(json, "systemId") ? undefined : json["systemId"],
-        taskId: !exists(json, "taskId") ? undefined : json["taskId"],
-        role: !exists(json, "role") ? undefined : json["role"],
-        name: !exists(json, "name") ? undefined : json["name"],
-        moduleOrder: !exists(json, "moduleOrder") ? undefined : json["moduleOrder"],
-        notes: !exists(json, "notes") ? undefined : json["notes"],
-        longDescription: !exists(json, "longDescription")
-            ? undefined
-            : json["longDescription"],
-        integrationAccount: !exists(json, "integrationAccount")
-            ? undefined
-            : IntegrationAccountFromJSON(json["integrationAccount"]),
-        className: !exists(json, "className") ? undefined : json["className"],
-        moduleType: !exists(json, "moduleType") ? undefined : json["moduleType"],
-        moduleData: !exists(json, "moduleData") ? undefined : json["moduleData"],
-        config: !exists(json, "config") ? undefined : json["config"],
-        status: !exists(json, "status") ? undefined : json["status"],
-        execModuleIntegrationAccount: !exists(json, "execModuleIntegrationAccount")
-            ? undefined
-            : IntegrationAccountFromJSON(json["execModuleIntegrationAccount"]),
-        specs: !exists(json, "specs")
-            ? undefined
-            : json["specs"].map(OasOpenAPISpecFromJSON),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    systemId: !exists(json, "systemId") ? undefined : json["systemId"],
+    taskId: !exists(json, "taskId") ? undefined : json["taskId"],
+    role: !exists(json, "role") ? undefined : json["role"],
+    name: !exists(json, "name") ? undefined : json["name"],
+    moduleOrder: !exists(json, "moduleOrder") ? undefined : json["moduleOrder"],
+    notes: !exists(json, "notes") ? undefined : json["notes"],
+    longDescription: !exists(json, "longDescription")
+      ? undefined
+      : json["longDescription"],
+    integrationAccount: !exists(json, "integrationAccount")
+      ? undefined
+      : IntegrationAccountFromJSON(json["integrationAccount"]),
+    className: !exists(json, "className") ? undefined : json["className"],
+    moduleType: !exists(json, "moduleType") ? undefined : json["moduleType"],
+    moduleData: !exists(json, "moduleData") ? undefined : json["moduleData"],
+    config: !exists(json, "config") ? undefined : json["config"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    execModuleIntegrationAccount: !exists(json, "execModuleIntegrationAccount")
+      ? undefined
+      : IntegrationAccountFromJSON(json["execModuleIntegrationAccount"]),
+    specs: !exists(json, "specs")
+      ? undefined
+      : json["specs"].map(OasOpenAPISpecFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ExecModuleToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        systemId: value.systemId,
-        taskId: value.taskId,
-        role: value.role,
-        name: value.name,
-        moduleOrder: value.moduleOrder,
-        notes: value.notes,
-        longDescription: value.longDescription,
-        integrationAccount: IntegrationAccountToJSON(value.integrationAccount),
-        className: value.className,
-        moduleType: value.moduleType,
-        moduleData: value.moduleData,
-        config: value.config,
-        status: value.status,
-        execModuleIntegrationAccount: IntegrationAccountToJSON(value.execModuleIntegrationAccount),
-        specs: value.specs === undefined
-            ? undefined
-            : value.specs.map(OasOpenAPISpecToJSON),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    systemId: value.systemId,
+    taskId: value.taskId,
+    role: value.role,
+    name: value.name,
+    moduleOrder: value.moduleOrder,
+    notes: value.notes,
+    longDescription: value.longDescription,
+    integrationAccount: IntegrationAccountToJSON(value.integrationAccount),
+    className: value.className,
+    moduleType: value.moduleType,
+    moduleData: value.moduleData,
+    config: value.config,
+    status: value.status,
+    execModuleIntegrationAccount: IntegrationAccountToJSON(
+      value.execModuleIntegrationAccount,
+    ),
+    specs:
+      value.specs === undefined
+        ? undefined
+        : value.specs.map(OasOpenAPISpecToJSON),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -108,9 +116,9 @@ export function ExecModuleToJSON(value) {
  */
 export var ExecModuleRoleEnum;
 (function (ExecModuleRoleEnum) {
-    ExecModuleRoleEnum["ANONYMOUS"] = "anonymous";
-    ExecModuleRoleEnum["USER"] = "user";
-    ExecModuleRoleEnum["ADMIN"] = "admin";
+  ExecModuleRoleEnum["ANONYMOUS"] = "anonymous";
+  ExecModuleRoleEnum["USER"] = "user";
+  ExecModuleRoleEnum["ADMIN"] = "admin";
 })(ExecModuleRoleEnum || (ExecModuleRoleEnum = {}));
 /**
  * @export
@@ -118,11 +126,11 @@ export var ExecModuleRoleEnum;
  */
 export var ExecModuleModuleTypeEnum;
 (function (ExecModuleModuleTypeEnum) {
-    ExecModuleModuleTypeEnum["BROADCAST"] = "broadcast";
-    ExecModuleModuleTypeEnum["IO"] = "io";
-    ExecModuleModuleTypeEnum["READER"] = "reader";
-    ExecModuleModuleTypeEnum["WRITER"] = "writer";
-    ExecModuleModuleTypeEnum["TRANSFORMER"] = "transformer";
+  ExecModuleModuleTypeEnum["BROADCAST"] = "broadcast";
+  ExecModuleModuleTypeEnum["IO"] = "io";
+  ExecModuleModuleTypeEnum["READER"] = "reader";
+  ExecModuleModuleTypeEnum["WRITER"] = "writer";
+  ExecModuleModuleTypeEnum["TRANSFORMER"] = "transformer";
 })(ExecModuleModuleTypeEnum || (ExecModuleModuleTypeEnum = {}));
 /**
  * @export
@@ -130,12 +138,12 @@ export var ExecModuleModuleTypeEnum;
  */
 export var ExecModuleStatusEnum;
 (function (ExecModuleStatusEnum) {
-    ExecModuleStatusEnum["RUNNING"] = "running";
-    ExecModuleStatusEnum["STOPPED"] = "stopped";
-    ExecModuleStatusEnum["READY"] = "ready";
-    ExecModuleStatusEnum["GOOD"] = "good";
-    ExecModuleStatusEnum["WARNING"] = "warning";
-    ExecModuleStatusEnum["ERROR"] = "error";
-    ExecModuleStatusEnum["DISABLED"] = "disabled";
+  ExecModuleStatusEnum["RUNNING"] = "running";
+  ExecModuleStatusEnum["STOPPED"] = "stopped";
+  ExecModuleStatusEnum["READY"] = "ready";
+  ExecModuleStatusEnum["GOOD"] = "good";
+  ExecModuleStatusEnum["WARNING"] = "warning";
+  ExecModuleStatusEnum["ERROR"] = "error";
+  ExecModuleStatusEnum["DISABLED"] = "disabled";
 })(ExecModuleStatusEnum || (ExecModuleStatusEnum = {}));
 //# sourceMappingURL=ExecModule.js.map

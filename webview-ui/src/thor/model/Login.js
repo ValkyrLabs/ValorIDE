@@ -30,48 +30,48 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { PrincipalFromJSON, PrincipalToJSON } from "./";
 export function LoginFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        username: !exists(json, "username") ? undefined : json["username"],
-        password: !exists(json, "password") ? undefined : json["password"],
-        token: !exists(json, "token") ? undefined : json["token"],
-        authenticatedPrincipal: !exists(json, "authenticatedPrincipal")
-            ? undefined
-            : PrincipalFromJSON(json["authenticatedPrincipal"]),
-        description: !exists(json, "description") ? undefined : json["description"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    username: !exists(json, "username") ? undefined : json["username"],
+    password: !exists(json, "password") ? undefined : json["password"],
+    token: !exists(json, "token") ? undefined : json["token"],
+    authenticatedPrincipal: !exists(json, "authenticatedPrincipal")
+      ? undefined
+      : PrincipalFromJSON(json["authenticatedPrincipal"]),
+    description: !exists(json, "description") ? undefined : json["description"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function LoginToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        username: value.username,
-        password: value.password,
-        token: value.token,
-        authenticatedPrincipal: PrincipalToJSON(value.authenticatedPrincipal),
-        description: value.description,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    username: value.username,
+    password: value.password,
+    token: value.token,
+    authenticatedPrincipal: PrincipalToJSON(value.authenticatedPrincipal),
+    description: value.description,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=Login.js.map

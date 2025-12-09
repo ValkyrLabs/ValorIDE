@@ -29,53 +29,53 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function ContentMediaLinkFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        applicationId: !exists(json, "applicationId")
-            ? undefined
-            : json["applicationId"],
-        contentDataId: !exists(json, "contentDataId")
-            ? undefined
-            : json["contentDataId"],
-        contentUse: !exists(json, "contentUse") ? undefined : json["contentUse"],
-        contentType: !exists(json, "contentType") ? undefined : json["contentType"],
-        mediaUrl: !exists(json, "mediaUrl") ? undefined : json["mediaUrl"],
-        fileName: !exists(json, "fileName") ? undefined : json["fileName"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    applicationId: !exists(json, "applicationId")
+      ? undefined
+      : json["applicationId"],
+    contentDataId: !exists(json, "contentDataId")
+      ? undefined
+      : json["contentDataId"],
+    contentUse: !exists(json, "contentUse") ? undefined : json["contentUse"],
+    contentType: !exists(json, "contentType") ? undefined : json["contentType"],
+    mediaUrl: !exists(json, "mediaUrl") ? undefined : json["mediaUrl"],
+    fileName: !exists(json, "fileName") ? undefined : json["fileName"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ContentMediaLinkToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        applicationId: value.applicationId,
-        contentDataId: value.contentDataId,
-        contentUse: value.contentUse,
-        contentType: value.contentType,
-        mediaUrl: value.mediaUrl,
-        fileName: value.fileName,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    applicationId: value.applicationId,
+    contentDataId: value.contentDataId,
+    contentUse: value.contentUse,
+    contentType: value.contentType,
+    mediaUrl: value.mediaUrl,
+    fileName: value.fileName,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -83,16 +83,16 @@ export function ContentMediaLinkToJSON(value) {
  */
 export var ContentMediaLinkContentUseEnum;
 (function (ContentMediaLinkContentUseEnum) {
-    ContentMediaLinkContentUseEnum["NONE"] = "none";
-    ContentMediaLinkContentUseEnum["SCREENSHOT"] = "screenshot";
-    ContentMediaLinkContentUseEnum["SELFIE"] = "selfie";
-    ContentMediaLinkContentUseEnum["PORTRAIT"] = "portrait";
-    ContentMediaLinkContentUseEnum["PROMOTIONAL"] = "promotional";
-    ContentMediaLinkContentUseEnum["INFORMATIONAL"] = "informational";
-    ContentMediaLinkContentUseEnum["ENTERTAINMENT"] = "entertainment";
-    ContentMediaLinkContentUseEnum["PRODUCT"] = "product";
-    ContentMediaLinkContentUseEnum["SUPPORT"] = "support";
-    ContentMediaLinkContentUseEnum["TRAINING"] = "training";
+  ContentMediaLinkContentUseEnum["NONE"] = "none";
+  ContentMediaLinkContentUseEnum["SCREENSHOT"] = "screenshot";
+  ContentMediaLinkContentUseEnum["SELFIE"] = "selfie";
+  ContentMediaLinkContentUseEnum["PORTRAIT"] = "portrait";
+  ContentMediaLinkContentUseEnum["PROMOTIONAL"] = "promotional";
+  ContentMediaLinkContentUseEnum["INFORMATIONAL"] = "informational";
+  ContentMediaLinkContentUseEnum["ENTERTAINMENT"] = "entertainment";
+  ContentMediaLinkContentUseEnum["PRODUCT"] = "product";
+  ContentMediaLinkContentUseEnum["SUPPORT"] = "support";
+  ContentMediaLinkContentUseEnum["TRAINING"] = "training";
 })(ContentMediaLinkContentUseEnum || (ContentMediaLinkContentUseEnum = {}));
 /**
  * @export
@@ -100,16 +100,16 @@ export var ContentMediaLinkContentUseEnum;
  */
 export var ContentMediaLinkContentTypeEnum;
 (function (ContentMediaLinkContentTypeEnum) {
-    ContentMediaLinkContentTypeEnum["IMAGE"] = "image";
-    ContentMediaLinkContentTypeEnum["ICON"] = "icon";
-    ContentMediaLinkContentTypeEnum["VIDEO"] = "video";
-    ContentMediaLinkContentTypeEnum["AUDIO"] = "audio";
-    ContentMediaLinkContentTypeEnum["TEXT"] = "text";
-    ContentMediaLinkContentTypeEnum["JSON"] = "json";
-    ContentMediaLinkContentTypeEnum["YAML"] = "yaml";
-    ContentMediaLinkContentTypeEnum["XML"] = "xml";
-    ContentMediaLinkContentTypeEnum["MARKDOWN"] = "markdown";
-    ContentMediaLinkContentTypeEnum["SPREADSHEET"] = "spreadsheet";
-    ContentMediaLinkContentTypeEnum["PDF"] = "pdf";
+  ContentMediaLinkContentTypeEnum["IMAGE"] = "image";
+  ContentMediaLinkContentTypeEnum["ICON"] = "icon";
+  ContentMediaLinkContentTypeEnum["VIDEO"] = "video";
+  ContentMediaLinkContentTypeEnum["AUDIO"] = "audio";
+  ContentMediaLinkContentTypeEnum["TEXT"] = "text";
+  ContentMediaLinkContentTypeEnum["JSON"] = "json";
+  ContentMediaLinkContentTypeEnum["YAML"] = "yaml";
+  ContentMediaLinkContentTypeEnum["XML"] = "xml";
+  ContentMediaLinkContentTypeEnum["MARKDOWN"] = "markdown";
+  ContentMediaLinkContentTypeEnum["SPREADSHEET"] = "spreadsheet";
+  ContentMediaLinkContentTypeEnum["PDF"] = "pdf";
 })(ContentMediaLinkContentTypeEnum || (ContentMediaLinkContentTypeEnum = {}));
 //# sourceMappingURL=ContentMediaLink.js.map

@@ -28,62 +28,67 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { FileRecordFromJSON, FileRecordToJSON, PrincipalFromJSON, PrincipalToJSON, } from "./";
+import {
+  FileRecordFromJSON,
+  FileRecordToJSON,
+  PrincipalFromJSON,
+  PrincipalToJSON,
+} from "./";
 export function FileDownloadTokenFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        token: json["token"],
-        fileId: json["fileId"],
-        expiresAt: new Date(json["expiresAt"]),
-        file: !exists(json, "file") ? undefined : FileRecordFromJSON(json["file"]),
-        downloadCount: !exists(json, "downloadCount")
-            ? undefined
-            : json["downloadCount"],
-        maxDownloads: !exists(json, "maxDownloads")
-            ? undefined
-            : json["maxDownloads"],
-        issuedToId: !exists(json, "issuedToId") ? undefined : json["issuedToId"],
-        issuedTo: !exists(json, "issuedTo")
-            ? undefined
-            : PrincipalFromJSON(json["issuedTo"]),
-        ipAddress: !exists(json, "ipAddress") ? undefined : json["ipAddress"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    token: json["token"],
+    fileId: json["fileId"],
+    expiresAt: new Date(json["expiresAt"]),
+    file: !exists(json, "file") ? undefined : FileRecordFromJSON(json["file"]),
+    downloadCount: !exists(json, "downloadCount")
+      ? undefined
+      : json["downloadCount"],
+    maxDownloads: !exists(json, "maxDownloads")
+      ? undefined
+      : json["maxDownloads"],
+    issuedToId: !exists(json, "issuedToId") ? undefined : json["issuedToId"],
+    issuedTo: !exists(json, "issuedTo")
+      ? undefined
+      : PrincipalFromJSON(json["issuedTo"]),
+    ipAddress: !exists(json, "ipAddress") ? undefined : json["ipAddress"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function FileDownloadTokenToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        token: value.token,
-        fileId: value.fileId,
-        expiresAt: value.expiresAt.toISOString(),
-        file: FileRecordToJSON(value.file),
-        downloadCount: value.downloadCount,
-        maxDownloads: value.maxDownloads,
-        issuedToId: value.issuedToId,
-        issuedTo: PrincipalToJSON(value.issuedTo),
-        ipAddress: value.ipAddress,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    token: value.token,
+    fileId: value.fileId,
+    expiresAt: value.expiresAt.toISOString(),
+    file: FileRecordToJSON(value.file),
+    downloadCount: value.downloadCount,
+    maxDownloads: value.maxDownloads,
+    issuedToId: value.issuedToId,
+    issuedTo: PrincipalToJSON(value.issuedTo),
+    ipAddress: value.ipAddress,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=FileDownloadToken.js.map

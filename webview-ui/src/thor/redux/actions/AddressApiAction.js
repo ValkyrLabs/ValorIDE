@@ -31,60 +31,60 @@ export const LIST_ADDRESS_REQUEST = "LIST_ADDRESS_REQUEST";
 export const LIST_ADDRESS_SUCCESS = "LIST_ADDRESS_SUCCESS";
 export const LIST_ADDRESS_FAILURE = "LIST_ADDRESS_FAILURE";
 export const addAddressRequest = () => ({
-    type: ADD_ADDRESS_REQUEST,
+  type: ADD_ADDRESS_REQUEST,
 });
 export const addAddressSuccess = (Addresss) => ({
-    type: ADD_ADDRESS_SUCCESS,
-    payload: Addresss,
+  type: ADD_ADDRESS_SUCCESS,
+  payload: Addresss,
 });
 export const addAddressFailure = (error) => ({
-    type: ADD_ADDRESS_FAILURE,
-    payload: error,
+  type: ADD_ADDRESS_FAILURE,
+  payload: error,
 });
 export const fetchAddressRequest = () => ({
-    type: FETCH_ADDRESS_REQUEST,
+  type: FETCH_ADDRESS_REQUEST,
 });
 export const fetchAddressSuccess = (Addresss) => ({
-    type: FETCH_ADDRESS_SUCCESS,
-    payload: Addresss,
+  type: FETCH_ADDRESS_SUCCESS,
+  payload: Addresss,
 });
 export const fetchAddressFailure = (error) => ({
-    type: FETCH_ADDRESS_FAILURE,
-    payload: error,
+  type: FETCH_ADDRESS_FAILURE,
+  payload: error,
 });
 export const listAddressRequest = () => ({
-    type: LIST_ADDRESS_REQUEST,
+  type: LIST_ADDRESS_REQUEST,
 });
 export const listAddressSuccess = (Addresss) => ({
-    type: LIST_ADDRESS_SUCCESS,
-    payload: Addresss,
+  type: LIST_ADDRESS_SUCCESS,
+  payload: Addresss,
 });
 export const listAddressFailure = (error) => ({
-    type: LIST_ADDRESS_FAILURE,
-    payload: error,
+  type: LIST_ADDRESS_FAILURE,
+  payload: error,
 });
 export const updateAddressRequest = (Address) => ({
-    type: UPDATE_ADDRESS_REQUEST,
-    payload: Address,
+  type: UPDATE_ADDRESS_REQUEST,
+  payload: Address,
 });
 export const updateAddressSuccess = (Address) => ({
-    type: UPDATE_ADDRESS_SUCCESS,
-    payload: Address,
+  type: UPDATE_ADDRESS_SUCCESS,
+  payload: Address,
 });
 export const updateAddressFailure = (error) => ({
-    type: UPDATE_ADDRESS_FAILURE,
-    payload: error,
+  type: UPDATE_ADDRESS_FAILURE,
+  payload: error,
 });
 export const deleteAddressRequest = (Address) => ({
-    type: DELETE_ADDRESS_REQUEST,
-    payload: Address,
+  type: DELETE_ADDRESS_REQUEST,
+  payload: Address,
 });
 export const deleteAddressSuccess = (Address) => ({
-    type: DELETE_ADDRESS_SUCCESS,
-    payload: Address,
+  type: DELETE_ADDRESS_SUCCESS,
+  payload: Address,
 });
 export const deleteAddressFailure = (error) => ({
-    type: DELETE_ADDRESS_FAILURE,
-    payload: error,
+  type: DELETE_ADDRESS_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=AddressApiAction.js.map

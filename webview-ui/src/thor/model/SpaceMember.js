@@ -30,59 +30,61 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { PrincipalFromJSON, PrincipalToJSON } from "./";
 export function SpaceMemberFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        spaceId: json["spaceId"],
-        principalId: json["principalId"],
-        role: json["role"],
-        principal: !exists(json, "principal")
-            ? undefined
-            : PrincipalFromJSON(json["principal"]),
-        invitedById: !exists(json, "invitedById") ? undefined : json["invitedById"],
-        invitedAt: !exists(json, "invitedAt")
-            ? undefined
-            : new Date(json["invitedAt"]),
-        acceptedAt: !exists(json, "acceptedAt")
-            ? undefined
-            : new Date(json["acceptedAt"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    spaceId: json["spaceId"],
+    principalId: json["principalId"],
+    role: json["role"],
+    principal: !exists(json, "principal")
+      ? undefined
+      : PrincipalFromJSON(json["principal"]),
+    invitedById: !exists(json, "invitedById") ? undefined : json["invitedById"],
+    invitedAt: !exists(json, "invitedAt")
+      ? undefined
+      : new Date(json["invitedAt"]),
+    acceptedAt: !exists(json, "acceptedAt")
+      ? undefined
+      : new Date(json["acceptedAt"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function SpaceMemberToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        spaceId: value.spaceId,
-        principalId: value.principalId,
-        role: value.role,
-        principal: PrincipalToJSON(value.principal),
-        invitedById: value.invitedById,
-        invitedAt: value.invitedAt === undefined ? undefined : value.invitedAt.toISOString(),
-        acceptedAt: value.acceptedAt === undefined
-            ? undefined
-            : value.acceptedAt.toISOString(),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    spaceId: value.spaceId,
+    principalId: value.principalId,
+    role: value.role,
+    principal: PrincipalToJSON(value.principal),
+    invitedById: value.invitedById,
+    invitedAt:
+      value.invitedAt === undefined ? undefined : value.invitedAt.toISOString(),
+    acceptedAt:
+      value.acceptedAt === undefined
+        ? undefined
+        : value.acceptedAt.toISOString(),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -90,9 +92,9 @@ export function SpaceMemberToJSON(value) {
  */
 export var SpaceMemberRoleEnum;
 (function (SpaceMemberRoleEnum) {
-    SpaceMemberRoleEnum["VIEWER"] = "viewer";
-    SpaceMemberRoleEnum["CONTRIBUTOR"] = "contributor";
-    SpaceMemberRoleEnum["ADMIN"] = "admin";
-    SpaceMemberRoleEnum["OWNER"] = "owner";
+  SpaceMemberRoleEnum["VIEWER"] = "viewer";
+  SpaceMemberRoleEnum["CONTRIBUTOR"] = "contributor";
+  SpaceMemberRoleEnum["ADMIN"] = "admin";
+  SpaceMemberRoleEnum["OWNER"] = "owner";
 })(SpaceMemberRoleEnum || (SpaceMemberRoleEnum = {}));
 //# sourceMappingURL=SpaceMember.js.map

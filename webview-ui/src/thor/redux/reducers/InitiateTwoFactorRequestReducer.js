@@ -16,31 +16,41 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const InitiateTwoFactorRequestSlice = createSlice({
-    name: "InitiateTwoFactorRequests",
-    initialState: [],
-    reducers: {
-        InitiateTwoFactorRequestAdded(state, action) {
-            state.push(action.payload);
-        },
-        InitiateTwoFactorRequestValueToggled(state, action) {
-            console.log("InitiateTwoFactorRequest TOGGLE");
-            console.warn(JSON.stringify(action));
-            const InitiateTwoFactorRequest = state.find((InitiateTwoFactorRequest) => InitiateTwoFactorRequest.id ===
-                action.payload.InitiateTwoFactorRequestId);
-            if (InitiateTwoFactorRequest) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        InitiateTwoFactorRequestpropertySet(state, action) {
-            const InitiateTwoFactorRequest = state.find((InitiateTwoFactorRequest) => InitiateTwoFactorRequest.id ===
-                action.payload.InitiateTwoFactorRequestId);
-            if (InitiateTwoFactorRequest) {
-                //  InitiateTwoFactorRequest[action.property] = action.payload[action.property];
-            }
-        },
+  name: "InitiateTwoFactorRequests",
+  initialState: [],
+  reducers: {
+    InitiateTwoFactorRequestAdded(state, action) {
+      state.push(action.payload);
     },
+    InitiateTwoFactorRequestValueToggled(state, action) {
+      console.log("InitiateTwoFactorRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const InitiateTwoFactorRequest = state.find(
+        (InitiateTwoFactorRequest) =>
+          InitiateTwoFactorRequest.id ===
+          action.payload.InitiateTwoFactorRequestId,
+      );
+      if (InitiateTwoFactorRequest) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    InitiateTwoFactorRequestpropertySet(state, action) {
+      const InitiateTwoFactorRequest = state.find(
+        (InitiateTwoFactorRequest) =>
+          InitiateTwoFactorRequest.id ===
+          action.payload.InitiateTwoFactorRequestId,
+      );
+      if (InitiateTwoFactorRequest) {
+        //  InitiateTwoFactorRequest[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { InitiateTwoFactorRequestAdded, InitiateTwoFactorRequestValueToggled, InitiateTwoFactorRequestpropertySet, } = InitiateTwoFactorRequestSlice.actions;
+export const {
+  InitiateTwoFactorRequestAdded,
+  InitiateTwoFactorRequestValueToggled,
+  InitiateTwoFactorRequestpropertySet,
+} = InitiateTwoFactorRequestSlice.actions;
 export default InitiateTwoFactorRequestSlice.reducer;
 //# sourceMappingURL=InitiateTwoFactorRequestReducer.js.map

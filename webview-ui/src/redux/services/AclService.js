@@ -16,62 +16,72 @@ Template file: typescript-redux-query/services/AclService.ts.mustache
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
 export const AclService = createApi({
-    reducerPath: "AclService",
-    baseQuery: customBaseQuery,
-    tagTypes: ["ACL", "Role"],
-    endpoints: (build) => ({
-        // Grant ACL permission
-        grantAclPermission: build.mutation({
-            query: (body) => ({
-                url: "auth/acl/grant",
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "ACL", id: "LIST" }],
-        }),
-        // Get roles for dropdown population
-        getRoles: build.query({
-            query: () => "Role",
-            providesTags: (result) => result
-                ? [
-                    ...result.map(({ id }) => ({ type: "Role", id })),
-                    { type: "Role", id: "LIST" },
-                ]
-                : [{ type: "Role", id: "LIST" }],
-        }),
-        // Get current user permissions for an object
-        getObjectPermissions: build.query({
-            query: ({ objectType, objectId }) => `auth/acl/permissions?objectType=${objectType}&objectId=${objectId}`,
-            providesTags: (result, error, { objectType, objectId }) => [
-                { type: "ACL", id: `${objectType}_${objectId}` },
-            ],
-        }),
-        // Deny ACL permission (granting=false)
-        denyAclPermission: build.mutation({
-            query: (body) => ({
-                url: "auth/acl/deny",
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "ACL", id: "LIST" }],
-        }),
-        // Revoke ACL permission
-        revokeAclPermission: build.mutation({
-            query: (body) => ({
-                url: "auth/acl/revoke",
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "ACL", id: "LIST" }],
-        }),
-        // Get all permissions for an object
-        getObjectAclEntries: build.query({
-            query: ({ objectType, objectId }) => `auth/acl/entries/${encodeURIComponent(objectType)}/${encodeURIComponent(objectId)}`,
-            providesTags: (result, error, { objectType, objectId }) => [
-                { type: "ACL", id: `entries_${objectType}_${objectId}` },
-            ],
-        }),
+  reducerPath: "AclService",
+  baseQuery: customBaseQuery,
+  tagTypes: ["ACL", "Role"],
+  endpoints: (build) => ({
+    // Grant ACL permission
+    grantAclPermission: build.mutation({
+      query: (body) => ({
+        url: "auth/acl/grant",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "ACL", id: "LIST" }],
     }),
+    // Get roles for dropdown population
+    getRoles: build.query({
+      query: () => "Role",
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "Role", id })),
+              { type: "Role", id: "LIST" },
+            ]
+          : [{ type: "Role", id: "LIST" }],
+    }),
+    // Get current user permissions for an object
+    getObjectPermissions: build.query({
+      query: ({ objectType, objectId }) =>
+        `auth/acl/permissions?objectType=${objectType}&objectId=${objectId}`,
+      providesTags: (result, error, { objectType, objectId }) => [
+        { type: "ACL", id: `${objectType}_${objectId}` },
+      ],
+    }),
+    // Deny ACL permission (granting=false)
+    denyAclPermission: build.mutation({
+      query: (body) => ({
+        url: "auth/acl/deny",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "ACL", id: "LIST" }],
+    }),
+    // Revoke ACL permission
+    revokeAclPermission: build.mutation({
+      query: (body) => ({
+        url: "auth/acl/revoke",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "ACL", id: "LIST" }],
+    }),
+    // Get all permissions for an object
+    getObjectAclEntries: build.query({
+      query: ({ objectType, objectId }) =>
+        `auth/acl/entries/${encodeURIComponent(objectType)}/${encodeURIComponent(objectId)}`,
+      providesTags: (result, error, { objectType, objectId }) => [
+        { type: "ACL", id: `entries_${objectType}_${objectId}` },
+      ],
+    }),
+  }),
 });
-export const { useGrantAclPermissionMutation, useDenyAclPermissionMutation, useGetRolesQuery, useGetObjectPermissionsQuery, useRevokeAclPermissionMutation, useGetObjectAclEntriesQuery, } = AclService;
+export const {
+  useGrantAclPermissionMutation,
+  useDenyAclPermissionMutation,
+  useGetRolesQuery,
+  useGetObjectPermissionsQuery,
+  useRevokeAclPermissionMutation,
+  useGetObjectAclEntriesQuery,
+} = AclService;
 //# sourceMappingURL=AclService.js.map

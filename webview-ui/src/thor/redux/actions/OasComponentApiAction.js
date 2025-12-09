@@ -31,60 +31,60 @@ export const LIST_OASCOMPONENT_REQUEST = "LIST_OASCOMPONENT_REQUEST";
 export const LIST_OASCOMPONENT_SUCCESS = "LIST_OASCOMPONENT_SUCCESS";
 export const LIST_OASCOMPONENT_FAILURE = "LIST_OASCOMPONENT_FAILURE";
 export const addOasComponentRequest = () => ({
-    type: ADD_OASCOMPONENT_REQUEST,
+  type: ADD_OASCOMPONENT_REQUEST,
 });
 export const addOasComponentSuccess = (OasComponents) => ({
-    type: ADD_OASCOMPONENT_SUCCESS,
-    payload: OasComponents,
+  type: ADD_OASCOMPONENT_SUCCESS,
+  payload: OasComponents,
 });
 export const addOasComponentFailure = (error) => ({
-    type: ADD_OASCOMPONENT_FAILURE,
-    payload: error,
+  type: ADD_OASCOMPONENT_FAILURE,
+  payload: error,
 });
 export const fetchOasComponentRequest = () => ({
-    type: FETCH_OASCOMPONENT_REQUEST,
+  type: FETCH_OASCOMPONENT_REQUEST,
 });
 export const fetchOasComponentSuccess = (OasComponents) => ({
-    type: FETCH_OASCOMPONENT_SUCCESS,
-    payload: OasComponents,
+  type: FETCH_OASCOMPONENT_SUCCESS,
+  payload: OasComponents,
 });
 export const fetchOasComponentFailure = (error) => ({
-    type: FETCH_OASCOMPONENT_FAILURE,
-    payload: error,
+  type: FETCH_OASCOMPONENT_FAILURE,
+  payload: error,
 });
 export const listOasComponentRequest = () => ({
-    type: LIST_OASCOMPONENT_REQUEST,
+  type: LIST_OASCOMPONENT_REQUEST,
 });
 export const listOasComponentSuccess = (OasComponents) => ({
-    type: LIST_OASCOMPONENT_SUCCESS,
-    payload: OasComponents,
+  type: LIST_OASCOMPONENT_SUCCESS,
+  payload: OasComponents,
 });
 export const listOasComponentFailure = (error) => ({
-    type: LIST_OASCOMPONENT_FAILURE,
-    payload: error,
+  type: LIST_OASCOMPONENT_FAILURE,
+  payload: error,
 });
 export const updateOasComponentRequest = (OasComponent) => ({
-    type: UPDATE_OASCOMPONENT_REQUEST,
-    payload: OasComponent,
+  type: UPDATE_OASCOMPONENT_REQUEST,
+  payload: OasComponent,
 });
 export const updateOasComponentSuccess = (OasComponent) => ({
-    type: UPDATE_OASCOMPONENT_SUCCESS,
-    payload: OasComponent,
+  type: UPDATE_OASCOMPONENT_SUCCESS,
+  payload: OasComponent,
 });
 export const updateOasComponentFailure = (error) => ({
-    type: UPDATE_OASCOMPONENT_FAILURE,
-    payload: error,
+  type: UPDATE_OASCOMPONENT_FAILURE,
+  payload: error,
 });
 export const deleteOasComponentRequest = (OasComponent) => ({
-    type: DELETE_OASCOMPONENT_REQUEST,
-    payload: OasComponent,
+  type: DELETE_OASCOMPONENT_REQUEST,
+  payload: OasComponent,
 });
 export const deleteOasComponentSuccess = (OasComponent) => ({
-    type: DELETE_OASCOMPONENT_SUCCESS,
-    payload: OasComponent,
+  type: DELETE_OASCOMPONENT_SUCCESS,
+  payload: OasComponent,
 });
 export const deleteOasComponentFailure = (error) => ({
-    type: DELETE_OASCOMPONENT_FAILURE,
-    payload: error,
+  type: DELETE_OASCOMPONENT_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=OasComponentApiAction.js.map

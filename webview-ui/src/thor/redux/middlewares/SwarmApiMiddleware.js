@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Swarm
 */
-export const SwarmMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const SwarmMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Swarm MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=SwarmApiMiddleware.js.map

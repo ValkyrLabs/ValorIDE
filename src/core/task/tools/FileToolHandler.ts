@@ -643,7 +643,14 @@ export class FileToolHandler extends BaseToolHandler {
             block.params.path,
           )
         ) {
-          this.context.removeLastPartialMessageIfExistsWithType("ask", "tool");
+          await this.context.removeLastPartialMessageIfExistsWithType(
+            "say",
+            "tool",
+          );
+          await this.context.removeLastPartialMessageIfExistsWithType(
+            "ask",
+            "tool",
+          );
           await this.context.say("tool", partialMessage, undefined, partial);
         } else {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
@@ -783,7 +790,14 @@ export class FileToolHandler extends BaseToolHandler {
             block.params.path,
           )
         ) {
-          this.context.removeLastPartialMessageIfExistsWithType("ask", "tool");
+          await this.context.removeLastPartialMessageIfExistsWithType(
+            "say",
+            "tool",
+          );
+          await this.context.removeLastPartialMessageIfExistsWithType(
+            "ask",
+            "tool",
+          );
           await this.context.say("tool", partialMessage, undefined, partial);
         } else {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
@@ -852,7 +866,14 @@ export class FileToolHandler extends BaseToolHandler {
             block.params.path,
           )
         ) {
-          this.context.removeLastPartialMessageIfExistsWithType("ask", "tool");
+          await this.context.removeLastPartialMessageIfExistsWithType(
+            "say",
+            "tool",
+          );
+          await this.context.removeLastPartialMessageIfExistsWithType(
+            "ask",
+            "tool",
+          );
           await this.context.say("tool", completeMessage, undefined, false);
           this.context.consecutiveAutoApprovedRequestsCount++;
           telemetryService.captureToolUsage(

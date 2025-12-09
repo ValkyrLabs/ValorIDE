@@ -17,7 +17,7 @@ Template file: typescript-redux-query/defaultTable.mustache
 // Generic table for displaying tabular data
 // Props: columns (array of { key, label }), data (array of objects)
 const DefaultTable = () => {
-    return _jsx("h1", { children: "default table" });
+  return _jsx("h1", { children: "default table" });
 };
 export default DefaultTable;
 //# sourceMappingURL=DefaultTable.js.map

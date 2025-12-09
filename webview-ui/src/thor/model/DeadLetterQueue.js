@@ -29,79 +29,81 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function DeadLetterQueueFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        runId: !exists(json, "runId") ? undefined : json["runId"],
-        executionId: !exists(json, "executionId") ? undefined : json["executionId"],
-        taskId: !exists(json, "taskId") ? undefined : json["taskId"],
-        failureReason: !exists(json, "failureReason")
-            ? undefined
-            : json["failureReason"],
-        failureType: !exists(json, "failureType") ? undefined : json["failureType"],
-        originalInputs: !exists(json, "originalInputs")
-            ? undefined
-            : json["originalInputs"],
-        originalConfig: !exists(json, "originalConfig")
-            ? undefined
-            : json["originalConfig"],
-        quarantinedAt: !exists(json, "quarantinedAt")
-            ? undefined
-            : new Date(json["quarantinedAt"]),
-        reviewedBy: !exists(json, "reviewedBy") ? undefined : json["reviewedBy"],
-        resolution: !exists(json, "resolution") ? undefined : json["resolution"],
-        resolvedAt: !exists(json, "resolvedAt")
-            ? undefined
-            : new Date(json["resolvedAt"]),
-        notes: !exists(json, "notes") ? undefined : json["notes"],
-        requeuedAsRunId: !exists(json, "requeuedAsRunId")
-            ? undefined
-            : json["requeuedAsRunId"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    runId: !exists(json, "runId") ? undefined : json["runId"],
+    executionId: !exists(json, "executionId") ? undefined : json["executionId"],
+    taskId: !exists(json, "taskId") ? undefined : json["taskId"],
+    failureReason: !exists(json, "failureReason")
+      ? undefined
+      : json["failureReason"],
+    failureType: !exists(json, "failureType") ? undefined : json["failureType"],
+    originalInputs: !exists(json, "originalInputs")
+      ? undefined
+      : json["originalInputs"],
+    originalConfig: !exists(json, "originalConfig")
+      ? undefined
+      : json["originalConfig"],
+    quarantinedAt: !exists(json, "quarantinedAt")
+      ? undefined
+      : new Date(json["quarantinedAt"]),
+    reviewedBy: !exists(json, "reviewedBy") ? undefined : json["reviewedBy"],
+    resolution: !exists(json, "resolution") ? undefined : json["resolution"],
+    resolvedAt: !exists(json, "resolvedAt")
+      ? undefined
+      : new Date(json["resolvedAt"]),
+    notes: !exists(json, "notes") ? undefined : json["notes"],
+    requeuedAsRunId: !exists(json, "requeuedAsRunId")
+      ? undefined
+      : json["requeuedAsRunId"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function DeadLetterQueueToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        runId: value.runId,
-        executionId: value.executionId,
-        taskId: value.taskId,
-        failureReason: value.failureReason,
-        failureType: value.failureType,
-        originalInputs: value.originalInputs,
-        originalConfig: value.originalConfig,
-        quarantinedAt: value.quarantinedAt === undefined
-            ? undefined
-            : value.quarantinedAt.toISOString(),
-        reviewedBy: value.reviewedBy,
-        resolution: value.resolution,
-        resolvedAt: value.resolvedAt === undefined
-            ? undefined
-            : value.resolvedAt.toISOString(),
-        notes: value.notes,
-        requeuedAsRunId: value.requeuedAsRunId,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    runId: value.runId,
+    executionId: value.executionId,
+    taskId: value.taskId,
+    failureReason: value.failureReason,
+    failureType: value.failureType,
+    originalInputs: value.originalInputs,
+    originalConfig: value.originalConfig,
+    quarantinedAt:
+      value.quarantinedAt === undefined
+        ? undefined
+        : value.quarantinedAt.toISOString(),
+    reviewedBy: value.reviewedBy,
+    resolution: value.resolution,
+    resolvedAt:
+      value.resolvedAt === undefined
+        ? undefined
+        : value.resolvedAt.toISOString(),
+    notes: value.notes,
+    requeuedAsRunId: value.requeuedAsRunId,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -109,10 +111,10 @@ export function DeadLetterQueueToJSON(value) {
  */
 export var DeadLetterQueueFailureTypeEnum;
 (function (DeadLetterQueueFailureTypeEnum) {
-    DeadLetterQueueFailureTypeEnum["MAXRETRIES"] = "max_retries";
-    DeadLetterQueueFailureTypeEnum["PERMANENTERROR"] = "permanent_error";
-    DeadLetterQueueFailureTypeEnum["CIRCUITBREAKER"] = "circuit_breaker";
-    DeadLetterQueueFailureTypeEnum["MANUAL"] = "manual";
+  DeadLetterQueueFailureTypeEnum["MAXRETRIES"] = "max_retries";
+  DeadLetterQueueFailureTypeEnum["PERMANENTERROR"] = "permanent_error";
+  DeadLetterQueueFailureTypeEnum["CIRCUITBREAKER"] = "circuit_breaker";
+  DeadLetterQueueFailureTypeEnum["MANUAL"] = "manual";
 })(DeadLetterQueueFailureTypeEnum || (DeadLetterQueueFailureTypeEnum = {}));
 /**
  * @export
@@ -120,9 +122,9 @@ export var DeadLetterQueueFailureTypeEnum;
  */
 export var DeadLetterQueueResolutionEnum;
 (function (DeadLetterQueueResolutionEnum) {
-    DeadLetterQueueResolutionEnum["PENDING"] = "pending";
-    DeadLetterQueueResolutionEnum["REQUEUED"] = "requeued";
-    DeadLetterQueueResolutionEnum["FIXED"] = "fixed";
-    DeadLetterQueueResolutionEnum["DISCARDED"] = "discarded";
+  DeadLetterQueueResolutionEnum["PENDING"] = "pending";
+  DeadLetterQueueResolutionEnum["REQUEUED"] = "requeued";
+  DeadLetterQueueResolutionEnum["FIXED"] = "fixed";
+  DeadLetterQueueResolutionEnum["DISCARDED"] = "discarded";
 })(DeadLetterQueueResolutionEnum || (DeadLetterQueueResolutionEnum = {}));
 //# sourceMappingURL=DeadLetterQueue.js.map

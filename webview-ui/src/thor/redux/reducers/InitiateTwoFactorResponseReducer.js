@@ -16,31 +16,41 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const InitiateTwoFactorResponseSlice = createSlice({
-    name: "InitiateTwoFactorResponses",
-    initialState: [],
-    reducers: {
-        InitiateTwoFactorResponseAdded(state, action) {
-            state.push(action.payload);
-        },
-        InitiateTwoFactorResponseValueToggled(state, action) {
-            console.log("InitiateTwoFactorResponse TOGGLE");
-            console.warn(JSON.stringify(action));
-            const InitiateTwoFactorResponse = state.find((InitiateTwoFactorResponse) => InitiateTwoFactorResponse.id ===
-                action.payload.InitiateTwoFactorResponseId);
-            if (InitiateTwoFactorResponse) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        InitiateTwoFactorResponsepropertySet(state, action) {
-            const InitiateTwoFactorResponse = state.find((InitiateTwoFactorResponse) => InitiateTwoFactorResponse.id ===
-                action.payload.InitiateTwoFactorResponseId);
-            if (InitiateTwoFactorResponse) {
-                //  InitiateTwoFactorResponse[action.property] = action.payload[action.property];
-            }
-        },
+  name: "InitiateTwoFactorResponses",
+  initialState: [],
+  reducers: {
+    InitiateTwoFactorResponseAdded(state, action) {
+      state.push(action.payload);
     },
+    InitiateTwoFactorResponseValueToggled(state, action) {
+      console.log("InitiateTwoFactorResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const InitiateTwoFactorResponse = state.find(
+        (InitiateTwoFactorResponse) =>
+          InitiateTwoFactorResponse.id ===
+          action.payload.InitiateTwoFactorResponseId,
+      );
+      if (InitiateTwoFactorResponse) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    InitiateTwoFactorResponsepropertySet(state, action) {
+      const InitiateTwoFactorResponse = state.find(
+        (InitiateTwoFactorResponse) =>
+          InitiateTwoFactorResponse.id ===
+          action.payload.InitiateTwoFactorResponseId,
+      );
+      if (InitiateTwoFactorResponse) {
+        //  InitiateTwoFactorResponse[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { InitiateTwoFactorResponseAdded, InitiateTwoFactorResponseValueToggled, InitiateTwoFactorResponsepropertySet, } = InitiateTwoFactorResponseSlice.actions;
+export const {
+  InitiateTwoFactorResponseAdded,
+  InitiateTwoFactorResponseValueToggled,
+  InitiateTwoFactorResponsepropertySet,
+} = InitiateTwoFactorResponseSlice.actions;
 export default InitiateTwoFactorResponseSlice.reducer;
 //# sourceMappingURL=InitiateTwoFactorResponseReducer.js.map

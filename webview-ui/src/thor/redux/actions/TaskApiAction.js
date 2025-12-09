@@ -31,60 +31,60 @@ export const LIST_TASK_REQUEST = "LIST_TASK_REQUEST";
 export const LIST_TASK_SUCCESS = "LIST_TASK_SUCCESS";
 export const LIST_TASK_FAILURE = "LIST_TASK_FAILURE";
 export const addTaskRequest = () => ({
-    type: ADD_TASK_REQUEST,
+  type: ADD_TASK_REQUEST,
 });
 export const addTaskSuccess = (Tasks) => ({
-    type: ADD_TASK_SUCCESS,
-    payload: Tasks,
+  type: ADD_TASK_SUCCESS,
+  payload: Tasks,
 });
 export const addTaskFailure = (error) => ({
-    type: ADD_TASK_FAILURE,
-    payload: error,
+  type: ADD_TASK_FAILURE,
+  payload: error,
 });
 export const fetchTaskRequest = () => ({
-    type: FETCH_TASK_REQUEST,
+  type: FETCH_TASK_REQUEST,
 });
 export const fetchTaskSuccess = (Tasks) => ({
-    type: FETCH_TASK_SUCCESS,
-    payload: Tasks,
+  type: FETCH_TASK_SUCCESS,
+  payload: Tasks,
 });
 export const fetchTaskFailure = (error) => ({
-    type: FETCH_TASK_FAILURE,
-    payload: error,
+  type: FETCH_TASK_FAILURE,
+  payload: error,
 });
 export const listTaskRequest = () => ({
-    type: LIST_TASK_REQUEST,
+  type: LIST_TASK_REQUEST,
 });
 export const listTaskSuccess = (Tasks) => ({
-    type: LIST_TASK_SUCCESS,
-    payload: Tasks,
+  type: LIST_TASK_SUCCESS,
+  payload: Tasks,
 });
 export const listTaskFailure = (error) => ({
-    type: LIST_TASK_FAILURE,
-    payload: error,
+  type: LIST_TASK_FAILURE,
+  payload: error,
 });
 export const updateTaskRequest = (Task) => ({
-    type: UPDATE_TASK_REQUEST,
-    payload: Task,
+  type: UPDATE_TASK_REQUEST,
+  payload: Task,
 });
 export const updateTaskSuccess = (Task) => ({
-    type: UPDATE_TASK_SUCCESS,
-    payload: Task,
+  type: UPDATE_TASK_SUCCESS,
+  payload: Task,
 });
 export const updateTaskFailure = (error) => ({
-    type: UPDATE_TASK_FAILURE,
-    payload: error,
+  type: UPDATE_TASK_FAILURE,
+  payload: error,
 });
 export const deleteTaskRequest = (Task) => ({
-    type: DELETE_TASK_REQUEST,
-    payload: Task,
+  type: DELETE_TASK_REQUEST,
+  payload: Task,
 });
 export const deleteTaskSuccess = (Task) => ({
-    type: DELETE_TASK_SUCCESS,
-    payload: Task,
+  type: DELETE_TASK_SUCCESS,
+  payload: Task,
 });
 export const deleteTaskFailure = (error) => ({
-    type: DELETE_TASK_FAILURE,
-    payload: error,
+  type: DELETE_TASK_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=TaskApiAction.js.map

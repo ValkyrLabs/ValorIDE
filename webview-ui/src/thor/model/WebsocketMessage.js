@@ -30,49 +30,49 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { PrincipalFromJSON, PrincipalToJSON } from "./";
 export function WebsocketMessageFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        websocketSessionId: !exists(json, "websocketSessionId")
-            ? undefined
-            : json["websocketSessionId"],
-        type: !exists(json, "type") ? undefined : json["type"],
-        payload: !exists(json, "payload") ? undefined : json["payload"],
-        time: !exists(json, "time") ? undefined : json["time"],
-        user: !exists(json, "user") ? undefined : PrincipalFromJSON(json["user"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    websocketSessionId: !exists(json, "websocketSessionId")
+      ? undefined
+      : json["websocketSessionId"],
+    type: !exists(json, "type") ? undefined : json["type"],
+    payload: !exists(json, "payload") ? undefined : json["payload"],
+    time: !exists(json, "time") ? undefined : json["time"],
+    user: !exists(json, "user") ? undefined : PrincipalFromJSON(json["user"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function WebsocketMessageToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        websocketSessionId: value.websocketSessionId,
-        type: value.type,
-        payload: value.payload,
-        time: value.time,
-        user: PrincipalToJSON(value.user),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    websocketSessionId: value.websocketSessionId,
+    type: value.type,
+    payload: value.payload,
+    time: value.time,
+    user: PrincipalToJSON(value.user),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -80,18 +80,18 @@ export function WebsocketMessageToJSON(value) {
  */
 export var WebsocketMessageTypeEnum;
 (function (WebsocketMessageTypeEnum) {
-    WebsocketMessageTypeEnum["COMMAND"] = "command";
-    WebsocketMessageTypeEnum["SERVICE"] = "service";
-    WebsocketMessageTypeEnum["AGENT"] = "agent";
-    WebsocketMessageTypeEnum["USER"] = "user";
-    WebsocketMessageTypeEnum["CONSOLE"] = "console";
-    WebsocketMessageTypeEnum["BROADCAST"] = "broadcast";
-    WebsocketMessageTypeEnum["ROOM"] = "room";
-    WebsocketMessageTypeEnum["PRIVATE"] = "private";
-    WebsocketMessageTypeEnum["SECURE"] = "secure";
-    WebsocketMessageTypeEnum["WARN"] = "warn";
-    WebsocketMessageTypeEnum["ERROR"] = "error";
-    WebsocketMessageTypeEnum["INFO"] = "info";
-    WebsocketMessageTypeEnum["DEBUG"] = "debug";
+  WebsocketMessageTypeEnum["COMMAND"] = "command";
+  WebsocketMessageTypeEnum["SERVICE"] = "service";
+  WebsocketMessageTypeEnum["AGENT"] = "agent";
+  WebsocketMessageTypeEnum["USER"] = "user";
+  WebsocketMessageTypeEnum["CONSOLE"] = "console";
+  WebsocketMessageTypeEnum["BROADCAST"] = "broadcast";
+  WebsocketMessageTypeEnum["ROOM"] = "room";
+  WebsocketMessageTypeEnum["PRIVATE"] = "private";
+  WebsocketMessageTypeEnum["SECURE"] = "secure";
+  WebsocketMessageTypeEnum["WARN"] = "warn";
+  WebsocketMessageTypeEnum["ERROR"] = "error";
+  WebsocketMessageTypeEnum["INFO"] = "info";
+  WebsocketMessageTypeEnum["DEBUG"] = "debug";
 })(WebsocketMessageTypeEnum || (WebsocketMessageTypeEnum = {}));
 //# sourceMappingURL=WebsocketMessage.js.map

@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: ProductFunnelWizard
 */
-export const ProductFunnelWizardMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const ProductFunnelWizardMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("ProductFunnelWizard MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=ProductFunnelWizardApiMiddleware.js.map

@@ -29,45 +29,45 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function SwarmFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        swarmType: json["swarmType"],
-        instanceId: !exists(json, "instanceId") ? undefined : json["instanceId"],
-        principalId: !exists(json, "principalId") ? undefined : json["principalId"],
-        username: !exists(json, "username") ? undefined : json["username"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    swarmType: json["swarmType"],
+    instanceId: !exists(json, "instanceId") ? undefined : json["instanceId"],
+    principalId: !exists(json, "principalId") ? undefined : json["principalId"],
+    username: !exists(json, "username") ? undefined : json["username"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function SwarmToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        swarmType: value.swarmType,
-        instanceId: value.instanceId,
-        principalId: value.principalId,
-        username: value.username,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    swarmType: value.swarmType,
+    instanceId: value.instanceId,
+    principalId: value.principalId,
+    username: value.username,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -75,10 +75,10 @@ export function SwarmToJSON(value) {
  */
 export var SwarmSwarmTypeEnum;
 (function (SwarmSwarmTypeEnum) {
-    SwarmSwarmTypeEnum["AGENT"] = "agent";
-    SwarmSwarmTypeEnum["SERVER"] = "server";
-    SwarmSwarmTypeEnum["WORKFLOW"] = "workflow";
-    SwarmSwarmTypeEnum["USER"] = "user";
-    SwarmSwarmTypeEnum["BROADCAST"] = "broadcast";
+  SwarmSwarmTypeEnum["AGENT"] = "agent";
+  SwarmSwarmTypeEnum["SERVER"] = "server";
+  SwarmSwarmTypeEnum["WORKFLOW"] = "workflow";
+  SwarmSwarmTypeEnum["USER"] = "user";
+  SwarmSwarmTypeEnum["BROADCAST"] = "broadcast";
 })(SwarmSwarmTypeEnum || (SwarmSwarmTypeEnum = {}));
 //# sourceMappingURL=Swarm.js.map

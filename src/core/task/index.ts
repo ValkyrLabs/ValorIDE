@@ -2990,7 +2990,14 @@ export class Task {
                     block.params.path,
                   )
                 ) {
-                  this.removeLastPartialMessageIfExistsWithType("ask", "tool");
+                  await this.removeLastPartialMessageIfExistsWithType(
+                    "say",
+                    "tool",
+                  );
+                  await this.removeLastPartialMessageIfExistsWithType(
+                    "ask",
+                    "tool",
+                  );
                   await this.say(
                     "tool",
                     partialMessage,
@@ -3116,7 +3123,14 @@ export class Task {
                     block.params.path,
                   )
                 ) {
-                  this.removeLastPartialMessageIfExistsWithType("ask", "tool");
+                  await this.removeLastPartialMessageIfExistsWithType(
+                    "say",
+                    "tool",
+                  );
+                  await this.removeLastPartialMessageIfExistsWithType(
+                    "ask",
+                    "tool",
+                  );
                   await this.say(
                     "tool",
                     partialMessage,
@@ -3171,7 +3185,14 @@ export class Task {
                     block.params.path,
                   )
                 ) {
-                  this.removeLastPartialMessageIfExistsWithType("ask", "tool");
+                  await this.removeLastPartialMessageIfExistsWithType(
+                    "say",
+                    "tool",
+                  );
+                  await this.removeLastPartialMessageIfExistsWithType(
+                    "ask",
+                    "tool",
+                  );
                   await this.say("tool", completeMessage, undefined, false);
                   this.consecutiveAutoApprovedRequestsCount++;
                   telemetryService.captureToolUsage(

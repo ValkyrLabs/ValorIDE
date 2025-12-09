@@ -31,60 +31,60 @@ export const LIST_MCPTOOL_REQUEST = "LIST_MCPTOOL_REQUEST";
 export const LIST_MCPTOOL_SUCCESS = "LIST_MCPTOOL_SUCCESS";
 export const LIST_MCPTOOL_FAILURE = "LIST_MCPTOOL_FAILURE";
 export const addMcpToolRequest = () => ({
-    type: ADD_MCPTOOL_REQUEST,
+  type: ADD_MCPTOOL_REQUEST,
 });
 export const addMcpToolSuccess = (McpTools) => ({
-    type: ADD_MCPTOOL_SUCCESS,
-    payload: McpTools,
+  type: ADD_MCPTOOL_SUCCESS,
+  payload: McpTools,
 });
 export const addMcpToolFailure = (error) => ({
-    type: ADD_MCPTOOL_FAILURE,
-    payload: error,
+  type: ADD_MCPTOOL_FAILURE,
+  payload: error,
 });
 export const fetchMcpToolRequest = () => ({
-    type: FETCH_MCPTOOL_REQUEST,
+  type: FETCH_MCPTOOL_REQUEST,
 });
 export const fetchMcpToolSuccess = (McpTools) => ({
-    type: FETCH_MCPTOOL_SUCCESS,
-    payload: McpTools,
+  type: FETCH_MCPTOOL_SUCCESS,
+  payload: McpTools,
 });
 export const fetchMcpToolFailure = (error) => ({
-    type: FETCH_MCPTOOL_FAILURE,
-    payload: error,
+  type: FETCH_MCPTOOL_FAILURE,
+  payload: error,
 });
 export const listMcpToolRequest = () => ({
-    type: LIST_MCPTOOL_REQUEST,
+  type: LIST_MCPTOOL_REQUEST,
 });
 export const listMcpToolSuccess = (McpTools) => ({
-    type: LIST_MCPTOOL_SUCCESS,
-    payload: McpTools,
+  type: LIST_MCPTOOL_SUCCESS,
+  payload: McpTools,
 });
 export const listMcpToolFailure = (error) => ({
-    type: LIST_MCPTOOL_FAILURE,
-    payload: error,
+  type: LIST_MCPTOOL_FAILURE,
+  payload: error,
 });
 export const updateMcpToolRequest = (McpTool) => ({
-    type: UPDATE_MCPTOOL_REQUEST,
-    payload: McpTool,
+  type: UPDATE_MCPTOOL_REQUEST,
+  payload: McpTool,
 });
 export const updateMcpToolSuccess = (McpTool) => ({
-    type: UPDATE_MCPTOOL_SUCCESS,
-    payload: McpTool,
+  type: UPDATE_MCPTOOL_SUCCESS,
+  payload: McpTool,
 });
 export const updateMcpToolFailure = (error) => ({
-    type: UPDATE_MCPTOOL_FAILURE,
-    payload: error,
+  type: UPDATE_MCPTOOL_FAILURE,
+  payload: error,
 });
 export const deleteMcpToolRequest = (McpTool) => ({
-    type: DELETE_MCPTOOL_REQUEST,
-    payload: McpTool,
+  type: DELETE_MCPTOOL_REQUEST,
+  payload: McpTool,
 });
 export const deleteMcpToolSuccess = (McpTool) => ({
-    type: DELETE_MCPTOOL_SUCCESS,
-    payload: McpTool,
+  type: DELETE_MCPTOOL_SUCCESS,
+  payload: McpTool,
 });
 export const deleteMcpToolFailure = (error) => ({
-    type: DELETE_MCPTOOL_FAILURE,
-    payload: error,
+  type: DELETE_MCPTOOL_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=McpToolApiAction.js.map

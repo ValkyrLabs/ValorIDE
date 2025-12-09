@@ -28,63 +28,69 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { ContentMediaLinkFromJSON, ContentMediaLinkToJSON, OasOpenAPISpecFromJSON, OasOpenAPISpecToJSON, } from "./";
+import {
+  ContentMediaLinkFromJSON,
+  ContentMediaLinkToJSON,
+  OasOpenAPISpecFromJSON,
+  OasOpenAPISpecToJSON,
+} from "./";
 export function ApplicationFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: !exists(json, "name") ? undefined : json["name"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        isTemplate: !exists(json, "isTemplate") ? undefined : json["isTemplate"],
-        type: !exists(json, "type") ? undefined : json["type"],
-        status: !exists(json, "status") ? undefined : json["status"],
-        entrypointUrl: !exists(json, "entrypointUrl")
-            ? undefined
-            : json["entrypointUrl"],
-        contentMedia: !exists(json, "contentMedia")
-            ? undefined
-            : json["contentMedia"].map(ContentMediaLinkFromJSON),
-        openAPISpec: !exists(json, "openAPISpec")
-            ? undefined
-            : OasOpenAPISpecFromJSON(json["openAPISpec"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: !exists(json, "name") ? undefined : json["name"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    isTemplate: !exists(json, "isTemplate") ? undefined : json["isTemplate"],
+    type: !exists(json, "type") ? undefined : json["type"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    entrypointUrl: !exists(json, "entrypointUrl")
+      ? undefined
+      : json["entrypointUrl"],
+    contentMedia: !exists(json, "contentMedia")
+      ? undefined
+      : json["contentMedia"].map(ContentMediaLinkFromJSON),
+    openAPISpec: !exists(json, "openAPISpec")
+      ? undefined
+      : OasOpenAPISpecFromJSON(json["openAPISpec"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ApplicationToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        description: value.description,
-        isTemplate: value.isTemplate,
-        type: value.type,
-        status: value.status,
-        entrypointUrl: value.entrypointUrl,
-        contentMedia: value.contentMedia === undefined
-            ? undefined
-            : value.contentMedia.map(ContentMediaLinkToJSON),
-        openAPISpec: OasOpenAPISpecToJSON(value.openAPISpec),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    description: value.description,
+    isTemplate: value.isTemplate,
+    type: value.type,
+    status: value.status,
+    entrypointUrl: value.entrypointUrl,
+    contentMedia:
+      value.contentMedia === undefined
+        ? undefined
+        : value.contentMedia.map(ContentMediaLinkToJSON),
+    openAPISpec: OasOpenAPISpecToJSON(value.openAPISpec),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -92,14 +98,14 @@ export function ApplicationToJSON(value) {
  */
 export var ApplicationTypeEnum;
 (function (ApplicationTypeEnum) {
-    ApplicationTypeEnum["FULLSTACK"] = "full-stack";
-    ApplicationTypeEnum["AUTOMATION"] = "automation";
-    ApplicationTypeEnum["AGENT"] = "agent";
-    ApplicationTypeEnum["SERVICE"] = "service";
-    ApplicationTypeEnum["FRONTEND"] = "front-end";
-    ApplicationTypeEnum["MOBILE"] = "mobile";
-    ApplicationTypeEnum["CICD"] = "ci-cd";
-    ApplicationTypeEnum["LAMBDA"] = "lambda";
+  ApplicationTypeEnum["FULLSTACK"] = "full-stack";
+  ApplicationTypeEnum["AUTOMATION"] = "automation";
+  ApplicationTypeEnum["AGENT"] = "agent";
+  ApplicationTypeEnum["SERVICE"] = "service";
+  ApplicationTypeEnum["FRONTEND"] = "front-end";
+  ApplicationTypeEnum["MOBILE"] = "mobile";
+  ApplicationTypeEnum["CICD"] = "ci-cd";
+  ApplicationTypeEnum["LAMBDA"] = "lambda";
 })(ApplicationTypeEnum || (ApplicationTypeEnum = {}));
 /**
  * @export
@@ -107,10 +113,10 @@ export var ApplicationTypeEnum;
  */
 export var ApplicationStatusEnum;
 (function (ApplicationStatusEnum) {
-    ApplicationStatusEnum["READY"] = "ready";
-    ApplicationStatusEnum["DEPLOYED"] = "deployed";
-    ApplicationStatusEnum["STAGING"] = "staging";
-    ApplicationStatusEnum["ERROR"] = "error";
-    ApplicationStatusEnum["DISABLED"] = "disabled";
+  ApplicationStatusEnum["READY"] = "ready";
+  ApplicationStatusEnum["DEPLOYED"] = "deployed";
+  ApplicationStatusEnum["STAGING"] = "staging";
+  ApplicationStatusEnum["ERROR"] = "error";
+  ApplicationStatusEnum["DISABLED"] = "disabled";
 })(ApplicationStatusEnum || (ApplicationStatusEnum = {}));
 //# sourceMappingURL=Application.js.map

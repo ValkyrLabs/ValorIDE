@@ -31,60 +31,60 @@ export const LIST_OASOBJECTSCHEMA_REQUEST = "LIST_OASOBJECTSCHEMA_REQUEST";
 export const LIST_OASOBJECTSCHEMA_SUCCESS = "LIST_OASOBJECTSCHEMA_SUCCESS";
 export const LIST_OASOBJECTSCHEMA_FAILURE = "LIST_OASOBJECTSCHEMA_FAILURE";
 export const addOasObjectSchemaRequest = () => ({
-    type: ADD_OASOBJECTSCHEMA_REQUEST,
+  type: ADD_OASOBJECTSCHEMA_REQUEST,
 });
 export const addOasObjectSchemaSuccess = (OasObjectSchemas) => ({
-    type: ADD_OASOBJECTSCHEMA_SUCCESS,
-    payload: OasObjectSchemas,
+  type: ADD_OASOBJECTSCHEMA_SUCCESS,
+  payload: OasObjectSchemas,
 });
 export const addOasObjectSchemaFailure = (error) => ({
-    type: ADD_OASOBJECTSCHEMA_FAILURE,
-    payload: error,
+  type: ADD_OASOBJECTSCHEMA_FAILURE,
+  payload: error,
 });
 export const fetchOasObjectSchemaRequest = () => ({
-    type: FETCH_OASOBJECTSCHEMA_REQUEST,
+  type: FETCH_OASOBJECTSCHEMA_REQUEST,
 });
 export const fetchOasObjectSchemaSuccess = (OasObjectSchemas) => ({
-    type: FETCH_OASOBJECTSCHEMA_SUCCESS,
-    payload: OasObjectSchemas,
+  type: FETCH_OASOBJECTSCHEMA_SUCCESS,
+  payload: OasObjectSchemas,
 });
 export const fetchOasObjectSchemaFailure = (error) => ({
-    type: FETCH_OASOBJECTSCHEMA_FAILURE,
-    payload: error,
+  type: FETCH_OASOBJECTSCHEMA_FAILURE,
+  payload: error,
 });
 export const listOasObjectSchemaRequest = () => ({
-    type: LIST_OASOBJECTSCHEMA_REQUEST,
+  type: LIST_OASOBJECTSCHEMA_REQUEST,
 });
 export const listOasObjectSchemaSuccess = (OasObjectSchemas) => ({
-    type: LIST_OASOBJECTSCHEMA_SUCCESS,
-    payload: OasObjectSchemas,
+  type: LIST_OASOBJECTSCHEMA_SUCCESS,
+  payload: OasObjectSchemas,
 });
 export const listOasObjectSchemaFailure = (error) => ({
-    type: LIST_OASOBJECTSCHEMA_FAILURE,
-    payload: error,
+  type: LIST_OASOBJECTSCHEMA_FAILURE,
+  payload: error,
 });
 export const updateOasObjectSchemaRequest = (OasObjectSchema) => ({
-    type: UPDATE_OASOBJECTSCHEMA_REQUEST,
-    payload: OasObjectSchema,
+  type: UPDATE_OASOBJECTSCHEMA_REQUEST,
+  payload: OasObjectSchema,
 });
 export const updateOasObjectSchemaSuccess = (OasObjectSchema) => ({
-    type: UPDATE_OASOBJECTSCHEMA_SUCCESS,
-    payload: OasObjectSchema,
+  type: UPDATE_OASOBJECTSCHEMA_SUCCESS,
+  payload: OasObjectSchema,
 });
 export const updateOasObjectSchemaFailure = (error) => ({
-    type: UPDATE_OASOBJECTSCHEMA_FAILURE,
-    payload: error,
+  type: UPDATE_OASOBJECTSCHEMA_FAILURE,
+  payload: error,
 });
 export const deleteOasObjectSchemaRequest = (OasObjectSchema) => ({
-    type: DELETE_OASOBJECTSCHEMA_REQUEST,
-    payload: OasObjectSchema,
+  type: DELETE_OASOBJECTSCHEMA_REQUEST,
+  payload: OasObjectSchema,
 });
 export const deleteOasObjectSchemaSuccess = (OasObjectSchema) => ({
-    type: DELETE_OASOBJECTSCHEMA_SUCCESS,
-    payload: OasObjectSchema,
+  type: DELETE_OASOBJECTSCHEMA_SUCCESS,
+  payload: OasObjectSchema,
 });
 export const deleteOasObjectSchemaFailure = (error) => ({
-    type: DELETE_OASOBJECTSCHEMA_FAILURE,
-    payload: error,
+  type: DELETE_OASOBJECTSCHEMA_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=OasObjectSchemaApiAction.js.map

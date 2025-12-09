@@ -31,60 +31,60 @@ export const LIST_PIVOTTABLE_REQUEST = "LIST_PIVOTTABLE_REQUEST";
 export const LIST_PIVOTTABLE_SUCCESS = "LIST_PIVOTTABLE_SUCCESS";
 export const LIST_PIVOTTABLE_FAILURE = "LIST_PIVOTTABLE_FAILURE";
 export const addPivotTableRequest = () => ({
-    type: ADD_PIVOTTABLE_REQUEST,
+  type: ADD_PIVOTTABLE_REQUEST,
 });
 export const addPivotTableSuccess = (PivotTables) => ({
-    type: ADD_PIVOTTABLE_SUCCESS,
-    payload: PivotTables,
+  type: ADD_PIVOTTABLE_SUCCESS,
+  payload: PivotTables,
 });
 export const addPivotTableFailure = (error) => ({
-    type: ADD_PIVOTTABLE_FAILURE,
-    payload: error,
+  type: ADD_PIVOTTABLE_FAILURE,
+  payload: error,
 });
 export const fetchPivotTableRequest = () => ({
-    type: FETCH_PIVOTTABLE_REQUEST,
+  type: FETCH_PIVOTTABLE_REQUEST,
 });
 export const fetchPivotTableSuccess = (PivotTables) => ({
-    type: FETCH_PIVOTTABLE_SUCCESS,
-    payload: PivotTables,
+  type: FETCH_PIVOTTABLE_SUCCESS,
+  payload: PivotTables,
 });
 export const fetchPivotTableFailure = (error) => ({
-    type: FETCH_PIVOTTABLE_FAILURE,
-    payload: error,
+  type: FETCH_PIVOTTABLE_FAILURE,
+  payload: error,
 });
 export const listPivotTableRequest = () => ({
-    type: LIST_PIVOTTABLE_REQUEST,
+  type: LIST_PIVOTTABLE_REQUEST,
 });
 export const listPivotTableSuccess = (PivotTables) => ({
-    type: LIST_PIVOTTABLE_SUCCESS,
-    payload: PivotTables,
+  type: LIST_PIVOTTABLE_SUCCESS,
+  payload: PivotTables,
 });
 export const listPivotTableFailure = (error) => ({
-    type: LIST_PIVOTTABLE_FAILURE,
-    payload: error,
+  type: LIST_PIVOTTABLE_FAILURE,
+  payload: error,
 });
 export const updatePivotTableRequest = (PivotTable) => ({
-    type: UPDATE_PIVOTTABLE_REQUEST,
-    payload: PivotTable,
+  type: UPDATE_PIVOTTABLE_REQUEST,
+  payload: PivotTable,
 });
 export const updatePivotTableSuccess = (PivotTable) => ({
-    type: UPDATE_PIVOTTABLE_SUCCESS,
-    payload: PivotTable,
+  type: UPDATE_PIVOTTABLE_SUCCESS,
+  payload: PivotTable,
 });
 export const updatePivotTableFailure = (error) => ({
-    type: UPDATE_PIVOTTABLE_FAILURE,
-    payload: error,
+  type: UPDATE_PIVOTTABLE_FAILURE,
+  payload: error,
 });
 export const deletePivotTableRequest = (PivotTable) => ({
-    type: DELETE_PIVOTTABLE_REQUEST,
-    payload: PivotTable,
+  type: DELETE_PIVOTTABLE_REQUEST,
+  payload: PivotTable,
 });
 export const deletePivotTableSuccess = (PivotTable) => ({
-    type: DELETE_PIVOTTABLE_SUCCESS,
-    payload: PivotTable,
+  type: DELETE_PIVOTTABLE_SUCCESS,
+  payload: PivotTable,
 });
 export const deletePivotTableFailure = (error) => ({
-    type: DELETE_PIVOTTABLE_FAILURE,
-    payload: error,
+  type: DELETE_PIVOTTABLE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=PivotTableApiAction.js.map

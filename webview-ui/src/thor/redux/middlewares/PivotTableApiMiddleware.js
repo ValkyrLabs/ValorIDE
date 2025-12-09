@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: PivotTable
 */
-export const PivotTableMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const PivotTableMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("PivotTable MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=PivotTableApiMiddleware.js.map

@@ -1,4 +1,8 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import {
+  jsx as _jsx,
+  jsxs as _jsxs,
+  Fragment as _Fragment,
+} from "react/jsx-runtime";
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -15,16 +19,16 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Formik, } from "formik";
+import { ErrorMessage, Formik } from "formik";
 import { useState } from "react";
-import { Form as BSForm, Accordion, Alert, } from "react-bootstrap";
+import { Form as BSForm, Accordion, Alert } from "react-bootstrap";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import * as Yup from "yup";
 import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import { PermissionType, } from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionType } from "@valkyr/component-library/PermissionDialog/types";
 import { useAddBorderMutation } from "../../services/BorderService";
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,129 +52,387 @@ GridHeim Formatting Border
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StyleValidation = () => {
-    return [
-        "None",
-        "Thin",
-        "Medium",
-        "Dashed",
-        "Dotted",
-        "Thick",
-        "Double",
-        "Hair",
-        "MediumDashed",
-        "DashDot",
-        "MediumDashDot",
-        "DashDotDot",
-        "MediumDashDotDot",
-        "SlantedDashDot",
-    ];
+  return [
+    "None",
+    "Thin",
+    "Medium",
+    "Dashed",
+    "Dotted",
+    "Thick",
+    "Double",
+    "Hair",
+    "MediumDashed",
+    "DashDot",
+    "MediumDashDot",
+    "DashDotDot",
+    "MediumDashDotDot",
+    "SlantedDashDot",
+  ];
 };
 const ColorValidation = () => {
-    return ["Black", "Red", "Blue", "Yellow", "Green", "Teal", "Gray50"];
+  return ["Black", "Red", "Blue", "Yellow", "Green", "Teal", "Gray50"];
 };
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
-const asNumber = (schema) => schema.transform((val, orig) => orig === "" || orig === null ? undefined : val);
+const asNumber = (schema) =>
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 const validationSchema = Yup.object().shape({
-    formatId: Yup.string(),
-    style: Yup.mixed().oneOf(StyleValidation(), "Invalid value for style"),
-    color: Yup.mixed().oneOf(ColorValidation(), "Invalid value for color"),
-    trashed: Yup.boolean(),
+  formatId: Yup.string(),
+  style: Yup.mixed().oneOf(StyleValidation(), "Invalid value for style"),
+  color: Yup.mixed().oneOf(ColorValidation(), "Invalid value for color"),
+  trashed: Yup.boolean(),
 });
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const BorderForm = () => {
-    const [addBorder, addBorderResult] = useAddBorderMutation();
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
-    // Permission Management State
-    const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-    const [createdObjectId, setCreatedObjectId] = useState(null);
-    // Mock current user - in real implementation, this would come from auth context
-    const currentUser = {
-        username: "current_user",
-        permissions: {
-            isOwner: true,
-            isAdmin: true,
-            canGrantPermissions: true,
-            permissions: [
-                PermissionType.READ,
-                PermissionType.WRITE,
-                PermissionType.CREATE,
-                PermissionType.DELETE,
-                PermissionType.ADMINISTRATION,
-            ],
-        },
-    };
-    /* -----------------------------------------------------
+  const [addBorder, addBorderResult] = useAddBorderMutation();
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState(null);
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: "current_user",
+    permissions: {
+      isOwner: true,
+      isAdmin: true,
+      canGrantPermissions: true,
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
+    },
+  };
+  /* -----------------------------------------------------
        INITIAL VALUES - only NON read-only fields
     -------------------------------------------------------- */
-    const initialValues = {
-        formatId: "",
-        style: undefined,
-        color: undefined,
-        trashed: false,
-    };
-    // Permission Management Handlers
-    const handleManagePermissions = (objectId) => {
-        setCreatedObjectId(objectId);
-        setShowPermissionDialog(true);
-    };
-    const handlePermissionDialogClose = () => {
-        setShowPermissionDialog(false);
-        setCreatedObjectId(null);
-    };
-    const handlePermissionsSave = (grants) => {
-        console.log("Permissions saved for new Border:", grants);
-    };
-    /* SUBMIT HANDLER */
-    const handleSubmit = async (values, { setSubmitting }) => {
-        try {
-            setSuccessMessage(null);
-            setErrorMessage(null);
-            console.log("Border form values:", values);
-            // NOTE: depending on your generated endpoint, you may need { body: values }
-            const result = await addBorder(values).unwrap();
-            if (result && result.id && currentUser.permissions.canGrantPermissions) {
-                const shouldSetPermissions = window.confirm(`Border created successfully! Would you like to set permissions for this object?`);
-                if (shouldSetPermissions) {
-                    handleManagePermissions(result.id);
-                }
-            }
-            setSuccessMessage("Saved successfully.");
+  const initialValues = {
+    formatId: "",
+    style: undefined,
+    color: undefined,
+    trashed: false,
+  };
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+  const handlePermissionsSave = (grants) => {
+    console.log("Permissions saved for new Border:", grants);
+  };
+  /* SUBMIT HANDLER */
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      setSuccessMessage(null);
+      setErrorMessage(null);
+      console.log("Border form values:", values);
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addBorder(values).unwrap();
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `Border created successfully! Would you like to set permissions for this object?`,
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
         }
-        catch (error) {
-            console.error("Failed to create Border:", error);
-            setErrorMessage("Failed to save. Please try again.");
-        }
-        setSubmitting(false);
-    };
-    return (_jsxs("div", { children: [_jsx(Formik, { validateOnBlur: true, initialValues: initialValues, validationSchema: validationSchema, onSubmit: handleSubmit, children: ({ isSubmitting, isValid, errors, values, setFieldValue, touched, setFieldTouched, handleSubmit, }) => {
-                    const isSaving = isSubmitting || addBorderResult.isLoading;
-                    return (_jsx("form", { onSubmit: handleSubmit, className: "form", children: _jsxs(Accordion, { defaultActiveKey: "1", children: [_jsxs(Accordion.Item, { eventKey: "1", children: [_jsxs(Accordion.Header, { children: [_jsx(FaRegPlusSquare, { size: 28 }), " \u00A0 Add New Border"] }), _jsxs(Accordion.Body, { children: [_jsxs("label", { htmlFor: "formatId", className: "nice-form-control", children: [_jsxs("b", { children: ["Format Id:", touched.formatId && !errors.formatId && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "formatId", value: values?.formatId, placeholder: "Format Id", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "formatId", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "style", className: "nice-form-control", children: [_jsxs("b", { children: ["Style:", touched.style && !errors.style && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "style", value: values.style || "", className: errors.style
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("style", true);
-                                                                setFieldValue("style", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Style" }), _jsx(StyleLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "style", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "color", className: "nice-form-control", children: [_jsxs("b", { children: ["Color:", touched.color && !errors.color && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "color", value: values.color || "", className: errors.color
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("color", true);
-                                                                setFieldValue("color", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Color" }), _jsx(ColorLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "color", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "trashed", className: "nice-form-control", children: [_jsxs("b", { children: ["Trashed:", touched.trashed && !errors.trashed && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "trashed", name: "trashed", checked: values.trashed || false, onChange: (e) => {
-                                                                setFieldTouched("trashed", true);
-                                                                setFieldValue("trashed", e.target.checked);
-                                                            }, isInvalid: !!errors.trashed, className: errors.trashed ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "trashed", component: "span" })] }), _jsx("br", {}), _jsxs(CoolButton, { variant: isValid
-                                                        ? isSaving
-                                                            ? "disabled"
-                                                            : "success"
-                                                        : "warning", type: "submit", disabled: !isValid || isSaving, children: [isSaving && (_jsx("span", { style: { float: "left", minHeight: 0 }, children: _jsx(LoadingSpinner, { label: "", size: 18 }) })), _jsx(FaCheckCircle, { size: 28 }), " Create New Border"] }), (addBorderResult.isError || errorMessage) && (_jsx(Alert, { variant: "danger", className: "mt-3", children: errorMessage ||
-                                                        JSON.stringify("data" in addBorderResult.error
-                                                            ? addBorderResult.error.data
-                                                            : addBorderResult.error) })), (addBorderResult.isSuccess || successMessage) && (_jsx(Alert, { variant: "success", className: "mt-3", children: successMessage || "Saved successfully." }))] })] }), _jsxs(Accordion.Item, { eventKey: "0", children: [_jsxs(Accordion.Header, { children: [_jsx(FaCogs, { size: 28 }), " \u00A0Server Messages"] }), _jsxs(Accordion.Body, { children: ["errors: ", JSON.stringify(errors), _jsx("br", {}), "addBorderResult: ", JSON.stringify(addBorderResult)] })] })] }) }));
-                } }), createdObjectId && (_jsx(PermissionDialog, { objectType: "com.valkyrlabs.model.Border", objectId: createdObjectId, isVisible: showPermissionDialog, onClose: handlePermissionDialogClose, onSave: handlePermissionsSave, currentUser: currentUser }))] }));
+      }
+      setSuccessMessage("Saved successfully.");
+    } catch (error) {
+      console.error("Failed to create Border:", error);
+      setErrorMessage("Failed to save. Please try again.");
+    }
+    setSubmitting(false);
+  };
+  return _jsxs("div", {
+    children: [
+      _jsx(Formik, {
+        validateOnBlur: true,
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: handleSubmit,
+        children: ({
+          isSubmitting,
+          isValid,
+          errors,
+          values,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => {
+          const isSaving = isSubmitting || addBorderResult.isLoading;
+          return _jsx("form", {
+            onSubmit: handleSubmit,
+            className: "form",
+            children: _jsxs(Accordion, {
+              defaultActiveKey: "1",
+              children: [
+                _jsxs(Accordion.Item, {
+                  eventKey: "1",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaRegPlusSquare, { size: 28 }),
+                        " \u00A0 Add New Border",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        _jsxs("label", {
+                          htmlFor: "formatId",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Format Id:",
+                                touched.formatId &&
+                                  !errors.formatId &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "formatId",
+                              value: values?.formatId,
+                              placeholder: "Format Id",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "formatId",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "style",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Style:",
+                                touched.style &&
+                                  !errors.style &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "style",
+                              value: values.style || "",
+                              className: errors.style
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("style", true);
+                                setFieldValue(
+                                  "style",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Style",
+                                }),
+                                _jsx(StyleLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "style",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "color",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Color:",
+                                touched.color &&
+                                  !errors.color &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "color",
+                              value: values.color || "",
+                              className: errors.color
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("color", true);
+                                setFieldValue(
+                                  "color",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Color",
+                                }),
+                                _jsx(ColorLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "color",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "trashed",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Trashed:",
+                                touched.trashed &&
+                                  !errors.trashed &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "trashed",
+                              name: "trashed",
+                              checked: values.trashed || false,
+                              onChange: (e) => {
+                                setFieldTouched("trashed", true);
+                                setFieldValue("trashed", e.target.checked);
+                              },
+                              isInvalid: !!errors.trashed,
+                              className: errors.trashed ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "trashed",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs(CoolButton, {
+                          variant: isValid
+                            ? isSaving
+                              ? "disabled"
+                              : "success"
+                            : "warning",
+                          type: "submit",
+                          disabled: !isValid || isSaving,
+                          children: [
+                            isSaving &&
+                              _jsx("span", {
+                                style: { float: "left", minHeight: 0 },
+                                children: _jsx(LoadingSpinner, {
+                                  label: "",
+                                  size: 18,
+                                }),
+                              }),
+                            _jsx(FaCheckCircle, { size: 28 }),
+                            " Create New Border",
+                          ],
+                        }),
+                        (addBorderResult.isError || errorMessage) &&
+                          _jsx(Alert, {
+                            variant: "danger",
+                            className: "mt-3",
+                            children:
+                              errorMessage ||
+                              JSON.stringify(
+                                "data" in addBorderResult.error
+                                  ? addBorderResult.error.data
+                                  : addBorderResult.error,
+                              ),
+                          }),
+                        (addBorderResult.isSuccess || successMessage) &&
+                          _jsx(Alert, {
+                            variant: "success",
+                            className: "mt-3",
+                            children: successMessage || "Saved successfully.",
+                          }),
+                      ],
+                    }),
+                  ],
+                }),
+                _jsxs(Accordion.Item, {
+                  eventKey: "0",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaCogs, { size: 28 }),
+                        " \u00A0Server Messages",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        "errors: ",
+                        JSON.stringify(errors),
+                        _jsx("br", {}),
+                        "addBorderResult: ",
+                        JSON.stringify(addBorderResult),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          });
+        },
+      }),
+      createdObjectId &&
+        _jsx(PermissionDialog, {
+          objectType: "com.valkyrlabs.model.Border",
+          objectId: createdObjectId,
+          isVisible: showPermissionDialog,
+          onClose: handlePermissionDialogClose,
+          onSave: handlePermissionsSave,
+          currentUser: currentUser,
+        }),
+    ],
+  });
 };
 /*
 lowercase stylelookup
@@ -181,7 +443,33 @@ camelcase styleLookup
 kebabcase style-lookup
 */
 const StyleLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "None", label: "Border None" }), _jsx("option", { value: "Thin", label: "Border Thin" }), _jsx("option", { value: "Medium", label: "Border Medium" }), _jsx("option", { value: "Dashed", label: "Border Dashed" }), _jsx("option", { value: "Dotted", label: "Border Dotted" }), _jsx("option", { value: "Thick", label: "Border Thick" }), _jsx("option", { value: "Double", label: "Border Double" }), _jsx("option", { value: "Hair", label: "Border Hair" }), _jsx("option", { value: "MediumDashed", label: "Border Medium Dashed" }), _jsx("option", { value: "DashDot", label: "Border Dash Dot" }), _jsx("option", { value: "MediumDashDot", label: "Border Medium Dash Dot" }), _jsx("option", { value: "DashDotDot", label: "Border Dash Dot Dot" }), _jsx("option", { value: "MediumDashDotDot", label: "Border Medium Dash Dot Dot" }), _jsx("option", { value: "SlantedDashDot", label: "Border Slanted Dash Dot" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "None", label: "Border None" }),
+      _jsx("option", { value: "Thin", label: "Border Thin" }),
+      _jsx("option", { value: "Medium", label: "Border Medium" }),
+      _jsx("option", { value: "Dashed", label: "Border Dashed" }),
+      _jsx("option", { value: "Dotted", label: "Border Dotted" }),
+      _jsx("option", { value: "Thick", label: "Border Thick" }),
+      _jsx("option", { value: "Double", label: "Border Double" }),
+      _jsx("option", { value: "Hair", label: "Border Hair" }),
+      _jsx("option", { value: "MediumDashed", label: "Border Medium Dashed" }),
+      _jsx("option", { value: "DashDot", label: "Border Dash Dot" }),
+      _jsx("option", {
+        value: "MediumDashDot",
+        label: "Border Medium Dash Dot",
+      }),
+      _jsx("option", { value: "DashDotDot", label: "Border Dash Dot Dot" }),
+      _jsx("option", {
+        value: "MediumDashDotDot",
+        label: "Border Medium Dash Dot Dot",
+      }),
+      _jsx("option", {
+        value: "SlantedDashDot",
+        label: "Border Slanted Dash Dot",
+      }),
+    ],
+  });
 };
 /*
 lowercase colorlookup
@@ -192,7 +480,17 @@ camelcase colorLookup
 kebabcase color-lookup
 */
 const ColorLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "Black", label: "Color Black" }), _jsx("option", { value: "Red", label: "Color Red" }), _jsx("option", { value: "Blue", label: "Color Blue" }), _jsx("option", { value: "Yellow", label: "Color Yellow" }), _jsx("option", { value: "Green", label: "Color Green" }), _jsx("option", { value: "Teal", label: "Color Teal" }), _jsx("option", { value: "Gray50", label: "Color Gray 50" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "Black", label: "Color Black" }),
+      _jsx("option", { value: "Red", label: "Color Red" }),
+      _jsx("option", { value: "Blue", label: "Color Blue" }),
+      _jsx("option", { value: "Yellow", label: "Color Yellow" }),
+      _jsx("option", { value: "Green", label: "Color Green" }),
+      _jsx("option", { value: "Teal", label: "Color Teal" }),
+      _jsx("option", { value: "Gray50", label: "Color Gray 50" }),
+    ],
+  });
 };
 /* Export the generated form */
 export default BorderForm;

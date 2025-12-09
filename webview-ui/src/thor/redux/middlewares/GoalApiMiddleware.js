@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Goal
 */
-export const GoalMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const GoalMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Goal MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=GoalApiMiddleware.js.map

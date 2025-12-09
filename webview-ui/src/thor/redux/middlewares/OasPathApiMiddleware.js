@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: OasPath
 */
-export const OasPathMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const OasPathMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("OasPath MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=OasPathApiMiddleware.js.map

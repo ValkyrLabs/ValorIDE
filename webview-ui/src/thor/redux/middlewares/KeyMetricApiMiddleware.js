@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: KeyMetric
 */
-export const KeyMetricMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const KeyMetricMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("KeyMetric MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=KeyMetricApiMiddleware.js.map

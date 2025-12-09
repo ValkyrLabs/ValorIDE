@@ -1,4 +1,8 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import {
+  jsx as _jsx,
+  jsxs as _jsxs,
+  Fragment as _Fragment,
+} from "react/jsx-runtime";
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -15,16 +19,16 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Formik, } from "formik";
+import { ErrorMessage, Formik } from "formik";
 import { useState } from "react";
-import { Form as BSForm, Accordion, Alert, } from "react-bootstrap";
+import { Form as BSForm, Accordion, Alert } from "react-bootstrap";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import * as Yup from "yup";
 import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import { PermissionType, } from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionType } from "@valkyr/component-library/PermissionDialog/types";
 import { useAddMcpToolMutation } from "../../services/McpToolService";
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,152 +52,724 @@ McpTool
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const CategoryValidation = () => {
-    return [
-        "cloud_platform",
-        "devops",
-        "security",
-        "observability",
-        "data_engineering",
-        "ai_assistant",
-        "productivity",
-        "customization",
-    ];
+  return [
+    "cloud_platform",
+    "devops",
+    "security",
+    "observability",
+    "data_engineering",
+    "ai_assistant",
+    "productivity",
+    "customization",
+  ];
 };
 const InvocationStyleValidation = () => {
-    return ["single_call", "conversational", "streaming", "background"];
+  return ["single_call", "conversational", "streaming", "background"];
 };
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
-const asNumber = (schema) => schema.transform((val, orig) => orig === "" || orig === null ? undefined : val);
+const asNumber = (schema) =>
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 const validationSchema = Yup.object().shape({
-    name: Yup.string().required("name is required."),
-    mcpServerId: Yup.string(),
-    slug: Yup.string(),
-    description: Yup.string(),
-    category: Yup.mixed().oneOf(CategoryValidation(), "Invalid value for category"),
-    capabilities: Yup.string(),
-    invocationStyle: Yup.mixed().oneOf(InvocationStyleValidation(), "Invalid value for invocationStyle"),
-    streamingSupported: Yup.boolean(),
-    autoApprove: Yup.boolean(),
-    defaultAutoApprove: Yup.boolean(),
-    docsUrl: Yup.string(),
-    inputSchema: Yup.string(),
-    trashed: Yup.boolean(),
+  name: Yup.string().required("name is required."),
+  mcpServerId: Yup.string(),
+  slug: Yup.string(),
+  description: Yup.string(),
+  category: Yup.mixed().oneOf(
+    CategoryValidation(),
+    "Invalid value for category",
+  ),
+  capabilities: Yup.string(),
+  invocationStyle: Yup.mixed().oneOf(
+    InvocationStyleValidation(),
+    "Invalid value for invocationStyle",
+  ),
+  streamingSupported: Yup.boolean(),
+  autoApprove: Yup.boolean(),
+  defaultAutoApprove: Yup.boolean(),
+  docsUrl: Yup.string(),
+  inputSchema: Yup.string(),
+  trashed: Yup.boolean(),
 });
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const McpToolForm = () => {
-    const [addMcpTool, addMcpToolResult] = useAddMcpToolMutation();
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
-    // Permission Management State
-    const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-    const [createdObjectId, setCreatedObjectId] = useState(null);
-    // Mock current user - in real implementation, this would come from auth context
-    const currentUser = {
-        username: "current_user",
-        permissions: {
-            isOwner: true,
-            isAdmin: true,
-            canGrantPermissions: true,
-            permissions: [
-                PermissionType.READ,
-                PermissionType.WRITE,
-                PermissionType.CREATE,
-                PermissionType.DELETE,
-                PermissionType.ADMINISTRATION,
-            ],
-        },
-    };
-    /* -----------------------------------------------------
+  const [addMcpTool, addMcpToolResult] = useAddMcpToolMutation();
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState(null);
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: "current_user",
+    permissions: {
+      isOwner: true,
+      isAdmin: true,
+      canGrantPermissions: true,
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
+    },
+  };
+  /* -----------------------------------------------------
        INITIAL VALUES - only NON read-only fields
     -------------------------------------------------------- */
-    const initialValues = {
-        name: "",
-        mcpServerId: "",
-        slug: "",
-        description: "",
-        category: undefined,
-        capabilities: "",
-        invocationStyle: undefined,
-        streamingSupported: false,
-        autoApprove: false,
-        defaultAutoApprove: false,
-        docsUrl: "",
-        inputSchema: "",
-        trashed: false,
-    };
-    // Permission Management Handlers
-    const handleManagePermissions = (objectId) => {
-        setCreatedObjectId(objectId);
-        setShowPermissionDialog(true);
-    };
-    const handlePermissionDialogClose = () => {
-        setShowPermissionDialog(false);
-        setCreatedObjectId(null);
-    };
-    const handlePermissionsSave = (grants) => {
-        console.log("Permissions saved for new McpTool:", grants);
-    };
-    /* SUBMIT HANDLER */
-    const handleSubmit = async (values, { setSubmitting }) => {
-        try {
-            setSuccessMessage(null);
-            setErrorMessage(null);
-            console.log("McpTool form values:", values);
-            // NOTE: depending on your generated endpoint, you may need { body: values }
-            const result = await addMcpTool(values).unwrap();
-            if (result && result.id && currentUser.permissions.canGrantPermissions) {
-                const shouldSetPermissions = window.confirm(`McpTool created successfully! Would you like to set permissions for this object?`);
-                if (shouldSetPermissions) {
-                    handleManagePermissions(result.id);
-                }
-            }
-            setSuccessMessage("Saved successfully.");
+  const initialValues = {
+    name: "",
+    mcpServerId: "",
+    slug: "",
+    description: "",
+    category: undefined,
+    capabilities: "",
+    invocationStyle: undefined,
+    streamingSupported: false,
+    autoApprove: false,
+    defaultAutoApprove: false,
+    docsUrl: "",
+    inputSchema: "",
+    trashed: false,
+  };
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+  const handlePermissionsSave = (grants) => {
+    console.log("Permissions saved for new McpTool:", grants);
+  };
+  /* SUBMIT HANDLER */
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      setSuccessMessage(null);
+      setErrorMessage(null);
+      console.log("McpTool form values:", values);
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addMcpTool(values).unwrap();
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `McpTool created successfully! Would you like to set permissions for this object?`,
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
         }
-        catch (error) {
-            console.error("Failed to create McpTool:", error);
-            setErrorMessage("Failed to save. Please try again.");
-        }
-        setSubmitting(false);
-    };
-    return (_jsxs("div", { children: [_jsx(Formik, { validateOnBlur: true, initialValues: initialValues, validationSchema: validationSchema, onSubmit: handleSubmit, children: ({ isSubmitting, isValid, errors, values, setFieldValue, touched, setFieldTouched, handleSubmit, }) => {
-                    const isSaving = isSubmitting || addMcpToolResult.isLoading;
-                    return (_jsx("form", { onSubmit: handleSubmit, className: "form", children: _jsxs(Accordion, { defaultActiveKey: "1", children: [_jsxs(Accordion.Item, { eventKey: "1", children: [_jsxs(Accordion.Header, { children: [_jsx(FaRegPlusSquare, { size: 28 }), " \u00A0 Add New McpTool"] }), _jsxs(Accordion.Body, { children: [_jsxs("label", { htmlFor: "name", className: "nice-form-control", children: [_jsxs("b", { children: ["Name:", touched.name && !errors.name && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "name", value: values?.name, placeholder: "Name", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "name", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "mcpServerId", className: "nice-form-control", children: [_jsxs("b", { children: ["Mcp Server Id:", touched.mcpServerId && !errors.mcpServerId && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "mcpServerId", value: values?.mcpServerId, placeholder: "Mcp Server Id", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "mcpServerId", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "slug", className: "nice-form-control", children: [_jsxs("b", { children: ["Slug:", touched.slug && !errors.slug && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "slug", value: values?.slug, placeholder: "Slug", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "slug", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "description", className: "nice-form-control", children: [_jsxs("b", { children: ["Description:", touched.description && !errors.description && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "description", value: values?.description, placeholder: "Description", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "description", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "category", className: "nice-form-control", children: [_jsxs("b", { children: ["Category:", touched.category && !errors.category && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "category", value: values.category || "", className: errors.category
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("category", true);
-                                                                setFieldValue("category", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Category" }), _jsx(CategoryLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "category", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "capabilities", className: "nice-form-control", children: [_jsxs("b", { children: ["Capabilities:", touched.capabilities && !errors.capabilities && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "capabilities", value: values?.capabilities, placeholder: "Capabilities", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "capabilities", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "invocationStyle", className: "nice-form-control", children: [_jsxs("b", { children: ["Invocation Style:", touched.invocationStyle && !errors.invocationStyle && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "invocationStyle", value: values.invocationStyle || "", className: errors.invocationStyle
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("invocationStyle", true);
-                                                                setFieldValue("invocationStyle", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Invocation Style" }), _jsx(InvocationStyleLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "invocationStyle", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "streamingSupported", className: "nice-form-control", children: [_jsxs("b", { children: ["Streaming Supported:", touched.streamingSupported &&
-                                                                    !errors.streamingSupported && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "streamingSupported", name: "streamingSupported", checked: values.streamingSupported || false, onChange: (e) => {
-                                                                setFieldTouched("streamingSupported", true);
-                                                                setFieldValue("streamingSupported", e.target.checked);
-                                                            }, isInvalid: !!errors.streamingSupported, className: errors.streamingSupported ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "streamingSupported", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "autoApprove", className: "nice-form-control", children: [_jsxs("b", { children: ["Auto Approve:", touched.autoApprove && !errors.autoApprove && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "autoApprove", name: "autoApprove", checked: values.autoApprove || false, onChange: (e) => {
-                                                                setFieldTouched("autoApprove", true);
-                                                                setFieldValue("autoApprove", e.target.checked);
-                                                            }, isInvalid: !!errors.autoApprove, className: errors.autoApprove ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "autoApprove", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "defaultAutoApprove", className: "nice-form-control", children: [_jsxs("b", { children: ["Default Auto Approve:", touched.defaultAutoApprove &&
-                                                                    !errors.defaultAutoApprove && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "defaultAutoApprove", name: "defaultAutoApprove", checked: values.defaultAutoApprove || false, onChange: (e) => {
-                                                                setFieldTouched("defaultAutoApprove", true);
-                                                                setFieldValue("defaultAutoApprove", e.target.checked);
-                                                            }, isInvalid: !!errors.defaultAutoApprove, className: errors.defaultAutoApprove ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "defaultAutoApprove", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "docsUrl", className: "nice-form-control", children: [_jsxs("b", { children: ["Docs Url:", touched.docsUrl && !errors.docsUrl && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "docsUrl", value: values?.docsUrl, placeholder: "Docs Url", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "docsUrl", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "inputSchema", className: "nice-form-control", children: [_jsxs("b", { children: ["Input Schema:", touched.inputSchema && !errors.inputSchema && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "inputSchema", value: values?.inputSchema, placeholder: "Input Schema", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "inputSchema", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "trashed", className: "nice-form-control", children: [_jsxs("b", { children: ["Trashed:", touched.trashed && !errors.trashed && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "trashed", name: "trashed", checked: values.trashed || false, onChange: (e) => {
-                                                                setFieldTouched("trashed", true);
-                                                                setFieldValue("trashed", e.target.checked);
-                                                            }, isInvalid: !!errors.trashed, className: errors.trashed ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "trashed", component: "span" })] }), _jsx("br", {}), _jsxs(CoolButton, { variant: isValid
-                                                        ? isSaving
-                                                            ? "disabled"
-                                                            : "success"
-                                                        : "warning", type: "submit", disabled: !isValid || isSaving, children: [isSaving && (_jsx("span", { style: { float: "left", minHeight: 0 }, children: _jsx(LoadingSpinner, { label: "", size: 18 }) })), _jsx(FaCheckCircle, { size: 28 }), " Create New McpTool"] }), (addMcpToolResult.isError || errorMessage) && (_jsx(Alert, { variant: "danger", className: "mt-3", children: errorMessage ||
-                                                        JSON.stringify("data" in addMcpToolResult.error
-                                                            ? addMcpToolResult.error.data
-                                                            : addMcpToolResult.error) })), (addMcpToolResult.isSuccess || successMessage) && (_jsx(Alert, { variant: "success", className: "mt-3", children: successMessage || "Saved successfully." }))] })] }), _jsxs(Accordion.Item, { eventKey: "0", children: [_jsxs(Accordion.Header, { children: [_jsx(FaCogs, { size: 28 }), " \u00A0Server Messages"] }), _jsxs(Accordion.Body, { children: ["errors: ", JSON.stringify(errors), _jsx("br", {}), "addMcpToolResult: ", JSON.stringify(addMcpToolResult)] })] })] }) }));
-                } }), createdObjectId && (_jsx(PermissionDialog, { objectType: "com.valkyrlabs.model.McpTool", objectId: createdObjectId, isVisible: showPermissionDialog, onClose: handlePermissionDialogClose, onSave: handlePermissionsSave, currentUser: currentUser }))] }));
+      }
+      setSuccessMessage("Saved successfully.");
+    } catch (error) {
+      console.error("Failed to create McpTool:", error);
+      setErrorMessage("Failed to save. Please try again.");
+    }
+    setSubmitting(false);
+  };
+  return _jsxs("div", {
+    children: [
+      _jsx(Formik, {
+        validateOnBlur: true,
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: handleSubmit,
+        children: ({
+          isSubmitting,
+          isValid,
+          errors,
+          values,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => {
+          const isSaving = isSubmitting || addMcpToolResult.isLoading;
+          return _jsx("form", {
+            onSubmit: handleSubmit,
+            className: "form",
+            children: _jsxs(Accordion, {
+              defaultActiveKey: "1",
+              children: [
+                _jsxs(Accordion.Item, {
+                  eventKey: "1",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaRegPlusSquare, { size: 28 }),
+                        " \u00A0 Add New McpTool",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        _jsxs("label", {
+                          htmlFor: "name",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Name:",
+                                touched.name &&
+                                  !errors.name &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "name",
+                              value: values?.name,
+                              placeholder: "Name",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "name",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "mcpServerId",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Mcp Server Id:",
+                                touched.mcpServerId &&
+                                  !errors.mcpServerId &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "mcpServerId",
+                              value: values?.mcpServerId,
+                              placeholder: "Mcp Server Id",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "mcpServerId",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "slug",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Slug:",
+                                touched.slug &&
+                                  !errors.slug &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "slug",
+                              value: values?.slug,
+                              placeholder: "Slug",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "slug",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "description",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Description:",
+                                touched.description &&
+                                  !errors.description &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "description",
+                              value: values?.description,
+                              placeholder: "Description",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "description",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "category",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Category:",
+                                touched.category &&
+                                  !errors.category &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "category",
+                              value: values.category || "",
+                              className: errors.category
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("category", true);
+                                setFieldValue(
+                                  "category",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Category",
+                                }),
+                                _jsx(CategoryLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "category",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "capabilities",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Capabilities:",
+                                touched.capabilities &&
+                                  !errors.capabilities &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "capabilities",
+                              value: values?.capabilities,
+                              placeholder: "Capabilities",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "capabilities",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "invocationStyle",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Invocation Style:",
+                                touched.invocationStyle &&
+                                  !errors.invocationStyle &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "invocationStyle",
+                              value: values.invocationStyle || "",
+                              className: errors.invocationStyle
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("invocationStyle", true);
+                                setFieldValue(
+                                  "invocationStyle",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Invocation Style",
+                                }),
+                                _jsx(InvocationStyleLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "invocationStyle",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "streamingSupported",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Streaming Supported:",
+                                touched.streamingSupported &&
+                                  !errors.streamingSupported &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "streamingSupported",
+                              name: "streamingSupported",
+                              checked: values.streamingSupported || false,
+                              onChange: (e) => {
+                                setFieldTouched("streamingSupported", true);
+                                setFieldValue(
+                                  "streamingSupported",
+                                  e.target.checked,
+                                );
+                              },
+                              isInvalid: !!errors.streamingSupported,
+                              className: errors.streamingSupported
+                                ? "error"
+                                : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "streamingSupported",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "autoApprove",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Auto Approve:",
+                                touched.autoApprove &&
+                                  !errors.autoApprove &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "autoApprove",
+                              name: "autoApprove",
+                              checked: values.autoApprove || false,
+                              onChange: (e) => {
+                                setFieldTouched("autoApprove", true);
+                                setFieldValue("autoApprove", e.target.checked);
+                              },
+                              isInvalid: !!errors.autoApprove,
+                              className: errors.autoApprove ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "autoApprove",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "defaultAutoApprove",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Default Auto Approve:",
+                                touched.defaultAutoApprove &&
+                                  !errors.defaultAutoApprove &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "defaultAutoApprove",
+                              name: "defaultAutoApprove",
+                              checked: values.defaultAutoApprove || false,
+                              onChange: (e) => {
+                                setFieldTouched("defaultAutoApprove", true);
+                                setFieldValue(
+                                  "defaultAutoApprove",
+                                  e.target.checked,
+                                );
+                              },
+                              isInvalid: !!errors.defaultAutoApprove,
+                              className: errors.defaultAutoApprove
+                                ? "error"
+                                : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "defaultAutoApprove",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "docsUrl",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Docs Url:",
+                                touched.docsUrl &&
+                                  !errors.docsUrl &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "docsUrl",
+                              value: values?.docsUrl,
+                              placeholder: "Docs Url",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "docsUrl",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "inputSchema",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Input Schema:",
+                                touched.inputSchema &&
+                                  !errors.inputSchema &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "inputSchema",
+                              value: values?.inputSchema,
+                              placeholder: "Input Schema",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "inputSchema",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "trashed",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Trashed:",
+                                touched.trashed &&
+                                  !errors.trashed &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "trashed",
+                              name: "trashed",
+                              checked: values.trashed || false,
+                              onChange: (e) => {
+                                setFieldTouched("trashed", true);
+                                setFieldValue("trashed", e.target.checked);
+                              },
+                              isInvalid: !!errors.trashed,
+                              className: errors.trashed ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "trashed",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs(CoolButton, {
+                          variant: isValid
+                            ? isSaving
+                              ? "disabled"
+                              : "success"
+                            : "warning",
+                          type: "submit",
+                          disabled: !isValid || isSaving,
+                          children: [
+                            isSaving &&
+                              _jsx("span", {
+                                style: { float: "left", minHeight: 0 },
+                                children: _jsx(LoadingSpinner, {
+                                  label: "",
+                                  size: 18,
+                                }),
+                              }),
+                            _jsx(FaCheckCircle, { size: 28 }),
+                            " Create New McpTool",
+                          ],
+                        }),
+                        (addMcpToolResult.isError || errorMessage) &&
+                          _jsx(Alert, {
+                            variant: "danger",
+                            className: "mt-3",
+                            children:
+                              errorMessage ||
+                              JSON.stringify(
+                                "data" in addMcpToolResult.error
+                                  ? addMcpToolResult.error.data
+                                  : addMcpToolResult.error,
+                              ),
+                          }),
+                        (addMcpToolResult.isSuccess || successMessage) &&
+                          _jsx(Alert, {
+                            variant: "success",
+                            className: "mt-3",
+                            children: successMessage || "Saved successfully.",
+                          }),
+                      ],
+                    }),
+                  ],
+                }),
+                _jsxs(Accordion.Item, {
+                  eventKey: "0",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaCogs, { size: 28 }),
+                        " \u00A0Server Messages",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        "errors: ",
+                        JSON.stringify(errors),
+                        _jsx("br", {}),
+                        "addMcpToolResult: ",
+                        JSON.stringify(addMcpToolResult),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          });
+        },
+      }),
+      createdObjectId &&
+        _jsx(PermissionDialog, {
+          objectType: "com.valkyrlabs.model.McpTool",
+          objectId: createdObjectId,
+          isVisible: showPermissionDialog,
+          onClose: handlePermissionDialogClose,
+          onSave: handlePermissionsSave,
+          currentUser: currentUser,
+        }),
+    ],
+  });
 };
 /*
 lowercase categorylookup
@@ -204,7 +780,18 @@ camelcase categoryLookup
 kebabcase category-lookup
 */
 const CategoryLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "cloud_platform", label: "Cloud Platform" }), _jsx("option", { value: "devops", label: "Devops" }), _jsx("option", { value: "security", label: "Security" }), _jsx("option", { value: "observability", label: "Observability" }), _jsx("option", { value: "data_engineering", label: "Data Engineering" }), _jsx("option", { value: "ai_assistant", label: "Ai Assistant" }), _jsx("option", { value: "productivity", label: "Productivity" }), _jsx("option", { value: "customization", label: "Customization" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "cloud_platform", label: "Cloud Platform" }),
+      _jsx("option", { value: "devops", label: "Devops" }),
+      _jsx("option", { value: "security", label: "Security" }),
+      _jsx("option", { value: "observability", label: "Observability" }),
+      _jsx("option", { value: "data_engineering", label: "Data Engineering" }),
+      _jsx("option", { value: "ai_assistant", label: "Ai Assistant" }),
+      _jsx("option", { value: "productivity", label: "Productivity" }),
+      _jsx("option", { value: "customization", label: "Customization" }),
+    ],
+  });
 };
 /*
 lowercase invocationstylelookup
@@ -215,7 +802,14 @@ camelcase invocationStyleLookup
 kebabcase invocation-style-lookup
 */
 const InvocationStyleLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "single_call", label: "Single Call" }), _jsx("option", { value: "conversational", label: "Conversational" }), _jsx("option", { value: "streaming", label: "Streaming" }), _jsx("option", { value: "background", label: "Background" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "single_call", label: "Single Call" }),
+      _jsx("option", { value: "conversational", label: "Conversational" }),
+      _jsx("option", { value: "streaming", label: "Streaming" }),
+      _jsx("option", { value: "background", label: "Background" }),
+    ],
+  });
 };
 /* Export the generated form */
 export default McpToolForm;

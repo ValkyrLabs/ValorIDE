@@ -30,75 +30,75 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { BorderFromJSON, BorderToJSON } from "./";
 export function FormatFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        workbookId: !exists(json, "workbookId") ? undefined : json["workbookId"],
-        fontWeight: !exists(json, "fontWeight") ? undefined : json["fontWeight"],
-        fontSize: !exists(json, "fontSize") ? undefined : json["fontSize"],
-        fontFace: !exists(json, "fontFace") ? undefined : json["fontFace"],
-        underline: !exists(json, "underline") ? undefined : json["underline"],
-        color: !exists(json, "color") ? undefined : json["color"],
-        alignmentHorizontal: !exists(json, "alignment-horizontal")
-            ? undefined
-            : json["alignment-horizontal"],
-        alignmentVertical: !exists(json, "alignment-vertical")
-            ? undefined
-            : json["alignment-vertical"],
-        pattern: !exists(json, "pattern") ? undefined : json["pattern"],
-        borderLeft: !exists(json, "border-left")
-            ? undefined
-            : BorderFromJSON(json["border-left"]),
-        borderRight: !exists(json, "border-right")
-            ? undefined
-            : BorderFromJSON(json["border-right"]),
-        borderTop: !exists(json, "border-top")
-            ? undefined
-            : BorderFromJSON(json["border-top"]),
-        borderBottom: !exists(json, "border-bottom")
-            ? undefined
-            : BorderFromJSON(json["border-bottom"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    workbookId: !exists(json, "workbookId") ? undefined : json["workbookId"],
+    fontWeight: !exists(json, "fontWeight") ? undefined : json["fontWeight"],
+    fontSize: !exists(json, "fontSize") ? undefined : json["fontSize"],
+    fontFace: !exists(json, "fontFace") ? undefined : json["fontFace"],
+    underline: !exists(json, "underline") ? undefined : json["underline"],
+    color: !exists(json, "color") ? undefined : json["color"],
+    alignmentHorizontal: !exists(json, "alignment-horizontal")
+      ? undefined
+      : json["alignment-horizontal"],
+    alignmentVertical: !exists(json, "alignment-vertical")
+      ? undefined
+      : json["alignment-vertical"],
+    pattern: !exists(json, "pattern") ? undefined : json["pattern"],
+    borderLeft: !exists(json, "border-left")
+      ? undefined
+      : BorderFromJSON(json["border-left"]),
+    borderRight: !exists(json, "border-right")
+      ? undefined
+      : BorderFromJSON(json["border-right"]),
+    borderTop: !exists(json, "border-top")
+      ? undefined
+      : BorderFromJSON(json["border-top"]),
+    borderBottom: !exists(json, "border-bottom")
+      ? undefined
+      : BorderFromJSON(json["border-bottom"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function FormatToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        workbookId: value.workbookId,
-        fontWeight: value.fontWeight,
-        fontSize: value.fontSize,
-        fontFace: value.fontFace,
-        underline: value.underline,
-        color: value.color,
-        "alignment-horizontal": value.alignmentHorizontal,
-        "alignment-vertical": value.alignmentVertical,
-        pattern: value.pattern,
-        "border-left": BorderToJSON(value.borderLeft),
-        "border-right": BorderToJSON(value.borderRight),
-        "border-top": BorderToJSON(value.borderTop),
-        "border-bottom": BorderToJSON(value.borderBottom),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    workbookId: value.workbookId,
+    fontWeight: value.fontWeight,
+    fontSize: value.fontSize,
+    fontFace: value.fontFace,
+    underline: value.underline,
+    color: value.color,
+    "alignment-horizontal": value.alignmentHorizontal,
+    "alignment-vertical": value.alignmentVertical,
+    pattern: value.pattern,
+    "border-left": BorderToJSON(value.borderLeft),
+    "border-right": BorderToJSON(value.borderRight),
+    "border-top": BorderToJSON(value.borderTop),
+    "border-bottom": BorderToJSON(value.borderBottom),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -106,9 +106,12 @@ export function FormatToJSON(value) {
  */
 export var FormatFontWeightEnum;
 (function (FormatFontWeightEnum) {
-    FormatFontWeightEnum[FormatFontWeightEnum["FONTWEIGHTLIGHT"] = 200] = "FONTWEIGHTLIGHT";
-    FormatFontWeightEnum[FormatFontWeightEnum["FONTWEIGHTREGULAR"] = 400] = "FONTWEIGHTREGULAR";
-    FormatFontWeightEnum[FormatFontWeightEnum["FONTWEIGHTBOLD"] = 700] = "FONTWEIGHTBOLD";
+  FormatFontWeightEnum[(FormatFontWeightEnum["FONTWEIGHTLIGHT"] = 200)] =
+    "FONTWEIGHTLIGHT";
+  FormatFontWeightEnum[(FormatFontWeightEnum["FONTWEIGHTREGULAR"] = 400)] =
+    "FONTWEIGHTREGULAR";
+  FormatFontWeightEnum[(FormatFontWeightEnum["FONTWEIGHTBOLD"] = 700)] =
+    "FONTWEIGHTBOLD";
 })(FormatFontWeightEnum || (FormatFontWeightEnum = {}));
 /**
  * @export
@@ -116,11 +119,16 @@ export var FormatFontWeightEnum;
  */
 export var FormatUnderlineEnum;
 (function (FormatUnderlineEnum) {
-    FormatUnderlineEnum[FormatUnderlineEnum["UNDERLINENONE"] = 0] = "UNDERLINENONE";
-    FormatUnderlineEnum[FormatUnderlineEnum["UNDERLINESINGLE"] = 1] = "UNDERLINESINGLE";
-    FormatUnderlineEnum[FormatUnderlineEnum["UNDERLINEDOUBLE"] = 2] = "UNDERLINEDOUBLE";
-    FormatUnderlineEnum[FormatUnderlineEnum["UNDERLINESINGLEACCOUNTING"] = 21] = "UNDERLINESINGLEACCOUNTING";
-    FormatUnderlineEnum[FormatUnderlineEnum["UNDERLINEDOUBLEACCOUNTING"] = 22] = "UNDERLINEDOUBLEACCOUNTING";
+  FormatUnderlineEnum[(FormatUnderlineEnum["UNDERLINENONE"] = 0)] =
+    "UNDERLINENONE";
+  FormatUnderlineEnum[(FormatUnderlineEnum["UNDERLINESINGLE"] = 1)] =
+    "UNDERLINESINGLE";
+  FormatUnderlineEnum[(FormatUnderlineEnum["UNDERLINEDOUBLE"] = 2)] =
+    "UNDERLINEDOUBLE";
+  FormatUnderlineEnum[(FormatUnderlineEnum["UNDERLINESINGLEACCOUNTING"] = 21)] =
+    "UNDERLINESINGLEACCOUNTING";
+  FormatUnderlineEnum[(FormatUnderlineEnum["UNDERLINEDOUBLEACCOUNTING"] = 22)] =
+    "UNDERLINEDOUBLEACCOUNTING";
 })(FormatUnderlineEnum || (FormatUnderlineEnum = {}));
 /**
  * @export
@@ -128,22 +136,22 @@ export var FormatUnderlineEnum;
  */
 export var FormatColorEnum;
 (function (FormatColorEnum) {
-    FormatColorEnum["COLORBLACK"] = "black";
-    FormatColorEnum["COLORWHITE"] = "white";
-    FormatColorEnum["COLORRED"] = "red";
-    FormatColorEnum["COLORBRIGHTGREEN"] = "brightgreen";
-    FormatColorEnum["COLORBLUE"] = "blue";
-    FormatColorEnum["COLORYELLOW"] = "yellow";
-    FormatColorEnum["COLORPINK"] = "pink";
-    FormatColorEnum["COLORTURQUOISE"] = "turquoise";
-    FormatColorEnum["COLORDARKRED"] = "darkred";
-    FormatColorEnum["COLORORANGE"] = "orange";
-    FormatColorEnum["COLORDARKYELLOW"] = "darkyellow";
-    FormatColorEnum["COLORGREEN"] = "green";
-    FormatColorEnum["COLORTEAL"] = "teal";
-    FormatColorEnum["COLORLIGHTBLUE"] = "lightblue";
-    FormatColorEnum["COLORVIOLET"] = "violet";
-    FormatColorEnum["COLORGRAY80"] = "gray80";
+  FormatColorEnum["COLORBLACK"] = "black";
+  FormatColorEnum["COLORWHITE"] = "white";
+  FormatColorEnum["COLORRED"] = "red";
+  FormatColorEnum["COLORBRIGHTGREEN"] = "brightgreen";
+  FormatColorEnum["COLORBLUE"] = "blue";
+  FormatColorEnum["COLORYELLOW"] = "yellow";
+  FormatColorEnum["COLORPINK"] = "pink";
+  FormatColorEnum["COLORTURQUOISE"] = "turquoise";
+  FormatColorEnum["COLORDARKRED"] = "darkred";
+  FormatColorEnum["COLORORANGE"] = "orange";
+  FormatColorEnum["COLORDARKYELLOW"] = "darkyellow";
+  FormatColorEnum["COLORGREEN"] = "green";
+  FormatColorEnum["COLORTEAL"] = "teal";
+  FormatColorEnum["COLORLIGHTBLUE"] = "lightblue";
+  FormatColorEnum["COLORVIOLET"] = "violet";
+  FormatColorEnum["COLORGRAY80"] = "gray80";
 })(FormatColorEnum || (FormatColorEnum = {}));
 /**
  * @export
@@ -151,12 +159,13 @@ export var FormatColorEnum;
  */
 export var FormatAlignmentHorizontalEnum;
 (function (FormatAlignmentHorizontalEnum) {
-    FormatAlignmentHorizontalEnum["ALIGNLEFT"] = "left";
-    FormatAlignmentHorizontalEnum["ALIGNCENTER"] = "center";
-    FormatAlignmentHorizontalEnum["ALIGNRIGHT"] = "right";
-    FormatAlignmentHorizontalEnum["ALIGNFILL"] = "fill";
-    FormatAlignmentHorizontalEnum["ALIGNJUSTIFY"] = "justify";
-    FormatAlignmentHorizontalEnum["ALIGNCENTERACROSSSELECTION"] = "centeracrossselection";
+  FormatAlignmentHorizontalEnum["ALIGNLEFT"] = "left";
+  FormatAlignmentHorizontalEnum["ALIGNCENTER"] = "center";
+  FormatAlignmentHorizontalEnum["ALIGNRIGHT"] = "right";
+  FormatAlignmentHorizontalEnum["ALIGNFILL"] = "fill";
+  FormatAlignmentHorizontalEnum["ALIGNJUSTIFY"] = "justify";
+  FormatAlignmentHorizontalEnum["ALIGNCENTERACROSSSELECTION"] =
+    "centeracrossselection";
 })(FormatAlignmentHorizontalEnum || (FormatAlignmentHorizontalEnum = {}));
 /**
  * @export
@@ -164,10 +173,10 @@ export var FormatAlignmentHorizontalEnum;
  */
 export var FormatAlignmentVerticalEnum;
 (function (FormatAlignmentVerticalEnum) {
-    FormatAlignmentVerticalEnum["ALIGNTOP"] = "top";
-    FormatAlignmentVerticalEnum["ALIGNMIDDLE"] = "middle";
-    FormatAlignmentVerticalEnum["ALIGNBOTTOM"] = "bottom";
-    FormatAlignmentVerticalEnum["ALIGNJUSTIFY"] = "justify";
+  FormatAlignmentVerticalEnum["ALIGNTOP"] = "top";
+  FormatAlignmentVerticalEnum["ALIGNMIDDLE"] = "middle";
+  FormatAlignmentVerticalEnum["ALIGNBOTTOM"] = "bottom";
+  FormatAlignmentVerticalEnum["ALIGNJUSTIFY"] = "justify";
 })(FormatAlignmentVerticalEnum || (FormatAlignmentVerticalEnum = {}));
 /**
  * @export
@@ -175,15 +184,23 @@ export var FormatAlignmentVerticalEnum;
  */
 export var FormatPatternEnum;
 (function (FormatPatternEnum) {
-    FormatPatternEnum[FormatPatternEnum["PATTERNNONE"] = 0] = "PATTERNNONE";
-    FormatPatternEnum[FormatPatternEnum["PATTERNFILLED"] = 1] = "PATTERNFILLED";
-    FormatPatternEnum[FormatPatternEnum["PATTERNLIGHTFILL"] = 2] = "PATTERNLIGHTFILL";
-    FormatPatternEnum[FormatPatternEnum["PATTERNMEDIUMFILL"] = 3] = "PATTERNMEDIUMFILL";
-    FormatPatternEnum[FormatPatternEnum["PATTERNHEAVYFILL"] = 4] = "PATTERNHEAVYFILL";
-    FormatPatternEnum[FormatPatternEnum["PATTERNHORIZONTALSTRIPES"] = 5] = "PATTERNHORIZONTALSTRIPES";
-    FormatPatternEnum[FormatPatternEnum["PATTERNVERTICALSTRIPES"] = 6] = "PATTERNVERTICALSTRIPES";
-    FormatPatternEnum[FormatPatternEnum["PATTERNDIAGONALSTRIPES"] = 7] = "PATTERNDIAGONALSTRIPES";
-    FormatPatternEnum[FormatPatternEnum["PATTERNDIAGONALSTRIPESALT"] = 8] = "PATTERNDIAGONALSTRIPESALT";
-    FormatPatternEnum[FormatPatternEnum["PATTERNCHECKERBOARD"] = 9] = "PATTERNCHECKERBOARD";
+  FormatPatternEnum[(FormatPatternEnum["PATTERNNONE"] = 0)] = "PATTERNNONE";
+  FormatPatternEnum[(FormatPatternEnum["PATTERNFILLED"] = 1)] = "PATTERNFILLED";
+  FormatPatternEnum[(FormatPatternEnum["PATTERNLIGHTFILL"] = 2)] =
+    "PATTERNLIGHTFILL";
+  FormatPatternEnum[(FormatPatternEnum["PATTERNMEDIUMFILL"] = 3)] =
+    "PATTERNMEDIUMFILL";
+  FormatPatternEnum[(FormatPatternEnum["PATTERNHEAVYFILL"] = 4)] =
+    "PATTERNHEAVYFILL";
+  FormatPatternEnum[(FormatPatternEnum["PATTERNHORIZONTALSTRIPES"] = 5)] =
+    "PATTERNHORIZONTALSTRIPES";
+  FormatPatternEnum[(FormatPatternEnum["PATTERNVERTICALSTRIPES"] = 6)] =
+    "PATTERNVERTICALSTRIPES";
+  FormatPatternEnum[(FormatPatternEnum["PATTERNDIAGONALSTRIPES"] = 7)] =
+    "PATTERNDIAGONALSTRIPES";
+  FormatPatternEnum[(FormatPatternEnum["PATTERNDIAGONALSTRIPESALT"] = 8)] =
+    "PATTERNDIAGONALSTRIPESALT";
+  FormatPatternEnum[(FormatPatternEnum["PATTERNCHECKERBOARD"] = 9)] =
+    "PATTERNCHECKERBOARD";
 })(FormatPatternEnum || (FormatPatternEnum = {}));
 //# sourceMappingURL=Format.js.map

@@ -28,48 +28,57 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { PaymentTransactionFromJSON, PaymentTransactionToJSON, UsageTransactionFromJSON, UsageTransactionToJSON, } from "./";
+import {
+  PaymentTransactionFromJSON,
+  PaymentTransactionToJSON,
+  UsageTransactionFromJSON,
+  UsageTransactionToJSON,
+} from "./";
 export function AccountBalanceFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        customerId: json["customerId"],
-        usageTransactions: json["usageTransactions"].map(UsageTransactionFromJSON),
-        paymentTransactions: json["paymentTransactions"].map(PaymentTransactionFromJSON),
-        currentBalance: !exists(json, "currentBalance")
-            ? undefined
-            : json["currentBalance"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    customerId: json["customerId"],
+    usageTransactions: json["usageTransactions"].map(UsageTransactionFromJSON),
+    paymentTransactions: json["paymentTransactions"].map(
+      PaymentTransactionFromJSON,
+    ),
+    currentBalance: !exists(json, "currentBalance")
+      ? undefined
+      : json["currentBalance"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function AccountBalanceToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        customerId: value.customerId,
-        usageTransactions: value.usageTransactions.map(UsageTransactionToJSON),
-        paymentTransactions: value.paymentTransactions.map(PaymentTransactionToJSON),
-        currentBalance: value.currentBalance,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    customerId: value.customerId,
+    usageTransactions: value.usageTransactions.map(UsageTransactionToJSON),
+    paymentTransactions: value.paymentTransactions.map(
+      PaymentTransactionToJSON,
+    ),
+    currentBalance: value.currentBalance,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=AccountBalance.js.map

@@ -30,48 +30,48 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { CellFromJSON, CellToJSON } from "./";
 export function NamedRangeFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
-        name: !exists(json, "name") ? undefined : json["name"],
-        startCell: !exists(json, "startCell")
-            ? undefined
-            : CellFromJSON(json["startCell"]),
-        endCell: !exists(json, "endCell")
-            ? undefined
-            : CellFromJSON(json["endCell"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
+    name: !exists(json, "name") ? undefined : json["name"],
+    startCell: !exists(json, "startCell")
+      ? undefined
+      : CellFromJSON(json["startCell"]),
+    endCell: !exists(json, "endCell")
+      ? undefined
+      : CellFromJSON(json["endCell"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function NamedRangeToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        sheetId: value.sheetId,
-        name: value.name,
-        startCell: CellToJSON(value.startCell),
-        endCell: CellToJSON(value.endCell),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    sheetId: value.sheetId,
+    name: value.name,
+    startCell: CellToJSON(value.startCell),
+    endCell: CellToJSON(value.endCell),
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=NamedRange.js.map

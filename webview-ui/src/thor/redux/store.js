@@ -230,434 +230,476 @@ import { WorkflowStateService } from "./services/WorkflowStateService";
 export const getQueries = (state) => state.queries;
 export const getEntities = (state) => state.entities;
 export const reducer = {
-    [AccountBalanceService.reducerPath]: AccountBalanceService.reducer,
-    [AclClassService.reducerPath]: AclClassService.reducer,
-    [AclEntryService.reducerPath]: AclEntryService.reducer,
-    [AclObjectIdentityService.reducerPath]: AclObjectIdentityService.reducer,
-    [AclSidService.reducerPath]: AclSidService.reducer,
-    [ActivateAgent200ResponseService.reducerPath]: ActivateAgent200ResponseService.reducer,
-    [AddressService.reducerPath]: AddressService.reducer,
-    [AgentService.reducerPath]: AgentService.reducer,
-    [AgentBillingService.reducerPath]: AgentBillingService.reducer,
-    [AgentBillingChargeService.reducerPath]: AgentBillingChargeService.reducer,
-    [AgentChatMessageService.reducerPath]: AgentChatMessageService.reducer,
-    [AgentChatMessageRequestService.reducerPath]: AgentChatMessageRequestService.reducer,
-    [AgentChatMessageResponseService.reducerPath]: AgentChatMessageResponseService.reducer,
-    [AgentDiscoveryItemService.reducerPath]: AgentDiscoveryItemService.reducer,
-    [AgentEventTriggerService.reducerPath]: AgentEventTriggerService.reducer,
-    [AgentHierarchyService.reducerPath]: AgentHierarchyService.reducer,
-    [AgentHierarchyNodeService.reducerPath]: AgentHierarchyNodeService.reducer,
-    [ApiMetricSnapshotService.reducerPath]: ApiMetricSnapshotService.reducer,
-    [ApiMetricsResponseService.reducerPath]: ApiMetricsResponseService.reducer,
-    [ApiTrafficEventService.reducerPath]: ApiTrafficEventService.reducer,
-    [ApplicationService.reducerPath]: ApplicationService.reducer,
-    [AuthorityService.reducerPath]: AuthorityService.reducer,
-    [BackupConfigService.reducerPath]: BackupConfigService.reducer,
-    [BalanceResponseService.reducerPath]: BalanceResponseService.reducer,
-    [BlankRangeService.reducerPath]: BlankRangeService.reducer,
-    [BorderService.reducerPath]: BorderService.reducer,
-    [BudgetService.reducerPath]: BudgetService.reducer,
-    [BuildService.reducerPath]: BuildService.reducer,
-    [BuildOutputService.reducerPath]: BuildOutputService.reducer,
-    [CampaignService.reducerPath]: CampaignService.reducer,
-    [CareerOpportunityService.reducerPath]: CareerOpportunityService.reducer,
-    [CellService.reducerPath]: CellService.reducer,
-    [ChannelSubscriptionService.reducerPath]: ChannelSubscriptionService.reducer,
-    [ChartService.reducerPath]: ChartService.reducer,
-    [ChartSeriesService.reducerPath]: ChartSeriesService.reducer,
-    [ChatCompletionRequestService.reducerPath]: ChatCompletionRequestService.reducer,
-    [ChatCompletionResponseService.reducerPath]: ChatCompletionResponseService.reducer,
-    [ChatMessageService.reducerPath]: ChatMessageService.reducer,
-    [ChatResponseService.reducerPath]: ChatResponseService.reducer,
-    [CircuitBreakerStateService.reducerPath]: CircuitBreakerStateService.reducer,
-    [CompleteUploadRequestService.reducerPath]: CompleteUploadRequestService.reducer,
-    [CompleteUploadRequestPartsInnerService.reducerPath]: CompleteUploadRequestPartsInnerService.reducer,
-    [ConfirmPasswordResetRequestService.reducerPath]: ConfirmPasswordResetRequestService.reducer,
-    [ConfirmPasswordResetResponseService.reducerPath]: ConfirmPasswordResetResponseService.reducer,
-    [ConsultingProfileService.reducerPath]: ConsultingProfileService.reducer,
-    [ContentDataService.reducerPath]: ContentDataService.reducer,
-    [ContentMediaLinkService.reducerPath]: ContentMediaLinkService.reducer,
-    [ConversationBranchService.reducerPath]: ConversationBranchService.reducer,
-    [ConversationMemoryNodeService.reducerPath]: ConversationMemoryNodeService.reducer,
-    [CustomerService.reducerPath]: CustomerService.reducer,
-    [DeadLetterQueueService.reducerPath]: DeadLetterQueueService.reducer,
-    [DefaultResponseService.reducerPath]: DefaultResponseService.reducer,
-    [DependService.reducerPath]: DependService.reducer,
-    [DigitalAssetService.reducerPath]: DigitalAssetService.reducer,
-    [DiscardDeadLetterEntryRequestService.reducerPath]: DiscardDeadLetterEntryRequestService.reducer,
-    [DiscardDeadLetterEntryResponseService.reducerPath]: DiscardDeadLetterEntryResponseService.reducer,
-    [DiscountService.reducerPath]: DiscountService.reducer,
-    [DownloadAccessService.reducerPath]: DownloadAccessService.reducer,
-    [EventLogService.reducerPath]: EventLogService.reducer,
-    [ExecModuleService.reducerPath]: ExecModuleService.reducer,
-    [ExecuteModuleRequestService.reducerPath]: ExecuteModuleRequestService.reducer,
-    [ExpenseService.reducerPath]: ExpenseService.reducer,
-    [FileAuditLogService.reducerPath]: FileAuditLogService.reducer,
-    [FileDownloadTokenService.reducerPath]: FileDownloadTokenService.reducer,
-    [FileMetadataService.reducerPath]: FileMetadataService.reducer,
-    [FileProcessingJobService.reducerPath]: FileProcessingJobService.reducer,
-    [FileRecordService.reducerPath]: FileRecordService.reducer,
-    [FileUploadSessionService.reducerPath]: FileUploadSessionService.reducer,
-    [FileVersionService.reducerPath]: FileVersionService.reducer,
-    [FormatService.reducerPath]: FormatService.reducer,
-    [FormulaService.reducerPath]: FormulaService.reducer,
-    [GeneralLedgerEntryService.reducerPath]: GeneralLedgerEntryService.reducer,
-    [GoalService.reducerPath]: GoalService.reducer,
-    [GoalDependencyService.reducerPath]: GoalDependencyService.reducer,
-    [GrantPermissionRequestService.reducerPath]: GrantPermissionRequestService.reducer,
-    [HostInstanceService.reducerPath]: HostInstanceService.reducer,
-    [IdempotencyKeyService.reducerPath]: IdempotencyKeyService.reducer,
-    [InitUploadRequestService.reducerPath]: InitUploadRequestService.reducer,
-    [InitUploadResponseService.reducerPath]: InitUploadResponseService.reducer,
-    [InitiateTwoFactorRequestService.reducerPath]: InitiateTwoFactorRequestService.reducer,
-    [InitiateTwoFactorResponseService.reducerPath]: InitiateTwoFactorResponseService.reducer,
-    [IntegrationAccountService.reducerPath]: IntegrationAccountService.reducer,
-    [InvoiceService.reducerPath]: InvoiceService.reducer,
-    [InvokeMcpToolRequestService.reducerPath]: InvokeMcpToolRequestService.reducer,
-    [JobApplicationService.reducerPath]: JobApplicationService.reducer,
-    [JobApplicationRequestService.reducerPath]: JobApplicationRequestService.reducer,
-    [JobApplicationResponseService.reducerPath]: JobApplicationResponseService.reducer,
-    [JobMetadataService.reducerPath]: JobMetadataService.reducer,
-    [JobSeekerService.reducerPath]: JobSeekerService.reducer,
-    [KeyMetricService.reducerPath]: KeyMetricService.reducer,
-    [LegalPrecedentService.reducerPath]: LegalPrecedentService.reducer,
-    [LineItemService.reducerPath]: LineItemService.reducer,
-    [LlmDetailsService.reducerPath]: LlmDetailsService.reducer,
-    [LoginService.reducerPath]: LoginService.reducer,
-    [LoginAuditService.reducerPath]: LoginAuditService.reducer,
-    [LoginRequestService.reducerPath]: LoginRequestService.reducer,
-    [LoginResponseService.reducerPath]: LoginResponseService.reducer,
-    [LogoutService.reducerPath]: LogoutService.reducer,
-    [McpService.reducerPath]: McpService.reducer,
-    [McpContentService.reducerPath]: McpContentService.reducer,
-    [McpDownloadResponseService.reducerPath]: McpDownloadResponseService.reducer,
-    [McpMarketplaceCatalogService.reducerPath]: McpMarketplaceCatalogService.reducer,
-    [McpMarketplaceItemService.reducerPath]: McpMarketplaceItemService.reducer,
-    [McpMarketplaceItemTagService.reducerPath]: McpMarketplaceItemTagService.reducer,
-    [McpResourceService.reducerPath]: McpResourceService.reducer,
-    [McpResourceResponseService.reducerPath]: McpResourceResponseService.reducer,
-    [McpResourceTemplateService.reducerPath]: McpResourceTemplateService.reducer,
-    [McpServerService.reducerPath]: McpServerService.reducer,
-    [McpServiceRegistryService.reducerPath]: McpServiceRegistryService.reducer,
-    [McpServiceResponseService.reducerPath]: McpServiceResponseService.reducer,
-    [McpToolService.reducerPath]: McpToolService.reducer,
-    [McpToolCallResponseService.reducerPath]: McpToolCallResponseService.reducer,
-    [McpToolPresetService.reducerPath]: McpToolPresetService.reducer,
-    [McpTransportConfigService.reducerPath]: McpTransportConfigService.reducer,
-    [MediaObjectService.reducerPath]: MediaObjectService.reducer,
-    [MergeRangeService.reducerPath]: MergeRangeService.reducer,
-    [MetricsService.reducerPath]: MetricsService.reducer,
-    [NamedRangeService.reducerPath]: NamedRangeService.reducer,
-    [NoteService.reducerPath]: NoteService.reducer,
-    [OasComponentService.reducerPath]: OasComponentService.reducer,
-    [OasEnumService.reducerPath]: OasEnumService.reducer,
-    [OasInfoService.reducerPath]: OasInfoService.reducer,
-    [OasObjectSchemaService.reducerPath]: OasObjectSchemaService.reducer,
-    [OasOpenAPISpecService.reducerPath]: OasOpenAPISpecService.reducer,
-    [OasOperationService.reducerPath]: OasOperationService.reducer,
-    [OasParameterService.reducerPath]: OasParameterService.reducer,
-    [OasPathService.reducerPath]: OasPathService.reducer,
-    [OasRequiredService.reducerPath]: OasRequiredService.reducer,
-    [OasResponseService.reducerPath]: OasResponseService.reducer,
-    [OasSecuritySchemeService.reducerPath]: OasSecuritySchemeService.reducer,
-    [OasServerService.reducerPath]: OasServerService.reducer,
-    [OpportunityService.reducerPath]: OpportunityService.reducer,
-    [OrderFulfillmentTaskService.reducerPath]: OrderFulfillmentTaskService.reducer,
-    [OrganizationService.reducerPath]: OrganizationService.reducer,
-    [PasswordResetTokenService.reducerPath]: PasswordResetTokenService.reducer,
-    [PaymentTransactionService.reducerPath]: PaymentTransactionService.reducer,
-    [PersistentLoginService.reducerPath]: PersistentLoginService.reducer,
-    [PhoneVerificationService.reducerPath]: PhoneVerificationService.reducer,
-    [PhoneVerificationRequestService.reducerPath]: PhoneVerificationRequestService.reducer,
-    [PhoneVerificationResponseService.reducerPath]: PhoneVerificationResponseService.reducer,
-    [PivotTableService.reducerPath]: PivotTableService.reducer,
-    [PresignRequestService.reducerPath]: PresignRequestService.reducer,
-    [PresignResponseService.reducerPath]: PresignResponseService.reducer,
-    [PrincipalService.reducerPath]: PrincipalService.reducer,
-    [PrincipalRolesService.reducerPath]: PrincipalRolesService.reducer,
-    [ProductService.reducerPath]: ProductService.reducer,
-    [ProductDeliveryConfigService.reducerPath]: ProductDeliveryConfigService.reducer,
-    [ProductFeatureService.reducerPath]: ProductFeatureService.reducer,
-    [ProductFunnelWizardService.reducerPath]: ProductFunnelWizardService.reducer,
-    [ProductLandingPageService.reducerPath]: ProductLandingPageService.reducer,
-    [PtgService.reducerPath]: PtgService.reducer,
-    [PtgRefService.reducerPath]: PtgRefService.reducer,
-    [PublishFunnel200ResponseService.reducerPath]: PublishFunnel200ResponseService.reducer,
-    [PublishRestEndpointRequestService.reducerPath]: PublishRestEndpointRequestService.reducer,
-    [PublishWorkflowRequestService.reducerPath]: PublishWorkflowRequestService.reducer,
-    [QuotaService.reducerPath]: QuotaService.reducer,
-    [RatingService.reducerPath]: RatingService.reducer,
-    [ReactionService.reducerPath]: ReactionService.reducer,
-    [ReferralLinkService.reducerPath]: ReferralLinkService.reducer,
-    [RequestPasswordResetRequestService.reducerPath]: RequestPasswordResetRequestService.reducer,
-    [RequestPasswordResetResponseService.reducerPath]: RequestPasswordResetResponseService.reducer,
-    [RequeueDeadLetterEntryRequestService.reducerPath]: RequeueDeadLetterEntryRequestService.reducer,
-    [RequeueDeadLetterEntryResponseService.reducerPath]: RequeueDeadLetterEntryResponseService.reducer,
-    [RetryPolicyService.reducerPath]: RetryPolicyService.reducer,
-    [RoleService.reducerPath]: RoleService.reducer,
-    [RunService.reducerPath]: RunService.reducer,
-    [SalesActivityService.reducerPath]: SalesActivityService.reducer,
-    [SalesOrderService.reducerPath]: SalesOrderService.reducer,
-    [SalesPipelineService.reducerPath]: SalesPipelineService.reducer,
-    [SecureKeyService.reducerPath]: SecureKeyService.reducer,
-    [SheetService.reducerPath]: SheetService.reducer,
-    [SheetColumnService.reducerPath]: SheetColumnService.reducer,
-    [SheetRowService.reducerPath]: SheetRowService.reducer,
-    [SkillProfileService.reducerPath]: SkillProfileService.reducer,
-    [SolutionService.reducerPath]: SolutionService.reducer,
-    [SpaceService.reducerPath]: SpaceService.reducer,
-    [SpaceFileService.reducerPath]: SpaceFileService.reducer,
-    [SpaceMemberService.reducerPath]: SpaceMemberService.reducer,
-    [StackService.reducerPath]: StackService.reducer,
-    [StrategicPriorityService.reducerPath]: StrategicPriorityService.reducer,
-    [SubscriberListService.reducerPath]: SubscriberListService.reducer,
-    [SwarmService.reducerPath]: SwarmService.reducer,
-    [SwarmAgentSummaryService.reducerPath]: SwarmAgentSummaryService.reducer,
-    [SwarmCommandRequestService.reducerPath]: SwarmCommandRequestService.reducer,
-    [SwarmCommandResponseService.reducerPath]: SwarmCommandResponseService.reducer,
-    [SwarmGraphEdgeService.reducerPath]: SwarmGraphEdgeService.reducer,
-    [SwarmGraphNodeService.reducerPath]: SwarmGraphNodeService.reducer,
-    [SwarmGraphSnapshotService.reducerPath]: SwarmGraphSnapshotService.reducer,
-    [SwarmMessageService.reducerPath]: SwarmMessageService.reducer,
-    [SwarmPayloadService.reducerPath]: SwarmPayloadService.reducer,
-    [SwarmRegisterRequestService.reducerPath]: SwarmRegisterRequestService.reducer,
-    [SwarmRegisterResponseService.reducerPath]: SwarmRegisterResponseService.reducer,
-    [SwarmSecurityService.reducerPath]: SwarmSecurityService.reducer,
-    [SwarmUnregisterRequestService.reducerPath]: SwarmUnregisterRequestService.reducer,
-    [SwarmUnregisterResponseService.reducerPath]: SwarmUnregisterResponseService.reducer,
-    [TaskService.reducerPath]: TaskService.reducer,
-    [TwoFactorSecretService.reducerPath]: TwoFactorSecretService.reducer,
-    [UpdateFileRequestService.reducerPath]: UpdateFileRequestService.reducer,
-    [UsageTransactionService.reducerPath]: UsageTransactionService.reducer,
-    [UserPreferenceService.reducerPath]: UserPreferenceService.reducer,
-    [ValkyrJobService.reducerPath]: ValkyrJobService.reducer,
-    [VerifyPhoneOTPRequestService.reducerPath]: VerifyPhoneOTPRequestService.reducer,
-    [VerifyTwoFactorRequestService.reducerPath]: VerifyTwoFactorRequestService.reducer,
-    [VerifyTwoFactorResponseService.reducerPath]: VerifyTwoFactorResponseService.reducer,
-    [WebsocketMessageService.reducerPath]: WebsocketMessageService.reducer,
-    [WebsocketSessionService.reducerPath]: WebsocketSessionService.reducer,
-    [WizardStartResponseService.reducerPath]: WizardStartResponseService.reducer,
-    [WizardStatusResponseService.reducerPath]: WizardStatusResponseService.reducer,
-    [WorkbookService.reducerPath]: WorkbookService.reducer,
-    [WorkflowService.reducerPath]: WorkflowService.reducer,
-    [WorkflowExecutionService.reducerPath]: WorkflowExecutionService.reducer,
-    [WorkflowStateService.reducerPath]: WorkflowStateService.reducer,
+  [AccountBalanceService.reducerPath]: AccountBalanceService.reducer,
+  [AclClassService.reducerPath]: AclClassService.reducer,
+  [AclEntryService.reducerPath]: AclEntryService.reducer,
+  [AclObjectIdentityService.reducerPath]: AclObjectIdentityService.reducer,
+  [AclSidService.reducerPath]: AclSidService.reducer,
+  [ActivateAgent200ResponseService.reducerPath]:
+    ActivateAgent200ResponseService.reducer,
+  [AddressService.reducerPath]: AddressService.reducer,
+  [AgentService.reducerPath]: AgentService.reducer,
+  [AgentBillingService.reducerPath]: AgentBillingService.reducer,
+  [AgentBillingChargeService.reducerPath]: AgentBillingChargeService.reducer,
+  [AgentChatMessageService.reducerPath]: AgentChatMessageService.reducer,
+  [AgentChatMessageRequestService.reducerPath]:
+    AgentChatMessageRequestService.reducer,
+  [AgentChatMessageResponseService.reducerPath]:
+    AgentChatMessageResponseService.reducer,
+  [AgentDiscoveryItemService.reducerPath]: AgentDiscoveryItemService.reducer,
+  [AgentEventTriggerService.reducerPath]: AgentEventTriggerService.reducer,
+  [AgentHierarchyService.reducerPath]: AgentHierarchyService.reducer,
+  [AgentHierarchyNodeService.reducerPath]: AgentHierarchyNodeService.reducer,
+  [ApiMetricSnapshotService.reducerPath]: ApiMetricSnapshotService.reducer,
+  [ApiMetricsResponseService.reducerPath]: ApiMetricsResponseService.reducer,
+  [ApiTrafficEventService.reducerPath]: ApiTrafficEventService.reducer,
+  [ApplicationService.reducerPath]: ApplicationService.reducer,
+  [AuthorityService.reducerPath]: AuthorityService.reducer,
+  [BackupConfigService.reducerPath]: BackupConfigService.reducer,
+  [BalanceResponseService.reducerPath]: BalanceResponseService.reducer,
+  [BlankRangeService.reducerPath]: BlankRangeService.reducer,
+  [BorderService.reducerPath]: BorderService.reducer,
+  [BudgetService.reducerPath]: BudgetService.reducer,
+  [BuildService.reducerPath]: BuildService.reducer,
+  [BuildOutputService.reducerPath]: BuildOutputService.reducer,
+  [CampaignService.reducerPath]: CampaignService.reducer,
+  [CareerOpportunityService.reducerPath]: CareerOpportunityService.reducer,
+  [CellService.reducerPath]: CellService.reducer,
+  [ChannelSubscriptionService.reducerPath]: ChannelSubscriptionService.reducer,
+  [ChartService.reducerPath]: ChartService.reducer,
+  [ChartSeriesService.reducerPath]: ChartSeriesService.reducer,
+  [ChatCompletionRequestService.reducerPath]:
+    ChatCompletionRequestService.reducer,
+  [ChatCompletionResponseService.reducerPath]:
+    ChatCompletionResponseService.reducer,
+  [ChatMessageService.reducerPath]: ChatMessageService.reducer,
+  [ChatResponseService.reducerPath]: ChatResponseService.reducer,
+  [CircuitBreakerStateService.reducerPath]: CircuitBreakerStateService.reducer,
+  [CompleteUploadRequestService.reducerPath]:
+    CompleteUploadRequestService.reducer,
+  [CompleteUploadRequestPartsInnerService.reducerPath]:
+    CompleteUploadRequestPartsInnerService.reducer,
+  [ConfirmPasswordResetRequestService.reducerPath]:
+    ConfirmPasswordResetRequestService.reducer,
+  [ConfirmPasswordResetResponseService.reducerPath]:
+    ConfirmPasswordResetResponseService.reducer,
+  [ConsultingProfileService.reducerPath]: ConsultingProfileService.reducer,
+  [ContentDataService.reducerPath]: ContentDataService.reducer,
+  [ContentMediaLinkService.reducerPath]: ContentMediaLinkService.reducer,
+  [ConversationBranchService.reducerPath]: ConversationBranchService.reducer,
+  [ConversationMemoryNodeService.reducerPath]:
+    ConversationMemoryNodeService.reducer,
+  [CustomerService.reducerPath]: CustomerService.reducer,
+  [DeadLetterQueueService.reducerPath]: DeadLetterQueueService.reducer,
+  [DefaultResponseService.reducerPath]: DefaultResponseService.reducer,
+  [DependService.reducerPath]: DependService.reducer,
+  [DigitalAssetService.reducerPath]: DigitalAssetService.reducer,
+  [DiscardDeadLetterEntryRequestService.reducerPath]:
+    DiscardDeadLetterEntryRequestService.reducer,
+  [DiscardDeadLetterEntryResponseService.reducerPath]:
+    DiscardDeadLetterEntryResponseService.reducer,
+  [DiscountService.reducerPath]: DiscountService.reducer,
+  [DownloadAccessService.reducerPath]: DownloadAccessService.reducer,
+  [EventLogService.reducerPath]: EventLogService.reducer,
+  [ExecModuleService.reducerPath]: ExecModuleService.reducer,
+  [ExecuteModuleRequestService.reducerPath]:
+    ExecuteModuleRequestService.reducer,
+  [ExpenseService.reducerPath]: ExpenseService.reducer,
+  [FileAuditLogService.reducerPath]: FileAuditLogService.reducer,
+  [FileDownloadTokenService.reducerPath]: FileDownloadTokenService.reducer,
+  [FileMetadataService.reducerPath]: FileMetadataService.reducer,
+  [FileProcessingJobService.reducerPath]: FileProcessingJobService.reducer,
+  [FileRecordService.reducerPath]: FileRecordService.reducer,
+  [FileUploadSessionService.reducerPath]: FileUploadSessionService.reducer,
+  [FileVersionService.reducerPath]: FileVersionService.reducer,
+  [FormatService.reducerPath]: FormatService.reducer,
+  [FormulaService.reducerPath]: FormulaService.reducer,
+  [GeneralLedgerEntryService.reducerPath]: GeneralLedgerEntryService.reducer,
+  [GoalService.reducerPath]: GoalService.reducer,
+  [GoalDependencyService.reducerPath]: GoalDependencyService.reducer,
+  [GrantPermissionRequestService.reducerPath]:
+    GrantPermissionRequestService.reducer,
+  [HostInstanceService.reducerPath]: HostInstanceService.reducer,
+  [IdempotencyKeyService.reducerPath]: IdempotencyKeyService.reducer,
+  [InitUploadRequestService.reducerPath]: InitUploadRequestService.reducer,
+  [InitUploadResponseService.reducerPath]: InitUploadResponseService.reducer,
+  [InitiateTwoFactorRequestService.reducerPath]:
+    InitiateTwoFactorRequestService.reducer,
+  [InitiateTwoFactorResponseService.reducerPath]:
+    InitiateTwoFactorResponseService.reducer,
+  [IntegrationAccountService.reducerPath]: IntegrationAccountService.reducer,
+  [InvoiceService.reducerPath]: InvoiceService.reducer,
+  [InvokeMcpToolRequestService.reducerPath]:
+    InvokeMcpToolRequestService.reducer,
+  [JobApplicationService.reducerPath]: JobApplicationService.reducer,
+  [JobApplicationRequestService.reducerPath]:
+    JobApplicationRequestService.reducer,
+  [JobApplicationResponseService.reducerPath]:
+    JobApplicationResponseService.reducer,
+  [JobMetadataService.reducerPath]: JobMetadataService.reducer,
+  [JobSeekerService.reducerPath]: JobSeekerService.reducer,
+  [KeyMetricService.reducerPath]: KeyMetricService.reducer,
+  [LegalPrecedentService.reducerPath]: LegalPrecedentService.reducer,
+  [LineItemService.reducerPath]: LineItemService.reducer,
+  [LlmDetailsService.reducerPath]: LlmDetailsService.reducer,
+  [LoginService.reducerPath]: LoginService.reducer,
+  [LoginAuditService.reducerPath]: LoginAuditService.reducer,
+  [LoginRequestService.reducerPath]: LoginRequestService.reducer,
+  [LoginResponseService.reducerPath]: LoginResponseService.reducer,
+  [LogoutService.reducerPath]: LogoutService.reducer,
+  [McpService.reducerPath]: McpService.reducer,
+  [McpContentService.reducerPath]: McpContentService.reducer,
+  [McpDownloadResponseService.reducerPath]: McpDownloadResponseService.reducer,
+  [McpMarketplaceCatalogService.reducerPath]:
+    McpMarketplaceCatalogService.reducer,
+  [McpMarketplaceItemService.reducerPath]: McpMarketplaceItemService.reducer,
+  [McpMarketplaceItemTagService.reducerPath]:
+    McpMarketplaceItemTagService.reducer,
+  [McpResourceService.reducerPath]: McpResourceService.reducer,
+  [McpResourceResponseService.reducerPath]: McpResourceResponseService.reducer,
+  [McpResourceTemplateService.reducerPath]: McpResourceTemplateService.reducer,
+  [McpServerService.reducerPath]: McpServerService.reducer,
+  [McpServiceRegistryService.reducerPath]: McpServiceRegistryService.reducer,
+  [McpServiceResponseService.reducerPath]: McpServiceResponseService.reducer,
+  [McpToolService.reducerPath]: McpToolService.reducer,
+  [McpToolCallResponseService.reducerPath]: McpToolCallResponseService.reducer,
+  [McpToolPresetService.reducerPath]: McpToolPresetService.reducer,
+  [McpTransportConfigService.reducerPath]: McpTransportConfigService.reducer,
+  [MediaObjectService.reducerPath]: MediaObjectService.reducer,
+  [MergeRangeService.reducerPath]: MergeRangeService.reducer,
+  [MetricsService.reducerPath]: MetricsService.reducer,
+  [NamedRangeService.reducerPath]: NamedRangeService.reducer,
+  [NoteService.reducerPath]: NoteService.reducer,
+  [OasComponentService.reducerPath]: OasComponentService.reducer,
+  [OasEnumService.reducerPath]: OasEnumService.reducer,
+  [OasInfoService.reducerPath]: OasInfoService.reducer,
+  [OasObjectSchemaService.reducerPath]: OasObjectSchemaService.reducer,
+  [OasOpenAPISpecService.reducerPath]: OasOpenAPISpecService.reducer,
+  [OasOperationService.reducerPath]: OasOperationService.reducer,
+  [OasParameterService.reducerPath]: OasParameterService.reducer,
+  [OasPathService.reducerPath]: OasPathService.reducer,
+  [OasRequiredService.reducerPath]: OasRequiredService.reducer,
+  [OasResponseService.reducerPath]: OasResponseService.reducer,
+  [OasSecuritySchemeService.reducerPath]: OasSecuritySchemeService.reducer,
+  [OasServerService.reducerPath]: OasServerService.reducer,
+  [OpportunityService.reducerPath]: OpportunityService.reducer,
+  [OrderFulfillmentTaskService.reducerPath]:
+    OrderFulfillmentTaskService.reducer,
+  [OrganizationService.reducerPath]: OrganizationService.reducer,
+  [PasswordResetTokenService.reducerPath]: PasswordResetTokenService.reducer,
+  [PaymentTransactionService.reducerPath]: PaymentTransactionService.reducer,
+  [PersistentLoginService.reducerPath]: PersistentLoginService.reducer,
+  [PhoneVerificationService.reducerPath]: PhoneVerificationService.reducer,
+  [PhoneVerificationRequestService.reducerPath]:
+    PhoneVerificationRequestService.reducer,
+  [PhoneVerificationResponseService.reducerPath]:
+    PhoneVerificationResponseService.reducer,
+  [PivotTableService.reducerPath]: PivotTableService.reducer,
+  [PresignRequestService.reducerPath]: PresignRequestService.reducer,
+  [PresignResponseService.reducerPath]: PresignResponseService.reducer,
+  [PrincipalService.reducerPath]: PrincipalService.reducer,
+  [PrincipalRolesService.reducerPath]: PrincipalRolesService.reducer,
+  [ProductService.reducerPath]: ProductService.reducer,
+  [ProductDeliveryConfigService.reducerPath]:
+    ProductDeliveryConfigService.reducer,
+  [ProductFeatureService.reducerPath]: ProductFeatureService.reducer,
+  [ProductFunnelWizardService.reducerPath]: ProductFunnelWizardService.reducer,
+  [ProductLandingPageService.reducerPath]: ProductLandingPageService.reducer,
+  [PtgService.reducerPath]: PtgService.reducer,
+  [PtgRefService.reducerPath]: PtgRefService.reducer,
+  [PublishFunnel200ResponseService.reducerPath]:
+    PublishFunnel200ResponseService.reducer,
+  [PublishRestEndpointRequestService.reducerPath]:
+    PublishRestEndpointRequestService.reducer,
+  [PublishWorkflowRequestService.reducerPath]:
+    PublishWorkflowRequestService.reducer,
+  [QuotaService.reducerPath]: QuotaService.reducer,
+  [RatingService.reducerPath]: RatingService.reducer,
+  [ReactionService.reducerPath]: ReactionService.reducer,
+  [ReferralLinkService.reducerPath]: ReferralLinkService.reducer,
+  [RequestPasswordResetRequestService.reducerPath]:
+    RequestPasswordResetRequestService.reducer,
+  [RequestPasswordResetResponseService.reducerPath]:
+    RequestPasswordResetResponseService.reducer,
+  [RequeueDeadLetterEntryRequestService.reducerPath]:
+    RequeueDeadLetterEntryRequestService.reducer,
+  [RequeueDeadLetterEntryResponseService.reducerPath]:
+    RequeueDeadLetterEntryResponseService.reducer,
+  [RetryPolicyService.reducerPath]: RetryPolicyService.reducer,
+  [RoleService.reducerPath]: RoleService.reducer,
+  [RunService.reducerPath]: RunService.reducer,
+  [SalesActivityService.reducerPath]: SalesActivityService.reducer,
+  [SalesOrderService.reducerPath]: SalesOrderService.reducer,
+  [SalesPipelineService.reducerPath]: SalesPipelineService.reducer,
+  [SecureKeyService.reducerPath]: SecureKeyService.reducer,
+  [SheetService.reducerPath]: SheetService.reducer,
+  [SheetColumnService.reducerPath]: SheetColumnService.reducer,
+  [SheetRowService.reducerPath]: SheetRowService.reducer,
+  [SkillProfileService.reducerPath]: SkillProfileService.reducer,
+  [SolutionService.reducerPath]: SolutionService.reducer,
+  [SpaceService.reducerPath]: SpaceService.reducer,
+  [SpaceFileService.reducerPath]: SpaceFileService.reducer,
+  [SpaceMemberService.reducerPath]: SpaceMemberService.reducer,
+  [StackService.reducerPath]: StackService.reducer,
+  [StrategicPriorityService.reducerPath]: StrategicPriorityService.reducer,
+  [SubscriberListService.reducerPath]: SubscriberListService.reducer,
+  [SwarmService.reducerPath]: SwarmService.reducer,
+  [SwarmAgentSummaryService.reducerPath]: SwarmAgentSummaryService.reducer,
+  [SwarmCommandRequestService.reducerPath]: SwarmCommandRequestService.reducer,
+  [SwarmCommandResponseService.reducerPath]:
+    SwarmCommandResponseService.reducer,
+  [SwarmGraphEdgeService.reducerPath]: SwarmGraphEdgeService.reducer,
+  [SwarmGraphNodeService.reducerPath]: SwarmGraphNodeService.reducer,
+  [SwarmGraphSnapshotService.reducerPath]: SwarmGraphSnapshotService.reducer,
+  [SwarmMessageService.reducerPath]: SwarmMessageService.reducer,
+  [SwarmPayloadService.reducerPath]: SwarmPayloadService.reducer,
+  [SwarmRegisterRequestService.reducerPath]:
+    SwarmRegisterRequestService.reducer,
+  [SwarmRegisterResponseService.reducerPath]:
+    SwarmRegisterResponseService.reducer,
+  [SwarmSecurityService.reducerPath]: SwarmSecurityService.reducer,
+  [SwarmUnregisterRequestService.reducerPath]:
+    SwarmUnregisterRequestService.reducer,
+  [SwarmUnregisterResponseService.reducerPath]:
+    SwarmUnregisterResponseService.reducer,
+  [TaskService.reducerPath]: TaskService.reducer,
+  [TwoFactorSecretService.reducerPath]: TwoFactorSecretService.reducer,
+  [UpdateFileRequestService.reducerPath]: UpdateFileRequestService.reducer,
+  [UsageTransactionService.reducerPath]: UsageTransactionService.reducer,
+  [UserPreferenceService.reducerPath]: UserPreferenceService.reducer,
+  [ValkyrJobService.reducerPath]: ValkyrJobService.reducer,
+  [VerifyPhoneOTPRequestService.reducerPath]:
+    VerifyPhoneOTPRequestService.reducer,
+  [VerifyTwoFactorRequestService.reducerPath]:
+    VerifyTwoFactorRequestService.reducer,
+  [VerifyTwoFactorResponseService.reducerPath]:
+    VerifyTwoFactorResponseService.reducer,
+  [WebsocketMessageService.reducerPath]: WebsocketMessageService.reducer,
+  [WebsocketSessionService.reducerPath]: WebsocketSessionService.reducer,
+  [WizardStartResponseService.reducerPath]: WizardStartResponseService.reducer,
+  [WizardStatusResponseService.reducerPath]:
+    WizardStatusResponseService.reducer,
+  [WorkbookService.reducerPath]: WorkbookService.reducer,
+  [WorkflowService.reducerPath]: WorkflowService.reducer,
+  [WorkflowExecutionService.reducerPath]: WorkflowExecutionService.reducer,
+  [WorkflowStateService.reducerPath]: WorkflowStateService.reducer,
 };
 /* use to populate external store */
 export const getMiddleWare = () => {
-    return () => middlewares
-        .concat(AccountBalanceService.middleware)
-        .concat(AclClassService.middleware)
-        .concat(AclEntryService.middleware)
-        .concat(AclObjectIdentityService.middleware)
-        .concat(AclSidService.middleware)
-        .concat(ActivateAgent200ResponseService.middleware)
-        .concat(AddressService.middleware)
-        .concat(AgentService.middleware)
-        .concat(AgentBillingService.middleware)
-        .concat(AgentBillingChargeService.middleware)
-        .concat(AgentChatMessageService.middleware)
-        .concat(AgentChatMessageRequestService.middleware)
-        .concat(AgentChatMessageResponseService.middleware)
-        .concat(AgentDiscoveryItemService.middleware)
-        .concat(AgentEventTriggerService.middleware)
-        .concat(AgentHierarchyService.middleware)
-        .concat(AgentHierarchyNodeService.middleware)
-        .concat(ApiMetricSnapshotService.middleware)
-        .concat(ApiMetricsResponseService.middleware)
-        .concat(ApiTrafficEventService.middleware)
-        .concat(ApplicationService.middleware)
-        .concat(AuthorityService.middleware)
-        .concat(BackupConfigService.middleware)
-        .concat(BalanceResponseService.middleware)
-        .concat(BlankRangeService.middleware)
-        .concat(BorderService.middleware)
-        .concat(BudgetService.middleware)
-        .concat(BuildService.middleware)
-        .concat(BuildOutputService.middleware)
-        .concat(CampaignService.middleware)
-        .concat(CareerOpportunityService.middleware)
-        .concat(CellService.middleware)
-        .concat(ChannelSubscriptionService.middleware)
-        .concat(ChartService.middleware)
-        .concat(ChartSeriesService.middleware)
-        .concat(ChatCompletionRequestService.middleware)
-        .concat(ChatCompletionResponseService.middleware)
-        .concat(ChatMessageService.middleware)
-        .concat(ChatResponseService.middleware)
-        .concat(CircuitBreakerStateService.middleware)
-        .concat(CompleteUploadRequestService.middleware)
-        .concat(CompleteUploadRequestPartsInnerService.middleware)
-        .concat(ConfirmPasswordResetRequestService.middleware)
-        .concat(ConfirmPasswordResetResponseService.middleware)
-        .concat(ConsultingProfileService.middleware)
-        .concat(ContentDataService.middleware)
-        .concat(ContentMediaLinkService.middleware)
-        .concat(ConversationBranchService.middleware)
-        .concat(ConversationMemoryNodeService.middleware)
-        .concat(CustomerService.middleware)
-        .concat(DeadLetterQueueService.middleware)
-        .concat(DefaultResponseService.middleware)
-        .concat(DependService.middleware)
-        .concat(DigitalAssetService.middleware)
-        .concat(DiscardDeadLetterEntryRequestService.middleware)
-        .concat(DiscardDeadLetterEntryResponseService.middleware)
-        .concat(DiscountService.middleware)
-        .concat(DownloadAccessService.middleware)
-        .concat(EventLogService.middleware)
-        .concat(ExecModuleService.middleware)
-        .concat(ExecuteModuleRequestService.middleware)
-        .concat(ExpenseService.middleware)
-        .concat(FileAuditLogService.middleware)
-        .concat(FileDownloadTokenService.middleware)
-        .concat(FileMetadataService.middleware)
-        .concat(FileProcessingJobService.middleware)
-        .concat(FileRecordService.middleware)
-        .concat(FileUploadSessionService.middleware)
-        .concat(FileVersionService.middleware)
-        .concat(FormatService.middleware)
-        .concat(FormulaService.middleware)
-        .concat(GeneralLedgerEntryService.middleware)
-        .concat(GoalService.middleware)
-        .concat(GoalDependencyService.middleware)
-        .concat(GrantPermissionRequestService.middleware)
-        .concat(HostInstanceService.middleware)
-        .concat(IdempotencyKeyService.middleware)
-        .concat(InitUploadRequestService.middleware)
-        .concat(InitUploadResponseService.middleware)
-        .concat(InitiateTwoFactorRequestService.middleware)
-        .concat(InitiateTwoFactorResponseService.middleware)
-        .concat(IntegrationAccountService.middleware)
-        .concat(InvoiceService.middleware)
-        .concat(InvokeMcpToolRequestService.middleware)
-        .concat(JobApplicationService.middleware)
-        .concat(JobApplicationRequestService.middleware)
-        .concat(JobApplicationResponseService.middleware)
-        .concat(JobMetadataService.middleware)
-        .concat(JobSeekerService.middleware)
-        .concat(KeyMetricService.middleware)
-        .concat(LegalPrecedentService.middleware)
-        .concat(LineItemService.middleware)
-        .concat(LlmDetailsService.middleware)
-        .concat(LoginService.middleware)
-        .concat(LoginAuditService.middleware)
-        .concat(LoginRequestService.middleware)
-        .concat(LoginResponseService.middleware)
-        .concat(LogoutService.middleware)
-        .concat(McpService.middleware)
-        .concat(McpContentService.middleware)
-        .concat(McpDownloadResponseService.middleware)
-        .concat(McpMarketplaceCatalogService.middleware)
-        .concat(McpMarketplaceItemService.middleware)
-        .concat(McpMarketplaceItemTagService.middleware)
-        .concat(McpResourceService.middleware)
-        .concat(McpResourceResponseService.middleware)
-        .concat(McpResourceTemplateService.middleware)
-        .concat(McpServerService.middleware)
-        .concat(McpServiceRegistryService.middleware)
-        .concat(McpServiceResponseService.middleware)
-        .concat(McpToolService.middleware)
-        .concat(McpToolCallResponseService.middleware)
-        .concat(McpToolPresetService.middleware)
-        .concat(McpTransportConfigService.middleware)
-        .concat(MediaObjectService.middleware)
-        .concat(MergeRangeService.middleware)
-        .concat(MetricsService.middleware)
-        .concat(NamedRangeService.middleware)
-        .concat(NoteService.middleware)
-        .concat(OasComponentService.middleware)
-        .concat(OasEnumService.middleware)
-        .concat(OasInfoService.middleware)
-        .concat(OasObjectSchemaService.middleware)
-        .concat(OasOpenAPISpecService.middleware)
-        .concat(OasOperationService.middleware)
-        .concat(OasParameterService.middleware)
-        .concat(OasPathService.middleware)
-        .concat(OasRequiredService.middleware)
-        .concat(OasResponseService.middleware)
-        .concat(OasSecuritySchemeService.middleware)
-        .concat(OasServerService.middleware)
-        .concat(OpportunityService.middleware)
-        .concat(OrderFulfillmentTaskService.middleware)
-        .concat(OrganizationService.middleware)
-        .concat(PasswordResetTokenService.middleware)
-        .concat(PaymentTransactionService.middleware)
-        .concat(PersistentLoginService.middleware)
-        .concat(PhoneVerificationService.middleware)
-        .concat(PhoneVerificationRequestService.middleware)
-        .concat(PhoneVerificationResponseService.middleware)
-        .concat(PivotTableService.middleware)
-        .concat(PresignRequestService.middleware)
-        .concat(PresignResponseService.middleware)
-        .concat(PrincipalService.middleware)
-        .concat(PrincipalRolesService.middleware)
-        .concat(ProductService.middleware)
-        .concat(ProductDeliveryConfigService.middleware)
-        .concat(ProductFeatureService.middleware)
-        .concat(ProductFunnelWizardService.middleware)
-        .concat(ProductLandingPageService.middleware)
-        .concat(PtgService.middleware)
-        .concat(PtgRefService.middleware)
-        .concat(PublishFunnel200ResponseService.middleware)
-        .concat(PublishRestEndpointRequestService.middleware)
-        .concat(PublishWorkflowRequestService.middleware)
-        .concat(QuotaService.middleware)
-        .concat(RatingService.middleware)
-        .concat(ReactionService.middleware)
-        .concat(ReferralLinkService.middleware)
-        .concat(RequestPasswordResetRequestService.middleware)
-        .concat(RequestPasswordResetResponseService.middleware)
-        .concat(RequeueDeadLetterEntryRequestService.middleware)
-        .concat(RequeueDeadLetterEntryResponseService.middleware)
-        .concat(RetryPolicyService.middleware)
-        .concat(RoleService.middleware)
-        .concat(RunService.middleware)
-        .concat(SalesActivityService.middleware)
-        .concat(SalesOrderService.middleware)
-        .concat(SalesPipelineService.middleware)
-        .concat(SecureKeyService.middleware)
-        .concat(SheetService.middleware)
-        .concat(SheetColumnService.middleware)
-        .concat(SheetRowService.middleware)
-        .concat(SkillProfileService.middleware)
-        .concat(SolutionService.middleware)
-        .concat(SpaceService.middleware)
-        .concat(SpaceFileService.middleware)
-        .concat(SpaceMemberService.middleware)
-        .concat(StackService.middleware)
-        .concat(StrategicPriorityService.middleware)
-        .concat(SubscriberListService.middleware)
-        .concat(SwarmService.middleware)
-        .concat(SwarmAgentSummaryService.middleware)
-        .concat(SwarmCommandRequestService.middleware)
-        .concat(SwarmCommandResponseService.middleware)
-        .concat(SwarmGraphEdgeService.middleware)
-        .concat(SwarmGraphNodeService.middleware)
-        .concat(SwarmGraphSnapshotService.middleware)
-        .concat(SwarmMessageService.middleware)
-        .concat(SwarmPayloadService.middleware)
-        .concat(SwarmRegisterRequestService.middleware)
-        .concat(SwarmRegisterResponseService.middleware)
-        .concat(SwarmSecurityService.middleware)
-        .concat(SwarmUnregisterRequestService.middleware)
-        .concat(SwarmUnregisterResponseService.middleware)
-        .concat(TaskService.middleware)
-        .concat(TwoFactorSecretService.middleware)
-        .concat(UpdateFileRequestService.middleware)
-        .concat(UsageTransactionService.middleware)
-        .concat(UserPreferenceService.middleware)
-        .concat(ValkyrJobService.middleware)
-        .concat(VerifyPhoneOTPRequestService.middleware)
-        .concat(VerifyTwoFactorRequestService.middleware)
-        .concat(VerifyTwoFactorResponseService.middleware)
-        .concat(WebsocketMessageService.middleware)
-        .concat(WebsocketSessionService.middleware)
-        .concat(WizardStartResponseService.middleware)
-        .concat(WizardStatusResponseService.middleware)
-        .concat(WorkbookService.middleware)
-        .concat(WorkflowService.middleware)
-        .concat(WorkflowExecutionService.middleware)
-        .concat(WorkflowStateService.middleware);
+  return () =>
+    middlewares
+      .concat(AccountBalanceService.middleware)
+      .concat(AclClassService.middleware)
+      .concat(AclEntryService.middleware)
+      .concat(AclObjectIdentityService.middleware)
+      .concat(AclSidService.middleware)
+      .concat(ActivateAgent200ResponseService.middleware)
+      .concat(AddressService.middleware)
+      .concat(AgentService.middleware)
+      .concat(AgentBillingService.middleware)
+      .concat(AgentBillingChargeService.middleware)
+      .concat(AgentChatMessageService.middleware)
+      .concat(AgentChatMessageRequestService.middleware)
+      .concat(AgentChatMessageResponseService.middleware)
+      .concat(AgentDiscoveryItemService.middleware)
+      .concat(AgentEventTriggerService.middleware)
+      .concat(AgentHierarchyService.middleware)
+      .concat(AgentHierarchyNodeService.middleware)
+      .concat(ApiMetricSnapshotService.middleware)
+      .concat(ApiMetricsResponseService.middleware)
+      .concat(ApiTrafficEventService.middleware)
+      .concat(ApplicationService.middleware)
+      .concat(AuthorityService.middleware)
+      .concat(BackupConfigService.middleware)
+      .concat(BalanceResponseService.middleware)
+      .concat(BlankRangeService.middleware)
+      .concat(BorderService.middleware)
+      .concat(BudgetService.middleware)
+      .concat(BuildService.middleware)
+      .concat(BuildOutputService.middleware)
+      .concat(CampaignService.middleware)
+      .concat(CareerOpportunityService.middleware)
+      .concat(CellService.middleware)
+      .concat(ChannelSubscriptionService.middleware)
+      .concat(ChartService.middleware)
+      .concat(ChartSeriesService.middleware)
+      .concat(ChatCompletionRequestService.middleware)
+      .concat(ChatCompletionResponseService.middleware)
+      .concat(ChatMessageService.middleware)
+      .concat(ChatResponseService.middleware)
+      .concat(CircuitBreakerStateService.middleware)
+      .concat(CompleteUploadRequestService.middleware)
+      .concat(CompleteUploadRequestPartsInnerService.middleware)
+      .concat(ConfirmPasswordResetRequestService.middleware)
+      .concat(ConfirmPasswordResetResponseService.middleware)
+      .concat(ConsultingProfileService.middleware)
+      .concat(ContentDataService.middleware)
+      .concat(ContentMediaLinkService.middleware)
+      .concat(ConversationBranchService.middleware)
+      .concat(ConversationMemoryNodeService.middleware)
+      .concat(CustomerService.middleware)
+      .concat(DeadLetterQueueService.middleware)
+      .concat(DefaultResponseService.middleware)
+      .concat(DependService.middleware)
+      .concat(DigitalAssetService.middleware)
+      .concat(DiscardDeadLetterEntryRequestService.middleware)
+      .concat(DiscardDeadLetterEntryResponseService.middleware)
+      .concat(DiscountService.middleware)
+      .concat(DownloadAccessService.middleware)
+      .concat(EventLogService.middleware)
+      .concat(ExecModuleService.middleware)
+      .concat(ExecuteModuleRequestService.middleware)
+      .concat(ExpenseService.middleware)
+      .concat(FileAuditLogService.middleware)
+      .concat(FileDownloadTokenService.middleware)
+      .concat(FileMetadataService.middleware)
+      .concat(FileProcessingJobService.middleware)
+      .concat(FileRecordService.middleware)
+      .concat(FileUploadSessionService.middleware)
+      .concat(FileVersionService.middleware)
+      .concat(FormatService.middleware)
+      .concat(FormulaService.middleware)
+      .concat(GeneralLedgerEntryService.middleware)
+      .concat(GoalService.middleware)
+      .concat(GoalDependencyService.middleware)
+      .concat(GrantPermissionRequestService.middleware)
+      .concat(HostInstanceService.middleware)
+      .concat(IdempotencyKeyService.middleware)
+      .concat(InitUploadRequestService.middleware)
+      .concat(InitUploadResponseService.middleware)
+      .concat(InitiateTwoFactorRequestService.middleware)
+      .concat(InitiateTwoFactorResponseService.middleware)
+      .concat(IntegrationAccountService.middleware)
+      .concat(InvoiceService.middleware)
+      .concat(InvokeMcpToolRequestService.middleware)
+      .concat(JobApplicationService.middleware)
+      .concat(JobApplicationRequestService.middleware)
+      .concat(JobApplicationResponseService.middleware)
+      .concat(JobMetadataService.middleware)
+      .concat(JobSeekerService.middleware)
+      .concat(KeyMetricService.middleware)
+      .concat(LegalPrecedentService.middleware)
+      .concat(LineItemService.middleware)
+      .concat(LlmDetailsService.middleware)
+      .concat(LoginService.middleware)
+      .concat(LoginAuditService.middleware)
+      .concat(LoginRequestService.middleware)
+      .concat(LoginResponseService.middleware)
+      .concat(LogoutService.middleware)
+      .concat(McpService.middleware)
+      .concat(McpContentService.middleware)
+      .concat(McpDownloadResponseService.middleware)
+      .concat(McpMarketplaceCatalogService.middleware)
+      .concat(McpMarketplaceItemService.middleware)
+      .concat(McpMarketplaceItemTagService.middleware)
+      .concat(McpResourceService.middleware)
+      .concat(McpResourceResponseService.middleware)
+      .concat(McpResourceTemplateService.middleware)
+      .concat(McpServerService.middleware)
+      .concat(McpServiceRegistryService.middleware)
+      .concat(McpServiceResponseService.middleware)
+      .concat(McpToolService.middleware)
+      .concat(McpToolCallResponseService.middleware)
+      .concat(McpToolPresetService.middleware)
+      .concat(McpTransportConfigService.middleware)
+      .concat(MediaObjectService.middleware)
+      .concat(MergeRangeService.middleware)
+      .concat(MetricsService.middleware)
+      .concat(NamedRangeService.middleware)
+      .concat(NoteService.middleware)
+      .concat(OasComponentService.middleware)
+      .concat(OasEnumService.middleware)
+      .concat(OasInfoService.middleware)
+      .concat(OasObjectSchemaService.middleware)
+      .concat(OasOpenAPISpecService.middleware)
+      .concat(OasOperationService.middleware)
+      .concat(OasParameterService.middleware)
+      .concat(OasPathService.middleware)
+      .concat(OasRequiredService.middleware)
+      .concat(OasResponseService.middleware)
+      .concat(OasSecuritySchemeService.middleware)
+      .concat(OasServerService.middleware)
+      .concat(OpportunityService.middleware)
+      .concat(OrderFulfillmentTaskService.middleware)
+      .concat(OrganizationService.middleware)
+      .concat(PasswordResetTokenService.middleware)
+      .concat(PaymentTransactionService.middleware)
+      .concat(PersistentLoginService.middleware)
+      .concat(PhoneVerificationService.middleware)
+      .concat(PhoneVerificationRequestService.middleware)
+      .concat(PhoneVerificationResponseService.middleware)
+      .concat(PivotTableService.middleware)
+      .concat(PresignRequestService.middleware)
+      .concat(PresignResponseService.middleware)
+      .concat(PrincipalService.middleware)
+      .concat(PrincipalRolesService.middleware)
+      .concat(ProductService.middleware)
+      .concat(ProductDeliveryConfigService.middleware)
+      .concat(ProductFeatureService.middleware)
+      .concat(ProductFunnelWizardService.middleware)
+      .concat(ProductLandingPageService.middleware)
+      .concat(PtgService.middleware)
+      .concat(PtgRefService.middleware)
+      .concat(PublishFunnel200ResponseService.middleware)
+      .concat(PublishRestEndpointRequestService.middleware)
+      .concat(PublishWorkflowRequestService.middleware)
+      .concat(QuotaService.middleware)
+      .concat(RatingService.middleware)
+      .concat(ReactionService.middleware)
+      .concat(ReferralLinkService.middleware)
+      .concat(RequestPasswordResetRequestService.middleware)
+      .concat(RequestPasswordResetResponseService.middleware)
+      .concat(RequeueDeadLetterEntryRequestService.middleware)
+      .concat(RequeueDeadLetterEntryResponseService.middleware)
+      .concat(RetryPolicyService.middleware)
+      .concat(RoleService.middleware)
+      .concat(RunService.middleware)
+      .concat(SalesActivityService.middleware)
+      .concat(SalesOrderService.middleware)
+      .concat(SalesPipelineService.middleware)
+      .concat(SecureKeyService.middleware)
+      .concat(SheetService.middleware)
+      .concat(SheetColumnService.middleware)
+      .concat(SheetRowService.middleware)
+      .concat(SkillProfileService.middleware)
+      .concat(SolutionService.middleware)
+      .concat(SpaceService.middleware)
+      .concat(SpaceFileService.middleware)
+      .concat(SpaceMemberService.middleware)
+      .concat(StackService.middleware)
+      .concat(StrategicPriorityService.middleware)
+      .concat(SubscriberListService.middleware)
+      .concat(SwarmService.middleware)
+      .concat(SwarmAgentSummaryService.middleware)
+      .concat(SwarmCommandRequestService.middleware)
+      .concat(SwarmCommandResponseService.middleware)
+      .concat(SwarmGraphEdgeService.middleware)
+      .concat(SwarmGraphNodeService.middleware)
+      .concat(SwarmGraphSnapshotService.middleware)
+      .concat(SwarmMessageService.middleware)
+      .concat(SwarmPayloadService.middleware)
+      .concat(SwarmRegisterRequestService.middleware)
+      .concat(SwarmRegisterResponseService.middleware)
+      .concat(SwarmSecurityService.middleware)
+      .concat(SwarmUnregisterRequestService.middleware)
+      .concat(SwarmUnregisterResponseService.middleware)
+      .concat(TaskService.middleware)
+      .concat(TwoFactorSecretService.middleware)
+      .concat(UpdateFileRequestService.middleware)
+      .concat(UsageTransactionService.middleware)
+      .concat(UserPreferenceService.middleware)
+      .concat(ValkyrJobService.middleware)
+      .concat(VerifyPhoneOTPRequestService.middleware)
+      .concat(VerifyTwoFactorRequestService.middleware)
+      .concat(VerifyTwoFactorResponseService.middleware)
+      .concat(WebsocketMessageService.middleware)
+      .concat(WebsocketSessionService.middleware)
+      .concat(WizardStartResponseService.middleware)
+      .concat(WizardStatusResponseService.middleware)
+      .concat(WorkbookService.middleware)
+      .concat(WorkflowService.middleware)
+      .concat(WorkflowExecutionService.middleware)
+      .concat(WorkflowStateService.middleware);
 };
 /*
 export const store = configureStore({

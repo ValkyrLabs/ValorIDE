@@ -31,60 +31,60 @@ export const LIST_AGENT_REQUEST = "LIST_AGENT_REQUEST";
 export const LIST_AGENT_SUCCESS = "LIST_AGENT_SUCCESS";
 export const LIST_AGENT_FAILURE = "LIST_AGENT_FAILURE";
 export const addAgentRequest = () => ({
-    type: ADD_AGENT_REQUEST,
+  type: ADD_AGENT_REQUEST,
 });
 export const addAgentSuccess = (Agents) => ({
-    type: ADD_AGENT_SUCCESS,
-    payload: Agents,
+  type: ADD_AGENT_SUCCESS,
+  payload: Agents,
 });
 export const addAgentFailure = (error) => ({
-    type: ADD_AGENT_FAILURE,
-    payload: error,
+  type: ADD_AGENT_FAILURE,
+  payload: error,
 });
 export const fetchAgentRequest = () => ({
-    type: FETCH_AGENT_REQUEST,
+  type: FETCH_AGENT_REQUEST,
 });
 export const fetchAgentSuccess = (Agents) => ({
-    type: FETCH_AGENT_SUCCESS,
-    payload: Agents,
+  type: FETCH_AGENT_SUCCESS,
+  payload: Agents,
 });
 export const fetchAgentFailure = (error) => ({
-    type: FETCH_AGENT_FAILURE,
-    payload: error,
+  type: FETCH_AGENT_FAILURE,
+  payload: error,
 });
 export const listAgentRequest = () => ({
-    type: LIST_AGENT_REQUEST,
+  type: LIST_AGENT_REQUEST,
 });
 export const listAgentSuccess = (Agents) => ({
-    type: LIST_AGENT_SUCCESS,
-    payload: Agents,
+  type: LIST_AGENT_SUCCESS,
+  payload: Agents,
 });
 export const listAgentFailure = (error) => ({
-    type: LIST_AGENT_FAILURE,
-    payload: error,
+  type: LIST_AGENT_FAILURE,
+  payload: error,
 });
 export const updateAgentRequest = (Agent) => ({
-    type: UPDATE_AGENT_REQUEST,
-    payload: Agent,
+  type: UPDATE_AGENT_REQUEST,
+  payload: Agent,
 });
 export const updateAgentSuccess = (Agent) => ({
-    type: UPDATE_AGENT_SUCCESS,
-    payload: Agent,
+  type: UPDATE_AGENT_SUCCESS,
+  payload: Agent,
 });
 export const updateAgentFailure = (error) => ({
-    type: UPDATE_AGENT_FAILURE,
-    payload: error,
+  type: UPDATE_AGENT_FAILURE,
+  payload: error,
 });
 export const deleteAgentRequest = (Agent) => ({
-    type: DELETE_AGENT_REQUEST,
-    payload: Agent,
+  type: DELETE_AGENT_REQUEST,
+  payload: Agent,
 });
 export const deleteAgentSuccess = (Agent) => ({
-    type: DELETE_AGENT_SUCCESS,
-    payload: Agent,
+  type: DELETE_AGENT_SUCCESS,
+  payload: Agent,
 });
 export const deleteAgentFailure = (error) => ({
-    type: DELETE_AGENT_FAILURE,
-    payload: error,
+  type: DELETE_AGENT_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=AgentApiAction.js.map

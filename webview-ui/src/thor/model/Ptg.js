@@ -29,47 +29,47 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function PtgFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
-        formulaId: !exists(json, "formulaId") ? undefined : json["formulaId"],
-        stringValue: !exists(json, "stringValue") ? undefined : json["stringValue"],
-        numberValue: !exists(json, "numberValue") ? undefined : json["numberValue"],
-        type: !exists(json, "type") ? undefined : json["type"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
+    formulaId: !exists(json, "formulaId") ? undefined : json["formulaId"],
+    stringValue: !exists(json, "stringValue") ? undefined : json["stringValue"],
+    numberValue: !exists(json, "numberValue") ? undefined : json["numberValue"],
+    type: !exists(json, "type") ? undefined : json["type"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function PtgToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        sheetId: value.sheetId,
-        formulaId: value.formulaId,
-        stringValue: value.stringValue,
-        numberValue: value.numberValue,
-        type: value.type,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    sheetId: value.sheetId,
+    formulaId: value.formulaId,
+    stringValue: value.stringValue,
+    numberValue: value.numberValue,
+    type: value.type,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -77,13 +77,13 @@ export function PtgToJSON(value) {
  */
 export var PtgTypeEnum;
 (function (PtgTypeEnum) {
-    PtgTypeEnum["PTGINT"] = "ptgint";
-    PtgTypeEnum["PTGSTR"] = "ptgstr";
-    PtgTypeEnum["PTGATTR"] = "ptgattr";
-    PtgTypeEnum["PTGFUNC"] = "ptgfunc";
-    PtgTypeEnum["PTGFUNCVAR"] = "ptgfuncvar";
-    PtgTypeEnum["PTGNAME"] = "ptgname";
-    PtgTypeEnum["PTGREF"] = "ptgref";
-    PtgTypeEnum["PTGAREA"] = "ptgarea";
+  PtgTypeEnum["PTGINT"] = "ptgint";
+  PtgTypeEnum["PTGSTR"] = "ptgstr";
+  PtgTypeEnum["PTGATTR"] = "ptgattr";
+  PtgTypeEnum["PTGFUNC"] = "ptgfunc";
+  PtgTypeEnum["PTGFUNCVAR"] = "ptgfuncvar";
+  PtgTypeEnum["PTGNAME"] = "ptgname";
+  PtgTypeEnum["PTGREF"] = "ptgref";
+  PtgTypeEnum["PTGAREA"] = "ptgarea";
 })(PtgTypeEnum || (PtgTypeEnum = {}));
 //# sourceMappingURL=Ptg.js.map

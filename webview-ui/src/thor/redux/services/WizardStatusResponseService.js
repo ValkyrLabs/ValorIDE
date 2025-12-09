@@ -17,119 +17,133 @@ Template file: typescript-redux-query/modelService.mustache
 import { createApi } from "@reduxjs/toolkit/query/react";
 import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 export const WizardStatusResponseService = createApi({
-    reducerPath: "WizardStatusResponse", // This should remain unique
-    baseQuery: customBaseQuery,
-    tagTypes: ["WizardStatusResponse"],
-    endpoints: (build) => ({
-        // 1) Paged Query Endpoint
-        // Standardized pagination: page (0-based), size (page size)
-        getWizardStatusResponsesPaged: build.query({
-            query: ({ page, size = 20, example }) => {
-                const q = [`page=${page}`, `size=${size}`];
-                if (example)
-                    q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-                return `WizardStatusResponse?${q.join("&")}`;
-            },
-            providesTags: (result, error, { page }) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "WizardStatusResponse",
-                        id,
-                    })),
-                    { type: "WizardStatusResponse", id: `PAGE_${page}` },
-                ]
-                : [],
-        }),
-        // 2) Simple "get all" Query (optional)
-        getWizardStatusResponses: build.query({
-            query: (arg) => {
-                if (arg && arg.example) {
-                    const ex = arg.example;
-                    return `WizardStatusResponse?example=${encodeURIComponent(JSON.stringify(ex))}`;
-                }
-                return `WizardStatusResponse`;
-            },
-            providesTags: (result) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "WizardStatusResponse",
-                        id,
-                    })),
-                    { type: "WizardStatusResponse", id: "LIST" },
-                ]
-                : [{ type: "WizardStatusResponse", id: "LIST" }],
-        }),
-        // 3) Create
-        addWizardStatusResponse: build.mutation({
-            query: (body) => ({
-                url: `WizardStatusResponse`,
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "WizardStatusResponse", id: "LIST" }],
-        }),
-        // 4) Get single by ID
-        getWizardStatusResponse: build.query({
-            query: (id) => `WizardStatusResponse/${id}`,
-            providesTags: (result, error, id) => [
-                { type: "WizardStatusResponse", id },
-            ],
-        }),
-        // 5) Update
-        updateWizardStatusResponse: build.mutation({
-            query: ({ id, ...patch }) => ({
-                url: `WizardStatusResponse/${id}`,
-                method: "PUT",
-                body: patch,
-            }),
-            async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-                if (id) {
-                    const patchResult = dispatch(WizardStatusResponseService.util.updateQueryData("getWizardStatusResponse", id, (draft) => {
-                        Object.assign(draft, patch);
-                    }));
-                    try {
-                        await queryFulfilled;
-                    }
-                    catch {
-                        patchResult.undo();
-                    }
-                }
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "WizardStatusResponse", id },
-                { type: "WizardStatusResponse", id: "LIST" },
-            ],
-        }),
-        // 6) Delete
-        deleteWizardStatusResponse: build.mutation({
-            query(id) {
-                return {
-                    url: `WizardStatusResponse/${id}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, id) => [
-                { type: "WizardStatusResponse", id },
-            ],
-        }),
-        // 7) Cascade / soft-delete (marks trashed, cascades children)
-        deleteWizardStatusResponseCascade: build.mutation({
-            query({ id, cascade = true, trash = true }) {
-                const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
-                return {
-                    url: `WizardStatusResponse/${id}?${params}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "WizardStatusResponse", id },
-                { type: "WizardStatusResponse", id: "LIST" },
-            ],
-        }),
+  reducerPath: "WizardStatusResponse", // This should remain unique
+  baseQuery: customBaseQuery,
+  tagTypes: ["WizardStatusResponse"],
+  endpoints: (build) => ({
+    // 1) Paged Query Endpoint
+    // Standardized pagination: page (0-based), size (page size)
+    getWizardStatusResponsesPaged: build.query({
+      query: ({ page, size = 20, example }) => {
+        const q = [`page=${page}`, `size=${size}`];
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `WizardStatusResponse?${q.join("&")}`;
+      },
+      providesTags: (result, error, { page }) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "WizardStatusResponse",
+                id,
+              })),
+              { type: "WizardStatusResponse", id: `PAGE_${page}` },
+            ]
+          : [],
     }),
+    // 2) Simple "get all" Query (optional)
+    getWizardStatusResponses: build.query({
+      query: (arg) => {
+        if (arg && arg.example) {
+          const ex = arg.example;
+          return `WizardStatusResponse?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `WizardStatusResponse`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "WizardStatusResponse",
+                id,
+              })),
+              { type: "WizardStatusResponse", id: "LIST" },
+            ]
+          : [{ type: "WizardStatusResponse", id: "LIST" }],
+    }),
+    // 3) Create
+    addWizardStatusResponse: build.mutation({
+      query: (body) => ({
+        url: `WizardStatusResponse`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "WizardStatusResponse", id: "LIST" }],
+    }),
+    // 4) Get single by ID
+    getWizardStatusResponse: build.query({
+      query: (id) => `WizardStatusResponse/${id}`,
+      providesTags: (result, error, id) => [
+        { type: "WizardStatusResponse", id },
+      ],
+    }),
+    // 5) Update
+    updateWizardStatusResponse: build.mutation({
+      query: ({ id, ...patch }) => ({
+        url: `WizardStatusResponse/${id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        if (id) {
+          const patchResult = dispatch(
+            WizardStatusResponseService.util.updateQueryData(
+              "getWizardStatusResponse",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        }
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "WizardStatusResponse", id },
+        { type: "WizardStatusResponse", id: "LIST" },
+      ],
+    }),
+    // 6) Delete
+    deleteWizardStatusResponse: build.mutation({
+      query(id) {
+        return {
+          url: `WizardStatusResponse/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, id) => [
+        { type: "WizardStatusResponse", id },
+      ],
+    }),
+    // 7) Cascade / soft-delete (marks trashed, cascades children)
+    deleteWizardStatusResponseCascade: build.mutation({
+      query({ id, cascade = true, trash = true }) {
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        return {
+          url: `WizardStatusResponse/${id}?${params}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "WizardStatusResponse", id },
+        { type: "WizardStatusResponse", id: "LIST" },
+      ],
+    }),
+  }),
 });
 // Notice we now also export `useLazyGetWizardStatusResponsesPagedQuery`
-export const { useGetWizardStatusResponsesPagedQuery, // immediate fetch
-useLazyGetWizardStatusResponsesPagedQuery, // lazy fetch
-useGetWizardStatusResponseQuery, useGetWizardStatusResponsesQuery, useAddWizardStatusResponseMutation, useUpdateWizardStatusResponseMutation, useDeleteWizardStatusResponseMutation, useDeleteWizardStatusResponseCascadeMutation, } = WizardStatusResponseService;
+export const {
+  useGetWizardStatusResponsesPagedQuery, // immediate fetch
+  useLazyGetWizardStatusResponsesPagedQuery, // lazy fetch
+  useGetWizardStatusResponseQuery,
+  useGetWizardStatusResponsesQuery,
+  useAddWizardStatusResponseMutation,
+  useUpdateWizardStatusResponseMutation,
+  useDeleteWizardStatusResponseMutation,
+  useDeleteWizardStatusResponseCascadeMutation,
+} = WizardStatusResponseService;
 //# sourceMappingURL=WizardStatusResponseService.js.map

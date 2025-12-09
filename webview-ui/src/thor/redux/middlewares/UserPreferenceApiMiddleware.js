@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: UserPreference
 */
-export const UserPreferenceMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const UserPreferenceMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("UserPreference MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=UserPreferenceApiMiddleware.js.map

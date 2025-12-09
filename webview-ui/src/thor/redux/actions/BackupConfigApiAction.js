@@ -31,60 +31,60 @@ export const LIST_BACKUPCONFIG_REQUEST = "LIST_BACKUPCONFIG_REQUEST";
 export const LIST_BACKUPCONFIG_SUCCESS = "LIST_BACKUPCONFIG_SUCCESS";
 export const LIST_BACKUPCONFIG_FAILURE = "LIST_BACKUPCONFIG_FAILURE";
 export const addBackupConfigRequest = () => ({
-    type: ADD_BACKUPCONFIG_REQUEST,
+  type: ADD_BACKUPCONFIG_REQUEST,
 });
 export const addBackupConfigSuccess = (BackupConfigs) => ({
-    type: ADD_BACKUPCONFIG_SUCCESS,
-    payload: BackupConfigs,
+  type: ADD_BACKUPCONFIG_SUCCESS,
+  payload: BackupConfigs,
 });
 export const addBackupConfigFailure = (error) => ({
-    type: ADD_BACKUPCONFIG_FAILURE,
-    payload: error,
+  type: ADD_BACKUPCONFIG_FAILURE,
+  payload: error,
 });
 export const fetchBackupConfigRequest = () => ({
-    type: FETCH_BACKUPCONFIG_REQUEST,
+  type: FETCH_BACKUPCONFIG_REQUEST,
 });
 export const fetchBackupConfigSuccess = (BackupConfigs) => ({
-    type: FETCH_BACKUPCONFIG_SUCCESS,
-    payload: BackupConfigs,
+  type: FETCH_BACKUPCONFIG_SUCCESS,
+  payload: BackupConfigs,
 });
 export const fetchBackupConfigFailure = (error) => ({
-    type: FETCH_BACKUPCONFIG_FAILURE,
-    payload: error,
+  type: FETCH_BACKUPCONFIG_FAILURE,
+  payload: error,
 });
 export const listBackupConfigRequest = () => ({
-    type: LIST_BACKUPCONFIG_REQUEST,
+  type: LIST_BACKUPCONFIG_REQUEST,
 });
 export const listBackupConfigSuccess = (BackupConfigs) => ({
-    type: LIST_BACKUPCONFIG_SUCCESS,
-    payload: BackupConfigs,
+  type: LIST_BACKUPCONFIG_SUCCESS,
+  payload: BackupConfigs,
 });
 export const listBackupConfigFailure = (error) => ({
-    type: LIST_BACKUPCONFIG_FAILURE,
-    payload: error,
+  type: LIST_BACKUPCONFIG_FAILURE,
+  payload: error,
 });
 export const updateBackupConfigRequest = (BackupConfig) => ({
-    type: UPDATE_BACKUPCONFIG_REQUEST,
-    payload: BackupConfig,
+  type: UPDATE_BACKUPCONFIG_REQUEST,
+  payload: BackupConfig,
 });
 export const updateBackupConfigSuccess = (BackupConfig) => ({
-    type: UPDATE_BACKUPCONFIG_SUCCESS,
-    payload: BackupConfig,
+  type: UPDATE_BACKUPCONFIG_SUCCESS,
+  payload: BackupConfig,
 });
 export const updateBackupConfigFailure = (error) => ({
-    type: UPDATE_BACKUPCONFIG_FAILURE,
-    payload: error,
+  type: UPDATE_BACKUPCONFIG_FAILURE,
+  payload: error,
 });
 export const deleteBackupConfigRequest = (BackupConfig) => ({
-    type: DELETE_BACKUPCONFIG_REQUEST,
-    payload: BackupConfig,
+  type: DELETE_BACKUPCONFIG_REQUEST,
+  payload: BackupConfig,
 });
 export const deleteBackupConfigSuccess = (BackupConfig) => ({
-    type: DELETE_BACKUPCONFIG_SUCCESS,
-    payload: BackupConfig,
+  type: DELETE_BACKUPCONFIG_SUCCESS,
+  payload: BackupConfig,
 });
 export const deleteBackupConfigFailure = (error) => ({
-    type: DELETE_BACKUPCONFIG_FAILURE,
-    payload: error,
+  type: DELETE_BACKUPCONFIG_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=BackupConfigApiAction.js.map

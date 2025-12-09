@@ -29,45 +29,45 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function ExpenseFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        expenseDate: new Date(json["expenseDate"]),
-        amount: json["amount"],
-        category: json["category"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    expenseDate: new Date(json["expenseDate"]),
+    amount: json["amount"],
+    category: json["category"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ExpenseToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        expenseDate: value.expenseDate.toISOString(),
-        amount: value.amount,
-        category: value.category,
-        description: value.description,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    expenseDate: value.expenseDate.toISOString(),
+    amount: value.amount,
+    category: value.category,
+    description: value.description,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -75,11 +75,11 @@ export function ExpenseToJSON(value) {
  */
 export var ExpenseCategoryEnum;
 (function (ExpenseCategoryEnum) {
-    ExpenseCategoryEnum["MARKETING"] = "marketing";
-    ExpenseCategoryEnum["TRAVEL"] = "travel";
-    ExpenseCategoryEnum["PAYROLL"] = "payroll";
-    ExpenseCategoryEnum["HOSTING"] = "hosting";
-    ExpenseCategoryEnum["SOFTWARE"] = "software";
-    ExpenseCategoryEnum["OTHER"] = "other";
+  ExpenseCategoryEnum["MARKETING"] = "marketing";
+  ExpenseCategoryEnum["TRAVEL"] = "travel";
+  ExpenseCategoryEnum["PAYROLL"] = "payroll";
+  ExpenseCategoryEnum["HOSTING"] = "hosting";
+  ExpenseCategoryEnum["SOFTWARE"] = "software";
+  ExpenseCategoryEnum["OTHER"] = "other";
 })(ExpenseCategoryEnum || (ExpenseCategoryEnum = {}));
 //# sourceMappingURL=Expense.js.map

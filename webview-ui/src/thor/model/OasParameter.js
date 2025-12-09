@@ -28,55 +28,55 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { OasObjectSchemaFromJSON, OasObjectSchemaToJSON, } from "./";
+import { OasObjectSchemaFromJSON, OasObjectSchemaToJSON } from "./";
 export function OasParameterFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        oasOperationId: !exists(json, "oasOperationId")
-            ? undefined
-            : json["oasOperationId"],
-        name: !exists(json, "name") ? undefined : json["name"],
-        location: !exists(json, "location") ? undefined : json["location"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        required: !exists(json, "required") ? undefined : json["required"],
-        schema: !exists(json, "schema")
-            ? undefined
-            : OasObjectSchemaFromJSON(json["schema"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    oasOperationId: !exists(json, "oasOperationId")
+      ? undefined
+      : json["oasOperationId"],
+    name: !exists(json, "name") ? undefined : json["name"],
+    location: !exists(json, "location") ? undefined : json["location"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    required: !exists(json, "required") ? undefined : json["required"],
+    schema: !exists(json, "schema")
+      ? undefined
+      : OasObjectSchemaFromJSON(json["schema"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function OasParameterToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        oasOperationId: value.oasOperationId,
-        name: value.name,
-        location: value.location,
-        description: value.description,
-        required: value.required,
-        schema: OasObjectSchemaToJSON(value.schema),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    oasOperationId: value.oasOperationId,
+    name: value.name,
+    location: value.location,
+    description: value.description,
+    required: value.required,
+    schema: OasObjectSchemaToJSON(value.schema),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -84,9 +84,9 @@ export function OasParameterToJSON(value) {
  */
 export var OasParameterLocationEnum;
 (function (OasParameterLocationEnum) {
-    OasParameterLocationEnum["QUERY"] = "query";
-    OasParameterLocationEnum["HEADER"] = "header";
-    OasParameterLocationEnum["PATH"] = "path";
-    OasParameterLocationEnum["COOKIE"] = "cookie";
+  OasParameterLocationEnum["QUERY"] = "query";
+  OasParameterLocationEnum["HEADER"] = "header";
+  OasParameterLocationEnum["PATH"] = "path";
+  OasParameterLocationEnum["COOKIE"] = "cookie";
 })(OasParameterLocationEnum || (OasParameterLocationEnum = {}));
 //# sourceMappingURL=OasParameter.js.map

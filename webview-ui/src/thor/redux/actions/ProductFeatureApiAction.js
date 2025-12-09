@@ -31,60 +31,60 @@ export const LIST_PRODUCTFEATURE_REQUEST = "LIST_PRODUCTFEATURE_REQUEST";
 export const LIST_PRODUCTFEATURE_SUCCESS = "LIST_PRODUCTFEATURE_SUCCESS";
 export const LIST_PRODUCTFEATURE_FAILURE = "LIST_PRODUCTFEATURE_FAILURE";
 export const addProductFeatureRequest = () => ({
-    type: ADD_PRODUCTFEATURE_REQUEST,
+  type: ADD_PRODUCTFEATURE_REQUEST,
 });
 export const addProductFeatureSuccess = (ProductFeatures) => ({
-    type: ADD_PRODUCTFEATURE_SUCCESS,
-    payload: ProductFeatures,
+  type: ADD_PRODUCTFEATURE_SUCCESS,
+  payload: ProductFeatures,
 });
 export const addProductFeatureFailure = (error) => ({
-    type: ADD_PRODUCTFEATURE_FAILURE,
-    payload: error,
+  type: ADD_PRODUCTFEATURE_FAILURE,
+  payload: error,
 });
 export const fetchProductFeatureRequest = () => ({
-    type: FETCH_PRODUCTFEATURE_REQUEST,
+  type: FETCH_PRODUCTFEATURE_REQUEST,
 });
 export const fetchProductFeatureSuccess = (ProductFeatures) => ({
-    type: FETCH_PRODUCTFEATURE_SUCCESS,
-    payload: ProductFeatures,
+  type: FETCH_PRODUCTFEATURE_SUCCESS,
+  payload: ProductFeatures,
 });
 export const fetchProductFeatureFailure = (error) => ({
-    type: FETCH_PRODUCTFEATURE_FAILURE,
-    payload: error,
+  type: FETCH_PRODUCTFEATURE_FAILURE,
+  payload: error,
 });
 export const listProductFeatureRequest = () => ({
-    type: LIST_PRODUCTFEATURE_REQUEST,
+  type: LIST_PRODUCTFEATURE_REQUEST,
 });
 export const listProductFeatureSuccess = (ProductFeatures) => ({
-    type: LIST_PRODUCTFEATURE_SUCCESS,
-    payload: ProductFeatures,
+  type: LIST_PRODUCTFEATURE_SUCCESS,
+  payload: ProductFeatures,
 });
 export const listProductFeatureFailure = (error) => ({
-    type: LIST_PRODUCTFEATURE_FAILURE,
-    payload: error,
+  type: LIST_PRODUCTFEATURE_FAILURE,
+  payload: error,
 });
 export const updateProductFeatureRequest = (ProductFeature) => ({
-    type: UPDATE_PRODUCTFEATURE_REQUEST,
-    payload: ProductFeature,
+  type: UPDATE_PRODUCTFEATURE_REQUEST,
+  payload: ProductFeature,
 });
 export const updateProductFeatureSuccess = (ProductFeature) => ({
-    type: UPDATE_PRODUCTFEATURE_SUCCESS,
-    payload: ProductFeature,
+  type: UPDATE_PRODUCTFEATURE_SUCCESS,
+  payload: ProductFeature,
 });
 export const updateProductFeatureFailure = (error) => ({
-    type: UPDATE_PRODUCTFEATURE_FAILURE,
-    payload: error,
+  type: UPDATE_PRODUCTFEATURE_FAILURE,
+  payload: error,
 });
 export const deleteProductFeatureRequest = (ProductFeature) => ({
-    type: DELETE_PRODUCTFEATURE_REQUEST,
-    payload: ProductFeature,
+  type: DELETE_PRODUCTFEATURE_REQUEST,
+  payload: ProductFeature,
 });
 export const deleteProductFeatureSuccess = (ProductFeature) => ({
-    type: DELETE_PRODUCTFEATURE_SUCCESS,
-    payload: ProductFeature,
+  type: DELETE_PRODUCTFEATURE_SUCCESS,
+  payload: ProductFeature,
 });
 export const deleteProductFeatureFailure = (error) => ({
-    type: DELETE_PRODUCTFEATURE_FAILURE,
-    payload: error,
+  type: DELETE_PRODUCTFEATURE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=ProductFeatureApiAction.js.map

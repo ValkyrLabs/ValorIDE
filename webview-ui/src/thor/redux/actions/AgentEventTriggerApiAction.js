@@ -15,76 +15,85 @@ Template file: typescript-redux-query/modelAction.mustache
 */
 // defines the Redux Actions for AgentEventTrigger
 // AgentEventTrigger
-export const FETCH_AGENTEVENTTRIGGER_REQUEST = "FETCH_AGENTEVENTTRIGGER_REQUEST";
-export const FETCH_AGENTEVENTTRIGGER_SUCCESS = "FETCH_AGENTEVENTTRIGGER_SUCCESS";
-export const FETCH_AGENTEVENTTRIGGER_FAILURE = "FETCH_AGENTEVENTTRIGGER_FAILURE";
+export const FETCH_AGENTEVENTTRIGGER_REQUEST =
+  "FETCH_AGENTEVENTTRIGGER_REQUEST";
+export const FETCH_AGENTEVENTTRIGGER_SUCCESS =
+  "FETCH_AGENTEVENTTRIGGER_SUCCESS";
+export const FETCH_AGENTEVENTTRIGGER_FAILURE =
+  "FETCH_AGENTEVENTTRIGGER_FAILURE";
 export const ADD_AGENTEVENTTRIGGER_REQUEST = "ADD_AGENTEVENTTRIGGER_REQUEST";
 export const ADD_AGENTEVENTTRIGGER_SUCCESS = "ADD_AGENTEVENTTRIGGER_SUCCESS";
 export const ADD_AGENTEVENTTRIGGER_FAILURE = "ADD_AGENTEVENTTRIGGER_FAILURE";
-export const UPDATE_AGENTEVENTTRIGGER_REQUEST = "UPDATE_AGENTEVENTTRIGGER_REQUEST";
-export const UPDATE_AGENTEVENTTRIGGER_SUCCESS = "UPDATE_AGENTEVENTTRIGGER_SUCCESS";
-export const UPDATE_AGENTEVENTTRIGGER_FAILURE = "UPDATE_AGENTEVENTTRIGGER_FAILURE";
-export const DELETE_AGENTEVENTTRIGGER_REQUEST = "DELETE_AGENTEVENTTRIGGER_REQUEST";
-export const DELETE_AGENTEVENTTRIGGER_SUCCESS = "DELETE_AGENTEVENTTRIGGER_SUCCESS";
-export const DELETE_AGENTEVENTTRIGGER_FAILURE = "DELETE_AGENTEVENTTRIGGER_FAILURE";
+export const UPDATE_AGENTEVENTTRIGGER_REQUEST =
+  "UPDATE_AGENTEVENTTRIGGER_REQUEST";
+export const UPDATE_AGENTEVENTTRIGGER_SUCCESS =
+  "UPDATE_AGENTEVENTTRIGGER_SUCCESS";
+export const UPDATE_AGENTEVENTTRIGGER_FAILURE =
+  "UPDATE_AGENTEVENTTRIGGER_FAILURE";
+export const DELETE_AGENTEVENTTRIGGER_REQUEST =
+  "DELETE_AGENTEVENTTRIGGER_REQUEST";
+export const DELETE_AGENTEVENTTRIGGER_SUCCESS =
+  "DELETE_AGENTEVENTTRIGGER_SUCCESS";
+export const DELETE_AGENTEVENTTRIGGER_FAILURE =
+  "DELETE_AGENTEVENTTRIGGER_FAILURE";
 export const LIST_AGENTEVENTTRIGGER_REQUEST = "LIST_AGENTEVENTTRIGGER_REQUEST";
 export const LIST_AGENTEVENTTRIGGER_SUCCESS = "LIST_AGENTEVENTTRIGGER_SUCCESS";
 export const LIST_AGENTEVENTTRIGGER_FAILURE = "LIST_AGENTEVENTTRIGGER_FAILURE";
 export const addAgentEventTriggerRequest = () => ({
-    type: ADD_AGENTEVENTTRIGGER_REQUEST,
+  type: ADD_AGENTEVENTTRIGGER_REQUEST,
 });
 export const addAgentEventTriggerSuccess = (AgentEventTriggers) => ({
-    type: ADD_AGENTEVENTTRIGGER_SUCCESS,
-    payload: AgentEventTriggers,
+  type: ADD_AGENTEVENTTRIGGER_SUCCESS,
+  payload: AgentEventTriggers,
 });
 export const addAgentEventTriggerFailure = (error) => ({
-    type: ADD_AGENTEVENTTRIGGER_FAILURE,
-    payload: error,
+  type: ADD_AGENTEVENTTRIGGER_FAILURE,
+  payload: error,
 });
 export const fetchAgentEventTriggerRequest = () => ({
-    type: FETCH_AGENTEVENTTRIGGER_REQUEST,
+  type: FETCH_AGENTEVENTTRIGGER_REQUEST,
 });
 export const fetchAgentEventTriggerSuccess = (AgentEventTriggers) => ({
-    type: FETCH_AGENTEVENTTRIGGER_SUCCESS,
-    payload: AgentEventTriggers,
+  type: FETCH_AGENTEVENTTRIGGER_SUCCESS,
+  payload: AgentEventTriggers,
 });
 export const fetchAgentEventTriggerFailure = (error) => ({
-    type: FETCH_AGENTEVENTTRIGGER_FAILURE,
-    payload: error,
+  type: FETCH_AGENTEVENTTRIGGER_FAILURE,
+  payload: error,
 });
 export const listAgentEventTriggerRequest = () => ({
-    type: LIST_AGENTEVENTTRIGGER_REQUEST,
+  type: LIST_AGENTEVENTTRIGGER_REQUEST,
 });
 export const listAgentEventTriggerSuccess = (AgentEventTriggers) => ({
-    type: LIST_AGENTEVENTTRIGGER_SUCCESS,
-    payload: AgentEventTriggers,
+  type: LIST_AGENTEVENTTRIGGER_SUCCESS,
+  payload: AgentEventTriggers,
 });
 export const listAgentEventTriggerFailure = (error) => ({
-    type: LIST_AGENTEVENTTRIGGER_FAILURE,
-    payload: error,
+  type: LIST_AGENTEVENTTRIGGER_FAILURE,
+  payload: error,
 });
 export const updateAgentEventTriggerRequest = (AgentEventTrigger) => ({
-    type: UPDATE_AGENTEVENTTRIGGER_REQUEST,
-    payload: AgentEventTrigger,
+  type: UPDATE_AGENTEVENTTRIGGER_REQUEST,
+  payload: AgentEventTrigger,
 });
 export const updateAgentEventTriggerSuccess = (AgentEventTrigger) => ({
-    type: UPDATE_AGENTEVENTTRIGGER_SUCCESS,
-    payload: AgentEventTrigger,
+  type: UPDATE_AGENTEVENTTRIGGER_SUCCESS,
+  payload: AgentEventTrigger,
 });
 export const updateAgentEventTriggerFailure = (error) => ({
-    type: UPDATE_AGENTEVENTTRIGGER_FAILURE,
-    payload: error,
+  type: UPDATE_AGENTEVENTTRIGGER_FAILURE,
+  payload: error,
 });
 export const deleteAgentEventTriggerRequest = (AgentEventTrigger) => ({
-    type: DELETE_AGENTEVENTTRIGGER_REQUEST,
-    payload: AgentEventTrigger,
+  type: DELETE_AGENTEVENTTRIGGER_REQUEST,
+  payload: AgentEventTrigger,
 });
 export const deleteAgentEventTriggerSuccess = (AgentEventTrigger) => ({
-    type: DELETE_AGENTEVENTTRIGGER_SUCCESS,
-    payload: AgentEventTrigger,
+  type: DELETE_AGENTEVENTTRIGGER_SUCCESS,
+  payload: AgentEventTrigger,
 });
 export const deleteAgentEventTriggerFailure = (error) => ({
-    type: DELETE_AGENTEVENTTRIGGER_FAILURE,
-    payload: error,
+  type: DELETE_AGENTEVENTTRIGGER_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=AgentEventTriggerApiAction.js.map

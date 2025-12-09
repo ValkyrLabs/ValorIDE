@@ -16,46 +16,49 @@ Template file: typescript-redux-query/dataObject.ts.mustache
 */
 import { exists } from "../src/runtime";
 export function DataObjectFromJSON(json) {
-    return {
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-    };
+  return {
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+  };
 }
 export function DataObjectToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    id: value.id,
+    ownerId: value.ownerId,
+    createdDate:
+      value.createdDate === undefined
+        ? undefined
+        : value.createdDate.toISOString(),
+    keyHash: value.keyHash,
+    lastAccessedById: value.lastAccessedById,
+    lastAccessedDate:
+      value.lastAccessedDate === undefined
+        ? undefined
+        : value.lastAccessedDate.toISOString(),
+    lastModifiedById: value.lastModifiedById,
+    lastModifiedDate:
+      value.lastModifiedDate === undefined
+        ? undefined
+        : value.lastModifiedDate.toISOString(),
+  };
 }
 //# sourceMappingURL=DataObject.js.map

@@ -1,4 +1,8 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import {
+  jsx as _jsx,
+  jsxs as _jsxs,
+  Fragment as _Fragment,
+} from "react/jsx-runtime";
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -15,16 +19,16 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, } from "formik";
+import { ErrorMessage, Field, Formik } from "formik";
 import { useState } from "react";
-import { Form as BSForm, Accordion, Alert, } from "react-bootstrap";
+import { Form as BSForm, Accordion, Alert } from "react-bootstrap";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import * as Yup from "yup";
 import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import { PermissionType, } from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionType } from "@valkyr/component-library/PermissionDialog/types";
 import { useAddCareerOpportunityMutation } from "../../services/CareerOpportunityService";
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,171 +52,677 @@ Job opportunity or consulting engagement at Valkyr Labs
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const OpportunityTypeValidation = () => {
-    return [
-        "DIRECT_HIRE",
-        "CONSULTING_ENGAGEMENT",
-        "RESELLER_PARTNER",
-        "OPEN_SOURCE_CONTRIBUTOR",
-    ];
+  return [
+    "DIRECT_HIRE",
+    "CONSULTING_ENGAGEMENT",
+    "RESELLER_PARTNER",
+    "OPEN_SOURCE_CONTRIBUTOR",
+  ];
 };
 const CommitmentValidation = () => {
-    return ["FULL_TIME", "PART_TIME", "CONTRACT", "HOURLY"];
+  return ["FULL_TIME", "PART_TIME", "CONTRACT", "HOURLY"];
 };
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
-const asNumber = (schema) => schema.transform((val, orig) => orig === "" || orig === null ? undefined : val);
+const asNumber = (schema) =>
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 const validationSchema = Yup.object().shape({
-    title: Yup.string().required("title is required."),
-    opportunityType: Yup.mixed()
-        .oneOf(OpportunityTypeValidation(), "Invalid value for opportunityType")
-        .required("opportunityType is required."),
-    description: Yup.string(),
-    requiredSkills: Yup.string(),
-    preferredSkills: Yup.string(),
-    experienceYearsMin: asNumber(Yup.number().integer().typeError("experienceYearsMin must be a number")),
-    experienceYearsMax: asNumber(Yup.number().integer().typeError("experienceYearsMax must be a number")),
-    commitment: Yup.mixed().oneOf(CommitmentValidation(), "Invalid value for commitment"),
-    isActive: Yup.boolean(),
-    updatedDate: Yup.date()
-        .transform((value, originalValue) => {
-        if (!originalValue) {
-            return value;
-        }
-        const parsed = new Date(originalValue);
-        return Number.isNaN(parsed.getTime()) ? value : parsed;
+  title: Yup.string().required("title is required."),
+  opportunityType: Yup.mixed()
+    .oneOf(OpportunityTypeValidation(), "Invalid value for opportunityType")
+    .required("opportunityType is required."),
+  description: Yup.string(),
+  requiredSkills: Yup.string(),
+  preferredSkills: Yup.string(),
+  experienceYearsMin: asNumber(
+    Yup.number().integer().typeError("experienceYearsMin must be a number"),
+  ),
+  experienceYearsMax: asNumber(
+    Yup.number().integer().typeError("experienceYearsMax must be a number"),
+  ),
+  commitment: Yup.mixed().oneOf(
+    CommitmentValidation(),
+    "Invalid value for commitment",
+  ),
+  isActive: Yup.boolean(),
+  updatedDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
     })
-        .typeError("updatedDate must be a valid date"),
-    trashed: Yup.boolean(),
+    .typeError("updatedDate must be a valid date"),
+  trashed: Yup.boolean(),
 });
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const CareerOpportunityForm = () => {
-    const [addCareerOpportunity, addCareerOpportunityResult] = useAddCareerOpportunityMutation();
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
-    // Permission Management State
-    const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-    const [createdObjectId, setCreatedObjectId] = useState(null);
-    // Mock current user - in real implementation, this would come from auth context
-    const currentUser = {
-        username: "current_user",
-        permissions: {
-            isOwner: true,
-            isAdmin: true,
-            canGrantPermissions: true,
-            permissions: [
-                PermissionType.READ,
-                PermissionType.WRITE,
-                PermissionType.CREATE,
-                PermissionType.DELETE,
-                PermissionType.ADMINISTRATION,
-            ],
-        },
-    };
-    /* -----------------------------------------------------
+  const [addCareerOpportunity, addCareerOpportunityResult] =
+    useAddCareerOpportunityMutation();
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState(null);
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: "current_user",
+    permissions: {
+      isOwner: true,
+      isAdmin: true,
+      canGrantPermissions: true,
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
+    },
+  };
+  /* -----------------------------------------------------
        INITIAL VALUES - only NON read-only fields
     -------------------------------------------------------- */
-    const initialValues = {
-        title: "",
-        opportunityType: undefined,
-        description: "",
-        requiredSkills: "",
-        preferredSkills: "",
-        experienceYearsMin: 0,
-        experienceYearsMax: 0,
-        commitment: undefined,
-        isActive: false,
-        updatedDate: new Date(),
-        trashed: false,
-    };
-    // Permission Management Handlers
-    const handleManagePermissions = (objectId) => {
-        setCreatedObjectId(objectId);
-        setShowPermissionDialog(true);
-    };
-    const handlePermissionDialogClose = () => {
-        setShowPermissionDialog(false);
-        setCreatedObjectId(null);
-    };
-    const handlePermissionsSave = (grants) => {
-        console.log("Permissions saved for new CareerOpportunity:", grants);
-    };
-    /* SUBMIT HANDLER */
-    const handleSubmit = async (values, { setSubmitting }) => {
-        try {
-            setSuccessMessage(null);
-            setErrorMessage(null);
-            console.log("CareerOpportunity form values:", values);
-            // NOTE: depending on your generated endpoint, you may need { body: values }
-            const result = await addCareerOpportunity(values).unwrap();
-            if (result && result.id && currentUser.permissions.canGrantPermissions) {
-                const shouldSetPermissions = window.confirm(`CareerOpportunity created successfully! Would you like to set permissions for this object?`);
-                if (shouldSetPermissions) {
-                    handleManagePermissions(result.id);
-                }
-            }
-            setSuccessMessage("Saved successfully.");
+  const initialValues = {
+    title: "",
+    opportunityType: undefined,
+    description: "",
+    requiredSkills: "",
+    preferredSkills: "",
+    experienceYearsMin: 0,
+    experienceYearsMax: 0,
+    commitment: undefined,
+    isActive: false,
+    updatedDate: new Date(),
+    trashed: false,
+  };
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+  const handlePermissionsSave = (grants) => {
+    console.log("Permissions saved for new CareerOpportunity:", grants);
+  };
+  /* SUBMIT HANDLER */
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      setSuccessMessage(null);
+      setErrorMessage(null);
+      console.log("CareerOpportunity form values:", values);
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addCareerOpportunity(values).unwrap();
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `CareerOpportunity created successfully! Would you like to set permissions for this object?`,
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
         }
-        catch (error) {
-            console.error("Failed to create CareerOpportunity:", error);
-            setErrorMessage("Failed to save. Please try again.");
-        }
-        setSubmitting(false);
-    };
-    return (_jsxs("div", { children: [_jsx(Formik, { validateOnBlur: true, initialValues: initialValues, validationSchema: validationSchema, onSubmit: handleSubmit, children: ({ isSubmitting, isValid, errors, values, setFieldValue, touched, setFieldTouched, handleSubmit, }) => {
-                    const isSaving = isSubmitting || addCareerOpportunityResult.isLoading;
-                    return (_jsx("form", { onSubmit: handleSubmit, className: "form", children: _jsxs(Accordion, { defaultActiveKey: "1", children: [_jsxs(Accordion.Item, { eventKey: "1", children: [_jsxs(Accordion.Header, { children: [_jsx(FaRegPlusSquare, { size: 28 }), " \u00A0 Add New CareerOpportunity"] }), _jsxs(Accordion.Body, { children: [_jsxs("label", { htmlFor: "title", className: "nice-form-control", children: [_jsxs("b", { children: ["Title:", touched.title && !errors.title && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "title", value: values?.title, placeholder: "Title", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "title", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "opportunityType", className: "nice-form-control", children: [_jsxs("b", { children: ["Opportunity Type:", touched.opportunityType && !errors.opportunityType && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "opportunityType", value: values.opportunityType || "", className: errors.opportunityType
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("opportunityType", true);
-                                                                setFieldValue("opportunityType", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Opportunity Type" }), _jsx(OpportunityTypeLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "opportunityType", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "description", className: "nice-form-control", children: [_jsxs("b", { children: ["Description:", touched.description && !errors.description && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "description", value: values?.description, placeholder: "Description", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "description", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "requiredSkills", className: "nice-form-control", children: [_jsxs("b", { children: ["Required Skills:", touched.requiredSkills && !errors.requiredSkills && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "requiredSkills", value: values?.requiredSkills, placeholder: "Required Skills", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "requiredSkills", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "preferredSkills", className: "nice-form-control", children: [_jsxs("b", { children: ["Preferred Skills:", touched.preferredSkills && !errors.preferredSkills && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "preferredSkills", value: values?.preferredSkills, placeholder: "Preferred Skills", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "preferredSkills", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "experienceYearsMin", className: "nice-form-control", children: [_jsxs("b", { children: ["Experience Years Min:", touched.experienceYearsMin &&
-                                                                    !errors.experienceYearsMin && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "experienceYearsMin", type: "number", value: values.experienceYearsMin || "", onChange: (e) => {
-                                                                setFieldTouched("experienceYearsMin", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("experienceYearsMin", v === "" ? undefined : Number(v));
-                                                            }, className: errors.experienceYearsMin
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "experienceYearsMin", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "experienceYearsMax", className: "nice-form-control", children: [_jsxs("b", { children: ["Experience Years Max:", touched.experienceYearsMax &&
-                                                                    !errors.experienceYearsMax && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "experienceYearsMax", type: "number", value: values.experienceYearsMax || "", onChange: (e) => {
-                                                                setFieldTouched("experienceYearsMax", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("experienceYearsMax", v === "" ? undefined : Number(v));
-                                                            }, className: errors.experienceYearsMax
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "experienceYearsMax", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "commitment", className: "nice-form-control", children: [_jsxs("b", { children: ["Commitment:", touched.commitment && !errors.commitment && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "commitment", value: values.commitment || "", className: errors.commitment
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("commitment", true);
-                                                                setFieldValue("commitment", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Commitment" }), _jsx(CommitmentLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "commitment", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "isActive", className: "nice-form-control", children: [_jsxs("b", { children: ["Is Active:", touched.isActive && !errors.isActive && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "isActive", name: "isActive", checked: values.isActive || false, onChange: (e) => {
-                                                                setFieldTouched("isActive", true);
-                                                                setFieldValue("isActive", e.target.checked);
-                                                            }, isInvalid: !!errors.isActive, className: errors.isActive ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "isActive", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "updatedDate", className: "nice-form-control", children: [_jsxs("b", { children: ["Updated Date:", touched.updatedDate && !errors.updatedDate && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "updatedDate", type: "datetime-local", value: values.updatedDate
-                                                                ? new Date(values.updatedDate)
-                                                                    .toISOString()
-                                                                    .slice(0, 16)
-                                                                : "", onChange: (e) => {
-                                                                setFieldTouched("updatedDate", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("updatedDate", v ? new Date(v).toISOString() : "");
-                                                            }, className: errors.updatedDate
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "updatedDate", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "trashed", className: "nice-form-control", children: [_jsxs("b", { children: ["Trashed:", touched.trashed && !errors.trashed && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "trashed", name: "trashed", checked: values.trashed || false, onChange: (e) => {
-                                                                setFieldTouched("trashed", true);
-                                                                setFieldValue("trashed", e.target.checked);
-                                                            }, isInvalid: !!errors.trashed, className: errors.trashed ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "trashed", component: "span" })] }), _jsx("br", {}), _jsxs(CoolButton, { variant: isValid
-                                                        ? isSaving
-                                                            ? "disabled"
-                                                            : "success"
-                                                        : "warning", type: "submit", disabled: !isValid || isSaving, children: [isSaving && (_jsx("span", { style: { float: "left", minHeight: 0 }, children: _jsx(LoadingSpinner, { label: "", size: 18 }) })), _jsx(FaCheckCircle, { size: 28 }), " Create New CareerOpportunity"] }), (addCareerOpportunityResult.isError || errorMessage) && (_jsx(Alert, { variant: "danger", className: "mt-3", children: errorMessage ||
-                                                        JSON.stringify("data" in addCareerOpportunityResult.error
-                                                            ? addCareerOpportunityResult.error.data
-                                                            : addCareerOpportunityResult.error) })), (addCareerOpportunityResult.isSuccess ||
-                                                    successMessage) && (_jsx(Alert, { variant: "success", className: "mt-3", children: successMessage || "Saved successfully." }))] })] }), _jsxs(Accordion.Item, { eventKey: "0", children: [_jsxs(Accordion.Header, { children: [_jsx(FaCogs, { size: 28 }), " \u00A0Server Messages"] }), _jsxs(Accordion.Body, { children: ["errors: ", JSON.stringify(errors), _jsx("br", {}), "addCareerOpportunityResult:", " ", JSON.stringify(addCareerOpportunityResult)] })] })] }) }));
-                } }), createdObjectId && (_jsx(PermissionDialog, { objectType: "com.valkyrlabs.model.CareerOpportunity", objectId: createdObjectId, isVisible: showPermissionDialog, onClose: handlePermissionDialogClose, onSave: handlePermissionsSave, currentUser: currentUser }))] }));
+      }
+      setSuccessMessage("Saved successfully.");
+    } catch (error) {
+      console.error("Failed to create CareerOpportunity:", error);
+      setErrorMessage("Failed to save. Please try again.");
+    }
+    setSubmitting(false);
+  };
+  return _jsxs("div", {
+    children: [
+      _jsx(Formik, {
+        validateOnBlur: true,
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: handleSubmit,
+        children: ({
+          isSubmitting,
+          isValid,
+          errors,
+          values,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => {
+          const isSaving = isSubmitting || addCareerOpportunityResult.isLoading;
+          return _jsx("form", {
+            onSubmit: handleSubmit,
+            className: "form",
+            children: _jsxs(Accordion, {
+              defaultActiveKey: "1",
+              children: [
+                _jsxs(Accordion.Item, {
+                  eventKey: "1",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaRegPlusSquare, { size: 28 }),
+                        " \u00A0 Add New CareerOpportunity",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        _jsxs("label", {
+                          htmlFor: "title",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Title:",
+                                touched.title &&
+                                  !errors.title &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "title",
+                              value: values?.title,
+                              placeholder: "Title",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "title",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "opportunityType",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Opportunity Type:",
+                                touched.opportunityType &&
+                                  !errors.opportunityType &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "opportunityType",
+                              value: values.opportunityType || "",
+                              className: errors.opportunityType
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("opportunityType", true);
+                                setFieldValue(
+                                  "opportunityType",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Opportunity Type",
+                                }),
+                                _jsx(OpportunityTypeLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "opportunityType",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "description",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Description:",
+                                touched.description &&
+                                  !errors.description &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "description",
+                              value: values?.description,
+                              placeholder: "Description",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "description",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "requiredSkills",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Required Skills:",
+                                touched.requiredSkills &&
+                                  !errors.requiredSkills &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "requiredSkills",
+                              value: values?.requiredSkills,
+                              placeholder: "Required Skills",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "requiredSkills",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "preferredSkills",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Preferred Skills:",
+                                touched.preferredSkills &&
+                                  !errors.preferredSkills &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "preferredSkills",
+                              value: values?.preferredSkills,
+                              placeholder: "Preferred Skills",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "preferredSkills",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "experienceYearsMin",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Experience Years Min:",
+                                touched.experienceYearsMin &&
+                                  !errors.experienceYearsMin &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "experienceYearsMin",
+                              type: "number",
+                              value: values.experienceYearsMin || "",
+                              onChange: (e) => {
+                                setFieldTouched("experienceYearsMin", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "experienceYearsMin",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.experienceYearsMin
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "experienceYearsMin",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "experienceYearsMax",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Experience Years Max:",
+                                touched.experienceYearsMax &&
+                                  !errors.experienceYearsMax &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "experienceYearsMax",
+                              type: "number",
+                              value: values.experienceYearsMax || "",
+                              onChange: (e) => {
+                                setFieldTouched("experienceYearsMax", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "experienceYearsMax",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.experienceYearsMax
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "experienceYearsMax",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "commitment",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Commitment:",
+                                touched.commitment &&
+                                  !errors.commitment &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "commitment",
+                              value: values.commitment || "",
+                              className: errors.commitment
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("commitment", true);
+                                setFieldValue(
+                                  "commitment",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Commitment",
+                                }),
+                                _jsx(CommitmentLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "commitment",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "isActive",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Is Active:",
+                                touched.isActive &&
+                                  !errors.isActive &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "isActive",
+                              name: "isActive",
+                              checked: values.isActive || false,
+                              onChange: (e) => {
+                                setFieldTouched("isActive", true);
+                                setFieldValue("isActive", e.target.checked);
+                              },
+                              isInvalid: !!errors.isActive,
+                              className: errors.isActive ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "isActive",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "updatedDate",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Updated Date:",
+                                touched.updatedDate &&
+                                  !errors.updatedDate &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "updatedDate",
+                              type: "datetime-local",
+                              value: values.updatedDate
+                                ? new Date(values.updatedDate)
+                                    .toISOString()
+                                    .slice(0, 16)
+                                : "",
+                              onChange: (e) => {
+                                setFieldTouched("updatedDate", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "updatedDate",
+                                  v ? new Date(v).toISOString() : "",
+                                );
+                              },
+                              className: errors.updatedDate
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "updatedDate",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "trashed",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Trashed:",
+                                touched.trashed &&
+                                  !errors.trashed &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "trashed",
+                              name: "trashed",
+                              checked: values.trashed || false,
+                              onChange: (e) => {
+                                setFieldTouched("trashed", true);
+                                setFieldValue("trashed", e.target.checked);
+                              },
+                              isInvalid: !!errors.trashed,
+                              className: errors.trashed ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "trashed",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs(CoolButton, {
+                          variant: isValid
+                            ? isSaving
+                              ? "disabled"
+                              : "success"
+                            : "warning",
+                          type: "submit",
+                          disabled: !isValid || isSaving,
+                          children: [
+                            isSaving &&
+                              _jsx("span", {
+                                style: { float: "left", minHeight: 0 },
+                                children: _jsx(LoadingSpinner, {
+                                  label: "",
+                                  size: 18,
+                                }),
+                              }),
+                            _jsx(FaCheckCircle, { size: 28 }),
+                            " Create New CareerOpportunity",
+                          ],
+                        }),
+                        (addCareerOpportunityResult.isError || errorMessage) &&
+                          _jsx(Alert, {
+                            variant: "danger",
+                            className: "mt-3",
+                            children:
+                              errorMessage ||
+                              JSON.stringify(
+                                "data" in addCareerOpportunityResult.error
+                                  ? addCareerOpportunityResult.error.data
+                                  : addCareerOpportunityResult.error,
+                              ),
+                          }),
+                        (addCareerOpportunityResult.isSuccess ||
+                          successMessage) &&
+                          _jsx(Alert, {
+                            variant: "success",
+                            className: "mt-3",
+                            children: successMessage || "Saved successfully.",
+                          }),
+                      ],
+                    }),
+                  ],
+                }),
+                _jsxs(Accordion.Item, {
+                  eventKey: "0",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaCogs, { size: 28 }),
+                        " \u00A0Server Messages",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        "errors: ",
+                        JSON.stringify(errors),
+                        _jsx("br", {}),
+                        "addCareerOpportunityResult:",
+                        " ",
+                        JSON.stringify(addCareerOpportunityResult),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          });
+        },
+      }),
+      createdObjectId &&
+        _jsx(PermissionDialog, {
+          objectType: "com.valkyrlabs.model.CareerOpportunity",
+          objectId: createdObjectId,
+          isVisible: showPermissionDialog,
+          onClose: handlePermissionDialogClose,
+          onSave: handlePermissionsSave,
+          currentUser: currentUser,
+        }),
+    ],
+  });
 };
 /*
 lowercase opportunitytypelookup
@@ -223,7 +733,23 @@ camelcase opportunityTypeLookup
 kebabcase opportunity-type-lookup
 */
 const OpportunityTypeLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "DIRECT_HIRE", label: "DIRECT _ HIRE" }), _jsx("option", { value: "CONSULTING_ENGAGEMENT", label: "CONSULTING _ ENGAGEMENT" }), _jsx("option", { value: "RESELLER_PARTNER", label: "RESELLER _ PARTNER" }), _jsx("option", { value: "OPEN_SOURCE_CONTRIBUTOR", label: "OPEN _ SOURCE _ CONTRIBUTOR" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "DIRECT_HIRE", label: "DIRECT _ HIRE" }),
+      _jsx("option", {
+        value: "CONSULTING_ENGAGEMENT",
+        label: "CONSULTING _ ENGAGEMENT",
+      }),
+      _jsx("option", {
+        value: "RESELLER_PARTNER",
+        label: "RESELLER _ PARTNER",
+      }),
+      _jsx("option", {
+        value: "OPEN_SOURCE_CONTRIBUTOR",
+        label: "OPEN _ SOURCE _ CONTRIBUTOR",
+      }),
+    ],
+  });
 };
 /*
 lowercase commitmentlookup
@@ -234,7 +760,14 @@ camelcase commitmentLookup
 kebabcase commitment-lookup
 */
 const CommitmentLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "FULL_TIME", label: "FULL _ TIME" }), _jsx("option", { value: "PART_TIME", label: "PART _ TIME" }), _jsx("option", { value: "CONTRACT", label: "CONTRACT" }), _jsx("option", { value: "HOURLY", label: "HOURLY" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "FULL_TIME", label: "FULL _ TIME" }),
+      _jsx("option", { value: "PART_TIME", label: "PART _ TIME" }),
+      _jsx("option", { value: "CONTRACT", label: "CONTRACT" }),
+      _jsx("option", { value: "HOURLY", label: "HOURLY" }),
+    ],
+  });
 };
 /* Export the generated form */
 export default CareerOpportunityForm;

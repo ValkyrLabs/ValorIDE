@@ -31,60 +31,60 @@ export const LIST_DEFAULT_REQUEST = "LIST_DEFAULT_REQUEST";
 export const LIST_DEFAULT_SUCCESS = "LIST_DEFAULT_SUCCESS";
 export const LIST_DEFAULT_FAILURE = "LIST_DEFAULT_FAILURE";
 export const addDefaultRequest = () => ({
-    type: ADD_DEFAULT_REQUEST,
+  type: ADD_DEFAULT_REQUEST,
 });
 export const addDefaultSuccess = (Defaults) => ({
-    type: ADD_DEFAULT_SUCCESS,
-    payload: Defaults,
+  type: ADD_DEFAULT_SUCCESS,
+  payload: Defaults,
 });
 export const addDefaultFailure = (error) => ({
-    type: ADD_DEFAULT_FAILURE,
-    payload: error,
+  type: ADD_DEFAULT_FAILURE,
+  payload: error,
 });
 export const fetchDefaultRequest = () => ({
-    type: FETCH_DEFAULT_REQUEST,
+  type: FETCH_DEFAULT_REQUEST,
 });
 export const fetchDefaultSuccess = (Defaults) => ({
-    type: FETCH_DEFAULT_SUCCESS,
-    payload: Defaults,
+  type: FETCH_DEFAULT_SUCCESS,
+  payload: Defaults,
 });
 export const fetchDefaultFailure = (error) => ({
-    type: FETCH_DEFAULT_FAILURE,
-    payload: error,
+  type: FETCH_DEFAULT_FAILURE,
+  payload: error,
 });
 export const listDefaultRequest = () => ({
-    type: LIST_DEFAULT_REQUEST,
+  type: LIST_DEFAULT_REQUEST,
 });
 export const listDefaultSuccess = (Defaults) => ({
-    type: LIST_DEFAULT_SUCCESS,
-    payload: Defaults,
+  type: LIST_DEFAULT_SUCCESS,
+  payload: Defaults,
 });
 export const listDefaultFailure = (error) => ({
-    type: LIST_DEFAULT_FAILURE,
-    payload: error,
+  type: LIST_DEFAULT_FAILURE,
+  payload: error,
 });
 export const updateDefaultRequest = (Default) => ({
-    type: UPDATE_DEFAULT_REQUEST,
-    payload: Default,
+  type: UPDATE_DEFAULT_REQUEST,
+  payload: Default,
 });
 export const updateDefaultSuccess = (Default) => ({
-    type: UPDATE_DEFAULT_SUCCESS,
-    payload: Default,
+  type: UPDATE_DEFAULT_SUCCESS,
+  payload: Default,
 });
 export const updateDefaultFailure = (error) => ({
-    type: UPDATE_DEFAULT_FAILURE,
-    payload: error,
+  type: UPDATE_DEFAULT_FAILURE,
+  payload: error,
 });
 export const deleteDefaultRequest = (Default) => ({
-    type: DELETE_DEFAULT_REQUEST,
-    payload: Default,
+  type: DELETE_DEFAULT_REQUEST,
+  payload: Default,
 });
 export const deleteDefaultSuccess = (Default) => ({
-    type: DELETE_DEFAULT_SUCCESS,
-    payload: Default,
+  type: DELETE_DEFAULT_SUCCESS,
+  payload: Default,
 });
 export const deleteDefaultFailure = (error) => ({
-    type: DELETE_DEFAULT_FAILURE,
-    payload: error,
+  type: DELETE_DEFAULT_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=DefaultApiAction.js.map

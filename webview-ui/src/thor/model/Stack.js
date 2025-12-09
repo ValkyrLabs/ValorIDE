@@ -29,113 +29,113 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function StackFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: json["name"],
-        schemaData: json["schemaData"],
-        execModuleId: !exists(json, "execModuleId")
-            ? undefined
-            : json["execModuleId"],
-        category: !exists(json, "category") ? undefined : json["category"],
-        artifactId: !exists(json, "artifactId") ? undefined : json["artifactId"],
-        applicationId: !exists(json, "applicationId")
-            ? undefined
-            : json["applicationId"],
-        adminServerHost: !exists(json, "adminServerHost")
-            ? undefined
-            : json["adminServerHost"],
-        adminServerPort: !exists(json, "adminServerPort")
-            ? undefined
-            : json["adminServerPort"],
-        hostName: !exists(json, "hostName") ? undefined : json["hostName"],
-        hostPort: !exists(json, "hostPort") ? undefined : json["hostPort"],
-        orgName: !exists(json, "orgName") ? undefined : json["orgName"],
-        gitUser: !exists(json, "gitUser") ? undefined : json["gitUser"],
-        gitRepo: !exists(json, "gitRepo") ? undefined : json["gitRepo"],
-        skipSwaggerGen: !exists(json, "skipSwaggerGen")
-            ? undefined
-            : json["skipSwaggerGen"],
-        skipJavaGen: !exists(json, "skipJavaGen") ? undefined : json["skipJavaGen"],
-        skipDbGen: !exists(json, "skipDbGen") ? undefined : json["skipDbGen"],
-        skipReactGen: !exists(json, "skipReactGen")
-            ? undefined
-            : json["skipReactGen"],
-        dbGenDropTable: !exists(json, "dbGenDropTable")
-            ? undefined
-            : json["dbGenDropTable"],
-        thorApiSecureKey: !exists(json, "thorApiSecureKey")
-            ? undefined
-            : json["thorApiSecureKey"],
-        dbUrl: !exists(json, "dbUrl") ? undefined : json["dbUrl"],
-        dbName: !exists(json, "dbName") ? undefined : json["dbName"],
-        dbUser: !exists(json, "dbUser") ? undefined : json["dbUser"],
-        dbPassword: !exists(json, "dbPassword") ? undefined : json["dbPassword"],
-        schemaName: !exists(json, "schemaName") ? undefined : json["schemaName"],
-        language: !exists(json, "language") ? undefined : json["language"],
-        templateRepo: !exists(json, "templateRepo")
-            ? undefined
-            : json["templateRepo"],
-        schemaFileName: !exists(json, "schemaFileName")
-            ? undefined
-            : json["schemaFileName"],
-        status: !exists(json, "status") ? undefined : json["status"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: json["name"],
+    schemaData: json["schemaData"],
+    execModuleId: !exists(json, "execModuleId")
+      ? undefined
+      : json["execModuleId"],
+    category: !exists(json, "category") ? undefined : json["category"],
+    artifactId: !exists(json, "artifactId") ? undefined : json["artifactId"],
+    applicationId: !exists(json, "applicationId")
+      ? undefined
+      : json["applicationId"],
+    adminServerHost: !exists(json, "adminServerHost")
+      ? undefined
+      : json["adminServerHost"],
+    adminServerPort: !exists(json, "adminServerPort")
+      ? undefined
+      : json["adminServerPort"],
+    hostName: !exists(json, "hostName") ? undefined : json["hostName"],
+    hostPort: !exists(json, "hostPort") ? undefined : json["hostPort"],
+    orgName: !exists(json, "orgName") ? undefined : json["orgName"],
+    gitUser: !exists(json, "gitUser") ? undefined : json["gitUser"],
+    gitRepo: !exists(json, "gitRepo") ? undefined : json["gitRepo"],
+    skipSwaggerGen: !exists(json, "skipSwaggerGen")
+      ? undefined
+      : json["skipSwaggerGen"],
+    skipJavaGen: !exists(json, "skipJavaGen") ? undefined : json["skipJavaGen"],
+    skipDbGen: !exists(json, "skipDbGen") ? undefined : json["skipDbGen"],
+    skipReactGen: !exists(json, "skipReactGen")
+      ? undefined
+      : json["skipReactGen"],
+    dbGenDropTable: !exists(json, "dbGenDropTable")
+      ? undefined
+      : json["dbGenDropTable"],
+    thorApiSecureKey: !exists(json, "thorApiSecureKey")
+      ? undefined
+      : json["thorApiSecureKey"],
+    dbUrl: !exists(json, "dbUrl") ? undefined : json["dbUrl"],
+    dbName: !exists(json, "dbName") ? undefined : json["dbName"],
+    dbUser: !exists(json, "dbUser") ? undefined : json["dbUser"],
+    dbPassword: !exists(json, "dbPassword") ? undefined : json["dbPassword"],
+    schemaName: !exists(json, "schemaName") ? undefined : json["schemaName"],
+    language: !exists(json, "language") ? undefined : json["language"],
+    templateRepo: !exists(json, "templateRepo")
+      ? undefined
+      : json["templateRepo"],
+    schemaFileName: !exists(json, "schemaFileName")
+      ? undefined
+      : json["schemaFileName"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function StackToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        schemaData: value.schemaData,
-        execModuleId: value.execModuleId,
-        category: value.category,
-        artifactId: value.artifactId,
-        applicationId: value.applicationId,
-        adminServerHost: value.adminServerHost,
-        adminServerPort: value.adminServerPort,
-        hostName: value.hostName,
-        hostPort: value.hostPort,
-        orgName: value.orgName,
-        gitUser: value.gitUser,
-        gitRepo: value.gitRepo,
-        skipSwaggerGen: value.skipSwaggerGen,
-        skipJavaGen: value.skipJavaGen,
-        skipDbGen: value.skipDbGen,
-        skipReactGen: value.skipReactGen,
-        dbGenDropTable: value.dbGenDropTable,
-        thorApiSecureKey: value.thorApiSecureKey,
-        dbUrl: value.dbUrl,
-        dbName: value.dbName,
-        dbUser: value.dbUser,
-        dbPassword: value.dbPassword,
-        schemaName: value.schemaName,
-        language: value.language,
-        templateRepo: value.templateRepo,
-        schemaFileName: value.schemaFileName,
-        status: value.status,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    schemaData: value.schemaData,
+    execModuleId: value.execModuleId,
+    category: value.category,
+    artifactId: value.artifactId,
+    applicationId: value.applicationId,
+    adminServerHost: value.adminServerHost,
+    adminServerPort: value.adminServerPort,
+    hostName: value.hostName,
+    hostPort: value.hostPort,
+    orgName: value.orgName,
+    gitUser: value.gitUser,
+    gitRepo: value.gitRepo,
+    skipSwaggerGen: value.skipSwaggerGen,
+    skipJavaGen: value.skipJavaGen,
+    skipDbGen: value.skipDbGen,
+    skipReactGen: value.skipReactGen,
+    dbGenDropTable: value.dbGenDropTable,
+    thorApiSecureKey: value.thorApiSecureKey,
+    dbUrl: value.dbUrl,
+    dbName: value.dbName,
+    dbUser: value.dbUser,
+    dbPassword: value.dbPassword,
+    schemaName: value.schemaName,
+    language: value.language,
+    templateRepo: value.templateRepo,
+    schemaFileName: value.schemaFileName,
+    status: value.status,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -143,12 +143,12 @@ export function StackToJSON(value) {
  */
 export var StackCategoryEnum;
 (function (StackCategoryEnum) {
-    StackCategoryEnum["FULLSTACK"] = "full stack";
-    StackCategoryEnum["FRONTEND"] = "front end";
-    StackCategoryEnum["API"] = "api";
-    StackCategoryEnum["DATALIBRARY"] = "data library";
-    StackCategoryEnum["INFRASTRUCTURE"] = "infrastructure";
-    StackCategoryEnum["DOCUMENTATION"] = "documentation";
+  StackCategoryEnum["FULLSTACK"] = "full stack";
+  StackCategoryEnum["FRONTEND"] = "front end";
+  StackCategoryEnum["API"] = "api";
+  StackCategoryEnum["DATALIBRARY"] = "data library";
+  StackCategoryEnum["INFRASTRUCTURE"] = "infrastructure";
+  StackCategoryEnum["DOCUMENTATION"] = "documentation";
 })(StackCategoryEnum || (StackCategoryEnum = {}));
 /**
  * @export
@@ -156,8 +156,8 @@ export var StackCategoryEnum;
  */
 export var StackLanguageEnum;
 (function (StackLanguageEnum) {
-    StackLanguageEnum["JAVASPRING"] = "valkyrai_java_spring";
-    StackLanguageEnum["KOTLINSPRING"] = "valkyrai_kotlin_spring";
+  StackLanguageEnum["JAVASPRING"] = "valkyrai_java_spring";
+  StackLanguageEnum["KOTLINSPRING"] = "valkyrai_kotlin_spring";
 })(StackLanguageEnum || (StackLanguageEnum = {}));
 /**
  * @export
@@ -165,8 +165,8 @@ export var StackLanguageEnum;
  */
 export var StackTemplateRepoEnum;
 (function (StackTemplateRepoEnum) {
-    StackTemplateRepoEnum["JAVASPRING"] = "java_spring";
-    StackTemplateRepoEnum["TYPESCRIPTRTKBOOTSTRAP"] = "typescript_rtk_bootstrap";
+  StackTemplateRepoEnum["JAVASPRING"] = "java_spring";
+  StackTemplateRepoEnum["TYPESCRIPTRTKBOOTSTRAP"] = "typescript_rtk_bootstrap";
 })(StackTemplateRepoEnum || (StackTemplateRepoEnum = {}));
 /**
  * @export
@@ -174,11 +174,11 @@ export var StackTemplateRepoEnum;
  */
 export var StackStatusEnum;
 (function (StackStatusEnum) {
-    StackStatusEnum["AVAILABLE"] = "available";
-    StackStatusEnum["SYNTAXERROR"] = "syntax_error";
-    StackStatusEnum["COMPILATIONERROR"] = "compilation_error";
-    StackStatusEnum["RUNTIMEERROR"] = "runtime_error";
-    StackStatusEnum["DATABASEERROR"] = "database_error";
-    StackStatusEnum["LOCKED"] = "locked";
+  StackStatusEnum["AVAILABLE"] = "available";
+  StackStatusEnum["SYNTAXERROR"] = "syntax_error";
+  StackStatusEnum["COMPILATIONERROR"] = "compilation_error";
+  StackStatusEnum["RUNTIMEERROR"] = "runtime_error";
+  StackStatusEnum["DATABASEERROR"] = "database_error";
+  StackStatusEnum["LOCKED"] = "locked";
 })(StackStatusEnum || (StackStatusEnum = {}));
 //# sourceMappingURL=Stack.js.map

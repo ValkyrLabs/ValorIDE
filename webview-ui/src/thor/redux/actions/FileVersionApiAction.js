@@ -31,60 +31,60 @@ export const LIST_FILEVERSION_REQUEST = "LIST_FILEVERSION_REQUEST";
 export const LIST_FILEVERSION_SUCCESS = "LIST_FILEVERSION_SUCCESS";
 export const LIST_FILEVERSION_FAILURE = "LIST_FILEVERSION_FAILURE";
 export const addFileVersionRequest = () => ({
-    type: ADD_FILEVERSION_REQUEST,
+  type: ADD_FILEVERSION_REQUEST,
 });
 export const addFileVersionSuccess = (FileVersions) => ({
-    type: ADD_FILEVERSION_SUCCESS,
-    payload: FileVersions,
+  type: ADD_FILEVERSION_SUCCESS,
+  payload: FileVersions,
 });
 export const addFileVersionFailure = (error) => ({
-    type: ADD_FILEVERSION_FAILURE,
-    payload: error,
+  type: ADD_FILEVERSION_FAILURE,
+  payload: error,
 });
 export const fetchFileVersionRequest = () => ({
-    type: FETCH_FILEVERSION_REQUEST,
+  type: FETCH_FILEVERSION_REQUEST,
 });
 export const fetchFileVersionSuccess = (FileVersions) => ({
-    type: FETCH_FILEVERSION_SUCCESS,
-    payload: FileVersions,
+  type: FETCH_FILEVERSION_SUCCESS,
+  payload: FileVersions,
 });
 export const fetchFileVersionFailure = (error) => ({
-    type: FETCH_FILEVERSION_FAILURE,
-    payload: error,
+  type: FETCH_FILEVERSION_FAILURE,
+  payload: error,
 });
 export const listFileVersionRequest = () => ({
-    type: LIST_FILEVERSION_REQUEST,
+  type: LIST_FILEVERSION_REQUEST,
 });
 export const listFileVersionSuccess = (FileVersions) => ({
-    type: LIST_FILEVERSION_SUCCESS,
-    payload: FileVersions,
+  type: LIST_FILEVERSION_SUCCESS,
+  payload: FileVersions,
 });
 export const listFileVersionFailure = (error) => ({
-    type: LIST_FILEVERSION_FAILURE,
-    payload: error,
+  type: LIST_FILEVERSION_FAILURE,
+  payload: error,
 });
 export const updateFileVersionRequest = (FileVersion) => ({
-    type: UPDATE_FILEVERSION_REQUEST,
-    payload: FileVersion,
+  type: UPDATE_FILEVERSION_REQUEST,
+  payload: FileVersion,
 });
 export const updateFileVersionSuccess = (FileVersion) => ({
-    type: UPDATE_FILEVERSION_SUCCESS,
-    payload: FileVersion,
+  type: UPDATE_FILEVERSION_SUCCESS,
+  payload: FileVersion,
 });
 export const updateFileVersionFailure = (error) => ({
-    type: UPDATE_FILEVERSION_FAILURE,
-    payload: error,
+  type: UPDATE_FILEVERSION_FAILURE,
+  payload: error,
 });
 export const deleteFileVersionRequest = (FileVersion) => ({
-    type: DELETE_FILEVERSION_REQUEST,
-    payload: FileVersion,
+  type: DELETE_FILEVERSION_REQUEST,
+  payload: FileVersion,
 });
 export const deleteFileVersionSuccess = (FileVersion) => ({
-    type: DELETE_FILEVERSION_SUCCESS,
-    payload: FileVersion,
+  type: DELETE_FILEVERSION_SUCCESS,
+  payload: FileVersion,
 });
 export const deleteFileVersionFailure = (error) => ({
-    type: DELETE_FILEVERSION_FAILURE,
-    payload: error,
+  type: DELETE_FILEVERSION_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=FileVersionApiAction.js.map

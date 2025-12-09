@@ -15,16 +15,16 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, } from "formik";
+import { ErrorMessage, Field, Formik } from "formik";
 import { useState } from "react";
-import { Form as BSForm, Accordion, Alert, } from "react-bootstrap";
+import { Form as BSForm, Accordion, Alert } from "react-bootstrap";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import * as Yup from "yup";
 import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import { PermissionType, } from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionType } from "@valkyr/component-library/PermissionDialog/types";
 import { useAddPrincipalMutation } from "../../services/PrincipalService";
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -50,198 +50,1207 @@ The Valkyr Principal. Represents a user, service, or agent in the system with pr
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
-const asNumber = (schema) => schema.transform((val, orig) => orig === "" || orig === null ? undefined : val);
+const asNumber = (schema) =>
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 const validationSchema = Yup.object().shape({
-    username: Yup.string().required("username is required."),
-    password: Yup.string().required("password is required."),
-    email: Yup.string()
-        .email("Invalid email")
-        .required("email is required.")
-        .matches(/^[a-zA-Z0-9_!#$%&’*+\/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$/, "email must match pattern The main email address"),
-    firstName: Yup.string(),
-    middleName: Yup.string(),
-    lastName: Yup.string(),
-    federalIdentification: Yup.string().matches(/^\\d{3}-\\d{2}-\\d{4}$/, "federalIdentification must match pattern SSN or a 10 digit federal government ID (encrypted)"),
-    residenceCountry: Yup.string(),
-    stateIdentification: Yup.string().matches(/^\\d{10}$/, "stateIdentification must match pattern Driver\&#39;s License or a 10 digit state government ID"),
-    residenceState: Yup.string(),
-    phone: Yup.string().matches(/^\\+?[1-9]\\d{1,14}$/, "phone must match pattern The main phone number"),
-    social: Yup.string(),
-    bio: Yup.string(),
-    notes: Yup.string(),
-    avatarUrl: Yup.string(),
-    acceptedCookies: Yup.boolean(),
-    acceptedTos: Yup.boolean(),
-    enabled: Yup.boolean(),
-    credentialNonExpired: Yup.boolean(),
-    accountEnabled: Yup.boolean(),
-    accountNonLocked: Yup.boolean(),
-    accountNonExpired: Yup.boolean(),
-    twoFactorEnabled: Yup.boolean(),
-    loginAttempts: asNumber(Yup.number().integer().typeError("loginAttempts must be a number")),
-    lockoutUntil: Yup.date()
-        .transform((value, originalValue) => {
-        if (!originalValue) {
-            return value;
-        }
-        const parsed = new Date(originalValue);
-        return Number.isNaN(parsed.getTime()) ? value : parsed;
+  username: Yup.string().required("username is required."),
+  password: Yup.string().required("password is required."),
+  email: Yup.string()
+    .email("Invalid email")
+    .required("email is required.")
+    .matches(
+      /^[a-zA-Z0-9_!#$%&’*+\/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$/,
+      "email must match pattern The main email address",
+    ),
+  firstName: Yup.string(),
+  middleName: Yup.string(),
+  lastName: Yup.string(),
+  federalIdentification: Yup.string().matches(
+    /^\\d{3}-\\d{2}-\\d{4}$/,
+    "federalIdentification must match pattern SSN or a 10 digit federal government ID (encrypted)",
+  ),
+  residenceCountry: Yup.string(),
+  stateIdentification: Yup.string().matches(
+    /^\\d{10}$/,
+    "stateIdentification must match pattern Driver\&#39;s License or a 10 digit state government ID",
+  ),
+  residenceState: Yup.string(),
+  phone: Yup.string().matches(
+    /^\\+?[1-9]\\d{1,14}$/,
+    "phone must match pattern The main phone number",
+  ),
+  social: Yup.string(),
+  bio: Yup.string(),
+  notes: Yup.string(),
+  avatarUrl: Yup.string(),
+  acceptedCookies: Yup.boolean(),
+  acceptedTos: Yup.boolean(),
+  enabled: Yup.boolean(),
+  credentialNonExpired: Yup.boolean(),
+  accountEnabled: Yup.boolean(),
+  accountNonLocked: Yup.boolean(),
+  accountNonExpired: Yup.boolean(),
+  twoFactorEnabled: Yup.boolean(),
+  loginAttempts: asNumber(
+    Yup.number().integer().typeError("loginAttempts must be a number"),
+  ),
+  lockoutUntil: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
     })
-        .typeError("lockoutUntil must be a valid date"),
-    trashed: Yup.boolean(),
+    .typeError("lockoutUntil must be a valid date"),
+  trashed: Yup.boolean(),
 });
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const PrincipalForm = () => {
-    const [addPrincipal, addPrincipalResult] = useAddPrincipalMutation();
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
-    // Permission Management State
-    const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-    const [createdObjectId, setCreatedObjectId] = useState(null);
-    // Mock current user - in real implementation, this would come from auth context
-    const currentUser = {
-        username: "current_user",
-        permissions: {
-            isOwner: true,
-            isAdmin: true,
-            canGrantPermissions: true,
-            permissions: [
-                PermissionType.READ,
-                PermissionType.WRITE,
-                PermissionType.CREATE,
-                PermissionType.DELETE,
-                PermissionType.ADMINISTRATION,
-            ],
-        },
-    };
-    /* -----------------------------------------------------
+  const [addPrincipal, addPrincipalResult] = useAddPrincipalMutation();
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState(null);
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: "current_user",
+    permissions: {
+      isOwner: true,
+      isAdmin: true,
+      canGrantPermissions: true,
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
+    },
+  };
+  /* -----------------------------------------------------
        INITIAL VALUES - only NON read-only fields
     -------------------------------------------------------- */
-    const initialValues = {
-        username: "",
-        password: "",
-        email: "",
-        firstName: "",
-        middleName: "",
-        lastName: "",
-        federalIdentification: "",
-        residenceCountry: "",
-        stateIdentification: "",
-        residenceState: "",
-        phone: "",
-        social: "",
-        bio: "",
-        notes: "",
-        avatarUrl: "",
-        acceptedCookies: false,
-        acceptedTos: false,
-        enabled: false,
-        credentialNonExpired: false,
-        accountEnabled: false,
-        accountNonLocked: false,
-        accountNonExpired: false,
-        twoFactorEnabled: false,
-        loginAttempts: 0,
-        lockoutUntil: new Date(),
-        trashed: false,
-    };
-    // Permission Management Handlers
-    const handleManagePermissions = (objectId) => {
-        setCreatedObjectId(objectId);
-        setShowPermissionDialog(true);
-    };
-    const handlePermissionDialogClose = () => {
-        setShowPermissionDialog(false);
-        setCreatedObjectId(null);
-    };
-    const handlePermissionsSave = (grants) => {
-        console.log("Permissions saved for new Principal:", grants);
-    };
-    /* SUBMIT HANDLER */
-    const handleSubmit = async (values, { setSubmitting }) => {
-        try {
-            setSuccessMessage(null);
-            setErrorMessage(null);
-            console.log("Principal form values:", values);
-            // NOTE: depending on your generated endpoint, you may need { body: values }
-            const result = await addPrincipal(values).unwrap();
-            if (result && result.id && currentUser.permissions.canGrantPermissions) {
-                const shouldSetPermissions = window.confirm(`Principal created successfully! Would you like to set permissions for this object?`);
-                if (shouldSetPermissions) {
-                    handleManagePermissions(result.id);
-                }
-            }
-            setSuccessMessage("Saved successfully.");
+  const initialValues = {
+    username: "",
+    password: "",
+    email: "",
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    federalIdentification: "",
+    residenceCountry: "",
+    stateIdentification: "",
+    residenceState: "",
+    phone: "",
+    social: "",
+    bio: "",
+    notes: "",
+    avatarUrl: "",
+    acceptedCookies: false,
+    acceptedTos: false,
+    enabled: false,
+    credentialNonExpired: false,
+    accountEnabled: false,
+    accountNonLocked: false,
+    accountNonExpired: false,
+    twoFactorEnabled: false,
+    loginAttempts: 0,
+    lockoutUntil: new Date(),
+    trashed: false,
+  };
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+  const handlePermissionsSave = (grants) => {
+    console.log("Permissions saved for new Principal:", grants);
+  };
+  /* SUBMIT HANDLER */
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      setSuccessMessage(null);
+      setErrorMessage(null);
+      console.log("Principal form values:", values);
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addPrincipal(values).unwrap();
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `Principal created successfully! Would you like to set permissions for this object?`,
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
         }
-        catch (error) {
-            console.error("Failed to create Principal:", error);
-            setErrorMessage("Failed to save. Please try again.");
-        }
-        setSubmitting(false);
-    };
-    return (_jsxs("div", { children: [_jsx(Formik, { validateOnBlur: true, initialValues: initialValues, validationSchema: validationSchema, onSubmit: handleSubmit, children: ({ isSubmitting, isValid, errors, values, setFieldValue, touched, setFieldTouched, handleSubmit, }) => {
-                    const isSaving = isSubmitting || addPrincipalResult.isLoading;
-                    return (_jsx("form", { onSubmit: handleSubmit, className: "form", children: _jsxs(Accordion, { defaultActiveKey: "1", children: [_jsxs(Accordion.Item, { eventKey: "1", children: [_jsxs(Accordion.Header, { children: [_jsx(FaRegPlusSquare, { size: 28 }), " \u00A0 Add New Principal"] }), _jsxs(Accordion.Body, { children: [_jsxs("label", { htmlFor: "username", className: "nice-form-control", children: [_jsxs("b", { children: ["Username:", touched.username && !errors.username && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "username", value: values?.username, placeholder: "Username", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "username", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "password", className: "nice-form-control", children: [_jsxs("b", { children: ["Password:", touched.password && !errors.password && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "password", value: values?.password, placeholder: "Password", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "password", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "email", className: "nice-form-control", children: [_jsxs("b", { children: ["Email:", touched.email && !errors.email && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "email", value: values?.email, placeholder: "Email", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "email", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "firstName", className: "nice-form-control", children: [_jsxs("b", { children: ["First Name:", touched.firstName && !errors.firstName && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "firstName", value: values?.firstName, placeholder: "First Name", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "firstName", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "middleName", className: "nice-form-control", children: [_jsxs("b", { children: ["Middle Name:", touched.middleName && !errors.middleName && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "middleName", value: values?.middleName, placeholder: "Middle Name", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "middleName", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "lastName", className: "nice-form-control", children: [_jsxs("b", { children: ["Last Name:", touched.lastName && !errors.lastName && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "lastName", value: values?.lastName, placeholder: "Last Name", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "lastName", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "federalIdentification", className: "nice-form-control", children: [_jsxs("b", { children: ["Federal Identification:", touched.federalIdentification &&
-                                                                    !errors.federalIdentification && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "federalIdentification", value: values?.federalIdentification, placeholder: "Federal Identification", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "federalIdentification", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "residenceCountry", className: "nice-form-control", children: [_jsxs("b", { children: ["Residence Country:", touched.residenceCountry &&
-                                                                    !errors.residenceCountry && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "residenceCountry", value: values?.residenceCountry, placeholder: "Residence Country", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "residenceCountry", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "stateIdentification", className: "nice-form-control", children: [_jsxs("b", { children: ["State Identification:", touched.stateIdentification &&
-                                                                    !errors.stateIdentification && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "stateIdentification", value: values?.stateIdentification, placeholder: "State Identification", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "stateIdentification", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "residenceState", className: "nice-form-control", children: [_jsxs("b", { children: ["Residence State:", touched.residenceState && !errors.residenceState && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "residenceState", value: values?.residenceState, placeholder: "Residence State", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "residenceState", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "phone", className: "nice-form-control", children: [_jsxs("b", { children: ["Phone:", touched.phone && !errors.phone && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "phone", value: values?.phone, placeholder: "Phone", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "phone", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "social", className: "nice-form-control", children: [_jsxs("b", { children: ["Social:", touched.social && !errors.social && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "social", value: values?.social, placeholder: "Social", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "social", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "bio", className: "nice-form-control", children: [_jsxs("b", { children: ["Bio:", touched.bio && !errors.bio && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "bio", value: values?.bio, placeholder: "Bio", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "bio", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "notes", className: "nice-form-control", children: [_jsxs("b", { children: ["Notes:", touched.notes && !errors.notes && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "notes", value: values?.notes, placeholder: "Notes", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "notes", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "avatarUrl", className: "nice-form-control", children: [_jsxs("b", { children: ["Avatar Url:", touched.avatarUrl && !errors.avatarUrl && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "avatarUrl", value: values?.avatarUrl, placeholder: "Avatar Url", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "avatarUrl", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "acceptedCookies", className: "nice-form-control", children: [_jsxs("b", { children: ["Accepted Cookies:", touched.acceptedCookies && !errors.acceptedCookies && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "acceptedCookies", name: "acceptedCookies", checked: values.acceptedCookies || false, onChange: (e) => {
-                                                                setFieldTouched("acceptedCookies", true);
-                                                                setFieldValue("acceptedCookies", e.target.checked);
-                                                            }, isInvalid: !!errors.acceptedCookies, className: errors.acceptedCookies ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "acceptedCookies", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "acceptedTos", className: "nice-form-control", children: [_jsxs("b", { children: ["Accepted Tos:", touched.acceptedTos && !errors.acceptedTos && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "acceptedTos", name: "acceptedTos", checked: values.acceptedTos || false, onChange: (e) => {
-                                                                setFieldTouched("acceptedTos", true);
-                                                                setFieldValue("acceptedTos", e.target.checked);
-                                                            }, isInvalid: !!errors.acceptedTos, className: errors.acceptedTos ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "acceptedTos", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "enabled", className: "nice-form-control", children: [_jsxs("b", { children: ["Enabled:", touched.enabled && !errors.enabled && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "enabled", name: "enabled", checked: values.enabled || false, onChange: (e) => {
-                                                                setFieldTouched("enabled", true);
-                                                                setFieldValue("enabled", e.target.checked);
-                                                            }, isInvalid: !!errors.enabled, className: errors.enabled ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "enabled", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "credentialNonExpired", className: "nice-form-control", children: [_jsxs("b", { children: ["Credential Non Expired:", touched.credentialNonExpired &&
-                                                                    !errors.credentialNonExpired && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "credentialNonExpired", name: "credentialNonExpired", checked: values.credentialNonExpired || false, onChange: (e) => {
-                                                                setFieldTouched("credentialNonExpired", true);
-                                                                setFieldValue("credentialNonExpired", e.target.checked);
-                                                            }, isInvalid: !!errors.credentialNonExpired, className: errors.credentialNonExpired ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "credentialNonExpired", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "accountEnabled", className: "nice-form-control", children: [_jsxs("b", { children: ["Account Enabled:", touched.accountEnabled && !errors.accountEnabled && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "accountEnabled", name: "accountEnabled", checked: values.accountEnabled || false, onChange: (e) => {
-                                                                setFieldTouched("accountEnabled", true);
-                                                                setFieldValue("accountEnabled", e.target.checked);
-                                                            }, isInvalid: !!errors.accountEnabled, className: errors.accountEnabled ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "accountEnabled", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "accountNonLocked", className: "nice-form-control", children: [_jsxs("b", { children: ["Account Non Locked:", touched.accountNonLocked &&
-                                                                    !errors.accountNonLocked && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "accountNonLocked", name: "accountNonLocked", checked: values.accountNonLocked || false, onChange: (e) => {
-                                                                setFieldTouched("accountNonLocked", true);
-                                                                setFieldValue("accountNonLocked", e.target.checked);
-                                                            }, isInvalid: !!errors.accountNonLocked, className: errors.accountNonLocked ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "accountNonLocked", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "accountNonExpired", className: "nice-form-control", children: [_jsxs("b", { children: ["Account Non Expired:", touched.accountNonExpired &&
-                                                                    !errors.accountNonExpired && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "accountNonExpired", name: "accountNonExpired", checked: values.accountNonExpired || false, onChange: (e) => {
-                                                                setFieldTouched("accountNonExpired", true);
-                                                                setFieldValue("accountNonExpired", e.target.checked);
-                                                            }, isInvalid: !!errors.accountNonExpired, className: errors.accountNonExpired ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "accountNonExpired", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "twoFactorEnabled", className: "nice-form-control", children: [_jsxs("b", { children: ["Two Factor Enabled:", touched.twoFactorEnabled &&
-                                                                    !errors.twoFactorEnabled && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "twoFactorEnabled", name: "twoFactorEnabled", checked: values.twoFactorEnabled || false, onChange: (e) => {
-                                                                setFieldTouched("twoFactorEnabled", true);
-                                                                setFieldValue("twoFactorEnabled", e.target.checked);
-                                                            }, isInvalid: !!errors.twoFactorEnabled, className: errors.twoFactorEnabled ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "twoFactorEnabled", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "loginAttempts", className: "nice-form-control", children: [_jsxs("b", { children: ["Login Attempts:", touched.loginAttempts && !errors.loginAttempts && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "loginAttempts", type: "number", value: values.loginAttempts || "", onChange: (e) => {
-                                                                setFieldTouched("loginAttempts", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("loginAttempts", v === "" ? undefined : Number(v));
-                                                            }, className: errors.loginAttempts
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "loginAttempts", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "lockoutUntil", className: "nice-form-control", children: [_jsxs("b", { children: ["Lockout Until:", touched.lockoutUntil && !errors.lockoutUntil && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "lockoutUntil", type: "datetime-local", value: values.lockoutUntil
-                                                                ? new Date(values.lockoutUntil)
-                                                                    .toISOString()
-                                                                    .slice(0, 16)
-                                                                : "", onChange: (e) => {
-                                                                setFieldTouched("lockoutUntil", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("lockoutUntil", v ? new Date(v).toISOString() : "");
-                                                            }, className: errors.lockoutUntil
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "lockoutUntil", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "trashed", className: "nice-form-control", children: [_jsxs("b", { children: ["Trashed:", touched.trashed && !errors.trashed && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "trashed", name: "trashed", checked: values.trashed || false, onChange: (e) => {
-                                                                setFieldTouched("trashed", true);
-                                                                setFieldValue("trashed", e.target.checked);
-                                                            }, isInvalid: !!errors.trashed, className: errors.trashed ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "trashed", component: "span" })] }), _jsx("br", {}), _jsxs(CoolButton, { variant: isValid
-                                                        ? isSaving
-                                                            ? "disabled"
-                                                            : "success"
-                                                        : "warning", type: "submit", disabled: !isValid || isSaving, children: [isSaving && (_jsx("span", { style: { float: "left", minHeight: 0 }, children: _jsx(LoadingSpinner, { label: "", size: 18 }) })), _jsx(FaCheckCircle, { size: 28 }), " Create New Principal"] }), (addPrincipalResult.isError || errorMessage) && (_jsx(Alert, { variant: "danger", className: "mt-3", children: errorMessage ||
-                                                        JSON.stringify("data" in addPrincipalResult.error
-                                                            ? addPrincipalResult.error.data
-                                                            : addPrincipalResult.error) })), (addPrincipalResult.isSuccess || successMessage) && (_jsx(Alert, { variant: "success", className: "mt-3", children: successMessage || "Saved successfully." }))] })] }), _jsxs(Accordion.Item, { eventKey: "0", children: [_jsxs(Accordion.Header, { children: [_jsx(FaCogs, { size: 28 }), " \u00A0Server Messages"] }), _jsxs(Accordion.Body, { children: ["errors: ", JSON.stringify(errors), _jsx("br", {}), "addPrincipalResult: ", JSON.stringify(addPrincipalResult)] })] })] }) }));
-                } }), createdObjectId && (_jsx(PermissionDialog, { objectType: "com.valkyrlabs.model.Principal", objectId: createdObjectId, isVisible: showPermissionDialog, onClose: handlePermissionDialogClose, onSave: handlePermissionsSave, currentUser: currentUser }))] }));
+      }
+      setSuccessMessage("Saved successfully.");
+    } catch (error) {
+      console.error("Failed to create Principal:", error);
+      setErrorMessage("Failed to save. Please try again.");
+    }
+    setSubmitting(false);
+  };
+  return _jsxs("div", {
+    children: [
+      _jsx(Formik, {
+        validateOnBlur: true,
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: handleSubmit,
+        children: ({
+          isSubmitting,
+          isValid,
+          errors,
+          values,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => {
+          const isSaving = isSubmitting || addPrincipalResult.isLoading;
+          return _jsx("form", {
+            onSubmit: handleSubmit,
+            className: "form",
+            children: _jsxs(Accordion, {
+              defaultActiveKey: "1",
+              children: [
+                _jsxs(Accordion.Item, {
+                  eventKey: "1",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaRegPlusSquare, { size: 28 }),
+                        " \u00A0 Add New Principal",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        _jsxs("label", {
+                          htmlFor: "username",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Username:",
+                                touched.username &&
+                                  !errors.username &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "username",
+                              value: values?.username,
+                              placeholder: "Username",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "username",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "password",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Password:",
+                                touched.password &&
+                                  !errors.password &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "password",
+                              value: values?.password,
+                              placeholder: "Password",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "password",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "email",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Email:",
+                                touched.email &&
+                                  !errors.email &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "email",
+                              value: values?.email,
+                              placeholder: "Email",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "email",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "firstName",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "First Name:",
+                                touched.firstName &&
+                                  !errors.firstName &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "firstName",
+                              value: values?.firstName,
+                              placeholder: "First Name",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "firstName",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "middleName",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Middle Name:",
+                                touched.middleName &&
+                                  !errors.middleName &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "middleName",
+                              value: values?.middleName,
+                              placeholder: "Middle Name",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "middleName",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "lastName",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Last Name:",
+                                touched.lastName &&
+                                  !errors.lastName &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "lastName",
+                              value: values?.lastName,
+                              placeholder: "Last Name",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "lastName",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "federalIdentification",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Federal Identification:",
+                                touched.federalIdentification &&
+                                  !errors.federalIdentification &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "federalIdentification",
+                              value: values?.federalIdentification,
+                              placeholder: "Federal Identification",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "federalIdentification",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "residenceCountry",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Residence Country:",
+                                touched.residenceCountry &&
+                                  !errors.residenceCountry &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "residenceCountry",
+                              value: values?.residenceCountry,
+                              placeholder: "Residence Country",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "residenceCountry",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "stateIdentification",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "State Identification:",
+                                touched.stateIdentification &&
+                                  !errors.stateIdentification &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "stateIdentification",
+                              value: values?.stateIdentification,
+                              placeholder: "State Identification",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "stateIdentification",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "residenceState",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Residence State:",
+                                touched.residenceState &&
+                                  !errors.residenceState &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "residenceState",
+                              value: values?.residenceState,
+                              placeholder: "Residence State",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "residenceState",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "phone",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Phone:",
+                                touched.phone &&
+                                  !errors.phone &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "phone",
+                              value: values?.phone,
+                              placeholder: "Phone",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "phone",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "social",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Social:",
+                                touched.social &&
+                                  !errors.social &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "social",
+                              value: values?.social,
+                              placeholder: "Social",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "social",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "bio",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Bio:",
+                                touched.bio &&
+                                  !errors.bio &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "bio",
+                              value: values?.bio,
+                              placeholder: "Bio",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "bio",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "notes",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Notes:",
+                                touched.notes &&
+                                  !errors.notes &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "notes",
+                              value: values?.notes,
+                              placeholder: "Notes",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "notes",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "avatarUrl",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Avatar Url:",
+                                touched.avatarUrl &&
+                                  !errors.avatarUrl &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "avatarUrl",
+                              value: values?.avatarUrl,
+                              placeholder: "Avatar Url",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "avatarUrl",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "acceptedCookies",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Accepted Cookies:",
+                                touched.acceptedCookies &&
+                                  !errors.acceptedCookies &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "acceptedCookies",
+                              name: "acceptedCookies",
+                              checked: values.acceptedCookies || false,
+                              onChange: (e) => {
+                                setFieldTouched("acceptedCookies", true);
+                                setFieldValue(
+                                  "acceptedCookies",
+                                  e.target.checked,
+                                );
+                              },
+                              isInvalid: !!errors.acceptedCookies,
+                              className: errors.acceptedCookies ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "acceptedCookies",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "acceptedTos",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Accepted Tos:",
+                                touched.acceptedTos &&
+                                  !errors.acceptedTos &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "acceptedTos",
+                              name: "acceptedTos",
+                              checked: values.acceptedTos || false,
+                              onChange: (e) => {
+                                setFieldTouched("acceptedTos", true);
+                                setFieldValue("acceptedTos", e.target.checked);
+                              },
+                              isInvalid: !!errors.acceptedTos,
+                              className: errors.acceptedTos ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "acceptedTos",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "enabled",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Enabled:",
+                                touched.enabled &&
+                                  !errors.enabled &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "enabled",
+                              name: "enabled",
+                              checked: values.enabled || false,
+                              onChange: (e) => {
+                                setFieldTouched("enabled", true);
+                                setFieldValue("enabled", e.target.checked);
+                              },
+                              isInvalid: !!errors.enabled,
+                              className: errors.enabled ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "enabled",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "credentialNonExpired",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Credential Non Expired:",
+                                touched.credentialNonExpired &&
+                                  !errors.credentialNonExpired &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "credentialNonExpired",
+                              name: "credentialNonExpired",
+                              checked: values.credentialNonExpired || false,
+                              onChange: (e) => {
+                                setFieldTouched("credentialNonExpired", true);
+                                setFieldValue(
+                                  "credentialNonExpired",
+                                  e.target.checked,
+                                );
+                              },
+                              isInvalid: !!errors.credentialNonExpired,
+                              className: errors.credentialNonExpired
+                                ? "error"
+                                : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "credentialNonExpired",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "accountEnabled",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Account Enabled:",
+                                touched.accountEnabled &&
+                                  !errors.accountEnabled &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "accountEnabled",
+                              name: "accountEnabled",
+                              checked: values.accountEnabled || false,
+                              onChange: (e) => {
+                                setFieldTouched("accountEnabled", true);
+                                setFieldValue(
+                                  "accountEnabled",
+                                  e.target.checked,
+                                );
+                              },
+                              isInvalid: !!errors.accountEnabled,
+                              className: errors.accountEnabled ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "accountEnabled",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "accountNonLocked",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Account Non Locked:",
+                                touched.accountNonLocked &&
+                                  !errors.accountNonLocked &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "accountNonLocked",
+                              name: "accountNonLocked",
+                              checked: values.accountNonLocked || false,
+                              onChange: (e) => {
+                                setFieldTouched("accountNonLocked", true);
+                                setFieldValue(
+                                  "accountNonLocked",
+                                  e.target.checked,
+                                );
+                              },
+                              isInvalid: !!errors.accountNonLocked,
+                              className: errors.accountNonLocked ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "accountNonLocked",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "accountNonExpired",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Account Non Expired:",
+                                touched.accountNonExpired &&
+                                  !errors.accountNonExpired &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "accountNonExpired",
+                              name: "accountNonExpired",
+                              checked: values.accountNonExpired || false,
+                              onChange: (e) => {
+                                setFieldTouched("accountNonExpired", true);
+                                setFieldValue(
+                                  "accountNonExpired",
+                                  e.target.checked,
+                                );
+                              },
+                              isInvalid: !!errors.accountNonExpired,
+                              className: errors.accountNonExpired
+                                ? "error"
+                                : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "accountNonExpired",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "twoFactorEnabled",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Two Factor Enabled:",
+                                touched.twoFactorEnabled &&
+                                  !errors.twoFactorEnabled &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "twoFactorEnabled",
+                              name: "twoFactorEnabled",
+                              checked: values.twoFactorEnabled || false,
+                              onChange: (e) => {
+                                setFieldTouched("twoFactorEnabled", true);
+                                setFieldValue(
+                                  "twoFactorEnabled",
+                                  e.target.checked,
+                                );
+                              },
+                              isInvalid: !!errors.twoFactorEnabled,
+                              className: errors.twoFactorEnabled ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "twoFactorEnabled",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "loginAttempts",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Login Attempts:",
+                                touched.loginAttempts &&
+                                  !errors.loginAttempts &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "loginAttempts",
+                              type: "number",
+                              value: values.loginAttempts || "",
+                              onChange: (e) => {
+                                setFieldTouched("loginAttempts", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "loginAttempts",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.loginAttempts
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "loginAttempts",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "lockoutUntil",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Lockout Until:",
+                                touched.lockoutUntil &&
+                                  !errors.lockoutUntil &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "lockoutUntil",
+                              type: "datetime-local",
+                              value: values.lockoutUntil
+                                ? new Date(values.lockoutUntil)
+                                    .toISOString()
+                                    .slice(0, 16)
+                                : "",
+                              onChange: (e) => {
+                                setFieldTouched("lockoutUntil", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "lockoutUntil",
+                                  v ? new Date(v).toISOString() : "",
+                                );
+                              },
+                              className: errors.lockoutUntil
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "lockoutUntil",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "trashed",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Trashed:",
+                                touched.trashed &&
+                                  !errors.trashed &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "trashed",
+                              name: "trashed",
+                              checked: values.trashed || false,
+                              onChange: (e) => {
+                                setFieldTouched("trashed", true);
+                                setFieldValue("trashed", e.target.checked);
+                              },
+                              isInvalid: !!errors.trashed,
+                              className: errors.trashed ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "trashed",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs(CoolButton, {
+                          variant: isValid
+                            ? isSaving
+                              ? "disabled"
+                              : "success"
+                            : "warning",
+                          type: "submit",
+                          disabled: !isValid || isSaving,
+                          children: [
+                            isSaving &&
+                              _jsx("span", {
+                                style: { float: "left", minHeight: 0 },
+                                children: _jsx(LoadingSpinner, {
+                                  label: "",
+                                  size: 18,
+                                }),
+                              }),
+                            _jsx(FaCheckCircle, { size: 28 }),
+                            " Create New Principal",
+                          ],
+                        }),
+                        (addPrincipalResult.isError || errorMessage) &&
+                          _jsx(Alert, {
+                            variant: "danger",
+                            className: "mt-3",
+                            children:
+                              errorMessage ||
+                              JSON.stringify(
+                                "data" in addPrincipalResult.error
+                                  ? addPrincipalResult.error.data
+                                  : addPrincipalResult.error,
+                              ),
+                          }),
+                        (addPrincipalResult.isSuccess || successMessage) &&
+                          _jsx(Alert, {
+                            variant: "success",
+                            className: "mt-3",
+                            children: successMessage || "Saved successfully.",
+                          }),
+                      ],
+                    }),
+                  ],
+                }),
+                _jsxs(Accordion.Item, {
+                  eventKey: "0",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaCogs, { size: 28 }),
+                        " \u00A0Server Messages",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        "errors: ",
+                        JSON.stringify(errors),
+                        _jsx("br", {}),
+                        "addPrincipalResult: ",
+                        JSON.stringify(addPrincipalResult),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          });
+        },
+      }),
+      createdObjectId &&
+        _jsx(PermissionDialog, {
+          objectType: "com.valkyrlabs.model.Principal",
+          objectId: createdObjectId,
+          isVisible: showPermissionDialog,
+          onClose: handlePermissionDialogClose,
+          onSave: handlePermissionsSave,
+          currentUser: currentUser,
+        }),
+    ],
+  });
 };
 /* Export the generated form */
 export default PrincipalForm;

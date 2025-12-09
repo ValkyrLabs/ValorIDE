@@ -17,117 +17,131 @@ Template file: typescript-redux-query/modelService.mustache
 import { createApi } from "@reduxjs/toolkit/query/react";
 import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 export const AgentHierarchyNodeService = createApi({
-    reducerPath: "AgentHierarchyNode", // This should remain unique
-    baseQuery: customBaseQuery,
-    tagTypes: ["AgentHierarchyNode"],
-    endpoints: (build) => ({
-        // 1) Paged Query Endpoint
-        // Standardized pagination: page (0-based), size (page size)
-        getAgentHierarchyNodesPaged: build.query({
-            query: ({ page, size = 20, example }) => {
-                const q = [`page=${page}`, `size=${size}`];
-                if (example)
-                    q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-                return `AgentHierarchyNode?${q.join("&")}`;
-            },
-            providesTags: (result, error, { page }) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "AgentHierarchyNode",
-                        id,
-                    })),
-                    { type: "AgentHierarchyNode", id: `PAGE_${page}` },
-                ]
-                : [],
-        }),
-        // 2) Simple "get all" Query (optional)
-        getAgentHierarchyNodes: build.query({
-            query: (arg) => {
-                if (arg && arg.example) {
-                    const ex = arg.example;
-                    return `AgentHierarchyNode?example=${encodeURIComponent(JSON.stringify(ex))}`;
-                }
-                return `AgentHierarchyNode`;
-            },
-            providesTags: (result) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "AgentHierarchyNode",
-                        id,
-                    })),
-                    { type: "AgentHierarchyNode", id: "LIST" },
-                ]
-                : [{ type: "AgentHierarchyNode", id: "LIST" }],
-        }),
-        // 3) Create
-        addAgentHierarchyNode: build.mutation({
-            query: (body) => ({
-                url: `AgentHierarchyNode`,
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "AgentHierarchyNode", id: "LIST" }],
-        }),
-        // 4) Get single by ID
-        getAgentHierarchyNode: build.query({
-            query: (id) => `AgentHierarchyNode/${id}`,
-            providesTags: (result, error, id) => [{ type: "AgentHierarchyNode", id }],
-        }),
-        // 5) Update
-        updateAgentHierarchyNode: build.mutation({
-            query: ({ id, ...patch }) => ({
-                url: `AgentHierarchyNode/${id}`,
-                method: "PUT",
-                body: patch,
-            }),
-            async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-                if (id) {
-                    const patchResult = dispatch(AgentHierarchyNodeService.util.updateQueryData("getAgentHierarchyNode", id, (draft) => {
-                        Object.assign(draft, patch);
-                    }));
-                    try {
-                        await queryFulfilled;
-                    }
-                    catch {
-                        patchResult.undo();
-                    }
-                }
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "AgentHierarchyNode", id },
-                { type: "AgentHierarchyNode", id: "LIST" },
-            ],
-        }),
-        // 6) Delete
-        deleteAgentHierarchyNode: build.mutation({
-            query(id) {
-                return {
-                    url: `AgentHierarchyNode/${id}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, id) => [
-                { type: "AgentHierarchyNode", id },
-            ],
-        }),
-        // 7) Cascade / soft-delete (marks trashed, cascades children)
-        deleteAgentHierarchyNodeCascade: build.mutation({
-            query({ id, cascade = true, trash = true }) {
-                const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
-                return {
-                    url: `AgentHierarchyNode/${id}?${params}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "AgentHierarchyNode", id },
-                { type: "AgentHierarchyNode", id: "LIST" },
-            ],
-        }),
+  reducerPath: "AgentHierarchyNode", // This should remain unique
+  baseQuery: customBaseQuery,
+  tagTypes: ["AgentHierarchyNode"],
+  endpoints: (build) => ({
+    // 1) Paged Query Endpoint
+    // Standardized pagination: page (0-based), size (page size)
+    getAgentHierarchyNodesPaged: build.query({
+      query: ({ page, size = 20, example }) => {
+        const q = [`page=${page}`, `size=${size}`];
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `AgentHierarchyNode?${q.join("&")}`;
+      },
+      providesTags: (result, error, { page }) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "AgentHierarchyNode",
+                id,
+              })),
+              { type: "AgentHierarchyNode", id: `PAGE_${page}` },
+            ]
+          : [],
     }),
+    // 2) Simple "get all" Query (optional)
+    getAgentHierarchyNodes: build.query({
+      query: (arg) => {
+        if (arg && arg.example) {
+          const ex = arg.example;
+          return `AgentHierarchyNode?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `AgentHierarchyNode`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "AgentHierarchyNode",
+                id,
+              })),
+              { type: "AgentHierarchyNode", id: "LIST" },
+            ]
+          : [{ type: "AgentHierarchyNode", id: "LIST" }],
+    }),
+    // 3) Create
+    addAgentHierarchyNode: build.mutation({
+      query: (body) => ({
+        url: `AgentHierarchyNode`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "AgentHierarchyNode", id: "LIST" }],
+    }),
+    // 4) Get single by ID
+    getAgentHierarchyNode: build.query({
+      query: (id) => `AgentHierarchyNode/${id}`,
+      providesTags: (result, error, id) => [{ type: "AgentHierarchyNode", id }],
+    }),
+    // 5) Update
+    updateAgentHierarchyNode: build.mutation({
+      query: ({ id, ...patch }) => ({
+        url: `AgentHierarchyNode/${id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        if (id) {
+          const patchResult = dispatch(
+            AgentHierarchyNodeService.util.updateQueryData(
+              "getAgentHierarchyNode",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        }
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "AgentHierarchyNode", id },
+        { type: "AgentHierarchyNode", id: "LIST" },
+      ],
+    }),
+    // 6) Delete
+    deleteAgentHierarchyNode: build.mutation({
+      query(id) {
+        return {
+          url: `AgentHierarchyNode/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, id) => [
+        { type: "AgentHierarchyNode", id },
+      ],
+    }),
+    // 7) Cascade / soft-delete (marks trashed, cascades children)
+    deleteAgentHierarchyNodeCascade: build.mutation({
+      query({ id, cascade = true, trash = true }) {
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        return {
+          url: `AgentHierarchyNode/${id}?${params}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "AgentHierarchyNode", id },
+        { type: "AgentHierarchyNode", id: "LIST" },
+      ],
+    }),
+  }),
 });
 // Notice we now also export `useLazyGetAgentHierarchyNodesPagedQuery`
-export const { useGetAgentHierarchyNodesPagedQuery, // immediate fetch
-useLazyGetAgentHierarchyNodesPagedQuery, // lazy fetch
-useGetAgentHierarchyNodeQuery, useGetAgentHierarchyNodesQuery, useAddAgentHierarchyNodeMutation, useUpdateAgentHierarchyNodeMutation, useDeleteAgentHierarchyNodeMutation, useDeleteAgentHierarchyNodeCascadeMutation, } = AgentHierarchyNodeService;
+export const {
+  useGetAgentHierarchyNodesPagedQuery, // immediate fetch
+  useLazyGetAgentHierarchyNodesPagedQuery, // lazy fetch
+  useGetAgentHierarchyNodeQuery,
+  useGetAgentHierarchyNodesQuery,
+  useAddAgentHierarchyNodeMutation,
+  useUpdateAgentHierarchyNodeMutation,
+  useDeleteAgentHierarchyNodeMutation,
+  useDeleteAgentHierarchyNodeCascadeMutation,
+} = AgentHierarchyNodeService;
 //# sourceMappingURL=AgentHierarchyNodeService.js.map

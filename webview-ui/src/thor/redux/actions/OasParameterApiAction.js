@@ -31,60 +31,60 @@ export const LIST_OASPARAMETER_REQUEST = "LIST_OASPARAMETER_REQUEST";
 export const LIST_OASPARAMETER_SUCCESS = "LIST_OASPARAMETER_SUCCESS";
 export const LIST_OASPARAMETER_FAILURE = "LIST_OASPARAMETER_FAILURE";
 export const addOasParameterRequest = () => ({
-    type: ADD_OASPARAMETER_REQUEST,
+  type: ADD_OASPARAMETER_REQUEST,
 });
 export const addOasParameterSuccess = (OasParameters) => ({
-    type: ADD_OASPARAMETER_SUCCESS,
-    payload: OasParameters,
+  type: ADD_OASPARAMETER_SUCCESS,
+  payload: OasParameters,
 });
 export const addOasParameterFailure = (error) => ({
-    type: ADD_OASPARAMETER_FAILURE,
-    payload: error,
+  type: ADD_OASPARAMETER_FAILURE,
+  payload: error,
 });
 export const fetchOasParameterRequest = () => ({
-    type: FETCH_OASPARAMETER_REQUEST,
+  type: FETCH_OASPARAMETER_REQUEST,
 });
 export const fetchOasParameterSuccess = (OasParameters) => ({
-    type: FETCH_OASPARAMETER_SUCCESS,
-    payload: OasParameters,
+  type: FETCH_OASPARAMETER_SUCCESS,
+  payload: OasParameters,
 });
 export const fetchOasParameterFailure = (error) => ({
-    type: FETCH_OASPARAMETER_FAILURE,
-    payload: error,
+  type: FETCH_OASPARAMETER_FAILURE,
+  payload: error,
 });
 export const listOasParameterRequest = () => ({
-    type: LIST_OASPARAMETER_REQUEST,
+  type: LIST_OASPARAMETER_REQUEST,
 });
 export const listOasParameterSuccess = (OasParameters) => ({
-    type: LIST_OASPARAMETER_SUCCESS,
-    payload: OasParameters,
+  type: LIST_OASPARAMETER_SUCCESS,
+  payload: OasParameters,
 });
 export const listOasParameterFailure = (error) => ({
-    type: LIST_OASPARAMETER_FAILURE,
-    payload: error,
+  type: LIST_OASPARAMETER_FAILURE,
+  payload: error,
 });
 export const updateOasParameterRequest = (OasParameter) => ({
-    type: UPDATE_OASPARAMETER_REQUEST,
-    payload: OasParameter,
+  type: UPDATE_OASPARAMETER_REQUEST,
+  payload: OasParameter,
 });
 export const updateOasParameterSuccess = (OasParameter) => ({
-    type: UPDATE_OASPARAMETER_SUCCESS,
-    payload: OasParameter,
+  type: UPDATE_OASPARAMETER_SUCCESS,
+  payload: OasParameter,
 });
 export const updateOasParameterFailure = (error) => ({
-    type: UPDATE_OASPARAMETER_FAILURE,
-    payload: error,
+  type: UPDATE_OASPARAMETER_FAILURE,
+  payload: error,
 });
 export const deleteOasParameterRequest = (OasParameter) => ({
-    type: DELETE_OASPARAMETER_REQUEST,
-    payload: OasParameter,
+  type: DELETE_OASPARAMETER_REQUEST,
+  payload: OasParameter,
 });
 export const deleteOasParameterSuccess = (OasParameter) => ({
-    type: DELETE_OASPARAMETER_SUCCESS,
-    payload: OasParameter,
+  type: DELETE_OASPARAMETER_SUCCESS,
+  payload: OasParameter,
 });
 export const deleteOasParameterFailure = (error) => ({
-    type: DELETE_OASPARAMETER_FAILURE,
-    payload: error,
+  type: DELETE_OASPARAMETER_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=OasParameterApiAction.js.map

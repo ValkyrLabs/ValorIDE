@@ -29,41 +29,41 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function RoleFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        roleName: json["roleName"],
-        role: !exists(json, "role") ? undefined : json["role"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    roleName: json["roleName"],
+    role: !exists(json, "role") ? undefined : json["role"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function RoleToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        roleName: value.roleName,
-        role: value.role,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    roleName: value.roleName,
+    role: value.role,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -71,12 +71,12 @@ export function RoleToJSON(value) {
  */
 export var RoleRoleEnum;
 (function (RoleRoleEnum) {
-    RoleRoleEnum["ROLE_ANONYMOUS"] = "anonymous";
-    RoleRoleEnum["ROLE_EVERYONE"] = "everyone";
-    RoleRoleEnum["ROLE_SYSTEM"] = "system";
-    RoleRoleEnum["ROLE_USER"] = "user";
-    RoleRoleEnum["ROLE_STAFF"] = "staff";
-    RoleRoleEnum["ROLE_ADMIN"] = "admin";
-    RoleRoleEnum["ROLE_CUSTOM"] = "custom";
+  RoleRoleEnum["ROLE_ANONYMOUS"] = "anonymous";
+  RoleRoleEnum["ROLE_EVERYONE"] = "everyone";
+  RoleRoleEnum["ROLE_SYSTEM"] = "system";
+  RoleRoleEnum["ROLE_USER"] = "user";
+  RoleRoleEnum["ROLE_STAFF"] = "staff";
+  RoleRoleEnum["ROLE_ADMIN"] = "admin";
+  RoleRoleEnum["ROLE_CUSTOM"] = "custom";
 })(RoleRoleEnum || (RoleRoleEnum = {}));
 //# sourceMappingURL=Role.js.map

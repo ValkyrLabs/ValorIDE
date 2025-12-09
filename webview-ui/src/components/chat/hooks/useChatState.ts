@@ -5,7 +5,7 @@ import {
   ValorIDEMessage,
   ValorIDESayTool,
 } from "@shared/ExtensionMessage";
-import { COMMAND_OUTPUT_STRING } from "@shared/combineCommandSequences";
+import { computeIsChatLoadingState } from "@shared/chatLoadingState";
 import { vscode } from "@/utils/vscode";
 import { TaskServiceClient } from "@/services/grpc-client";
 
@@ -229,54 +229,12 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
 
   // Detect chat loading state - when we're waiting for API responses
   useEffect(() => {
-    const lastApiStatus = (() => {
-      for (let i = messages.length - 1; i >= 0; i -= 1) {
-        const msg = messages[i];
-        if (
-          msg.say === "api_req_started" ||
-          msg.say === "api_req_finished" ||
-          msg.say === "api_req_retried" ||
-          (msg.type === "ask" && msg.ask === "api_req_failed")
-        ) {
-          return msg;
-        }
-      }
-      return undefined;
-    })();
-
-    const apiReqInFlight =
-      (lastApiStatus?.say === "api_req_started" ||
-        lastApiStatus?.say === "api_req_retried") &&
-      (() => {
-        if (!lastApiStatus?.text) return true;
-        try {
-          const parsed = JSON.parse(lastApiStatus.text);
-          return parsed?.cancelReason == null;
-        } catch {
-          return true;
-        }
-      })();
-
-    const isCommandFlow =
-      lastMessage?.ask === "command" ||
-      lastMessage?.say === "command" ||
-      lastMessage?.ask === "command_output" ||
-      lastMessage?.say === "command_output";
-    const hasCommandOutput =
-      typeof lastMessage?.text === "string" &&
-      lastMessage.text.includes(COMMAND_OUTPUT_STRING);
-    const isCommandStillRunning =
-      isCommandFlow &&
-      (lastMessage?.ask === "command_output" ||
-        lastMessage?.partial ||
-        !hasCommandOutput);
-
-    const isWaitingForResponse =
-      apiReqInFlight ||
-      lastMessage?.partial === true ||
-      (textAreaDisabled && !enableButtons) ||
-      (lastMessage?.ask === "followup" && lastMessage?.partial) ||
-      isCommandStillRunning;
+    const isWaitingForResponse = computeIsChatLoadingState({
+      messages,
+      lastMessage,
+      textAreaDisabled,
+      enableButtons,
+    });
     setIsChatLoading(isWaitingForResponse);
   }, [messages, lastMessage, textAreaDisabled, enableButtons]);
 

@@ -29,44 +29,44 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function KeyMetricFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        goalId: !exists(json, "goalId") ? undefined : json["goalId"],
-        metricName: !exists(json, "metricName") ? undefined : json["metricName"],
-        metricValue: !exists(json, "metricValue") ? undefined : json["metricValue"],
-        targetValue: !exists(json, "targetValue") ? undefined : json["targetValue"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    goalId: !exists(json, "goalId") ? undefined : json["goalId"],
+    metricName: !exists(json, "metricName") ? undefined : json["metricName"],
+    metricValue: !exists(json, "metricValue") ? undefined : json["metricValue"],
+    targetValue: !exists(json, "targetValue") ? undefined : json["targetValue"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function KeyMetricToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        goalId: value.goalId,
-        metricName: value.metricName,
-        metricValue: value.metricValue,
-        targetValue: value.targetValue,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    goalId: value.goalId,
+    metricName: value.metricName,
+    metricValue: value.metricValue,
+    targetValue: value.targetValue,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=KeyMetric.js.map

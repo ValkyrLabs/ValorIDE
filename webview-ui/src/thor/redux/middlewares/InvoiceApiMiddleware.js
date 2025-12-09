@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Invoice
 */
-export const InvoiceMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const InvoiceMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Invoice MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=InvoiceApiMiddleware.js.map

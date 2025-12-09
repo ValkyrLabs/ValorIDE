@@ -64,6 +64,17 @@ const SystemAlerts: React.FC = () => {
     [valorideMessages],
   );
 
+  const budgetAlerts = useMemo(
+    () =>
+      advancedSettings?.budgetAlerts || {
+        depletedThreshold: 0,
+        criticalThreshold: 1,
+        lowThreshold: 5,
+        alertThreshold: 10,
+      },
+    [advancedSettings?.budgetAlerts],
+  );
+
   // Calculate effective balance using the new creditsApi AccountBalance
   const effectiveBalance = useMemo(() => {
     const rawBalance = balanceData?.currentBalance ?? 0;
@@ -74,30 +85,24 @@ const SystemAlerts: React.FC = () => {
   useEffect(() => {
     if (!jwtToken || effectiveBalance === undefined) return;
 
-    const ba = advancedSettings?.budgetAlerts || {
-      depletedThreshold: 0,
-      criticalThreshold: 1,
-      lowThreshold: 5,
-      alertThreshold: 10,
-    };
     const budgetThresholds = [
       {
-        threshold: ba.depletedThreshold,
+        threshold: budgetAlerts.depletedThreshold,
         severity: "danger" as const,
         title: "Budget Depleted",
       },
       {
-        threshold: ba.criticalThreshold,
+        threshold: budgetAlerts.criticalThreshold,
         severity: "danger" as const,
         title: "Critical Budget Alert",
       },
       {
-        threshold: ba.lowThreshold,
+        threshold: budgetAlerts.lowThreshold,
         severity: "warning" as const,
         title: "Low Budget Warning",
       },
       {
-        threshold: ba.alertThreshold,
+        threshold: budgetAlerts.alertThreshold,
         severity: "warning" as const,
         title: "Budget Alert",
       },
@@ -130,7 +135,7 @@ const SystemAlerts: React.FC = () => {
         break; // Only show the most severe alert
       }
     }
-  }, [effectiveBalance, jwtToken, dismissedAlerts]);
+  }, [budgetAlerts, effectiveBalance, jwtToken, dismissedAlerts]);
 
   // Check for blocker alerts (error states)
   useEffect(() => {
@@ -246,7 +251,12 @@ const SystemAlerts: React.FC = () => {
 
   const activeAlerts = alerts.filter((alert) => !dismissedAlerts.has(alert.id));
 
-  if (activeAlerts.length === 0 && !showBuyCreditsModal) return null;
+  const shouldShowBuyCreditsModal =
+    showBuyCreditsModal &&
+    typeof balanceData?.currentBalance === "number" &&
+    balanceData.currentBalance <= budgetAlerts.criticalThreshold;
+
+  if (activeAlerts.length === 0 && !shouldShowBuyCreditsModal) return null;
 
   return (
     <>
@@ -362,7 +372,7 @@ const SystemAlerts: React.FC = () => {
 
       {/* Buy Credits Modal */}
       <Modal
-        show={showBuyCreditsModal}
+        show={shouldShowBuyCreditsModal}
         onHide={() => setShowBuyCreditsModal(false)}
         centered
         size="sm"

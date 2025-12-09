@@ -29,50 +29,50 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function ChartSeriesFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        chartId: !exists(json, "chartId") ? undefined : json["chartId"],
-        name: !exists(json, "name") ? undefined : json["name"],
-        valuesRange: !exists(json, "valuesRange") ? undefined : json["valuesRange"],
-        color: !exists(json, "color") ? undefined : json["color"],
-        markerStyle: !exists(json, "markerStyle") ? undefined : json["markerStyle"],
-        showDataLabels: !exists(json, "showDataLabels")
-            ? undefined
-            : json["showDataLabels"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    chartId: !exists(json, "chartId") ? undefined : json["chartId"],
+    name: !exists(json, "name") ? undefined : json["name"],
+    valuesRange: !exists(json, "valuesRange") ? undefined : json["valuesRange"],
+    color: !exists(json, "color") ? undefined : json["color"],
+    markerStyle: !exists(json, "markerStyle") ? undefined : json["markerStyle"],
+    showDataLabels: !exists(json, "showDataLabels")
+      ? undefined
+      : json["showDataLabels"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ChartSeriesToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        chartId: value.chartId,
-        name: value.name,
-        valuesRange: value.valuesRange,
-        color: value.color,
-        markerStyle: value.markerStyle,
-        showDataLabels: value.showDataLabels,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    chartId: value.chartId,
+    name: value.name,
+    valuesRange: value.valuesRange,
+    color: value.color,
+    markerStyle: value.markerStyle,
+    showDataLabels: value.showDataLabels,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=ChartSeries.js.map

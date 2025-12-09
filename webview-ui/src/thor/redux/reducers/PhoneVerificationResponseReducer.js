@@ -16,31 +16,41 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const PhoneVerificationResponseSlice = createSlice({
-    name: "PhoneVerificationResponses",
-    initialState: [],
-    reducers: {
-        PhoneVerificationResponseAdded(state, action) {
-            state.push(action.payload);
-        },
-        PhoneVerificationResponseValueToggled(state, action) {
-            console.log("PhoneVerificationResponse TOGGLE");
-            console.warn(JSON.stringify(action));
-            const PhoneVerificationResponse = state.find((PhoneVerificationResponse) => PhoneVerificationResponse.id ===
-                action.payload.PhoneVerificationResponseId);
-            if (PhoneVerificationResponse) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        PhoneVerificationResponsepropertySet(state, action) {
-            const PhoneVerificationResponse = state.find((PhoneVerificationResponse) => PhoneVerificationResponse.id ===
-                action.payload.PhoneVerificationResponseId);
-            if (PhoneVerificationResponse) {
-                //  PhoneVerificationResponse[action.property] = action.payload[action.property];
-            }
-        },
+  name: "PhoneVerificationResponses",
+  initialState: [],
+  reducers: {
+    PhoneVerificationResponseAdded(state, action) {
+      state.push(action.payload);
     },
+    PhoneVerificationResponseValueToggled(state, action) {
+      console.log("PhoneVerificationResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const PhoneVerificationResponse = state.find(
+        (PhoneVerificationResponse) =>
+          PhoneVerificationResponse.id ===
+          action.payload.PhoneVerificationResponseId,
+      );
+      if (PhoneVerificationResponse) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    PhoneVerificationResponsepropertySet(state, action) {
+      const PhoneVerificationResponse = state.find(
+        (PhoneVerificationResponse) =>
+          PhoneVerificationResponse.id ===
+          action.payload.PhoneVerificationResponseId,
+      );
+      if (PhoneVerificationResponse) {
+        //  PhoneVerificationResponse[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { PhoneVerificationResponseAdded, PhoneVerificationResponseValueToggled, PhoneVerificationResponsepropertySet, } = PhoneVerificationResponseSlice.actions;
+export const {
+  PhoneVerificationResponseAdded,
+  PhoneVerificationResponseValueToggled,
+  PhoneVerificationResponsepropertySet,
+} = PhoneVerificationResponseSlice.actions;
 export default PhoneVerificationResponseSlice.reducer;
 //# sourceMappingURL=PhoneVerificationResponseReducer.js.map

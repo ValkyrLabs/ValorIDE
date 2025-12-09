@@ -15,16 +15,16 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, } from "formik";
+import { ErrorMessage, Field, Formik } from "formik";
 import { useState } from "react";
-import { Form as BSForm, Accordion, Alert, } from "react-bootstrap";
+import { Form as BSForm, Accordion, Alert } from "react-bootstrap";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import * as Yup from "yup";
 import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import { PermissionType, } from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionType } from "@valkyr/component-library/PermissionDialog/types";
 import { useAddDownloadAccessMutation } from "../../services/DownloadAccessService";
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -50,199 +50,726 @@ Row-level permission grant for a Principal to download a DigitalAsset. Represent
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
-const asNumber = (schema) => schema.transform((val, orig) => orig === "" || orig === null ? undefined : val);
+const asNumber = (schema) =>
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 const validationSchema = Yup.object().shape({
-    digitalAssetId: Yup.string().required("digitalAssetId is required."),
-    principalId: Yup.string().required("principalId is required."),
-    salesOrderLineItemId: Yup.string().required("salesOrderLineItemId is required."),
-    downloadToken: Yup.string(),
-    downloadCount: asNumber(Yup.number().integer().typeError("downloadCount must be a number")),
-    maxDownloadsRemaining: asNumber(Yup.number().integer().typeError("maxDownloadsRemaining must be a number")),
-    grantedAt: Yup.date()
-        .transform((value, originalValue) => {
-        if (!originalValue) {
-            return value;
-        }
-        const parsed = new Date(originalValue);
-        return Number.isNaN(parsed.getTime()) ? value : parsed;
+  digitalAssetId: Yup.string().required("digitalAssetId is required."),
+  principalId: Yup.string().required("principalId is required."),
+  salesOrderLineItemId: Yup.string().required(
+    "salesOrderLineItemId is required.",
+  ),
+  downloadToken: Yup.string(),
+  downloadCount: asNumber(
+    Yup.number().integer().typeError("downloadCount must be a number"),
+  ),
+  maxDownloadsRemaining: asNumber(
+    Yup.number().integer().typeError("maxDownloadsRemaining must be a number"),
+  ),
+  grantedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
     })
-        .typeError("grantedAt must be a valid date"),
-    expiresAt: Yup.date()
-        .transform((value, originalValue) => {
-        if (!originalValue) {
-            return value;
-        }
-        const parsed = new Date(originalValue);
-        return Number.isNaN(parsed.getTime()) ? value : parsed;
+    .typeError("grantedAt must be a valid date"),
+  expiresAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
     })
-        .typeError("expiresAt must be a valid date"),
-    lastDownloadedAt: Yup.date()
-        .transform((value, originalValue) => {
-        if (!originalValue) {
-            return value;
-        }
-        const parsed = new Date(originalValue);
-        return Number.isNaN(parsed.getTime()) ? value : parsed;
+    .typeError("expiresAt must be a valid date"),
+  lastDownloadedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
     })
-        .typeError("lastDownloadedAt must be a valid date"),
-    revokedAt: Yup.date()
-        .transform((value, originalValue) => {
-        if (!originalValue) {
-            return value;
-        }
-        const parsed = new Date(originalValue);
-        return Number.isNaN(parsed.getTime()) ? value : parsed;
+    .typeError("lastDownloadedAt must be a valid date"),
+  revokedAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
     })
-        .typeError("revokedAt must be a valid date"),
-    revokedReason: Yup.string(),
-    trashed: Yup.boolean(),
+    .typeError("revokedAt must be a valid date"),
+  revokedReason: Yup.string(),
+  trashed: Yup.boolean(),
 });
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const DownloadAccessForm = () => {
-    const [addDownloadAccess, addDownloadAccessResult] = useAddDownloadAccessMutation();
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
-    // Permission Management State
-    const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-    const [createdObjectId, setCreatedObjectId] = useState(null);
-    // Mock current user - in real implementation, this would come from auth context
-    const currentUser = {
-        username: "current_user",
-        permissions: {
-            isOwner: true,
-            isAdmin: true,
-            canGrantPermissions: true,
-            permissions: [
-                PermissionType.READ,
-                PermissionType.WRITE,
-                PermissionType.CREATE,
-                PermissionType.DELETE,
-                PermissionType.ADMINISTRATION,
-            ],
-        },
-    };
-    /* -----------------------------------------------------
+  const [addDownloadAccess, addDownloadAccessResult] =
+    useAddDownloadAccessMutation();
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState(null);
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: "current_user",
+    permissions: {
+      isOwner: true,
+      isAdmin: true,
+      canGrantPermissions: true,
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
+    },
+  };
+  /* -----------------------------------------------------
        INITIAL VALUES - only NON read-only fields
     -------------------------------------------------------- */
-    const initialValues = {
-        digitalAssetId: "",
-        principalId: "",
-        salesOrderLineItemId: "",
-        downloadToken: "",
-        downloadCount: 0,
-        maxDownloadsRemaining: 0,
-        grantedAt: new Date(),
-        expiresAt: new Date(),
-        lastDownloadedAt: new Date(),
-        revokedAt: new Date(),
-        revokedReason: "",
-        trashed: false,
-    };
-    // Permission Management Handlers
-    const handleManagePermissions = (objectId) => {
-        setCreatedObjectId(objectId);
-        setShowPermissionDialog(true);
-    };
-    const handlePermissionDialogClose = () => {
-        setShowPermissionDialog(false);
-        setCreatedObjectId(null);
-    };
-    const handlePermissionsSave = (grants) => {
-        console.log("Permissions saved for new DownloadAccess:", grants);
-    };
-    /* SUBMIT HANDLER */
-    const handleSubmit = async (values, { setSubmitting }) => {
-        try {
-            setSuccessMessage(null);
-            setErrorMessage(null);
-            console.log("DownloadAccess form values:", values);
-            // NOTE: depending on your generated endpoint, you may need { body: values }
-            const result = await addDownloadAccess(values).unwrap();
-            if (result && result.id && currentUser.permissions.canGrantPermissions) {
-                const shouldSetPermissions = window.confirm(`DownloadAccess created successfully! Would you like to set permissions for this object?`);
-                if (shouldSetPermissions) {
-                    handleManagePermissions(result.id);
-                }
-            }
-            setSuccessMessage("Saved successfully.");
+  const initialValues = {
+    digitalAssetId: "",
+    principalId: "",
+    salesOrderLineItemId: "",
+    downloadToken: "",
+    downloadCount: 0,
+    maxDownloadsRemaining: 0,
+    grantedAt: new Date(),
+    expiresAt: new Date(),
+    lastDownloadedAt: new Date(),
+    revokedAt: new Date(),
+    revokedReason: "",
+    trashed: false,
+  };
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+  const handlePermissionsSave = (grants) => {
+    console.log("Permissions saved for new DownloadAccess:", grants);
+  };
+  /* SUBMIT HANDLER */
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      setSuccessMessage(null);
+      setErrorMessage(null);
+      console.log("DownloadAccess form values:", values);
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addDownloadAccess(values).unwrap();
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `DownloadAccess created successfully! Would you like to set permissions for this object?`,
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
         }
-        catch (error) {
-            console.error("Failed to create DownloadAccess:", error);
-            setErrorMessage("Failed to save. Please try again.");
-        }
-        setSubmitting(false);
-    };
-    return (_jsxs("div", { children: [_jsx(Formik, { validateOnBlur: true, initialValues: initialValues, validationSchema: validationSchema, onSubmit: handleSubmit, children: ({ isSubmitting, isValid, errors, values, setFieldValue, touched, setFieldTouched, handleSubmit, }) => {
-                    const isSaving = isSubmitting || addDownloadAccessResult.isLoading;
-                    return (_jsx("form", { onSubmit: handleSubmit, className: "form", children: _jsxs(Accordion, { defaultActiveKey: "1", children: [_jsxs(Accordion.Item, { eventKey: "1", children: [_jsxs(Accordion.Header, { children: [_jsx(FaRegPlusSquare, { size: 28 }), " \u00A0 Add New DownloadAccess"] }), _jsxs(Accordion.Body, { children: [_jsxs("label", { htmlFor: "digitalAssetId", className: "nice-form-control", children: [_jsxs("b", { children: ["Digital Asset Id:", touched.digitalAssetId && !errors.digitalAssetId && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "digitalAssetId", value: values?.digitalAssetId, placeholder: "Digital Asset Id", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "digitalAssetId", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "principalId", className: "nice-form-control", children: [_jsxs("b", { children: ["Principal Id:", touched.principalId && !errors.principalId && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "principalId", value: values?.principalId, placeholder: "Principal Id", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "principalId", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "salesOrderLineItemId", className: "nice-form-control", children: [_jsxs("b", { children: ["Sales Order Line Item Id:", touched.salesOrderLineItemId &&
-                                                                    !errors.salesOrderLineItemId && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "salesOrderLineItemId", value: values?.salesOrderLineItemId, placeholder: "Sales Order Line Item Id", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "salesOrderLineItemId", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "downloadToken", className: "nice-form-control", children: [_jsxs("b", { children: ["Download Token:", touched.downloadToken && !errors.downloadToken && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "downloadToken", value: values?.downloadToken, placeholder: "Download Token", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "downloadToken", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "downloadCount", className: "nice-form-control", children: [_jsxs("b", { children: ["Download Count:", touched.downloadCount && !errors.downloadCount && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "downloadCount", type: "number", value: values.downloadCount || "", onChange: (e) => {
-                                                                setFieldTouched("downloadCount", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("downloadCount", v === "" ? undefined : Number(v));
-                                                            }, className: errors.downloadCount
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "downloadCount", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "maxDownloadsRemaining", className: "nice-form-control", children: [_jsxs("b", { children: ["Max Downloads Remaining:", touched.maxDownloadsRemaining &&
-                                                                    !errors.maxDownloadsRemaining && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "maxDownloadsRemaining", type: "number", value: values.maxDownloadsRemaining || "", onChange: (e) => {
-                                                                setFieldTouched("maxDownloadsRemaining", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("maxDownloadsRemaining", v === "" ? undefined : Number(v));
-                                                            }, className: errors.maxDownloadsRemaining
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "maxDownloadsRemaining", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "grantedAt", className: "nice-form-control", children: [_jsxs("b", { children: ["Granted At:", touched.grantedAt && !errors.grantedAt && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "grantedAt", type: "datetime-local", value: values.grantedAt
-                                                                ? new Date(values.grantedAt)
-                                                                    .toISOString()
-                                                                    .slice(0, 16)
-                                                                : "", onChange: (e) => {
-                                                                setFieldTouched("grantedAt", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("grantedAt", v ? new Date(v).toISOString() : "");
-                                                            }, className: errors.grantedAt
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "grantedAt", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "expiresAt", className: "nice-form-control", children: [_jsxs("b", { children: ["Expires At:", touched.expiresAt && !errors.expiresAt && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "expiresAt", type: "datetime-local", value: values.expiresAt
-                                                                ? new Date(values.expiresAt)
-                                                                    .toISOString()
-                                                                    .slice(0, 16)
-                                                                : "", onChange: (e) => {
-                                                                setFieldTouched("expiresAt", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("expiresAt", v ? new Date(v).toISOString() : "");
-                                                            }, className: errors.expiresAt
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "expiresAt", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "lastDownloadedAt", className: "nice-form-control", children: [_jsxs("b", { children: ["Last Downloaded At:", touched.lastDownloadedAt &&
-                                                                    !errors.lastDownloadedAt && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "lastDownloadedAt", type: "datetime-local", value: values.lastDownloadedAt
-                                                                ? new Date(values.lastDownloadedAt)
-                                                                    .toISOString()
-                                                                    .slice(0, 16)
-                                                                : "", onChange: (e) => {
-                                                                setFieldTouched("lastDownloadedAt", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("lastDownloadedAt", v ? new Date(v).toISOString() : "");
-                                                            }, className: errors.lastDownloadedAt
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "lastDownloadedAt", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "revokedAt", className: "nice-form-control", children: [_jsxs("b", { children: ["Revoked At:", touched.revokedAt && !errors.revokedAt && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "revokedAt", type: "datetime-local", value: values.revokedAt
-                                                                ? new Date(values.revokedAt)
-                                                                    .toISOString()
-                                                                    .slice(0, 16)
-                                                                : "", onChange: (e) => {
-                                                                setFieldTouched("revokedAt", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("revokedAt", v ? new Date(v).toISOString() : "");
-                                                            }, className: errors.revokedAt
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "revokedAt", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "revokedReason", className: "nice-form-control", children: [_jsxs("b", { children: ["Revoked Reason:", touched.revokedReason && !errors.revokedReason && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "revokedReason", value: values?.revokedReason, placeholder: "Revoked Reason", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "revokedReason", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "trashed", className: "nice-form-control", children: [_jsxs("b", { children: ["Trashed:", touched.trashed && !errors.trashed && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "trashed", name: "trashed", checked: values.trashed || false, onChange: (e) => {
-                                                                setFieldTouched("trashed", true);
-                                                                setFieldValue("trashed", e.target.checked);
-                                                            }, isInvalid: !!errors.trashed, className: errors.trashed ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "trashed", component: "span" })] }), _jsx("br", {}), _jsxs(CoolButton, { variant: isValid
-                                                        ? isSaving
-                                                            ? "disabled"
-                                                            : "success"
-                                                        : "warning", type: "submit", disabled: !isValid || isSaving, children: [isSaving && (_jsx("span", { style: { float: "left", minHeight: 0 }, children: _jsx(LoadingSpinner, { label: "", size: 18 }) })), _jsx(FaCheckCircle, { size: 28 }), " Create New DownloadAccess"] }), (addDownloadAccessResult.isError || errorMessage) && (_jsx(Alert, { variant: "danger", className: "mt-3", children: errorMessage ||
-                                                        JSON.stringify("data" in addDownloadAccessResult.error
-                                                            ? addDownloadAccessResult.error.data
-                                                            : addDownloadAccessResult.error) })), (addDownloadAccessResult.isSuccess || successMessage) && (_jsx(Alert, { variant: "success", className: "mt-3", children: successMessage || "Saved successfully." }))] })] }), _jsxs(Accordion.Item, { eventKey: "0", children: [_jsxs(Accordion.Header, { children: [_jsx(FaCogs, { size: 28 }), " \u00A0Server Messages"] }), _jsxs(Accordion.Body, { children: ["errors: ", JSON.stringify(errors), _jsx("br", {}), "addDownloadAccessResult:", " ", JSON.stringify(addDownloadAccessResult)] })] })] }) }));
-                } }), createdObjectId && (_jsx(PermissionDialog, { objectType: "com.valkyrlabs.model.DownloadAccess", objectId: createdObjectId, isVisible: showPermissionDialog, onClose: handlePermissionDialogClose, onSave: handlePermissionsSave, currentUser: currentUser }))] }));
+      }
+      setSuccessMessage("Saved successfully.");
+    } catch (error) {
+      console.error("Failed to create DownloadAccess:", error);
+      setErrorMessage("Failed to save. Please try again.");
+    }
+    setSubmitting(false);
+  };
+  return _jsxs("div", {
+    children: [
+      _jsx(Formik, {
+        validateOnBlur: true,
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: handleSubmit,
+        children: ({
+          isSubmitting,
+          isValid,
+          errors,
+          values,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => {
+          const isSaving = isSubmitting || addDownloadAccessResult.isLoading;
+          return _jsx("form", {
+            onSubmit: handleSubmit,
+            className: "form",
+            children: _jsxs(Accordion, {
+              defaultActiveKey: "1",
+              children: [
+                _jsxs(Accordion.Item, {
+                  eventKey: "1",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaRegPlusSquare, { size: 28 }),
+                        " \u00A0 Add New DownloadAccess",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        _jsxs("label", {
+                          htmlFor: "digitalAssetId",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Digital Asset Id:",
+                                touched.digitalAssetId &&
+                                  !errors.digitalAssetId &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "digitalAssetId",
+                              value: values?.digitalAssetId,
+                              placeholder: "Digital Asset Id",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "digitalAssetId",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "principalId",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Principal Id:",
+                                touched.principalId &&
+                                  !errors.principalId &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "principalId",
+                              value: values?.principalId,
+                              placeholder: "Principal Id",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "principalId",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "salesOrderLineItemId",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Sales Order Line Item Id:",
+                                touched.salesOrderLineItemId &&
+                                  !errors.salesOrderLineItemId &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "salesOrderLineItemId",
+                              value: values?.salesOrderLineItemId,
+                              placeholder: "Sales Order Line Item Id",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "salesOrderLineItemId",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "downloadToken",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Download Token:",
+                                touched.downloadToken &&
+                                  !errors.downloadToken &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "downloadToken",
+                              value: values?.downloadToken,
+                              placeholder: "Download Token",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "downloadToken",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "downloadCount",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Download Count:",
+                                touched.downloadCount &&
+                                  !errors.downloadCount &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "downloadCount",
+                              type: "number",
+                              value: values.downloadCount || "",
+                              onChange: (e) => {
+                                setFieldTouched("downloadCount", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "downloadCount",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.downloadCount
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "downloadCount",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "maxDownloadsRemaining",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Max Downloads Remaining:",
+                                touched.maxDownloadsRemaining &&
+                                  !errors.maxDownloadsRemaining &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "maxDownloadsRemaining",
+                              type: "number",
+                              value: values.maxDownloadsRemaining || "",
+                              onChange: (e) => {
+                                setFieldTouched("maxDownloadsRemaining", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "maxDownloadsRemaining",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.maxDownloadsRemaining
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "maxDownloadsRemaining",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "grantedAt",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Granted At:",
+                                touched.grantedAt &&
+                                  !errors.grantedAt &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "grantedAt",
+                              type: "datetime-local",
+                              value: values.grantedAt
+                                ? new Date(values.grantedAt)
+                                    .toISOString()
+                                    .slice(0, 16)
+                                : "",
+                              onChange: (e) => {
+                                setFieldTouched("grantedAt", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "grantedAt",
+                                  v ? new Date(v).toISOString() : "",
+                                );
+                              },
+                              className: errors.grantedAt
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "grantedAt",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "expiresAt",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Expires At:",
+                                touched.expiresAt &&
+                                  !errors.expiresAt &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "expiresAt",
+                              type: "datetime-local",
+                              value: values.expiresAt
+                                ? new Date(values.expiresAt)
+                                    .toISOString()
+                                    .slice(0, 16)
+                                : "",
+                              onChange: (e) => {
+                                setFieldTouched("expiresAt", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "expiresAt",
+                                  v ? new Date(v).toISOString() : "",
+                                );
+                              },
+                              className: errors.expiresAt
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "expiresAt",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "lastDownloadedAt",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Last Downloaded At:",
+                                touched.lastDownloadedAt &&
+                                  !errors.lastDownloadedAt &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "lastDownloadedAt",
+                              type: "datetime-local",
+                              value: values.lastDownloadedAt
+                                ? new Date(values.lastDownloadedAt)
+                                    .toISOString()
+                                    .slice(0, 16)
+                                : "",
+                              onChange: (e) => {
+                                setFieldTouched("lastDownloadedAt", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "lastDownloadedAt",
+                                  v ? new Date(v).toISOString() : "",
+                                );
+                              },
+                              className: errors.lastDownloadedAt
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "lastDownloadedAt",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "revokedAt",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Revoked At:",
+                                touched.revokedAt &&
+                                  !errors.revokedAt &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "revokedAt",
+                              type: "datetime-local",
+                              value: values.revokedAt
+                                ? new Date(values.revokedAt)
+                                    .toISOString()
+                                    .slice(0, 16)
+                                : "",
+                              onChange: (e) => {
+                                setFieldTouched("revokedAt", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "revokedAt",
+                                  v ? new Date(v).toISOString() : "",
+                                );
+                              },
+                              className: errors.revokedAt
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "revokedAt",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "revokedReason",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Revoked Reason:",
+                                touched.revokedReason &&
+                                  !errors.revokedReason &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "revokedReason",
+                              value: values?.revokedReason,
+                              placeholder: "Revoked Reason",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "revokedReason",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "trashed",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Trashed:",
+                                touched.trashed &&
+                                  !errors.trashed &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "trashed",
+                              name: "trashed",
+                              checked: values.trashed || false,
+                              onChange: (e) => {
+                                setFieldTouched("trashed", true);
+                                setFieldValue("trashed", e.target.checked);
+                              },
+                              isInvalid: !!errors.trashed,
+                              className: errors.trashed ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "trashed",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs(CoolButton, {
+                          variant: isValid
+                            ? isSaving
+                              ? "disabled"
+                              : "success"
+                            : "warning",
+                          type: "submit",
+                          disabled: !isValid || isSaving,
+                          children: [
+                            isSaving &&
+                              _jsx("span", {
+                                style: { float: "left", minHeight: 0 },
+                                children: _jsx(LoadingSpinner, {
+                                  label: "",
+                                  size: 18,
+                                }),
+                              }),
+                            _jsx(FaCheckCircle, { size: 28 }),
+                            " Create New DownloadAccess",
+                          ],
+                        }),
+                        (addDownloadAccessResult.isError || errorMessage) &&
+                          _jsx(Alert, {
+                            variant: "danger",
+                            className: "mt-3",
+                            children:
+                              errorMessage ||
+                              JSON.stringify(
+                                "data" in addDownloadAccessResult.error
+                                  ? addDownloadAccessResult.error.data
+                                  : addDownloadAccessResult.error,
+                              ),
+                          }),
+                        (addDownloadAccessResult.isSuccess || successMessage) &&
+                          _jsx(Alert, {
+                            variant: "success",
+                            className: "mt-3",
+                            children: successMessage || "Saved successfully.",
+                          }),
+                      ],
+                    }),
+                  ],
+                }),
+                _jsxs(Accordion.Item, {
+                  eventKey: "0",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaCogs, { size: 28 }),
+                        " \u00A0Server Messages",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        "errors: ",
+                        JSON.stringify(errors),
+                        _jsx("br", {}),
+                        "addDownloadAccessResult:",
+                        " ",
+                        JSON.stringify(addDownloadAccessResult),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          });
+        },
+      }),
+      createdObjectId &&
+        _jsx(PermissionDialog, {
+          objectType: "com.valkyrlabs.model.DownloadAccess",
+          objectId: createdObjectId,
+          isVisible: showPermissionDialog,
+          onClose: handlePermissionDialogClose,
+          onSave: handlePermissionsSave,
+          currentUser: currentUser,
+        }),
+    ],
+  });
 };
 /* Export the generated form */
 export default DownloadAccessForm;

@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: SpaceFile
 */
-export const SpaceFileMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const SpaceFileMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("SpaceFile MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=SpaceFileApiMiddleware.js.map

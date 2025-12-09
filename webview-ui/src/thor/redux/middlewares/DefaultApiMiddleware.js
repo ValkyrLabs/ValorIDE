@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Default
 */
-export const DefaultMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const DefaultMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Default MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=DefaultApiMiddleware.js.map

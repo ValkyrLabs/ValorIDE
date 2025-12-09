@@ -1,4 +1,8 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import {
+  jsx as _jsx,
+  jsxs as _jsxs,
+  Fragment as _Fragment,
+} from "react/jsx-runtime";
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -15,16 +19,16 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, } from "formik";
+import { ErrorMessage, Field, Formik } from "formik";
 import { useState } from "react";
-import { Form as BSForm, Accordion, Alert, } from "react-bootstrap";
+import { Form as BSForm, Accordion, Alert } from "react-bootstrap";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import * as Yup from "yup";
 import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import { PermissionType, } from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionType } from "@valkyr/component-library/PermissionDialog/types";
 import { useAddQuotaMutation } from "../../services/QuotaService";
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,200 +52,717 @@ Per-principal quota limits for rate limiting and concurrency control
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const ResourceTypeValidation = () => {
-    return [
-        "WORKFLOW_EXECUTION",
-        "API_CALL",
-        "LLM_REQUEST",
-        "EMAIL_SEND",
-        "FILE_UPLOAD",
-    ];
+  return [
+    "WORKFLOW_EXECUTION",
+    "API_CALL",
+    "LLM_REQUEST",
+    "EMAIL_SEND",
+    "FILE_UPLOAD",
+  ];
 };
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
-const asNumber = (schema) => schema.transform((val, orig) => orig === "" || orig === null ? undefined : val);
+const asNumber = (schema) =>
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 const validationSchema = Yup.object().shape({
-    principalId: Yup.string(),
-    resourceType: Yup.mixed().oneOf(ResourceTypeValidation(), "Invalid value for resourceType"),
-    maxConcurrent: asNumber(Yup.number().integer().typeError("maxConcurrent must be a number")),
-    maxPerHour: asNumber(Yup.number().integer().typeError("maxPerHour must be a number")),
-    maxPerDay: asNumber(Yup.number().integer().typeError("maxPerDay must be a number")),
-    currentConcurrent: asNumber(Yup.number().integer().typeError("currentConcurrent must be a number")),
-    currentHourCount: asNumber(Yup.number().integer().typeError("currentHourCount must be a number")),
-    currentDayCount: asNumber(Yup.number().integer().typeError("currentDayCount must be a number")),
-    hourResetAt: Yup.date()
-        .transform((value, originalValue) => {
-        if (!originalValue) {
-            return value;
-        }
-        const parsed = new Date(originalValue);
-        return Number.isNaN(parsed.getTime()) ? value : parsed;
+  principalId: Yup.string(),
+  resourceType: Yup.mixed().oneOf(
+    ResourceTypeValidation(),
+    "Invalid value for resourceType",
+  ),
+  maxConcurrent: asNumber(
+    Yup.number().integer().typeError("maxConcurrent must be a number"),
+  ),
+  maxPerHour: asNumber(
+    Yup.number().integer().typeError("maxPerHour must be a number"),
+  ),
+  maxPerDay: asNumber(
+    Yup.number().integer().typeError("maxPerDay must be a number"),
+  ),
+  currentConcurrent: asNumber(
+    Yup.number().integer().typeError("currentConcurrent must be a number"),
+  ),
+  currentHourCount: asNumber(
+    Yup.number().integer().typeError("currentHourCount must be a number"),
+  ),
+  currentDayCount: asNumber(
+    Yup.number().integer().typeError("currentDayCount must be a number"),
+  ),
+  hourResetAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
     })
-        .typeError("hourResetAt must be a valid date"),
-    dayResetAt: Yup.date()
-        .transform((value, originalValue) => {
-        if (!originalValue) {
-            return value;
-        }
-        const parsed = new Date(originalValue);
-        return Number.isNaN(parsed.getTime()) ? value : parsed;
+    .typeError("hourResetAt must be a valid date"),
+  dayResetAt: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
     })
-        .typeError("dayResetAt must be a valid date"),
-    trashed: Yup.boolean(),
+    .typeError("dayResetAt must be a valid date"),
+  trashed: Yup.boolean(),
 });
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const QuotaForm = () => {
-    const [addQuota, addQuotaResult] = useAddQuotaMutation();
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
-    // Permission Management State
-    const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-    const [createdObjectId, setCreatedObjectId] = useState(null);
-    // Mock current user - in real implementation, this would come from auth context
-    const currentUser = {
-        username: "current_user",
-        permissions: {
-            isOwner: true,
-            isAdmin: true,
-            canGrantPermissions: true,
-            permissions: [
-                PermissionType.READ,
-                PermissionType.WRITE,
-                PermissionType.CREATE,
-                PermissionType.DELETE,
-                PermissionType.ADMINISTRATION,
-            ],
-        },
-    };
-    /* -----------------------------------------------------
+  const [addQuota, addQuotaResult] = useAddQuotaMutation();
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState(null);
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: "current_user",
+    permissions: {
+      isOwner: true,
+      isAdmin: true,
+      canGrantPermissions: true,
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
+    },
+  };
+  /* -----------------------------------------------------
        INITIAL VALUES - only NON read-only fields
     -------------------------------------------------------- */
-    const initialValues = {
-        principalId: "",
-        resourceType: undefined,
-        maxConcurrent: 0,
-        maxPerHour: 0,
-        maxPerDay: 0,
-        currentConcurrent: 0,
-        currentHourCount: 0,
-        currentDayCount: 0,
-        hourResetAt: new Date(),
-        dayResetAt: new Date(),
-        trashed: false,
-    };
-    // Permission Management Handlers
-    const handleManagePermissions = (objectId) => {
-        setCreatedObjectId(objectId);
-        setShowPermissionDialog(true);
-    };
-    const handlePermissionDialogClose = () => {
-        setShowPermissionDialog(false);
-        setCreatedObjectId(null);
-    };
-    const handlePermissionsSave = (grants) => {
-        console.log("Permissions saved for new Quota:", grants);
-    };
-    /* SUBMIT HANDLER */
-    const handleSubmit = async (values, { setSubmitting }) => {
-        try {
-            setSuccessMessage(null);
-            setErrorMessage(null);
-            console.log("Quota form values:", values);
-            // NOTE: depending on your generated endpoint, you may need { body: values }
-            const result = await addQuota(values).unwrap();
-            if (result && result.id && currentUser.permissions.canGrantPermissions) {
-                const shouldSetPermissions = window.confirm(`Quota created successfully! Would you like to set permissions for this object?`);
-                if (shouldSetPermissions) {
-                    handleManagePermissions(result.id);
-                }
-            }
-            setSuccessMessage("Saved successfully.");
+  const initialValues = {
+    principalId: "",
+    resourceType: undefined,
+    maxConcurrent: 0,
+    maxPerHour: 0,
+    maxPerDay: 0,
+    currentConcurrent: 0,
+    currentHourCount: 0,
+    currentDayCount: 0,
+    hourResetAt: new Date(),
+    dayResetAt: new Date(),
+    trashed: false,
+  };
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+  const handlePermissionsSave = (grants) => {
+    console.log("Permissions saved for new Quota:", grants);
+  };
+  /* SUBMIT HANDLER */
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      setSuccessMessage(null);
+      setErrorMessage(null);
+      console.log("Quota form values:", values);
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addQuota(values).unwrap();
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `Quota created successfully! Would you like to set permissions for this object?`,
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
         }
-        catch (error) {
-            console.error("Failed to create Quota:", error);
-            setErrorMessage("Failed to save. Please try again.");
-        }
-        setSubmitting(false);
-    };
-    return (_jsxs("div", { children: [_jsx(Formik, { validateOnBlur: true, initialValues: initialValues, validationSchema: validationSchema, onSubmit: handleSubmit, children: ({ isSubmitting, isValid, errors, values, setFieldValue, touched, setFieldTouched, handleSubmit, }) => {
-                    const isSaving = isSubmitting || addQuotaResult.isLoading;
-                    return (_jsx("form", { onSubmit: handleSubmit, className: "form", children: _jsxs(Accordion, { defaultActiveKey: "1", children: [_jsxs(Accordion.Item, { eventKey: "1", children: [_jsxs(Accordion.Header, { children: [_jsx(FaRegPlusSquare, { size: 28 }), " \u00A0 Add New Quota"] }), _jsxs(Accordion.Body, { children: [_jsxs("label", { htmlFor: "principalId", className: "nice-form-control", children: [_jsxs("b", { children: ["Principal Id:", touched.principalId && !errors.principalId && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "principalId", value: values?.principalId, placeholder: "Principal Id", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "principalId", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "resourceType", className: "nice-form-control", children: [_jsxs("b", { children: ["Resource Type:", touched.resourceType && !errors.resourceType && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "resourceType", value: values.resourceType || "", className: errors.resourceType
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("resourceType", true);
-                                                                setFieldValue("resourceType", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Resource Type" }), _jsx(ResourceTypeLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "resourceType", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "maxConcurrent", className: "nice-form-control", children: [_jsxs("b", { children: ["Max Concurrent:", touched.maxConcurrent && !errors.maxConcurrent && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "maxConcurrent", type: "number", value: values.maxConcurrent || "", onChange: (e) => {
-                                                                setFieldTouched("maxConcurrent", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("maxConcurrent", v === "" ? undefined : Number(v));
-                                                            }, className: errors.maxConcurrent
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "maxConcurrent", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "maxPerHour", className: "nice-form-control", children: [_jsxs("b", { children: ["Max Per Hour:", touched.maxPerHour && !errors.maxPerHour && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "maxPerHour", type: "number", value: values.maxPerHour || "", onChange: (e) => {
-                                                                setFieldTouched("maxPerHour", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("maxPerHour", v === "" ? undefined : Number(v));
-                                                            }, className: errors.maxPerHour
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "maxPerHour", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "maxPerDay", className: "nice-form-control", children: [_jsxs("b", { children: ["Max Per Day:", touched.maxPerDay && !errors.maxPerDay && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "maxPerDay", type: "number", value: values.maxPerDay || "", onChange: (e) => {
-                                                                setFieldTouched("maxPerDay", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("maxPerDay", v === "" ? undefined : Number(v));
-                                                            }, className: errors.maxPerDay
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "maxPerDay", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "currentConcurrent", className: "nice-form-control", children: [_jsxs("b", { children: ["Current Concurrent:", touched.currentConcurrent &&
-                                                                    !errors.currentConcurrent && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "currentConcurrent", type: "number", value: values.currentConcurrent || "", onChange: (e) => {
-                                                                setFieldTouched("currentConcurrent", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("currentConcurrent", v === "" ? undefined : Number(v));
-                                                            }, className: errors.currentConcurrent
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "currentConcurrent", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "currentHourCount", className: "nice-form-control", children: [_jsxs("b", { children: ["Current Hour Count:", touched.currentHourCount &&
-                                                                    !errors.currentHourCount && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "currentHourCount", type: "number", value: values.currentHourCount || "", onChange: (e) => {
-                                                                setFieldTouched("currentHourCount", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("currentHourCount", v === "" ? undefined : Number(v));
-                                                            }, className: errors.currentHourCount
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "currentHourCount", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "currentDayCount", className: "nice-form-control", children: [_jsxs("b", { children: ["Current Day Count:", touched.currentDayCount && !errors.currentDayCount && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "currentDayCount", type: "number", value: values.currentDayCount || "", onChange: (e) => {
-                                                                setFieldTouched("currentDayCount", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("currentDayCount", v === "" ? undefined : Number(v));
-                                                            }, className: errors.currentDayCount
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "currentDayCount", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "hourResetAt", className: "nice-form-control", children: [_jsxs("b", { children: ["Hour Reset At:", touched.hourResetAt && !errors.hourResetAt && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "hourResetAt", type: "datetime-local", value: values.hourResetAt
-                                                                ? new Date(values.hourResetAt)
-                                                                    .toISOString()
-                                                                    .slice(0, 16)
-                                                                : "", onChange: (e) => {
-                                                                setFieldTouched("hourResetAt", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("hourResetAt", v ? new Date(v).toISOString() : "");
-                                                            }, className: errors.hourResetAt
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "hourResetAt", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "dayResetAt", className: "nice-form-control", children: [_jsxs("b", { children: ["Day Reset At:", touched.dayResetAt && !errors.dayResetAt && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "dayResetAt", type: "datetime-local", value: values.dayResetAt
-                                                                ? new Date(values.dayResetAt)
-                                                                    .toISOString()
-                                                                    .slice(0, 16)
-                                                                : "", onChange: (e) => {
-                                                                setFieldTouched("dayResetAt", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("dayResetAt", v ? new Date(v).toISOString() : "");
-                                                            }, className: errors.dayResetAt
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "dayResetAt", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "trashed", className: "nice-form-control", children: [_jsxs("b", { children: ["Trashed:", touched.trashed && !errors.trashed && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "trashed", name: "trashed", checked: values.trashed || false, onChange: (e) => {
-                                                                setFieldTouched("trashed", true);
-                                                                setFieldValue("trashed", e.target.checked);
-                                                            }, isInvalid: !!errors.trashed, className: errors.trashed ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "trashed", component: "span" })] }), _jsx("br", {}), _jsxs(CoolButton, { variant: isValid
-                                                        ? isSaving
-                                                            ? "disabled"
-                                                            : "success"
-                                                        : "warning", type: "submit", disabled: !isValid || isSaving, children: [isSaving && (_jsx("span", { style: { float: "left", minHeight: 0 }, children: _jsx(LoadingSpinner, { label: "", size: 18 }) })), _jsx(FaCheckCircle, { size: 28 }), " Create New Quota"] }), (addQuotaResult.isError || errorMessage) && (_jsx(Alert, { variant: "danger", className: "mt-3", children: errorMessage ||
-                                                        JSON.stringify("data" in addQuotaResult.error
-                                                            ? addQuotaResult.error.data
-                                                            : addQuotaResult.error) })), (addQuotaResult.isSuccess || successMessage) && (_jsx(Alert, { variant: "success", className: "mt-3", children: successMessage || "Saved successfully." }))] })] }), _jsxs(Accordion.Item, { eventKey: "0", children: [_jsxs(Accordion.Header, { children: [_jsx(FaCogs, { size: 28 }), " \u00A0Server Messages"] }), _jsxs(Accordion.Body, { children: ["errors: ", JSON.stringify(errors), _jsx("br", {}), "addQuotaResult: ", JSON.stringify(addQuotaResult)] })] })] }) }));
-                } }), createdObjectId && (_jsx(PermissionDialog, { objectType: "com.valkyrlabs.model.Quota", objectId: createdObjectId, isVisible: showPermissionDialog, onClose: handlePermissionDialogClose, onSave: handlePermissionsSave, currentUser: currentUser }))] }));
+      }
+      setSuccessMessage("Saved successfully.");
+    } catch (error) {
+      console.error("Failed to create Quota:", error);
+      setErrorMessage("Failed to save. Please try again.");
+    }
+    setSubmitting(false);
+  };
+  return _jsxs("div", {
+    children: [
+      _jsx(Formik, {
+        validateOnBlur: true,
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: handleSubmit,
+        children: ({
+          isSubmitting,
+          isValid,
+          errors,
+          values,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => {
+          const isSaving = isSubmitting || addQuotaResult.isLoading;
+          return _jsx("form", {
+            onSubmit: handleSubmit,
+            className: "form",
+            children: _jsxs(Accordion, {
+              defaultActiveKey: "1",
+              children: [
+                _jsxs(Accordion.Item, {
+                  eventKey: "1",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaRegPlusSquare, { size: 28 }),
+                        " \u00A0 Add New Quota",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        _jsxs("label", {
+                          htmlFor: "principalId",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Principal Id:",
+                                touched.principalId &&
+                                  !errors.principalId &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "principalId",
+                              value: values?.principalId,
+                              placeholder: "Principal Id",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "principalId",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "resourceType",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Resource Type:",
+                                touched.resourceType &&
+                                  !errors.resourceType &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "resourceType",
+                              value: values.resourceType || "",
+                              className: errors.resourceType
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("resourceType", true);
+                                setFieldValue(
+                                  "resourceType",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Resource Type",
+                                }),
+                                _jsx(ResourceTypeLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "resourceType",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "maxConcurrent",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Max Concurrent:",
+                                touched.maxConcurrent &&
+                                  !errors.maxConcurrent &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "maxConcurrent",
+                              type: "number",
+                              value: values.maxConcurrent || "",
+                              onChange: (e) => {
+                                setFieldTouched("maxConcurrent", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "maxConcurrent",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.maxConcurrent
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "maxConcurrent",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "maxPerHour",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Max Per Hour:",
+                                touched.maxPerHour &&
+                                  !errors.maxPerHour &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "maxPerHour",
+                              type: "number",
+                              value: values.maxPerHour || "",
+                              onChange: (e) => {
+                                setFieldTouched("maxPerHour", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "maxPerHour",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.maxPerHour
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "maxPerHour",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "maxPerDay",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Max Per Day:",
+                                touched.maxPerDay &&
+                                  !errors.maxPerDay &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "maxPerDay",
+                              type: "number",
+                              value: values.maxPerDay || "",
+                              onChange: (e) => {
+                                setFieldTouched("maxPerDay", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "maxPerDay",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.maxPerDay
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "maxPerDay",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "currentConcurrent",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Current Concurrent:",
+                                touched.currentConcurrent &&
+                                  !errors.currentConcurrent &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "currentConcurrent",
+                              type: "number",
+                              value: values.currentConcurrent || "",
+                              onChange: (e) => {
+                                setFieldTouched("currentConcurrent", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "currentConcurrent",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.currentConcurrent
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "currentConcurrent",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "currentHourCount",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Current Hour Count:",
+                                touched.currentHourCount &&
+                                  !errors.currentHourCount &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "currentHourCount",
+                              type: "number",
+                              value: values.currentHourCount || "",
+                              onChange: (e) => {
+                                setFieldTouched("currentHourCount", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "currentHourCount",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.currentHourCount
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "currentHourCount",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "currentDayCount",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Current Day Count:",
+                                touched.currentDayCount &&
+                                  !errors.currentDayCount &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "currentDayCount",
+                              type: "number",
+                              value: values.currentDayCount || "",
+                              onChange: (e) => {
+                                setFieldTouched("currentDayCount", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "currentDayCount",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.currentDayCount
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "currentDayCount",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "hourResetAt",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Hour Reset At:",
+                                touched.hourResetAt &&
+                                  !errors.hourResetAt &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "hourResetAt",
+                              type: "datetime-local",
+                              value: values.hourResetAt
+                                ? new Date(values.hourResetAt)
+                                    .toISOString()
+                                    .slice(0, 16)
+                                : "",
+                              onChange: (e) => {
+                                setFieldTouched("hourResetAt", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "hourResetAt",
+                                  v ? new Date(v).toISOString() : "",
+                                );
+                              },
+                              className: errors.hourResetAt
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "hourResetAt",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "dayResetAt",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Day Reset At:",
+                                touched.dayResetAt &&
+                                  !errors.dayResetAt &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "dayResetAt",
+                              type: "datetime-local",
+                              value: values.dayResetAt
+                                ? new Date(values.dayResetAt)
+                                    .toISOString()
+                                    .slice(0, 16)
+                                : "",
+                              onChange: (e) => {
+                                setFieldTouched("dayResetAt", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "dayResetAt",
+                                  v ? new Date(v).toISOString() : "",
+                                );
+                              },
+                              className: errors.dayResetAt
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "dayResetAt",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "trashed",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Trashed:",
+                                touched.trashed &&
+                                  !errors.trashed &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "trashed",
+                              name: "trashed",
+                              checked: values.trashed || false,
+                              onChange: (e) => {
+                                setFieldTouched("trashed", true);
+                                setFieldValue("trashed", e.target.checked);
+                              },
+                              isInvalid: !!errors.trashed,
+                              className: errors.trashed ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "trashed",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs(CoolButton, {
+                          variant: isValid
+                            ? isSaving
+                              ? "disabled"
+                              : "success"
+                            : "warning",
+                          type: "submit",
+                          disabled: !isValid || isSaving,
+                          children: [
+                            isSaving &&
+                              _jsx("span", {
+                                style: { float: "left", minHeight: 0 },
+                                children: _jsx(LoadingSpinner, {
+                                  label: "",
+                                  size: 18,
+                                }),
+                              }),
+                            _jsx(FaCheckCircle, { size: 28 }),
+                            " Create New Quota",
+                          ],
+                        }),
+                        (addQuotaResult.isError || errorMessage) &&
+                          _jsx(Alert, {
+                            variant: "danger",
+                            className: "mt-3",
+                            children:
+                              errorMessage ||
+                              JSON.stringify(
+                                "data" in addQuotaResult.error
+                                  ? addQuotaResult.error.data
+                                  : addQuotaResult.error,
+                              ),
+                          }),
+                        (addQuotaResult.isSuccess || successMessage) &&
+                          _jsx(Alert, {
+                            variant: "success",
+                            className: "mt-3",
+                            children: successMessage || "Saved successfully.",
+                          }),
+                      ],
+                    }),
+                  ],
+                }),
+                _jsxs(Accordion.Item, {
+                  eventKey: "0",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaCogs, { size: 28 }),
+                        " \u00A0Server Messages",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        "errors: ",
+                        JSON.stringify(errors),
+                        _jsx("br", {}),
+                        "addQuotaResult: ",
+                        JSON.stringify(addQuotaResult),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          });
+        },
+      }),
+      createdObjectId &&
+        _jsx(PermissionDialog, {
+          objectType: "com.valkyrlabs.model.Quota",
+          objectId: createdObjectId,
+          isVisible: showPermissionDialog,
+          onClose: handlePermissionDialogClose,
+          onSave: handlePermissionsSave,
+          currentUser: currentUser,
+        }),
+    ],
+  });
 };
 /*
 lowercase resourcetypelookup
@@ -252,7 +773,18 @@ camelcase resourceTypeLookup
 kebabcase resource-type-lookup
 */
 const ResourceTypeLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "WORKFLOW_EXECUTION", label: "Workflow Execution" }), _jsx("option", { value: "API_CALL", label: "Api Call" }), _jsx("option", { value: "LLM_REQUEST", label: "Llm Request" }), _jsx("option", { value: "EMAIL_SEND", label: "Email Send" }), _jsx("option", { value: "FILE_UPLOAD", label: "File Upload" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", {
+        value: "WORKFLOW_EXECUTION",
+        label: "Workflow Execution",
+      }),
+      _jsx("option", { value: "API_CALL", label: "Api Call" }),
+      _jsx("option", { value: "LLM_REQUEST", label: "Llm Request" }),
+      _jsx("option", { value: "EMAIL_SEND", label: "Email Send" }),
+      _jsx("option", { value: "FILE_UPLOAD", label: "File Upload" }),
+    ],
+  });
 };
 /* Export the generated form */
 export default QuotaForm;

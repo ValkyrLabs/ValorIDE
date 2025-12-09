@@ -28,62 +28,71 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { FormatFromJSON, FormatToJSON, FormulaFromJSON, FormulaToJSON, SheetColumnFromJSON, SheetColumnToJSON, SheetRowFromJSON, SheetRowToJSON, } from "./";
+import {
+  FormatFromJSON,
+  FormatToJSON,
+  FormulaFromJSON,
+  FormulaToJSON,
+  SheetColumnFromJSON,
+  SheetColumnToJSON,
+  SheetRowFromJSON,
+  SheetRowToJSON,
+} from "./";
 export function CellFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
-        comment: !exists(json, "comment") ? undefined : json["comment"],
-        hyperlink: !exists(json, "hyperlink") ? undefined : json["hyperlink"],
-        row: !exists(json, "row") ? undefined : SheetRowFromJSON(json["row"]),
-        column: !exists(json, "column")
-            ? undefined
-            : SheetColumnFromJSON(json["column"]),
-        stringValue: !exists(json, "stringValue") ? undefined : json["stringValue"],
-        numberValue: !exists(json, "numberValue") ? undefined : json["numberValue"],
-        formula: !exists(json, "formula")
-            ? undefined
-            : FormulaFromJSON(json["formula"]),
-        format: !exists(json, "format")
-            ? undefined
-            : FormatFromJSON(json["format"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
+    comment: !exists(json, "comment") ? undefined : json["comment"],
+    hyperlink: !exists(json, "hyperlink") ? undefined : json["hyperlink"],
+    row: !exists(json, "row") ? undefined : SheetRowFromJSON(json["row"]),
+    column: !exists(json, "column")
+      ? undefined
+      : SheetColumnFromJSON(json["column"]),
+    stringValue: !exists(json, "stringValue") ? undefined : json["stringValue"],
+    numberValue: !exists(json, "numberValue") ? undefined : json["numberValue"],
+    formula: !exists(json, "formula")
+      ? undefined
+      : FormulaFromJSON(json["formula"]),
+    format: !exists(json, "format")
+      ? undefined
+      : FormatFromJSON(json["format"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function CellToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        sheetId: value.sheetId,
-        comment: value.comment,
-        hyperlink: value.hyperlink,
-        row: SheetRowToJSON(value.row),
-        column: SheetColumnToJSON(value.column),
-        stringValue: value.stringValue,
-        numberValue: value.numberValue,
-        formula: FormulaToJSON(value.formula),
-        format: FormatToJSON(value.format),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    sheetId: value.sheetId,
+    comment: value.comment,
+    hyperlink: value.hyperlink,
+    row: SheetRowToJSON(value.row),
+    column: SheetColumnToJSON(value.column),
+    stringValue: value.stringValue,
+    numberValue: value.numberValue,
+    formula: FormulaToJSON(value.formula),
+    format: FormatToJSON(value.format),
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=Cell.js.map

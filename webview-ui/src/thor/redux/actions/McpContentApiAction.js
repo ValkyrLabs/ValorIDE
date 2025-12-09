@@ -31,60 +31,60 @@ export const LIST_MCPCONTENT_REQUEST = "LIST_MCPCONTENT_REQUEST";
 export const LIST_MCPCONTENT_SUCCESS = "LIST_MCPCONTENT_SUCCESS";
 export const LIST_MCPCONTENT_FAILURE = "LIST_MCPCONTENT_FAILURE";
 export const addMcpContentRequest = () => ({
-    type: ADD_MCPCONTENT_REQUEST,
+  type: ADD_MCPCONTENT_REQUEST,
 });
 export const addMcpContentSuccess = (McpContents) => ({
-    type: ADD_MCPCONTENT_SUCCESS,
-    payload: McpContents,
+  type: ADD_MCPCONTENT_SUCCESS,
+  payload: McpContents,
 });
 export const addMcpContentFailure = (error) => ({
-    type: ADD_MCPCONTENT_FAILURE,
-    payload: error,
+  type: ADD_MCPCONTENT_FAILURE,
+  payload: error,
 });
 export const fetchMcpContentRequest = () => ({
-    type: FETCH_MCPCONTENT_REQUEST,
+  type: FETCH_MCPCONTENT_REQUEST,
 });
 export const fetchMcpContentSuccess = (McpContents) => ({
-    type: FETCH_MCPCONTENT_SUCCESS,
-    payload: McpContents,
+  type: FETCH_MCPCONTENT_SUCCESS,
+  payload: McpContents,
 });
 export const fetchMcpContentFailure = (error) => ({
-    type: FETCH_MCPCONTENT_FAILURE,
-    payload: error,
+  type: FETCH_MCPCONTENT_FAILURE,
+  payload: error,
 });
 export const listMcpContentRequest = () => ({
-    type: LIST_MCPCONTENT_REQUEST,
+  type: LIST_MCPCONTENT_REQUEST,
 });
 export const listMcpContentSuccess = (McpContents) => ({
-    type: LIST_MCPCONTENT_SUCCESS,
-    payload: McpContents,
+  type: LIST_MCPCONTENT_SUCCESS,
+  payload: McpContents,
 });
 export const listMcpContentFailure = (error) => ({
-    type: LIST_MCPCONTENT_FAILURE,
-    payload: error,
+  type: LIST_MCPCONTENT_FAILURE,
+  payload: error,
 });
 export const updateMcpContentRequest = (McpContent) => ({
-    type: UPDATE_MCPCONTENT_REQUEST,
-    payload: McpContent,
+  type: UPDATE_MCPCONTENT_REQUEST,
+  payload: McpContent,
 });
 export const updateMcpContentSuccess = (McpContent) => ({
-    type: UPDATE_MCPCONTENT_SUCCESS,
-    payload: McpContent,
+  type: UPDATE_MCPCONTENT_SUCCESS,
+  payload: McpContent,
 });
 export const updateMcpContentFailure = (error) => ({
-    type: UPDATE_MCPCONTENT_FAILURE,
-    payload: error,
+  type: UPDATE_MCPCONTENT_FAILURE,
+  payload: error,
 });
 export const deleteMcpContentRequest = (McpContent) => ({
-    type: DELETE_MCPCONTENT_REQUEST,
-    payload: McpContent,
+  type: DELETE_MCPCONTENT_REQUEST,
+  payload: McpContent,
 });
 export const deleteMcpContentSuccess = (McpContent) => ({
-    type: DELETE_MCPCONTENT_SUCCESS,
-    payload: McpContent,
+  type: DELETE_MCPCONTENT_SUCCESS,
+  payload: McpContent,
 });
 export const deleteMcpContentFailure = (error) => ({
-    type: DELETE_MCPCONTENT_FAILURE,
-    payload: error,
+  type: DELETE_MCPCONTENT_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=McpContentApiAction.js.map

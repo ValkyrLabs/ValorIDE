@@ -29,51 +29,51 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function IntegrationAccountFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        accountName: !exists(json, "accountName") ? undefined : json["accountName"],
-        username: !exists(json, "username") ? undefined : json["username"],
-        password: !exists(json, "password") ? undefined : json["password"],
-        apiKey: !exists(json, "apiKey") ? undefined : json["apiKey"],
-        accountId: !exists(json, "accountId") ? undefined : json["accountId"],
-        status: !exists(json, "status") ? undefined : json["status"],
-        verified: !exists(json, "verified") ? undefined : json["verified"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    accountName: !exists(json, "accountName") ? undefined : json["accountName"],
+    username: !exists(json, "username") ? undefined : json["username"],
+    password: !exists(json, "password") ? undefined : json["password"],
+    apiKey: !exists(json, "apiKey") ? undefined : json["apiKey"],
+    accountId: !exists(json, "accountId") ? undefined : json["accountId"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    verified: !exists(json, "verified") ? undefined : json["verified"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function IntegrationAccountToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        accountName: value.accountName,
-        username: value.username,
-        password: value.password,
-        apiKey: value.apiKey,
-        accountId: value.accountId,
-        status: value.status,
-        verified: value.verified,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    accountName: value.accountName,
+    username: value.username,
+    password: value.password,
+    apiKey: value.apiKey,
+    accountId: value.accountId,
+    status: value.status,
+    verified: value.verified,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -81,9 +81,9 @@ export function IntegrationAccountToJSON(value) {
  */
 export var IntegrationAccountStatusEnum;
 (function (IntegrationAccountStatusEnum) {
-    IntegrationAccountStatusEnum["READY"] = "ready";
-    IntegrationAccountStatusEnum["CLOSED"] = "closed";
-    IntegrationAccountStatusEnum["EXECUTED"] = "executed";
-    IntegrationAccountStatusEnum["ERROR"] = "error";
+  IntegrationAccountStatusEnum["READY"] = "ready";
+  IntegrationAccountStatusEnum["CLOSED"] = "closed";
+  IntegrationAccountStatusEnum["EXECUTED"] = "executed";
+  IntegrationAccountStatusEnum["ERROR"] = "error";
 })(IntegrationAccountStatusEnum || (IntegrationAccountStatusEnum = {}));
 //# sourceMappingURL=IntegrationAccount.js.map

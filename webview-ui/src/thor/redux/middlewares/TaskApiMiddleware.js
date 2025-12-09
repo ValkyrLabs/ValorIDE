@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Task
 */
-export const TaskMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const TaskMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Task MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=TaskApiMiddleware.js.map

@@ -17,117 +17,131 @@ Template file: typescript-redux-query/modelService.mustache
 import { createApi } from "@reduxjs/toolkit/query/react";
 import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 export const UpdateFileRequestService = createApi({
-    reducerPath: "UpdateFileRequest", // This should remain unique
-    baseQuery: customBaseQuery,
-    tagTypes: ["UpdateFileRequest"],
-    endpoints: (build) => ({
-        // 1) Paged Query Endpoint
-        // Standardized pagination: page (0-based), size (page size)
-        getUpdateFileRequestsPaged: build.query({
-            query: ({ page, size = 20, example }) => {
-                const q = [`page=${page}`, `size=${size}`];
-                if (example)
-                    q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-                return `UpdateFileRequest?${q.join("&")}`;
-            },
-            providesTags: (result, error, { page }) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "UpdateFileRequest",
-                        id,
-                    })),
-                    { type: "UpdateFileRequest", id: `PAGE_${page}` },
-                ]
-                : [],
-        }),
-        // 2) Simple "get all" Query (optional)
-        getUpdateFileRequests: build.query({
-            query: (arg) => {
-                if (arg && arg.example) {
-                    const ex = arg.example;
-                    return `UpdateFileRequest?example=${encodeURIComponent(JSON.stringify(ex))}`;
-                }
-                return `UpdateFileRequest`;
-            },
-            providesTags: (result) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "UpdateFileRequest",
-                        id,
-                    })),
-                    { type: "UpdateFileRequest", id: "LIST" },
-                ]
-                : [{ type: "UpdateFileRequest", id: "LIST" }],
-        }),
-        // 3) Create
-        addUpdateFileRequest: build.mutation({
-            query: (body) => ({
-                url: `UpdateFileRequest`,
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "UpdateFileRequest", id: "LIST" }],
-        }),
-        // 4) Get single by ID
-        getUpdateFileRequest: build.query({
-            query: (id) => `UpdateFileRequest/${id}`,
-            providesTags: (result, error, id) => [{ type: "UpdateFileRequest", id }],
-        }),
-        // 5) Update
-        updateUpdateFileRequest: build.mutation({
-            query: ({ id, ...patch }) => ({
-                url: `UpdateFileRequest/${id}`,
-                method: "PUT",
-                body: patch,
-            }),
-            async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-                if (id) {
-                    const patchResult = dispatch(UpdateFileRequestService.util.updateQueryData("getUpdateFileRequest", id, (draft) => {
-                        Object.assign(draft, patch);
-                    }));
-                    try {
-                        await queryFulfilled;
-                    }
-                    catch {
-                        patchResult.undo();
-                    }
-                }
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "UpdateFileRequest", id },
-                { type: "UpdateFileRequest", id: "LIST" },
-            ],
-        }),
-        // 6) Delete
-        deleteUpdateFileRequest: build.mutation({
-            query(id) {
-                return {
-                    url: `UpdateFileRequest/${id}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, id) => [
-                { type: "UpdateFileRequest", id },
-            ],
-        }),
-        // 7) Cascade / soft-delete (marks trashed, cascades children)
-        deleteUpdateFileRequestCascade: build.mutation({
-            query({ id, cascade = true, trash = true }) {
-                const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
-                return {
-                    url: `UpdateFileRequest/${id}?${params}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "UpdateFileRequest", id },
-                { type: "UpdateFileRequest", id: "LIST" },
-            ],
-        }),
+  reducerPath: "UpdateFileRequest", // This should remain unique
+  baseQuery: customBaseQuery,
+  tagTypes: ["UpdateFileRequest"],
+  endpoints: (build) => ({
+    // 1) Paged Query Endpoint
+    // Standardized pagination: page (0-based), size (page size)
+    getUpdateFileRequestsPaged: build.query({
+      query: ({ page, size = 20, example }) => {
+        const q = [`page=${page}`, `size=${size}`];
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `UpdateFileRequest?${q.join("&")}`;
+      },
+      providesTags: (result, error, { page }) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "UpdateFileRequest",
+                id,
+              })),
+              { type: "UpdateFileRequest", id: `PAGE_${page}` },
+            ]
+          : [],
     }),
+    // 2) Simple "get all" Query (optional)
+    getUpdateFileRequests: build.query({
+      query: (arg) => {
+        if (arg && arg.example) {
+          const ex = arg.example;
+          return `UpdateFileRequest?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `UpdateFileRequest`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "UpdateFileRequest",
+                id,
+              })),
+              { type: "UpdateFileRequest", id: "LIST" },
+            ]
+          : [{ type: "UpdateFileRequest", id: "LIST" }],
+    }),
+    // 3) Create
+    addUpdateFileRequest: build.mutation({
+      query: (body) => ({
+        url: `UpdateFileRequest`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "UpdateFileRequest", id: "LIST" }],
+    }),
+    // 4) Get single by ID
+    getUpdateFileRequest: build.query({
+      query: (id) => `UpdateFileRequest/${id}`,
+      providesTags: (result, error, id) => [{ type: "UpdateFileRequest", id }],
+    }),
+    // 5) Update
+    updateUpdateFileRequest: build.mutation({
+      query: ({ id, ...patch }) => ({
+        url: `UpdateFileRequest/${id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        if (id) {
+          const patchResult = dispatch(
+            UpdateFileRequestService.util.updateQueryData(
+              "getUpdateFileRequest",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        }
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "UpdateFileRequest", id },
+        { type: "UpdateFileRequest", id: "LIST" },
+      ],
+    }),
+    // 6) Delete
+    deleteUpdateFileRequest: build.mutation({
+      query(id) {
+        return {
+          url: `UpdateFileRequest/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, id) => [
+        { type: "UpdateFileRequest", id },
+      ],
+    }),
+    // 7) Cascade / soft-delete (marks trashed, cascades children)
+    deleteUpdateFileRequestCascade: build.mutation({
+      query({ id, cascade = true, trash = true }) {
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        return {
+          url: `UpdateFileRequest/${id}?${params}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "UpdateFileRequest", id },
+        { type: "UpdateFileRequest", id: "LIST" },
+      ],
+    }),
+  }),
 });
 // Notice we now also export `useLazyGetUpdateFileRequestsPagedQuery`
-export const { useGetUpdateFileRequestsPagedQuery, // immediate fetch
-useLazyGetUpdateFileRequestsPagedQuery, // lazy fetch
-useGetUpdateFileRequestQuery, useGetUpdateFileRequestsQuery, useAddUpdateFileRequestMutation, useUpdateUpdateFileRequestMutation, useDeleteUpdateFileRequestMutation, useDeleteUpdateFileRequestCascadeMutation, } = UpdateFileRequestService;
+export const {
+  useGetUpdateFileRequestsPagedQuery, // immediate fetch
+  useLazyGetUpdateFileRequestsPagedQuery, // lazy fetch
+  useGetUpdateFileRequestQuery,
+  useGetUpdateFileRequestsQuery,
+  useAddUpdateFileRequestMutation,
+  useUpdateUpdateFileRequestMutation,
+  useDeleteUpdateFileRequestMutation,
+  useDeleteUpdateFileRequestCascadeMutation,
+} = UpdateFileRequestService;
 //# sourceMappingURL=UpdateFileRequestService.js.map

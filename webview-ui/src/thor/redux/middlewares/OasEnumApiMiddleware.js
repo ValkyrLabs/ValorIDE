@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: OasEnum
 */
-export const OasEnumMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const OasEnumMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("OasEnum MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=OasEnumApiMiddleware.js.map

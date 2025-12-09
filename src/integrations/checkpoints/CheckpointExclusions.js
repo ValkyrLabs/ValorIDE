@@ -37,244 +37,244 @@ import { GIT_DISABLED_SUFFIX } from "./CheckpointGitOperations";
  * @todo Make this configurable by the user
  */
 export const getDefaultExclusions = (lfsPatterns = []) => [
-    // Build and Development Artifacts
-    ".git/",
-    `.git${GIT_DISABLED_SUFFIX}/`,
-    ...getBuildArtifactPatterns(),
-    // Media Files
-    ...getMediaFilePatterns(),
-    // Cache and Temporary Files
-    ...getCacheFilePatterns(),
-    // Environment and Config Files
-    ...getConfigFilePatterns(),
-    // Large Data Files
-    ...getLargeDataFilePatterns(),
-    // Database Files
-    ...getDatabaseFilePatterns(),
-    // Geospatial Datasets
-    ...getGeospatialPatterns(),
-    // Log Files
-    ...getLogFilePatterns(),
-    ...lfsPatterns,
+  // Build and Development Artifacts
+  ".git/",
+  `.git${GIT_DISABLED_SUFFIX}/`,
+  ...getBuildArtifactPatterns(),
+  // Media Files
+  ...getMediaFilePatterns(),
+  // Cache and Temporary Files
+  ...getCacheFilePatterns(),
+  // Environment and Config Files
+  ...getConfigFilePatterns(),
+  // Large Data Files
+  ...getLargeDataFilePatterns(),
+  // Database Files
+  ...getDatabaseFilePatterns(),
+  // Geospatial Datasets
+  ...getGeospatialPatterns(),
+  // Log Files
+  ...getLogFilePatterns(),
+  ...lfsPatterns,
 ];
 /**
  * Returns patterns for common build and development artifact directories
  * @returns Array of glob patterns for build artifacts
  */
 function getBuildArtifactPatterns() {
-    return [
-        ".gradle/",
-        ".idea/",
-        ".parcel-cache/",
-        ".pytest_cache/",
-        ".next/",
-        ".nuxt/",
-        ".sass-cache/",
-        ".vs/",
-        ".vscode/",
-        "Pods/",
-        "__pycache__/",
-        "bin/",
-        "build/",
-        "bundle/",
-        "coverage/",
-        "deps/",
-        "dist/",
-        "env/",
-        "node_modules/",
-        "obj/",
-        "out/",
-        "pkg/",
-        "pycache/",
-        "target/dependency/",
-        "temp/",
-        "vendor/",
-        "venv/",
-    ];
+  return [
+    ".gradle/",
+    ".idea/",
+    ".parcel-cache/",
+    ".pytest_cache/",
+    ".next/",
+    ".nuxt/",
+    ".sass-cache/",
+    ".vs/",
+    ".vscode/",
+    "Pods/",
+    "__pycache__/",
+    "bin/",
+    "build/",
+    "bundle/",
+    "coverage/",
+    "deps/",
+    "dist/",
+    "env/",
+    "node_modules/",
+    "obj/",
+    "out/",
+    "pkg/",
+    "pycache/",
+    "target/dependency/",
+    "temp/",
+    "vendor/",
+    "venv/",
+  ];
 }
 /**
  * Returns patterns for common media and image file types
  * @returns Array of glob patterns for media files
  */
 function getMediaFilePatterns() {
-    return [
-        "*.jpg",
-        "*.jpeg",
-        "*.png",
-        "*.gif",
-        "*.bmp",
-        "*.ico",
-        "*.webp",
-        "*.tiff",
-        "*.tif",
-        // "*.svg",
-        "*.raw",
-        "*.heic",
-        "*.avif",
-        "*.eps",
-        "*.psd",
-        "*.3gp",
-        "*.aac",
-        "*.aiff",
-        "*.asf",
-        "*.avi",
-        "*.divx",
-        "*.flac",
-        "*.m4a",
-        "*.m4v",
-        "*.mkv",
-        "*.mov",
-        "*.mp3",
-        "*.mp4",
-        "*.mpeg",
-        "*.mpg",
-        "*.ogg",
-        "*.opus",
-        "*.rm",
-        "*.rmvb",
-        "*.vob",
-        "*.wav",
-        "*.webm",
-        "*.wma",
-        "*.wmv",
-    ];
+  return [
+    "*.jpg",
+    "*.jpeg",
+    "*.png",
+    "*.gif",
+    "*.bmp",
+    "*.ico",
+    "*.webp",
+    "*.tiff",
+    "*.tif",
+    // "*.svg",
+    "*.raw",
+    "*.heic",
+    "*.avif",
+    "*.eps",
+    "*.psd",
+    "*.3gp",
+    "*.aac",
+    "*.aiff",
+    "*.asf",
+    "*.avi",
+    "*.divx",
+    "*.flac",
+    "*.m4a",
+    "*.m4v",
+    "*.mkv",
+    "*.mov",
+    "*.mp3",
+    "*.mp4",
+    "*.mpeg",
+    "*.mpg",
+    "*.ogg",
+    "*.opus",
+    "*.rm",
+    "*.rmvb",
+    "*.vob",
+    "*.wav",
+    "*.webm",
+    "*.wma",
+    "*.wmv",
+  ];
 }
 /**
  * Returns patterns for cache, temporary, and system files
  * @returns Array of glob patterns for cache files
  */
 function getCacheFilePatterns() {
-    return [
-        "*.DS_Store",
-        "*.bak",
-        "*.cache",
-        "*.crdownload",
-        "*.dmp",
-        "*.dump",
-        "*.eslintcache",
-        "*.lock",
-        "*.log",
-        "*.old",
-        "*.part",
-        "*.partial",
-        "*.pyc",
-        "*.pyo",
-        "*.stackdump",
-        "*.swo",
-        "*.swp",
-        "*.temp",
-        "*.tmp",
-        "*.Thumbs.db",
-    ];
+  return [
+    "*.DS_Store",
+    "*.bak",
+    "*.cache",
+    "*.crdownload",
+    "*.dmp",
+    "*.dump",
+    "*.eslintcache",
+    "*.lock",
+    "*.log",
+    "*.old",
+    "*.part",
+    "*.partial",
+    "*.pyc",
+    "*.pyo",
+    "*.stackdump",
+    "*.swo",
+    "*.swp",
+    "*.temp",
+    "*.tmp",
+    "*.Thumbs.db",
+  ];
 }
 /**
  * Returns patterns for environment and configuration files
  * @returns Array of glob patterns for config files
  */
 function getConfigFilePatterns() {
-    return ["*.env*", "*.local", "*.development", "*.production"];
+  return ["*.env*", "*.local", "*.development", "*.production"];
 }
 /**
  * Returns patterns for common large binary and archive files
  * @returns Array of glob patterns for large data files
  */
 function getLargeDataFilePatterns() {
-    return [
-        "*.zip",
-        "*.tar",
-        "*.gz",
-        "*.rar",
-        "*.7z",
-        "*.iso",
-        "*.bin",
-        "*.exe",
-        "*.dll",
-        "*.so",
-        "*.dylib",
-        "*.dat",
-        "*.dmg",
-        "*.msi",
-    ];
+  return [
+    "*.zip",
+    "*.tar",
+    "*.gz",
+    "*.rar",
+    "*.7z",
+    "*.iso",
+    "*.bin",
+    "*.exe",
+    "*.dll",
+    "*.so",
+    "*.dylib",
+    "*.dat",
+    "*.dmg",
+    "*.msi",
+  ];
 }
 /**
  * Returns patterns for database and data storage files
  * @returns Array of glob patterns for database files
  */
 function getDatabaseFilePatterns() {
-    return [
-        "*.arrow",
-        "*.accdb",
-        "*.aof",
-        "*.avro",
-        "*.bak",
-        "*.bson",
-        "*.csv",
-        "*.db",
-        "*.dbf",
-        "*.dmp",
-        "*.frm",
-        "*.ibd",
-        "*.mdb",
-        "*.myd",
-        "*.myi",
-        "*.orc",
-        "*.parquet",
-        "*.pdb",
-        "*.rdb",
-        "*.sql",
-        "*.sqlite",
-    ];
+  return [
+    "*.arrow",
+    "*.accdb",
+    "*.aof",
+    "*.avro",
+    "*.bak",
+    "*.bson",
+    "*.csv",
+    "*.db",
+    "*.dbf",
+    "*.dmp",
+    "*.frm",
+    "*.ibd",
+    "*.mdb",
+    "*.myd",
+    "*.myi",
+    "*.orc",
+    "*.parquet",
+    "*.pdb",
+    "*.rdb",
+    "*.sql",
+    "*.sqlite",
+  ];
 }
 /**
  * Returns patterns for geospatial and mapping data files
  * @returns Array of glob patterns for geospatial files
  */
 function getGeospatialPatterns() {
-    return [
-        "*.shp",
-        "*.shx",
-        "*.dbf",
-        "*.prj",
-        "*.sbn",
-        "*.sbx",
-        "*.shp.xml",
-        "*.cpg",
-        "*.gdb",
-        "*.mdb",
-        "*.gpkg",
-        "*.kml",
-        "*.kmz",
-        "*.gml",
-        "*.geojson",
-        "*.dem",
-        "*.asc",
-        "*.img",
-        "*.ecw",
-        "*.las",
-        "*.laz",
-        "*.mxd",
-        "*.qgs",
-        "*.grd",
-        "*.csv",
-        "*.dwg",
-        "*.dxf",
-    ];
+  return [
+    "*.shp",
+    "*.shx",
+    "*.dbf",
+    "*.prj",
+    "*.sbn",
+    "*.sbx",
+    "*.shp.xml",
+    "*.cpg",
+    "*.gdb",
+    "*.mdb",
+    "*.gpkg",
+    "*.kml",
+    "*.kmz",
+    "*.gml",
+    "*.geojson",
+    "*.dem",
+    "*.asc",
+    "*.img",
+    "*.ecw",
+    "*.las",
+    "*.laz",
+    "*.mxd",
+    "*.qgs",
+    "*.grd",
+    "*.csv",
+    "*.dwg",
+    "*.dxf",
+  ];
 }
 /**
  * Returns patterns for log and debug output files
  * @returns Array of glob patterns for log files
  */
 function getLogFilePatterns() {
-    return [
-        "*.error",
-        "*.log",
-        "*.logs",
-        "*.npm-debug.log*",
-        "*.out",
-        "*.stdout",
-        "yarn-debug.log*",
-        "yarn-error.log*",
-    ];
+  return [
+    "*.error",
+    "*.log",
+    "*.logs",
+    "*.npm-debug.log*",
+    "*.out",
+    "*.stdout",
+    "yarn-debug.log*",
+    "yarn-error.log*",
+  ];
 }
 /**
  * Writes the combined exclusion patterns to Git's exclude file.
@@ -284,10 +284,10 @@ function getLogFilePatterns() {
  * @param lfsPatterns - Optional array of Git LFS patterns to include
  */
 export const writeExcludesFile = async (gitPath, lfsPatterns = []) => {
-    const excludesPath = join(gitPath, "info", "exclude");
-    await fs.mkdir(join(gitPath, "info"), { recursive: true });
-    const patterns = getDefaultExclusions(lfsPatterns);
-    await fs.writeFile(excludesPath, patterns.join("\n"));
+  const excludesPath = join(gitPath, "info", "exclude");
+  await fs.mkdir(join(gitPath, "info"), { recursive: true });
+  const patterns = getDefaultExclusions(lfsPatterns);
+  await fs.writeFile(excludesPath, patterns.join("\n"));
 };
 /**
  * Retrieves Git LFS patterns from the workspace's .gitattributes file.
@@ -297,19 +297,18 @@ export const writeExcludesFile = async (gitPath, lfsPatterns = []) => {
  * @returns Array of Git LFS patterns found in .gitattributes
  */
 export const getLfsPatterns = async (workspacePath) => {
-    try {
-        const attributesPath = join(workspacePath, ".gitattributes");
-        if (await fileExistsAtPath(attributesPath)) {
-            const attributesContent = await fs.readFile(attributesPath, "utf8");
-            return attributesContent
-                .split("\n")
-                .filter((line) => line.includes("filter=lfs"))
-                .map((line) => line.split(" ")[0].trim());
-        }
+  try {
+    const attributesPath = join(workspacePath, ".gitattributes");
+    if (await fileExistsAtPath(attributesPath)) {
+      const attributesContent = await fs.readFile(attributesPath, "utf8");
+      return attributesContent
+        .split("\n")
+        .filter((line) => line.includes("filter=lfs"))
+        .map((line) => line.split(" ")[0].trim());
     }
-    catch (error) {
-        console.warn("Failed to read .gitattributes:", error);
-    }
-    return [];
+  } catch (error) {
+    console.warn("Failed to read .gitattributes:", error);
+  }
+  return [];
 };
 //# sourceMappingURL=CheckpointExclusions.js.map

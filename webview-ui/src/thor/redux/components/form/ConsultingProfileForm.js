@@ -1,4 +1,8 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import {
+  jsx as _jsx,
+  jsxs as _jsxs,
+  Fragment as _Fragment,
+} from "react/jsx-runtime";
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -15,16 +19,16 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, } from "formik";
+import { ErrorMessage, Field, Formik } from "formik";
 import { useState } from "react";
-import { Form as BSForm, Accordion, Alert, } from "react-bootstrap";
+import { Form as BSForm, Accordion, Alert } from "react-bootstrap";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import * as Yup from "yup";
 import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import { PermissionType, } from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionType } from "@valkyr/component-library/PermissionDialog/types";
 import { useAddConsultingProfileMutation } from "../../services/ConsultingProfileService";
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,194 +52,731 @@ Profile for candidates interested in consulting/reseller opportunities
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const ConsultingTypeValidation = () => {
-    return [
-        "INDEPENDENT_CONSULTANT",
-        "AGENCY_OWNER",
-        "FREELANCER",
-        "RESELLER_PARTNER",
-    ];
+  return [
+    "INDEPENDENT_CONSULTANT",
+    "AGENCY_OWNER",
+    "FREELANCER",
+    "RESELLER_PARTNER",
+  ];
 };
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
-const asNumber = (schema) => schema.transform((val, orig) => orig === "" || orig === null ? undefined : val);
+const asNumber = (schema) =>
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 const validationSchema = Yup.object().shape({
-    jobSeekerId: Yup.string().required("jobSeekerId is required."),
-    consultingType: Yup.mixed()
-        .oneOf(ConsultingTypeValidation(), "Invalid value for consultingType")
-        .required("consultingType is required."),
-    expertiseAreas: Yup.string(),
-    maximumHourlyRate: asNumber(Yup.number().typeError("maximumHourlyRate must be a number")),
-    minimumMonthlyCommitment: asNumber(Yup.number()
-        .integer()
-        .typeError("minimumMonthlyCommitment must be a number")),
-    geographicFocus: Yup.string(),
-    projectPortfolio: Yup.string(),
-    profileCompletionScore: asNumber(Yup.number().typeError("profileCompletionScore must be a number")),
-    isAvailable: Yup.boolean(),
-    availableStartDate: Yup.date()
-        .transform((value, originalValue) => {
-        if (!originalValue) {
-            return value;
-        }
-        const parsed = new Date(originalValue);
-        return Number.isNaN(parsed.getTime()) ? value : parsed;
+  jobSeekerId: Yup.string().required("jobSeekerId is required."),
+  consultingType: Yup.mixed()
+    .oneOf(ConsultingTypeValidation(), "Invalid value for consultingType")
+    .required("consultingType is required."),
+  expertiseAreas: Yup.string(),
+  maximumHourlyRate: asNumber(
+    Yup.number().typeError("maximumHourlyRate must be a number"),
+  ),
+  minimumMonthlyCommitment: asNumber(
+    Yup.number()
+      .integer()
+      .typeError("minimumMonthlyCommitment must be a number"),
+  ),
+  geographicFocus: Yup.string(),
+  projectPortfolio: Yup.string(),
+  profileCompletionScore: asNumber(
+    Yup.number().typeError("profileCompletionScore must be a number"),
+  ),
+  isAvailable: Yup.boolean(),
+  availableStartDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
     })
-        .typeError("availableStartDate must be a valid date"),
-    updatedDate: Yup.date()
-        .transform((value, originalValue) => {
-        if (!originalValue) {
-            return value;
-        }
-        const parsed = new Date(originalValue);
-        return Number.isNaN(parsed.getTime()) ? value : parsed;
+    .typeError("availableStartDate must be a valid date"),
+  updatedDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
     })
-        .typeError("updatedDate must be a valid date"),
-    trashed: Yup.boolean(),
+    .typeError("updatedDate must be a valid date"),
+  trashed: Yup.boolean(),
 });
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ConsultingProfileForm = () => {
-    const [addConsultingProfile, addConsultingProfileResult] = useAddConsultingProfileMutation();
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
-    // Permission Management State
-    const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-    const [createdObjectId, setCreatedObjectId] = useState(null);
-    // Mock current user - in real implementation, this would come from auth context
-    const currentUser = {
-        username: "current_user",
-        permissions: {
-            isOwner: true,
-            isAdmin: true,
-            canGrantPermissions: true,
-            permissions: [
-                PermissionType.READ,
-                PermissionType.WRITE,
-                PermissionType.CREATE,
-                PermissionType.DELETE,
-                PermissionType.ADMINISTRATION,
-            ],
-        },
-    };
-    /* -----------------------------------------------------
+  const [addConsultingProfile, addConsultingProfileResult] =
+    useAddConsultingProfileMutation();
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState(null);
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: "current_user",
+    permissions: {
+      isOwner: true,
+      isAdmin: true,
+      canGrantPermissions: true,
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
+    },
+  };
+  /* -----------------------------------------------------
        INITIAL VALUES - only NON read-only fields
     -------------------------------------------------------- */
-    const initialValues = {
-        jobSeekerId: "",
-        consultingType: undefined,
-        expertiseAreas: "",
-        maximumHourlyRate: 0,
-        minimumMonthlyCommitment: 0,
-        geographicFocus: "",
-        projectPortfolio: "",
-        profileCompletionScore: 0,
-        isAvailable: false,
-        availableStartDate: new Date(),
-        updatedDate: new Date(),
-        trashed: false,
-    };
-    // Permission Management Handlers
-    const handleManagePermissions = (objectId) => {
-        setCreatedObjectId(objectId);
-        setShowPermissionDialog(true);
-    };
-    const handlePermissionDialogClose = () => {
-        setShowPermissionDialog(false);
-        setCreatedObjectId(null);
-    };
-    const handlePermissionsSave = (grants) => {
-        console.log("Permissions saved for new ConsultingProfile:", grants);
-    };
-    /* SUBMIT HANDLER */
-    const handleSubmit = async (values, { setSubmitting }) => {
-        try {
-            setSuccessMessage(null);
-            setErrorMessage(null);
-            console.log("ConsultingProfile form values:", values);
-            // NOTE: depending on your generated endpoint, you may need { body: values }
-            const result = await addConsultingProfile(values).unwrap();
-            if (result && result.id && currentUser.permissions.canGrantPermissions) {
-                const shouldSetPermissions = window.confirm(`ConsultingProfile created successfully! Would you like to set permissions for this object?`);
-                if (shouldSetPermissions) {
-                    handleManagePermissions(result.id);
-                }
-            }
-            setSuccessMessage("Saved successfully.");
+  const initialValues = {
+    jobSeekerId: "",
+    consultingType: undefined,
+    expertiseAreas: "",
+    maximumHourlyRate: 0,
+    minimumMonthlyCommitment: 0,
+    geographicFocus: "",
+    projectPortfolio: "",
+    profileCompletionScore: 0,
+    isAvailable: false,
+    availableStartDate: new Date(),
+    updatedDate: new Date(),
+    trashed: false,
+  };
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+  const handlePermissionsSave = (grants) => {
+    console.log("Permissions saved for new ConsultingProfile:", grants);
+  };
+  /* SUBMIT HANDLER */
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      setSuccessMessage(null);
+      setErrorMessage(null);
+      console.log("ConsultingProfile form values:", values);
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addConsultingProfile(values).unwrap();
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `ConsultingProfile created successfully! Would you like to set permissions for this object?`,
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
         }
-        catch (error) {
-            console.error("Failed to create ConsultingProfile:", error);
-            setErrorMessage("Failed to save. Please try again.");
-        }
-        setSubmitting(false);
-    };
-    return (_jsxs("div", { children: [_jsx(Formik, { validateOnBlur: true, initialValues: initialValues, validationSchema: validationSchema, onSubmit: handleSubmit, children: ({ isSubmitting, isValid, errors, values, setFieldValue, touched, setFieldTouched, handleSubmit, }) => {
-                    const isSaving = isSubmitting || addConsultingProfileResult.isLoading;
-                    return (_jsx("form", { onSubmit: handleSubmit, className: "form", children: _jsxs(Accordion, { defaultActiveKey: "1", children: [_jsxs(Accordion.Item, { eventKey: "1", children: [_jsxs(Accordion.Header, { children: [_jsx(FaRegPlusSquare, { size: 28 }), " \u00A0 Add New ConsultingProfile"] }), _jsxs(Accordion.Body, { children: [_jsxs("label", { htmlFor: "jobSeekerId", className: "nice-form-control", children: [_jsxs("b", { children: ["Job Seeker Id:", touched.jobSeekerId && !errors.jobSeekerId && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "jobSeekerId", value: values?.jobSeekerId, placeholder: "Job Seeker Id", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "jobSeekerId", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "consultingType", className: "nice-form-control", children: [_jsxs("b", { children: ["Consulting Type:", touched.consultingType && !errors.consultingType && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "consultingType", value: values.consultingType || "", className: errors.consultingType
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("consultingType", true);
-                                                                setFieldValue("consultingType", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Consulting Type" }), _jsx(ConsultingTypeLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "consultingType", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "expertiseAreas", className: "nice-form-control", children: [_jsxs("b", { children: ["Expertise Areas:", touched.expertiseAreas && !errors.expertiseAreas && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "expertiseAreas", value: values?.expertiseAreas, placeholder: "Expertise Areas", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "expertiseAreas", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "maximumHourlyRate", className: "nice-form-control", children: [_jsxs("b", { children: ["Maximum Hourly Rate:", touched.maximumHourlyRate &&
-                                                                    !errors.maximumHourlyRate && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "maximumHourlyRate", type: "number", step: "any", value: values.maximumHourlyRate || "", onChange: (e) => {
-                                                                setFieldTouched("maximumHourlyRate", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("maximumHourlyRate", v === "" ? undefined : Number(v));
-                                                            }, className: errors.maximumHourlyRate
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "maximumHourlyRate", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "minimumMonthlyCommitment", className: "nice-form-control", children: [_jsxs("b", { children: ["Minimum Monthly Commitment:", touched.minimumMonthlyCommitment &&
-                                                                    !errors.minimumMonthlyCommitment && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "minimumMonthlyCommitment", type: "number", value: values.minimumMonthlyCommitment || "", onChange: (e) => {
-                                                                setFieldTouched("minimumMonthlyCommitment", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("minimumMonthlyCommitment", v === "" ? undefined : Number(v));
-                                                            }, className: errors.minimumMonthlyCommitment
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "minimumMonthlyCommitment", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "geographicFocus", className: "nice-form-control", children: [_jsxs("b", { children: ["Geographic Focus:", touched.geographicFocus && !errors.geographicFocus && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "geographicFocus", value: values?.geographicFocus, placeholder: "Geographic Focus", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "geographicFocus", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "projectPortfolio", className: "nice-form-control", children: [_jsxs("b", { children: ["Project Portfolio:", touched.projectPortfolio &&
-                                                                    !errors.projectPortfolio && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "projectPortfolio", value: values?.projectPortfolio, placeholder: "Project Portfolio", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "projectPortfolio", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "profileCompletionScore", className: "nice-form-control", children: [_jsxs("b", { children: ["Profile Completion Score:", touched.profileCompletionScore &&
-                                                                    !errors.profileCompletionScore && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "profileCompletionScore", type: "number", step: "any", value: values.profileCompletionScore || "", onChange: (e) => {
-                                                                setFieldTouched("profileCompletionScore", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("profileCompletionScore", v === "" ? undefined : Number(v));
-                                                            }, className: errors.profileCompletionScore
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "profileCompletionScore", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "isAvailable", className: "nice-form-control", children: [_jsxs("b", { children: ["Is Available:", touched.isAvailable && !errors.isAvailable && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "isAvailable", name: "isAvailable", checked: values.isAvailable || false, onChange: (e) => {
-                                                                setFieldTouched("isAvailable", true);
-                                                                setFieldValue("isAvailable", e.target.checked);
-                                                            }, isInvalid: !!errors.isAvailable, className: errors.isAvailable ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "isAvailable", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "availableStartDate", className: "nice-form-control", children: [_jsxs("b", { children: ["Available Start Date:", touched.availableStartDate &&
-                                                                    !errors.availableStartDate && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "availableStartDate", type: "datetime-local", value: values.availableStartDate
-                                                                ? new Date(values.availableStartDate)
-                                                                    .toISOString()
-                                                                    .slice(0, 16)
-                                                                : "", onChange: (e) => {
-                                                                setFieldTouched("availableStartDate", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("availableStartDate", v ? new Date(v).toISOString() : "");
-                                                            }, className: errors.availableStartDate
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "availableStartDate", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "updatedDate", className: "nice-form-control", children: [_jsxs("b", { children: ["Updated Date:", touched.updatedDate && !errors.updatedDate && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "updatedDate", type: "datetime-local", value: values.updatedDate
-                                                                ? new Date(values.updatedDate)
-                                                                    .toISOString()
-                                                                    .slice(0, 16)
-                                                                : "", onChange: (e) => {
-                                                                setFieldTouched("updatedDate", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("updatedDate", v ? new Date(v).toISOString() : "");
-                                                            }, className: errors.updatedDate
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "updatedDate", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "trashed", className: "nice-form-control", children: [_jsxs("b", { children: ["Trashed:", touched.trashed && !errors.trashed && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "trashed", name: "trashed", checked: values.trashed || false, onChange: (e) => {
-                                                                setFieldTouched("trashed", true);
-                                                                setFieldValue("trashed", e.target.checked);
-                                                            }, isInvalid: !!errors.trashed, className: errors.trashed ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "trashed", component: "span" })] }), _jsx("br", {}), _jsxs(CoolButton, { variant: isValid
-                                                        ? isSaving
-                                                            ? "disabled"
-                                                            : "success"
-                                                        : "warning", type: "submit", disabled: !isValid || isSaving, children: [isSaving && (_jsx("span", { style: { float: "left", minHeight: 0 }, children: _jsx(LoadingSpinner, { label: "", size: 18 }) })), _jsx(FaCheckCircle, { size: 28 }), " Create New ConsultingProfile"] }), (addConsultingProfileResult.isError || errorMessage) && (_jsx(Alert, { variant: "danger", className: "mt-3", children: errorMessage ||
-                                                        JSON.stringify("data" in addConsultingProfileResult.error
-                                                            ? addConsultingProfileResult.error.data
-                                                            : addConsultingProfileResult.error) })), (addConsultingProfileResult.isSuccess ||
-                                                    successMessage) && (_jsx(Alert, { variant: "success", className: "mt-3", children: successMessage || "Saved successfully." }))] })] }), _jsxs(Accordion.Item, { eventKey: "0", children: [_jsxs(Accordion.Header, { children: [_jsx(FaCogs, { size: 28 }), " \u00A0Server Messages"] }), _jsxs(Accordion.Body, { children: ["errors: ", JSON.stringify(errors), _jsx("br", {}), "addConsultingProfileResult:", " ", JSON.stringify(addConsultingProfileResult)] })] })] }) }));
-                } }), createdObjectId && (_jsx(PermissionDialog, { objectType: "com.valkyrlabs.model.ConsultingProfile", objectId: createdObjectId, isVisible: showPermissionDialog, onClose: handlePermissionDialogClose, onSave: handlePermissionsSave, currentUser: currentUser }))] }));
+      }
+      setSuccessMessage("Saved successfully.");
+    } catch (error) {
+      console.error("Failed to create ConsultingProfile:", error);
+      setErrorMessage("Failed to save. Please try again.");
+    }
+    setSubmitting(false);
+  };
+  return _jsxs("div", {
+    children: [
+      _jsx(Formik, {
+        validateOnBlur: true,
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: handleSubmit,
+        children: ({
+          isSubmitting,
+          isValid,
+          errors,
+          values,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => {
+          const isSaving = isSubmitting || addConsultingProfileResult.isLoading;
+          return _jsx("form", {
+            onSubmit: handleSubmit,
+            className: "form",
+            children: _jsxs(Accordion, {
+              defaultActiveKey: "1",
+              children: [
+                _jsxs(Accordion.Item, {
+                  eventKey: "1",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaRegPlusSquare, { size: 28 }),
+                        " \u00A0 Add New ConsultingProfile",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        _jsxs("label", {
+                          htmlFor: "jobSeekerId",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Job Seeker Id:",
+                                touched.jobSeekerId &&
+                                  !errors.jobSeekerId &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "jobSeekerId",
+                              value: values?.jobSeekerId,
+                              placeholder: "Job Seeker Id",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "jobSeekerId",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "consultingType",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Consulting Type:",
+                                touched.consultingType &&
+                                  !errors.consultingType &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "consultingType",
+                              value: values.consultingType || "",
+                              className: errors.consultingType
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("consultingType", true);
+                                setFieldValue(
+                                  "consultingType",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Consulting Type",
+                                }),
+                                _jsx(ConsultingTypeLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "consultingType",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "expertiseAreas",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Expertise Areas:",
+                                touched.expertiseAreas &&
+                                  !errors.expertiseAreas &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "expertiseAreas",
+                              value: values?.expertiseAreas,
+                              placeholder: "Expertise Areas",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "expertiseAreas",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "maximumHourlyRate",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Maximum Hourly Rate:",
+                                touched.maximumHourlyRate &&
+                                  !errors.maximumHourlyRate &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "maximumHourlyRate",
+                              type: "number",
+                              step: "any",
+                              value: values.maximumHourlyRate || "",
+                              onChange: (e) => {
+                                setFieldTouched("maximumHourlyRate", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "maximumHourlyRate",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.maximumHourlyRate
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "maximumHourlyRate",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "minimumMonthlyCommitment",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Minimum Monthly Commitment:",
+                                touched.minimumMonthlyCommitment &&
+                                  !errors.minimumMonthlyCommitment &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "minimumMonthlyCommitment",
+                              type: "number",
+                              value: values.minimumMonthlyCommitment || "",
+                              onChange: (e) => {
+                                setFieldTouched(
+                                  "minimumMonthlyCommitment",
+                                  true,
+                                );
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "minimumMonthlyCommitment",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.minimumMonthlyCommitment
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "minimumMonthlyCommitment",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "geographicFocus",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Geographic Focus:",
+                                touched.geographicFocus &&
+                                  !errors.geographicFocus &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "geographicFocus",
+                              value: values?.geographicFocus,
+                              placeholder: "Geographic Focus",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "geographicFocus",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "projectPortfolio",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Project Portfolio:",
+                                touched.projectPortfolio &&
+                                  !errors.projectPortfolio &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "projectPortfolio",
+                              value: values?.projectPortfolio,
+                              placeholder: "Project Portfolio",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "projectPortfolio",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "profileCompletionScore",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Profile Completion Score:",
+                                touched.profileCompletionScore &&
+                                  !errors.profileCompletionScore &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "profileCompletionScore",
+                              type: "number",
+                              step: "any",
+                              value: values.profileCompletionScore || "",
+                              onChange: (e) => {
+                                setFieldTouched("profileCompletionScore", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "profileCompletionScore",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.profileCompletionScore
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "profileCompletionScore",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "isAvailable",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Is Available:",
+                                touched.isAvailable &&
+                                  !errors.isAvailable &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "isAvailable",
+                              name: "isAvailable",
+                              checked: values.isAvailable || false,
+                              onChange: (e) => {
+                                setFieldTouched("isAvailable", true);
+                                setFieldValue("isAvailable", e.target.checked);
+                              },
+                              isInvalid: !!errors.isAvailable,
+                              className: errors.isAvailable ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "isAvailable",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "availableStartDate",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Available Start Date:",
+                                touched.availableStartDate &&
+                                  !errors.availableStartDate &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "availableStartDate",
+                              type: "datetime-local",
+                              value: values.availableStartDate
+                                ? new Date(values.availableStartDate)
+                                    .toISOString()
+                                    .slice(0, 16)
+                                : "",
+                              onChange: (e) => {
+                                setFieldTouched("availableStartDate", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "availableStartDate",
+                                  v ? new Date(v).toISOString() : "",
+                                );
+                              },
+                              className: errors.availableStartDate
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "availableStartDate",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "updatedDate",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Updated Date:",
+                                touched.updatedDate &&
+                                  !errors.updatedDate &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "updatedDate",
+                              type: "datetime-local",
+                              value: values.updatedDate
+                                ? new Date(values.updatedDate)
+                                    .toISOString()
+                                    .slice(0, 16)
+                                : "",
+                              onChange: (e) => {
+                                setFieldTouched("updatedDate", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "updatedDate",
+                                  v ? new Date(v).toISOString() : "",
+                                );
+                              },
+                              className: errors.updatedDate
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "updatedDate",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "trashed",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Trashed:",
+                                touched.trashed &&
+                                  !errors.trashed &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "trashed",
+                              name: "trashed",
+                              checked: values.trashed || false,
+                              onChange: (e) => {
+                                setFieldTouched("trashed", true);
+                                setFieldValue("trashed", e.target.checked);
+                              },
+                              isInvalid: !!errors.trashed,
+                              className: errors.trashed ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "trashed",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs(CoolButton, {
+                          variant: isValid
+                            ? isSaving
+                              ? "disabled"
+                              : "success"
+                            : "warning",
+                          type: "submit",
+                          disabled: !isValid || isSaving,
+                          children: [
+                            isSaving &&
+                              _jsx("span", {
+                                style: { float: "left", minHeight: 0 },
+                                children: _jsx(LoadingSpinner, {
+                                  label: "",
+                                  size: 18,
+                                }),
+                              }),
+                            _jsx(FaCheckCircle, { size: 28 }),
+                            " Create New ConsultingProfile",
+                          ],
+                        }),
+                        (addConsultingProfileResult.isError || errorMessage) &&
+                          _jsx(Alert, {
+                            variant: "danger",
+                            className: "mt-3",
+                            children:
+                              errorMessage ||
+                              JSON.stringify(
+                                "data" in addConsultingProfileResult.error
+                                  ? addConsultingProfileResult.error.data
+                                  : addConsultingProfileResult.error,
+                              ),
+                          }),
+                        (addConsultingProfileResult.isSuccess ||
+                          successMessage) &&
+                          _jsx(Alert, {
+                            variant: "success",
+                            className: "mt-3",
+                            children: successMessage || "Saved successfully.",
+                          }),
+                      ],
+                    }),
+                  ],
+                }),
+                _jsxs(Accordion.Item, {
+                  eventKey: "0",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaCogs, { size: 28 }),
+                        " \u00A0Server Messages",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        "errors: ",
+                        JSON.stringify(errors),
+                        _jsx("br", {}),
+                        "addConsultingProfileResult:",
+                        " ",
+                        JSON.stringify(addConsultingProfileResult),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          });
+        },
+      }),
+      createdObjectId &&
+        _jsx(PermissionDialog, {
+          objectType: "com.valkyrlabs.model.ConsultingProfile",
+          objectId: createdObjectId,
+          isVisible: showPermissionDialog,
+          onClose: handlePermissionDialogClose,
+          onSave: handlePermissionsSave,
+          currentUser: currentUser,
+        }),
+    ],
+  });
 };
 /*
 lowercase consultingtypelookup
@@ -246,7 +787,20 @@ camelcase consultingTypeLookup
 kebabcase consulting-type-lookup
 */
 const ConsultingTypeLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "INDEPENDENT_CONSULTANT", label: "INDEPENDENT _ CONSULTANT" }), _jsx("option", { value: "AGENCY_OWNER", label: "AGENCY _ OWNER" }), _jsx("option", { value: "FREELANCER", label: "FREELANCER" }), _jsx("option", { value: "RESELLER_PARTNER", label: "RESELLER _ PARTNER" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", {
+        value: "INDEPENDENT_CONSULTANT",
+        label: "INDEPENDENT _ CONSULTANT",
+      }),
+      _jsx("option", { value: "AGENCY_OWNER", label: "AGENCY _ OWNER" }),
+      _jsx("option", { value: "FREELANCER", label: "FREELANCER" }),
+      _jsx("option", {
+        value: "RESELLER_PARTNER",
+        label: "RESELLER _ PARTNER",
+      }),
+    ],
+  });
 };
 /* Export the generated form */
 export default ConsultingProfileForm;

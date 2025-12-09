@@ -29,79 +29,81 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function ConsultingProfileFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        jobSeekerId: json["jobSeekerId"],
-        consultingType: json["consultingType"],
-        expertiseAreas: !exists(json, "expertiseAreas")
-            ? undefined
-            : json["expertiseAreas"],
-        maximumHourlyRate: !exists(json, "maximumHourlyRate")
-            ? undefined
-            : json["maximumHourlyRate"],
-        minimumMonthlyCommitment: !exists(json, "minimumMonthlyCommitment")
-            ? undefined
-            : json["minimumMonthlyCommitment"],
-        geographicFocus: !exists(json, "geographicFocus")
-            ? undefined
-            : json["geographicFocus"],
-        projectPortfolio: !exists(json, "projectPortfolio")
-            ? undefined
-            : json["projectPortfolio"],
-        profileCompletionScore: !exists(json, "profileCompletionScore")
-            ? undefined
-            : json["profileCompletionScore"],
-        isAvailable: !exists(json, "isAvailable") ? undefined : json["isAvailable"],
-        availableStartDate: !exists(json, "availableStartDate")
-            ? undefined
-            : new Date(json["availableStartDate"]),
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        updatedDate: !exists(json, "updatedDate")
-            ? undefined
-            : new Date(json["updatedDate"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    jobSeekerId: json["jobSeekerId"],
+    consultingType: json["consultingType"],
+    expertiseAreas: !exists(json, "expertiseAreas")
+      ? undefined
+      : json["expertiseAreas"],
+    maximumHourlyRate: !exists(json, "maximumHourlyRate")
+      ? undefined
+      : json["maximumHourlyRate"],
+    minimumMonthlyCommitment: !exists(json, "minimumMonthlyCommitment")
+      ? undefined
+      : json["minimumMonthlyCommitment"],
+    geographicFocus: !exists(json, "geographicFocus")
+      ? undefined
+      : json["geographicFocus"],
+    projectPortfolio: !exists(json, "projectPortfolio")
+      ? undefined
+      : json["projectPortfolio"],
+    profileCompletionScore: !exists(json, "profileCompletionScore")
+      ? undefined
+      : json["profileCompletionScore"],
+    isAvailable: !exists(json, "isAvailable") ? undefined : json["isAvailable"],
+    availableStartDate: !exists(json, "availableStartDate")
+      ? undefined
+      : new Date(json["availableStartDate"]),
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    updatedDate: !exists(json, "updatedDate")
+      ? undefined
+      : new Date(json["updatedDate"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ConsultingProfileToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        jobSeekerId: value.jobSeekerId,
-        consultingType: value.consultingType,
-        expertiseAreas: value.expertiseAreas,
-        maximumHourlyRate: value.maximumHourlyRate,
-        minimumMonthlyCommitment: value.minimumMonthlyCommitment,
-        geographicFocus: value.geographicFocus,
-        projectPortfolio: value.projectPortfolio,
-        profileCompletionScore: value.profileCompletionScore,
-        isAvailable: value.isAvailable,
-        availableStartDate: value.availableStartDate === undefined
-            ? undefined
-            : value.availableStartDate.toISOString(),
-        updatedDate: value.updatedDate === undefined
-            ? undefined
-            : value.updatedDate.toISOString(),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    jobSeekerId: value.jobSeekerId,
+    consultingType: value.consultingType,
+    expertiseAreas: value.expertiseAreas,
+    maximumHourlyRate: value.maximumHourlyRate,
+    minimumMonthlyCommitment: value.minimumMonthlyCommitment,
+    geographicFocus: value.geographicFocus,
+    projectPortfolio: value.projectPortfolio,
+    profileCompletionScore: value.profileCompletionScore,
+    isAvailable: value.isAvailable,
+    availableStartDate:
+      value.availableStartDate === undefined
+        ? undefined
+        : value.availableStartDate.toISOString(),
+    updatedDate:
+      value.updatedDate === undefined
+        ? undefined
+        : value.updatedDate.toISOString(),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -109,9 +111,13 @@ export function ConsultingProfileToJSON(value) {
  */
 export var ConsultingProfileConsultingTypeEnum;
 (function (ConsultingProfileConsultingTypeEnum) {
-    ConsultingProfileConsultingTypeEnum["INDEPENDENT_CONSULTANT"] = "independent_consultant";
-    ConsultingProfileConsultingTypeEnum["AGENCY_OWNER"] = "agency_owner";
-    ConsultingProfileConsultingTypeEnum["FREELANCER"] = "freelancer";
-    ConsultingProfileConsultingTypeEnum["RESELLER_PARTNER"] = "reseller_partner";
-})(ConsultingProfileConsultingTypeEnum || (ConsultingProfileConsultingTypeEnum = {}));
+  ConsultingProfileConsultingTypeEnum["INDEPENDENT_CONSULTANT"] =
+    "independent_consultant";
+  ConsultingProfileConsultingTypeEnum["AGENCY_OWNER"] = "agency_owner";
+  ConsultingProfileConsultingTypeEnum["FREELANCER"] = "freelancer";
+  ConsultingProfileConsultingTypeEnum["RESELLER_PARTNER"] = "reseller_partner";
+})(
+  ConsultingProfileConsultingTypeEnum ||
+    (ConsultingProfileConsultingTypeEnum = {}),
+);
 //# sourceMappingURL=ConsultingProfile.js.map

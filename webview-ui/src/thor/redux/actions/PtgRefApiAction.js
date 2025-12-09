@@ -31,60 +31,60 @@ export const LIST_PTGREF_REQUEST = "LIST_PTGREF_REQUEST";
 export const LIST_PTGREF_SUCCESS = "LIST_PTGREF_SUCCESS";
 export const LIST_PTGREF_FAILURE = "LIST_PTGREF_FAILURE";
 export const addPtgRefRequest = () => ({
-    type: ADD_PTGREF_REQUEST,
+  type: ADD_PTGREF_REQUEST,
 });
 export const addPtgRefSuccess = (PtgRefs) => ({
-    type: ADD_PTGREF_SUCCESS,
-    payload: PtgRefs,
+  type: ADD_PTGREF_SUCCESS,
+  payload: PtgRefs,
 });
 export const addPtgRefFailure = (error) => ({
-    type: ADD_PTGREF_FAILURE,
-    payload: error,
+  type: ADD_PTGREF_FAILURE,
+  payload: error,
 });
 export const fetchPtgRefRequest = () => ({
-    type: FETCH_PTGREF_REQUEST,
+  type: FETCH_PTGREF_REQUEST,
 });
 export const fetchPtgRefSuccess = (PtgRefs) => ({
-    type: FETCH_PTGREF_SUCCESS,
-    payload: PtgRefs,
+  type: FETCH_PTGREF_SUCCESS,
+  payload: PtgRefs,
 });
 export const fetchPtgRefFailure = (error) => ({
-    type: FETCH_PTGREF_FAILURE,
-    payload: error,
+  type: FETCH_PTGREF_FAILURE,
+  payload: error,
 });
 export const listPtgRefRequest = () => ({
-    type: LIST_PTGREF_REQUEST,
+  type: LIST_PTGREF_REQUEST,
 });
 export const listPtgRefSuccess = (PtgRefs) => ({
-    type: LIST_PTGREF_SUCCESS,
-    payload: PtgRefs,
+  type: LIST_PTGREF_SUCCESS,
+  payload: PtgRefs,
 });
 export const listPtgRefFailure = (error) => ({
-    type: LIST_PTGREF_FAILURE,
-    payload: error,
+  type: LIST_PTGREF_FAILURE,
+  payload: error,
 });
 export const updatePtgRefRequest = (PtgRef) => ({
-    type: UPDATE_PTGREF_REQUEST,
-    payload: PtgRef,
+  type: UPDATE_PTGREF_REQUEST,
+  payload: PtgRef,
 });
 export const updatePtgRefSuccess = (PtgRef) => ({
-    type: UPDATE_PTGREF_SUCCESS,
-    payload: PtgRef,
+  type: UPDATE_PTGREF_SUCCESS,
+  payload: PtgRef,
 });
 export const updatePtgRefFailure = (error) => ({
-    type: UPDATE_PTGREF_FAILURE,
-    payload: error,
+  type: UPDATE_PTGREF_FAILURE,
+  payload: error,
 });
 export const deletePtgRefRequest = (PtgRef) => ({
-    type: DELETE_PTGREF_REQUEST,
-    payload: PtgRef,
+  type: DELETE_PTGREF_REQUEST,
+  payload: PtgRef,
 });
 export const deletePtgRefSuccess = (PtgRef) => ({
-    type: DELETE_PTGREF_SUCCESS,
-    payload: PtgRef,
+  type: DELETE_PTGREF_SUCCESS,
+  payload: PtgRef,
 });
 export const deletePtgRefFailure = (error) => ({
-    type: DELETE_PTGREF_FAILURE,
-    payload: error,
+  type: DELETE_PTGREF_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=PtgRefApiAction.js.map

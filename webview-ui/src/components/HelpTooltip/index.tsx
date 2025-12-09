@@ -15,6 +15,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Overlay, Popover } from "react-bootstrap";
 import { FaQuestionCircle, FaExternalLinkAlt, FaBook } from "react-icons/fa";
 import "./styles.css";
+import { vscode } from "@/utils/vscode";
 
 const DOCS_BASE = "https://valkyrlabs.com";
 
@@ -461,7 +462,10 @@ const HelpTooltip: React.FC<HelpTooltipProps> = ({
   const handleOpenDocs = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    window.open(resolveDocUrl(docEntry.url), "_blank");
+    vscode.postMessage({
+      type: "openInBrowser",
+      url: resolveDocUrl(docEntry.url),
+    });
     setShow(false);
   };
 

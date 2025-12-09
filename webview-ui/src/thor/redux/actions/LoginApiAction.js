@@ -31,60 +31,60 @@ export const LIST_LOGIN_REQUEST = "LIST_LOGIN_REQUEST";
 export const LIST_LOGIN_SUCCESS = "LIST_LOGIN_SUCCESS";
 export const LIST_LOGIN_FAILURE = "LIST_LOGIN_FAILURE";
 export const addLoginRequest = () => ({
-    type: ADD_LOGIN_REQUEST,
+  type: ADD_LOGIN_REQUEST,
 });
 export const addLoginSuccess = (Logins) => ({
-    type: ADD_LOGIN_SUCCESS,
-    payload: Logins,
+  type: ADD_LOGIN_SUCCESS,
+  payload: Logins,
 });
 export const addLoginFailure = (error) => ({
-    type: ADD_LOGIN_FAILURE,
-    payload: error,
+  type: ADD_LOGIN_FAILURE,
+  payload: error,
 });
 export const fetchLoginRequest = () => ({
-    type: FETCH_LOGIN_REQUEST,
+  type: FETCH_LOGIN_REQUEST,
 });
 export const fetchLoginSuccess = (Logins) => ({
-    type: FETCH_LOGIN_SUCCESS,
-    payload: Logins,
+  type: FETCH_LOGIN_SUCCESS,
+  payload: Logins,
 });
 export const fetchLoginFailure = (error) => ({
-    type: FETCH_LOGIN_FAILURE,
-    payload: error,
+  type: FETCH_LOGIN_FAILURE,
+  payload: error,
 });
 export const listLoginRequest = () => ({
-    type: LIST_LOGIN_REQUEST,
+  type: LIST_LOGIN_REQUEST,
 });
 export const listLoginSuccess = (Logins) => ({
-    type: LIST_LOGIN_SUCCESS,
-    payload: Logins,
+  type: LIST_LOGIN_SUCCESS,
+  payload: Logins,
 });
 export const listLoginFailure = (error) => ({
-    type: LIST_LOGIN_FAILURE,
-    payload: error,
+  type: LIST_LOGIN_FAILURE,
+  payload: error,
 });
 export const updateLoginRequest = (Login) => ({
-    type: UPDATE_LOGIN_REQUEST,
-    payload: Login,
+  type: UPDATE_LOGIN_REQUEST,
+  payload: Login,
 });
 export const updateLoginSuccess = (Login) => ({
-    type: UPDATE_LOGIN_SUCCESS,
-    payload: Login,
+  type: UPDATE_LOGIN_SUCCESS,
+  payload: Login,
 });
 export const updateLoginFailure = (error) => ({
-    type: UPDATE_LOGIN_FAILURE,
-    payload: error,
+  type: UPDATE_LOGIN_FAILURE,
+  payload: error,
 });
 export const deleteLoginRequest = (Login) => ({
-    type: DELETE_LOGIN_REQUEST,
-    payload: Login,
+  type: DELETE_LOGIN_REQUEST,
+  payload: Login,
 });
 export const deleteLoginSuccess = (Login) => ({
-    type: DELETE_LOGIN_SUCCESS,
-    payload: Login,
+  type: DELETE_LOGIN_SUCCESS,
+  payload: Login,
 });
 export const deleteLoginFailure = (error) => ({
-    type: DELETE_LOGIN_FAILURE,
-    payload: error,
+  type: DELETE_LOGIN_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=LoginApiAction.js.map

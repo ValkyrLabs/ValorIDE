@@ -31,60 +31,60 @@ export const LIST_CHARTSERIES_REQUEST = "LIST_CHARTSERIES_REQUEST";
 export const LIST_CHARTSERIES_SUCCESS = "LIST_CHARTSERIES_SUCCESS";
 export const LIST_CHARTSERIES_FAILURE = "LIST_CHARTSERIES_FAILURE";
 export const addChartSeriesRequest = () => ({
-    type: ADD_CHARTSERIES_REQUEST,
+  type: ADD_CHARTSERIES_REQUEST,
 });
 export const addChartSeriesSuccess = (ChartSeriess) => ({
-    type: ADD_CHARTSERIES_SUCCESS,
-    payload: ChartSeriess,
+  type: ADD_CHARTSERIES_SUCCESS,
+  payload: ChartSeriess,
 });
 export const addChartSeriesFailure = (error) => ({
-    type: ADD_CHARTSERIES_FAILURE,
-    payload: error,
+  type: ADD_CHARTSERIES_FAILURE,
+  payload: error,
 });
 export const fetchChartSeriesRequest = () => ({
-    type: FETCH_CHARTSERIES_REQUEST,
+  type: FETCH_CHARTSERIES_REQUEST,
 });
 export const fetchChartSeriesSuccess = (ChartSeriess) => ({
-    type: FETCH_CHARTSERIES_SUCCESS,
-    payload: ChartSeriess,
+  type: FETCH_CHARTSERIES_SUCCESS,
+  payload: ChartSeriess,
 });
 export const fetchChartSeriesFailure = (error) => ({
-    type: FETCH_CHARTSERIES_FAILURE,
-    payload: error,
+  type: FETCH_CHARTSERIES_FAILURE,
+  payload: error,
 });
 export const listChartSeriesRequest = () => ({
-    type: LIST_CHARTSERIES_REQUEST,
+  type: LIST_CHARTSERIES_REQUEST,
 });
 export const listChartSeriesSuccess = (ChartSeriess) => ({
-    type: LIST_CHARTSERIES_SUCCESS,
-    payload: ChartSeriess,
+  type: LIST_CHARTSERIES_SUCCESS,
+  payload: ChartSeriess,
 });
 export const listChartSeriesFailure = (error) => ({
-    type: LIST_CHARTSERIES_FAILURE,
-    payload: error,
+  type: LIST_CHARTSERIES_FAILURE,
+  payload: error,
 });
 export const updateChartSeriesRequest = (ChartSeries) => ({
-    type: UPDATE_CHARTSERIES_REQUEST,
-    payload: ChartSeries,
+  type: UPDATE_CHARTSERIES_REQUEST,
+  payload: ChartSeries,
 });
 export const updateChartSeriesSuccess = (ChartSeries) => ({
-    type: UPDATE_CHARTSERIES_SUCCESS,
-    payload: ChartSeries,
+  type: UPDATE_CHARTSERIES_SUCCESS,
+  payload: ChartSeries,
 });
 export const updateChartSeriesFailure = (error) => ({
-    type: UPDATE_CHARTSERIES_FAILURE,
-    payload: error,
+  type: UPDATE_CHARTSERIES_FAILURE,
+  payload: error,
 });
 export const deleteChartSeriesRequest = (ChartSeries) => ({
-    type: DELETE_CHARTSERIES_REQUEST,
-    payload: ChartSeries,
+  type: DELETE_CHARTSERIES_REQUEST,
+  payload: ChartSeries,
 });
 export const deleteChartSeriesSuccess = (ChartSeries) => ({
-    type: DELETE_CHARTSERIES_SUCCESS,
-    payload: ChartSeries,
+  type: DELETE_CHARTSERIES_SUCCESS,
+  payload: ChartSeries,
 });
 export const deleteChartSeriesFailure = (error) => ({
-    type: DELETE_CHARTSERIES_FAILURE,
-    payload: error,
+  type: DELETE_CHARTSERIES_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=ChartSeriesApiAction.js.map

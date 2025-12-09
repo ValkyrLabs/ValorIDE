@@ -17,6 +17,10 @@ import { OutputFilterService } from "@services/output-filter/OutputFilterService
 import { isInTestMode } from "@services/test/TestMode";
 import { Logger } from "@services/logging/Logger";
 import { setTimeout as setTimeoutPromise } from "node:timers/promises";
+import {
+  awaitAskWithTimeout,
+  COMMAND_OUTPUT_TIMEOUT_MS,
+} from "../utils/askWithTimeout";
 
 export class CommandToolHandler extends BaseToolHandler {
   async execute(
@@ -348,9 +352,10 @@ export class CommandToolHandler extends BaseToolHandler {
       outputBufferSize = 0;
       chunkEnroute = true;
       try {
-        const { response, text, images } = await this.context.ask(
-          "command_output",
-          chunk,
+        const askPromise = this.context.ask("command_output", chunk);
+        const { response, text, images } = await awaitAskWithTimeout(
+          askPromise,
+          COMMAND_OUTPUT_TIMEOUT_MS,
         );
         if (response === "yesButtonClicked") {
           // proceed while running

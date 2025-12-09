@@ -29,43 +29,43 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function EventLogFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        eventDetails: !exists(json, "eventDetails")
-            ? undefined
-            : json["eventDetails"],
-        status: !exists(json, "status") ? undefined : json["status"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    eventDetails: !exists(json, "eventDetails")
+      ? undefined
+      : json["eventDetails"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function EventLogToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        eventDetails: value.eventDetails,
-        status: value.status,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    eventDetails: value.eventDetails,
+    status: value.status,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -73,8 +73,8 @@ export function EventLogToJSON(value) {
  */
 export var EventLogStatusEnum;
 (function (EventLogStatusEnum) {
-    EventLogStatusEnum["OK"] = "ok";
-    EventLogStatusEnum["ERROR"] = "error";
-    EventLogStatusEnum["DISABLED"] = "disabled";
+  EventLogStatusEnum["OK"] = "ok";
+  EventLogStatusEnum["ERROR"] = "error";
+  EventLogStatusEnum["DISABLED"] = "disabled";
 })(EventLogStatusEnum || (EventLogStatusEnum = {}));
 //# sourceMappingURL=EventLog.js.map

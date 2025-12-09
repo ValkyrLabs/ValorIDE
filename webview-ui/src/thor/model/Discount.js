@@ -30,53 +30,53 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { ProductFromJSON, ProductToJSON } from "./";
 export function DiscountFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        code: !exists(json, "code") ? undefined : json["code"],
-        lineItemId: !exists(json, "lineItemId") ? undefined : json["lineItemId"],
-        orderDiscount: !exists(json, "orderDiscount")
-            ? undefined
-            : json["orderDiscount"],
-        lineItem: !exists(json, "lineItem")
-            ? undefined
-            : ProductFromJSON(json["lineItem"]),
-        type: !exists(json, "type") ? undefined : json["type"],
-        amount: !exists(json, "amount") ? undefined : json["amount"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    code: !exists(json, "code") ? undefined : json["code"],
+    lineItemId: !exists(json, "lineItemId") ? undefined : json["lineItemId"],
+    orderDiscount: !exists(json, "orderDiscount")
+      ? undefined
+      : json["orderDiscount"],
+    lineItem: !exists(json, "lineItem")
+      ? undefined
+      : ProductFromJSON(json["lineItem"]),
+    type: !exists(json, "type") ? undefined : json["type"],
+    amount: !exists(json, "amount") ? undefined : json["amount"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function DiscountToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        code: value.code,
-        lineItemId: value.lineItemId,
-        orderDiscount: value.orderDiscount,
-        lineItem: ProductToJSON(value.lineItem),
-        type: value.type,
-        amount: value.amount,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    code: value.code,
+    lineItemId: value.lineItemId,
+    orderDiscount: value.orderDiscount,
+    lineItem: ProductToJSON(value.lineItem),
+    type: value.type,
+    amount: value.amount,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -84,8 +84,8 @@ export function DiscountToJSON(value) {
  */
 export var DiscountTypeEnum;
 (function (DiscountTypeEnum) {
-    DiscountTypeEnum["PERCENTAGE"] = "percentage";
-    DiscountTypeEnum["FIXED"] = "fixed";
-    DiscountTypeEnum["OTHER"] = "other";
+  DiscountTypeEnum["PERCENTAGE"] = "percentage";
+  DiscountTypeEnum["FIXED"] = "fixed";
+  DiscountTypeEnum["OTHER"] = "other";
 })(DiscountTypeEnum || (DiscountTypeEnum = {}));
 //# sourceMappingURL=Discount.js.map

@@ -31,60 +31,60 @@ export const LIST_GOAL_REQUEST = "LIST_GOAL_REQUEST";
 export const LIST_GOAL_SUCCESS = "LIST_GOAL_SUCCESS";
 export const LIST_GOAL_FAILURE = "LIST_GOAL_FAILURE";
 export const addGoalRequest = () => ({
-    type: ADD_GOAL_REQUEST,
+  type: ADD_GOAL_REQUEST,
 });
 export const addGoalSuccess = (Goals) => ({
-    type: ADD_GOAL_SUCCESS,
-    payload: Goals,
+  type: ADD_GOAL_SUCCESS,
+  payload: Goals,
 });
 export const addGoalFailure = (error) => ({
-    type: ADD_GOAL_FAILURE,
-    payload: error,
+  type: ADD_GOAL_FAILURE,
+  payload: error,
 });
 export const fetchGoalRequest = () => ({
-    type: FETCH_GOAL_REQUEST,
+  type: FETCH_GOAL_REQUEST,
 });
 export const fetchGoalSuccess = (Goals) => ({
-    type: FETCH_GOAL_SUCCESS,
-    payload: Goals,
+  type: FETCH_GOAL_SUCCESS,
+  payload: Goals,
 });
 export const fetchGoalFailure = (error) => ({
-    type: FETCH_GOAL_FAILURE,
-    payload: error,
+  type: FETCH_GOAL_FAILURE,
+  payload: error,
 });
 export const listGoalRequest = () => ({
-    type: LIST_GOAL_REQUEST,
+  type: LIST_GOAL_REQUEST,
 });
 export const listGoalSuccess = (Goals) => ({
-    type: LIST_GOAL_SUCCESS,
-    payload: Goals,
+  type: LIST_GOAL_SUCCESS,
+  payload: Goals,
 });
 export const listGoalFailure = (error) => ({
-    type: LIST_GOAL_FAILURE,
-    payload: error,
+  type: LIST_GOAL_FAILURE,
+  payload: error,
 });
 export const updateGoalRequest = (Goal) => ({
-    type: UPDATE_GOAL_REQUEST,
-    payload: Goal,
+  type: UPDATE_GOAL_REQUEST,
+  payload: Goal,
 });
 export const updateGoalSuccess = (Goal) => ({
-    type: UPDATE_GOAL_SUCCESS,
-    payload: Goal,
+  type: UPDATE_GOAL_SUCCESS,
+  payload: Goal,
 });
 export const updateGoalFailure = (error) => ({
-    type: UPDATE_GOAL_FAILURE,
-    payload: error,
+  type: UPDATE_GOAL_FAILURE,
+  payload: error,
 });
 export const deleteGoalRequest = (Goal) => ({
-    type: DELETE_GOAL_REQUEST,
-    payload: Goal,
+  type: DELETE_GOAL_REQUEST,
+  payload: Goal,
 });
 export const deleteGoalSuccess = (Goal) => ({
-    type: DELETE_GOAL_SUCCESS,
-    payload: Goal,
+  type: DELETE_GOAL_SUCCESS,
+  payload: Goal,
 });
 export const deleteGoalFailure = (error) => ({
-    type: DELETE_GOAL_FAILURE,
-    payload: error,
+  type: DELETE_GOAL_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=GoalApiAction.js.map

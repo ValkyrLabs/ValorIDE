@@ -29,47 +29,47 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function RatingFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        contentId: json["contentId"],
-        targetType: !exists(json, "targetType") ? undefined : json["targetType"],
-        comments: !exists(json, "comments") ? undefined : json["comments"],
-        url: !exists(json, "url") ? undefined : json["url"],
-        rating: !exists(json, "rating") ? undefined : json["rating"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    contentId: json["contentId"],
+    targetType: !exists(json, "targetType") ? undefined : json["targetType"],
+    comments: !exists(json, "comments") ? undefined : json["comments"],
+    url: !exists(json, "url") ? undefined : json["url"],
+    rating: !exists(json, "rating") ? undefined : json["rating"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function RatingToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        contentId: value.contentId,
-        targetType: value.targetType,
-        comments: value.comments,
-        url: value.url,
-        rating: value.rating,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    contentId: value.contentId,
+    targetType: value.targetType,
+    comments: value.comments,
+    url: value.url,
+    rating: value.rating,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -77,19 +77,19 @@ export function RatingToJSON(value) {
  */
 export var RatingTargetTypeEnum;
 (function (RatingTargetTypeEnum) {
-    RatingTargetTypeEnum["HOMEPAGE"] = "homepage";
-    RatingTargetTypeEnum["WEBPAGE"] = "webpage";
-    RatingTargetTypeEnum["APPLICATION"] = "application";
-    RatingTargetTypeEnum["FUNCTION"] = "function";
-    RatingTargetTypeEnum["API"] = "api";
-    RatingTargetTypeEnum["SERVICE"] = "service";
-    RatingTargetTypeEnum["CONTENT"] = "content";
-    RatingTargetTypeEnum["SCHEMA"] = "schema";
-    RatingTargetTypeEnum["APPLICATION2"] = "application";
-    RatingTargetTypeEnum["FEATURE"] = "feature";
-    RatingTargetTypeEnum["HELPFULNESS"] = "helpfulness";
-    RatingTargetTypeEnum["SATISFACTION"] = "satisfaction";
-    RatingTargetTypeEnum["PRODUCT"] = "product";
-    RatingTargetTypeEnum["NONE"] = "none";
+  RatingTargetTypeEnum["HOMEPAGE"] = "homepage";
+  RatingTargetTypeEnum["WEBPAGE"] = "webpage";
+  RatingTargetTypeEnum["APPLICATION"] = "application";
+  RatingTargetTypeEnum["FUNCTION"] = "function";
+  RatingTargetTypeEnum["API"] = "api";
+  RatingTargetTypeEnum["SERVICE"] = "service";
+  RatingTargetTypeEnum["CONTENT"] = "content";
+  RatingTargetTypeEnum["SCHEMA"] = "schema";
+  RatingTargetTypeEnum["APPLICATION2"] = "application";
+  RatingTargetTypeEnum["FEATURE"] = "feature";
+  RatingTargetTypeEnum["HELPFULNESS"] = "helpfulness";
+  RatingTargetTypeEnum["SATISFACTION"] = "satisfaction";
+  RatingTargetTypeEnum["PRODUCT"] = "product";
+  RatingTargetTypeEnum["NONE"] = "none";
 })(RatingTargetTypeEnum || (RatingTargetTypeEnum = {}));
 //# sourceMappingURL=Rating.js.map

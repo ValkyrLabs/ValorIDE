@@ -30,61 +30,61 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { AgentFromJSON, AgentToJSON } from "./";
 export function AgentChatMessageFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        agentId: !exists(json, "agentId") ? undefined : json["agentId"],
-        conversationId: !exists(json, "conversationId")
-            ? undefined
-            : json["conversationId"],
-        senderId: !exists(json, "senderId") ? undefined : json["senderId"],
-        senderType: !exists(json, "senderType") ? undefined : json["senderType"],
-        message: !exists(json, "message") ? undefined : json["message"],
-        attachments: !exists(json, "attachments") ? undefined : json["attachments"],
-        timestamp: !exists(json, "timestamp")
-            ? undefined
-            : new Date(json["timestamp"]),
-        readBy: !exists(json, "readBy")
-            ? undefined
-            : json["readBy"].map(AgentFromJSON),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    agentId: !exists(json, "agentId") ? undefined : json["agentId"],
+    conversationId: !exists(json, "conversationId")
+      ? undefined
+      : json["conversationId"],
+    senderId: !exists(json, "senderId") ? undefined : json["senderId"],
+    senderType: !exists(json, "senderType") ? undefined : json["senderType"],
+    message: !exists(json, "message") ? undefined : json["message"],
+    attachments: !exists(json, "attachments") ? undefined : json["attachments"],
+    timestamp: !exists(json, "timestamp")
+      ? undefined
+      : new Date(json["timestamp"]),
+    readBy: !exists(json, "readBy")
+      ? undefined
+      : json["readBy"].map(AgentFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function AgentChatMessageToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        agentId: value.agentId,
-        conversationId: value.conversationId,
-        senderId: value.senderId,
-        senderType: value.senderType,
-        message: value.message,
-        attachments: value.attachments,
-        timestamp: value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
-        readBy: value.readBy === undefined
-            ? undefined
-            : value.readBy.map(AgentToJSON),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    agentId: value.agentId,
+    conversationId: value.conversationId,
+    senderId: value.senderId,
+    senderType: value.senderType,
+    message: value.message,
+    attachments: value.attachments,
+    timestamp:
+      value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
+    readBy:
+      value.readBy === undefined ? undefined : value.readBy.map(AgentToJSON),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -92,8 +92,8 @@ export function AgentChatMessageToJSON(value) {
  */
 export var AgentChatMessageSenderTypeEnum;
 (function (AgentChatMessageSenderTypeEnum) {
-    AgentChatMessageSenderTypeEnum["AGENT"] = "agent";
-    AgentChatMessageSenderTypeEnum["USER"] = "user";
-    AgentChatMessageSenderTypeEnum["SYSTEM"] = "system";
+  AgentChatMessageSenderTypeEnum["AGENT"] = "agent";
+  AgentChatMessageSenderTypeEnum["USER"] = "user";
+  AgentChatMessageSenderTypeEnum["SYSTEM"] = "system";
 })(AgentChatMessageSenderTypeEnum || (AgentChatMessageSenderTypeEnum = {}));
 //# sourceMappingURL=AgentChatMessage.js.map

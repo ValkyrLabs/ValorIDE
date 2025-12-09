@@ -29,54 +29,55 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function PublishFunnel200ResponseFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        success: json["success"],
-        funnelUrl: json["funnelUrl"],
-        published: !exists(json, "published") ? undefined : json["published"],
-        landingPageUrl: !exists(json, "landingPageUrl")
-            ? undefined
-            : json["landingPageUrl"],
-        message: !exists(json, "message") ? undefined : json["message"],
-        publishedAt: !exists(json, "publishedAt")
-            ? undefined
-            : new Date(json["publishedAt"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    success: json["success"],
+    funnelUrl: json["funnelUrl"],
+    published: !exists(json, "published") ? undefined : json["published"],
+    landingPageUrl: !exists(json, "landingPageUrl")
+      ? undefined
+      : json["landingPageUrl"],
+    message: !exists(json, "message") ? undefined : json["message"],
+    publishedAt: !exists(json, "publishedAt")
+      ? undefined
+      : new Date(json["publishedAt"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function PublishFunnel200ResponseToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        success: value.success,
-        funnelUrl: value.funnelUrl,
-        published: value.published,
-        landingPageUrl: value.landingPageUrl,
-        message: value.message,
-        publishedAt: value.publishedAt === undefined
-            ? undefined
-            : value.publishedAt.toISOString(),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    success: value.success,
+    funnelUrl: value.funnelUrl,
+    published: value.published,
+    landingPageUrl: value.landingPageUrl,
+    message: value.message,
+    publishedAt:
+      value.publishedAt === undefined
+        ? undefined
+        : value.publishedAt.toISOString(),
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=PublishFunnel200Response.js.map

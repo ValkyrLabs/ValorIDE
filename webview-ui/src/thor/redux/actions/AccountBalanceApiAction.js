@@ -31,60 +31,60 @@ export const LIST_ACCOUNTBALANCE_REQUEST = "LIST_ACCOUNTBALANCE_REQUEST";
 export const LIST_ACCOUNTBALANCE_SUCCESS = "LIST_ACCOUNTBALANCE_SUCCESS";
 export const LIST_ACCOUNTBALANCE_FAILURE = "LIST_ACCOUNTBALANCE_FAILURE";
 export const addAccountBalanceRequest = () => ({
-    type: ADD_ACCOUNTBALANCE_REQUEST,
+  type: ADD_ACCOUNTBALANCE_REQUEST,
 });
 export const addAccountBalanceSuccess = (AccountBalances) => ({
-    type: ADD_ACCOUNTBALANCE_SUCCESS,
-    payload: AccountBalances,
+  type: ADD_ACCOUNTBALANCE_SUCCESS,
+  payload: AccountBalances,
 });
 export const addAccountBalanceFailure = (error) => ({
-    type: ADD_ACCOUNTBALANCE_FAILURE,
-    payload: error,
+  type: ADD_ACCOUNTBALANCE_FAILURE,
+  payload: error,
 });
 export const fetchAccountBalanceRequest = () => ({
-    type: FETCH_ACCOUNTBALANCE_REQUEST,
+  type: FETCH_ACCOUNTBALANCE_REQUEST,
 });
 export const fetchAccountBalanceSuccess = (AccountBalances) => ({
-    type: FETCH_ACCOUNTBALANCE_SUCCESS,
-    payload: AccountBalances,
+  type: FETCH_ACCOUNTBALANCE_SUCCESS,
+  payload: AccountBalances,
 });
 export const fetchAccountBalanceFailure = (error) => ({
-    type: FETCH_ACCOUNTBALANCE_FAILURE,
-    payload: error,
+  type: FETCH_ACCOUNTBALANCE_FAILURE,
+  payload: error,
 });
 export const listAccountBalanceRequest = () => ({
-    type: LIST_ACCOUNTBALANCE_REQUEST,
+  type: LIST_ACCOUNTBALANCE_REQUEST,
 });
 export const listAccountBalanceSuccess = (AccountBalances) => ({
-    type: LIST_ACCOUNTBALANCE_SUCCESS,
-    payload: AccountBalances,
+  type: LIST_ACCOUNTBALANCE_SUCCESS,
+  payload: AccountBalances,
 });
 export const listAccountBalanceFailure = (error) => ({
-    type: LIST_ACCOUNTBALANCE_FAILURE,
-    payload: error,
+  type: LIST_ACCOUNTBALANCE_FAILURE,
+  payload: error,
 });
 export const updateAccountBalanceRequest = (AccountBalance) => ({
-    type: UPDATE_ACCOUNTBALANCE_REQUEST,
-    payload: AccountBalance,
+  type: UPDATE_ACCOUNTBALANCE_REQUEST,
+  payload: AccountBalance,
 });
 export const updateAccountBalanceSuccess = (AccountBalance) => ({
-    type: UPDATE_ACCOUNTBALANCE_SUCCESS,
-    payload: AccountBalance,
+  type: UPDATE_ACCOUNTBALANCE_SUCCESS,
+  payload: AccountBalance,
 });
 export const updateAccountBalanceFailure = (error) => ({
-    type: UPDATE_ACCOUNTBALANCE_FAILURE,
-    payload: error,
+  type: UPDATE_ACCOUNTBALANCE_FAILURE,
+  payload: error,
 });
 export const deleteAccountBalanceRequest = (AccountBalance) => ({
-    type: DELETE_ACCOUNTBALANCE_REQUEST,
-    payload: AccountBalance,
+  type: DELETE_ACCOUNTBALANCE_REQUEST,
+  payload: AccountBalance,
 });
 export const deleteAccountBalanceSuccess = (AccountBalance) => ({
-    type: DELETE_ACCOUNTBALANCE_SUCCESS,
-    payload: AccountBalance,
+  type: DELETE_ACCOUNTBALANCE_SUCCESS,
+  payload: AccountBalance,
 });
 export const deleteAccountBalanceFailure = (error) => ({
-    type: DELETE_ACCOUNTBALANCE_FAILURE,
-    payload: error,
+  type: DELETE_ACCOUNTBALANCE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=AccountBalanceApiAction.js.map

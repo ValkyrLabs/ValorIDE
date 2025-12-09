@@ -29,63 +29,64 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function ProductLandingPageFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        productId: json["productId"],
-        slug: json["slug"],
-        templateId: !exists(json, "templateId") ? undefined : json["templateId"],
-        seoTitle: !exists(json, "seoTitle") ? undefined : json["seoTitle"],
-        seoDescription: !exists(json, "seoDescription")
-            ? undefined
-            : json["seoDescription"],
-        seoKeywords: !exists(json, "seoKeywords") ? undefined : json["seoKeywords"],
-        ogImageUrl: !exists(json, "ogImageUrl") ? undefined : json["ogImageUrl"],
-        isPublished: !exists(json, "isPublished") ? undefined : json["isPublished"],
-        publishedAt: !exists(json, "publishedAt")
-            ? undefined
-            : new Date(json["publishedAt"]),
-        config: !exists(json, "config") ? undefined : json["config"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    productId: json["productId"],
+    slug: json["slug"],
+    templateId: !exists(json, "templateId") ? undefined : json["templateId"],
+    seoTitle: !exists(json, "seoTitle") ? undefined : json["seoTitle"],
+    seoDescription: !exists(json, "seoDescription")
+      ? undefined
+      : json["seoDescription"],
+    seoKeywords: !exists(json, "seoKeywords") ? undefined : json["seoKeywords"],
+    ogImageUrl: !exists(json, "ogImageUrl") ? undefined : json["ogImageUrl"],
+    isPublished: !exists(json, "isPublished") ? undefined : json["isPublished"],
+    publishedAt: !exists(json, "publishedAt")
+      ? undefined
+      : new Date(json["publishedAt"]),
+    config: !exists(json, "config") ? undefined : json["config"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ProductLandingPageToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        productId: value.productId,
-        slug: value.slug,
-        templateId: value.templateId,
-        seoTitle: value.seoTitle,
-        seoDescription: value.seoDescription,
-        seoKeywords: value.seoKeywords,
-        ogImageUrl: value.ogImageUrl,
-        isPublished: value.isPublished,
-        publishedAt: value.publishedAt === undefined
-            ? undefined
-            : value.publishedAt.toISOString(),
-        config: value.config,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    productId: value.productId,
+    slug: value.slug,
+    templateId: value.templateId,
+    seoTitle: value.seoTitle,
+    seoDescription: value.seoDescription,
+    seoKeywords: value.seoKeywords,
+    ogImageUrl: value.ogImageUrl,
+    isPublished: value.isPublished,
+    publishedAt:
+      value.publishedAt === undefined
+        ? undefined
+        : value.publishedAt.toISOString(),
+    config: value.config,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -93,10 +94,10 @@ export function ProductLandingPageToJSON(value) {
  */
 export var ProductLandingPageTemplateIdEnum;
 (function (ProductLandingPageTemplateIdEnum) {
-    ProductLandingPageTemplateIdEnum["MINIMALCLEAN"] = "minimal_clean";
-    ProductLandingPageTemplateIdEnum["BOLDHERO"] = "bold_hero";
-    ProductLandingPageTemplateIdEnum["FEATUREGRID"] = "feature_grid";
-    ProductLandingPageTemplateIdEnum["TESTIMONIALHEAVY"] = "testimonial_heavy";
-    ProductLandingPageTemplateIdEnum["VIDEOFIRST"] = "video_first";
+  ProductLandingPageTemplateIdEnum["MINIMALCLEAN"] = "minimal_clean";
+  ProductLandingPageTemplateIdEnum["BOLDHERO"] = "bold_hero";
+  ProductLandingPageTemplateIdEnum["FEATUREGRID"] = "feature_grid";
+  ProductLandingPageTemplateIdEnum["TESTIMONIALHEAVY"] = "testimonial_heavy";
+  ProductLandingPageTemplateIdEnum["VIDEOFIRST"] = "video_first";
 })(ProductLandingPageTemplateIdEnum || (ProductLandingPageTemplateIdEnum = {}));
 //# sourceMappingURL=ProductLandingPage.js.map

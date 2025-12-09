@@ -31,60 +31,60 @@ export const LIST_WORKBOOK_REQUEST = "LIST_WORKBOOK_REQUEST";
 export const LIST_WORKBOOK_SUCCESS = "LIST_WORKBOOK_SUCCESS";
 export const LIST_WORKBOOK_FAILURE = "LIST_WORKBOOK_FAILURE";
 export const addWorkbookRequest = () => ({
-    type: ADD_WORKBOOK_REQUEST,
+  type: ADD_WORKBOOK_REQUEST,
 });
 export const addWorkbookSuccess = (Workbooks) => ({
-    type: ADD_WORKBOOK_SUCCESS,
-    payload: Workbooks,
+  type: ADD_WORKBOOK_SUCCESS,
+  payload: Workbooks,
 });
 export const addWorkbookFailure = (error) => ({
-    type: ADD_WORKBOOK_FAILURE,
-    payload: error,
+  type: ADD_WORKBOOK_FAILURE,
+  payload: error,
 });
 export const fetchWorkbookRequest = () => ({
-    type: FETCH_WORKBOOK_REQUEST,
+  type: FETCH_WORKBOOK_REQUEST,
 });
 export const fetchWorkbookSuccess = (Workbooks) => ({
-    type: FETCH_WORKBOOK_SUCCESS,
-    payload: Workbooks,
+  type: FETCH_WORKBOOK_SUCCESS,
+  payload: Workbooks,
 });
 export const fetchWorkbookFailure = (error) => ({
-    type: FETCH_WORKBOOK_FAILURE,
-    payload: error,
+  type: FETCH_WORKBOOK_FAILURE,
+  payload: error,
 });
 export const listWorkbookRequest = () => ({
-    type: LIST_WORKBOOK_REQUEST,
+  type: LIST_WORKBOOK_REQUEST,
 });
 export const listWorkbookSuccess = (Workbooks) => ({
-    type: LIST_WORKBOOK_SUCCESS,
-    payload: Workbooks,
+  type: LIST_WORKBOOK_SUCCESS,
+  payload: Workbooks,
 });
 export const listWorkbookFailure = (error) => ({
-    type: LIST_WORKBOOK_FAILURE,
-    payload: error,
+  type: LIST_WORKBOOK_FAILURE,
+  payload: error,
 });
 export const updateWorkbookRequest = (Workbook) => ({
-    type: UPDATE_WORKBOOK_REQUEST,
-    payload: Workbook,
+  type: UPDATE_WORKBOOK_REQUEST,
+  payload: Workbook,
 });
 export const updateWorkbookSuccess = (Workbook) => ({
-    type: UPDATE_WORKBOOK_SUCCESS,
-    payload: Workbook,
+  type: UPDATE_WORKBOOK_SUCCESS,
+  payload: Workbook,
 });
 export const updateWorkbookFailure = (error) => ({
-    type: UPDATE_WORKBOOK_FAILURE,
-    payload: error,
+  type: UPDATE_WORKBOOK_FAILURE,
+  payload: error,
 });
 export const deleteWorkbookRequest = (Workbook) => ({
-    type: DELETE_WORKBOOK_REQUEST,
-    payload: Workbook,
+  type: DELETE_WORKBOOK_REQUEST,
+  payload: Workbook,
 });
 export const deleteWorkbookSuccess = (Workbook) => ({
-    type: DELETE_WORKBOOK_SUCCESS,
-    payload: Workbook,
+  type: DELETE_WORKBOOK_SUCCESS,
+  payload: Workbook,
 });
 export const deleteWorkbookFailure = (error) => ({
-    type: DELETE_WORKBOOK_FAILURE,
-    payload: error,
+  type: DELETE_WORKBOOK_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=WorkbookApiAction.js.map

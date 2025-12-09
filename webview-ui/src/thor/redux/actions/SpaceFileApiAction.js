@@ -31,60 +31,60 @@ export const LIST_SPACEFILE_REQUEST = "LIST_SPACEFILE_REQUEST";
 export const LIST_SPACEFILE_SUCCESS = "LIST_SPACEFILE_SUCCESS";
 export const LIST_SPACEFILE_FAILURE = "LIST_SPACEFILE_FAILURE";
 export const addSpaceFileRequest = () => ({
-    type: ADD_SPACEFILE_REQUEST,
+  type: ADD_SPACEFILE_REQUEST,
 });
 export const addSpaceFileSuccess = (SpaceFiles) => ({
-    type: ADD_SPACEFILE_SUCCESS,
-    payload: SpaceFiles,
+  type: ADD_SPACEFILE_SUCCESS,
+  payload: SpaceFiles,
 });
 export const addSpaceFileFailure = (error) => ({
-    type: ADD_SPACEFILE_FAILURE,
-    payload: error,
+  type: ADD_SPACEFILE_FAILURE,
+  payload: error,
 });
 export const fetchSpaceFileRequest = () => ({
-    type: FETCH_SPACEFILE_REQUEST,
+  type: FETCH_SPACEFILE_REQUEST,
 });
 export const fetchSpaceFileSuccess = (SpaceFiles) => ({
-    type: FETCH_SPACEFILE_SUCCESS,
-    payload: SpaceFiles,
+  type: FETCH_SPACEFILE_SUCCESS,
+  payload: SpaceFiles,
 });
 export const fetchSpaceFileFailure = (error) => ({
-    type: FETCH_SPACEFILE_FAILURE,
-    payload: error,
+  type: FETCH_SPACEFILE_FAILURE,
+  payload: error,
 });
 export const listSpaceFileRequest = () => ({
-    type: LIST_SPACEFILE_REQUEST,
+  type: LIST_SPACEFILE_REQUEST,
 });
 export const listSpaceFileSuccess = (SpaceFiles) => ({
-    type: LIST_SPACEFILE_SUCCESS,
-    payload: SpaceFiles,
+  type: LIST_SPACEFILE_SUCCESS,
+  payload: SpaceFiles,
 });
 export const listSpaceFileFailure = (error) => ({
-    type: LIST_SPACEFILE_FAILURE,
-    payload: error,
+  type: LIST_SPACEFILE_FAILURE,
+  payload: error,
 });
 export const updateSpaceFileRequest = (SpaceFile) => ({
-    type: UPDATE_SPACEFILE_REQUEST,
-    payload: SpaceFile,
+  type: UPDATE_SPACEFILE_REQUEST,
+  payload: SpaceFile,
 });
 export const updateSpaceFileSuccess = (SpaceFile) => ({
-    type: UPDATE_SPACEFILE_SUCCESS,
-    payload: SpaceFile,
+  type: UPDATE_SPACEFILE_SUCCESS,
+  payload: SpaceFile,
 });
 export const updateSpaceFileFailure = (error) => ({
-    type: UPDATE_SPACEFILE_FAILURE,
-    payload: error,
+  type: UPDATE_SPACEFILE_FAILURE,
+  payload: error,
 });
 export const deleteSpaceFileRequest = (SpaceFile) => ({
-    type: DELETE_SPACEFILE_REQUEST,
-    payload: SpaceFile,
+  type: DELETE_SPACEFILE_REQUEST,
+  payload: SpaceFile,
 });
 export const deleteSpaceFileSuccess = (SpaceFile) => ({
-    type: DELETE_SPACEFILE_SUCCESS,
-    payload: SpaceFile,
+  type: DELETE_SPACEFILE_SUCCESS,
+  payload: SpaceFile,
 });
 export const deleteSpaceFileFailure = (error) => ({
-    type: DELETE_SPACEFILE_FAILURE,
-    payload: error,
+  type: DELETE_SPACEFILE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=SpaceFileApiAction.js.map

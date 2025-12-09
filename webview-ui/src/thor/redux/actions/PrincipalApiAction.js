@@ -31,60 +31,60 @@ export const LIST_PRINCIPAL_REQUEST = "LIST_PRINCIPAL_REQUEST";
 export const LIST_PRINCIPAL_SUCCESS = "LIST_PRINCIPAL_SUCCESS";
 export const LIST_PRINCIPAL_FAILURE = "LIST_PRINCIPAL_FAILURE";
 export const addPrincipalRequest = () => ({
-    type: ADD_PRINCIPAL_REQUEST,
+  type: ADD_PRINCIPAL_REQUEST,
 });
 export const addPrincipalSuccess = (Principals) => ({
-    type: ADD_PRINCIPAL_SUCCESS,
-    payload: Principals,
+  type: ADD_PRINCIPAL_SUCCESS,
+  payload: Principals,
 });
 export const addPrincipalFailure = (error) => ({
-    type: ADD_PRINCIPAL_FAILURE,
-    payload: error,
+  type: ADD_PRINCIPAL_FAILURE,
+  payload: error,
 });
 export const fetchPrincipalRequest = () => ({
-    type: FETCH_PRINCIPAL_REQUEST,
+  type: FETCH_PRINCIPAL_REQUEST,
 });
 export const fetchPrincipalSuccess = (Principals) => ({
-    type: FETCH_PRINCIPAL_SUCCESS,
-    payload: Principals,
+  type: FETCH_PRINCIPAL_SUCCESS,
+  payload: Principals,
 });
 export const fetchPrincipalFailure = (error) => ({
-    type: FETCH_PRINCIPAL_FAILURE,
-    payload: error,
+  type: FETCH_PRINCIPAL_FAILURE,
+  payload: error,
 });
 export const listPrincipalRequest = () => ({
-    type: LIST_PRINCIPAL_REQUEST,
+  type: LIST_PRINCIPAL_REQUEST,
 });
 export const listPrincipalSuccess = (Principals) => ({
-    type: LIST_PRINCIPAL_SUCCESS,
-    payload: Principals,
+  type: LIST_PRINCIPAL_SUCCESS,
+  payload: Principals,
 });
 export const listPrincipalFailure = (error) => ({
-    type: LIST_PRINCIPAL_FAILURE,
-    payload: error,
+  type: LIST_PRINCIPAL_FAILURE,
+  payload: error,
 });
 export const updatePrincipalRequest = (Principal) => ({
-    type: UPDATE_PRINCIPAL_REQUEST,
-    payload: Principal,
+  type: UPDATE_PRINCIPAL_REQUEST,
+  payload: Principal,
 });
 export const updatePrincipalSuccess = (Principal) => ({
-    type: UPDATE_PRINCIPAL_SUCCESS,
-    payload: Principal,
+  type: UPDATE_PRINCIPAL_SUCCESS,
+  payload: Principal,
 });
 export const updatePrincipalFailure = (error) => ({
-    type: UPDATE_PRINCIPAL_FAILURE,
-    payload: error,
+  type: UPDATE_PRINCIPAL_FAILURE,
+  payload: error,
 });
 export const deletePrincipalRequest = (Principal) => ({
-    type: DELETE_PRINCIPAL_REQUEST,
-    payload: Principal,
+  type: DELETE_PRINCIPAL_REQUEST,
+  payload: Principal,
 });
 export const deletePrincipalSuccess = (Principal) => ({
-    type: DELETE_PRINCIPAL_SUCCESS,
-    payload: Principal,
+  type: DELETE_PRINCIPAL_SUCCESS,
+  payload: Principal,
 });
 export const deletePrincipalFailure = (error) => ({
-    type: DELETE_PRINCIPAL_FAILURE,
-    payload: error,
+  type: DELETE_PRINCIPAL_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=PrincipalApiAction.js.map

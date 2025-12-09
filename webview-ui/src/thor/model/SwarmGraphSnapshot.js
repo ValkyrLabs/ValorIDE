@@ -28,50 +28,57 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { SwarmGraphEdgeFromJSON, SwarmGraphEdgeToJSON, SwarmGraphNodeFromJSON, SwarmGraphNodeToJSON, } from "./";
+import {
+  SwarmGraphEdgeFromJSON,
+  SwarmGraphEdgeToJSON,
+  SwarmGraphNodeFromJSON,
+  SwarmGraphNodeToJSON,
+} from "./";
 export function SwarmGraphSnapshotFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        nodes: !exists(json, "nodes")
-            ? undefined
-            : json["nodes"].map(SwarmGraphNodeFromJSON),
-        edges: !exists(json, "edges")
-            ? undefined
-            : json["edges"].map(SwarmGraphEdgeFromJSON),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    nodes: !exists(json, "nodes")
+      ? undefined
+      : json["nodes"].map(SwarmGraphNodeFromJSON),
+    edges: !exists(json, "edges")
+      ? undefined
+      : json["edges"].map(SwarmGraphEdgeFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function SwarmGraphSnapshotToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        nodes: value.nodes === undefined
-            ? undefined
-            : value.nodes.map(SwarmGraphNodeToJSON),
-        edges: value.edges === undefined
-            ? undefined
-            : value.edges.map(SwarmGraphEdgeToJSON),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    nodes:
+      value.nodes === undefined
+        ? undefined
+        : value.nodes.map(SwarmGraphNodeToJSON),
+    edges:
+      value.edges === undefined
+        ? undefined
+        : value.edges.map(SwarmGraphEdgeToJSON),
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=SwarmGraphSnapshot.js.map

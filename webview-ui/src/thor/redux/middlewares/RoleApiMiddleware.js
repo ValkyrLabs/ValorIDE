@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Role
 */
-export const RoleMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const RoleMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Role MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=RoleApiMiddleware.js.map

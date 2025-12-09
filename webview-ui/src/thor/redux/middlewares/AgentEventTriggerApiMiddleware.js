@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: AgentEventTrigger
 */
-export const AgentEventTriggerMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const AgentEventTriggerMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("AgentEventTrigger MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=AgentEventTriggerApiMiddleware.js.map

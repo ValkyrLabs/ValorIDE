@@ -29,51 +29,51 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function CampaignFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        campaignId: json["campaignId"],
-        name: json["name"],
-        startDate: new Date(json["startDate"]),
-        endDate: new Date(json["endDate"]),
-        status: json["status"],
-        notes: !exists(json, "notes") ? undefined : json["notes"],
-        budget: !exists(json, "budget") ? undefined : json["budget"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    campaignId: json["campaignId"],
+    name: json["name"],
+    startDate: new Date(json["startDate"]),
+    endDate: new Date(json["endDate"]),
+    status: json["status"],
+    notes: !exists(json, "notes") ? undefined : json["notes"],
+    budget: !exists(json, "budget") ? undefined : json["budget"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function CampaignToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        campaignId: value.campaignId,
-        name: value.name,
-        startDate: value.startDate.toISOString(),
-        endDate: value.endDate.toISOString(),
-        status: value.status,
-        notes: value.notes,
-        budget: value.budget,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    campaignId: value.campaignId,
+    name: value.name,
+    startDate: value.startDate.toISOString(),
+    endDate: value.endDate.toISOString(),
+    status: value.status,
+    notes: value.notes,
+    budget: value.budget,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -81,9 +81,9 @@ export function CampaignToJSON(value) {
  */
 export var CampaignStatusEnum;
 (function (CampaignStatusEnum) {
-    CampaignStatusEnum["PLANNED"] = "planned";
-    CampaignStatusEnum["ACTIVE"] = "active";
-    CampaignStatusEnum["COMPLETED"] = "completed";
-    CampaignStatusEnum["CANCELED"] = "canceled";
+  CampaignStatusEnum["PLANNED"] = "planned";
+  CampaignStatusEnum["ACTIVE"] = "active";
+  CampaignStatusEnum["COMPLETED"] = "completed";
+  CampaignStatusEnum["CANCELED"] = "canceled";
 })(CampaignStatusEnum || (CampaignStatusEnum = {}));
 //# sourceMappingURL=Campaign.js.map

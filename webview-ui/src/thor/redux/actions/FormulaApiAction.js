@@ -31,60 +31,60 @@ export const LIST_FORMULA_REQUEST = "LIST_FORMULA_REQUEST";
 export const LIST_FORMULA_SUCCESS = "LIST_FORMULA_SUCCESS";
 export const LIST_FORMULA_FAILURE = "LIST_FORMULA_FAILURE";
 export const addFormulaRequest = () => ({
-    type: ADD_FORMULA_REQUEST,
+  type: ADD_FORMULA_REQUEST,
 });
 export const addFormulaSuccess = (Formulas) => ({
-    type: ADD_FORMULA_SUCCESS,
-    payload: Formulas,
+  type: ADD_FORMULA_SUCCESS,
+  payload: Formulas,
 });
 export const addFormulaFailure = (error) => ({
-    type: ADD_FORMULA_FAILURE,
-    payload: error,
+  type: ADD_FORMULA_FAILURE,
+  payload: error,
 });
 export const fetchFormulaRequest = () => ({
-    type: FETCH_FORMULA_REQUEST,
+  type: FETCH_FORMULA_REQUEST,
 });
 export const fetchFormulaSuccess = (Formulas) => ({
-    type: FETCH_FORMULA_SUCCESS,
-    payload: Formulas,
+  type: FETCH_FORMULA_SUCCESS,
+  payload: Formulas,
 });
 export const fetchFormulaFailure = (error) => ({
-    type: FETCH_FORMULA_FAILURE,
-    payload: error,
+  type: FETCH_FORMULA_FAILURE,
+  payload: error,
 });
 export const listFormulaRequest = () => ({
-    type: LIST_FORMULA_REQUEST,
+  type: LIST_FORMULA_REQUEST,
 });
 export const listFormulaSuccess = (Formulas) => ({
-    type: LIST_FORMULA_SUCCESS,
-    payload: Formulas,
+  type: LIST_FORMULA_SUCCESS,
+  payload: Formulas,
 });
 export const listFormulaFailure = (error) => ({
-    type: LIST_FORMULA_FAILURE,
-    payload: error,
+  type: LIST_FORMULA_FAILURE,
+  payload: error,
 });
 export const updateFormulaRequest = (Formula) => ({
-    type: UPDATE_FORMULA_REQUEST,
-    payload: Formula,
+  type: UPDATE_FORMULA_REQUEST,
+  payload: Formula,
 });
 export const updateFormulaSuccess = (Formula) => ({
-    type: UPDATE_FORMULA_SUCCESS,
-    payload: Formula,
+  type: UPDATE_FORMULA_SUCCESS,
+  payload: Formula,
 });
 export const updateFormulaFailure = (error) => ({
-    type: UPDATE_FORMULA_FAILURE,
-    payload: error,
+  type: UPDATE_FORMULA_FAILURE,
+  payload: error,
 });
 export const deleteFormulaRequest = (Formula) => ({
-    type: DELETE_FORMULA_REQUEST,
-    payload: Formula,
+  type: DELETE_FORMULA_REQUEST,
+  payload: Formula,
 });
 export const deleteFormulaSuccess = (Formula) => ({
-    type: DELETE_FORMULA_SUCCESS,
-    payload: Formula,
+  type: DELETE_FORMULA_SUCCESS,
+  payload: Formula,
 });
 export const deleteFormulaFailure = (error) => ({
-    type: DELETE_FORMULA_FAILURE,
-    payload: error,
+  type: DELETE_FORMULA_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=FormulaApiAction.js.map

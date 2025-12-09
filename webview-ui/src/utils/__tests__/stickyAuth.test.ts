@@ -1,6 +1,13 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { readStoredPrincipal, writeStoredPrincipal, storeJwtToken, hydrateStoredCredentials, clearStoredPrincipal, clearStoredJwtToken } from '../accessControl';
-import { Principal } from '@/thor/model';
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import {
+  readStoredPrincipal,
+  writeStoredPrincipal,
+  storeJwtToken,
+  hydrateStoredCredentials,
+  clearStoredPrincipal,
+  clearStoredJwtToken,
+} from "../accessControl";
+import { Principal } from "@/thor/model";
 
 // Mock storage for Node.js environment
 const createMockStorage = () => {
@@ -14,7 +21,7 @@ const createMockStorage = () => {
       delete store[key];
     },
     clear: () => {
-      Object.keys(store).forEach(key => delete store[key]);
+      Object.keys(store).forEach((key) => delete store[key]);
     },
     key: (index: number) => Object.keys(store)[index] || null,
     get length() {
@@ -23,7 +30,7 @@ const createMockStorage = () => {
   };
 };
 
-describe('Sticky Auth Persistence', () => {
+describe("Sticky Auth Persistence", () => {
   beforeEach(() => {
     // Setup mock storage
     global.localStorage = createMockStorage() as Storage;
@@ -35,52 +42,52 @@ describe('Sticky Auth Persistence', () => {
     sessionStorage.clear();
   });
 
-  describe('storeJwtToken', () => {
-    it('should store JWT token in both sessionStorage and localStorage', () => {
-      const token = 'test-jwt-token-12345';
-      storeJwtToken(token, 'test-source');
+  describe("storeJwtToken", () => {
+    it("should store JWT token in both sessionStorage and localStorage", () => {
+      const token = "test-jwt-token-12345";
+      storeJwtToken(token, "test-source");
 
-      expect(sessionStorage.getItem('jwtToken')).toBe(token);
-      expect(localStorage.getItem('jwtToken')).toBe(token);
+      expect(sessionStorage.getItem("jwtToken")).toBe(token);
+      expect(localStorage.getItem("jwtToken")).toBe(token);
     });
 
-    it('should clear token when null is passed', () => {
-      const token = 'test-jwt-token-12345';
-      storeJwtToken(token, 'test-source');
-      storeJwtToken(null, 'test-source');
+    it("should clear token when null is passed", () => {
+      const token = "test-jwt-token-12345";
+      storeJwtToken(token, "test-source");
+      storeJwtToken(null, "test-source");
 
-      expect(sessionStorage.getItem('jwtToken')).toBeNull();
-      expect(localStorage.getItem('jwtToken')).toBeNull();
+      expect(sessionStorage.getItem("jwtToken")).toBeNull();
+      expect(localStorage.getItem("jwtToken")).toBeNull();
     });
   });
 
-  describe('writeStoredPrincipal', () => {
-    it('should store principal in both sessionStorage and localStorage', () => {
+  describe("writeStoredPrincipal", () => {
+    it("should store principal in both sessionStorage and localStorage", () => {
       const principal: Principal = {
-        id: 'user-123',
-        username: 'testuser',
-        email: 'test@example.com',
-        password: '',
+        id: "user-123",
+        username: "testuser",
+        email: "test@example.com",
+        password: "",
         roleList: [],
         authorityList: [],
       };
 
       writeStoredPrincipal(principal);
 
-      const storedSession = sessionStorage.getItem('authenticatedPrincipal');
-      const storedLocal = localStorage.getItem('authenticatedPrincipal');
+      const storedSession = sessionStorage.getItem("authenticatedPrincipal");
+      const storedLocal = localStorage.getItem("authenticatedPrincipal");
 
       expect(storedSession).not.toBeNull();
       expect(storedLocal).not.toBeNull();
       expect(storedSession).toBe(storedLocal);
     });
 
-    it('should clear principal when null is passed', () => {
+    it("should clear principal when null is passed", () => {
       const principal: Principal = {
-        id: 'user-123',
-        username: 'testuser',
-        email: 'test@example.com',
-        password: '',
+        id: "user-123",
+        username: "testuser",
+        email: "test@example.com",
+        password: "",
         roleList: [],
         authorityList: [],
       };
@@ -88,156 +95,158 @@ describe('Sticky Auth Persistence', () => {
       writeStoredPrincipal(principal);
       writeStoredPrincipal(null);
 
-      expect(sessionStorage.getItem('authenticatedPrincipal')).toBeNull();
-      expect(localStorage.getItem('authenticatedPrincipal')).toBeNull();
+      expect(sessionStorage.getItem("authenticatedPrincipal")).toBeNull();
+      expect(localStorage.getItem("authenticatedPrincipal")).toBeNull();
     });
   });
 
-  describe('hydrateStoredCredentials', () => {
-    it('should restore JWT token from localStorage to sessionStorage', () => {
-      const token = 'restored-jwt-token';
-      localStorage.setItem('jwtToken', token);
+  describe("hydrateStoredCredentials", () => {
+    it("should restore JWT token from localStorage to sessionStorage", () => {
+      const token = "restored-jwt-token";
+      localStorage.setItem("jwtToken", token);
 
-      const { token: restoredToken } = hydrateStoredCredentials('test');
+      const { token: restoredToken } = hydrateStoredCredentials("test");
 
       expect(restoredToken).toBe(token);
-      expect(sessionStorage.getItem('jwtToken')).toBe(token);
+      expect(sessionStorage.getItem("jwtToken")).toBe(token);
     });
 
-    it('should restore principal from localStorage to sessionStorage', () => {
+    it("should restore principal from localStorage to sessionStorage", () => {
       const principal: Principal = {
-        id: 'user-456',
-        username: 'restoreduser',
-        email: 'restored@example.com',
-        password: '',
+        id: "user-456",
+        username: "restoreduser",
+        email: "restored@example.com",
+        password: "",
         roleList: [],
         authorityList: [],
       };
 
-      localStorage.setItem('authenticatedPrincipal', JSON.stringify(principal));
+      localStorage.setItem("authenticatedPrincipal", JSON.stringify(principal));
 
-      const { principal: restoredPrincipal } = hydrateStoredCredentials('test');
+      const { principal: restoredPrincipal } = hydrateStoredCredentials("test");
 
       expect(restoredPrincipal).not.toBeNull();
       expect(restoredPrincipal?.id).toBe(principal.id);
       expect(restoredPrincipal?.username).toBe(principal.username);
     });
 
-    it('should return both token and principal when both exist', () => {
-      const token = 'test-token';
+    it("should return both token and principal when both exist", () => {
+      const token = "test-token";
       const principal: Principal = {
-        id: 'user-789',
-        username: 'fulluser',
-        email: 'full@example.com',
-        password: '',
+        id: "user-789",
+        username: "fulluser",
+        email: "full@example.com",
+        password: "",
         roleList: [],
         authorityList: [],
       };
 
-      localStorage.setItem('jwtToken', token);
-      localStorage.setItem('authenticatedPrincipal', JSON.stringify(principal));
+      localStorage.setItem("jwtToken", token);
+      localStorage.setItem("authenticatedPrincipal", JSON.stringify(principal));
 
-      const { token: restoredToken, principal: restoredPrincipal } = hydrateStoredCredentials('test');
+      const { token: restoredToken, principal: restoredPrincipal } =
+        hydrateStoredCredentials("test");
 
       expect(restoredToken).toBe(token);
       expect(restoredPrincipal?.id).toBe(principal.id);
     });
   });
 
-  describe('clearStoredJwtToken', () => {
-    it('should clear JWT token from both storages', () => {
-      const token = 'token-to-clear';
-      storeJwtToken(token, 'test');
+  describe("clearStoredJwtToken", () => {
+    it("should clear JWT token from both storages", () => {
+      const token = "token-to-clear";
+      storeJwtToken(token, "test");
 
-      clearStoredJwtToken('test');
+      clearStoredJwtToken("test");
 
-      expect(sessionStorage.getItem('jwtToken')).toBeNull();
-      expect(localStorage.getItem('jwtToken')).toBeNull();
+      expect(sessionStorage.getItem("jwtToken")).toBeNull();
+      expect(localStorage.getItem("jwtToken")).toBeNull();
     });
   });
 
-  describe('clearStoredPrincipal', () => {
-    it('should clear principal from both storages', () => {
+  describe("clearStoredPrincipal", () => {
+    it("should clear principal from both storages", () => {
       const principal: Principal = {
-        id: 'user-to-clear',
-        username: 'clearuser',
-        email: 'clear@example.com',
-        password: '',
+        id: "user-to-clear",
+        username: "clearuser",
+        email: "clear@example.com",
+        password: "",
         roleList: [],
         authorityList: [],
       };
 
       writeStoredPrincipal(principal);
-      clearStoredPrincipal('test');
+      clearStoredPrincipal("test");
 
-      expect(sessionStorage.getItem('authenticatedPrincipal')).toBeNull();
-      expect(localStorage.getItem('authenticatedPrincipal')).toBeNull();
+      expect(sessionStorage.getItem("authenticatedPrincipal")).toBeNull();
+      expect(localStorage.getItem("authenticatedPrincipal")).toBeNull();
     });
   });
 
-  describe('Sticky Auth Scenario', () => {
-    it('should maintain auth across page reload simulation', () => {
+  describe("Sticky Auth Scenario", () => {
+    it("should maintain auth across page reload simulation", () => {
       // Step 1: User logs in
-      const token = 'persistent-jwt-token';
+      const token = "persistent-jwt-token";
       const principal: Principal = {
-        id: 'user-persistent',
-        username: 'persistentuser',
-        email: 'persistent@example.com',
-        password: '',
+        id: "user-persistent",
+        username: "persistentuser",
+        email: "persistent@example.com",
+        password: "",
         roleList: [],
         authorityList: [],
       };
 
-      storeJwtToken(token, 'login');
+      storeJwtToken(token, "login");
       writeStoredPrincipal(principal);
 
       // Verify credentials are stored
-      expect(localStorage.getItem('jwtToken')).toBe(token);
-      expect(localStorage.getItem('authenticatedPrincipal')).not.toBeNull();
+      expect(localStorage.getItem("jwtToken")).toBe(token);
+      expect(localStorage.getItem("authenticatedPrincipal")).not.toBeNull();
 
       // Step 2: Clear sessionStorage (simulating page reload)
       sessionStorage.clear();
 
       // Step 3: App initializes and hydrates from localStorage
-      const { token: restoredToken, principal: restoredPrincipal } = hydrateStoredCredentials('app-init');
+      const { token: restoredToken, principal: restoredPrincipal } =
+        hydrateStoredCredentials("app-init");
 
       expect(restoredToken).toBe(token);
       expect(restoredPrincipal?.id).toBe(principal.id);
       expect(restoredPrincipal?.username).toBe(principal.username);
 
       // Step 4: SessionStorage is now populated
-      expect(sessionStorage.getItem('jwtToken')).toBe(token);
-      expect(sessionStorage.getItem('authenticatedPrincipal')).not.toBeNull();
+      expect(sessionStorage.getItem("jwtToken")).toBe(token);
+      expect(sessionStorage.getItem("authenticatedPrincipal")).not.toBeNull();
     });
 
-    it('should allow logout to clear all auth', () => {
+    it("should allow logout to clear all auth", () => {
       // Setup
-      const token = 'logout-test-token';
+      const token = "logout-test-token";
       const principal: Principal = {
-        id: 'user-logout',
-        username: 'logoutuser',
-        email: 'logout@example.com',
-        password: '',
+        id: "user-logout",
+        username: "logoutuser",
+        email: "logout@example.com",
+        password: "",
         roleList: [],
         authorityList: [],
       };
 
-      storeJwtToken(token, 'login');
+      storeJwtToken(token, "login");
       writeStoredPrincipal(principal);
 
       // Verify stored
-      expect(localStorage.getItem('jwtToken')).not.toBeNull();
-      expect(localStorage.getItem('authenticatedPrincipal')).not.toBeNull();
+      expect(localStorage.getItem("jwtToken")).not.toBeNull();
+      expect(localStorage.getItem("authenticatedPrincipal")).not.toBeNull();
 
       // Logout
-      clearStoredJwtToken('logout');
-      clearStoredPrincipal('logout');
+      clearStoredJwtToken("logout");
+      clearStoredPrincipal("logout");
 
       // Verify cleared
-      expect(sessionStorage.getItem('jwtToken')).toBeNull();
-      expect(localStorage.getItem('jwtToken')).toBeNull();
-      expect(sessionStorage.getItem('authenticatedPrincipal')).toBeNull();
-      expect(localStorage.getItem('authenticatedPrincipal')).toBeNull();
+      expect(sessionStorage.getItem("jwtToken")).toBeNull();
+      expect(localStorage.getItem("jwtToken")).toBeNull();
+      expect(sessionStorage.getItem("authenticatedPrincipal")).toBeNull();
+      expect(localStorage.getItem("authenticatedPrincipal")).toBeNull();
     });
   });
 });

@@ -29,78 +29,79 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function JobSeekerFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        email: json["email"],
-        fullName: json["fullName"],
-        linkedinUrl: !exists(json, "linkedinUrl") ? undefined : json["linkedinUrl"],
-        currentRole: !exists(json, "currentRole") ? undefined : json["currentRole"],
-        currentCompany: !exists(json, "currentCompany")
-            ? undefined
-            : json["currentCompany"],
-        yearsExperience: !exists(json, "yearsExperience")
-            ? undefined
-            : json["yearsExperience"],
-        openToWork: !exists(json, "openToWork") ? undefined : json["openToWork"],
-        preferredRoles: !exists(json, "preferredRoles")
-            ? undefined
-            : json["preferredRoles"],
-        skills: !exists(json, "skills") ? undefined : json["skills"],
-        resumeStorageUrl: !exists(json, "resumeStorageUrl")
-            ? undefined
-            : json["resumeStorageUrl"],
-        resumeParsedText: !exists(json, "resumeParsedText")
-            ? undefined
-            : json["resumeParsedText"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        updatedDate: !exists(json, "updatedDate")
-            ? undefined
-            : new Date(json["updatedDate"]),
-        aiReadableProfile: !exists(json, "aiReadableProfile")
-            ? undefined
-            : json["aiReadableProfile"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    email: json["email"],
+    fullName: json["fullName"],
+    linkedinUrl: !exists(json, "linkedinUrl") ? undefined : json["linkedinUrl"],
+    currentRole: !exists(json, "currentRole") ? undefined : json["currentRole"],
+    currentCompany: !exists(json, "currentCompany")
+      ? undefined
+      : json["currentCompany"],
+    yearsExperience: !exists(json, "yearsExperience")
+      ? undefined
+      : json["yearsExperience"],
+    openToWork: !exists(json, "openToWork") ? undefined : json["openToWork"],
+    preferredRoles: !exists(json, "preferredRoles")
+      ? undefined
+      : json["preferredRoles"],
+    skills: !exists(json, "skills") ? undefined : json["skills"],
+    resumeStorageUrl: !exists(json, "resumeStorageUrl")
+      ? undefined
+      : json["resumeStorageUrl"],
+    resumeParsedText: !exists(json, "resumeParsedText")
+      ? undefined
+      : json["resumeParsedText"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    updatedDate: !exists(json, "updatedDate")
+      ? undefined
+      : new Date(json["updatedDate"]),
+    aiReadableProfile: !exists(json, "aiReadableProfile")
+      ? undefined
+      : json["aiReadableProfile"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function JobSeekerToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        email: value.email,
-        fullName: value.fullName,
-        linkedinUrl: value.linkedinUrl,
-        currentRole: value.currentRole,
-        currentCompany: value.currentCompany,
-        yearsExperience: value.yearsExperience,
-        openToWork: value.openToWork,
-        preferredRoles: value.preferredRoles,
-        skills: value.skills,
-        resumeStorageUrl: value.resumeStorageUrl,
-        resumeParsedText: value.resumeParsedText,
-        updatedDate: value.updatedDate === undefined
-            ? undefined
-            : value.updatedDate.toISOString(),
-        aiReadableProfile: value.aiReadableProfile,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    email: value.email,
+    fullName: value.fullName,
+    linkedinUrl: value.linkedinUrl,
+    currentRole: value.currentRole,
+    currentCompany: value.currentCompany,
+    yearsExperience: value.yearsExperience,
+    openToWork: value.openToWork,
+    preferredRoles: value.preferredRoles,
+    skills: value.skills,
+    resumeStorageUrl: value.resumeStorageUrl,
+    resumeParsedText: value.resumeParsedText,
+    updatedDate:
+      value.updatedDate === undefined
+        ? undefined
+        : value.updatedDate.toISOString(),
+    aiReadableProfile: value.aiReadableProfile,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=JobSeeker.js.map

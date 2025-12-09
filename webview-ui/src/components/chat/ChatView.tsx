@@ -231,6 +231,9 @@ const ChatView = ({
           apiConfiguration={apiConfiguration}
           inputValue={inputValue}
           setInputValue={setInputValue}
+          sendMessageFromChatRow={(text, images) =>
+            handleSendMessage(text, images ?? [])
+          }
           isChatLoading={isChatLoading}
           lastApiReqTotalTokens={lastApiReqTotalTokens}
           valorideAsk={valorideAsk}

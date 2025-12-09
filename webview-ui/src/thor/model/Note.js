@@ -29,51 +29,51 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function NoteFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        content: json["content"],
-        noteId: !exists(json, "noteId") ? undefined : json["noteId"],
-        associatedEntityId: !exists(json, "associatedEntityId")
-            ? undefined
-            : json["associatedEntityId"],
-        entityType: !exists(json, "entityType") ? undefined : json["entityType"],
-        name: !exists(json, "name") ? undefined : json["name"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        createdBy: !exists(json, "createdBy") ? undefined : json["createdBy"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    content: json["content"],
+    noteId: !exists(json, "noteId") ? undefined : json["noteId"],
+    associatedEntityId: !exists(json, "associatedEntityId")
+      ? undefined
+      : json["associatedEntityId"],
+    entityType: !exists(json, "entityType") ? undefined : json["entityType"],
+    name: !exists(json, "name") ? undefined : json["name"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    createdBy: !exists(json, "createdBy") ? undefined : json["createdBy"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function NoteToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        content: value.content,
-        noteId: value.noteId,
-        associatedEntityId: value.associatedEntityId,
-        entityType: value.entityType,
-        name: value.name,
-        createdBy: value.createdBy,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    content: value.content,
+    noteId: value.noteId,
+    associatedEntityId: value.associatedEntityId,
+    entityType: value.entityType,
+    name: value.name,
+    createdBy: value.createdBy,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -81,9 +81,9 @@ export function NoteToJSON(value) {
  */
 export var NoteEntityTypeEnum;
 (function (NoteEntityTypeEnum) {
-    NoteEntityTypeEnum["CUSTOMER"] = "customer";
-    NoteEntityTypeEnum["OPPORTUNITY"] = "opportunity";
-    NoteEntityTypeEnum["CONTACT"] = "contact";
-    NoteEntityTypeEnum["SALESACTIVITY"] = "sales-activity";
+  NoteEntityTypeEnum["CUSTOMER"] = "customer";
+  NoteEntityTypeEnum["OPPORTUNITY"] = "opportunity";
+  NoteEntityTypeEnum["CONTACT"] = "contact";
+  NoteEntityTypeEnum["SALESACTIVITY"] = "sales-activity";
 })(NoteEntityTypeEnum || (NoteEntityTypeEnum = {}));
 //# sourceMappingURL=Note.js.map

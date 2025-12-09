@@ -31,60 +31,60 @@ export const LIST_OASPATH_REQUEST = "LIST_OASPATH_REQUEST";
 export const LIST_OASPATH_SUCCESS = "LIST_OASPATH_SUCCESS";
 export const LIST_OASPATH_FAILURE = "LIST_OASPATH_FAILURE";
 export const addOasPathRequest = () => ({
-    type: ADD_OASPATH_REQUEST,
+  type: ADD_OASPATH_REQUEST,
 });
 export const addOasPathSuccess = (OasPaths) => ({
-    type: ADD_OASPATH_SUCCESS,
-    payload: OasPaths,
+  type: ADD_OASPATH_SUCCESS,
+  payload: OasPaths,
 });
 export const addOasPathFailure = (error) => ({
-    type: ADD_OASPATH_FAILURE,
-    payload: error,
+  type: ADD_OASPATH_FAILURE,
+  payload: error,
 });
 export const fetchOasPathRequest = () => ({
-    type: FETCH_OASPATH_REQUEST,
+  type: FETCH_OASPATH_REQUEST,
 });
 export const fetchOasPathSuccess = (OasPaths) => ({
-    type: FETCH_OASPATH_SUCCESS,
-    payload: OasPaths,
+  type: FETCH_OASPATH_SUCCESS,
+  payload: OasPaths,
 });
 export const fetchOasPathFailure = (error) => ({
-    type: FETCH_OASPATH_FAILURE,
-    payload: error,
+  type: FETCH_OASPATH_FAILURE,
+  payload: error,
 });
 export const listOasPathRequest = () => ({
-    type: LIST_OASPATH_REQUEST,
+  type: LIST_OASPATH_REQUEST,
 });
 export const listOasPathSuccess = (OasPaths) => ({
-    type: LIST_OASPATH_SUCCESS,
-    payload: OasPaths,
+  type: LIST_OASPATH_SUCCESS,
+  payload: OasPaths,
 });
 export const listOasPathFailure = (error) => ({
-    type: LIST_OASPATH_FAILURE,
-    payload: error,
+  type: LIST_OASPATH_FAILURE,
+  payload: error,
 });
 export const updateOasPathRequest = (OasPath) => ({
-    type: UPDATE_OASPATH_REQUEST,
-    payload: OasPath,
+  type: UPDATE_OASPATH_REQUEST,
+  payload: OasPath,
 });
 export const updateOasPathSuccess = (OasPath) => ({
-    type: UPDATE_OASPATH_SUCCESS,
-    payload: OasPath,
+  type: UPDATE_OASPATH_SUCCESS,
+  payload: OasPath,
 });
 export const updateOasPathFailure = (error) => ({
-    type: UPDATE_OASPATH_FAILURE,
-    payload: error,
+  type: UPDATE_OASPATH_FAILURE,
+  payload: error,
 });
 export const deleteOasPathRequest = (OasPath) => ({
-    type: DELETE_OASPATH_REQUEST,
-    payload: OasPath,
+  type: DELETE_OASPATH_REQUEST,
+  payload: OasPath,
 });
 export const deleteOasPathSuccess = (OasPath) => ({
-    type: DELETE_OASPATH_SUCCESS,
-    payload: OasPath,
+  type: DELETE_OASPATH_SUCCESS,
+  payload: OasPath,
 });
 export const deleteOasPathFailure = (error) => ({
-    type: DELETE_OASPATH_FAILURE,
-    payload: error,
+  type: DELETE_OASPATH_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=OasPathApiAction.js.map

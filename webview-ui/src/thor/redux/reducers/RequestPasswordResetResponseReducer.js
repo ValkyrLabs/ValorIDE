@@ -16,31 +16,41 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const RequestPasswordResetResponseSlice = createSlice({
-    name: "RequestPasswordResetResponses",
-    initialState: [],
-    reducers: {
-        RequestPasswordResetResponseAdded(state, action) {
-            state.push(action.payload);
-        },
-        RequestPasswordResetResponseValueToggled(state, action) {
-            console.log("RequestPasswordResetResponse TOGGLE");
-            console.warn(JSON.stringify(action));
-            const RequestPasswordResetResponse = state.find((RequestPasswordResetResponse) => RequestPasswordResetResponse.id ===
-                action.payload.RequestPasswordResetResponseId);
-            if (RequestPasswordResetResponse) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        RequestPasswordResetResponsepropertySet(state, action) {
-            const RequestPasswordResetResponse = state.find((RequestPasswordResetResponse) => RequestPasswordResetResponse.id ===
-                action.payload.RequestPasswordResetResponseId);
-            if (RequestPasswordResetResponse) {
-                //  RequestPasswordResetResponse[action.property] = action.payload[action.property];
-            }
-        },
+  name: "RequestPasswordResetResponses",
+  initialState: [],
+  reducers: {
+    RequestPasswordResetResponseAdded(state, action) {
+      state.push(action.payload);
     },
+    RequestPasswordResetResponseValueToggled(state, action) {
+      console.log("RequestPasswordResetResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const RequestPasswordResetResponse = state.find(
+        (RequestPasswordResetResponse) =>
+          RequestPasswordResetResponse.id ===
+          action.payload.RequestPasswordResetResponseId,
+      );
+      if (RequestPasswordResetResponse) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    RequestPasswordResetResponsepropertySet(state, action) {
+      const RequestPasswordResetResponse = state.find(
+        (RequestPasswordResetResponse) =>
+          RequestPasswordResetResponse.id ===
+          action.payload.RequestPasswordResetResponseId,
+      );
+      if (RequestPasswordResetResponse) {
+        //  RequestPasswordResetResponse[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { RequestPasswordResetResponseAdded, RequestPasswordResetResponseValueToggled, RequestPasswordResetResponsepropertySet, } = RequestPasswordResetResponseSlice.actions;
+export const {
+  RequestPasswordResetResponseAdded,
+  RequestPasswordResetResponseValueToggled,
+  RequestPasswordResetResponsepropertySet,
+} = RequestPasswordResetResponseSlice.actions;
 export default RequestPasswordResetResponseSlice.reducer;
 //# sourceMappingURL=RequestPasswordResetResponseReducer.js.map

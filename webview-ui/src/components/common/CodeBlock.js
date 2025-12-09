@@ -5,9 +5,11 @@ import rehypeHighlight from "rehype-highlight";
 import styled from "styled-components";
 import { visit } from "unist-util-visit";
 import { useExtensionState } from "@/context/ExtensionStateContext";
-export const CODE_BLOCK_BG_COLOR = "var(--vscode-editor-background, --vscode-sideBar-background, rgb(30 30 30))";
-const StyledMarkdown = styled.div `
-  ${({ forceWrap }) => forceWrap &&
+export const CODE_BLOCK_BG_COLOR =
+  "var(--vscode-editor-background, --vscode-sideBar-background, rgb(30 30 30))";
+const StyledMarkdown = styled.div`
+  ${({ forceWrap }) =>
+    forceWrap &&
     `
     pre, code {
       white-space: pre-wrap;
@@ -77,59 +79,66 @@ const StyledMarkdown = styled.div `
     line-height: 1.5;
   }
 `;
-const StyledPre = styled.pre `
+const StyledPre = styled.pre`
   & .hljs {
     color: var(--vscode-editor-foreground, #fff);
   }
 
-  ${(props) => Object.keys(props.theme)
-    .map((key, index) => {
-    return `
+  ${(props) =>
+    Object.keys(props.theme)
+      .map((key, index) => {
+        return `
       & ${key} {
         color: ${props.theme[key]};
       }
     `;
-})
-    .join("")}
+      })
+      .join("")}
 `;
 const CodeBlock = memo(({ source, forceWrap = false }) => {
-    const { theme } = useExtensionState();
-    const [reactContent, setMarkdownSource] = useRemark({
-        remarkPlugins: [
-            () => {
-                return (tree) => {
-                    visit(tree, "code", (node) => {
-                        if (!node.lang) {
-                            node.lang = "javascript";
-                        }
-                        else if (node.lang.includes(".")) {
-                            // if the language is a file, get the extension
-                            node.lang = node.lang.split(".").slice(-1)[0];
-                        }
-                    });
-                };
-            },
-        ],
-        rehypePlugins: [
-            rehypeHighlight,
-            {
-            // languages: {},
-            },
-        ],
-        rehypeReactOptions: {
-            components: {
-                pre: ({ node, ...preProps }) => (_jsx(StyledPre, { ...preProps, theme: theme })),
-            },
-        },
-    });
-    useEffect(() => {
-        setMarkdownSource(source || "");
-    }, [source, setMarkdownSource, theme]);
-    return (_jsx("div", { style: {
-            overflowY: forceWrap ? "visible" : "auto",
-            maxHeight: forceWrap ? "none" : "100%",
-            backgroundColor: CODE_BLOCK_BG_COLOR,
-        }, children: _jsx(StyledMarkdown, { forceWrap: forceWrap, children: reactContent }) }));
+  const { theme } = useExtensionState();
+  const [reactContent, setMarkdownSource] = useRemark({
+    remarkPlugins: [
+      () => {
+        return (tree) => {
+          visit(tree, "code", (node) => {
+            if (!node.lang) {
+              node.lang = "javascript";
+            } else if (node.lang.includes(".")) {
+              // if the language is a file, get the extension
+              node.lang = node.lang.split(".").slice(-1)[0];
+            }
+          });
+        };
+      },
+    ],
+    rehypePlugins: [
+      rehypeHighlight,
+      {
+        // languages: {},
+      },
+    ],
+    rehypeReactOptions: {
+      components: {
+        pre: ({ node, ...preProps }) =>
+          _jsx(StyledPre, { ...preProps, theme: theme }),
+      },
+    },
+  });
+  useEffect(() => {
+    setMarkdownSource(source || "");
+  }, [source, setMarkdownSource, theme]);
+  return _jsx("div", {
+    style: {
+      overflowY: forceWrap ? "visible" : "auto",
+      maxHeight: forceWrap ? "none" : "100%",
+      backgroundColor: CODE_BLOCK_BG_COLOR,
+    },
+    children: _jsx(StyledMarkdown, {
+      forceWrap: forceWrap,
+      children: reactContent,
+    }),
+  });
 });
 export default CodeBlock;
 //# sourceMappingURL=CodeBlock.js.map

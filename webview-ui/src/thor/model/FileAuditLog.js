@@ -28,57 +28,62 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { FileRecordFromJSON, FileRecordToJSON, PrincipalFromJSON, PrincipalToJSON, } from "./";
+import {
+  FileRecordFromJSON,
+  FileRecordToJSON,
+  PrincipalFromJSON,
+  PrincipalToJSON,
+} from "./";
 export function FileAuditLogFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        fileId: json["fileId"],
-        action: json["action"],
-        file: !exists(json, "file") ? undefined : FileRecordFromJSON(json["file"]),
-        actorId: !exists(json, "actorId") ? undefined : json["actorId"],
-        actor: !exists(json, "actor")
-            ? undefined
-            : PrincipalFromJSON(json["actor"]),
-        details: !exists(json, "details") ? undefined : json["details"],
-        ipAddress: !exists(json, "ipAddress") ? undefined : json["ipAddress"],
-        userAgent: !exists(json, "userAgent") ? undefined : json["userAgent"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    fileId: json["fileId"],
+    action: json["action"],
+    file: !exists(json, "file") ? undefined : FileRecordFromJSON(json["file"]),
+    actorId: !exists(json, "actorId") ? undefined : json["actorId"],
+    actor: !exists(json, "actor")
+      ? undefined
+      : PrincipalFromJSON(json["actor"]),
+    details: !exists(json, "details") ? undefined : json["details"],
+    ipAddress: !exists(json, "ipAddress") ? undefined : json["ipAddress"],
+    userAgent: !exists(json, "userAgent") ? undefined : json["userAgent"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function FileAuditLogToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        fileId: value.fileId,
-        action: value.action,
-        file: FileRecordToJSON(value.file),
-        actorId: value.actorId,
-        actor: PrincipalToJSON(value.actor),
-        details: value.details,
-        ipAddress: value.ipAddress,
-        userAgent: value.userAgent,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    fileId: value.fileId,
+    action: value.action,
+    file: FileRecordToJSON(value.file),
+    actorId: value.actorId,
+    actor: PrincipalToJSON(value.actor),
+    details: value.details,
+    ipAddress: value.ipAddress,
+    userAgent: value.userAgent,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -86,13 +91,13 @@ export function FileAuditLogToJSON(value) {
  */
 export var FileAuditLogActionEnum;
 (function (FileAuditLogActionEnum) {
-    FileAuditLogActionEnum["UPLOAD"] = "upload";
-    FileAuditLogActionEnum["DOWNLOAD"] = "download";
-    FileAuditLogActionEnum["VIEW"] = "view";
-    FileAuditLogActionEnum["EDIT"] = "edit";
-    FileAuditLogActionEnum["DELETE"] = "delete";
-    FileAuditLogActionEnum["SHARE"] = "share";
-    FileAuditLogActionEnum["MOVE"] = "move";
-    FileAuditLogActionEnum["COPY"] = "copy";
+  FileAuditLogActionEnum["UPLOAD"] = "upload";
+  FileAuditLogActionEnum["DOWNLOAD"] = "download";
+  FileAuditLogActionEnum["VIEW"] = "view";
+  FileAuditLogActionEnum["EDIT"] = "edit";
+  FileAuditLogActionEnum["DELETE"] = "delete";
+  FileAuditLogActionEnum["SHARE"] = "share";
+  FileAuditLogActionEnum["MOVE"] = "move";
+  FileAuditLogActionEnum["COPY"] = "copy";
 })(FileAuditLogActionEnum || (FileAuditLogActionEnum = {}));
 //# sourceMappingURL=FileAuditLog.js.map

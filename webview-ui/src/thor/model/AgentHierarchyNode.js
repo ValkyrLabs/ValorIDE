@@ -30,56 +30,57 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { AgentBillingFromJSON, AgentBillingToJSON } from "./";
 export function AgentHierarchyNodeFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        agentId: !exists(json, "agentId") ? undefined : json["agentId"],
-        parentAgentId: !exists(json, "parentAgentId")
-            ? undefined
-            : json["parentAgentId"],
-        children: !exists(json, "children")
-            ? undefined
-            : json["children"].map(AgentHierarchyNodeFromJSON),
-        depth: !exists(json, "depth") ? undefined : json["depth"],
-        status: !exists(json, "status") ? undefined : json["status"],
-        billing: !exists(json, "billing")
-            ? undefined
-            : AgentBillingFromJSON(json["billing"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    agentId: !exists(json, "agentId") ? undefined : json["agentId"],
+    parentAgentId: !exists(json, "parentAgentId")
+      ? undefined
+      : json["parentAgentId"],
+    children: !exists(json, "children")
+      ? undefined
+      : json["children"].map(AgentHierarchyNodeFromJSON),
+    depth: !exists(json, "depth") ? undefined : json["depth"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    billing: !exists(json, "billing")
+      ? undefined
+      : AgentBillingFromJSON(json["billing"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function AgentHierarchyNodeToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        agentId: value.agentId,
-        parentAgentId: value.parentAgentId,
-        children: value.children === undefined
-            ? undefined
-            : value.children.map(AgentHierarchyNodeToJSON),
-        depth: value.depth,
-        status: value.status,
-        billing: AgentBillingToJSON(value.billing),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    agentId: value.agentId,
+    parentAgentId: value.parentAgentId,
+    children:
+      value.children === undefined
+        ? undefined
+        : value.children.map(AgentHierarchyNodeToJSON),
+    depth: value.depth,
+    status: value.status,
+    billing: AgentBillingToJSON(value.billing),
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=AgentHierarchyNode.js.map

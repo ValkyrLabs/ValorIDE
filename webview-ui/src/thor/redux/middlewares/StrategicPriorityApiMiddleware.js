@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: StrategicPriority
 */
-export const StrategicPriorityMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const StrategicPriorityMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("StrategicPriority MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=StrategicPriorityApiMiddleware.js.map

@@ -29,47 +29,47 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function WizardStartResponseFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        wizardId: json["wizardId"],
-        status: json["status"],
-        message: !exists(json, "message") ? undefined : json["message"],
-        estimatedSeconds: !exists(json, "estimatedSeconds")
-            ? undefined
-            : json["estimatedSeconds"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    wizardId: json["wizardId"],
+    status: json["status"],
+    message: !exists(json, "message") ? undefined : json["message"],
+    estimatedSeconds: !exists(json, "estimatedSeconds")
+      ? undefined
+      : json["estimatedSeconds"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function WizardStartResponseToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        wizardId: value.wizardId,
-        status: value.status,
-        message: value.message,
-        estimatedSeconds: value.estimatedSeconds,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    wizardId: value.wizardId,
+    status: value.status,
+    message: value.message,
+    estimatedSeconds: value.estimatedSeconds,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -77,7 +77,7 @@ export function WizardStartResponseToJSON(value) {
  */
 export var WizardStartResponseStatusEnum;
 (function (WizardStartResponseStatusEnum) {
-    WizardStartResponseStatusEnum["STARTED"] = "started";
-    WizardStartResponseStatusEnum["GENERATING"] = "generating";
+  WizardStartResponseStatusEnum["STARTED"] = "started";
+  WizardStartResponseStatusEnum["GENERATING"] = "generating";
 })(WizardStartResponseStatusEnum || (WizardStartResponseStatusEnum = {}));
 //# sourceMappingURL=WizardStartResponse.js.map

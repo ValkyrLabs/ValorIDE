@@ -28,67 +28,76 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { CustomerFromJSON, CustomerToJSON, OrganizationFromJSON, OrganizationToJSON, SalesOrderFromJSON, SalesOrderToJSON, } from "./";
+import {
+  CustomerFromJSON,
+  CustomerToJSON,
+  OrganizationFromJSON,
+  OrganizationToJSON,
+  SalesOrderFromJSON,
+  SalesOrderToJSON,
+} from "./";
 export function OpportunityFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        customerId: json["customerId"],
-        description: json["description"],
-        currentStatus: json["currentStatus"],
-        customer: !exists(json, "customer")
-            ? undefined
-            : CustomerFromJSON(json["customer"]),
-        organization: !exists(json, "organization")
-            ? undefined
-            : OrganizationFromJSON(json["organization"]),
-        totalValue: !exists(json, "totalValue") ? undefined : json["totalValue"],
-        salesOrder: !exists(json, "salesOrder")
-            ? undefined
-            : SalesOrderFromJSON(json["salesOrder"]),
-        deadline: !exists(json, "deadline")
-            ? undefined
-            : new Date(json["deadline"]),
-        closeDate: !exists(json, "closeDate")
-            ? undefined
-            : new Date(json["closeDate"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    customerId: json["customerId"],
+    description: json["description"],
+    currentStatus: json["currentStatus"],
+    customer: !exists(json, "customer")
+      ? undefined
+      : CustomerFromJSON(json["customer"]),
+    organization: !exists(json, "organization")
+      ? undefined
+      : OrganizationFromJSON(json["organization"]),
+    totalValue: !exists(json, "totalValue") ? undefined : json["totalValue"],
+    salesOrder: !exists(json, "salesOrder")
+      ? undefined
+      : SalesOrderFromJSON(json["salesOrder"]),
+    deadline: !exists(json, "deadline")
+      ? undefined
+      : new Date(json["deadline"]),
+    closeDate: !exists(json, "closeDate")
+      ? undefined
+      : new Date(json["closeDate"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function OpportunityToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        customerId: value.customerId,
-        description: value.description,
-        currentStatus: value.currentStatus,
-        customer: CustomerToJSON(value.customer),
-        organization: OrganizationToJSON(value.organization),
-        totalValue: value.totalValue,
-        salesOrder: SalesOrderToJSON(value.salesOrder),
-        deadline: value.deadline === undefined ? undefined : value.deadline.toISOString(),
-        closeDate: value.closeDate === undefined ? undefined : value.closeDate.toISOString(),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    customerId: value.customerId,
+    description: value.description,
+    currentStatus: value.currentStatus,
+    customer: CustomerToJSON(value.customer),
+    organization: OrganizationToJSON(value.organization),
+    totalValue: value.totalValue,
+    salesOrder: SalesOrderToJSON(value.salesOrder),
+    deadline:
+      value.deadline === undefined ? undefined : value.deadline.toISOString(),
+    closeDate:
+      value.closeDate === undefined ? undefined : value.closeDate.toISOString(),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -96,13 +105,13 @@ export function OpportunityToJSON(value) {
  */
 export var OpportunityCurrentStatusEnum;
 (function (OpportunityCurrentStatusEnum) {
-    OpportunityCurrentStatusEnum["DISCOVERY"] = "discovery";
-    OpportunityCurrentStatusEnum["WON"] = "won";
-    OpportunityCurrentStatusEnum["OPEN"] = "open";
-    OpportunityCurrentStatusEnum["LOST"] = "lost";
-    OpportunityCurrentStatusEnum["INACTIVE"] = "inactive";
-    OpportunityCurrentStatusEnum["REVIVE"] = "revive";
-    OpportunityCurrentStatusEnum["LEGAL"] = "legal";
-    OpportunityCurrentStatusEnum["BLOCKED"] = "blocked";
+  OpportunityCurrentStatusEnum["DISCOVERY"] = "discovery";
+  OpportunityCurrentStatusEnum["WON"] = "won";
+  OpportunityCurrentStatusEnum["OPEN"] = "open";
+  OpportunityCurrentStatusEnum["LOST"] = "lost";
+  OpportunityCurrentStatusEnum["INACTIVE"] = "inactive";
+  OpportunityCurrentStatusEnum["REVIVE"] = "revive";
+  OpportunityCurrentStatusEnum["LEGAL"] = "legal";
+  OpportunityCurrentStatusEnum["BLOCKED"] = "blocked";
 })(OpportunityCurrentStatusEnum || (OpportunityCurrentStatusEnum = {}));
 //# sourceMappingURL=Opportunity.js.map

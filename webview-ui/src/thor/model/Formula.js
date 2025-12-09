@@ -28,56 +28,56 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { PtgFromJSON, PtgToJSON, PtgRefFromJSON, PtgRefToJSON, } from "./";
+import { PtgFromJSON, PtgToJSON, PtgRefFromJSON, PtgRefToJSON } from "./";
 export function FormulaFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        workbookId: !exists(json, "workbookId") ? undefined : json["workbookId"],
-        sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
-        expression: !exists(json, "expression") ? undefined : json["expression"],
-        ptgRefs: !exists(json, "ptgRefs")
-            ? undefined
-            : json["ptgRefs"].map(PtgRefFromJSON),
-        calculatingPtgs: !exists(json, "calculatingPtgs")
-            ? undefined
-            : json["calculatingPtgs"].map(PtgFromJSON),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    workbookId: !exists(json, "workbookId") ? undefined : json["workbookId"],
+    sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
+    expression: !exists(json, "expression") ? undefined : json["expression"],
+    ptgRefs: !exists(json, "ptgRefs")
+      ? undefined
+      : json["ptgRefs"].map(PtgRefFromJSON),
+    calculatingPtgs: !exists(json, "calculatingPtgs")
+      ? undefined
+      : json["calculatingPtgs"].map(PtgFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function FormulaToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        workbookId: value.workbookId,
-        sheetId: value.sheetId,
-        expression: value.expression,
-        ptgRefs: value.ptgRefs === undefined
-            ? undefined
-            : value.ptgRefs.map(PtgRefToJSON),
-        calculatingPtgs: value.calculatingPtgs === undefined
-            ? undefined
-            : value.calculatingPtgs.map(PtgToJSON),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    workbookId: value.workbookId,
+    sheetId: value.sheetId,
+    expression: value.expression,
+    ptgRefs:
+      value.ptgRefs === undefined ? undefined : value.ptgRefs.map(PtgRefToJSON),
+    calculatingPtgs:
+      value.calculatingPtgs === undefined
+        ? undefined
+        : value.calculatingPtgs.map(PtgToJSON),
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=Formula.js.map

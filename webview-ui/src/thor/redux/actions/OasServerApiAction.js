@@ -31,60 +31,60 @@ export const LIST_OASSERVER_REQUEST = "LIST_OASSERVER_REQUEST";
 export const LIST_OASSERVER_SUCCESS = "LIST_OASSERVER_SUCCESS";
 export const LIST_OASSERVER_FAILURE = "LIST_OASSERVER_FAILURE";
 export const addOasServerRequest = () => ({
-    type: ADD_OASSERVER_REQUEST,
+  type: ADD_OASSERVER_REQUEST,
 });
 export const addOasServerSuccess = (OasServers) => ({
-    type: ADD_OASSERVER_SUCCESS,
-    payload: OasServers,
+  type: ADD_OASSERVER_SUCCESS,
+  payload: OasServers,
 });
 export const addOasServerFailure = (error) => ({
-    type: ADD_OASSERVER_FAILURE,
-    payload: error,
+  type: ADD_OASSERVER_FAILURE,
+  payload: error,
 });
 export const fetchOasServerRequest = () => ({
-    type: FETCH_OASSERVER_REQUEST,
+  type: FETCH_OASSERVER_REQUEST,
 });
 export const fetchOasServerSuccess = (OasServers) => ({
-    type: FETCH_OASSERVER_SUCCESS,
-    payload: OasServers,
+  type: FETCH_OASSERVER_SUCCESS,
+  payload: OasServers,
 });
 export const fetchOasServerFailure = (error) => ({
-    type: FETCH_OASSERVER_FAILURE,
-    payload: error,
+  type: FETCH_OASSERVER_FAILURE,
+  payload: error,
 });
 export const listOasServerRequest = () => ({
-    type: LIST_OASSERVER_REQUEST,
+  type: LIST_OASSERVER_REQUEST,
 });
 export const listOasServerSuccess = (OasServers) => ({
-    type: LIST_OASSERVER_SUCCESS,
-    payload: OasServers,
+  type: LIST_OASSERVER_SUCCESS,
+  payload: OasServers,
 });
 export const listOasServerFailure = (error) => ({
-    type: LIST_OASSERVER_FAILURE,
-    payload: error,
+  type: LIST_OASSERVER_FAILURE,
+  payload: error,
 });
 export const updateOasServerRequest = (OasServer) => ({
-    type: UPDATE_OASSERVER_REQUEST,
-    payload: OasServer,
+  type: UPDATE_OASSERVER_REQUEST,
+  payload: OasServer,
 });
 export const updateOasServerSuccess = (OasServer) => ({
-    type: UPDATE_OASSERVER_SUCCESS,
-    payload: OasServer,
+  type: UPDATE_OASSERVER_SUCCESS,
+  payload: OasServer,
 });
 export const updateOasServerFailure = (error) => ({
-    type: UPDATE_OASSERVER_FAILURE,
-    payload: error,
+  type: UPDATE_OASSERVER_FAILURE,
+  payload: error,
 });
 export const deleteOasServerRequest = (OasServer) => ({
-    type: DELETE_OASSERVER_REQUEST,
-    payload: OasServer,
+  type: DELETE_OASSERVER_REQUEST,
+  payload: OasServer,
 });
 export const deleteOasServerSuccess = (OasServer) => ({
-    type: DELETE_OASSERVER_SUCCESS,
-    payload: OasServer,
+  type: DELETE_OASSERVER_SUCCESS,
+  payload: OasServer,
 });
 export const deleteOasServerFailure = (error) => ({
-    type: DELETE_OASSERVER_FAILURE,
-    payload: error,
+  type: DELETE_OASSERVER_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=OasServerApiAction.js.map

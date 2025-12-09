@@ -7,119 +7,192 @@ import { CheckpointsServiceClient } from "@/services/grpc-client";
 import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
 import { FaCodeBranch, FaTrash } from "react-icons/fa";
 export const CheckpointOverlay = ({ messageTs }) => {
-    const [compareDisabled, setCompareDisabled] = useState(false);
-    const [restoreTaskDisabled, setRestoreTaskDisabled] = useState(false);
-    const [restoreWorkspaceDisabled, setRestoreWorkspaceDisabled] = useState(false);
-    const [restoreBothDisabled, setRestoreBothDisabled] = useState(false);
-    const [showRestoreConfirm, setShowRestoreConfirm] = useState(false);
-    const [hasMouseEntered, setHasMouseEntered] = useState(false);
-    const containerRef = useRef(null);
-    const tooltipRef = useRef(null);
-    useClickAway(containerRef, () => {
-        if (showRestoreConfirm) {
-            setShowRestoreConfirm(false);
-            setHasMouseEntered(false);
-        }
-    });
-    const handleMessage = useCallback((event) => {
-        const message = event.data;
-        switch (message.type) {
-            case "relinquishControl": {
-                setCompareDisabled(false);
-                setRestoreTaskDisabled(false);
-                setRestoreWorkspaceDisabled(false);
-                setRestoreBothDisabled(false);
-                setShowRestoreConfirm(false);
-                break;
-            }
-        }
-    }, []);
-    useEvent("message", handleMessage);
-    const handleRestoreTask = async () => {
-        setRestoreTaskDisabled(true);
-        try {
-            await CheckpointsServiceClient.checkpointRestore({
-                number: messageTs,
-                restoreType: "task",
-            });
-        }
-        catch (err) {
-            console.error("Checkpoint restore task error:", err);
-            setRestoreTaskDisabled(false);
-        }
-    };
-    const handleRestoreWorkspace = async () => {
-        setRestoreWorkspaceDisabled(true);
-        try {
-            await CheckpointsServiceClient.checkpointRestore({
-                number: messageTs,
-                restoreType: "workspace",
-            });
-        }
-        catch (err) {
-            console.error("Checkpoint restore workspace error:", err);
-            setRestoreWorkspaceDisabled(false);
-        }
-    };
-    const handleRestoreBoth = async () => {
-        setRestoreBothDisabled(true);
-        try {
-            await CheckpointsServiceClient.checkpointRestore({
-                number: messageTs,
-                restoreType: "taskAndWorkspace",
-            });
-        }
-        catch (err) {
-            console.error("Checkpoint restore both error:", err);
-            setRestoreBothDisabled(false);
-        }
-    };
-    const handleMouseEnter = () => {
-        setHasMouseEntered(true);
-    };
-    const handleMouseLeave = () => {
-        if (hasMouseEntered) {
-            setShowRestoreConfirm(false);
-            setHasMouseEntered(false);
-        }
-    };
-    const handleControlsMouseLeave = (e) => {
-        const tooltipElement = tooltipRef.current;
-        if (tooltipElement && showRestoreConfirm) {
-            const tooltipRect = tooltipElement.getBoundingClientRect();
-            // If mouse is moving towards the tooltip, don't close it
-            if (e.clientY >= tooltipRect.top &&
-                e.clientY <= tooltipRect.bottom &&
-                e.clientX >= tooltipRect.left &&
-                e.clientX <= tooltipRect.right) {
-                return;
-            }
-        }
+  const [compareDisabled, setCompareDisabled] = useState(false);
+  const [restoreTaskDisabled, setRestoreTaskDisabled] = useState(false);
+  const [restoreWorkspaceDisabled, setRestoreWorkspaceDisabled] =
+    useState(false);
+  const [restoreBothDisabled, setRestoreBothDisabled] = useState(false);
+  const [showRestoreConfirm, setShowRestoreConfirm] = useState(false);
+  const [hasMouseEntered, setHasMouseEntered] = useState(false);
+  const containerRef = useRef(null);
+  const tooltipRef = useRef(null);
+  useClickAway(containerRef, () => {
+    if (showRestoreConfirm) {
+      setShowRestoreConfirm(false);
+      setHasMouseEntered(false);
+    }
+  });
+  const handleMessage = useCallback((event) => {
+    const message = event.data;
+    switch (message.type) {
+      case "relinquishControl": {
+        setCompareDisabled(false);
+        setRestoreTaskDisabled(false);
+        setRestoreWorkspaceDisabled(false);
+        setRestoreBothDisabled(false);
         setShowRestoreConfirm(false);
-        setHasMouseEntered(false);
-    };
-    return (_jsxs(CheckpointControls, { onMouseLeave: handleControlsMouseLeave, children: [_jsx(VSCodeButton, { title: "Compare", appearance: "secondary", disabled: compareDisabled, style: { cursor: compareDisabled ? "wait" : "pointer" }, onClick: async () => {
-                    setCompareDisabled(true);
-                    try {
-                        await CheckpointsServiceClient.checkpointDiff({
-                            value: messageTs,
-                        });
-                    }
-                    catch (err) {
-                        console.error("CheckpointDiff error:", err);
-                    }
-                    finally {
-                        setCompareDisabled(false);
-                    }
-                }, children: _jsx(FaCodeBranch, {}) }), _jsxs("div", { style: { position: "relative" }, ref: containerRef, children: [_jsx(VSCodeButton, { title: "Restore", appearance: "secondary", style: { cursor: "pointer" }, onClick: () => setShowRestoreConfirm(true), children: _jsx(FaTrash, {}) }), showRestoreConfirm && (_jsxs(RestoreConfirmTooltip, { ref: tooltipRef, onMouseEnter: handleMouseEnter, onMouseLeave: handleMouseLeave, children: [_jsxs(RestoreOption, { children: [_jsx(VSCodeButton, { onClick: handleRestoreBoth, disabled: restoreBothDisabled, style: {
-                                            cursor: restoreBothDisabled ? "wait" : "pointer",
-                                        }, children: "Restore Task and Workspace" }), _jsx("p", { children: "Restores the task and your project's files back to a snapshot taken at this point" })] }), _jsxs(RestoreOption, { children: [_jsx(VSCodeButton, { onClick: handleRestoreTask, disabled: restoreTaskDisabled, style: {
-                                            cursor: restoreTaskDisabled ? "wait" : "pointer",
-                                        }, children: "Restore Task Only" }), _jsx("p", { children: "Deletes messages after this point (does not affect workspace)" })] }), _jsxs(RestoreOption, { children: [_jsx(VSCodeButton, { onClick: handleRestoreWorkspace, disabled: restoreWorkspaceDisabled, style: {
-                                            cursor: restoreWorkspaceDisabled ? "wait" : "pointer",
-                                        }, children: "Restore Workspace Only" }), _jsx("p", { children: "Restores your project's files to a snapshot taken at this point (task may become out of sync)" })] })] }))] })] }));
+        break;
+      }
+    }
+  }, []);
+  useEvent("message", handleMessage);
+  const handleRestoreTask = async () => {
+    setRestoreTaskDisabled(true);
+    try {
+      await CheckpointsServiceClient.checkpointRestore({
+        number: messageTs,
+        restoreType: "task",
+      });
+    } catch (err) {
+      console.error("Checkpoint restore task error:", err);
+      setRestoreTaskDisabled(false);
+    }
+  };
+  const handleRestoreWorkspace = async () => {
+    setRestoreWorkspaceDisabled(true);
+    try {
+      await CheckpointsServiceClient.checkpointRestore({
+        number: messageTs,
+        restoreType: "workspace",
+      });
+    } catch (err) {
+      console.error("Checkpoint restore workspace error:", err);
+      setRestoreWorkspaceDisabled(false);
+    }
+  };
+  const handleRestoreBoth = async () => {
+    setRestoreBothDisabled(true);
+    try {
+      await CheckpointsServiceClient.checkpointRestore({
+        number: messageTs,
+        restoreType: "taskAndWorkspace",
+      });
+    } catch (err) {
+      console.error("Checkpoint restore both error:", err);
+      setRestoreBothDisabled(false);
+    }
+  };
+  const handleMouseEnter = () => {
+    setHasMouseEntered(true);
+  };
+  const handleMouseLeave = () => {
+    if (hasMouseEntered) {
+      setShowRestoreConfirm(false);
+      setHasMouseEntered(false);
+    }
+  };
+  const handleControlsMouseLeave = (e) => {
+    const tooltipElement = tooltipRef.current;
+    if (tooltipElement && showRestoreConfirm) {
+      const tooltipRect = tooltipElement.getBoundingClientRect();
+      // If mouse is moving towards the tooltip, don't close it
+      if (
+        e.clientY >= tooltipRect.top &&
+        e.clientY <= tooltipRect.bottom &&
+        e.clientX >= tooltipRect.left &&
+        e.clientX <= tooltipRect.right
+      ) {
+        return;
+      }
+    }
+    setShowRestoreConfirm(false);
+    setHasMouseEntered(false);
+  };
+  return _jsxs(CheckpointControls, {
+    onMouseLeave: handleControlsMouseLeave,
+    children: [
+      _jsx(VSCodeButton, {
+        title: "Compare",
+        appearance: "secondary",
+        disabled: compareDisabled,
+        style: { cursor: compareDisabled ? "wait" : "pointer" },
+        onClick: async () => {
+          setCompareDisabled(true);
+          try {
+            await CheckpointsServiceClient.checkpointDiff({
+              value: messageTs,
+            });
+          } catch (err) {
+            console.error("CheckpointDiff error:", err);
+          } finally {
+            setCompareDisabled(false);
+          }
+        },
+        children: _jsx(FaCodeBranch, {}),
+      }),
+      _jsxs("div", {
+        style: { position: "relative" },
+        ref: containerRef,
+        children: [
+          _jsx(VSCodeButton, {
+            title: "Restore",
+            appearance: "secondary",
+            style: { cursor: "pointer" },
+            onClick: () => setShowRestoreConfirm(true),
+            children: _jsx(FaTrash, {}),
+          }),
+          showRestoreConfirm &&
+            _jsxs(RestoreConfirmTooltip, {
+              ref: tooltipRef,
+              onMouseEnter: handleMouseEnter,
+              onMouseLeave: handleMouseLeave,
+              children: [
+                _jsxs(RestoreOption, {
+                  children: [
+                    _jsx(VSCodeButton, {
+                      onClick: handleRestoreBoth,
+                      disabled: restoreBothDisabled,
+                      style: {
+                        cursor: restoreBothDisabled ? "wait" : "pointer",
+                      },
+                      children: "Restore Task and Workspace",
+                    }),
+                    _jsx("p", {
+                      children:
+                        "Restores the task and your project's files back to a snapshot taken at this point",
+                    }),
+                  ],
+                }),
+                _jsxs(RestoreOption, {
+                  children: [
+                    _jsx(VSCodeButton, {
+                      onClick: handleRestoreTask,
+                      disabled: restoreTaskDisabled,
+                      style: {
+                        cursor: restoreTaskDisabled ? "wait" : "pointer",
+                      },
+                      children: "Restore Task Only",
+                    }),
+                    _jsx("p", {
+                      children:
+                        "Deletes messages after this point (does not affect workspace)",
+                    }),
+                  ],
+                }),
+                _jsxs(RestoreOption, {
+                  children: [
+                    _jsx(VSCodeButton, {
+                      onClick: handleRestoreWorkspace,
+                      disabled: restoreWorkspaceDisabled,
+                      style: {
+                        cursor: restoreWorkspaceDisabled ? "wait" : "pointer",
+                      },
+                      children: "Restore Workspace Only",
+                    }),
+                    _jsx("p", {
+                      children:
+                        "Restores your project's files to a snapshot taken at this point (task may become out of sync)",
+                    }),
+                  ],
+                }),
+              ],
+            }),
+        ],
+      }),
+    ],
+  });
 };
-export const CheckpointControls = styled.div `
+export const CheckpointControls = styled.div`
   position: absolute;
   top: 3px;
   right: 6px;
@@ -144,7 +217,7 @@ export const CheckpointControls = styled.div `
     transform: translate(-50%, -50%);
   }
 `;
-const RestoreOption = styled.div `
+const RestoreOption = styled.div`
   &:not(:last-child) {
     margin-bottom: 10px;
     padding-bottom: 4px;
@@ -167,7 +240,7 @@ const RestoreOption = styled.div `
     margin-bottom: 10px;
   }
 `;
-const RestoreConfirmTooltip = styled.div `
+const RestoreConfirmTooltip = styled.div`
   position: absolute;
   top: calc(100% - 0.5px);
   right: 0;

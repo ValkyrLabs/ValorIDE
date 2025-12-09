@@ -29,51 +29,51 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function GeneralLedgerEntryFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        entryDate: new Date(json["entryDate"]),
-        debitAccount: json["debitAccount"],
-        creditAccount: json["creditAccount"],
-        amount: json["amount"],
-        referenceType: json["referenceType"],
-        referenceId: json["referenceId"],
-        notes: !exists(json, "notes") ? undefined : json["notes"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    entryDate: new Date(json["entryDate"]),
+    debitAccount: json["debitAccount"],
+    creditAccount: json["creditAccount"],
+    amount: json["amount"],
+    referenceType: json["referenceType"],
+    referenceId: json["referenceId"],
+    notes: !exists(json, "notes") ? undefined : json["notes"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function GeneralLedgerEntryToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        entryDate: value.entryDate.toISOString(),
-        debitAccount: value.debitAccount,
-        creditAccount: value.creditAccount,
-        amount: value.amount,
-        referenceType: value.referenceType,
-        referenceId: value.referenceId,
-        notes: value.notes,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    entryDate: value.entryDate.toISOString(),
+    debitAccount: value.debitAccount,
+    creditAccount: value.creditAccount,
+    amount: value.amount,
+    referenceType: value.referenceType,
+    referenceId: value.referenceId,
+    notes: value.notes,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -81,10 +81,14 @@ export function GeneralLedgerEntryToJSON(value) {
  */
 export var GeneralLedgerEntryReferenceTypeEnum;
 (function (GeneralLedgerEntryReferenceTypeEnum) {
-    GeneralLedgerEntryReferenceTypeEnum["PAYMENTTRANSACTION"] = "paymenttransaction";
-    GeneralLedgerEntryReferenceTypeEnum["USAGETRANSACTION"] = "usagetransaction";
-    GeneralLedgerEntryReferenceTypeEnum["SALESORDER"] = "salesorder";
-    GeneralLedgerEntryReferenceTypeEnum["INVOICE"] = "invoice";
-    GeneralLedgerEntryReferenceTypeEnum["EXPENSE"] = "expense";
-})(GeneralLedgerEntryReferenceTypeEnum || (GeneralLedgerEntryReferenceTypeEnum = {}));
+  GeneralLedgerEntryReferenceTypeEnum["PAYMENTTRANSACTION"] =
+    "paymenttransaction";
+  GeneralLedgerEntryReferenceTypeEnum["USAGETRANSACTION"] = "usagetransaction";
+  GeneralLedgerEntryReferenceTypeEnum["SALESORDER"] = "salesorder";
+  GeneralLedgerEntryReferenceTypeEnum["INVOICE"] = "invoice";
+  GeneralLedgerEntryReferenceTypeEnum["EXPENSE"] = "expense";
+})(
+  GeneralLedgerEntryReferenceTypeEnum ||
+    (GeneralLedgerEntryReferenceTypeEnum = {}),
+);
 //# sourceMappingURL=GeneralLedgerEntry.js.map

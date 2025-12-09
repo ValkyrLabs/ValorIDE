@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: ContentData
 */
-export const ContentDataMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const ContentDataMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("ContentData MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=ContentDataApiMiddleware.js.map

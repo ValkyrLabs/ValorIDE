@@ -30,57 +30,58 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { PrincipalFromJSON, PrincipalToJSON } from "./";
 export function PasswordResetTokenFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        principalId: json["principalId"],
-        token: json["token"],
-        principal: !exists(json, "principal")
-            ? undefined
-            : PrincipalFromJSON(json["principal"]),
-        tokenHash: !exists(json, "tokenHash") ? undefined : json["tokenHash"],
-        expiresAt: !exists(json, "expiresAt")
-            ? undefined
-            : new Date(json["expiresAt"]),
-        usedAt: !exists(json, "usedAt") ? undefined : new Date(json["usedAt"]),
-        createdAt: !exists(json, "createdAt")
-            ? undefined
-            : new Date(json["createdAt"]),
-        ipAddress: !exists(json, "ipAddress") ? undefined : json["ipAddress"],
-        userAgent: !exists(json, "userAgent") ? undefined : json["userAgent"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    principalId: json["principalId"],
+    token: json["token"],
+    principal: !exists(json, "principal")
+      ? undefined
+      : PrincipalFromJSON(json["principal"]),
+    tokenHash: !exists(json, "tokenHash") ? undefined : json["tokenHash"],
+    expiresAt: !exists(json, "expiresAt")
+      ? undefined
+      : new Date(json["expiresAt"]),
+    usedAt: !exists(json, "usedAt") ? undefined : new Date(json["usedAt"]),
+    createdAt: !exists(json, "createdAt")
+      ? undefined
+      : new Date(json["createdAt"]),
+    ipAddress: !exists(json, "ipAddress") ? undefined : json["ipAddress"],
+    userAgent: !exists(json, "userAgent") ? undefined : json["userAgent"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function PasswordResetTokenToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        principalId: value.principalId,
-        token: value.token,
-        principal: PrincipalToJSON(value.principal),
-        expiresAt: value.expiresAt === undefined ? undefined : value.expiresAt.toISOString(),
-        ipAddress: value.ipAddress,
-        userAgent: value.userAgent,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    principalId: value.principalId,
+    token: value.token,
+    principal: PrincipalToJSON(value.principal),
+    expiresAt:
+      value.expiresAt === undefined ? undefined : value.expiresAt.toISOString(),
+    ipAddress: value.ipAddress,
+    userAgent: value.userAgent,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=PasswordResetToken.js.map

@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Agent
 */
-export const AgentMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const AgentMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Agent MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=AgentApiMiddleware.js.map

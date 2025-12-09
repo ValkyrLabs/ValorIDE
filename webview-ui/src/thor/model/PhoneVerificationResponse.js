@@ -29,41 +29,41 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function PhoneVerificationResponseFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        verificationId: json["verificationId"],
-        status: json["status"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    verificationId: json["verificationId"],
+    status: json["status"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function PhoneVerificationResponseToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        verificationId: value.verificationId,
-        status: value.status,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    verificationId: value.verificationId,
+    status: value.status,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -71,7 +71,10 @@ export function PhoneVerificationResponseToJSON(value) {
  */
 export var PhoneVerificationResponseStatusEnum;
 (function (PhoneVerificationResponseStatusEnum) {
-    PhoneVerificationResponseStatusEnum["OTPSENT"] = "otp_sent";
-    PhoneVerificationResponseStatusEnum["ALREADYVERIFIED"] = "already_verified";
-})(PhoneVerificationResponseStatusEnum || (PhoneVerificationResponseStatusEnum = {}));
+  PhoneVerificationResponseStatusEnum["OTPSENT"] = "otp_sent";
+  PhoneVerificationResponseStatusEnum["ALREADYVERIFIED"] = "already_verified";
+})(
+  PhoneVerificationResponseStatusEnum ||
+    (PhoneVerificationResponseStatusEnum = {}),
+);
 //# sourceMappingURL=PhoneVerificationResponse.js.map

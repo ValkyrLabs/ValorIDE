@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Chart
 */
-export const ChartMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const ChartMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Chart MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=ChartApiMiddleware.js.map

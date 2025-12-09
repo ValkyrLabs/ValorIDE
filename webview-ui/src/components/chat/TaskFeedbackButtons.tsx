@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { vscode } from "@/utils/vscode";
 import { TaskFeedbackType } from "@shared/WebviewMessage";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
-import { FaThumbsUp } from "react-icons/fa";
+import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 interface TaskFeedbackButtonsProps {
   messageTs: number;
@@ -82,7 +82,11 @@ const TaskFeedbackButtons: React.FC<TaskFeedbackButtonsProps> = ({
             aria-label="This was helpful"
           >
             <IconWrapper>
-              ${feedback === "thumbs_up" ? <FaThumbsUp /> : <i>no comment</i>}
+              {feedback === "thumbs_up" ? (
+                <FaThumbsUp />
+              ) : (
+                <FaThumbsUp style={{ opacity: 0.6 }} />
+              )}
             </IconWrapper>
           </VSCodeButton>
         </ButtonWrapper>
@@ -90,22 +94,26 @@ const TaskFeedbackButtons: React.FC<TaskFeedbackButtonsProps> = ({
           <VSCodeButton
             appearance="icon"
             onClick={() => handleFeedback("thumbs_down")}
-            disabled={feedback !== null && feedback !== "thumbs_down"}
+            disabled={feedback !== null}
             title="This wasn't helpful"
             aria-label="This wasn't helpful"
           >
             <IconWrapper>
-              ${feedback === "thumbs_up" ? <FaThumbsUp /> : <i>no comment</i>}
+              {feedback === "thumbs_down" ? (
+                <FaThumbsDown />
+              ) : (
+                <FaThumbsDown style={{ opacity: 0.6 }} />
+              )}
             </IconWrapper>
           </VSCodeButton>
         </ButtonWrapper>
         {/* <VSCodeButtonLink
-					href="https://github.com/valkyrlabs/valoride/issues/new?template=bug_report.yml"
-					appearance="icon"
-					title="Report a bug"
-					aria-label="Report a bug">
-					
-				</VSCodeButtonLink> */}
+				href="https://github.com/valkyrlabs/valoride/issues/new?template=bug_report.yml"
+				appearance="icon"
+				title="Report a bug"
+				aria-label="Report a bug">
+				
+			</VSCodeButtonLink> */}
       </ButtonsContainer>
     </Container>
   );

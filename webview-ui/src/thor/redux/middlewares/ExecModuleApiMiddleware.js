@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: ExecModule
 */
-export const ExecModuleMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const ExecModuleMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("ExecModule MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=ExecModuleApiMiddleware.js.map

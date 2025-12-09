@@ -29,45 +29,45 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function RequestPasswordResetResponseFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        status: json["status"],
-        message: !exists(json, "message") ? undefined : json["message"],
-        requiresPhoneVerification: !exists(json, "requiresPhoneVerification")
-            ? undefined
-            : json["requiresPhoneVerification"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    status: json["status"],
+    message: !exists(json, "message") ? undefined : json["message"],
+    requiresPhoneVerification: !exists(json, "requiresPhoneVerification")
+      ? undefined
+      : json["requiresPhoneVerification"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function RequestPasswordResetResponseToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        status: value.status,
-        message: value.message,
-        requiresPhoneVerification: value.requiresPhoneVerification,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    status: value.status,
+    message: value.message,
+    requiresPhoneVerification: value.requiresPhoneVerification,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -75,8 +75,11 @@ export function RequestPasswordResetResponseToJSON(value) {
  */
 export var RequestPasswordResetResponseStatusEnum;
 (function (RequestPasswordResetResponseStatusEnum) {
-    RequestPasswordResetResponseStatusEnum["SENT"] = "sent";
-    RequestPasswordResetResponseStatusEnum["USERNOTFOUND"] = "user_not_found";
-    RequestPasswordResetResponseStatusEnum["ACCOUNTLOCKED"] = "account_locked";
-})(RequestPasswordResetResponseStatusEnum || (RequestPasswordResetResponseStatusEnum = {}));
+  RequestPasswordResetResponseStatusEnum["SENT"] = "sent";
+  RequestPasswordResetResponseStatusEnum["USERNOTFOUND"] = "user_not_found";
+  RequestPasswordResetResponseStatusEnum["ACCOUNTLOCKED"] = "account_locked";
+})(
+  RequestPasswordResetResponseStatusEnum ||
+    (RequestPasswordResetResponseStatusEnum = {}),
+);
 //# sourceMappingURL=RequestPasswordResetResponse.js.map

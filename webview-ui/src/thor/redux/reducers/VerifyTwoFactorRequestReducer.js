@@ -16,29 +16,39 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const VerifyTwoFactorRequestSlice = createSlice({
-    name: "VerifyTwoFactorRequests",
-    initialState: [],
-    reducers: {
-        VerifyTwoFactorRequestAdded(state, action) {
-            state.push(action.payload);
-        },
-        VerifyTwoFactorRequestValueToggled(state, action) {
-            console.log("VerifyTwoFactorRequest TOGGLE");
-            console.warn(JSON.stringify(action));
-            const VerifyTwoFactorRequest = state.find((VerifyTwoFactorRequest) => VerifyTwoFactorRequest.id === action.payload.VerifyTwoFactorRequestId);
-            if (VerifyTwoFactorRequest) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        VerifyTwoFactorRequestpropertySet(state, action) {
-            const VerifyTwoFactorRequest = state.find((VerifyTwoFactorRequest) => VerifyTwoFactorRequest.id === action.payload.VerifyTwoFactorRequestId);
-            if (VerifyTwoFactorRequest) {
-                //  VerifyTwoFactorRequest[action.property] = action.payload[action.property];
-            }
-        },
+  name: "VerifyTwoFactorRequests",
+  initialState: [],
+  reducers: {
+    VerifyTwoFactorRequestAdded(state, action) {
+      state.push(action.payload);
     },
+    VerifyTwoFactorRequestValueToggled(state, action) {
+      console.log("VerifyTwoFactorRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const VerifyTwoFactorRequest = state.find(
+        (VerifyTwoFactorRequest) =>
+          VerifyTwoFactorRequest.id === action.payload.VerifyTwoFactorRequestId,
+      );
+      if (VerifyTwoFactorRequest) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    VerifyTwoFactorRequestpropertySet(state, action) {
+      const VerifyTwoFactorRequest = state.find(
+        (VerifyTwoFactorRequest) =>
+          VerifyTwoFactorRequest.id === action.payload.VerifyTwoFactorRequestId,
+      );
+      if (VerifyTwoFactorRequest) {
+        //  VerifyTwoFactorRequest[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { VerifyTwoFactorRequestAdded, VerifyTwoFactorRequestValueToggled, VerifyTwoFactorRequestpropertySet, } = VerifyTwoFactorRequestSlice.actions;
+export const {
+  VerifyTwoFactorRequestAdded,
+  VerifyTwoFactorRequestValueToggled,
+  VerifyTwoFactorRequestpropertySet,
+} = VerifyTwoFactorRequestSlice.actions;
 export default VerifyTwoFactorRequestSlice.reducer;
 //# sourceMappingURL=VerifyTwoFactorRequestReducer.js.map

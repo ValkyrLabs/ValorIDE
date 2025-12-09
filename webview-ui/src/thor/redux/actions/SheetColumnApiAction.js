@@ -31,60 +31,60 @@ export const LIST_SHEETCOLUMN_REQUEST = "LIST_SHEETCOLUMN_REQUEST";
 export const LIST_SHEETCOLUMN_SUCCESS = "LIST_SHEETCOLUMN_SUCCESS";
 export const LIST_SHEETCOLUMN_FAILURE = "LIST_SHEETCOLUMN_FAILURE";
 export const addSheetColumnRequest = () => ({
-    type: ADD_SHEETCOLUMN_REQUEST,
+  type: ADD_SHEETCOLUMN_REQUEST,
 });
 export const addSheetColumnSuccess = (SheetColumns) => ({
-    type: ADD_SHEETCOLUMN_SUCCESS,
-    payload: SheetColumns,
+  type: ADD_SHEETCOLUMN_SUCCESS,
+  payload: SheetColumns,
 });
 export const addSheetColumnFailure = (error) => ({
-    type: ADD_SHEETCOLUMN_FAILURE,
-    payload: error,
+  type: ADD_SHEETCOLUMN_FAILURE,
+  payload: error,
 });
 export const fetchSheetColumnRequest = () => ({
-    type: FETCH_SHEETCOLUMN_REQUEST,
+  type: FETCH_SHEETCOLUMN_REQUEST,
 });
 export const fetchSheetColumnSuccess = (SheetColumns) => ({
-    type: FETCH_SHEETCOLUMN_SUCCESS,
-    payload: SheetColumns,
+  type: FETCH_SHEETCOLUMN_SUCCESS,
+  payload: SheetColumns,
 });
 export const fetchSheetColumnFailure = (error) => ({
-    type: FETCH_SHEETCOLUMN_FAILURE,
-    payload: error,
+  type: FETCH_SHEETCOLUMN_FAILURE,
+  payload: error,
 });
 export const listSheetColumnRequest = () => ({
-    type: LIST_SHEETCOLUMN_REQUEST,
+  type: LIST_SHEETCOLUMN_REQUEST,
 });
 export const listSheetColumnSuccess = (SheetColumns) => ({
-    type: LIST_SHEETCOLUMN_SUCCESS,
-    payload: SheetColumns,
+  type: LIST_SHEETCOLUMN_SUCCESS,
+  payload: SheetColumns,
 });
 export const listSheetColumnFailure = (error) => ({
-    type: LIST_SHEETCOLUMN_FAILURE,
-    payload: error,
+  type: LIST_SHEETCOLUMN_FAILURE,
+  payload: error,
 });
 export const updateSheetColumnRequest = (SheetColumn) => ({
-    type: UPDATE_SHEETCOLUMN_REQUEST,
-    payload: SheetColumn,
+  type: UPDATE_SHEETCOLUMN_REQUEST,
+  payload: SheetColumn,
 });
 export const updateSheetColumnSuccess = (SheetColumn) => ({
-    type: UPDATE_SHEETCOLUMN_SUCCESS,
-    payload: SheetColumn,
+  type: UPDATE_SHEETCOLUMN_SUCCESS,
+  payload: SheetColumn,
 });
 export const updateSheetColumnFailure = (error) => ({
-    type: UPDATE_SHEETCOLUMN_FAILURE,
-    payload: error,
+  type: UPDATE_SHEETCOLUMN_FAILURE,
+  payload: error,
 });
 export const deleteSheetColumnRequest = (SheetColumn) => ({
-    type: DELETE_SHEETCOLUMN_REQUEST,
-    payload: SheetColumn,
+  type: DELETE_SHEETCOLUMN_REQUEST,
+  payload: SheetColumn,
 });
 export const deleteSheetColumnSuccess = (SheetColumn) => ({
-    type: DELETE_SHEETCOLUMN_SUCCESS,
-    payload: SheetColumn,
+  type: DELETE_SHEETCOLUMN_SUCCESS,
+  payload: SheetColumn,
 });
 export const deleteSheetColumnFailure = (error) => ({
-    type: DELETE_SHEETCOLUMN_FAILURE,
-    payload: error,
+  type: DELETE_SHEETCOLUMN_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=SheetColumnApiAction.js.map

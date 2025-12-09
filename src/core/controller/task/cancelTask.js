@@ -6,7 +6,7 @@ import { Empty } from "../../../shared/proto/common";
  * @returns Empty response
  */
 export async function cancelTask(controller, _request) {
-    await controller.cancelTask();
-    return Empty.create();
+  await controller.cancelTask();
+  return Empty.create();
 }
 //# sourceMappingURL=cancelTask.js.map

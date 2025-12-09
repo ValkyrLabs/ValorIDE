@@ -31,60 +31,60 @@ export const LIST_MCP_REQUEST = "LIST_MCP_REQUEST";
 export const LIST_MCP_SUCCESS = "LIST_MCP_SUCCESS";
 export const LIST_MCP_FAILURE = "LIST_MCP_FAILURE";
 export const addMcpRequest = () => ({
-    type: ADD_MCP_REQUEST,
+  type: ADD_MCP_REQUEST,
 });
 export const addMcpSuccess = (Mcps) => ({
-    type: ADD_MCP_SUCCESS,
-    payload: Mcps,
+  type: ADD_MCP_SUCCESS,
+  payload: Mcps,
 });
 export const addMcpFailure = (error) => ({
-    type: ADD_MCP_FAILURE,
-    payload: error,
+  type: ADD_MCP_FAILURE,
+  payload: error,
 });
 export const fetchMcpRequest = () => ({
-    type: FETCH_MCP_REQUEST,
+  type: FETCH_MCP_REQUEST,
 });
 export const fetchMcpSuccess = (Mcps) => ({
-    type: FETCH_MCP_SUCCESS,
-    payload: Mcps,
+  type: FETCH_MCP_SUCCESS,
+  payload: Mcps,
 });
 export const fetchMcpFailure = (error) => ({
-    type: FETCH_MCP_FAILURE,
-    payload: error,
+  type: FETCH_MCP_FAILURE,
+  payload: error,
 });
 export const listMcpRequest = () => ({
-    type: LIST_MCP_REQUEST,
+  type: LIST_MCP_REQUEST,
 });
 export const listMcpSuccess = (Mcps) => ({
-    type: LIST_MCP_SUCCESS,
-    payload: Mcps,
+  type: LIST_MCP_SUCCESS,
+  payload: Mcps,
 });
 export const listMcpFailure = (error) => ({
-    type: LIST_MCP_FAILURE,
-    payload: error,
+  type: LIST_MCP_FAILURE,
+  payload: error,
 });
 export const updateMcpRequest = (Mcp) => ({
-    type: UPDATE_MCP_REQUEST,
-    payload: Mcp,
+  type: UPDATE_MCP_REQUEST,
+  payload: Mcp,
 });
 export const updateMcpSuccess = (Mcp) => ({
-    type: UPDATE_MCP_SUCCESS,
-    payload: Mcp,
+  type: UPDATE_MCP_SUCCESS,
+  payload: Mcp,
 });
 export const updateMcpFailure = (error) => ({
-    type: UPDATE_MCP_FAILURE,
-    payload: error,
+  type: UPDATE_MCP_FAILURE,
+  payload: error,
 });
 export const deleteMcpRequest = (Mcp) => ({
-    type: DELETE_MCP_REQUEST,
-    payload: Mcp,
+  type: DELETE_MCP_REQUEST,
+  payload: Mcp,
 });
 export const deleteMcpSuccess = (Mcp) => ({
-    type: DELETE_MCP_SUCCESS,
-    payload: Mcp,
+  type: DELETE_MCP_SUCCESS,
+  payload: Mcp,
 });
 export const deleteMcpFailure = (error) => ({
-    type: DELETE_MCP_FAILURE,
-    payload: error,
+  type: DELETE_MCP_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=McpApiAction.js.map

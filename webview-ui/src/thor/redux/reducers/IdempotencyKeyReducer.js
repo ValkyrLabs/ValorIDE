@@ -16,29 +16,39 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const IdempotencyKeySlice = createSlice({
-    name: "IdempotencyKeys",
-    initialState: [],
-    reducers: {
-        IdempotencyKeyAdded(state, action) {
-            state.push(action.payload);
-        },
-        IdempotencyKeyValueToggled(state, action) {
-            console.log("IdempotencyKey TOGGLE");
-            console.warn(JSON.stringify(action));
-            const IdempotencyKey = state.find((IdempotencyKey) => IdempotencyKey.id === action.payload.IdempotencyKeyId);
-            if (IdempotencyKey) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        IdempotencyKeypropertySet(state, action) {
-            const IdempotencyKey = state.find((IdempotencyKey) => IdempotencyKey.id === action.payload.IdempotencyKeyId);
-            if (IdempotencyKey) {
-                //  IdempotencyKey[action.property] = action.payload[action.property];
-            }
-        },
+  name: "IdempotencyKeys",
+  initialState: [],
+  reducers: {
+    IdempotencyKeyAdded(state, action) {
+      state.push(action.payload);
     },
+    IdempotencyKeyValueToggled(state, action) {
+      console.log("IdempotencyKey TOGGLE");
+      console.warn(JSON.stringify(action));
+      const IdempotencyKey = state.find(
+        (IdempotencyKey) =>
+          IdempotencyKey.id === action.payload.IdempotencyKeyId,
+      );
+      if (IdempotencyKey) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    IdempotencyKeypropertySet(state, action) {
+      const IdempotencyKey = state.find(
+        (IdempotencyKey) =>
+          IdempotencyKey.id === action.payload.IdempotencyKeyId,
+      );
+      if (IdempotencyKey) {
+        //  IdempotencyKey[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { IdempotencyKeyAdded, IdempotencyKeyValueToggled, IdempotencyKeypropertySet, } = IdempotencyKeySlice.actions;
+export const {
+  IdempotencyKeyAdded,
+  IdempotencyKeyValueToggled,
+  IdempotencyKeypropertySet,
+} = IdempotencyKeySlice.actions;
 export default IdempotencyKeySlice.reducer;
 //# sourceMappingURL=IdempotencyKeyReducer.js.map

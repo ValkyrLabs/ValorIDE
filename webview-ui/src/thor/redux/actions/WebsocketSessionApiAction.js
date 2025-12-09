@@ -21,70 +21,76 @@ export const FETCH_WEBSOCKETSESSION_FAILURE = "FETCH_WEBSOCKETSESSION_FAILURE";
 export const ADD_WEBSOCKETSESSION_REQUEST = "ADD_WEBSOCKETSESSION_REQUEST";
 export const ADD_WEBSOCKETSESSION_SUCCESS = "ADD_WEBSOCKETSESSION_SUCCESS";
 export const ADD_WEBSOCKETSESSION_FAILURE = "ADD_WEBSOCKETSESSION_FAILURE";
-export const UPDATE_WEBSOCKETSESSION_REQUEST = "UPDATE_WEBSOCKETSESSION_REQUEST";
-export const UPDATE_WEBSOCKETSESSION_SUCCESS = "UPDATE_WEBSOCKETSESSION_SUCCESS";
-export const UPDATE_WEBSOCKETSESSION_FAILURE = "UPDATE_WEBSOCKETSESSION_FAILURE";
-export const DELETE_WEBSOCKETSESSION_REQUEST = "DELETE_WEBSOCKETSESSION_REQUEST";
-export const DELETE_WEBSOCKETSESSION_SUCCESS = "DELETE_WEBSOCKETSESSION_SUCCESS";
-export const DELETE_WEBSOCKETSESSION_FAILURE = "DELETE_WEBSOCKETSESSION_FAILURE";
+export const UPDATE_WEBSOCKETSESSION_REQUEST =
+  "UPDATE_WEBSOCKETSESSION_REQUEST";
+export const UPDATE_WEBSOCKETSESSION_SUCCESS =
+  "UPDATE_WEBSOCKETSESSION_SUCCESS";
+export const UPDATE_WEBSOCKETSESSION_FAILURE =
+  "UPDATE_WEBSOCKETSESSION_FAILURE";
+export const DELETE_WEBSOCKETSESSION_REQUEST =
+  "DELETE_WEBSOCKETSESSION_REQUEST";
+export const DELETE_WEBSOCKETSESSION_SUCCESS =
+  "DELETE_WEBSOCKETSESSION_SUCCESS";
+export const DELETE_WEBSOCKETSESSION_FAILURE =
+  "DELETE_WEBSOCKETSESSION_FAILURE";
 export const LIST_WEBSOCKETSESSION_REQUEST = "LIST_WEBSOCKETSESSION_REQUEST";
 export const LIST_WEBSOCKETSESSION_SUCCESS = "LIST_WEBSOCKETSESSION_SUCCESS";
 export const LIST_WEBSOCKETSESSION_FAILURE = "LIST_WEBSOCKETSESSION_FAILURE";
 export const addWebsocketSessionRequest = () => ({
-    type: ADD_WEBSOCKETSESSION_REQUEST,
+  type: ADD_WEBSOCKETSESSION_REQUEST,
 });
 export const addWebsocketSessionSuccess = (WebsocketSessions) => ({
-    type: ADD_WEBSOCKETSESSION_SUCCESS,
-    payload: WebsocketSessions,
+  type: ADD_WEBSOCKETSESSION_SUCCESS,
+  payload: WebsocketSessions,
 });
 export const addWebsocketSessionFailure = (error) => ({
-    type: ADD_WEBSOCKETSESSION_FAILURE,
-    payload: error,
+  type: ADD_WEBSOCKETSESSION_FAILURE,
+  payload: error,
 });
 export const fetchWebsocketSessionRequest = () => ({
-    type: FETCH_WEBSOCKETSESSION_REQUEST,
+  type: FETCH_WEBSOCKETSESSION_REQUEST,
 });
 export const fetchWebsocketSessionSuccess = (WebsocketSessions) => ({
-    type: FETCH_WEBSOCKETSESSION_SUCCESS,
-    payload: WebsocketSessions,
+  type: FETCH_WEBSOCKETSESSION_SUCCESS,
+  payload: WebsocketSessions,
 });
 export const fetchWebsocketSessionFailure = (error) => ({
-    type: FETCH_WEBSOCKETSESSION_FAILURE,
-    payload: error,
+  type: FETCH_WEBSOCKETSESSION_FAILURE,
+  payload: error,
 });
 export const listWebsocketSessionRequest = () => ({
-    type: LIST_WEBSOCKETSESSION_REQUEST,
+  type: LIST_WEBSOCKETSESSION_REQUEST,
 });
 export const listWebsocketSessionSuccess = (WebsocketSessions) => ({
-    type: LIST_WEBSOCKETSESSION_SUCCESS,
-    payload: WebsocketSessions,
+  type: LIST_WEBSOCKETSESSION_SUCCESS,
+  payload: WebsocketSessions,
 });
 export const listWebsocketSessionFailure = (error) => ({
-    type: LIST_WEBSOCKETSESSION_FAILURE,
-    payload: error,
+  type: LIST_WEBSOCKETSESSION_FAILURE,
+  payload: error,
 });
 export const updateWebsocketSessionRequest = (WebsocketSession) => ({
-    type: UPDATE_WEBSOCKETSESSION_REQUEST,
-    payload: WebsocketSession,
+  type: UPDATE_WEBSOCKETSESSION_REQUEST,
+  payload: WebsocketSession,
 });
 export const updateWebsocketSessionSuccess = (WebsocketSession) => ({
-    type: UPDATE_WEBSOCKETSESSION_SUCCESS,
-    payload: WebsocketSession,
+  type: UPDATE_WEBSOCKETSESSION_SUCCESS,
+  payload: WebsocketSession,
 });
 export const updateWebsocketSessionFailure = (error) => ({
-    type: UPDATE_WEBSOCKETSESSION_FAILURE,
-    payload: error,
+  type: UPDATE_WEBSOCKETSESSION_FAILURE,
+  payload: error,
 });
 export const deleteWebsocketSessionRequest = (WebsocketSession) => ({
-    type: DELETE_WEBSOCKETSESSION_REQUEST,
-    payload: WebsocketSession,
+  type: DELETE_WEBSOCKETSESSION_REQUEST,
+  payload: WebsocketSession,
 });
 export const deleteWebsocketSessionSuccess = (WebsocketSession) => ({
-    type: DELETE_WEBSOCKETSESSION_SUCCESS,
-    payload: WebsocketSession,
+  type: DELETE_WEBSOCKETSESSION_SUCCESS,
+  payload: WebsocketSession,
 });
 export const deleteWebsocketSessionFailure = (error) => ({
-    type: DELETE_WEBSOCKETSESSION_FAILURE,
-    payload: error,
+  type: DELETE_WEBSOCKETSESSION_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=WebsocketSessionApiAction.js.map

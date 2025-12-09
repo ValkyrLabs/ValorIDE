@@ -15,76 +15,91 @@ Template file: typescript-redux-query/modelAction.mustache
 */
 // defines the Redux Actions for McpToolCallResponse
 // McpToolCallResponse
-export const FETCH_MCPTOOLCALLRESPONSE_REQUEST = "FETCH_MCPTOOLCALLRESPONSE_REQUEST";
-export const FETCH_MCPTOOLCALLRESPONSE_SUCCESS = "FETCH_MCPTOOLCALLRESPONSE_SUCCESS";
-export const FETCH_MCPTOOLCALLRESPONSE_FAILURE = "FETCH_MCPTOOLCALLRESPONSE_FAILURE";
-export const ADD_MCPTOOLCALLRESPONSE_REQUEST = "ADD_MCPTOOLCALLRESPONSE_REQUEST";
-export const ADD_MCPTOOLCALLRESPONSE_SUCCESS = "ADD_MCPTOOLCALLRESPONSE_SUCCESS";
-export const ADD_MCPTOOLCALLRESPONSE_FAILURE = "ADD_MCPTOOLCALLRESPONSE_FAILURE";
-export const UPDATE_MCPTOOLCALLRESPONSE_REQUEST = "UPDATE_MCPTOOLCALLRESPONSE_REQUEST";
-export const UPDATE_MCPTOOLCALLRESPONSE_SUCCESS = "UPDATE_MCPTOOLCALLRESPONSE_SUCCESS";
-export const UPDATE_MCPTOOLCALLRESPONSE_FAILURE = "UPDATE_MCPTOOLCALLRESPONSE_FAILURE";
-export const DELETE_MCPTOOLCALLRESPONSE_REQUEST = "DELETE_MCPTOOLCALLRESPONSE_REQUEST";
-export const DELETE_MCPTOOLCALLRESPONSE_SUCCESS = "DELETE_MCPTOOLCALLRESPONSE_SUCCESS";
-export const DELETE_MCPTOOLCALLRESPONSE_FAILURE = "DELETE_MCPTOOLCALLRESPONSE_FAILURE";
-export const LIST_MCPTOOLCALLRESPONSE_REQUEST = "LIST_MCPTOOLCALLRESPONSE_REQUEST";
-export const LIST_MCPTOOLCALLRESPONSE_SUCCESS = "LIST_MCPTOOLCALLRESPONSE_SUCCESS";
-export const LIST_MCPTOOLCALLRESPONSE_FAILURE = "LIST_MCPTOOLCALLRESPONSE_FAILURE";
+export const FETCH_MCPTOOLCALLRESPONSE_REQUEST =
+  "FETCH_MCPTOOLCALLRESPONSE_REQUEST";
+export const FETCH_MCPTOOLCALLRESPONSE_SUCCESS =
+  "FETCH_MCPTOOLCALLRESPONSE_SUCCESS";
+export const FETCH_MCPTOOLCALLRESPONSE_FAILURE =
+  "FETCH_MCPTOOLCALLRESPONSE_FAILURE";
+export const ADD_MCPTOOLCALLRESPONSE_REQUEST =
+  "ADD_MCPTOOLCALLRESPONSE_REQUEST";
+export const ADD_MCPTOOLCALLRESPONSE_SUCCESS =
+  "ADD_MCPTOOLCALLRESPONSE_SUCCESS";
+export const ADD_MCPTOOLCALLRESPONSE_FAILURE =
+  "ADD_MCPTOOLCALLRESPONSE_FAILURE";
+export const UPDATE_MCPTOOLCALLRESPONSE_REQUEST =
+  "UPDATE_MCPTOOLCALLRESPONSE_REQUEST";
+export const UPDATE_MCPTOOLCALLRESPONSE_SUCCESS =
+  "UPDATE_MCPTOOLCALLRESPONSE_SUCCESS";
+export const UPDATE_MCPTOOLCALLRESPONSE_FAILURE =
+  "UPDATE_MCPTOOLCALLRESPONSE_FAILURE";
+export const DELETE_MCPTOOLCALLRESPONSE_REQUEST =
+  "DELETE_MCPTOOLCALLRESPONSE_REQUEST";
+export const DELETE_MCPTOOLCALLRESPONSE_SUCCESS =
+  "DELETE_MCPTOOLCALLRESPONSE_SUCCESS";
+export const DELETE_MCPTOOLCALLRESPONSE_FAILURE =
+  "DELETE_MCPTOOLCALLRESPONSE_FAILURE";
+export const LIST_MCPTOOLCALLRESPONSE_REQUEST =
+  "LIST_MCPTOOLCALLRESPONSE_REQUEST";
+export const LIST_MCPTOOLCALLRESPONSE_SUCCESS =
+  "LIST_MCPTOOLCALLRESPONSE_SUCCESS";
+export const LIST_MCPTOOLCALLRESPONSE_FAILURE =
+  "LIST_MCPTOOLCALLRESPONSE_FAILURE";
 export const addMcpToolCallResponseRequest = () => ({
-    type: ADD_MCPTOOLCALLRESPONSE_REQUEST,
+  type: ADD_MCPTOOLCALLRESPONSE_REQUEST,
 });
 export const addMcpToolCallResponseSuccess = (McpToolCallResponses) => ({
-    type: ADD_MCPTOOLCALLRESPONSE_SUCCESS,
-    payload: McpToolCallResponses,
+  type: ADD_MCPTOOLCALLRESPONSE_SUCCESS,
+  payload: McpToolCallResponses,
 });
 export const addMcpToolCallResponseFailure = (error) => ({
-    type: ADD_MCPTOOLCALLRESPONSE_FAILURE,
-    payload: error,
+  type: ADD_MCPTOOLCALLRESPONSE_FAILURE,
+  payload: error,
 });
 export const fetchMcpToolCallResponseRequest = () => ({
-    type: FETCH_MCPTOOLCALLRESPONSE_REQUEST,
+  type: FETCH_MCPTOOLCALLRESPONSE_REQUEST,
 });
 export const fetchMcpToolCallResponseSuccess = (McpToolCallResponses) => ({
-    type: FETCH_MCPTOOLCALLRESPONSE_SUCCESS,
-    payload: McpToolCallResponses,
+  type: FETCH_MCPTOOLCALLRESPONSE_SUCCESS,
+  payload: McpToolCallResponses,
 });
 export const fetchMcpToolCallResponseFailure = (error) => ({
-    type: FETCH_MCPTOOLCALLRESPONSE_FAILURE,
-    payload: error,
+  type: FETCH_MCPTOOLCALLRESPONSE_FAILURE,
+  payload: error,
 });
 export const listMcpToolCallResponseRequest = () => ({
-    type: LIST_MCPTOOLCALLRESPONSE_REQUEST,
+  type: LIST_MCPTOOLCALLRESPONSE_REQUEST,
 });
 export const listMcpToolCallResponseSuccess = (McpToolCallResponses) => ({
-    type: LIST_MCPTOOLCALLRESPONSE_SUCCESS,
-    payload: McpToolCallResponses,
+  type: LIST_MCPTOOLCALLRESPONSE_SUCCESS,
+  payload: McpToolCallResponses,
 });
 export const listMcpToolCallResponseFailure = (error) => ({
-    type: LIST_MCPTOOLCALLRESPONSE_FAILURE,
-    payload: error,
+  type: LIST_MCPTOOLCALLRESPONSE_FAILURE,
+  payload: error,
 });
 export const updateMcpToolCallResponseRequest = (McpToolCallResponse) => ({
-    type: UPDATE_MCPTOOLCALLRESPONSE_REQUEST,
-    payload: McpToolCallResponse,
+  type: UPDATE_MCPTOOLCALLRESPONSE_REQUEST,
+  payload: McpToolCallResponse,
 });
 export const updateMcpToolCallResponseSuccess = (McpToolCallResponse) => ({
-    type: UPDATE_MCPTOOLCALLRESPONSE_SUCCESS,
-    payload: McpToolCallResponse,
+  type: UPDATE_MCPTOOLCALLRESPONSE_SUCCESS,
+  payload: McpToolCallResponse,
 });
 export const updateMcpToolCallResponseFailure = (error) => ({
-    type: UPDATE_MCPTOOLCALLRESPONSE_FAILURE,
-    payload: error,
+  type: UPDATE_MCPTOOLCALLRESPONSE_FAILURE,
+  payload: error,
 });
 export const deleteMcpToolCallResponseRequest = (McpToolCallResponse) => ({
-    type: DELETE_MCPTOOLCALLRESPONSE_REQUEST,
-    payload: McpToolCallResponse,
+  type: DELETE_MCPTOOLCALLRESPONSE_REQUEST,
+  payload: McpToolCallResponse,
 });
 export const deleteMcpToolCallResponseSuccess = (McpToolCallResponse) => ({
-    type: DELETE_MCPTOOLCALLRESPONSE_SUCCESS,
-    payload: McpToolCallResponse,
+  type: DELETE_MCPTOOLCALLRESPONSE_SUCCESS,
+  payload: McpToolCallResponse,
 });
 export const deleteMcpToolCallResponseFailure = (error) => ({
-    type: DELETE_MCPTOOLCALLRESPONSE_FAILURE,
-    payload: error,
+  type: DELETE_MCPTOOLCALLRESPONSE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=McpToolCallResponseApiAction.js.map

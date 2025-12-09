@@ -29,71 +29,72 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function AgentBillingFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        agentId: !exists(json, "agentId") ? undefined : json["agentId"],
-        organizationId: !exists(json, "organizationId")
-            ? undefined
-            : json["organizationId"],
-        instantiationCost: !exists(json, "instantiationCost")
-            ? undefined
-            : json["instantiationCost"],
-        totalCharges: !exists(json, "totalCharges")
-            ? undefined
-            : json["totalCharges"],
-        chargingModel: !exists(json, "chargingModel")
-            ? undefined
-            : json["chargingModel"],
-        billingStatus: !exists(json, "billingStatus")
-            ? undefined
-            : json["billingStatus"],
-        lastChargeDate: !exists(json, "lastChargeDate")
-            ? undefined
-            : new Date(json["lastChargeDate"]),
-        quotaAgents: !exists(json, "quotaAgents") ? undefined : json["quotaAgents"],
-        activeAgentCount: !exists(json, "activeAgentCount")
-            ? undefined
-            : json["activeAgentCount"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    agentId: !exists(json, "agentId") ? undefined : json["agentId"],
+    organizationId: !exists(json, "organizationId")
+      ? undefined
+      : json["organizationId"],
+    instantiationCost: !exists(json, "instantiationCost")
+      ? undefined
+      : json["instantiationCost"],
+    totalCharges: !exists(json, "totalCharges")
+      ? undefined
+      : json["totalCharges"],
+    chargingModel: !exists(json, "chargingModel")
+      ? undefined
+      : json["chargingModel"],
+    billingStatus: !exists(json, "billingStatus")
+      ? undefined
+      : json["billingStatus"],
+    lastChargeDate: !exists(json, "lastChargeDate")
+      ? undefined
+      : new Date(json["lastChargeDate"]),
+    quotaAgents: !exists(json, "quotaAgents") ? undefined : json["quotaAgents"],
+    activeAgentCount: !exists(json, "activeAgentCount")
+      ? undefined
+      : json["activeAgentCount"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function AgentBillingToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        agentId: value.agentId,
-        organizationId: value.organizationId,
-        instantiationCost: value.instantiationCost,
-        totalCharges: value.totalCharges,
-        chargingModel: value.chargingModel,
-        billingStatus: value.billingStatus,
-        lastChargeDate: value.lastChargeDate === undefined
-            ? undefined
-            : value.lastChargeDate.toISOString(),
-        quotaAgents: value.quotaAgents,
-        activeAgentCount: value.activeAgentCount,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    agentId: value.agentId,
+    organizationId: value.organizationId,
+    instantiationCost: value.instantiationCost,
+    totalCharges: value.totalCharges,
+    chargingModel: value.chargingModel,
+    billingStatus: value.billingStatus,
+    lastChargeDate:
+      value.lastChargeDate === undefined
+        ? undefined
+        : value.lastChargeDate.toISOString(),
+    quotaAgents: value.quotaAgents,
+    activeAgentCount: value.activeAgentCount,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -101,9 +102,9 @@ export function AgentBillingToJSON(value) {
  */
 export var AgentBillingChargingModelEnum;
 (function (AgentBillingChargingModelEnum) {
-    AgentBillingChargingModelEnum["PERINSTANCE"] = "per_instance";
-    AgentBillingChargingModelEnum["USAGEBASED"] = "usage_based";
-    AgentBillingChargingModelEnum["FLATRATE"] = "flat_rate";
+  AgentBillingChargingModelEnum["PERINSTANCE"] = "per_instance";
+  AgentBillingChargingModelEnum["USAGEBASED"] = "usage_based";
+  AgentBillingChargingModelEnum["FLATRATE"] = "flat_rate";
 })(AgentBillingChargingModelEnum || (AgentBillingChargingModelEnum = {}));
 /**
  * @export
@@ -111,8 +112,8 @@ export var AgentBillingChargingModelEnum;
  */
 export var AgentBillingBillingStatusEnum;
 (function (AgentBillingBillingStatusEnum) {
-    AgentBillingBillingStatusEnum["ACTIVE"] = "active";
-    AgentBillingBillingStatusEnum["SUSPENDED"] = "suspended";
-    AgentBillingBillingStatusEnum["ARCHIVED"] = "archived";
+  AgentBillingBillingStatusEnum["ACTIVE"] = "active";
+  AgentBillingBillingStatusEnum["SUSPENDED"] = "suspended";
+  AgentBillingBillingStatusEnum["ARCHIVED"] = "archived";
 })(AgentBillingBillingStatusEnum || (AgentBillingBillingStatusEnum = {}));
 //# sourceMappingURL=AgentBilling.js.map

@@ -31,60 +31,60 @@ export const LIST_CUSTOMER_REQUEST = "LIST_CUSTOMER_REQUEST";
 export const LIST_CUSTOMER_SUCCESS = "LIST_CUSTOMER_SUCCESS";
 export const LIST_CUSTOMER_FAILURE = "LIST_CUSTOMER_FAILURE";
 export const addCustomerRequest = () => ({
-    type: ADD_CUSTOMER_REQUEST,
+  type: ADD_CUSTOMER_REQUEST,
 });
 export const addCustomerSuccess = (Customers) => ({
-    type: ADD_CUSTOMER_SUCCESS,
-    payload: Customers,
+  type: ADD_CUSTOMER_SUCCESS,
+  payload: Customers,
 });
 export const addCustomerFailure = (error) => ({
-    type: ADD_CUSTOMER_FAILURE,
-    payload: error,
+  type: ADD_CUSTOMER_FAILURE,
+  payload: error,
 });
 export const fetchCustomerRequest = () => ({
-    type: FETCH_CUSTOMER_REQUEST,
+  type: FETCH_CUSTOMER_REQUEST,
 });
 export const fetchCustomerSuccess = (Customers) => ({
-    type: FETCH_CUSTOMER_SUCCESS,
-    payload: Customers,
+  type: FETCH_CUSTOMER_SUCCESS,
+  payload: Customers,
 });
 export const fetchCustomerFailure = (error) => ({
-    type: FETCH_CUSTOMER_FAILURE,
-    payload: error,
+  type: FETCH_CUSTOMER_FAILURE,
+  payload: error,
 });
 export const listCustomerRequest = () => ({
-    type: LIST_CUSTOMER_REQUEST,
+  type: LIST_CUSTOMER_REQUEST,
 });
 export const listCustomerSuccess = (Customers) => ({
-    type: LIST_CUSTOMER_SUCCESS,
-    payload: Customers,
+  type: LIST_CUSTOMER_SUCCESS,
+  payload: Customers,
 });
 export const listCustomerFailure = (error) => ({
-    type: LIST_CUSTOMER_FAILURE,
-    payload: error,
+  type: LIST_CUSTOMER_FAILURE,
+  payload: error,
 });
 export const updateCustomerRequest = (Customer) => ({
-    type: UPDATE_CUSTOMER_REQUEST,
-    payload: Customer,
+  type: UPDATE_CUSTOMER_REQUEST,
+  payload: Customer,
 });
 export const updateCustomerSuccess = (Customer) => ({
-    type: UPDATE_CUSTOMER_SUCCESS,
-    payload: Customer,
+  type: UPDATE_CUSTOMER_SUCCESS,
+  payload: Customer,
 });
 export const updateCustomerFailure = (error) => ({
-    type: UPDATE_CUSTOMER_FAILURE,
-    payload: error,
+  type: UPDATE_CUSTOMER_FAILURE,
+  payload: error,
 });
 export const deleteCustomerRequest = (Customer) => ({
-    type: DELETE_CUSTOMER_REQUEST,
-    payload: Customer,
+  type: DELETE_CUSTOMER_REQUEST,
+  payload: Customer,
 });
 export const deleteCustomerSuccess = (Customer) => ({
-    type: DELETE_CUSTOMER_SUCCESS,
-    payload: Customer,
+  type: DELETE_CUSTOMER_SUCCESS,
+  payload: Customer,
 });
 export const deleteCustomerFailure = (error) => ({
-    type: DELETE_CUSTOMER_FAILURE,
-    payload: error,
+  type: DELETE_CUSTOMER_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=CustomerApiAction.js.map

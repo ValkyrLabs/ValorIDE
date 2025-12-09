@@ -28,68 +28,74 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { FileRecordFromJSON, FileRecordToJSON, PrincipalFromJSON, PrincipalToJSON, } from "./";
+import {
+  FileRecordFromJSON,
+  FileRecordToJSON,
+  PrincipalFromJSON,
+  PrincipalToJSON,
+} from "./";
 export function FileUploadSessionFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        uploadId: json["uploadId"],
-        storageDriverId: json["storageDriverId"],
-        storageKey: json["storageKey"],
-        fileId: json["fileId"],
-        initiatedById: json["initiatedById"],
-        expiresAt: new Date(json["expiresAt"]),
-        file: !exists(json, "file") ? undefined : FileRecordFromJSON(json["file"]),
-        initiatedBy: !exists(json, "initiatedBy")
-            ? undefined
-            : PrincipalFromJSON(json["initiatedBy"]),
-        completedAt: !exists(json, "completedAt")
-            ? undefined
-            : new Date(json["completedAt"]),
-        partSizeBytes: !exists(json, "partSizeBytes")
-            ? undefined
-            : json["partSizeBytes"],
-        metadata: !exists(json, "metadata") ? undefined : json["metadata"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    uploadId: json["uploadId"],
+    storageDriverId: json["storageDriverId"],
+    storageKey: json["storageKey"],
+    fileId: json["fileId"],
+    initiatedById: json["initiatedById"],
+    expiresAt: new Date(json["expiresAt"]),
+    file: !exists(json, "file") ? undefined : FileRecordFromJSON(json["file"]),
+    initiatedBy: !exists(json, "initiatedBy")
+      ? undefined
+      : PrincipalFromJSON(json["initiatedBy"]),
+    completedAt: !exists(json, "completedAt")
+      ? undefined
+      : new Date(json["completedAt"]),
+    partSizeBytes: !exists(json, "partSizeBytes")
+      ? undefined
+      : json["partSizeBytes"],
+    metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function FileUploadSessionToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        uploadId: value.uploadId,
-        storageDriverId: value.storageDriverId,
-        storageKey: value.storageKey,
-        fileId: value.fileId,
-        initiatedById: value.initiatedById,
-        expiresAt: value.expiresAt.toISOString(),
-        file: FileRecordToJSON(value.file),
-        initiatedBy: PrincipalToJSON(value.initiatedBy),
-        completedAt: value.completedAt === undefined
-            ? undefined
-            : value.completedAt.toISOString(),
-        partSizeBytes: value.partSizeBytes,
-        metadata: value.metadata,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    uploadId: value.uploadId,
+    storageDriverId: value.storageDriverId,
+    storageKey: value.storageKey,
+    fileId: value.fileId,
+    initiatedById: value.initiatedById,
+    expiresAt: value.expiresAt.toISOString(),
+    file: FileRecordToJSON(value.file),
+    initiatedBy: PrincipalToJSON(value.initiatedBy),
+    completedAt:
+      value.completedAt === undefined
+        ? undefined
+        : value.completedAt.toISOString(),
+    partSizeBytes: value.partSizeBytes,
+    metadata: value.metadata,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=FileUploadSession.js.map

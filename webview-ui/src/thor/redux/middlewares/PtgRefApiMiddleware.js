@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: PtgRef
 */
-export const PtgRefMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const PtgRefMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("PtgRef MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=PtgRefApiMiddleware.js.map

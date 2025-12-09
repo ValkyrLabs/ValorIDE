@@ -17,115 +17,129 @@ Template file: typescript-redux-query/modelService.mustache
 import { createApi } from "@reduxjs/toolkit/query/react";
 import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 export const LoginResponseService = createApi({
-    reducerPath: "LoginResponse", // This should remain unique
-    baseQuery: customBaseQuery,
-    tagTypes: ["LoginResponse"],
-    endpoints: (build) => ({
-        // 1) Paged Query Endpoint
-        // Standardized pagination: page (0-based), size (page size)
-        getLoginResponsesPaged: build.query({
-            query: ({ page, size = 20, example }) => {
-                const q = [`page=${page}`, `size=${size}`];
-                if (example)
-                    q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-                return `LoginResponse?${q.join("&")}`;
-            },
-            providesTags: (result, error, { page }) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "LoginResponse",
-                        id,
-                    })),
-                    { type: "LoginResponse", id: `PAGE_${page}` },
-                ]
-                : [],
-        }),
-        // 2) Simple "get all" Query (optional)
-        getLoginResponses: build.query({
-            query: (arg) => {
-                if (arg && arg.example) {
-                    const ex = arg.example;
-                    return `LoginResponse?example=${encodeURIComponent(JSON.stringify(ex))}`;
-                }
-                return `LoginResponse`;
-            },
-            providesTags: (result) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "LoginResponse",
-                        id,
-                    })),
-                    { type: "LoginResponse", id: "LIST" },
-                ]
-                : [{ type: "LoginResponse", id: "LIST" }],
-        }),
-        // 3) Create
-        addLoginResponse: build.mutation({
-            query: (body) => ({
-                url: `LoginResponse`,
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "LoginResponse", id: "LIST" }],
-        }),
-        // 4) Get single by ID
-        getLoginResponse: build.query({
-            query: (id) => `LoginResponse/${id}`,
-            providesTags: (result, error, id) => [{ type: "LoginResponse", id }],
-        }),
-        // 5) Update
-        updateLoginResponse: build.mutation({
-            query: ({ id, ...patch }) => ({
-                url: `LoginResponse/${id}`,
-                method: "PUT",
-                body: patch,
-            }),
-            async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-                if (id) {
-                    const patchResult = dispatch(LoginResponseService.util.updateQueryData("getLoginResponse", id, (draft) => {
-                        Object.assign(draft, patch);
-                    }));
-                    try {
-                        await queryFulfilled;
-                    }
-                    catch {
-                        patchResult.undo();
-                    }
-                }
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "LoginResponse", id },
-                { type: "LoginResponse", id: "LIST" },
-            ],
-        }),
-        // 6) Delete
-        deleteLoginResponse: build.mutation({
-            query(id) {
-                return {
-                    url: `LoginResponse/${id}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, id) => [{ type: "LoginResponse", id }],
-        }),
-        // 7) Cascade / soft-delete (marks trashed, cascades children)
-        deleteLoginResponseCascade: build.mutation({
-            query({ id, cascade = true, trash = true }) {
-                const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
-                return {
-                    url: `LoginResponse/${id}?${params}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "LoginResponse", id },
-                { type: "LoginResponse", id: "LIST" },
-            ],
-        }),
+  reducerPath: "LoginResponse", // This should remain unique
+  baseQuery: customBaseQuery,
+  tagTypes: ["LoginResponse"],
+  endpoints: (build) => ({
+    // 1) Paged Query Endpoint
+    // Standardized pagination: page (0-based), size (page size)
+    getLoginResponsesPaged: build.query({
+      query: ({ page, size = 20, example }) => {
+        const q = [`page=${page}`, `size=${size}`];
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `LoginResponse?${q.join("&")}`;
+      },
+      providesTags: (result, error, { page }) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "LoginResponse",
+                id,
+              })),
+              { type: "LoginResponse", id: `PAGE_${page}` },
+            ]
+          : [],
     }),
+    // 2) Simple "get all" Query (optional)
+    getLoginResponses: build.query({
+      query: (arg) => {
+        if (arg && arg.example) {
+          const ex = arg.example;
+          return `LoginResponse?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `LoginResponse`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "LoginResponse",
+                id,
+              })),
+              { type: "LoginResponse", id: "LIST" },
+            ]
+          : [{ type: "LoginResponse", id: "LIST" }],
+    }),
+    // 3) Create
+    addLoginResponse: build.mutation({
+      query: (body) => ({
+        url: `LoginResponse`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "LoginResponse", id: "LIST" }],
+    }),
+    // 4) Get single by ID
+    getLoginResponse: build.query({
+      query: (id) => `LoginResponse/${id}`,
+      providesTags: (result, error, id) => [{ type: "LoginResponse", id }],
+    }),
+    // 5) Update
+    updateLoginResponse: build.mutation({
+      query: ({ id, ...patch }) => ({
+        url: `LoginResponse/${id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        if (id) {
+          const patchResult = dispatch(
+            LoginResponseService.util.updateQueryData(
+              "getLoginResponse",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        }
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "LoginResponse", id },
+        { type: "LoginResponse", id: "LIST" },
+      ],
+    }),
+    // 6) Delete
+    deleteLoginResponse: build.mutation({
+      query(id) {
+        return {
+          url: `LoginResponse/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, id) => [{ type: "LoginResponse", id }],
+    }),
+    // 7) Cascade / soft-delete (marks trashed, cascades children)
+    deleteLoginResponseCascade: build.mutation({
+      query({ id, cascade = true, trash = true }) {
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        return {
+          url: `LoginResponse/${id}?${params}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "LoginResponse", id },
+        { type: "LoginResponse", id: "LIST" },
+      ],
+    }),
+  }),
 });
 // Notice we now also export `useLazyGetLoginResponsesPagedQuery`
-export const { useGetLoginResponsesPagedQuery, // immediate fetch
-useLazyGetLoginResponsesPagedQuery, // lazy fetch
-useGetLoginResponseQuery, useGetLoginResponsesQuery, useAddLoginResponseMutation, useUpdateLoginResponseMutation, useDeleteLoginResponseMutation, useDeleteLoginResponseCascadeMutation, } = LoginResponseService;
+export const {
+  useGetLoginResponsesPagedQuery, // immediate fetch
+  useLazyGetLoginResponsesPagedQuery, // lazy fetch
+  useGetLoginResponseQuery,
+  useGetLoginResponsesQuery,
+  useAddLoginResponseMutation,
+  useUpdateLoginResponseMutation,
+  useDeleteLoginResponseMutation,
+  useDeleteLoginResponseCascadeMutation,
+} = LoginResponseService;
 //# sourceMappingURL=LoginResponseService.js.map

@@ -31,60 +31,60 @@ export const LIST_BUILDOUTPUT_REQUEST = "LIST_BUILDOUTPUT_REQUEST";
 export const LIST_BUILDOUTPUT_SUCCESS = "LIST_BUILDOUTPUT_SUCCESS";
 export const LIST_BUILDOUTPUT_FAILURE = "LIST_BUILDOUTPUT_FAILURE";
 export const addBuildOutputRequest = () => ({
-    type: ADD_BUILDOUTPUT_REQUEST,
+  type: ADD_BUILDOUTPUT_REQUEST,
 });
 export const addBuildOutputSuccess = (BuildOutputs) => ({
-    type: ADD_BUILDOUTPUT_SUCCESS,
-    payload: BuildOutputs,
+  type: ADD_BUILDOUTPUT_SUCCESS,
+  payload: BuildOutputs,
 });
 export const addBuildOutputFailure = (error) => ({
-    type: ADD_BUILDOUTPUT_FAILURE,
-    payload: error,
+  type: ADD_BUILDOUTPUT_FAILURE,
+  payload: error,
 });
 export const fetchBuildOutputRequest = () => ({
-    type: FETCH_BUILDOUTPUT_REQUEST,
+  type: FETCH_BUILDOUTPUT_REQUEST,
 });
 export const fetchBuildOutputSuccess = (BuildOutputs) => ({
-    type: FETCH_BUILDOUTPUT_SUCCESS,
-    payload: BuildOutputs,
+  type: FETCH_BUILDOUTPUT_SUCCESS,
+  payload: BuildOutputs,
 });
 export const fetchBuildOutputFailure = (error) => ({
-    type: FETCH_BUILDOUTPUT_FAILURE,
-    payload: error,
+  type: FETCH_BUILDOUTPUT_FAILURE,
+  payload: error,
 });
 export const listBuildOutputRequest = () => ({
-    type: LIST_BUILDOUTPUT_REQUEST,
+  type: LIST_BUILDOUTPUT_REQUEST,
 });
 export const listBuildOutputSuccess = (BuildOutputs) => ({
-    type: LIST_BUILDOUTPUT_SUCCESS,
-    payload: BuildOutputs,
+  type: LIST_BUILDOUTPUT_SUCCESS,
+  payload: BuildOutputs,
 });
 export const listBuildOutputFailure = (error) => ({
-    type: LIST_BUILDOUTPUT_FAILURE,
-    payload: error,
+  type: LIST_BUILDOUTPUT_FAILURE,
+  payload: error,
 });
 export const updateBuildOutputRequest = (BuildOutput) => ({
-    type: UPDATE_BUILDOUTPUT_REQUEST,
-    payload: BuildOutput,
+  type: UPDATE_BUILDOUTPUT_REQUEST,
+  payload: BuildOutput,
 });
 export const updateBuildOutputSuccess = (BuildOutput) => ({
-    type: UPDATE_BUILDOUTPUT_SUCCESS,
-    payload: BuildOutput,
+  type: UPDATE_BUILDOUTPUT_SUCCESS,
+  payload: BuildOutput,
 });
 export const updateBuildOutputFailure = (error) => ({
-    type: UPDATE_BUILDOUTPUT_FAILURE,
-    payload: error,
+  type: UPDATE_BUILDOUTPUT_FAILURE,
+  payload: error,
 });
 export const deleteBuildOutputRequest = (BuildOutput) => ({
-    type: DELETE_BUILDOUTPUT_REQUEST,
-    payload: BuildOutput,
+  type: DELETE_BUILDOUTPUT_REQUEST,
+  payload: BuildOutput,
 });
 export const deleteBuildOutputSuccess = (BuildOutput) => ({
-    type: DELETE_BUILDOUTPUT_SUCCESS,
-    payload: BuildOutput,
+  type: DELETE_BUILDOUTPUT_SUCCESS,
+  payload: BuildOutput,
 });
 export const deleteBuildOutputFailure = (error) => ({
-    type: DELETE_BUILDOUTPUT_FAILURE,
-    payload: error,
+  type: DELETE_BUILDOUTPUT_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=BuildOutputApiAction.js.map

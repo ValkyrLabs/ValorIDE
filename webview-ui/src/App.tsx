@@ -23,6 +23,7 @@ import { ChatMothershipProvider } from "./components/chat/ChatMothershipProvider
 import { UsageTrackingHandler } from "./components/usage-tracking/UsageTrackingHandler";
 import { ContentDataHandler } from "./components/content-data/ContentDataHandler";
 import StartupDebit from "./components/usage-tracking/StartupDebit";
+import { registerExternalLinkInterceptor } from "./utils/linkInterceptor";
 import useValorIDEMothership from "./hooks/useValorIDEMothership";
 import LoadingSpinner from "./components/LoadingSpinner";
 
@@ -52,10 +53,10 @@ const AppContent = () => {
     // Also check sessionStorage directly as backup
     const sessionToken = sessionStorage.getItem("jwtToken");
     const sessionPrincipal = readStoredPrincipal();
-    
+
     // Auth is valid if we have BOTH token AND principal (credentials are complete)
     const hasAuth = (token || sessionToken) && (principal || sessionPrincipal);
-    
+
     if (hasAuth) {
       setHasStoredAuth(true);
     }
@@ -92,6 +93,11 @@ const AppContent = () => {
   console.log(
     `🚀 ValorIDE Mothership Status: Connected=${mothershipConnected}, InstanceId=${instanceId}`,
   );
+
+  useEffect(() => {
+    const cleanup = registerExternalLinkInterceptor();
+    return cleanup;
+  }, []);
 
   const handleMessage = useCallback(
     (e: MessageEvent) => {

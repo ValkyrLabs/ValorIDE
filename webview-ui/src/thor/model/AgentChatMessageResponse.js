@@ -29,45 +29,46 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function AgentChatMessageResponseFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        messageId: !exists(json, "messageId") ? undefined : json["messageId"],
-        status: !exists(json, "status") ? undefined : json["status"],
-        timestamp: !exists(json, "timestamp")
-            ? undefined
-            : new Date(json["timestamp"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    messageId: !exists(json, "messageId") ? undefined : json["messageId"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    timestamp: !exists(json, "timestamp")
+      ? undefined
+      : new Date(json["timestamp"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function AgentChatMessageResponseToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        messageId: value.messageId,
-        status: value.status,
-        timestamp: value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    messageId: value.messageId,
+    status: value.status,
+    timestamp:
+      value.timestamp === undefined ? undefined : value.timestamp.toISOString(),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -75,8 +76,11 @@ export function AgentChatMessageResponseToJSON(value) {
  */
 export var AgentChatMessageResponseStatusEnum;
 (function (AgentChatMessageResponseStatusEnum) {
-    AgentChatMessageResponseStatusEnum["QUEUED"] = "queued";
-    AgentChatMessageResponseStatusEnum["DELIVERED"] = "delivered";
-    AgentChatMessageResponseStatusEnum["READ"] = "read";
-})(AgentChatMessageResponseStatusEnum || (AgentChatMessageResponseStatusEnum = {}));
+  AgentChatMessageResponseStatusEnum["QUEUED"] = "queued";
+  AgentChatMessageResponseStatusEnum["DELIVERED"] = "delivered";
+  AgentChatMessageResponseStatusEnum["READ"] = "read";
+})(
+  AgentChatMessageResponseStatusEnum ||
+    (AgentChatMessageResponseStatusEnum = {}),
+);
 //# sourceMappingURL=AgentChatMessageResponse.js.map

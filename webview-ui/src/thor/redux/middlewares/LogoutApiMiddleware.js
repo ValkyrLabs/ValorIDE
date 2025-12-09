@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Logout
 */
-export const LogoutMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const LogoutMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Logout MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=LogoutApiMiddleware.js.map

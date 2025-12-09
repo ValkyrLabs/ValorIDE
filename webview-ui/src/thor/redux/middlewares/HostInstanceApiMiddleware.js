@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: HostInstance
 */
-export const HostInstanceMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const HostInstanceMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("HostInstance MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=HostInstanceApiMiddleware.js.map

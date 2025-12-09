@@ -28,101 +28,108 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { ContentMediaLinkFromJSON, ContentMediaLinkToJSON, PrincipalFromJSON, PrincipalToJSON, } from "./";
+import {
+  ContentMediaLinkFromJSON,
+  ContentMediaLinkToJSON,
+  PrincipalFromJSON,
+  PrincipalToJSON,
+} from "./";
 export function ContentDataFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        authorName: !exists(json, "authorName") ? undefined : json["authorName"],
-        title: !exists(json, "title") ? undefined : json["title"],
-        subtitle: !exists(json, "subtitle") ? undefined : json["subtitle"],
-        tags: !exists(json, "tags") ? undefined : json["tags"],
-        fileName: !exists(json, "fileName") ? undefined : json["fileName"],
-        contentUrl: !exists(json, "contentUrl") ? undefined : json["contentUrl"],
-        contentData: !exists(json, "contentData") ? undefined : json["contentData"],
-        contentType: !exists(json, "contentType") ? undefined : json["contentType"],
-        brand: !exists(json, "brand") ? undefined : json["brand"],
-        targetAudience: !exists(json, "targetAudience")
-            ? undefined
-            : json["targetAudience"],
-        priceTier: !exists(json, "priceTier") ? undefined : json["priceTier"],
-        deliveryMode: !exists(json, "deliveryMode")
-            ? undefined
-            : json["deliveryMode"],
-        heroBenefit: !exists(json, "heroBenefit") ? undefined : json["heroBenefit"],
-        version: !exists(json, "version") ? undefined : json["version"],
-        metadata: !exists(json, "metadata") ? undefined : json["metadata"],
-        thumbnailImage: !exists(json, "thumbnailImage")
-            ? undefined
-            : json["thumbnailImage"],
-        largeImage: !exists(json, "largeImage") ? undefined : json["largeImage"],
-        category: !exists(json, "category") ? undefined : json["category"],
-        status: !exists(json, "status") ? undefined : json["status"],
-        releaseDate: !exists(json, "releaseDate")
-            ? undefined
-            : new Date(json["releaseDate"]),
-        contentMedia: !exists(json, "contentMedia")
-            ? undefined
-            : json["contentMedia"].map(ContentMediaLinkFromJSON),
-        author: !exists(json, "author")
-            ? undefined
-            : PrincipalFromJSON(json["author"]),
-        slug: !exists(json, "slug") ? undefined : json["slug"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    authorName: !exists(json, "authorName") ? undefined : json["authorName"],
+    title: !exists(json, "title") ? undefined : json["title"],
+    subtitle: !exists(json, "subtitle") ? undefined : json["subtitle"],
+    tags: !exists(json, "tags") ? undefined : json["tags"],
+    fileName: !exists(json, "fileName") ? undefined : json["fileName"],
+    contentUrl: !exists(json, "contentUrl") ? undefined : json["contentUrl"],
+    contentData: !exists(json, "contentData") ? undefined : json["contentData"],
+    contentType: !exists(json, "contentType") ? undefined : json["contentType"],
+    brand: !exists(json, "brand") ? undefined : json["brand"],
+    targetAudience: !exists(json, "targetAudience")
+      ? undefined
+      : json["targetAudience"],
+    priceTier: !exists(json, "priceTier") ? undefined : json["priceTier"],
+    deliveryMode: !exists(json, "deliveryMode")
+      ? undefined
+      : json["deliveryMode"],
+    heroBenefit: !exists(json, "heroBenefit") ? undefined : json["heroBenefit"],
+    version: !exists(json, "version") ? undefined : json["version"],
+    metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+    thumbnailImage: !exists(json, "thumbnailImage")
+      ? undefined
+      : json["thumbnailImage"],
+    largeImage: !exists(json, "largeImage") ? undefined : json["largeImage"],
+    category: !exists(json, "category") ? undefined : json["category"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    releaseDate: !exists(json, "releaseDate")
+      ? undefined
+      : new Date(json["releaseDate"]),
+    contentMedia: !exists(json, "contentMedia")
+      ? undefined
+      : json["contentMedia"].map(ContentMediaLinkFromJSON),
+    author: !exists(json, "author")
+      ? undefined
+      : PrincipalFromJSON(json["author"]),
+    slug: !exists(json, "slug") ? undefined : json["slug"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ContentDataToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        authorName: value.authorName,
-        title: value.title,
-        subtitle: value.subtitle,
-        tags: value.tags,
-        fileName: value.fileName,
-        contentUrl: value.contentUrl,
-        contentData: value.contentData,
-        contentType: value.contentType,
-        brand: value.brand,
-        targetAudience: value.targetAudience,
-        priceTier: value.priceTier,
-        deliveryMode: value.deliveryMode,
-        heroBenefit: value.heroBenefit,
-        version: value.version,
-        metadata: value.metadata,
-        thumbnailImage: value.thumbnailImage,
-        largeImage: value.largeImage,
-        category: value.category,
-        status: value.status,
-        releaseDate: value.releaseDate === undefined
-            ? undefined
-            : value.releaseDate.toISOString(),
-        contentMedia: value.contentMedia === undefined
-            ? undefined
-            : value.contentMedia.map(ContentMediaLinkToJSON),
-        author: PrincipalToJSON(value.author),
-        slug: value.slug,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    authorName: value.authorName,
+    title: value.title,
+    subtitle: value.subtitle,
+    tags: value.tags,
+    fileName: value.fileName,
+    contentUrl: value.contentUrl,
+    contentData: value.contentData,
+    contentType: value.contentType,
+    brand: value.brand,
+    targetAudience: value.targetAudience,
+    priceTier: value.priceTier,
+    deliveryMode: value.deliveryMode,
+    heroBenefit: value.heroBenefit,
+    version: value.version,
+    metadata: value.metadata,
+    thumbnailImage: value.thumbnailImage,
+    largeImage: value.largeImage,
+    category: value.category,
+    status: value.status,
+    releaseDate:
+      value.releaseDate === undefined
+        ? undefined
+        : value.releaseDate.toISOString(),
+    contentMedia:
+      value.contentMedia === undefined
+        ? undefined
+        : value.contentMedia.map(ContentMediaLinkToJSON),
+    author: PrincipalToJSON(value.author),
+    slug: value.slug,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -130,22 +137,22 @@ export function ContentDataToJSON(value) {
  */
 export var ContentDataContentTypeEnum;
 (function (ContentDataContentTypeEnum) {
-    ContentDataContentTypeEnum["PLAINTEXT"] = "plaintext";
-    ContentDataContentTypeEnum["MARKDOWN"] = "markdown";
-    ContentDataContentTypeEnum["JSON"] = "json";
-    ContentDataContentTypeEnum["CODE"] = "code";
-    ContentDataContentTypeEnum["YAML"] = "yaml";
-    ContentDataContentTypeEnum["AUDIO"] = "audio";
-    ContentDataContentTypeEnum["VIDEO"] = "video";
-    ContentDataContentTypeEnum["URL"] = "url";
-    ContentDataContentTypeEnum["SPREADSHEET"] = "spreadsheet";
-    ContentDataContentTypeEnum["PDF"] = "pdf";
-    ContentDataContentTypeEnum["BINARY"] = "binary";
-    ContentDataContentTypeEnum["PRESENTATION"] = "presentation";
-    ContentDataContentTypeEnum["IMAGE"] = "image";
-    ContentDataContentTypeEnum["DOCUMENT"] = "document";
-    ContentDataContentTypeEnum["EBOOK"] = "ebook";
-    ContentDataContentTypeEnum["FUNNEL"] = "funnel";
+  ContentDataContentTypeEnum["PLAINTEXT"] = "plaintext";
+  ContentDataContentTypeEnum["MARKDOWN"] = "markdown";
+  ContentDataContentTypeEnum["JSON"] = "json";
+  ContentDataContentTypeEnum["CODE"] = "code";
+  ContentDataContentTypeEnum["YAML"] = "yaml";
+  ContentDataContentTypeEnum["AUDIO"] = "audio";
+  ContentDataContentTypeEnum["VIDEO"] = "video";
+  ContentDataContentTypeEnum["URL"] = "url";
+  ContentDataContentTypeEnum["SPREADSHEET"] = "spreadsheet";
+  ContentDataContentTypeEnum["PDF"] = "pdf";
+  ContentDataContentTypeEnum["BINARY"] = "binary";
+  ContentDataContentTypeEnum["PRESENTATION"] = "presentation";
+  ContentDataContentTypeEnum["IMAGE"] = "image";
+  ContentDataContentTypeEnum["DOCUMENT"] = "document";
+  ContentDataContentTypeEnum["EBOOK"] = "ebook";
+  ContentDataContentTypeEnum["FUNNEL"] = "funnel";
 })(ContentDataContentTypeEnum || (ContentDataContentTypeEnum = {}));
 /**
  * @export
@@ -153,11 +160,11 @@ export var ContentDataContentTypeEnum;
  */
 export var ContentDataPriceTierEnum;
 (function (ContentDataPriceTierEnum) {
-    ContentDataPriceTierEnum["FREE"] = "free";
-    ContentDataPriceTierEnum["LOW"] = "low";
-    ContentDataPriceTierEnum["MEDIUM"] = "medium";
-    ContentDataPriceTierEnum["HIGH"] = "high";
-    ContentDataPriceTierEnum["PREMIUM"] = "premium";
+  ContentDataPriceTierEnum["FREE"] = "free";
+  ContentDataPriceTierEnum["LOW"] = "low";
+  ContentDataPriceTierEnum["MEDIUM"] = "medium";
+  ContentDataPriceTierEnum["HIGH"] = "high";
+  ContentDataPriceTierEnum["PREMIUM"] = "premium";
 })(ContentDataPriceTierEnum || (ContentDataPriceTierEnum = {}));
 /**
  * @export
@@ -165,10 +172,10 @@ export var ContentDataPriceTierEnum;
  */
 export var ContentDataDeliveryModeEnum;
 (function (ContentDataDeliveryModeEnum) {
-    ContentDataDeliveryModeEnum["DIGITAL"] = "digital";
-    ContentDataDeliveryModeEnum["PHYSICAL"] = "physical";
-    ContentDataDeliveryModeEnum["HYBRID"] = "hybrid";
-    ContentDataDeliveryModeEnum["SERVICE"] = "service";
+  ContentDataDeliveryModeEnum["DIGITAL"] = "digital";
+  ContentDataDeliveryModeEnum["PHYSICAL"] = "physical";
+  ContentDataDeliveryModeEnum["HYBRID"] = "hybrid";
+  ContentDataDeliveryModeEnum["SERVICE"] = "service";
 })(ContentDataDeliveryModeEnum || (ContentDataDeliveryModeEnum = {}));
 /**
  * @export
@@ -176,30 +183,30 @@ export var ContentDataDeliveryModeEnum;
  */
 export var ContentDataCategoryEnum;
 (function (ContentDataCategoryEnum) {
-    ContentDataCategoryEnum["CODEGEN"] = "codegen";
-    ContentDataCategoryEnum["SLIDES"] = "slides";
-    ContentDataCategoryEnum["SPREADSHEETS"] = "spreadsheets";
-    ContentDataCategoryEnum["DOCS"] = "docs";
-    ContentDataCategoryEnum["BLOG"] = "blog";
-    ContentDataCategoryEnum["PRODUCT"] = "product";
-    ContentDataCategoryEnum["SECURITY"] = "security";
-    ContentDataCategoryEnum["EVENT"] = "event";
-    ContentDataCategoryEnum["TUTORIAL"] = "tutorial";
-    ContentDataCategoryEnum["NEWS"] = "news";
-    ContentDataCategoryEnum["ANNOUNCEMENT"] = "announcement";
-    ContentDataCategoryEnum["GUIDE"] = "guide";
-    ContentDataCategoryEnum["REVIEW"] = "review";
-    ContentDataCategoryEnum["CASESTUDY"] = "case study";
-    ContentDataCategoryEnum["WHITEPAPER"] = "whitepaper";
-    ContentDataCategoryEnum["EBOOK"] = "ebook";
-    ContentDataCategoryEnum["FUNNEL"] = "funnel";
-    ContentDataCategoryEnum["VIDEO"] = "video";
-    ContentDataCategoryEnum["AUDIO"] = "audio";
-    ContentDataCategoryEnum["IMAGE"] = "image";
-    ContentDataCategoryEnum["PODCAST"] = "podcast";
-    ContentDataCategoryEnum["WEBINAR"] = "webinar";
-    ContentDataCategoryEnum["COURSE"] = "course";
-    ContentDataCategoryEnum["OTHER"] = "other";
+  ContentDataCategoryEnum["CODEGEN"] = "codegen";
+  ContentDataCategoryEnum["SLIDES"] = "slides";
+  ContentDataCategoryEnum["SPREADSHEETS"] = "spreadsheets";
+  ContentDataCategoryEnum["DOCS"] = "docs";
+  ContentDataCategoryEnum["BLOG"] = "blog";
+  ContentDataCategoryEnum["PRODUCT"] = "product";
+  ContentDataCategoryEnum["SECURITY"] = "security";
+  ContentDataCategoryEnum["EVENT"] = "event";
+  ContentDataCategoryEnum["TUTORIAL"] = "tutorial";
+  ContentDataCategoryEnum["NEWS"] = "news";
+  ContentDataCategoryEnum["ANNOUNCEMENT"] = "announcement";
+  ContentDataCategoryEnum["GUIDE"] = "guide";
+  ContentDataCategoryEnum["REVIEW"] = "review";
+  ContentDataCategoryEnum["CASESTUDY"] = "case study";
+  ContentDataCategoryEnum["WHITEPAPER"] = "whitepaper";
+  ContentDataCategoryEnum["EBOOK"] = "ebook";
+  ContentDataCategoryEnum["FUNNEL"] = "funnel";
+  ContentDataCategoryEnum["VIDEO"] = "video";
+  ContentDataCategoryEnum["AUDIO"] = "audio";
+  ContentDataCategoryEnum["IMAGE"] = "image";
+  ContentDataCategoryEnum["PODCAST"] = "podcast";
+  ContentDataCategoryEnum["WEBINAR"] = "webinar";
+  ContentDataCategoryEnum["COURSE"] = "course";
+  ContentDataCategoryEnum["OTHER"] = "other";
 })(ContentDataCategoryEnum || (ContentDataCategoryEnum = {}));
 /**
  * @export
@@ -207,9 +214,9 @@ export var ContentDataCategoryEnum;
  */
 export var ContentDataStatusEnum;
 (function (ContentDataStatusEnum) {
-    ContentDataStatusEnum["HOLDING"] = "holding";
-    ContentDataStatusEnum["EDITING"] = "editing";
-    ContentDataStatusEnum["PUBLISHED"] = "published";
-    ContentDataStatusEnum["DRAFT"] = "draft";
+  ContentDataStatusEnum["HOLDING"] = "holding";
+  ContentDataStatusEnum["EDITING"] = "editing";
+  ContentDataStatusEnum["PUBLISHED"] = "published";
+  ContentDataStatusEnum["DRAFT"] = "draft";
 })(ContentDataStatusEnum || (ContentDataStatusEnum = {}));
 //# sourceMappingURL=ContentData.js.map

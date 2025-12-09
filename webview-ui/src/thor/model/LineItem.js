@@ -28,61 +28,66 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { DiscountFromJSON, DiscountToJSON, ProductFromJSON, ProductToJSON, } from "./";
+import {
+  DiscountFromJSON,
+  DiscountToJSON,
+  ProductFromJSON,
+  ProductToJSON,
+} from "./";
 export function LineItemFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        salesOrderId: !exists(json, "salesOrderId")
-            ? undefined
-            : json["salesOrderId"],
-        product: !exists(json, "product")
-            ? undefined
-            : ProductFromJSON(json["product"]),
-        lineItemAmount: !exists(json, "lineItemAmount")
-            ? undefined
-            : json["lineItemAmount"],
-        taxRate: !exists(json, "taxRate") ? undefined : json["taxRate"],
-        discount: !exists(json, "discount")
-            ? undefined
-            : DiscountFromJSON(json["discount"]),
-        quantity: !exists(json, "quantity") ? undefined : json["quantity"],
-        type: !exists(json, "type") ? undefined : json["type"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    salesOrderId: !exists(json, "salesOrderId")
+      ? undefined
+      : json["salesOrderId"],
+    product: !exists(json, "product")
+      ? undefined
+      : ProductFromJSON(json["product"]),
+    lineItemAmount: !exists(json, "lineItemAmount")
+      ? undefined
+      : json["lineItemAmount"],
+    taxRate: !exists(json, "taxRate") ? undefined : json["taxRate"],
+    discount: !exists(json, "discount")
+      ? undefined
+      : DiscountFromJSON(json["discount"]),
+    quantity: !exists(json, "quantity") ? undefined : json["quantity"],
+    type: !exists(json, "type") ? undefined : json["type"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function LineItemToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        salesOrderId: value.salesOrderId,
-        product: ProductToJSON(value.product),
-        lineItemAmount: value.lineItemAmount,
-        taxRate: value.taxRate,
-        discount: DiscountToJSON(value.discount),
-        quantity: value.quantity,
-        type: value.type,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    salesOrderId: value.salesOrderId,
+    product: ProductToJSON(value.product),
+    lineItemAmount: value.lineItemAmount,
+    taxRate: value.taxRate,
+    discount: DiscountToJSON(value.discount),
+    quantity: value.quantity,
+    type: value.type,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -90,10 +95,10 @@ export function LineItemToJSON(value) {
  */
 export var LineItemTypeEnum;
 (function (LineItemTypeEnum) {
-    LineItemTypeEnum["PRODUCT"] = "product";
-    LineItemTypeEnum["SERVICE"] = "service";
-    LineItemTypeEnum["DISCOUNT"] = "discount";
-    LineItemTypeEnum["ADJUSTMENT"] = "adjustment";
-    LineItemTypeEnum["OTHER"] = "other";
+  LineItemTypeEnum["PRODUCT"] = "product";
+  LineItemTypeEnum["SERVICE"] = "service";
+  LineItemTypeEnum["DISCOUNT"] = "discount";
+  LineItemTypeEnum["ADJUSTMENT"] = "adjustment";
+  LineItemTypeEnum["OTHER"] = "other";
 })(LineItemTypeEnum || (LineItemTypeEnum = {}));
 //# sourceMappingURL=LineItem.js.map

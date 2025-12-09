@@ -16,29 +16,39 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const PhoneVerificationSlice = createSlice({
-    name: "PhoneVerifications",
-    initialState: [],
-    reducers: {
-        PhoneVerificationAdded(state, action) {
-            state.push(action.payload);
-        },
-        PhoneVerificationValueToggled(state, action) {
-            console.log("PhoneVerification TOGGLE");
-            console.warn(JSON.stringify(action));
-            const PhoneVerification = state.find((PhoneVerification) => PhoneVerification.id === action.payload.PhoneVerificationId);
-            if (PhoneVerification) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        PhoneVerificationpropertySet(state, action) {
-            const PhoneVerification = state.find((PhoneVerification) => PhoneVerification.id === action.payload.PhoneVerificationId);
-            if (PhoneVerification) {
-                //  PhoneVerification[action.property] = action.payload[action.property];
-            }
-        },
+  name: "PhoneVerifications",
+  initialState: [],
+  reducers: {
+    PhoneVerificationAdded(state, action) {
+      state.push(action.payload);
     },
+    PhoneVerificationValueToggled(state, action) {
+      console.log("PhoneVerification TOGGLE");
+      console.warn(JSON.stringify(action));
+      const PhoneVerification = state.find(
+        (PhoneVerification) =>
+          PhoneVerification.id === action.payload.PhoneVerificationId,
+      );
+      if (PhoneVerification) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    PhoneVerificationpropertySet(state, action) {
+      const PhoneVerification = state.find(
+        (PhoneVerification) =>
+          PhoneVerification.id === action.payload.PhoneVerificationId,
+      );
+      if (PhoneVerification) {
+        //  PhoneVerification[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { PhoneVerificationAdded, PhoneVerificationValueToggled, PhoneVerificationpropertySet, } = PhoneVerificationSlice.actions;
+export const {
+  PhoneVerificationAdded,
+  PhoneVerificationValueToggled,
+  PhoneVerificationpropertySet,
+} = PhoneVerificationSlice.actions;
 export default PhoneVerificationSlice.reducer;
 //# sourceMappingURL=PhoneVerificationReducer.js.map

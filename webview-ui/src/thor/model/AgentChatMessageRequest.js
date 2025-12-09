@@ -29,43 +29,43 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function AgentChatMessageRequestFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        message: json["message"],
-        attachments: !exists(json, "attachments") ? undefined : json["attachments"],
-        priority: !exists(json, "priority") ? undefined : json["priority"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    message: json["message"],
+    attachments: !exists(json, "attachments") ? undefined : json["attachments"],
+    priority: !exists(json, "priority") ? undefined : json["priority"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function AgentChatMessageRequestToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        message: value.message,
-        attachments: value.attachments,
-        priority: value.priority,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    message: value.message,
+    attachments: value.attachments,
+    priority: value.priority,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -73,8 +73,11 @@ export function AgentChatMessageRequestToJSON(value) {
  */
 export var AgentChatMessageRequestPriorityEnum;
 (function (AgentChatMessageRequestPriorityEnum) {
-    AgentChatMessageRequestPriorityEnum["LOW"] = "low";
-    AgentChatMessageRequestPriorityEnum["NORMAL"] = "normal";
-    AgentChatMessageRequestPriorityEnum["HIGH"] = "high";
-})(AgentChatMessageRequestPriorityEnum || (AgentChatMessageRequestPriorityEnum = {}));
+  AgentChatMessageRequestPriorityEnum["LOW"] = "low";
+  AgentChatMessageRequestPriorityEnum["NORMAL"] = "normal";
+  AgentChatMessageRequestPriorityEnum["HIGH"] = "high";
+})(
+  AgentChatMessageRequestPriorityEnum ||
+    (AgentChatMessageRequestPriorityEnum = {}),
+);
 //# sourceMappingURL=AgentChatMessageRequest.js.map

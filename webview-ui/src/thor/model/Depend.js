@@ -29,49 +29,49 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function DependFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        groupId: json["groupId"],
-        artifactId: json["artifactId"],
-        version: json["version"],
-        scope: !exists(json, "scope") ? undefined : json["scope"],
-        status: !exists(json, "status") ? undefined : json["status"],
-        buildId: !exists(json, "buildId") ? undefined : json["buildId"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    groupId: json["groupId"],
+    artifactId: json["artifactId"],
+    version: json["version"],
+    scope: !exists(json, "scope") ? undefined : json["scope"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    buildId: !exists(json, "buildId") ? undefined : json["buildId"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function DependToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        groupId: value.groupId,
-        artifactId: value.artifactId,
-        version: value.version,
-        scope: value.scope,
-        status: value.status,
-        buildId: value.buildId,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    groupId: value.groupId,
+    artifactId: value.artifactId,
+    version: value.version,
+    scope: value.scope,
+    status: value.status,
+    buildId: value.buildId,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -79,8 +79,8 @@ export function DependToJSON(value) {
  */
 export var DependStatusEnum;
 (function (DependStatusEnum) {
-    DependStatusEnum["UPTODATE"] = "up_to_date";
-    DependStatusEnum["OUTDATED"] = "outdated";
-    DependStatusEnum["MISSING"] = "missing";
+  DependStatusEnum["UPTODATE"] = "up_to_date";
+  DependStatusEnum["OUTDATED"] = "outdated";
+  DependStatusEnum["MISSING"] = "missing";
 })(DependStatusEnum || (DependStatusEnum = {}));
 //# sourceMappingURL=Depend.js.map

@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: MediaObject
 */
-export const MediaObjectMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const MediaObjectMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("MediaObject MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=MediaObjectApiMiddleware.js.map

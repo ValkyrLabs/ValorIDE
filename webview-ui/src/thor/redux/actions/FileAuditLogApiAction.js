@@ -31,60 +31,60 @@ export const LIST_FILEAUDITLOG_REQUEST = "LIST_FILEAUDITLOG_REQUEST";
 export const LIST_FILEAUDITLOG_SUCCESS = "LIST_FILEAUDITLOG_SUCCESS";
 export const LIST_FILEAUDITLOG_FAILURE = "LIST_FILEAUDITLOG_FAILURE";
 export const addFileAuditLogRequest = () => ({
-    type: ADD_FILEAUDITLOG_REQUEST,
+  type: ADD_FILEAUDITLOG_REQUEST,
 });
 export const addFileAuditLogSuccess = (FileAuditLogs) => ({
-    type: ADD_FILEAUDITLOG_SUCCESS,
-    payload: FileAuditLogs,
+  type: ADD_FILEAUDITLOG_SUCCESS,
+  payload: FileAuditLogs,
 });
 export const addFileAuditLogFailure = (error) => ({
-    type: ADD_FILEAUDITLOG_FAILURE,
-    payload: error,
+  type: ADD_FILEAUDITLOG_FAILURE,
+  payload: error,
 });
 export const fetchFileAuditLogRequest = () => ({
-    type: FETCH_FILEAUDITLOG_REQUEST,
+  type: FETCH_FILEAUDITLOG_REQUEST,
 });
 export const fetchFileAuditLogSuccess = (FileAuditLogs) => ({
-    type: FETCH_FILEAUDITLOG_SUCCESS,
-    payload: FileAuditLogs,
+  type: FETCH_FILEAUDITLOG_SUCCESS,
+  payload: FileAuditLogs,
 });
 export const fetchFileAuditLogFailure = (error) => ({
-    type: FETCH_FILEAUDITLOG_FAILURE,
-    payload: error,
+  type: FETCH_FILEAUDITLOG_FAILURE,
+  payload: error,
 });
 export const listFileAuditLogRequest = () => ({
-    type: LIST_FILEAUDITLOG_REQUEST,
+  type: LIST_FILEAUDITLOG_REQUEST,
 });
 export const listFileAuditLogSuccess = (FileAuditLogs) => ({
-    type: LIST_FILEAUDITLOG_SUCCESS,
-    payload: FileAuditLogs,
+  type: LIST_FILEAUDITLOG_SUCCESS,
+  payload: FileAuditLogs,
 });
 export const listFileAuditLogFailure = (error) => ({
-    type: LIST_FILEAUDITLOG_FAILURE,
-    payload: error,
+  type: LIST_FILEAUDITLOG_FAILURE,
+  payload: error,
 });
 export const updateFileAuditLogRequest = (FileAuditLog) => ({
-    type: UPDATE_FILEAUDITLOG_REQUEST,
-    payload: FileAuditLog,
+  type: UPDATE_FILEAUDITLOG_REQUEST,
+  payload: FileAuditLog,
 });
 export const updateFileAuditLogSuccess = (FileAuditLog) => ({
-    type: UPDATE_FILEAUDITLOG_SUCCESS,
-    payload: FileAuditLog,
+  type: UPDATE_FILEAUDITLOG_SUCCESS,
+  payload: FileAuditLog,
 });
 export const updateFileAuditLogFailure = (error) => ({
-    type: UPDATE_FILEAUDITLOG_FAILURE,
-    payload: error,
+  type: UPDATE_FILEAUDITLOG_FAILURE,
+  payload: error,
 });
 export const deleteFileAuditLogRequest = (FileAuditLog) => ({
-    type: DELETE_FILEAUDITLOG_REQUEST,
-    payload: FileAuditLog,
+  type: DELETE_FILEAUDITLOG_REQUEST,
+  payload: FileAuditLog,
 });
 export const deleteFileAuditLogSuccess = (FileAuditLog) => ({
-    type: DELETE_FILEAUDITLOG_SUCCESS,
-    payload: FileAuditLog,
+  type: DELETE_FILEAUDITLOG_SUCCESS,
+  payload: FileAuditLog,
 });
 export const deleteFileAuditLogFailure = (error) => ({
-    type: DELETE_FILEAUDITLOG_FAILURE,
-    payload: error,
+  type: DELETE_FILEAUDITLOG_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=FileAuditLogApiAction.js.map

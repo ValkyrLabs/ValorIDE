@@ -28,83 +28,105 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { McpDownloadResponseFromJSON, McpDownloadResponseToJSON, McpMarketplaceCatalogFromJSON, McpMarketplaceCatalogToJSON, McpMarketplaceItemFromJSON, McpMarketplaceItemToJSON, McpResourceResponseFromJSON, McpResourceResponseToJSON, McpServerFromJSON, McpServerToJSON, McpToolCallResponseFromJSON, McpToolCallResponseToJSON, McpToolPresetFromJSON, McpToolPresetToJSON, } from "./";
+import {
+  McpDownloadResponseFromJSON,
+  McpDownloadResponseToJSON,
+  McpMarketplaceCatalogFromJSON,
+  McpMarketplaceCatalogToJSON,
+  McpMarketplaceItemFromJSON,
+  McpMarketplaceItemToJSON,
+  McpResourceResponseFromJSON,
+  McpResourceResponseToJSON,
+  McpServerFromJSON,
+  McpServerToJSON,
+  McpToolCallResponseFromJSON,
+  McpToolCallResponseToJSON,
+  McpToolPresetFromJSON,
+  McpToolPresetToJSON,
+} from "./";
 export function McpFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        mode: !exists(json, "mode") ? undefined : json["mode"],
-        servers: !exists(json, "servers")
-            ? undefined
-            : json["servers"].map(McpServerFromJSON),
-        marketplaceCatalogs: !exists(json, "marketplaceCatalogs")
-            ? undefined
-            : json["marketplaceCatalogs"].map(McpMarketplaceCatalogFromJSON),
-        marketplaceItems: !exists(json, "marketplaceItems")
-            ? undefined
-            : json["marketplaceItems"].map(McpMarketplaceItemFromJSON),
-        downloads: !exists(json, "downloads")
-            ? undefined
-            : json["downloads"].map(McpDownloadResponseFromJSON),
-        resourceResponses: !exists(json, "resourceResponses")
-            ? undefined
-            : json["resourceResponses"].map(McpResourceResponseFromJSON),
-        toolCallResponses: !exists(json, "toolCallResponses")
-            ? undefined
-            : json["toolCallResponses"].map(McpToolCallResponseFromJSON),
-        toolPresets: !exists(json, "toolPresets")
-            ? undefined
-            : json["toolPresets"].map(McpToolPresetFromJSON),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    mode: !exists(json, "mode") ? undefined : json["mode"],
+    servers: !exists(json, "servers")
+      ? undefined
+      : json["servers"].map(McpServerFromJSON),
+    marketplaceCatalogs: !exists(json, "marketplaceCatalogs")
+      ? undefined
+      : json["marketplaceCatalogs"].map(McpMarketplaceCatalogFromJSON),
+    marketplaceItems: !exists(json, "marketplaceItems")
+      ? undefined
+      : json["marketplaceItems"].map(McpMarketplaceItemFromJSON),
+    downloads: !exists(json, "downloads")
+      ? undefined
+      : json["downloads"].map(McpDownloadResponseFromJSON),
+    resourceResponses: !exists(json, "resourceResponses")
+      ? undefined
+      : json["resourceResponses"].map(McpResourceResponseFromJSON),
+    toolCallResponses: !exists(json, "toolCallResponses")
+      ? undefined
+      : json["toolCallResponses"].map(McpToolCallResponseFromJSON),
+    toolPresets: !exists(json, "toolPresets")
+      ? undefined
+      : json["toolPresets"].map(McpToolPresetFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function McpToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        mode: value.mode,
-        servers: value.servers === undefined
-            ? undefined
-            : value.servers.map(McpServerToJSON),
-        marketplaceCatalogs: value.marketplaceCatalogs === undefined
-            ? undefined
-            : value.marketplaceCatalogs.map(McpMarketplaceCatalogToJSON),
-        marketplaceItems: value.marketplaceItems === undefined
-            ? undefined
-            : value.marketplaceItems.map(McpMarketplaceItemToJSON),
-        downloads: value.downloads === undefined
-            ? undefined
-            : value.downloads.map(McpDownloadResponseToJSON),
-        resourceResponses: value.resourceResponses === undefined
-            ? undefined
-            : value.resourceResponses.map(McpResourceResponseToJSON),
-        toolCallResponses: value.toolCallResponses === undefined
-            ? undefined
-            : value.toolCallResponses.map(McpToolCallResponseToJSON),
-        toolPresets: value.toolPresets === undefined
-            ? undefined
-            : value.toolPresets.map(McpToolPresetToJSON),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    mode: value.mode,
+    servers:
+      value.servers === undefined
+        ? undefined
+        : value.servers.map(McpServerToJSON),
+    marketplaceCatalogs:
+      value.marketplaceCatalogs === undefined
+        ? undefined
+        : value.marketplaceCatalogs.map(McpMarketplaceCatalogToJSON),
+    marketplaceItems:
+      value.marketplaceItems === undefined
+        ? undefined
+        : value.marketplaceItems.map(McpMarketplaceItemToJSON),
+    downloads:
+      value.downloads === undefined
+        ? undefined
+        : value.downloads.map(McpDownloadResponseToJSON),
+    resourceResponses:
+      value.resourceResponses === undefined
+        ? undefined
+        : value.resourceResponses.map(McpResourceResponseToJSON),
+    toolCallResponses:
+      value.toolCallResponses === undefined
+        ? undefined
+        : value.toolCallResponses.map(McpToolCallResponseToJSON),
+    toolPresets:
+      value.toolPresets === undefined
+        ? undefined
+        : value.toolPresets.map(McpToolPresetToJSON),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -112,8 +134,8 @@ export function McpToJSON(value) {
  */
 export var McpModeEnum;
 (function (McpModeEnum) {
-    McpModeEnum["FULL"] = "full";
-    McpModeEnum["SERVERUSEONLY"] = "server-use-only";
-    McpModeEnum["FALSE"] = "false";
+  McpModeEnum["FULL"] = "full";
+  McpModeEnum["SERVERUSEONLY"] = "server-use-only";
+  McpModeEnum["FALSE"] = "false";
 })(McpModeEnum || (McpModeEnum = {}));
 //# sourceMappingURL=Mcp.js.map

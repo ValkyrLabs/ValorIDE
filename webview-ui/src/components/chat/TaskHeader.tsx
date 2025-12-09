@@ -26,9 +26,13 @@ import {
   FaClock,
 } from "react-icons/fa";
 import StatusBadge from "../common/StatusBadge";
+import TaskThermometer from "@/components/TaskThermometer";
+import { TaskConfidence, TaskPhase } from "@/utils/taskPhase";
 
 interface TaskHeaderProps {
   task: ValorIDEMessage;
+  phase: TaskPhase;
+  phaseRatio?: number;
   tokensIn: number;
   tokensOut: number;
   doesModelSupportPromptCache: boolean;
@@ -37,10 +41,18 @@ interface TaskHeaderProps {
   totalCost: number;
   lastApiReqTotalTokens?: number;
   onClose: () => void;
+  phaseAnchors?: Partial<Record<TaskPhase, number>>;
+  phaseConfidence?: TaskConfidence;
+  onPhaseSelect?: (phase: TaskPhase) => void;
 }
 
 const TaskHeader: React.FC<TaskHeaderProps> = ({
   task,
+  phase,
+  phaseRatio = 0,
+  phaseAnchors,
+  phaseConfidence = "normal",
+  onPhaseSelect,
   tokensIn,
   tokensOut,
   doesModelSupportPromptCache,
@@ -372,6 +384,13 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
             <FaTimes />
           </VSCodeButton>
         </div>
+        <TaskThermometer
+          phase={phase}
+          ratio={phaseRatio}
+          tone={phaseConfidence}
+          phaseAnchors={phaseAnchors}
+          onPhaseSelect={onPhaseSelect}
+        />
         {isTaskExpanded && (
           <>
             <div
@@ -681,13 +700,13 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                       <>
                         {" "}
                         <a
-                          href="https://github.com/valkyrlabs/valoride/wiki/Installing-Git-for-Checkpoints"
+                          href="https://git-scm.com/install/"
                           style={{
                             color: "inherit",
                             textDecoration: "underline",
                           }}
                         >
-                          See here for instructions.
+                          Git Installation Instructions
                         </a>
                       </>
                     )}

@@ -29,63 +29,63 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function BackupConfigFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: !exists(json, "name") ? undefined : json["name"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        remoteConfigUrl: !exists(json, "remoteConfigUrl")
-            ? undefined
-            : json["remoteConfigUrl"],
-        runNumber: !exists(json, "runNumber") ? undefined : json["runNumber"],
-        percentComplete: !exists(json, "percentComplete")
-            ? undefined
-            : json["percentComplete"],
-        type: !exists(json, "type") ? undefined : json["type"],
-        priorityLevel: !exists(json, "priorityLevel")
-            ? undefined
-            : json["priorityLevel"],
-        backupDir: !exists(json, "backupDir") ? undefined : json["backupDir"],
-        workingDir: !exists(json, "workingDir") ? undefined : json["workingDir"],
-        skiplist: !exists(json, "skiplist") ? undefined : json["skiplist"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: !exists(json, "name") ? undefined : json["name"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    remoteConfigUrl: !exists(json, "remoteConfigUrl")
+      ? undefined
+      : json["remoteConfigUrl"],
+    runNumber: !exists(json, "runNumber") ? undefined : json["runNumber"],
+    percentComplete: !exists(json, "percentComplete")
+      ? undefined
+      : json["percentComplete"],
+    type: !exists(json, "type") ? undefined : json["type"],
+    priorityLevel: !exists(json, "priorityLevel")
+      ? undefined
+      : json["priorityLevel"],
+    backupDir: !exists(json, "backupDir") ? undefined : json["backupDir"],
+    workingDir: !exists(json, "workingDir") ? undefined : json["workingDir"],
+    skiplist: !exists(json, "skiplist") ? undefined : json["skiplist"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function BackupConfigToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        description: value.description,
-        remoteConfigUrl: value.remoteConfigUrl,
-        runNumber: value.runNumber,
-        percentComplete: value.percentComplete,
-        type: value.type,
-        priorityLevel: value.priorityLevel,
-        backupDir: value.backupDir,
-        workingDir: value.workingDir,
-        skiplist: value.skiplist,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    description: value.description,
+    remoteConfigUrl: value.remoteConfigUrl,
+    runNumber: value.runNumber,
+    percentComplete: value.percentComplete,
+    type: value.type,
+    priorityLevel: value.priorityLevel,
+    backupDir: value.backupDir,
+    workingDir: value.workingDir,
+    skiplist: value.skiplist,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -93,11 +93,11 @@ export function BackupConfigToJSON(value) {
  */
 export var BackupConfigTypeEnum;
 (function (BackupConfigTypeEnum) {
-    BackupConfigTypeEnum["WORKSTATION"] = "workstation";
-    BackupConfigTypeEnum["SERVER"] = "server";
-    BackupConfigTypeEnum["DESKTOP"] = "desktop";
-    BackupConfigTypeEnum["LAPTOP"] = "laptop";
-    BackupConfigTypeEnum["DEVICE"] = "device";
+  BackupConfigTypeEnum["WORKSTATION"] = "workstation";
+  BackupConfigTypeEnum["SERVER"] = "server";
+  BackupConfigTypeEnum["DESKTOP"] = "desktop";
+  BackupConfigTypeEnum["LAPTOP"] = "laptop";
+  BackupConfigTypeEnum["DEVICE"] = "device";
 })(BackupConfigTypeEnum || (BackupConfigTypeEnum = {}));
 /**
  * @export
@@ -105,9 +105,9 @@ export var BackupConfigTypeEnum;
  */
 export var BackupConfigPriorityLevelEnum;
 (function (BackupConfigPriorityLevelEnum) {
-    BackupConfigPriorityLevelEnum["LOW"] = "low";
-    BackupConfigPriorityLevelEnum["MEDIUM"] = "medium";
-    BackupConfigPriorityLevelEnum["HIGH"] = "high";
-    BackupConfigPriorityLevelEnum["CRITICAL"] = "critical";
+  BackupConfigPriorityLevelEnum["LOW"] = "low";
+  BackupConfigPriorityLevelEnum["MEDIUM"] = "medium";
+  BackupConfigPriorityLevelEnum["HIGH"] = "high";
+  BackupConfigPriorityLevelEnum["CRITICAL"] = "critical";
 })(BackupConfigPriorityLevelEnum || (BackupConfigPriorityLevelEnum = {}));
 //# sourceMappingURL=BackupConfig.js.map

@@ -31,60 +31,60 @@ export const LIST_CONTENTDATA_REQUEST = "LIST_CONTENTDATA_REQUEST";
 export const LIST_CONTENTDATA_SUCCESS = "LIST_CONTENTDATA_SUCCESS";
 export const LIST_CONTENTDATA_FAILURE = "LIST_CONTENTDATA_FAILURE";
 export const addContentDataRequest = () => ({
-    type: ADD_CONTENTDATA_REQUEST,
+  type: ADD_CONTENTDATA_REQUEST,
 });
 export const addContentDataSuccess = (ContentDatas) => ({
-    type: ADD_CONTENTDATA_SUCCESS,
-    payload: ContentDatas,
+  type: ADD_CONTENTDATA_SUCCESS,
+  payload: ContentDatas,
 });
 export const addContentDataFailure = (error) => ({
-    type: ADD_CONTENTDATA_FAILURE,
-    payload: error,
+  type: ADD_CONTENTDATA_FAILURE,
+  payload: error,
 });
 export const fetchContentDataRequest = () => ({
-    type: FETCH_CONTENTDATA_REQUEST,
+  type: FETCH_CONTENTDATA_REQUEST,
 });
 export const fetchContentDataSuccess = (ContentDatas) => ({
-    type: FETCH_CONTENTDATA_SUCCESS,
-    payload: ContentDatas,
+  type: FETCH_CONTENTDATA_SUCCESS,
+  payload: ContentDatas,
 });
 export const fetchContentDataFailure = (error) => ({
-    type: FETCH_CONTENTDATA_FAILURE,
-    payload: error,
+  type: FETCH_CONTENTDATA_FAILURE,
+  payload: error,
 });
 export const listContentDataRequest = () => ({
-    type: LIST_CONTENTDATA_REQUEST,
+  type: LIST_CONTENTDATA_REQUEST,
 });
 export const listContentDataSuccess = (ContentDatas) => ({
-    type: LIST_CONTENTDATA_SUCCESS,
-    payload: ContentDatas,
+  type: LIST_CONTENTDATA_SUCCESS,
+  payload: ContentDatas,
 });
 export const listContentDataFailure = (error) => ({
-    type: LIST_CONTENTDATA_FAILURE,
-    payload: error,
+  type: LIST_CONTENTDATA_FAILURE,
+  payload: error,
 });
 export const updateContentDataRequest = (ContentData) => ({
-    type: UPDATE_CONTENTDATA_REQUEST,
-    payload: ContentData,
+  type: UPDATE_CONTENTDATA_REQUEST,
+  payload: ContentData,
 });
 export const updateContentDataSuccess = (ContentData) => ({
-    type: UPDATE_CONTENTDATA_SUCCESS,
-    payload: ContentData,
+  type: UPDATE_CONTENTDATA_SUCCESS,
+  payload: ContentData,
 });
 export const updateContentDataFailure = (error) => ({
-    type: UPDATE_CONTENTDATA_FAILURE,
-    payload: error,
+  type: UPDATE_CONTENTDATA_FAILURE,
+  payload: error,
 });
 export const deleteContentDataRequest = (ContentData) => ({
-    type: DELETE_CONTENTDATA_REQUEST,
-    payload: ContentData,
+  type: DELETE_CONTENTDATA_REQUEST,
+  payload: ContentData,
 });
 export const deleteContentDataSuccess = (ContentData) => ({
-    type: DELETE_CONTENTDATA_SUCCESS,
-    payload: ContentData,
+  type: DELETE_CONTENTDATA_SUCCESS,
+  payload: ContentData,
 });
 export const deleteContentDataFailure = (error) => ({
-    type: DELETE_CONTENTDATA_FAILURE,
-    payload: error,
+  type: DELETE_CONTENTDATA_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=ContentDataApiAction.js.map

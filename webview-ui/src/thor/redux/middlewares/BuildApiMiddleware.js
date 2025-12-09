@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Build
 */
-export const BuildMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const BuildMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Build MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=BuildApiMiddleware.js.map

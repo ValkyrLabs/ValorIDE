@@ -28,68 +28,73 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { FileRecordFromJSON, FileRecordToJSON, PrincipalFromJSON, PrincipalToJSON, } from "./";
+import {
+  FileRecordFromJSON,
+  FileRecordToJSON,
+  PrincipalFromJSON,
+  PrincipalToJSON,
+} from "./";
 export function FileVersionFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        fileId: json["fileId"],
-        versionNumber: json["versionNumber"],
-        storageKey: json["storageKey"],
-        sizeBytes: json["sizeBytes"],
-        file: !exists(json, "file") ? undefined : FileRecordFromJSON(json["file"]),
-        storageDriverId: !exists(json, "storageDriverId")
-            ? undefined
-            : json["storageDriverId"],
-        checksumSha256: !exists(json, "checksumSha256")
-            ? undefined
-            : json["checksumSha256"],
-        contentType: !exists(json, "contentType") ? undefined : json["contentType"],
-        changeLog: !exists(json, "changeLog") ? undefined : json["changeLog"],
-        createdById: !exists(json, "createdById") ? undefined : json["createdById"],
-        createdBy: !exists(json, "createdBy")
-            ? undefined
-            : PrincipalFromJSON(json["createdBy"]),
-        isCurrent: !exists(json, "isCurrent") ? undefined : json["isCurrent"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    fileId: json["fileId"],
+    versionNumber: json["versionNumber"],
+    storageKey: json["storageKey"],
+    sizeBytes: json["sizeBytes"],
+    file: !exists(json, "file") ? undefined : FileRecordFromJSON(json["file"]),
+    storageDriverId: !exists(json, "storageDriverId")
+      ? undefined
+      : json["storageDriverId"],
+    checksumSha256: !exists(json, "checksumSha256")
+      ? undefined
+      : json["checksumSha256"],
+    contentType: !exists(json, "contentType") ? undefined : json["contentType"],
+    changeLog: !exists(json, "changeLog") ? undefined : json["changeLog"],
+    createdById: !exists(json, "createdById") ? undefined : json["createdById"],
+    createdBy: !exists(json, "createdBy")
+      ? undefined
+      : PrincipalFromJSON(json["createdBy"]),
+    isCurrent: !exists(json, "isCurrent") ? undefined : json["isCurrent"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function FileVersionToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        fileId: value.fileId,
-        versionNumber: value.versionNumber,
-        storageKey: value.storageKey,
-        sizeBytes: value.sizeBytes,
-        file: FileRecordToJSON(value.file),
-        storageDriverId: value.storageDriverId,
-        checksumSha256: value.checksumSha256,
-        contentType: value.contentType,
-        changeLog: value.changeLog,
-        createdById: value.createdById,
-        createdBy: PrincipalToJSON(value.createdBy),
-        isCurrent: value.isCurrent,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    fileId: value.fileId,
+    versionNumber: value.versionNumber,
+    storageKey: value.storageKey,
+    sizeBytes: value.sizeBytes,
+    file: FileRecordToJSON(value.file),
+    storageDriverId: value.storageDriverId,
+    checksumSha256: value.checksumSha256,
+    contentType: value.contentType,
+    changeLog: value.changeLog,
+    createdById: value.createdById,
+    createdBy: PrincipalToJSON(value.createdBy),
+    isCurrent: value.isCurrent,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=FileVersion.js.map

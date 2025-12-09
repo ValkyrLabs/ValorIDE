@@ -16,29 +16,39 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const ConsultingProfileSlice = createSlice({
-    name: "ConsultingProfiles",
-    initialState: [],
-    reducers: {
-        ConsultingProfileAdded(state, action) {
-            state.push(action.payload);
-        },
-        ConsultingProfileValueToggled(state, action) {
-            console.log("ConsultingProfile TOGGLE");
-            console.warn(JSON.stringify(action));
-            const ConsultingProfile = state.find((ConsultingProfile) => ConsultingProfile.id === action.payload.ConsultingProfileId);
-            if (ConsultingProfile) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        ConsultingProfilepropertySet(state, action) {
-            const ConsultingProfile = state.find((ConsultingProfile) => ConsultingProfile.id === action.payload.ConsultingProfileId);
-            if (ConsultingProfile) {
-                //  ConsultingProfile[action.property] = action.payload[action.property];
-            }
-        },
+  name: "ConsultingProfiles",
+  initialState: [],
+  reducers: {
+    ConsultingProfileAdded(state, action) {
+      state.push(action.payload);
     },
+    ConsultingProfileValueToggled(state, action) {
+      console.log("ConsultingProfile TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ConsultingProfile = state.find(
+        (ConsultingProfile) =>
+          ConsultingProfile.id === action.payload.ConsultingProfileId,
+      );
+      if (ConsultingProfile) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    ConsultingProfilepropertySet(state, action) {
+      const ConsultingProfile = state.find(
+        (ConsultingProfile) =>
+          ConsultingProfile.id === action.payload.ConsultingProfileId,
+      );
+      if (ConsultingProfile) {
+        //  ConsultingProfile[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { ConsultingProfileAdded, ConsultingProfileValueToggled, ConsultingProfilepropertySet, } = ConsultingProfileSlice.actions;
+export const {
+  ConsultingProfileAdded,
+  ConsultingProfileValueToggled,
+  ConsultingProfilepropertySet,
+} = ConsultingProfileSlice.actions;
 export default ConsultingProfileSlice.reducer;
 //# sourceMappingURL=ConsultingProfileReducer.js.map

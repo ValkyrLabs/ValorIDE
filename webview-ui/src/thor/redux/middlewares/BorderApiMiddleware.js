@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Border
 */
-export const BorderMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const BorderMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Border MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=BorderApiMiddleware.js.map

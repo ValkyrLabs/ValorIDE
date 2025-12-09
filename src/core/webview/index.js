@@ -8,226 +8,248 @@ import { findLast } from "@shared/array";
 import { UsageTrackingService } from "../../services/usage-tracking/UsageTrackingService";
 import { TelecomHub } from "@services/P2P/TelecomHub";
 import { thorapiSettingChanged } from "@utils/thorapi";
-const FALLBACK_VALKYRAI_BASE = (process.env.VITE_basePath && process.env.VITE_basePath.trim()) ||
-    "http://localhost:8080/v1";
+const FALLBACK_VALKYRAI_BASE =
+  (process.env.VITE_basePath && process.env.VITE_basePath.trim()) ||
+  "http://localhost:8080/v1";
 const resolveValkyraiBasePath = () => {
-    const configured = vscode.workspace
-        .getConfiguration("valoride.valkyrai")
-        .get("host");
-    const normalized = (configured && configured.trim().replace(/\/+$/, "")) ||
-        FALLBACK_VALKYRAI_BASE.replace(/\/+$/, "");
-    return normalized;
+  const configured = vscode.workspace
+    .getConfiguration("valoride.valkyrai")
+    .get("host");
+  const normalized =
+    (configured && configured.trim().replace(/\/+$/, "")) ||
+    FALLBACK_VALKYRAI_BASE.replace(/\/+$/, "");
+  return normalized;
 };
 const deriveValkyraiOrigins = (basePath) => {
-    try {
-        const parsed = new URL(basePath);
-        const httpOrigin = `${parsed.protocol}//${parsed.host}`;
-        const wsOrigin = `${parsed.protocol === "https:" ? "wss" : "ws"}://${parsed.host}`;
-        return { httpOrigin, wsOrigin };
-    }
-    catch {
-        const fallbackOrigin = basePath.replace(/\/v1$/, "");
-        return { httpOrigin: fallbackOrigin, wsOrigin: undefined };
-    }
+  try {
+    const parsed = new URL(basePath);
+    const httpOrigin = `${parsed.protocol}//${parsed.host}`;
+    const wsOrigin = `${parsed.protocol === "https:" ? "wss" : "ws"}://${parsed.host}`;
+    return { httpOrigin, wsOrigin };
+  } catch {
+    const fallbackOrigin = basePath.replace(/\/v1$/, "");
+    return { httpOrigin: fallbackOrigin, wsOrigin: undefined };
+  }
 };
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
 https://github.com/KumarVariable/vscode-extension-sidebar-html/blob/master/src/customSidebarViewProvider.ts
 */
 export class WebviewProvider {
-    context;
-    outputChannel;
-    static sideBarId = "valoride-dev.SidebarProvider"; // used in package.json as the view's id. This value cannot be changed due to how vscode caches views based on their id, and updating the id would break existing instances of the extension.
-    static tabPanelId = "valoride-dev.TabPanelProvider";
-    static activeInstances = new Set();
-    view;
-    disposables = [];
-    controller;
-    usageTrackingService;
-    constructor(context, outputChannel) {
-        this.context = context;
-        this.outputChannel = outputChannel;
-        WebviewProvider.activeInstances.add(this);
-        this.controller = new Controller(context, outputChannel, (message) => this.view?.webview.postMessage(message));
-        this.usageTrackingService = UsageTrackingService.getInstance();
+  context;
+  outputChannel;
+  static sideBarId = "valoride-dev.SidebarProvider"; // used in package.json as the view's id. This value cannot be changed due to how vscode caches views based on their id, and updating the id would break existing instances of the extension.
+  static tabPanelId = "valoride-dev.TabPanelProvider";
+  static activeInstances = new Set();
+  view;
+  disposables = [];
+  controller;
+  usageTrackingService;
+  constructor(context, outputChannel) {
+    this.context = context;
+    this.outputChannel = outputChannel;
+    WebviewProvider.activeInstances.add(this);
+    this.controller = new Controller(context, outputChannel, (message) =>
+      this.view?.webview.postMessage(message),
+    );
+    this.usageTrackingService = UsageTrackingService.getInstance();
+  }
+  async dispose() {
+    console.log("Starting WebviewProvider disposal...");
+    try {
+      // Do NOT dispose the webview here.
+      // VS Code owns the lifetime of WebviewView/WebviewPanel and will invoke our onDidDispose handler.
+      // Disposing it again from within our dispose() leads to double-disposal and VS Code internals
+      // (e.g., ContextKeyService) being accessed after disposal, causing errors like
+      // "AbstractContextKeyService has been disposed" when menus/actions resolve.
+    } catch (error) {
+      console.error("Error disposing webview:", error);
     }
-    async dispose() {
-        console.log("Starting WebviewProvider disposal...");
+    // Dispose all disposables with individual error handling
+    while (this.disposables.length) {
+      const disposable = this.disposables.pop();
+      if (disposable) {
         try {
-            // Do NOT dispose the webview here.
-            // VS Code owns the lifetime of WebviewView/WebviewPanel and will invoke our onDidDispose handler.
-            // Disposing it again from within our dispose() leads to double-disposal and VS Code internals
-            // (e.g., ContextKeyService) being accessed after disposal, causing errors like
-            // "AbstractContextKeyService has been disposed" when menus/actions resolve.
+          disposable.dispose();
+        } catch (error) {
+          console.error("Error disposing resource:", error);
         }
-        catch (error) {
-            console.error("Error disposing webview:", error);
-        }
-        // Dispose all disposables with individual error handling
-        while (this.disposables.length) {
-            const disposable = this.disposables.pop();
-            if (disposable) {
-                try {
-                    disposable.dispose();
-                }
-                catch (error) {
-                    console.error("Error disposing resource:", error);
-                }
-            }
-        }
-        try {
-            await this.controller.dispose();
-            console.log("Controller disposed successfully");
-        }
-        catch (error) {
-            console.error("Error disposing controller:", error);
-        }
-        try {
-            this.usageTrackingService.dispose();
-            console.log("Usage tracking service disposed successfully");
-        }
-        catch (error) {
-            console.error("Error disposing usage tracking service:", error);
-        }
-        WebviewProvider.activeInstances.delete(this);
-        this.view = undefined;
-        console.log("WebviewProvider disposal completed");
+      }
     }
-    static getVisibleInstance() {
-        return findLast(Array.from(this.activeInstances), (instance) => instance.view?.visible === true);
+    try {
+      await this.controller.dispose();
+      console.log("Controller disposed successfully");
+    } catch (error) {
+      console.error("Error disposing controller:", error);
     }
-    static getAllInstances() {
-        return Array.from(this.activeInstances);
+    try {
+      this.usageTrackingService.dispose();
+      console.log("Usage tracking service disposed successfully");
+    } catch (error) {
+      console.error("Error disposing usage tracking service:", error);
     }
-    static getSidebarInstance() {
-        return Array.from(this.activeInstances).find((instance) => instance.view && "onDidChangeVisibility" in instance.view);
+    WebviewProvider.activeInstances.delete(this);
+    this.view = undefined;
+    console.log("WebviewProvider disposal completed");
+  }
+  static getVisibleInstance() {
+    return findLast(
+      Array.from(this.activeInstances),
+      (instance) => instance.view?.visible === true,
+    );
+  }
+  static getAllInstances() {
+    return Array.from(this.activeInstances);
+  }
+  static getSidebarInstance() {
+    return Array.from(this.activeInstances).find(
+      (instance) => instance.view && "onDidChangeVisibility" in instance.view,
+    );
+  }
+  static getTabInstances() {
+    return Array.from(this.activeInstances).filter(
+      (instance) => instance.view && "onDidChangeViewState" in instance.view,
+    );
+  }
+  async resolveWebviewView(webviewView) {
+    this.view = webviewView;
+    webviewView.webview.options = {
+      // Allow scripts in the webview
+      enableScripts: true,
+      localResourceRoots: [this.context.extensionUri],
+    };
+    webviewView.webview.html =
+      this.context.extensionMode === vscode.ExtensionMode.Development
+        ? await this.getHMRHtmlContent(webviewView.webview)
+        : this.getHtmlContent(webviewView.webview);
+    // Initialize bridge services with the active webview
+    this.usageTrackingService.setWebview(webviewView);
+    try {
+      const { ContentDataBridge } = await import(
+        "../../services/content-data/ContentDataBridge"
+      );
+      ContentDataBridge.getInstance().setWebviewPanel(webviewView);
+    } catch (e) {
+      console.warn("ContentDataBridge not initialized:", e);
     }
-    static getTabInstances() {
-        return Array.from(this.activeInstances).filter((instance) => instance.view && "onDidChangeViewState" in instance.view);
+    // Sets up an event listener to listen for messages passed from the webview view context
+    // and executes code based on the message that is received
+    this.setWebviewMessageListener(webviewView.webview);
+    // Register this provider with the TelecomHub for local multi-instance comms
+    TelecomHub.getInstance().registerProvider(this);
+    // Logs show up in bottom panel > Debug Console
+    //console.log("registering listener")
+    // Listen for when the panel becomes visible
+    // https://github.com/microsoft/vscode-discussions/discussions/840
+    if ("onDidChangeViewState" in webviewView) {
+      // WebviewView and WebviewPanel have all the same properties except for this visibility listener
+      // panel
+      webviewView.onDidChangeViewState(
+        () => {
+          if (this.view?.visible) {
+            this.controller.postMessageToWebview({
+              type: "action",
+              action: "didBecomeVisible",
+            });
+          }
+        },
+        null,
+        this.disposables,
+      );
+    } else if ("onDidChangeVisibility" in webviewView) {
+      // sidebar
+      webviewView.onDidChangeVisibility(
+        () => {
+          if (this.view?.visible) {
+            this.controller.postMessageToWebview({
+              type: "action",
+              action: "didBecomeVisible",
+            });
+          }
+        },
+        null,
+        this.disposables,
+      );
     }
-    async resolveWebviewView(webviewView) {
-        this.view = webviewView;
-        webviewView.webview.options = {
-            // Allow scripts in the webview
-            enableScripts: true,
-            localResourceRoots: [this.context.extensionUri],
-        };
-        webviewView.webview.html =
-            this.context.extensionMode === vscode.ExtensionMode.Development
-                ? await this.getHMRHtmlContent(webviewView.webview)
-                : this.getHtmlContent(webviewView.webview);
-        // Initialize bridge services with the active webview
-        this.usageTrackingService.setWebview(webviewView);
-        try {
-            const { ContentDataBridge } = await import("../../services/content-data/ContentDataBridge");
-            ContentDataBridge.getInstance().setWebviewPanel(webviewView);
-        }
-        catch (e) {
-            console.warn("ContentDataBridge not initialized:", e);
-        }
-        // Sets up an event listener to listen for messages passed from the webview view context
-        // and executes code based on the message that is received
-        this.setWebviewMessageListener(webviewView.webview);
-        // Register this provider with the TelecomHub for local multi-instance comms
-        TelecomHub.getInstance().registerProvider(this);
-        // Logs show up in bottom panel > Debug Console
-        //console.log("registering listener")
-        // Listen for when the panel becomes visible
-        // https://github.com/microsoft/vscode-discussions/discussions/840
-        if ("onDidChangeViewState" in webviewView) {
-            // WebviewView and WebviewPanel have all the same properties except for this visibility listener
-            // panel
-            webviewView.onDidChangeViewState(() => {
-                if (this.view?.visible) {
-                    this.controller.postMessageToWebview({
-                        type: "action",
-                        action: "didBecomeVisible",
-                    });
-                }
-            }, null, this.disposables);
-        }
-        else if ("onDidChangeVisibility" in webviewView) {
-            // sidebar
-            webviewView.onDidChangeVisibility(() => {
-                if (this.view?.visible) {
-                    this.controller.postMessageToWebview({
-                        type: "action",
-                        action: "didBecomeVisible",
-                    });
-                }
-            }, null, this.disposables);
-        }
-        // Listen for when the view is disposed
-        // This happens when the user closes the view or when the view is closed programmatically
-        webviewView.onDidDispose(async () => {
-            await this.dispose();
-        }, null, this.disposables);
-        // // if the extension is starting a new session, clear previous task state
-        // this.clearTask()
-        {
-            // Listen for configuration changes
-            vscode.workspace.onDidChangeConfiguration(async (e) => {
-                if (e && e.affectsConfiguration("workbench.colorTheme")) {
-                    // Sends latest theme name to webview
-                    await this.controller.postMessageToWebview({
-                        type: "theme",
-                        text: JSON.stringify(await getTheme()),
-                    });
-                }
-                if (e && e.affectsConfiguration("valoride.mcpMarketplace.enabled")) {
-                    // Update state when marketplace tab setting changes
-                    await this.controller.postStateToWebview();
-                }
-                if (e && thorapiSettingChanged(e)) {
-                    await this.controller.postStateToWebview();
-                }
-            }, null, this.disposables);
-            // if the extension is starting a new session, clear previous task state
-            this.controller.clearTask();
-            this.outputChannel.appendLine("Webview view resolved");
-        }
+    // Listen for when the view is disposed
+    // This happens when the user closes the view or when the view is closed programmatically
+    webviewView.onDidDispose(
+      async () => {
+        await this.dispose();
+      },
+      null,
+      this.disposables,
+    );
+    // // if the extension is starting a new session, clear previous task state
+    // this.clearTask()
+    {
+      // Listen for configuration changes
+      vscode.workspace.onDidChangeConfiguration(
+        async (e) => {
+          if (e && e.affectsConfiguration("workbench.colorTheme")) {
+            // Sends latest theme name to webview
+            await this.controller.postMessageToWebview({
+              type: "theme",
+              text: JSON.stringify(await getTheme()),
+            });
+          }
+          if (e && e.affectsConfiguration("valoride.mcpMarketplace.enabled")) {
+            // Update state when marketplace tab setting changes
+            await this.controller.postStateToWebview();
+          }
+          if (e && thorapiSettingChanged(e)) {
+            await this.controller.postStateToWebview();
+          }
+        },
+        null,
+        this.disposables,
+      );
+      // if the extension is starting a new session, clear previous task state
+      this.controller.clearTask();
+      this.outputChannel.appendLine("Webview view resolved");
     }
-    /**
-     * Get the usage tracking service instance
-     */
-    getUsageTrackingService() {
-        return this.usageTrackingService;
-    }
-    /**
-     * Defines and returns the HTML that should be rendered within the webview panel.
-     *
-     * @remarks This is also the place where references to the React webview build files
-     * are created and inserted into the webview HTML.
-     *
-     * @param webview A reference to the extension webview
-     * @param extensionUri The URI of the directory containing the extension
-     * @returns A template string literal containing the HTML that should be
-     * rendered within the webview panel
-     */
-    getHtmlContent(webview) {
-        // Get the local path to main script run in the webview,
-        // then convert it to a uri we can use in the webview.
-        // The CSS file from the React build output
-        const stylesUri = getUri(webview, this.context.extensionUri, [
-            "dist",
-            "webview",
-            "assets",
-            "index.css",
-        ]);
-        // The JS file from the React build output
-        const scriptUri = getUri(webview, this.context.extensionUri, [
-            "dist",
-            "webview",
-            "assets",
-            "index.js",
-        ]);
-        // const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "main.js"))
-        // const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "reset.css"))
-        // const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "vscode.css"))
-        // // Same for stylesheet
-        // const stylesheetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "main.css"))
-        // Use a nonce to only allow a specific script to be run.
-        /*
+  }
+  /**
+   * Get the usage tracking service instance
+   */
+  getUsageTrackingService() {
+    return this.usageTrackingService;
+  }
+  /**
+   * Defines and returns the HTML that should be rendered within the webview panel.
+   *
+   * @remarks This is also the place where references to the React webview build files
+   * are created and inserted into the webview HTML.
+   *
+   * @param webview A reference to the extension webview
+   * @param extensionUri The URI of the directory containing the extension
+   * @returns A template string literal containing the HTML that should be
+   * rendered within the webview panel
+   */
+  getHtmlContent(webview) {
+    // Get the local path to main script run in the webview,
+    // then convert it to a uri we can use in the webview.
+    // The CSS file from the React build output
+    const stylesUri = getUri(webview, this.context.extensionUri, [
+      "dist",
+      "webview",
+      "assets",
+      "index.css",
+    ]);
+    // The JS file from the React build output
+    const scriptUri = getUri(webview, this.context.extensionUri, [
+      "dist",
+      "webview",
+      "assets",
+      "index.js",
+    ]);
+    // const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "main.js"))
+    // const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "reset.css"))
+    // const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "vscode.css"))
+    // // Same for stylesheet
+    // const stylesheetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "assets", "main.css"))
+    // Use a nonce to only allow a specific script to be run.
+    /*
             content security policy of your webview to only allow scripts that have a specific nonce
             create a content security policy meta tag so that only loading scripts with a nonce is allowed
             As your extension grows you will likely want to add custom styles, fonts, and/or images to your webview. If you do, you will need to update the content security policy meta tag to explicitly allow for these resources. E.g.
@@ -237,31 +259,30 @@ export class WebviewProvider {
     
             in meta tag we add nonce attribute: A cryptographic nonce (only used once) to allow scripts. The server must generate a unique nonce value each time it transmits a policy. It is critical to provide a nonce that cannot be guessed as bypassing a resource's policy is otherwise trivial.
             */
-        const nonce = getNonce();
-        // Tip: Install the es6-string-html VS Code extension to enable code highlighting below
-        const cfg = vscode.workspace.getConfiguration("valoride");
-        const telecomConfig = {
-            turnServers: cfg.get("P2P.turnServers", [
-                "stun:stun.l.google.com:19302",
-            ]),
-            bonjour: cfg.get("P2P.discovery.bonjour", false),
-            p2pEnabled: cfg.get("P2P.p2pEnabled", true),
-        };
-        const valkyraiBasePath = resolveValkyraiBasePath();
-        const { httpOrigin: valkyraiOrigin, wsOrigin: valkyraiWsOrigin } = deriveValkyraiOrigins(valkyraiBasePath);
-        const connectSrcEntries = new Set([
-            valkyraiOrigin || "http://localhost:8080",
-            "https://*.valkyrlabs.com",
-            "wss://*.valkyrlabs.com",
-            "ws://localhost:*",
-            "https://*.posthog.com",
-            "https://*.googleapis.com",
-        ]);
-        if (valkyraiWsOrigin) {
-            connectSrcEntries.add(valkyraiWsOrigin);
-        }
-        const connectSrc = Array.from(connectSrcEntries).filter(Boolean).join(" ");
-        return /*html*/ `
+    const nonce = getNonce();
+    // Tip: Install the es6-string-html VS Code extension to enable code highlighting below
+    const cfg = vscode.workspace.getConfiguration("valoride");
+    const telecomConfig = {
+      turnServers: cfg.get("P2P.turnServers", ["stun:stun.l.google.com:19302"]),
+      bonjour: cfg.get("P2P.discovery.bonjour", false),
+      p2pEnabled: cfg.get("P2P.p2pEnabled", true),
+    };
+    const valkyraiBasePath = resolveValkyraiBasePath();
+    const { httpOrigin: valkyraiOrigin, wsOrigin: valkyraiWsOrigin } =
+      deriveValkyraiOrigins(valkyraiBasePath);
+    const connectSrcEntries = new Set([
+      valkyraiOrigin || "http://localhost:8080",
+      "https://*.valkyrlabs.com",
+      "wss://*.valkyrlabs.com",
+      "ws://localhost:*",
+      "https://*.posthog.com",
+      "https://*.googleapis.com",
+    ]);
+    if (valkyraiWsOrigin) {
+      connectSrcEntries.add(valkyraiWsOrigin);
+    }
+    const connectSrc = Array.from(connectSrcEntries).filter(Boolean).join(" ");
+    return /*html*/ `
         <!DOCTYPE html>
         <html lang="en">
           <head>
@@ -285,35 +306,36 @@ export class WebviewProvider {
           </body>
         </html>
       `;
+  }
+  /**
+   * Connects to the local Vite dev server to allow HMR, with fallback to the bundled assets
+   *
+   * @param webview A reference to the extension webview
+   * @returns A template string literal containing the HTML that should be
+   * rendered within the webview panel
+   */
+  async getHMRHtmlContent(webview) {
+    const localPort = 25463;
+    const localServerUrl = `localhost:${localPort}`;
+    // Check if local dev server is running.
+    try {
+      await axios.get(`http://${localServerUrl}`);
+    } catch (error) {
+      vscode.window.showErrorMessage(
+        "ValorIDE: Local webview dev server is not running, HMR will not work. Please run 'npm run dev:webview' before launching the extension to enable HMR. Using bundled assets.",
+      );
+      return this.getHtmlContent(webview);
     }
-    /**
-     * Connects to the local Vite dev server to allow HMR, with fallback to the bundled assets
-     *
-     * @param webview A reference to the extension webview
-     * @returns A template string literal containing the HTML that should be
-     * rendered within the webview panel
-     */
-    async getHMRHtmlContent(webview) {
-        const localPort = 25463;
-        const localServerUrl = `localhost:${localPort}`;
-        // Check if local dev server is running.
-        try {
-            await axios.get(`http://${localServerUrl}`);
-        }
-        catch (error) {
-            vscode.window.showErrorMessage("ValorIDE: Local webview dev server is not running, HMR will not work. Please run 'npm run dev:webview' before launching the extension to enable HMR. Using bundled assets.");
-            return this.getHtmlContent(webview);
-        }
-        const nonce = getNonce();
-        const stylesUri = getUri(webview, this.context.extensionUri, [
-            "dist",
-            "webview",
-            "assets",
-            "index.css",
-        ]);
-        const scriptEntrypoint = "src/main.tsx";
-        const scriptUri = `http://${localServerUrl}/${scriptEntrypoint}`;
-        const reactRefresh = /*html*/ `
+    const nonce = getNonce();
+    const stylesUri = getUri(webview, this.context.extensionUri, [
+      "dist",
+      "webview",
+      "assets",
+      "index.css",
+    ]);
+    const scriptEntrypoint = "src/main.tsx";
+    const scriptUri = `http://${localServerUrl}/${scriptEntrypoint}`;
+    const reactRefresh = /*html*/ `
 			<script nonce="${nonce}" type="module">
 				import RefreshRuntime from "http://${localServerUrl}/@react-refresh"
 				RefreshRuntime.injectIntoGlobalHook(window)
@@ -322,36 +344,35 @@ export class WebviewProvider {
 				window.__vite_plugin_react_preamble_installed__ = true
 			</script>
 		`;
-        const valkyraiBasePath = resolveValkyraiBasePath();
-        const { httpOrigin: devValkyraiOrigin, wsOrigin: devValkyraiWsOrigin } = deriveValkyraiOrigins(valkyraiBasePath);
-        const connectSrcParts = new Set([
-            devValkyraiOrigin || "",
-            "https://*",
-            `ws://${localServerUrl}`,
-            `ws://0.0.0.0:${localPort}`,
-            `http://${localServerUrl}`,
-            `http://0.0.0.0:${localPort}`,
-        ]);
-        if (devValkyraiWsOrigin) {
-            connectSrcParts.add(devValkyraiWsOrigin);
-        }
-        const csp = [
-            "default-src 'none'",
-            `font-src ${webview.cspSource}`,
-            `style-src ${webview.cspSource} 'unsafe-inline' https://* http://${localServerUrl} http://0.0.0.0:${localPort}`,
-            `img-src ${webview.cspSource} https: data:`,
-            `script-src 'unsafe-eval' https://* http://${localServerUrl} http://0.0.0.0:${localPort} 'nonce-${nonce}'`,
-            `connect-src ${Array.from(connectSrcParts).filter(Boolean).join(" ")}`,
-        ];
-        const cfg = vscode.workspace.getConfiguration("valoride");
-        const telecomConfig = {
-            turnServers: cfg.get("P2P.turnServers", [
-                "stun:stun.l.google.com:19302",
-            ]),
-            bonjour: cfg.get("P2P.discovery.bonjour", false),
-            p2pEnabled: cfg.get("P2P.p2pEnabled", true),
-        };
-        return /*html*/ `
+    const valkyraiBasePath = resolveValkyraiBasePath();
+    const { httpOrigin: devValkyraiOrigin, wsOrigin: devValkyraiWsOrigin } =
+      deriveValkyraiOrigins(valkyraiBasePath);
+    const connectSrcParts = new Set([
+      devValkyraiOrigin || "",
+      "https://*",
+      `ws://${localServerUrl}`,
+      `ws://0.0.0.0:${localPort}`,
+      `http://${localServerUrl}`,
+      `http://0.0.0.0:${localPort}`,
+    ]);
+    if (devValkyraiWsOrigin) {
+      connectSrcParts.add(devValkyraiWsOrigin);
+    }
+    const csp = [
+      "default-src 'none'",
+      `font-src ${webview.cspSource}`,
+      `style-src ${webview.cspSource} 'unsafe-inline' https://* http://${localServerUrl} http://0.0.0.0:${localPort}`,
+      `img-src ${webview.cspSource} https: data:`,
+      `script-src 'unsafe-eval' https://* http://${localServerUrl} http://0.0.0.0:${localPort} 'nonce-${nonce}'`,
+      `connect-src ${Array.from(connectSrcParts).filter(Boolean).join(" ")}`,
+    ];
+    const cfg = vscode.workspace.getConfiguration("valoride");
+    const telecomConfig = {
+      turnServers: cfg.get("P2P.turnServers", ["stun:stun.l.google.com:19302"]),
+      bonjour: cfg.get("P2P.discovery.bonjour", false),
+      p2pEnabled: cfg.get("P2P.p2pEnabled", true),
+    };
+    return /*html*/ `
 			<!DOCTYPE html>
 			<html lang="en">
 				<head>
@@ -374,35 +395,39 @@ export class WebviewProvider {
 				</body>
 			</html>
 		`;
-    }
-    /**
-     * Sets up an event listener to listen for messages passed from the webview context and
-     * executes code based on the message that is received.
-     *
-     * IMPORTANT: When passing methods as callbacks in JavaScript/TypeScript, the method's
-     * 'this' context can be lost. This happens because the method is passed as a
-     * standalone function reference, detached from its original object.
-     *
-     * The Problem:
-     * Doing: webview.onDidReceiveMessage(this.controller.handleWebviewMessage)
-     * Would cause 'this' inside handleWebviewMessage to be undefined or wrong,
-     * leading to "TypeError: this.setUserInfo is not a function"
-     *
-     * The Solution:
-     * We wrap the method call in an arrow function, which:
-     * 1. Preserves the lexical scope's 'this' binding
-     * 2. Ensures handleWebviewMessage is called as a method on the controller instance
-     * 3. Maintains access to all controller methods and properties
-     *
-     * Alternative solutions could use .bind() or making handleWebviewMessage an arrow
-     * function property, but this approach is clean and explicit.
-     *
-     * @param webview The webview instance to attach the message listener to
-     */
-    setWebviewMessageListener(webview) {
-        webview.onDidReceiveMessage((message) => {
-            this.controller.handleWebviewMessage(message);
-        }, null, this.disposables);
-    }
+  }
+  /**
+   * Sets up an event listener to listen for messages passed from the webview context and
+   * executes code based on the message that is received.
+   *
+   * IMPORTANT: When passing methods as callbacks in JavaScript/TypeScript, the method's
+   * 'this' context can be lost. This happens because the method is passed as a
+   * standalone function reference, detached from its original object.
+   *
+   * The Problem:
+   * Doing: webview.onDidReceiveMessage(this.controller.handleWebviewMessage)
+   * Would cause 'this' inside handleWebviewMessage to be undefined or wrong,
+   * leading to "TypeError: this.setUserInfo is not a function"
+   *
+   * The Solution:
+   * We wrap the method call in an arrow function, which:
+   * 1. Preserves the lexical scope's 'this' binding
+   * 2. Ensures handleWebviewMessage is called as a method on the controller instance
+   * 3. Maintains access to all controller methods and properties
+   *
+   * Alternative solutions could use .bind() or making handleWebviewMessage an arrow
+   * function property, but this approach is clean and explicit.
+   *
+   * @param webview The webview instance to attach the message listener to
+   */
+  setWebviewMessageListener(webview) {
+    webview.onDidReceiveMessage(
+      (message) => {
+        this.controller.handleWebviewMessage(message);
+      },
+      null,
+      this.disposables,
+    );
+  }
 }
 //# sourceMappingURL=index.js.map

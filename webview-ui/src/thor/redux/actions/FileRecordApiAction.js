@@ -31,60 +31,60 @@ export const LIST_FILERECORD_REQUEST = "LIST_FILERECORD_REQUEST";
 export const LIST_FILERECORD_SUCCESS = "LIST_FILERECORD_SUCCESS";
 export const LIST_FILERECORD_FAILURE = "LIST_FILERECORD_FAILURE";
 export const addFileRecordRequest = () => ({
-    type: ADD_FILERECORD_REQUEST,
+  type: ADD_FILERECORD_REQUEST,
 });
 export const addFileRecordSuccess = (FileRecords) => ({
-    type: ADD_FILERECORD_SUCCESS,
-    payload: FileRecords,
+  type: ADD_FILERECORD_SUCCESS,
+  payload: FileRecords,
 });
 export const addFileRecordFailure = (error) => ({
-    type: ADD_FILERECORD_FAILURE,
-    payload: error,
+  type: ADD_FILERECORD_FAILURE,
+  payload: error,
 });
 export const fetchFileRecordRequest = () => ({
-    type: FETCH_FILERECORD_REQUEST,
+  type: FETCH_FILERECORD_REQUEST,
 });
 export const fetchFileRecordSuccess = (FileRecords) => ({
-    type: FETCH_FILERECORD_SUCCESS,
-    payload: FileRecords,
+  type: FETCH_FILERECORD_SUCCESS,
+  payload: FileRecords,
 });
 export const fetchFileRecordFailure = (error) => ({
-    type: FETCH_FILERECORD_FAILURE,
-    payload: error,
+  type: FETCH_FILERECORD_FAILURE,
+  payload: error,
 });
 export const listFileRecordRequest = () => ({
-    type: LIST_FILERECORD_REQUEST,
+  type: LIST_FILERECORD_REQUEST,
 });
 export const listFileRecordSuccess = (FileRecords) => ({
-    type: LIST_FILERECORD_SUCCESS,
-    payload: FileRecords,
+  type: LIST_FILERECORD_SUCCESS,
+  payload: FileRecords,
 });
 export const listFileRecordFailure = (error) => ({
-    type: LIST_FILERECORD_FAILURE,
-    payload: error,
+  type: LIST_FILERECORD_FAILURE,
+  payload: error,
 });
 export const updateFileRecordRequest = (FileRecord) => ({
-    type: UPDATE_FILERECORD_REQUEST,
-    payload: FileRecord,
+  type: UPDATE_FILERECORD_REQUEST,
+  payload: FileRecord,
 });
 export const updateFileRecordSuccess = (FileRecord) => ({
-    type: UPDATE_FILERECORD_SUCCESS,
-    payload: FileRecord,
+  type: UPDATE_FILERECORD_SUCCESS,
+  payload: FileRecord,
 });
 export const updateFileRecordFailure = (error) => ({
-    type: UPDATE_FILERECORD_FAILURE,
-    payload: error,
+  type: UPDATE_FILERECORD_FAILURE,
+  payload: error,
 });
 export const deleteFileRecordRequest = (FileRecord) => ({
-    type: DELETE_FILERECORD_REQUEST,
-    payload: FileRecord,
+  type: DELETE_FILERECORD_REQUEST,
+  payload: FileRecord,
 });
 export const deleteFileRecordSuccess = (FileRecord) => ({
-    type: DELETE_FILERECORD_SUCCESS,
-    payload: FileRecord,
+  type: DELETE_FILERECORD_SUCCESS,
+  payload: FileRecord,
 });
 export const deleteFileRecordFailure = (error) => ({
-    type: DELETE_FILERECORD_FAILURE,
-    payload: error,
+  type: DELETE_FILERECORD_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=FileRecordApiAction.js.map

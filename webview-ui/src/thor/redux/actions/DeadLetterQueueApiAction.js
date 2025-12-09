@@ -31,60 +31,60 @@ export const LIST_DEADLETTERQUEUE_REQUEST = "LIST_DEADLETTERQUEUE_REQUEST";
 export const LIST_DEADLETTERQUEUE_SUCCESS = "LIST_DEADLETTERQUEUE_SUCCESS";
 export const LIST_DEADLETTERQUEUE_FAILURE = "LIST_DEADLETTERQUEUE_FAILURE";
 export const addDeadLetterQueueRequest = () => ({
-    type: ADD_DEADLETTERQUEUE_REQUEST,
+  type: ADD_DEADLETTERQUEUE_REQUEST,
 });
 export const addDeadLetterQueueSuccess = (DeadLetterQueues) => ({
-    type: ADD_DEADLETTERQUEUE_SUCCESS,
-    payload: DeadLetterQueues,
+  type: ADD_DEADLETTERQUEUE_SUCCESS,
+  payload: DeadLetterQueues,
 });
 export const addDeadLetterQueueFailure = (error) => ({
-    type: ADD_DEADLETTERQUEUE_FAILURE,
-    payload: error,
+  type: ADD_DEADLETTERQUEUE_FAILURE,
+  payload: error,
 });
 export const fetchDeadLetterQueueRequest = () => ({
-    type: FETCH_DEADLETTERQUEUE_REQUEST,
+  type: FETCH_DEADLETTERQUEUE_REQUEST,
 });
 export const fetchDeadLetterQueueSuccess = (DeadLetterQueues) => ({
-    type: FETCH_DEADLETTERQUEUE_SUCCESS,
-    payload: DeadLetterQueues,
+  type: FETCH_DEADLETTERQUEUE_SUCCESS,
+  payload: DeadLetterQueues,
 });
 export const fetchDeadLetterQueueFailure = (error) => ({
-    type: FETCH_DEADLETTERQUEUE_FAILURE,
-    payload: error,
+  type: FETCH_DEADLETTERQUEUE_FAILURE,
+  payload: error,
 });
 export const listDeadLetterQueueRequest = () => ({
-    type: LIST_DEADLETTERQUEUE_REQUEST,
+  type: LIST_DEADLETTERQUEUE_REQUEST,
 });
 export const listDeadLetterQueueSuccess = (DeadLetterQueues) => ({
-    type: LIST_DEADLETTERQUEUE_SUCCESS,
-    payload: DeadLetterQueues,
+  type: LIST_DEADLETTERQUEUE_SUCCESS,
+  payload: DeadLetterQueues,
 });
 export const listDeadLetterQueueFailure = (error) => ({
-    type: LIST_DEADLETTERQUEUE_FAILURE,
-    payload: error,
+  type: LIST_DEADLETTERQUEUE_FAILURE,
+  payload: error,
 });
 export const updateDeadLetterQueueRequest = (DeadLetterQueue) => ({
-    type: UPDATE_DEADLETTERQUEUE_REQUEST,
-    payload: DeadLetterQueue,
+  type: UPDATE_DEADLETTERQUEUE_REQUEST,
+  payload: DeadLetterQueue,
 });
 export const updateDeadLetterQueueSuccess = (DeadLetterQueue) => ({
-    type: UPDATE_DEADLETTERQUEUE_SUCCESS,
-    payload: DeadLetterQueue,
+  type: UPDATE_DEADLETTERQUEUE_SUCCESS,
+  payload: DeadLetterQueue,
 });
 export const updateDeadLetterQueueFailure = (error) => ({
-    type: UPDATE_DEADLETTERQUEUE_FAILURE,
-    payload: error,
+  type: UPDATE_DEADLETTERQUEUE_FAILURE,
+  payload: error,
 });
 export const deleteDeadLetterQueueRequest = (DeadLetterQueue) => ({
-    type: DELETE_DEADLETTERQUEUE_REQUEST,
-    payload: DeadLetterQueue,
+  type: DELETE_DEADLETTERQUEUE_REQUEST,
+  payload: DeadLetterQueue,
 });
 export const deleteDeadLetterQueueSuccess = (DeadLetterQueue) => ({
-    type: DELETE_DEADLETTERQUEUE_SUCCESS,
-    payload: DeadLetterQueue,
+  type: DELETE_DEADLETTERQUEUE_SUCCESS,
+  payload: DeadLetterQueue,
 });
 export const deleteDeadLetterQueueFailure = (error) => ({
-    type: DELETE_DEADLETTERQUEUE_FAILURE,
-    payload: error,
+  type: DELETE_DEADLETTERQUEUE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=DeadLetterQueueApiAction.js.map

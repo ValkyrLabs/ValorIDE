@@ -16,31 +16,41 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const ConfirmPasswordResetRequestSlice = createSlice({
-    name: "ConfirmPasswordResetRequests",
-    initialState: [],
-    reducers: {
-        ConfirmPasswordResetRequestAdded(state, action) {
-            state.push(action.payload);
-        },
-        ConfirmPasswordResetRequestValueToggled(state, action) {
-            console.log("ConfirmPasswordResetRequest TOGGLE");
-            console.warn(JSON.stringify(action));
-            const ConfirmPasswordResetRequest = state.find((ConfirmPasswordResetRequest) => ConfirmPasswordResetRequest.id ===
-                action.payload.ConfirmPasswordResetRequestId);
-            if (ConfirmPasswordResetRequest) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        ConfirmPasswordResetRequestpropertySet(state, action) {
-            const ConfirmPasswordResetRequest = state.find((ConfirmPasswordResetRequest) => ConfirmPasswordResetRequest.id ===
-                action.payload.ConfirmPasswordResetRequestId);
-            if (ConfirmPasswordResetRequest) {
-                //  ConfirmPasswordResetRequest[action.property] = action.payload[action.property];
-            }
-        },
+  name: "ConfirmPasswordResetRequests",
+  initialState: [],
+  reducers: {
+    ConfirmPasswordResetRequestAdded(state, action) {
+      state.push(action.payload);
     },
+    ConfirmPasswordResetRequestValueToggled(state, action) {
+      console.log("ConfirmPasswordResetRequest TOGGLE");
+      console.warn(JSON.stringify(action));
+      const ConfirmPasswordResetRequest = state.find(
+        (ConfirmPasswordResetRequest) =>
+          ConfirmPasswordResetRequest.id ===
+          action.payload.ConfirmPasswordResetRequestId,
+      );
+      if (ConfirmPasswordResetRequest) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    ConfirmPasswordResetRequestpropertySet(state, action) {
+      const ConfirmPasswordResetRequest = state.find(
+        (ConfirmPasswordResetRequest) =>
+          ConfirmPasswordResetRequest.id ===
+          action.payload.ConfirmPasswordResetRequestId,
+      );
+      if (ConfirmPasswordResetRequest) {
+        //  ConfirmPasswordResetRequest[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { ConfirmPasswordResetRequestAdded, ConfirmPasswordResetRequestValueToggled, ConfirmPasswordResetRequestpropertySet, } = ConfirmPasswordResetRequestSlice.actions;
+export const {
+  ConfirmPasswordResetRequestAdded,
+  ConfirmPasswordResetRequestValueToggled,
+  ConfirmPasswordResetRequestpropertySet,
+} = ConfirmPasswordResetRequestSlice.actions;
 export default ConfirmPasswordResetRequestSlice.reducer;
 //# sourceMappingURL=ConfirmPasswordResetRequestReducer.js.map

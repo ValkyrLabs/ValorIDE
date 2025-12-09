@@ -29,46 +29,46 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function GoalDependencyFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        goalId: !exists(json, "goalId") ? undefined : json["goalId"],
-        dependencyOrder: !exists(json, "dependencyOrder")
-            ? undefined
-            : json["dependencyOrder"],
-        dependencyName: !exists(json, "dependencyName")
-            ? undefined
-            : json["dependencyName"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    goalId: !exists(json, "goalId") ? undefined : json["goalId"],
+    dependencyOrder: !exists(json, "dependencyOrder")
+      ? undefined
+      : json["dependencyOrder"],
+    dependencyName: !exists(json, "dependencyName")
+      ? undefined
+      : json["dependencyName"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function GoalDependencyToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        goalId: value.goalId,
-        dependencyOrder: value.dependencyOrder,
-        dependencyName: value.dependencyName,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    goalId: value.goalId,
+    dependencyOrder: value.dependencyOrder,
+    dependencyName: value.dependencyName,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=GoalDependency.js.map

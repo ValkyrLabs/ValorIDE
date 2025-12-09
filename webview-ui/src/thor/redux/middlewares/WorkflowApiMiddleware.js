@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Workflow
 */
-export const WorkflowMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const WorkflowMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Workflow MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=WorkflowApiMiddleware.js.map

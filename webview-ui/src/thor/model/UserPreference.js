@@ -29,43 +29,43 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function UserPreferenceFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        principalId: json["principalId"],
-        preference: json["preference"],
-        preferenceType: json["preferenceType"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    principalId: json["principalId"],
+    preference: json["preference"],
+    preferenceType: json["preferenceType"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function UserPreferenceToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        principalId: value.principalId,
-        preference: value.preference,
-        preferenceType: value.preferenceType,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    principalId: value.principalId,
+    preference: value.preference,
+    preferenceType: value.preferenceType,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -73,10 +73,10 @@ export function UserPreferenceToJSON(value) {
  */
 export var UserPreferencePreferenceTypeEnum;
 (function (UserPreferencePreferenceTypeEnum) {
-    UserPreferencePreferenceTypeEnum["UXLAYOUT"] = "ux-layout";
-    UserPreferencePreferenceTypeEnum["UXMODE"] = "ux-mode";
-    UserPreferencePreferenceTypeEnum["UXTHEME"] = "ux-theme";
-    UserPreferencePreferenceTypeEnum["MEASUREMENT"] = "measurement";
-    UserPreferencePreferenceTypeEnum["CHATMEMORY"] = "chatmemory";
+  UserPreferencePreferenceTypeEnum["UXLAYOUT"] = "ux-layout";
+  UserPreferencePreferenceTypeEnum["UXMODE"] = "ux-mode";
+  UserPreferencePreferenceTypeEnum["UXTHEME"] = "ux-theme";
+  UserPreferencePreferenceTypeEnum["MEASUREMENT"] = "measurement";
+  UserPreferencePreferenceTypeEnum["CHATMEMORY"] = "chatmemory";
 })(UserPreferencePreferenceTypeEnum || (UserPreferencePreferenceTypeEnum = {}));
 //# sourceMappingURL=UserPreference.js.map

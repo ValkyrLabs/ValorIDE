@@ -30,55 +30,55 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { AddressFromJSON, AddressToJSON } from "./";
 export function OrganizationFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: json["name"],
-        normalizedName: !exists(json, "normalizedName")
-            ? undefined
-            : json["normalizedName"],
-        homePage: !exists(json, "homePage") ? undefined : json["homePage"],
-        phone: !exists(json, "phone") ? undefined : json["phone"],
-        verified: !exists(json, "verified") ? undefined : json["verified"],
-        parentOrganizationId: !exists(json, "parentOrganizationId")
-            ? undefined
-            : json["parentOrganizationId"],
-        address: !exists(json, "address")
-            ? undefined
-            : AddressFromJSON(json["address"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: json["name"],
+    normalizedName: !exists(json, "normalizedName")
+      ? undefined
+      : json["normalizedName"],
+    homePage: !exists(json, "homePage") ? undefined : json["homePage"],
+    phone: !exists(json, "phone") ? undefined : json["phone"],
+    verified: !exists(json, "verified") ? undefined : json["verified"],
+    parentOrganizationId: !exists(json, "parentOrganizationId")
+      ? undefined
+      : json["parentOrganizationId"],
+    address: !exists(json, "address")
+      ? undefined
+      : AddressFromJSON(json["address"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function OrganizationToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        homePage: value.homePage,
-        phone: value.phone,
-        verified: value.verified,
-        parentOrganizationId: value.parentOrganizationId,
-        address: AddressToJSON(value.address),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    homePage: value.homePage,
+    phone: value.phone,
+    verified: value.verified,
+    parentOrganizationId: value.parentOrganizationId,
+    address: AddressToJSON(value.address),
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=Organization.js.map

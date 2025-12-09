@@ -29,51 +29,51 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function MediaObjectFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
-        type: !exists(json, "type") ? undefined : json["type"],
-        url: !exists(json, "url") ? undefined : json["url"],
-        positionRow: !exists(json, "position:-row")
-            ? undefined
-            : json["position:-row"],
-        positionCol: !exists(json, "position-col")
-            ? undefined
-            : json["position-col"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
+    type: !exists(json, "type") ? undefined : json["type"],
+    url: !exists(json, "url") ? undefined : json["url"],
+    positionRow: !exists(json, "position:-row")
+      ? undefined
+      : json["position:-row"],
+    positionCol: !exists(json, "position-col")
+      ? undefined
+      : json["position-col"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function MediaObjectToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        sheetId: value.sheetId,
-        type: value.type,
-        url: value.url,
-        "position:-row": value.positionRow,
-        "position-col": value.positionCol,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    sheetId: value.sheetId,
+    type: value.type,
+    url: value.url,
+    "position:-row": value.positionRow,
+    "position-col": value.positionCol,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -81,9 +81,9 @@ export function MediaObjectToJSON(value) {
  */
 export var MediaObjectTypeEnum;
 (function (MediaObjectTypeEnum) {
-    MediaObjectTypeEnum["MEDIAIMAGE"] = "image";
-    MediaObjectTypeEnum["MEDIAAUDIO"] = "audio";
-    MediaObjectTypeEnum["MEDIAVIDEO"] = "video";
-    MediaObjectTypeEnum["MEDIASHAPE"] = "shape";
+  MediaObjectTypeEnum["MEDIAIMAGE"] = "image";
+  MediaObjectTypeEnum["MEDIAAUDIO"] = "audio";
+  MediaObjectTypeEnum["MEDIAVIDEO"] = "video";
+  MediaObjectTypeEnum["MEDIASHAPE"] = "shape";
 })(MediaObjectTypeEnum || (MediaObjectTypeEnum = {}));
 //# sourceMappingURL=MediaObject.js.map

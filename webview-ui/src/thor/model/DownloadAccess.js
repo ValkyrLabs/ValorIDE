@@ -28,86 +28,95 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { DigitalAssetFromJSON, DigitalAssetToJSON, PrincipalFromJSON, PrincipalToJSON, } from "./";
+import {
+  DigitalAssetFromJSON,
+  DigitalAssetToJSON,
+  PrincipalFromJSON,
+  PrincipalToJSON,
+} from "./";
 export function DownloadAccessFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        digitalAssetId: json["digitalAssetId"],
-        principalId: json["principalId"],
-        salesOrderLineItemId: json["salesOrderLineItemId"],
-        digitalAsset: !exists(json, "digitalAsset")
-            ? undefined
-            : DigitalAssetFromJSON(json["digitalAsset"]),
-        principal: !exists(json, "principal")
-            ? undefined
-            : PrincipalFromJSON(json["principal"]),
-        downloadToken: !exists(json, "downloadToken")
-            ? undefined
-            : json["downloadToken"],
-        downloadCount: !exists(json, "downloadCount")
-            ? undefined
-            : json["downloadCount"],
-        maxDownloadsRemaining: !exists(json, "maxDownloadsRemaining")
-            ? undefined
-            : json["maxDownloadsRemaining"],
-        grantedAt: !exists(json, "grantedAt")
-            ? undefined
-            : new Date(json["grantedAt"]),
-        expiresAt: !exists(json, "expiresAt")
-            ? undefined
-            : new Date(json["expiresAt"]),
-        lastDownloadedAt: !exists(json, "lastDownloadedAt")
-            ? undefined
-            : new Date(json["lastDownloadedAt"]),
-        revokedAt: !exists(json, "revokedAt")
-            ? undefined
-            : new Date(json["revokedAt"]),
-        revokedReason: !exists(json, "revokedReason")
-            ? undefined
-            : json["revokedReason"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    digitalAssetId: json["digitalAssetId"],
+    principalId: json["principalId"],
+    salesOrderLineItemId: json["salesOrderLineItemId"],
+    digitalAsset: !exists(json, "digitalAsset")
+      ? undefined
+      : DigitalAssetFromJSON(json["digitalAsset"]),
+    principal: !exists(json, "principal")
+      ? undefined
+      : PrincipalFromJSON(json["principal"]),
+    downloadToken: !exists(json, "downloadToken")
+      ? undefined
+      : json["downloadToken"],
+    downloadCount: !exists(json, "downloadCount")
+      ? undefined
+      : json["downloadCount"],
+    maxDownloadsRemaining: !exists(json, "maxDownloadsRemaining")
+      ? undefined
+      : json["maxDownloadsRemaining"],
+    grantedAt: !exists(json, "grantedAt")
+      ? undefined
+      : new Date(json["grantedAt"]),
+    expiresAt: !exists(json, "expiresAt")
+      ? undefined
+      : new Date(json["expiresAt"]),
+    lastDownloadedAt: !exists(json, "lastDownloadedAt")
+      ? undefined
+      : new Date(json["lastDownloadedAt"]),
+    revokedAt: !exists(json, "revokedAt")
+      ? undefined
+      : new Date(json["revokedAt"]),
+    revokedReason: !exists(json, "revokedReason")
+      ? undefined
+      : json["revokedReason"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function DownloadAccessToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        digitalAssetId: value.digitalAssetId,
-        principalId: value.principalId,
-        salesOrderLineItemId: value.salesOrderLineItemId,
-        digitalAsset: DigitalAssetToJSON(value.digitalAsset),
-        principal: PrincipalToJSON(value.principal),
-        downloadToken: value.downloadToken,
-        downloadCount: value.downloadCount,
-        maxDownloadsRemaining: value.maxDownloadsRemaining,
-        grantedAt: value.grantedAt === undefined ? undefined : value.grantedAt.toISOString(),
-        expiresAt: value.expiresAt === undefined ? undefined : value.expiresAt.toISOString(),
-        lastDownloadedAt: value.lastDownloadedAt === undefined
-            ? undefined
-            : value.lastDownloadedAt.toISOString(),
-        revokedAt: value.revokedAt === undefined ? undefined : value.revokedAt.toISOString(),
-        revokedReason: value.revokedReason,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    digitalAssetId: value.digitalAssetId,
+    principalId: value.principalId,
+    salesOrderLineItemId: value.salesOrderLineItemId,
+    digitalAsset: DigitalAssetToJSON(value.digitalAsset),
+    principal: PrincipalToJSON(value.principal),
+    downloadToken: value.downloadToken,
+    downloadCount: value.downloadCount,
+    maxDownloadsRemaining: value.maxDownloadsRemaining,
+    grantedAt:
+      value.grantedAt === undefined ? undefined : value.grantedAt.toISOString(),
+    expiresAt:
+      value.expiresAt === undefined ? undefined : value.expiresAt.toISOString(),
+    lastDownloadedAt:
+      value.lastDownloadedAt === undefined
+        ? undefined
+        : value.lastDownloadedAt.toISOString(),
+    revokedAt:
+      value.revokedAt === undefined ? undefined : value.revokedAt.toISOString(),
+    revokedReason: value.revokedReason,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=DownloadAccess.js.map

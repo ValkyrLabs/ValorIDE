@@ -29,60 +29,60 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function PublishWorkflowRequestFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        workflowId: json["workflowId"],
-        toolSlug: json["toolSlug"],
-        displayName: json["displayName"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        category: !exists(json, "category") ? undefined : json["category"],
-        inputMapping: !exists(json, "inputMapping")
-            ? undefined
-            : json["inputMapping"],
-        outputMapping: !exists(json, "outputMapping")
-            ? undefined
-            : json["outputMapping"],
-        marketplaceCategory: !exists(json, "marketplaceCategory")
-            ? undefined
-            : json["marketplaceCategory"],
-        tags: !exists(json, "tags") ? undefined : json["tags"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    workflowId: json["workflowId"],
+    toolSlug: json["toolSlug"],
+    displayName: json["displayName"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    category: !exists(json, "category") ? undefined : json["category"],
+    inputMapping: !exists(json, "inputMapping")
+      ? undefined
+      : json["inputMapping"],
+    outputMapping: !exists(json, "outputMapping")
+      ? undefined
+      : json["outputMapping"],
+    marketplaceCategory: !exists(json, "marketplaceCategory")
+      ? undefined
+      : json["marketplaceCategory"],
+    tags: !exists(json, "tags") ? undefined : json["tags"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function PublishWorkflowRequestToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        workflowId: value.workflowId,
-        toolSlug: value.toolSlug,
-        displayName: value.displayName,
-        description: value.description,
-        category: value.category,
-        inputMapping: value.inputMapping,
-        outputMapping: value.outputMapping,
-        marketplaceCategory: value.marketplaceCategory,
-        tags: value.tags,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    workflowId: value.workflowId,
+    toolSlug: value.toolSlug,
+    displayName: value.displayName,
+    description: value.description,
+    category: value.category,
+    inputMapping: value.inputMapping,
+    outputMapping: value.outputMapping,
+    marketplaceCategory: value.marketplaceCategory,
+    tags: value.tags,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=PublishWorkflowRequest.js.map

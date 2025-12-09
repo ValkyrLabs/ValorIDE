@@ -28,107 +28,114 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { OrganizationFromJSON, OrganizationToJSON, PrincipalFromJSON, PrincipalToJSON, } from "./";
+import {
+  OrganizationFromJSON,
+  OrganizationToJSON,
+  PrincipalFromJSON,
+  PrincipalToJSON,
+} from "./";
 export function FileRecordFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        storageDriverId: json["storageDriverId"],
-        storageKey: json["storageKey"],
-        filename: json["filename"],
-        sizeBytes: json["sizeBytes"],
-        status: json["status"],
-        organizationId: !exists(json, "organizationId")
-            ? undefined
-            : json["organizationId"],
-        organization: !exists(json, "organization")
-            ? undefined
-            : OrganizationFromJSON(json["organization"]),
-        uploaderId: !exists(json, "uploaderId") ? undefined : json["uploaderId"],
-        uploader: !exists(json, "uploader")
-            ? undefined
-            : PrincipalFromJSON(json["uploader"]),
-        spaceId: !exists(json, "spaceId") ? undefined : json["spaceId"],
-        mimeType: !exists(json, "mimeType") ? undefined : json["mimeType"],
-        checksumSha256: !exists(json, "checksumSha256")
-            ? undefined
-            : json["checksumSha256"],
-        providerEtag: !exists(json, "providerEtag")
-            ? undefined
-            : json["providerEtag"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        directoryPath: !exists(json, "directoryPath")
-            ? undefined
-            : json["directoryPath"],
-        tags: !exists(json, "tags") ? undefined : json["tags"],
-        metadata: !exists(json, "metadata") ? undefined : json["metadata"],
-        virusScanStatus: !exists(json, "virusScanStatus")
-            ? undefined
-            : json["virusScanStatus"],
-        retentionExpiresAt: !exists(json, "retentionExpiresAt")
-            ? undefined
-            : new Date(json["retentionExpiresAt"]),
-        deletedAt: !exists(json, "deletedAt")
-            ? undefined
-            : new Date(json["deletedAt"]),
-        latestVersionNumber: !exists(json, "latestVersionNumber")
-            ? undefined
-            : json["latestVersionNumber"],
-        currentVersionId: !exists(json, "currentVersionId")
-            ? undefined
-            : json["currentVersionId"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    storageDriverId: json["storageDriverId"],
+    storageKey: json["storageKey"],
+    filename: json["filename"],
+    sizeBytes: json["sizeBytes"],
+    status: json["status"],
+    organizationId: !exists(json, "organizationId")
+      ? undefined
+      : json["organizationId"],
+    organization: !exists(json, "organization")
+      ? undefined
+      : OrganizationFromJSON(json["organization"]),
+    uploaderId: !exists(json, "uploaderId") ? undefined : json["uploaderId"],
+    uploader: !exists(json, "uploader")
+      ? undefined
+      : PrincipalFromJSON(json["uploader"]),
+    spaceId: !exists(json, "spaceId") ? undefined : json["spaceId"],
+    mimeType: !exists(json, "mimeType") ? undefined : json["mimeType"],
+    checksumSha256: !exists(json, "checksumSha256")
+      ? undefined
+      : json["checksumSha256"],
+    providerEtag: !exists(json, "providerEtag")
+      ? undefined
+      : json["providerEtag"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    directoryPath: !exists(json, "directoryPath")
+      ? undefined
+      : json["directoryPath"],
+    tags: !exists(json, "tags") ? undefined : json["tags"],
+    metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+    virusScanStatus: !exists(json, "virusScanStatus")
+      ? undefined
+      : json["virusScanStatus"],
+    retentionExpiresAt: !exists(json, "retentionExpiresAt")
+      ? undefined
+      : new Date(json["retentionExpiresAt"]),
+    deletedAt: !exists(json, "deletedAt")
+      ? undefined
+      : new Date(json["deletedAt"]),
+    latestVersionNumber: !exists(json, "latestVersionNumber")
+      ? undefined
+      : json["latestVersionNumber"],
+    currentVersionId: !exists(json, "currentVersionId")
+      ? undefined
+      : json["currentVersionId"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function FileRecordToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        storageDriverId: value.storageDriverId,
-        storageKey: value.storageKey,
-        filename: value.filename,
-        sizeBytes: value.sizeBytes,
-        status: value.status,
-        organizationId: value.organizationId,
-        organization: OrganizationToJSON(value.organization),
-        uploaderId: value.uploaderId,
-        uploader: PrincipalToJSON(value.uploader),
-        spaceId: value.spaceId,
-        mimeType: value.mimeType,
-        checksumSha256: value.checksumSha256,
-        providerEtag: value.providerEtag,
-        description: value.description,
-        directoryPath: value.directoryPath,
-        tags: value.tags,
-        metadata: value.metadata,
-        virusScanStatus: value.virusScanStatus,
-        retentionExpiresAt: value.retentionExpiresAt === undefined
-            ? undefined
-            : value.retentionExpiresAt.toISOString(),
-        deletedAt: value.deletedAt === undefined ? undefined : value.deletedAt.toISOString(),
-        latestVersionNumber: value.latestVersionNumber,
-        currentVersionId: value.currentVersionId,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    storageDriverId: value.storageDriverId,
+    storageKey: value.storageKey,
+    filename: value.filename,
+    sizeBytes: value.sizeBytes,
+    status: value.status,
+    organizationId: value.organizationId,
+    organization: OrganizationToJSON(value.organization),
+    uploaderId: value.uploaderId,
+    uploader: PrincipalToJSON(value.uploader),
+    spaceId: value.spaceId,
+    mimeType: value.mimeType,
+    checksumSha256: value.checksumSha256,
+    providerEtag: value.providerEtag,
+    description: value.description,
+    directoryPath: value.directoryPath,
+    tags: value.tags,
+    metadata: value.metadata,
+    virusScanStatus: value.virusScanStatus,
+    retentionExpiresAt:
+      value.retentionExpiresAt === undefined
+        ? undefined
+        : value.retentionExpiresAt.toISOString(),
+    deletedAt:
+      value.deletedAt === undefined ? undefined : value.deletedAt.toISOString(),
+    latestVersionNumber: value.latestVersionNumber,
+    currentVersionId: value.currentVersionId,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -136,12 +143,12 @@ export function FileRecordToJSON(value) {
  */
 export var FileRecordStatusEnum;
 (function (FileRecordStatusEnum) {
-    FileRecordStatusEnum["UPLOADING"] = "uploading";
-    FileRecordStatusEnum["SCANNING"] = "scanning";
-    FileRecordStatusEnum["AVAILABLE"] = "available";
-    FileRecordStatusEnum["BLOCKED"] = "blocked";
-    FileRecordStatusEnum["DELETED"] = "deleted";
-    FileRecordStatusEnum["FAILED"] = "failed";
+  FileRecordStatusEnum["UPLOADING"] = "uploading";
+  FileRecordStatusEnum["SCANNING"] = "scanning";
+  FileRecordStatusEnum["AVAILABLE"] = "available";
+  FileRecordStatusEnum["BLOCKED"] = "blocked";
+  FileRecordStatusEnum["DELETED"] = "deleted";
+  FileRecordStatusEnum["FAILED"] = "failed";
 })(FileRecordStatusEnum || (FileRecordStatusEnum = {}));
 /**
  * @export
@@ -149,10 +156,10 @@ export var FileRecordStatusEnum;
  */
 export var FileRecordVirusScanStatusEnum;
 (function (FileRecordVirusScanStatusEnum) {
-    FileRecordVirusScanStatusEnum["PENDING"] = "pending";
-    FileRecordVirusScanStatusEnum["INPROGRESS"] = "in_progress";
-    FileRecordVirusScanStatusEnum["CLEAN"] = "clean";
-    FileRecordVirusScanStatusEnum["INFECTED"] = "infected";
-    FileRecordVirusScanStatusEnum["SKIPPED"] = "skipped";
+  FileRecordVirusScanStatusEnum["PENDING"] = "pending";
+  FileRecordVirusScanStatusEnum["INPROGRESS"] = "in_progress";
+  FileRecordVirusScanStatusEnum["CLEAN"] = "clean";
+  FileRecordVirusScanStatusEnum["INFECTED"] = "infected";
+  FileRecordVirusScanStatusEnum["SKIPPED"] = "skipped";
 })(FileRecordVirusScanStatusEnum || (FileRecordVirusScanStatusEnum = {}));
 //# sourceMappingURL=FileRecord.js.map

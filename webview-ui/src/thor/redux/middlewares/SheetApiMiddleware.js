@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Sheet
 */
-export const SheetMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const SheetMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Sheet MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=SheetApiMiddleware.js.map

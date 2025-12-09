@@ -16,29 +16,39 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const PasswordResetTokenSlice = createSlice({
-    name: "PasswordResetTokens",
-    initialState: [],
-    reducers: {
-        PasswordResetTokenAdded(state, action) {
-            state.push(action.payload);
-        },
-        PasswordResetTokenValueToggled(state, action) {
-            console.log("PasswordResetToken TOGGLE");
-            console.warn(JSON.stringify(action));
-            const PasswordResetToken = state.find((PasswordResetToken) => PasswordResetToken.id === action.payload.PasswordResetTokenId);
-            if (PasswordResetToken) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        PasswordResetTokenpropertySet(state, action) {
-            const PasswordResetToken = state.find((PasswordResetToken) => PasswordResetToken.id === action.payload.PasswordResetTokenId);
-            if (PasswordResetToken) {
-                //  PasswordResetToken[action.property] = action.payload[action.property];
-            }
-        },
+  name: "PasswordResetTokens",
+  initialState: [],
+  reducers: {
+    PasswordResetTokenAdded(state, action) {
+      state.push(action.payload);
     },
+    PasswordResetTokenValueToggled(state, action) {
+      console.log("PasswordResetToken TOGGLE");
+      console.warn(JSON.stringify(action));
+      const PasswordResetToken = state.find(
+        (PasswordResetToken) =>
+          PasswordResetToken.id === action.payload.PasswordResetTokenId,
+      );
+      if (PasswordResetToken) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    PasswordResetTokenpropertySet(state, action) {
+      const PasswordResetToken = state.find(
+        (PasswordResetToken) =>
+          PasswordResetToken.id === action.payload.PasswordResetTokenId,
+      );
+      if (PasswordResetToken) {
+        //  PasswordResetToken[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { PasswordResetTokenAdded, PasswordResetTokenValueToggled, PasswordResetTokenpropertySet, } = PasswordResetTokenSlice.actions;
+export const {
+  PasswordResetTokenAdded,
+  PasswordResetTokenValueToggled,
+  PasswordResetTokenpropertySet,
+} = PasswordResetTokenSlice.actions;
 export default PasswordResetTokenSlice.reducer;
 //# sourceMappingURL=PasswordResetTokenReducer.js.map

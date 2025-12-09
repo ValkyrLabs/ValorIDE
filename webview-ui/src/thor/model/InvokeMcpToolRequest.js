@@ -29,20 +29,20 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function InvokeMcpToolRequestFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        toolName: json["toolName"],
-        input: !exists(json, "input") ? undefined : json["input"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    toolName: json["toolName"],
+    input: !exists(json, "input") ? undefined : json["input"],
+  };
 }
 export function InvokeMcpToolRequestToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        toolName: value.toolName,
-        input: value.input,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    toolName: value.toolName,
+    input: value.input,
+  };
 }
 //# sourceMappingURL=InvokeMcpToolRequest.js.map

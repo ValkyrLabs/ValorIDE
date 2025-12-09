@@ -30,60 +30,60 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { PrincipalFromJSON, PrincipalToJSON } from "./";
 export function LoginAuditFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        principalId: json["principalId"],
-        loginStatus: json["loginStatus"],
-        loginMethod: json["loginMethod"],
-        principal: !exists(json, "principal")
-            ? undefined
-            : PrincipalFromJSON(json["principal"]),
-        ipAddress: !exists(json, "ipAddress") ? undefined : json["ipAddress"],
-        userAgent: !exists(json, "userAgent") ? undefined : json["userAgent"],
-        deviceFingerprint: !exists(json, "deviceFingerprint")
-            ? undefined
-            : json["deviceFingerprint"],
-        geoLocation: !exists(json, "geoLocation") ? undefined : json["geoLocation"],
-        createdAt: !exists(json, "createdAt")
-            ? undefined
-            : new Date(json["createdAt"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    principalId: json["principalId"],
+    loginStatus: json["loginStatus"],
+    loginMethod: json["loginMethod"],
+    principal: !exists(json, "principal")
+      ? undefined
+      : PrincipalFromJSON(json["principal"]),
+    ipAddress: !exists(json, "ipAddress") ? undefined : json["ipAddress"],
+    userAgent: !exists(json, "userAgent") ? undefined : json["userAgent"],
+    deviceFingerprint: !exists(json, "deviceFingerprint")
+      ? undefined
+      : json["deviceFingerprint"],
+    geoLocation: !exists(json, "geoLocation") ? undefined : json["geoLocation"],
+    createdAt: !exists(json, "createdAt")
+      ? undefined
+      : new Date(json["createdAt"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function LoginAuditToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        principalId: value.principalId,
-        loginStatus: value.loginStatus,
-        loginMethod: value.loginMethod,
-        principal: PrincipalToJSON(value.principal),
-        ipAddress: value.ipAddress,
-        userAgent: value.userAgent,
-        deviceFingerprint: value.deviceFingerprint,
-        geoLocation: value.geoLocation,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    principalId: value.principalId,
+    loginStatus: value.loginStatus,
+    loginMethod: value.loginMethod,
+    principal: PrincipalToJSON(value.principal),
+    ipAddress: value.ipAddress,
+    userAgent: value.userAgent,
+    deviceFingerprint: value.deviceFingerprint,
+    geoLocation: value.geoLocation,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -91,13 +91,15 @@ export function LoginAuditToJSON(value) {
  */
 export var LoginAuditLoginStatusEnum;
 (function (LoginAuditLoginStatusEnum) {
-    LoginAuditLoginStatusEnum["SUCCESS"] = "success";
-    LoginAuditLoginStatusEnum["FAILED_INVALID_CREDENTIALS"] = "failed_invalid_credentials";
-    LoginAuditLoginStatusEnum["FAILED_2FA_REQUIRED"] = "failed_2fa_required";
-    LoginAuditLoginStatusEnum["FAILED_2FA_INVALID"] = "failed_2fa_invalid";
-    LoginAuditLoginStatusEnum["FAILED_ACCOUNT_LOCKED"] = "failed_account_locked";
-    LoginAuditLoginStatusEnum["FAILED_ACCOUNT_DISABLED"] = "failed_account_disabled";
-    LoginAuditLoginStatusEnum["SUCCESS_2FA_VERIFIED"] = "success_2fa_verified";
+  LoginAuditLoginStatusEnum["SUCCESS"] = "success";
+  LoginAuditLoginStatusEnum["FAILED_INVALID_CREDENTIALS"] =
+    "failed_invalid_credentials";
+  LoginAuditLoginStatusEnum["FAILED_2FA_REQUIRED"] = "failed_2fa_required";
+  LoginAuditLoginStatusEnum["FAILED_2FA_INVALID"] = "failed_2fa_invalid";
+  LoginAuditLoginStatusEnum["FAILED_ACCOUNT_LOCKED"] = "failed_account_locked";
+  LoginAuditLoginStatusEnum["FAILED_ACCOUNT_DISABLED"] =
+    "failed_account_disabled";
+  LoginAuditLoginStatusEnum["SUCCESS_2FA_VERIFIED"] = "success_2fa_verified";
 })(LoginAuditLoginStatusEnum || (LoginAuditLoginStatusEnum = {}));
 /**
  * @export
@@ -105,10 +107,10 @@ export var LoginAuditLoginStatusEnum;
  */
 export var LoginAuditLoginMethodEnum;
 (function (LoginAuditLoginMethodEnum) {
-    LoginAuditLoginMethodEnum["USERNAME_PASSWORD"] = "username_password";
-    LoginAuditLoginMethodEnum["GITHUB_OAUTH"] = "github_oauth";
-    LoginAuditLoginMethodEnum["GOOGLE_OAUTH"] = "google_oauth";
-    LoginAuditLoginMethodEnum["SMS_OTP"] = "sms_otp";
-    LoginAuditLoginMethodEnum["TOTP"] = "totp";
+  LoginAuditLoginMethodEnum["USERNAME_PASSWORD"] = "username_password";
+  LoginAuditLoginMethodEnum["GITHUB_OAUTH"] = "github_oauth";
+  LoginAuditLoginMethodEnum["GOOGLE_OAUTH"] = "google_oauth";
+  LoginAuditLoginMethodEnum["SMS_OTP"] = "sms_otp";
+  LoginAuditLoginMethodEnum["TOTP"] = "totp";
 })(LoginAuditLoginMethodEnum || (LoginAuditLoginMethodEnum = {}));
 //# sourceMappingURL=LoginAudit.js.map

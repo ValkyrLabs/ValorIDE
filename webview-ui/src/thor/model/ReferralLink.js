@@ -29,47 +29,47 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function ReferralLinkFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: !exists(json, "name") ? undefined : json["name"],
-        link: !exists(json, "link") ? undefined : json["link"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        referralType: !exists(json, "referralType")
-            ? undefined
-            : json["referralType"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: !exists(json, "name") ? undefined : json["name"],
+    link: !exists(json, "link") ? undefined : json["link"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    referralType: !exists(json, "referralType")
+      ? undefined
+      : json["referralType"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ReferralLinkToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        link: value.link,
-        description: value.description,
-        referralType: value.referralType,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    link: value.link,
+    description: value.description,
+    referralType: value.referralType,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -77,10 +77,10 @@ export function ReferralLinkToJSON(value) {
  */
 export var ReferralLinkReferralTypeEnum;
 (function (ReferralLinkReferralTypeEnum) {
-    ReferralLinkReferralTypeEnum["INTERNAL"] = "internal";
-    ReferralLinkReferralTypeEnum["PRODUCT"] = "product";
-    ReferralLinkReferralTypeEnum["SERVICE"] = "service";
-    ReferralLinkReferralTypeEnum["MEDIA"] = "media";
-    ReferralLinkReferralTypeEnum["OTHER"] = "other";
+  ReferralLinkReferralTypeEnum["INTERNAL"] = "internal";
+  ReferralLinkReferralTypeEnum["PRODUCT"] = "product";
+  ReferralLinkReferralTypeEnum["SERVICE"] = "service";
+  ReferralLinkReferralTypeEnum["MEDIA"] = "media";
+  ReferralLinkReferralTypeEnum["OTHER"] = "other";
 })(ReferralLinkReferralTypeEnum || (ReferralLinkReferralTypeEnum = {}));
 //# sourceMappingURL=ReferralLink.js.map

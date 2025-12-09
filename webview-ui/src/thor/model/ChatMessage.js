@@ -29,55 +29,55 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function ChatMessageFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        role: json["role"],
-        content: json["content"],
-        sessionId: !exists(json, "sessionId") ? undefined : json["sessionId"],
-        chatCompletionRequestId: !exists(json, "chatCompletionRequestId")
-            ? undefined
-            : json["chatCompletionRequestId"],
-        connected: !exists(json, "connected") ? undefined : json["connected"],
-        json: !exists(json, "json") ? undefined : json["json"],
-        sourceType: !exists(json, "sourceType") ? undefined : json["sourceType"],
-        sourceOwner: !exists(json, "sourceOwner") ? undefined : json["sourceOwner"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    role: json["role"],
+    content: json["content"],
+    sessionId: !exists(json, "sessionId") ? undefined : json["sessionId"],
+    chatCompletionRequestId: !exists(json, "chatCompletionRequestId")
+      ? undefined
+      : json["chatCompletionRequestId"],
+    connected: !exists(json, "connected") ? undefined : json["connected"],
+    json: !exists(json, "json") ? undefined : json["json"],
+    sourceType: !exists(json, "sourceType") ? undefined : json["sourceType"],
+    sourceOwner: !exists(json, "sourceOwner") ? undefined : json["sourceOwner"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ChatMessageToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        role: value.role,
-        content: value.content,
-        sessionId: value.sessionId,
-        chatCompletionRequestId: value.chatCompletionRequestId,
-        connected: value.connected,
-        json: value.json,
-        sourceType: value.sourceType,
-        sourceOwner: value.sourceOwner,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    role: value.role,
+    content: value.content,
+    sessionId: value.sessionId,
+    chatCompletionRequestId: value.chatCompletionRequestId,
+    connected: value.connected,
+    json: value.json,
+    sourceType: value.sourceType,
+    sourceOwner: value.sourceOwner,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -85,9 +85,9 @@ export function ChatMessageToJSON(value) {
  */
 export var ChatMessageRoleEnum;
 (function (ChatMessageRoleEnum) {
-    ChatMessageRoleEnum["SYSTEM"] = "system";
-    ChatMessageRoleEnum["USER"] = "user";
-    ChatMessageRoleEnum["ASSISTANT"] = "assistant";
+  ChatMessageRoleEnum["SYSTEM"] = "system";
+  ChatMessageRoleEnum["USER"] = "user";
+  ChatMessageRoleEnum["ASSISTANT"] = "assistant";
 })(ChatMessageRoleEnum || (ChatMessageRoleEnum = {}));
 /**
  * @export
@@ -95,8 +95,8 @@ export var ChatMessageRoleEnum;
  */
 export var ChatMessageSourceTypeEnum;
 (function (ChatMessageSourceTypeEnum) {
-    ChatMessageSourceTypeEnum["API"] = "api";
-    ChatMessageSourceTypeEnum["SERVERLOG"] = "server_log";
-    ChatMessageSourceTypeEnum["P2P"] = "p2p";
+  ChatMessageSourceTypeEnum["API"] = "api";
+  ChatMessageSourceTypeEnum["SERVERLOG"] = "server_log";
+  ChatMessageSourceTypeEnum["P2P"] = "p2p";
 })(ChatMessageSourceTypeEnum || (ChatMessageSourceTypeEnum = {}));
 //# sourceMappingURL=ChatMessage.js.map

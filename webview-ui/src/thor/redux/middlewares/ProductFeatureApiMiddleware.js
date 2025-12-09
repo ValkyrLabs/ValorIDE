@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: ProductFeature
 */
-export const ProductFeatureMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const ProductFeatureMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("ProductFeature MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=ProductFeatureApiMiddleware.js.map

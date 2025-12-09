@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: SheetRow
 */
-export const SheetRowMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const SheetRowMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("SheetRow MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=SheetRowApiMiddleware.js.map

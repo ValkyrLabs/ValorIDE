@@ -31,60 +31,60 @@ export const LIST_DISCOUNT_REQUEST = "LIST_DISCOUNT_REQUEST";
 export const LIST_DISCOUNT_SUCCESS = "LIST_DISCOUNT_SUCCESS";
 export const LIST_DISCOUNT_FAILURE = "LIST_DISCOUNT_FAILURE";
 export const addDiscountRequest = () => ({
-    type: ADD_DISCOUNT_REQUEST,
+  type: ADD_DISCOUNT_REQUEST,
 });
 export const addDiscountSuccess = (Discounts) => ({
-    type: ADD_DISCOUNT_SUCCESS,
-    payload: Discounts,
+  type: ADD_DISCOUNT_SUCCESS,
+  payload: Discounts,
 });
 export const addDiscountFailure = (error) => ({
-    type: ADD_DISCOUNT_FAILURE,
-    payload: error,
+  type: ADD_DISCOUNT_FAILURE,
+  payload: error,
 });
 export const fetchDiscountRequest = () => ({
-    type: FETCH_DISCOUNT_REQUEST,
+  type: FETCH_DISCOUNT_REQUEST,
 });
 export const fetchDiscountSuccess = (Discounts) => ({
-    type: FETCH_DISCOUNT_SUCCESS,
-    payload: Discounts,
+  type: FETCH_DISCOUNT_SUCCESS,
+  payload: Discounts,
 });
 export const fetchDiscountFailure = (error) => ({
-    type: FETCH_DISCOUNT_FAILURE,
-    payload: error,
+  type: FETCH_DISCOUNT_FAILURE,
+  payload: error,
 });
 export const listDiscountRequest = () => ({
-    type: LIST_DISCOUNT_REQUEST,
+  type: LIST_DISCOUNT_REQUEST,
 });
 export const listDiscountSuccess = (Discounts) => ({
-    type: LIST_DISCOUNT_SUCCESS,
-    payload: Discounts,
+  type: LIST_DISCOUNT_SUCCESS,
+  payload: Discounts,
 });
 export const listDiscountFailure = (error) => ({
-    type: LIST_DISCOUNT_FAILURE,
-    payload: error,
+  type: LIST_DISCOUNT_FAILURE,
+  payload: error,
 });
 export const updateDiscountRequest = (Discount) => ({
-    type: UPDATE_DISCOUNT_REQUEST,
-    payload: Discount,
+  type: UPDATE_DISCOUNT_REQUEST,
+  payload: Discount,
 });
 export const updateDiscountSuccess = (Discount) => ({
-    type: UPDATE_DISCOUNT_SUCCESS,
-    payload: Discount,
+  type: UPDATE_DISCOUNT_SUCCESS,
+  payload: Discount,
 });
 export const updateDiscountFailure = (error) => ({
-    type: UPDATE_DISCOUNT_FAILURE,
-    payload: error,
+  type: UPDATE_DISCOUNT_FAILURE,
+  payload: error,
 });
 export const deleteDiscountRequest = (Discount) => ({
-    type: DELETE_DISCOUNT_REQUEST,
-    payload: Discount,
+  type: DELETE_DISCOUNT_REQUEST,
+  payload: Discount,
 });
 export const deleteDiscountSuccess = (Discount) => ({
-    type: DELETE_DISCOUNT_SUCCESS,
-    payload: Discount,
+  type: DELETE_DISCOUNT_SUCCESS,
+  payload: Discount,
 });
 export const deleteDiscountFailure = (error) => ({
-    type: DELETE_DISCOUNT_FAILURE,
-    payload: error,
+  type: DELETE_DISCOUNT_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=DiscountApiAction.js.map

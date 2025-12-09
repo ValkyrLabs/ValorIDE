@@ -31,60 +31,60 @@ export const LIST_EXECMODULE_REQUEST = "LIST_EXECMODULE_REQUEST";
 export const LIST_EXECMODULE_SUCCESS = "LIST_EXECMODULE_SUCCESS";
 export const LIST_EXECMODULE_FAILURE = "LIST_EXECMODULE_FAILURE";
 export const addExecModuleRequest = () => ({
-    type: ADD_EXECMODULE_REQUEST,
+  type: ADD_EXECMODULE_REQUEST,
 });
 export const addExecModuleSuccess = (ExecModules) => ({
-    type: ADD_EXECMODULE_SUCCESS,
-    payload: ExecModules,
+  type: ADD_EXECMODULE_SUCCESS,
+  payload: ExecModules,
 });
 export const addExecModuleFailure = (error) => ({
-    type: ADD_EXECMODULE_FAILURE,
-    payload: error,
+  type: ADD_EXECMODULE_FAILURE,
+  payload: error,
 });
 export const fetchExecModuleRequest = () => ({
-    type: FETCH_EXECMODULE_REQUEST,
+  type: FETCH_EXECMODULE_REQUEST,
 });
 export const fetchExecModuleSuccess = (ExecModules) => ({
-    type: FETCH_EXECMODULE_SUCCESS,
-    payload: ExecModules,
+  type: FETCH_EXECMODULE_SUCCESS,
+  payload: ExecModules,
 });
 export const fetchExecModuleFailure = (error) => ({
-    type: FETCH_EXECMODULE_FAILURE,
-    payload: error,
+  type: FETCH_EXECMODULE_FAILURE,
+  payload: error,
 });
 export const listExecModuleRequest = () => ({
-    type: LIST_EXECMODULE_REQUEST,
+  type: LIST_EXECMODULE_REQUEST,
 });
 export const listExecModuleSuccess = (ExecModules) => ({
-    type: LIST_EXECMODULE_SUCCESS,
-    payload: ExecModules,
+  type: LIST_EXECMODULE_SUCCESS,
+  payload: ExecModules,
 });
 export const listExecModuleFailure = (error) => ({
-    type: LIST_EXECMODULE_FAILURE,
-    payload: error,
+  type: LIST_EXECMODULE_FAILURE,
+  payload: error,
 });
 export const updateExecModuleRequest = (ExecModule) => ({
-    type: UPDATE_EXECMODULE_REQUEST,
-    payload: ExecModule,
+  type: UPDATE_EXECMODULE_REQUEST,
+  payload: ExecModule,
 });
 export const updateExecModuleSuccess = (ExecModule) => ({
-    type: UPDATE_EXECMODULE_SUCCESS,
-    payload: ExecModule,
+  type: UPDATE_EXECMODULE_SUCCESS,
+  payload: ExecModule,
 });
 export const updateExecModuleFailure = (error) => ({
-    type: UPDATE_EXECMODULE_FAILURE,
-    payload: error,
+  type: UPDATE_EXECMODULE_FAILURE,
+  payload: error,
 });
 export const deleteExecModuleRequest = (ExecModule) => ({
-    type: DELETE_EXECMODULE_REQUEST,
-    payload: ExecModule,
+  type: DELETE_EXECMODULE_REQUEST,
+  payload: ExecModule,
 });
 export const deleteExecModuleSuccess = (ExecModule) => ({
-    type: DELETE_EXECMODULE_SUCCESS,
-    payload: ExecModule,
+  type: DELETE_EXECMODULE_SUCCESS,
+  payload: ExecModule,
 });
 export const deleteExecModuleFailure = (error) => ({
-    type: DELETE_EXECMODULE_FAILURE,
-    payload: error,
+  type: DELETE_EXECMODULE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=ExecModuleApiAction.js.map

@@ -4,12 +4,12 @@
  * @returns String with HTML entities converted back to normal characters
  */
 export function fixModelHtmlEscaping(text) {
-    return text
-        .replace(/&gt;/g, ">")
-        .replace(/&lt;/g, "<")
-        .replace(/&quot;/g, '"')
-        .replace(/&amp;/g, "&")
-        .replace(/&apos;/g, "'");
+  return text
+    .replace(/&gt;/g, ">")
+    .replace(/&lt;/g, "<")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&")
+    .replace(/&apos;/g, "'");
 }
 /**
  * Removes invalid characters (like the replacement character �) from a string
@@ -17,14 +17,14 @@ export function fixModelHtmlEscaping(text) {
  * @returns String with invalid characters removed
  */
 export function removeInvalidChars(text) {
-    return text.replace(/\uFFFD/g, "");
+  return text.replace(/\uFFFD/g, "");
 }
 /**
  * Normalises end-of-line characters to a single representation.
  * Useful when diff algorithms need consistent newlines before rewriting.
  */
 export function normalizeEol(text, newline) {
-    const replacement = newline || "\n";
-    return text.replace(/\r\n|\r|\n/g, replacement);
+  const replacement = newline || "\n";
+  return text.replace(/\r\n|\r|\n/g, replacement);
 }
 //# sourceMappingURL=string.js.map

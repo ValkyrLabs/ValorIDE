@@ -29,49 +29,49 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function ChatResponseFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        sessionId: !exists(json, "sessionId") ? undefined : json["sessionId"],
-        json: !exists(json, "json") ? undefined : json["json"],
-        sourceType: !exists(json, "sourceType") ? undefined : json["sourceType"],
-        sourceOwner: !exists(json, "sourceOwner") ? undefined : json["sourceOwner"],
-        role: !exists(json, "role") ? undefined : json["role"],
-        content: !exists(json, "content") ? undefined : json["content"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    sessionId: !exists(json, "sessionId") ? undefined : json["sessionId"],
+    json: !exists(json, "json") ? undefined : json["json"],
+    sourceType: !exists(json, "sourceType") ? undefined : json["sourceType"],
+    sourceOwner: !exists(json, "sourceOwner") ? undefined : json["sourceOwner"],
+    role: !exists(json, "role") ? undefined : json["role"],
+    content: !exists(json, "content") ? undefined : json["content"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ChatResponseToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        sessionId: value.sessionId,
-        json: value.json,
-        sourceType: value.sourceType,
-        sourceOwner: value.sourceOwner,
-        role: value.role,
-        content: value.content,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    sessionId: value.sessionId,
+    json: value.json,
+    sourceType: value.sourceType,
+    sourceOwner: value.sourceOwner,
+    role: value.role,
+    content: value.content,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -79,9 +79,9 @@ export function ChatResponseToJSON(value) {
  */
 export var ChatResponseSourceTypeEnum;
 (function (ChatResponseSourceTypeEnum) {
-    ChatResponseSourceTypeEnum["API"] = "api";
-    ChatResponseSourceTypeEnum["SERVERLOG"] = "server_log";
-    ChatResponseSourceTypeEnum["P2P"] = "p2p";
+  ChatResponseSourceTypeEnum["API"] = "api";
+  ChatResponseSourceTypeEnum["SERVERLOG"] = "server_log";
+  ChatResponseSourceTypeEnum["P2P"] = "p2p";
 })(ChatResponseSourceTypeEnum || (ChatResponseSourceTypeEnum = {}));
 /**
  * @export
@@ -89,7 +89,7 @@ export var ChatResponseSourceTypeEnum;
  */
 export var ChatResponseRoleEnum;
 (function (ChatResponseRoleEnum) {
-    ChatResponseRoleEnum["USER"] = "user";
-    ChatResponseRoleEnum["ASSISTANT"] = "assistant";
+  ChatResponseRoleEnum["USER"] = "user";
+  ChatResponseRoleEnum["ASSISTANT"] = "assistant";
 })(ChatResponseRoleEnum || (ChatResponseRoleEnum = {}));
 //# sourceMappingURL=ChatResponse.js.map

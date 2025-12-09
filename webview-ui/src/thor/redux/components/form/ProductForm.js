@@ -1,4 +1,8 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import {
+  jsx as _jsx,
+  jsxs as _jsxs,
+  Fragment as _Fragment,
+} from "react/jsx-runtime";
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -15,16 +19,16 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, } from "formik";
+import { ErrorMessage, Field, Formik } from "formik";
 import { useState } from "react";
-import { Form as BSForm, Accordion, Alert, } from "react-bootstrap";
+import { Form as BSForm, Accordion, Alert } from "react-bootstrap";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import * as Yup from "yup";
 import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import { PermissionType, } from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionType } from "@valkyr/component-library/PermissionDialog/types";
 import { useAddProductMutation } from "../../services/ProductService";
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,172 +52,646 @@ Represents a product or service in the CRM.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const StatusValidation = () => {
-    return [
-        "pending",
-        "sale",
-        "clearance",
-        "available",
-        "discontinued",
-        "out_of_stock",
-    ];
+  return [
+    "pending",
+    "sale",
+    "clearance",
+    "available",
+    "discontinued",
+    "out_of_stock",
+  ];
 };
 const TypeValidation = () => {
-    return [
-        "physical",
-        "subscription",
-        "credits",
-        "bespoke",
-        "consulting",
-        "support",
-        "cloud",
-        "download",
-        "service",
-        "media",
-        "performance",
-        "other",
-    ];
+  return [
+    "physical",
+    "subscription",
+    "credits",
+    "bespoke",
+    "consulting",
+    "support",
+    "cloud",
+    "download",
+    "service",
+    "media",
+    "performance",
+    "other",
+  ];
 };
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
-const asNumber = (schema) => schema.transform((val, orig) => orig === "" || orig === null ? undefined : val);
+const asNumber = (schema) =>
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 const validationSchema = Yup.object().shape({
-    name: Yup.string().required("name is required."),
-    price: asNumber(Yup.number().typeError("price must be a number")).required("price is required."),
-    status: Yup.mixed()
-        .oneOf(StatusValidation(), "Invalid value for status")
-        .required("status is required."),
-    description: Yup.string(),
-    salePrice: asNumber(Yup.number().typeError("salePrice must be a number")),
-    taxRate: asNumber(Yup.number().typeError("taxRate must be a number")),
-    duration: asNumber(Yup.number().typeError("duration must be a number")),
-    type: Yup.mixed().oneOf(TypeValidation(), "Invalid value for type"),
-    countryOfOrigin: Yup.string(),
-    trashed: Yup.boolean(),
+  name: Yup.string().required("name is required."),
+  price: asNumber(Yup.number().typeError("price must be a number")).required(
+    "price is required.",
+  ),
+  status: Yup.mixed()
+    .oneOf(StatusValidation(), "Invalid value for status")
+    .required("status is required."),
+  description: Yup.string(),
+  salePrice: asNumber(Yup.number().typeError("salePrice must be a number")),
+  taxRate: asNumber(Yup.number().typeError("taxRate must be a number")),
+  duration: asNumber(Yup.number().typeError("duration must be a number")),
+  type: Yup.mixed().oneOf(TypeValidation(), "Invalid value for type"),
+  countryOfOrigin: Yup.string(),
+  trashed: Yup.boolean(),
 });
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const ProductForm = () => {
-    const [addProduct, addProductResult] = useAddProductMutation();
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
-    // Permission Management State
-    const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-    const [createdObjectId, setCreatedObjectId] = useState(null);
-    // Mock current user - in real implementation, this would come from auth context
-    const currentUser = {
-        username: "current_user",
-        permissions: {
-            isOwner: true,
-            isAdmin: true,
-            canGrantPermissions: true,
-            permissions: [
-                PermissionType.READ,
-                PermissionType.WRITE,
-                PermissionType.CREATE,
-                PermissionType.DELETE,
-                PermissionType.ADMINISTRATION,
-            ],
-        },
-    };
-    /* -----------------------------------------------------
+  const [addProduct, addProductResult] = useAddProductMutation();
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState(null);
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: "current_user",
+    permissions: {
+      isOwner: true,
+      isAdmin: true,
+      canGrantPermissions: true,
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
+    },
+  };
+  /* -----------------------------------------------------
        INITIAL VALUES - only NON read-only fields
     -------------------------------------------------------- */
-    const initialValues = {
-        name: "",
-        price: 0,
-        status: undefined,
-        description: "",
-        salePrice: 0,
-        taxRate: 0,
-        duration: 0,
-        type: undefined,
-        countryOfOrigin: "",
-        trashed: false,
-    };
-    // Permission Management Handlers
-    const handleManagePermissions = (objectId) => {
-        setCreatedObjectId(objectId);
-        setShowPermissionDialog(true);
-    };
-    const handlePermissionDialogClose = () => {
-        setShowPermissionDialog(false);
-        setCreatedObjectId(null);
-    };
-    const handlePermissionsSave = (grants) => {
-        console.log("Permissions saved for new Product:", grants);
-    };
-    /* SUBMIT HANDLER */
-    const handleSubmit = async (values, { setSubmitting }) => {
-        try {
-            setSuccessMessage(null);
-            setErrorMessage(null);
-            console.log("Product form values:", values);
-            // NOTE: depending on your generated endpoint, you may need { body: values }
-            const result = await addProduct(values).unwrap();
-            if (result && result.id && currentUser.permissions.canGrantPermissions) {
-                const shouldSetPermissions = window.confirm(`Product created successfully! Would you like to set permissions for this object?`);
-                if (shouldSetPermissions) {
-                    handleManagePermissions(result.id);
-                }
-            }
-            setSuccessMessage("Saved successfully.");
+  const initialValues = {
+    name: "",
+    price: 0,
+    status: undefined,
+    description: "",
+    salePrice: 0,
+    taxRate: 0,
+    duration: 0,
+    type: undefined,
+    countryOfOrigin: "",
+    trashed: false,
+  };
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+  const handlePermissionsSave = (grants) => {
+    console.log("Permissions saved for new Product:", grants);
+  };
+  /* SUBMIT HANDLER */
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      setSuccessMessage(null);
+      setErrorMessage(null);
+      console.log("Product form values:", values);
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addProduct(values).unwrap();
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `Product created successfully! Would you like to set permissions for this object?`,
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
         }
-        catch (error) {
-            console.error("Failed to create Product:", error);
-            setErrorMessage("Failed to save. Please try again.");
-        }
-        setSubmitting(false);
-    };
-    return (_jsxs("div", { children: [_jsx(Formik, { validateOnBlur: true, initialValues: initialValues, validationSchema: validationSchema, onSubmit: handleSubmit, children: ({ isSubmitting, isValid, errors, values, setFieldValue, touched, setFieldTouched, handleSubmit, }) => {
-                    const isSaving = isSubmitting || addProductResult.isLoading;
-                    return (_jsx("form", { onSubmit: handleSubmit, className: "form", children: _jsxs(Accordion, { defaultActiveKey: "1", children: [_jsxs(Accordion.Item, { eventKey: "1", children: [_jsxs(Accordion.Header, { children: [_jsx(FaRegPlusSquare, { size: 28 }), " \u00A0 Add New Product"] }), _jsxs(Accordion.Body, { children: [_jsxs("label", { htmlFor: "name", className: "nice-form-control", children: [_jsxs("b", { children: ["Name:", touched.name && !errors.name && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "name", value: values?.name, placeholder: "Name", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "name", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "price", className: "nice-form-control", children: [_jsxs("b", { children: ["Price:", touched.price && !errors.price && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "price", type: "number", step: "any", value: values.price || "", onChange: (e) => {
-                                                                setFieldTouched("price", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("price", v === "" ? undefined : Number(v));
-                                                            }, className: errors.price
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "price", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "status", className: "nice-form-control", children: [_jsxs("b", { children: ["Status:", touched.status && !errors.status && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "status", value: values.status || "", className: errors.status
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("status", true);
-                                                                setFieldValue("status", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Status" }), _jsx(StatusLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "status", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "description", className: "nice-form-control", children: [_jsxs("b", { children: ["Description:", touched.description && !errors.description && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "description", value: values?.description, placeholder: "Description", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "description", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "salePrice", className: "nice-form-control", children: [_jsxs("b", { children: ["Sale Price:", touched.salePrice && !errors.salePrice && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "salePrice", type: "number", step: "any", value: values.salePrice || "", onChange: (e) => {
-                                                                setFieldTouched("salePrice", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("salePrice", v === "" ? undefined : Number(v));
-                                                            }, className: errors.salePrice
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "salePrice", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "taxRate", className: "nice-form-control", children: [_jsxs("b", { children: ["Tax Rate:", touched.taxRate && !errors.taxRate && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "taxRate", type: "number", step: "any", value: values.taxRate || "", onChange: (e) => {
-                                                                setFieldTouched("taxRate", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("taxRate", v === "" ? undefined : Number(v));
-                                                            }, className: errors.taxRate
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "taxRate", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "duration", className: "nice-form-control", children: [_jsxs("b", { children: ["Duration:", touched.duration && !errors.duration && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "duration", type: "number", step: "any", value: values.duration || "", onChange: (e) => {
-                                                                setFieldTouched("duration", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("duration", v === "" ? undefined : Number(v));
-                                                            }, className: errors.duration
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "duration", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "type", className: "nice-form-control", children: [_jsxs("b", { children: ["Type:", touched.type && !errors.type && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "type", value: values.type || "", className: errors.type
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("type", true);
-                                                                setFieldValue("type", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Type" }), _jsx(TypeLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "type", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "countryOfOrigin", className: "nice-form-control", children: [_jsxs("b", { children: ["Country Of Origin:", touched.countryOfOrigin && !errors.countryOfOrigin && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "countryOfOrigin", value: values?.countryOfOrigin, placeholder: "Country Of Origin", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "countryOfOrigin", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "trashed", className: "nice-form-control", children: [_jsxs("b", { children: ["Trashed:", touched.trashed && !errors.trashed && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "trashed", name: "trashed", checked: values.trashed || false, onChange: (e) => {
-                                                                setFieldTouched("trashed", true);
-                                                                setFieldValue("trashed", e.target.checked);
-                                                            }, isInvalid: !!errors.trashed, className: errors.trashed ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "trashed", component: "span" })] }), _jsx("br", {}), _jsxs(CoolButton, { variant: isValid
-                                                        ? isSaving
-                                                            ? "disabled"
-                                                            : "success"
-                                                        : "warning", type: "submit", disabled: !isValid || isSaving, children: [isSaving && (_jsx("span", { style: { float: "left", minHeight: 0 }, children: _jsx(LoadingSpinner, { label: "", size: 18 }) })), _jsx(FaCheckCircle, { size: 28 }), " Create New Product"] }), (addProductResult.isError || errorMessage) && (_jsx(Alert, { variant: "danger", className: "mt-3", children: errorMessage ||
-                                                        JSON.stringify("data" in addProductResult.error
-                                                            ? addProductResult.error.data
-                                                            : addProductResult.error) })), (addProductResult.isSuccess || successMessage) && (_jsx(Alert, { variant: "success", className: "mt-3", children: successMessage || "Saved successfully." }))] })] }), _jsxs(Accordion.Item, { eventKey: "0", children: [_jsxs(Accordion.Header, { children: [_jsx(FaCogs, { size: 28 }), " \u00A0Server Messages"] }), _jsxs(Accordion.Body, { children: ["errors: ", JSON.stringify(errors), _jsx("br", {}), "addProductResult: ", JSON.stringify(addProductResult)] })] })] }) }));
-                } }), createdObjectId && (_jsx(PermissionDialog, { objectType: "com.valkyrlabs.model.Product", objectId: createdObjectId, isVisible: showPermissionDialog, onClose: handlePermissionDialogClose, onSave: handlePermissionsSave, currentUser: currentUser }))] }));
+      }
+      setSuccessMessage("Saved successfully.");
+    } catch (error) {
+      console.error("Failed to create Product:", error);
+      setErrorMessage("Failed to save. Please try again.");
+    }
+    setSubmitting(false);
+  };
+  return _jsxs("div", {
+    children: [
+      _jsx(Formik, {
+        validateOnBlur: true,
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: handleSubmit,
+        children: ({
+          isSubmitting,
+          isValid,
+          errors,
+          values,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => {
+          const isSaving = isSubmitting || addProductResult.isLoading;
+          return _jsx("form", {
+            onSubmit: handleSubmit,
+            className: "form",
+            children: _jsxs(Accordion, {
+              defaultActiveKey: "1",
+              children: [
+                _jsxs(Accordion.Item, {
+                  eventKey: "1",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaRegPlusSquare, { size: 28 }),
+                        " \u00A0 Add New Product",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        _jsxs("label", {
+                          htmlFor: "name",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Name:",
+                                touched.name &&
+                                  !errors.name &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "name",
+                              value: values?.name,
+                              placeholder: "Name",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "name",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "price",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Price:",
+                                touched.price &&
+                                  !errors.price &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "price",
+                              type: "number",
+                              step: "any",
+                              value: values.price || "",
+                              onChange: (e) => {
+                                setFieldTouched("price", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "price",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.price
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "price",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "status",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Status:",
+                                touched.status &&
+                                  !errors.status &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "status",
+                              value: values.status || "",
+                              className: errors.status
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("status", true);
+                                setFieldValue(
+                                  "status",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Status",
+                                }),
+                                _jsx(StatusLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "status",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "description",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Description:",
+                                touched.description &&
+                                  !errors.description &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "description",
+                              value: values?.description,
+                              placeholder: "Description",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "description",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "salePrice",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Sale Price:",
+                                touched.salePrice &&
+                                  !errors.salePrice &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "salePrice",
+                              type: "number",
+                              step: "any",
+                              value: values.salePrice || "",
+                              onChange: (e) => {
+                                setFieldTouched("salePrice", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "salePrice",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.salePrice
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "salePrice",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "taxRate",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Tax Rate:",
+                                touched.taxRate &&
+                                  !errors.taxRate &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "taxRate",
+                              type: "number",
+                              step: "any",
+                              value: values.taxRate || "",
+                              onChange: (e) => {
+                                setFieldTouched("taxRate", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "taxRate",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.taxRate
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "taxRate",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "duration",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Duration:",
+                                touched.duration &&
+                                  !errors.duration &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "duration",
+                              type: "number",
+                              step: "any",
+                              value: values.duration || "",
+                              onChange: (e) => {
+                                setFieldTouched("duration", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "duration",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.duration
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "duration",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "type",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Type:",
+                                touched.type &&
+                                  !errors.type &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "type",
+                              value: values.type || "",
+                              className: errors.type
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("type", true);
+                                setFieldValue(
+                                  "type",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Type",
+                                }),
+                                _jsx(TypeLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "type",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "countryOfOrigin",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Country Of Origin:",
+                                touched.countryOfOrigin &&
+                                  !errors.countryOfOrigin &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "countryOfOrigin",
+                              value: values?.countryOfOrigin,
+                              placeholder: "Country Of Origin",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "countryOfOrigin",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "trashed",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Trashed:",
+                                touched.trashed &&
+                                  !errors.trashed &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "trashed",
+                              name: "trashed",
+                              checked: values.trashed || false,
+                              onChange: (e) => {
+                                setFieldTouched("trashed", true);
+                                setFieldValue("trashed", e.target.checked);
+                              },
+                              isInvalid: !!errors.trashed,
+                              className: errors.trashed ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "trashed",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs(CoolButton, {
+                          variant: isValid
+                            ? isSaving
+                              ? "disabled"
+                              : "success"
+                            : "warning",
+                          type: "submit",
+                          disabled: !isValid || isSaving,
+                          children: [
+                            isSaving &&
+                              _jsx("span", {
+                                style: { float: "left", minHeight: 0 },
+                                children: _jsx(LoadingSpinner, {
+                                  label: "",
+                                  size: 18,
+                                }),
+                              }),
+                            _jsx(FaCheckCircle, { size: 28 }),
+                            " Create New Product",
+                          ],
+                        }),
+                        (addProductResult.isError || errorMessage) &&
+                          _jsx(Alert, {
+                            variant: "danger",
+                            className: "mt-3",
+                            children:
+                              errorMessage ||
+                              JSON.stringify(
+                                "data" in addProductResult.error
+                                  ? addProductResult.error.data
+                                  : addProductResult.error,
+                              ),
+                          }),
+                        (addProductResult.isSuccess || successMessage) &&
+                          _jsx(Alert, {
+                            variant: "success",
+                            className: "mt-3",
+                            children: successMessage || "Saved successfully.",
+                          }),
+                      ],
+                    }),
+                  ],
+                }),
+                _jsxs(Accordion.Item, {
+                  eventKey: "0",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaCogs, { size: 28 }),
+                        " \u00A0Server Messages",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        "errors: ",
+                        JSON.stringify(errors),
+                        _jsx("br", {}),
+                        "addProductResult: ",
+                        JSON.stringify(addProductResult),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          });
+        },
+      }),
+      createdObjectId &&
+        _jsx(PermissionDialog, {
+          objectType: "com.valkyrlabs.model.Product",
+          objectId: createdObjectId,
+          isVisible: showPermissionDialog,
+          onClose: handlePermissionDialogClose,
+          onSave: handlePermissionsSave,
+          currentUser: currentUser,
+        }),
+    ],
+  });
 };
 /*
 lowercase statuslookup
@@ -224,7 +702,16 @@ camelcase statusLookup
 kebabcase status-lookup
 */
 const StatusLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "pending", label: "Pending" }), _jsx("option", { value: "sale", label: "Sale" }), _jsx("option", { value: "clearance", label: "Clearance" }), _jsx("option", { value: "available", label: "Available" }), _jsx("option", { value: "discontinued", label: "Discontinued" }), _jsx("option", { value: "out_of_stock", label: "Out Of Stock" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "pending", label: "Pending" }),
+      _jsx("option", { value: "sale", label: "Sale" }),
+      _jsx("option", { value: "clearance", label: "Clearance" }),
+      _jsx("option", { value: "available", label: "Available" }),
+      _jsx("option", { value: "discontinued", label: "Discontinued" }),
+      _jsx("option", { value: "out_of_stock", label: "Out Of Stock" }),
+    ],
+  });
 };
 /*
 lowercase typelookup
@@ -235,7 +722,22 @@ camelcase typeLookup
 kebabcase type-lookup
 */
 const TypeLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "physical", label: "Physical" }), _jsx("option", { value: "subscription", label: "Subscription" }), _jsx("option", { value: "credits", label: "Credits" }), _jsx("option", { value: "bespoke", label: "Bespoke" }), _jsx("option", { value: "consulting", label: "Consulting" }), _jsx("option", { value: "support", label: "Support" }), _jsx("option", { value: "cloud", label: "Cloud" }), _jsx("option", { value: "download", label: "Download" }), _jsx("option", { value: "service", label: "Service" }), _jsx("option", { value: "media", label: "Media" }), _jsx("option", { value: "performance", label: "Performance" }), _jsx("option", { value: "other", label: "Other" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "physical", label: "Physical" }),
+      _jsx("option", { value: "subscription", label: "Subscription" }),
+      _jsx("option", { value: "credits", label: "Credits" }),
+      _jsx("option", { value: "bespoke", label: "Bespoke" }),
+      _jsx("option", { value: "consulting", label: "Consulting" }),
+      _jsx("option", { value: "support", label: "Support" }),
+      _jsx("option", { value: "cloud", label: "Cloud" }),
+      _jsx("option", { value: "download", label: "Download" }),
+      _jsx("option", { value: "service", label: "Service" }),
+      _jsx("option", { value: "media", label: "Media" }),
+      _jsx("option", { value: "performance", label: "Performance" }),
+      _jsx("option", { value: "other", label: "Other" }),
+    ],
+  });
 };
 /* Export the generated form */
 export default ProductForm;

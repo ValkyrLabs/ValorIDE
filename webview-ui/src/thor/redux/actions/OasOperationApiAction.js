@@ -31,60 +31,60 @@ export const LIST_OASOPERATION_REQUEST = "LIST_OASOPERATION_REQUEST";
 export const LIST_OASOPERATION_SUCCESS = "LIST_OASOPERATION_SUCCESS";
 export const LIST_OASOPERATION_FAILURE = "LIST_OASOPERATION_FAILURE";
 export const addOasOperationRequest = () => ({
-    type: ADD_OASOPERATION_REQUEST,
+  type: ADD_OASOPERATION_REQUEST,
 });
 export const addOasOperationSuccess = (OasOperations) => ({
-    type: ADD_OASOPERATION_SUCCESS,
-    payload: OasOperations,
+  type: ADD_OASOPERATION_SUCCESS,
+  payload: OasOperations,
 });
 export const addOasOperationFailure = (error) => ({
-    type: ADD_OASOPERATION_FAILURE,
-    payload: error,
+  type: ADD_OASOPERATION_FAILURE,
+  payload: error,
 });
 export const fetchOasOperationRequest = () => ({
-    type: FETCH_OASOPERATION_REQUEST,
+  type: FETCH_OASOPERATION_REQUEST,
 });
 export const fetchOasOperationSuccess = (OasOperations) => ({
-    type: FETCH_OASOPERATION_SUCCESS,
-    payload: OasOperations,
+  type: FETCH_OASOPERATION_SUCCESS,
+  payload: OasOperations,
 });
 export const fetchOasOperationFailure = (error) => ({
-    type: FETCH_OASOPERATION_FAILURE,
-    payload: error,
+  type: FETCH_OASOPERATION_FAILURE,
+  payload: error,
 });
 export const listOasOperationRequest = () => ({
-    type: LIST_OASOPERATION_REQUEST,
+  type: LIST_OASOPERATION_REQUEST,
 });
 export const listOasOperationSuccess = (OasOperations) => ({
-    type: LIST_OASOPERATION_SUCCESS,
-    payload: OasOperations,
+  type: LIST_OASOPERATION_SUCCESS,
+  payload: OasOperations,
 });
 export const listOasOperationFailure = (error) => ({
-    type: LIST_OASOPERATION_FAILURE,
-    payload: error,
+  type: LIST_OASOPERATION_FAILURE,
+  payload: error,
 });
 export const updateOasOperationRequest = (OasOperation) => ({
-    type: UPDATE_OASOPERATION_REQUEST,
-    payload: OasOperation,
+  type: UPDATE_OASOPERATION_REQUEST,
+  payload: OasOperation,
 });
 export const updateOasOperationSuccess = (OasOperation) => ({
-    type: UPDATE_OASOPERATION_SUCCESS,
-    payload: OasOperation,
+  type: UPDATE_OASOPERATION_SUCCESS,
+  payload: OasOperation,
 });
 export const updateOasOperationFailure = (error) => ({
-    type: UPDATE_OASOPERATION_FAILURE,
-    payload: error,
+  type: UPDATE_OASOPERATION_FAILURE,
+  payload: error,
 });
 export const deleteOasOperationRequest = (OasOperation) => ({
-    type: DELETE_OASOPERATION_REQUEST,
-    payload: OasOperation,
+  type: DELETE_OASOPERATION_REQUEST,
+  payload: OasOperation,
 });
 export const deleteOasOperationSuccess = (OasOperation) => ({
-    type: DELETE_OASOPERATION_SUCCESS,
-    payload: OasOperation,
+  type: DELETE_OASOPERATION_SUCCESS,
+  payload: OasOperation,
 });
 export const deleteOasOperationFailure = (error) => ({
-    type: DELETE_OASOPERATION_FAILURE,
-    payload: error,
+  type: DELETE_OASOPERATION_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=OasOperationApiAction.js.map

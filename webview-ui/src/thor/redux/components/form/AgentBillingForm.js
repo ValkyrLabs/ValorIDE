@@ -1,4 +1,8 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import {
+  jsx as _jsx,
+  jsxs as _jsxs,
+  Fragment as _Fragment,
+} from "react/jsx-runtime";
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -15,16 +19,16 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, } from "formik";
+import { ErrorMessage, Field, Formik } from "formik";
 import { useState } from "react";
-import { Form as BSForm, Accordion, Alert, } from "react-bootstrap";
+import { Form as BSForm, Accordion, Alert } from "react-bootstrap";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import * as Yup from "yup";
 import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import { PermissionType, } from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionType } from "@valkyr/component-library/PermissionDialog/types";
 import { useAddAgentBillingMutation } from "../../services/AgentBillingService";
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,170 +52,656 @@ Billing configuration and tracking for an agent.
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const ChargingModelValidation = () => {
-    return ["PER_INSTANCE", "USAGE_BASED", "FLAT_RATE"];
+  return ["PER_INSTANCE", "USAGE_BASED", "FLAT_RATE"];
 };
 const BillingStatusValidation = () => {
-    return ["ACTIVE", "SUSPENDED", "ARCHIVED"];
+  return ["ACTIVE", "SUSPENDED", "ARCHIVED"];
 };
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
-const asNumber = (schema) => schema.transform((val, orig) => orig === "" || orig === null ? undefined : val);
+const asNumber = (schema) =>
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 const validationSchema = Yup.object().shape({
-    agentId: Yup.string(),
-    organizationId: Yup.string(),
-    instantiationCost: asNumber(Yup.number().typeError("instantiationCost must be a number")),
-    totalCharges: asNumber(Yup.number().typeError("totalCharges must be a number")),
-    chargingModel: Yup.mixed().oneOf(ChargingModelValidation(), "Invalid value for chargingModel"),
-    billingStatus: Yup.mixed().oneOf(BillingStatusValidation(), "Invalid value for billingStatus"),
-    lastChargeDate: Yup.date()
-        .transform((value, originalValue) => {
-        if (!originalValue) {
-            return value;
-        }
-        const parsed = new Date(originalValue);
-        return Number.isNaN(parsed.getTime()) ? value : parsed;
+  agentId: Yup.string(),
+  organizationId: Yup.string(),
+  instantiationCost: asNumber(
+    Yup.number().typeError("instantiationCost must be a number"),
+  ),
+  totalCharges: asNumber(
+    Yup.number().typeError("totalCharges must be a number"),
+  ),
+  chargingModel: Yup.mixed().oneOf(
+    ChargingModelValidation(),
+    "Invalid value for chargingModel",
+  ),
+  billingStatus: Yup.mixed().oneOf(
+    BillingStatusValidation(),
+    "Invalid value for billingStatus",
+  ),
+  lastChargeDate: Yup.date()
+    .transform((value, originalValue) => {
+      if (!originalValue) {
+        return value;
+      }
+      const parsed = new Date(originalValue);
+      return Number.isNaN(parsed.getTime()) ? value : parsed;
     })
-        .typeError("lastChargeDate must be a valid date"),
-    quotaAgents: asNumber(Yup.number().integer().typeError("quotaAgents must be a number")),
-    activeAgentCount: asNumber(Yup.number().integer().typeError("activeAgentCount must be a number")),
-    trashed: Yup.boolean(),
+    .typeError("lastChargeDate must be a valid date"),
+  quotaAgents: asNumber(
+    Yup.number().integer().typeError("quotaAgents must be a number"),
+  ),
+  activeAgentCount: asNumber(
+    Yup.number().integer().typeError("activeAgentCount must be a number"),
+  ),
+  trashed: Yup.boolean(),
 });
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const AgentBillingForm = () => {
-    const [addAgentBilling, addAgentBillingResult] = useAddAgentBillingMutation();
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
-    // Permission Management State
-    const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-    const [createdObjectId, setCreatedObjectId] = useState(null);
-    // Mock current user - in real implementation, this would come from auth context
-    const currentUser = {
-        username: "current_user",
-        permissions: {
-            isOwner: true,
-            isAdmin: true,
-            canGrantPermissions: true,
-            permissions: [
-                PermissionType.READ,
-                PermissionType.WRITE,
-                PermissionType.CREATE,
-                PermissionType.DELETE,
-                PermissionType.ADMINISTRATION,
-            ],
-        },
-    };
-    /* -----------------------------------------------------
+  const [addAgentBilling, addAgentBillingResult] = useAddAgentBillingMutation();
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState(null);
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: "current_user",
+    permissions: {
+      isOwner: true,
+      isAdmin: true,
+      canGrantPermissions: true,
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
+    },
+  };
+  /* -----------------------------------------------------
        INITIAL VALUES - only NON read-only fields
     -------------------------------------------------------- */
-    const initialValues = {
-        agentId: "",
-        organizationId: "",
-        instantiationCost: 0,
-        totalCharges: 0,
-        chargingModel: undefined,
-        billingStatus: undefined,
-        lastChargeDate: new Date(),
-        quotaAgents: 0,
-        activeAgentCount: 0,
-        trashed: false,
-    };
-    // Permission Management Handlers
-    const handleManagePermissions = (objectId) => {
-        setCreatedObjectId(objectId);
-        setShowPermissionDialog(true);
-    };
-    const handlePermissionDialogClose = () => {
-        setShowPermissionDialog(false);
-        setCreatedObjectId(null);
-    };
-    const handlePermissionsSave = (grants) => {
-        console.log("Permissions saved for new AgentBilling:", grants);
-    };
-    /* SUBMIT HANDLER */
-    const handleSubmit = async (values, { setSubmitting }) => {
-        try {
-            setSuccessMessage(null);
-            setErrorMessage(null);
-            console.log("AgentBilling form values:", values);
-            // NOTE: depending on your generated endpoint, you may need { body: values }
-            const result = await addAgentBilling(values).unwrap();
-            if (result && result.id && currentUser.permissions.canGrantPermissions) {
-                const shouldSetPermissions = window.confirm(`AgentBilling created successfully! Would you like to set permissions for this object?`);
-                if (shouldSetPermissions) {
-                    handleManagePermissions(result.id);
-                }
-            }
-            setSuccessMessage("Saved successfully.");
+  const initialValues = {
+    agentId: "",
+    organizationId: "",
+    instantiationCost: 0,
+    totalCharges: 0,
+    chargingModel: undefined,
+    billingStatus: undefined,
+    lastChargeDate: new Date(),
+    quotaAgents: 0,
+    activeAgentCount: 0,
+    trashed: false,
+  };
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+  const handlePermissionsSave = (grants) => {
+    console.log("Permissions saved for new AgentBilling:", grants);
+  };
+  /* SUBMIT HANDLER */
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      setSuccessMessage(null);
+      setErrorMessage(null);
+      console.log("AgentBilling form values:", values);
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addAgentBilling(values).unwrap();
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `AgentBilling created successfully! Would you like to set permissions for this object?`,
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
         }
-        catch (error) {
-            console.error("Failed to create AgentBilling:", error);
-            setErrorMessage("Failed to save. Please try again.");
-        }
-        setSubmitting(false);
-    };
-    return (_jsxs("div", { children: [_jsx(Formik, { validateOnBlur: true, initialValues: initialValues, validationSchema: validationSchema, onSubmit: handleSubmit, children: ({ isSubmitting, isValid, errors, values, setFieldValue, touched, setFieldTouched, handleSubmit, }) => {
-                    const isSaving = isSubmitting || addAgentBillingResult.isLoading;
-                    return (_jsx("form", { onSubmit: handleSubmit, className: "form", children: _jsxs(Accordion, { defaultActiveKey: "1", children: [_jsxs(Accordion.Item, { eventKey: "1", children: [_jsxs(Accordion.Header, { children: [_jsx(FaRegPlusSquare, { size: 28 }), " \u00A0 Add New AgentBilling"] }), _jsxs(Accordion.Body, { children: [_jsxs("label", { htmlFor: "agentId", className: "nice-form-control", children: [_jsxs("b", { children: ["Agent Id:", touched.agentId && !errors.agentId && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "agentId", value: values?.agentId, placeholder: "Agent Id", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "agentId", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "organizationId", className: "nice-form-control", children: [_jsxs("b", { children: ["Organization Id:", touched.organizationId && !errors.organizationId && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "organizationId", value: values?.organizationId, placeholder: "Organization Id", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "organizationId", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "instantiationCost", className: "nice-form-control", children: [_jsxs("b", { children: ["Instantiation Cost:", touched.instantiationCost &&
-                                                                    !errors.instantiationCost && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "instantiationCost", type: "number", step: "any", value: values.instantiationCost || "", onChange: (e) => {
-                                                                setFieldTouched("instantiationCost", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("instantiationCost", v === "" ? undefined : Number(v));
-                                                            }, className: errors.instantiationCost
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "instantiationCost", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "totalCharges", className: "nice-form-control", children: [_jsxs("b", { children: ["Total Charges:", touched.totalCharges && !errors.totalCharges && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "totalCharges", type: "number", step: "any", value: values.totalCharges || "", onChange: (e) => {
-                                                                setFieldTouched("totalCharges", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("totalCharges", v === "" ? undefined : Number(v));
-                                                            }, className: errors.totalCharges
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "totalCharges", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "chargingModel", className: "nice-form-control", children: [_jsxs("b", { children: ["Charging Model:", touched.chargingModel && !errors.chargingModel && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "chargingModel", value: values.chargingModel || "", className: errors.chargingModel
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("chargingModel", true);
-                                                                setFieldValue("chargingModel", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Charging Model" }), _jsx(ChargingModelLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "chargingModel", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "billingStatus", className: "nice-form-control", children: [_jsxs("b", { children: ["Billing Status:", touched.billingStatus && !errors.billingStatus && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "billingStatus", value: values.billingStatus || "", className: errors.billingStatus
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("billingStatus", true);
-                                                                setFieldValue("billingStatus", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Billing Status" }), _jsx(BillingStatusLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "billingStatus", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "lastChargeDate", className: "nice-form-control", children: [_jsxs("b", { children: ["Last Charge Date:", touched.lastChargeDate && !errors.lastChargeDate && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "lastChargeDate", type: "datetime-local", value: values.lastChargeDate
-                                                                ? new Date(values.lastChargeDate)
-                                                                    .toISOString()
-                                                                    .slice(0, 16)
-                                                                : "", onChange: (e) => {
-                                                                setFieldTouched("lastChargeDate", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("lastChargeDate", v ? new Date(v).toISOString() : "");
-                                                            }, className: errors.lastChargeDate
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "lastChargeDate", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "quotaAgents", className: "nice-form-control", children: [_jsxs("b", { children: ["Quota Agents:", touched.quotaAgents && !errors.quotaAgents && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "quotaAgents", type: "number", value: values.quotaAgents || "", onChange: (e) => {
-                                                                setFieldTouched("quotaAgents", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("quotaAgents", v === "" ? undefined : Number(v));
-                                                            }, className: errors.quotaAgents
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "quotaAgents", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "activeAgentCount", className: "nice-form-control", children: [_jsxs("b", { children: ["Active Agent Count:", touched.activeAgentCount &&
-                                                                    !errors.activeAgentCount && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "activeAgentCount", type: "number", value: values.activeAgentCount || "", onChange: (e) => {
-                                                                setFieldTouched("activeAgentCount", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("activeAgentCount", v === "" ? undefined : Number(v));
-                                                            }, className: errors.activeAgentCount
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "activeAgentCount", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "trashed", className: "nice-form-control", children: [_jsxs("b", { children: ["Trashed:", touched.trashed && !errors.trashed && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "trashed", name: "trashed", checked: values.trashed || false, onChange: (e) => {
-                                                                setFieldTouched("trashed", true);
-                                                                setFieldValue("trashed", e.target.checked);
-                                                            }, isInvalid: !!errors.trashed, className: errors.trashed ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "trashed", component: "span" })] }), _jsx("br", {}), _jsxs(CoolButton, { variant: isValid
-                                                        ? isSaving
-                                                            ? "disabled"
-                                                            : "success"
-                                                        : "warning", type: "submit", disabled: !isValid || isSaving, children: [isSaving && (_jsx("span", { style: { float: "left", minHeight: 0 }, children: _jsx(LoadingSpinner, { label: "", size: 18 }) })), _jsx(FaCheckCircle, { size: 28 }), " Create New AgentBilling"] }), (addAgentBillingResult.isError || errorMessage) && (_jsx(Alert, { variant: "danger", className: "mt-3", children: errorMessage ||
-                                                        JSON.stringify("data" in addAgentBillingResult.error
-                                                            ? addAgentBillingResult.error.data
-                                                            : addAgentBillingResult.error) })), (addAgentBillingResult.isSuccess || successMessage) && (_jsx(Alert, { variant: "success", className: "mt-3", children: successMessage || "Saved successfully." }))] })] }), _jsxs(Accordion.Item, { eventKey: "0", children: [_jsxs(Accordion.Header, { children: [_jsx(FaCogs, { size: 28 }), " \u00A0Server Messages"] }), _jsxs(Accordion.Body, { children: ["errors: ", JSON.stringify(errors), _jsx("br", {}), "addAgentBillingResult:", " ", JSON.stringify(addAgentBillingResult)] })] })] }) }));
-                } }), createdObjectId && (_jsx(PermissionDialog, { objectType: "com.valkyrlabs.model.AgentBilling", objectId: createdObjectId, isVisible: showPermissionDialog, onClose: handlePermissionDialogClose, onSave: handlePermissionsSave, currentUser: currentUser }))] }));
+      }
+      setSuccessMessage("Saved successfully.");
+    } catch (error) {
+      console.error("Failed to create AgentBilling:", error);
+      setErrorMessage("Failed to save. Please try again.");
+    }
+    setSubmitting(false);
+  };
+  return _jsxs("div", {
+    children: [
+      _jsx(Formik, {
+        validateOnBlur: true,
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: handleSubmit,
+        children: ({
+          isSubmitting,
+          isValid,
+          errors,
+          values,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => {
+          const isSaving = isSubmitting || addAgentBillingResult.isLoading;
+          return _jsx("form", {
+            onSubmit: handleSubmit,
+            className: "form",
+            children: _jsxs(Accordion, {
+              defaultActiveKey: "1",
+              children: [
+                _jsxs(Accordion.Item, {
+                  eventKey: "1",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaRegPlusSquare, { size: 28 }),
+                        " \u00A0 Add New AgentBilling",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        _jsxs("label", {
+                          htmlFor: "agentId",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Agent Id:",
+                                touched.agentId &&
+                                  !errors.agentId &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "agentId",
+                              value: values?.agentId,
+                              placeholder: "Agent Id",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "agentId",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "organizationId",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Organization Id:",
+                                touched.organizationId &&
+                                  !errors.organizationId &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "organizationId",
+                              value: values?.organizationId,
+                              placeholder: "Organization Id",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "organizationId",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "instantiationCost",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Instantiation Cost:",
+                                touched.instantiationCost &&
+                                  !errors.instantiationCost &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "instantiationCost",
+                              type: "number",
+                              step: "any",
+                              value: values.instantiationCost || "",
+                              onChange: (e) => {
+                                setFieldTouched("instantiationCost", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "instantiationCost",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.instantiationCost
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "instantiationCost",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "totalCharges",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Total Charges:",
+                                touched.totalCharges &&
+                                  !errors.totalCharges &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "totalCharges",
+                              type: "number",
+                              step: "any",
+                              value: values.totalCharges || "",
+                              onChange: (e) => {
+                                setFieldTouched("totalCharges", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "totalCharges",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.totalCharges
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "totalCharges",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "chargingModel",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Charging Model:",
+                                touched.chargingModel &&
+                                  !errors.chargingModel &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "chargingModel",
+                              value: values.chargingModel || "",
+                              className: errors.chargingModel
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("chargingModel", true);
+                                setFieldValue(
+                                  "chargingModel",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Charging Model",
+                                }),
+                                _jsx(ChargingModelLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "chargingModel",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "billingStatus",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Billing Status:",
+                                touched.billingStatus &&
+                                  !errors.billingStatus &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "billingStatus",
+                              value: values.billingStatus || "",
+                              className: errors.billingStatus
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("billingStatus", true);
+                                setFieldValue(
+                                  "billingStatus",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Billing Status",
+                                }),
+                                _jsx(BillingStatusLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "billingStatus",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "lastChargeDate",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Last Charge Date:",
+                                touched.lastChargeDate &&
+                                  !errors.lastChargeDate &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "lastChargeDate",
+                              type: "datetime-local",
+                              value: values.lastChargeDate
+                                ? new Date(values.lastChargeDate)
+                                    .toISOString()
+                                    .slice(0, 16)
+                                : "",
+                              onChange: (e) => {
+                                setFieldTouched("lastChargeDate", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "lastChargeDate",
+                                  v ? new Date(v).toISOString() : "",
+                                );
+                              },
+                              className: errors.lastChargeDate
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "lastChargeDate",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "quotaAgents",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Quota Agents:",
+                                touched.quotaAgents &&
+                                  !errors.quotaAgents &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "quotaAgents",
+                              type: "number",
+                              value: values.quotaAgents || "",
+                              onChange: (e) => {
+                                setFieldTouched("quotaAgents", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "quotaAgents",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.quotaAgents
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "quotaAgents",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "activeAgentCount",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Active Agent Count:",
+                                touched.activeAgentCount &&
+                                  !errors.activeAgentCount &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "activeAgentCount",
+                              type: "number",
+                              value: values.activeAgentCount || "",
+                              onChange: (e) => {
+                                setFieldTouched("activeAgentCount", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "activeAgentCount",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.activeAgentCount
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "activeAgentCount",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "trashed",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Trashed:",
+                                touched.trashed &&
+                                  !errors.trashed &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "trashed",
+                              name: "trashed",
+                              checked: values.trashed || false,
+                              onChange: (e) => {
+                                setFieldTouched("trashed", true);
+                                setFieldValue("trashed", e.target.checked);
+                              },
+                              isInvalid: !!errors.trashed,
+                              className: errors.trashed ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "trashed",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs(CoolButton, {
+                          variant: isValid
+                            ? isSaving
+                              ? "disabled"
+                              : "success"
+                            : "warning",
+                          type: "submit",
+                          disabled: !isValid || isSaving,
+                          children: [
+                            isSaving &&
+                              _jsx("span", {
+                                style: { float: "left", minHeight: 0 },
+                                children: _jsx(LoadingSpinner, {
+                                  label: "",
+                                  size: 18,
+                                }),
+                              }),
+                            _jsx(FaCheckCircle, { size: 28 }),
+                            " Create New AgentBilling",
+                          ],
+                        }),
+                        (addAgentBillingResult.isError || errorMessage) &&
+                          _jsx(Alert, {
+                            variant: "danger",
+                            className: "mt-3",
+                            children:
+                              errorMessage ||
+                              JSON.stringify(
+                                "data" in addAgentBillingResult.error
+                                  ? addAgentBillingResult.error.data
+                                  : addAgentBillingResult.error,
+                              ),
+                          }),
+                        (addAgentBillingResult.isSuccess || successMessage) &&
+                          _jsx(Alert, {
+                            variant: "success",
+                            className: "mt-3",
+                            children: successMessage || "Saved successfully.",
+                          }),
+                      ],
+                    }),
+                  ],
+                }),
+                _jsxs(Accordion.Item, {
+                  eventKey: "0",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaCogs, { size: 28 }),
+                        " \u00A0Server Messages",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        "errors: ",
+                        JSON.stringify(errors),
+                        _jsx("br", {}),
+                        "addAgentBillingResult:",
+                        " ",
+                        JSON.stringify(addAgentBillingResult),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          });
+        },
+      }),
+      createdObjectId &&
+        _jsx(PermissionDialog, {
+          objectType: "com.valkyrlabs.model.AgentBilling",
+          objectId: createdObjectId,
+          isVisible: showPermissionDialog,
+          onClose: handlePermissionDialogClose,
+          onSave: handlePermissionsSave,
+          currentUser: currentUser,
+        }),
+    ],
+  });
 };
 /*
 lowercase chargingmodellookup
@@ -222,7 +712,13 @@ camelcase chargingModelLookup
 kebabcase charging-model-lookup
 */
 const ChargingModelLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "PER_INSTANCE", label: "Per Instance" }), _jsx("option", { value: "USAGE_BASED", label: "Usage Based" }), _jsx("option", { value: "FLAT_RATE", label: "Flat Rate" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "PER_INSTANCE", label: "Per Instance" }),
+      _jsx("option", { value: "USAGE_BASED", label: "Usage Based" }),
+      _jsx("option", { value: "FLAT_RATE", label: "Flat Rate" }),
+    ],
+  });
 };
 /*
 lowercase billingstatuslookup
@@ -233,7 +729,13 @@ camelcase billingStatusLookup
 kebabcase billing-status-lookup
 */
 const BillingStatusLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "ACTIVE", label: "Active" }), _jsx("option", { value: "SUSPENDED", label: "Suspended" }), _jsx("option", { value: "ARCHIVED", label: "Archived" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "ACTIVE", label: "Active" }),
+      _jsx("option", { value: "SUSPENDED", label: "Suspended" }),
+      _jsx("option", { value: "ARCHIVED", label: "Archived" }),
+    ],
+  });
 };
 /* Export the generated form */
 export default AgentBillingForm;

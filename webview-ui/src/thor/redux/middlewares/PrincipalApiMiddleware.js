@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Principal
 */
-export const PrincipalMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const PrincipalMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Principal MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=PrincipalApiMiddleware.js.map

@@ -17,115 +17,129 @@ Template file: typescript-redux-query/modelService.mustache
 import { createApi } from "@reduxjs/toolkit/query/react";
 import customBaseQuery from "../customBaseQuery"; // Import the custom base query
 export const TwoFactorSecretService = createApi({
-    reducerPath: "TwoFactorSecret", // This should remain unique
-    baseQuery: customBaseQuery,
-    tagTypes: ["TwoFactorSecret"],
-    endpoints: (build) => ({
-        // 1) Paged Query Endpoint
-        // Standardized pagination: page (0-based), size (page size)
-        getTwoFactorSecretsPaged: build.query({
-            query: ({ page, size = 20, example }) => {
-                const q = [`page=${page}`, `size=${size}`];
-                if (example)
-                    q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
-                return `TwoFactorSecret?${q.join("&")}`;
-            },
-            providesTags: (result, error, { page }) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "TwoFactorSecret",
-                        id,
-                    })),
-                    { type: "TwoFactorSecret", id: `PAGE_${page}` },
-                ]
-                : [],
-        }),
-        // 2) Simple "get all" Query (optional)
-        getTwoFactorSecrets: build.query({
-            query: (arg) => {
-                if (arg && arg.example) {
-                    const ex = arg.example;
-                    return `TwoFactorSecret?example=${encodeURIComponent(JSON.stringify(ex))}`;
-                }
-                return `TwoFactorSecret`;
-            },
-            providesTags: (result) => result
-                ? [
-                    ...result.map(({ id }) => ({
-                        type: "TwoFactorSecret",
-                        id,
-                    })),
-                    { type: "TwoFactorSecret", id: "LIST" },
-                ]
-                : [{ type: "TwoFactorSecret", id: "LIST" }],
-        }),
-        // 3) Create
-        addTwoFactorSecret: build.mutation({
-            query: (body) => ({
-                url: `TwoFactorSecret`,
-                method: "POST",
-                body,
-            }),
-            invalidatesTags: [{ type: "TwoFactorSecret", id: "LIST" }],
-        }),
-        // 4) Get single by ID
-        getTwoFactorSecret: build.query({
-            query: (id) => `TwoFactorSecret/${id}`,
-            providesTags: (result, error, id) => [{ type: "TwoFactorSecret", id }],
-        }),
-        // 5) Update
-        updateTwoFactorSecret: build.mutation({
-            query: ({ id, ...patch }) => ({
-                url: `TwoFactorSecret/${id}`,
-                method: "PUT",
-                body: patch,
-            }),
-            async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
-                if (id) {
-                    const patchResult = dispatch(TwoFactorSecretService.util.updateQueryData("getTwoFactorSecret", id, (draft) => {
-                        Object.assign(draft, patch);
-                    }));
-                    try {
-                        await queryFulfilled;
-                    }
-                    catch {
-                        patchResult.undo();
-                    }
-                }
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "TwoFactorSecret", id },
-                { type: "TwoFactorSecret", id: "LIST" },
-            ],
-        }),
-        // 6) Delete
-        deleteTwoFactorSecret: build.mutation({
-            query(id) {
-                return {
-                    url: `TwoFactorSecret/${id}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, id) => [{ type: "TwoFactorSecret", id }],
-        }),
-        // 7) Cascade / soft-delete (marks trashed, cascades children)
-        deleteTwoFactorSecretCascade: build.mutation({
-            query({ id, cascade = true, trash = true }) {
-                const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
-                return {
-                    url: `TwoFactorSecret/${id}?${params}`,
-                    method: "DELETE",
-                };
-            },
-            invalidatesTags: (result, error, { id }) => [
-                { type: "TwoFactorSecret", id },
-                { type: "TwoFactorSecret", id: "LIST" },
-            ],
-        }),
+  reducerPath: "TwoFactorSecret", // This should remain unique
+  baseQuery: customBaseQuery,
+  tagTypes: ["TwoFactorSecret"],
+  endpoints: (build) => ({
+    // 1) Paged Query Endpoint
+    // Standardized pagination: page (0-based), size (page size)
+    getTwoFactorSecretsPaged: build.query({
+      query: ({ page, size = 20, example }) => {
+        const q = [`page=${page}`, `size=${size}`];
+        if (example)
+          q.push(`example=${encodeURIComponent(JSON.stringify(example))}`);
+        return `TwoFactorSecret?${q.join("&")}`;
+      },
+      providesTags: (result, error, { page }) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "TwoFactorSecret",
+                id,
+              })),
+              { type: "TwoFactorSecret", id: `PAGE_${page}` },
+            ]
+          : [],
     }),
+    // 2) Simple "get all" Query (optional)
+    getTwoFactorSecrets: build.query({
+      query: (arg) => {
+        if (arg && arg.example) {
+          const ex = arg.example;
+          return `TwoFactorSecret?example=${encodeURIComponent(JSON.stringify(ex))}`;
+        }
+        return `TwoFactorSecret`;
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({
+                type: "TwoFactorSecret",
+                id,
+              })),
+              { type: "TwoFactorSecret", id: "LIST" },
+            ]
+          : [{ type: "TwoFactorSecret", id: "LIST" }],
+    }),
+    // 3) Create
+    addTwoFactorSecret: build.mutation({
+      query: (body) => ({
+        url: `TwoFactorSecret`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [{ type: "TwoFactorSecret", id: "LIST" }],
+    }),
+    // 4) Get single by ID
+    getTwoFactorSecret: build.query({
+      query: (id) => `TwoFactorSecret/${id}`,
+      providesTags: (result, error, id) => [{ type: "TwoFactorSecret", id }],
+    }),
+    // 5) Update
+    updateTwoFactorSecret: build.mutation({
+      query: ({ id, ...patch }) => ({
+        url: `TwoFactorSecret/${id}`,
+        method: "PUT",
+        body: patch,
+      }),
+      async onQueryStarted({ id, ...patch }, { dispatch, queryFulfilled }) {
+        if (id) {
+          const patchResult = dispatch(
+            TwoFactorSecretService.util.updateQueryData(
+              "getTwoFactorSecret",
+              id,
+              (draft) => {
+                Object.assign(draft, patch);
+              },
+            ),
+          );
+          try {
+            await queryFulfilled;
+          } catch {
+            patchResult.undo();
+          }
+        }
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "TwoFactorSecret", id },
+        { type: "TwoFactorSecret", id: "LIST" },
+      ],
+    }),
+    // 6) Delete
+    deleteTwoFactorSecret: build.mutation({
+      query(id) {
+        return {
+          url: `TwoFactorSecret/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, id) => [{ type: "TwoFactorSecret", id }],
+    }),
+    // 7) Cascade / soft-delete (marks trashed, cascades children)
+    deleteTwoFactorSecretCascade: build.mutation({
+      query({ id, cascade = true, trash = true }) {
+        const params = [`cascade=${cascade}`, `trash=${trash}`].join("&");
+        return {
+          url: `TwoFactorSecret/${id}?${params}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "TwoFactorSecret", id },
+        { type: "TwoFactorSecret", id: "LIST" },
+      ],
+    }),
+  }),
 });
 // Notice we now also export `useLazyGetTwoFactorSecretsPagedQuery`
-export const { useGetTwoFactorSecretsPagedQuery, // immediate fetch
-useLazyGetTwoFactorSecretsPagedQuery, // lazy fetch
-useGetTwoFactorSecretQuery, useGetTwoFactorSecretsQuery, useAddTwoFactorSecretMutation, useUpdateTwoFactorSecretMutation, useDeleteTwoFactorSecretMutation, useDeleteTwoFactorSecretCascadeMutation, } = TwoFactorSecretService;
+export const {
+  useGetTwoFactorSecretsPagedQuery, // immediate fetch
+  useLazyGetTwoFactorSecretsPagedQuery, // lazy fetch
+  useGetTwoFactorSecretQuery,
+  useGetTwoFactorSecretsQuery,
+  useAddTwoFactorSecretMutation,
+  useUpdateTwoFactorSecretMutation,
+  useDeleteTwoFactorSecretMutation,
+  useDeleteTwoFactorSecretCascadeMutation,
+} = TwoFactorSecretService;
 //# sourceMappingURL=TwoFactorSecretService.js.map

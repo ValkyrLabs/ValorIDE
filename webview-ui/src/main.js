@@ -15,5 +15,10 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 const ReduxProvider = Provider;
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(_jsx(ReduxProvider, { store: store, children: _jsx(MemoryRouter, { children: _jsx(App, {}) }) }));
+root.render(
+  _jsx(ReduxProvider, {
+    store: store,
+    children: _jsx(MemoryRouter, { children: _jsx(App, {}) }),
+  }),
+);
 //# sourceMappingURL=main.js.map

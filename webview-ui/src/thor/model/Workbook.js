@@ -28,55 +28,53 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { FormatFromJSON, FormatToJSON, SheetFromJSON, SheetToJSON, } from "./";
+import { FormatFromJSON, FormatToJSON, SheetFromJSON, SheetToJSON } from "./";
 export function WorkbookFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: !exists(json, "name") ? undefined : json["name"],
-        sheets: !exists(json, "sheets")
-            ? undefined
-            : json["sheets"].map(SheetFromJSON),
-        formats: !exists(json, "formats")
-            ? undefined
-            : json["formats"].map(FormatFromJSON),
-        status: !exists(json, "status") ? undefined : json["status"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: !exists(json, "name") ? undefined : json["name"],
+    sheets: !exists(json, "sheets")
+      ? undefined
+      : json["sheets"].map(SheetFromJSON),
+    formats: !exists(json, "formats")
+      ? undefined
+      : json["formats"].map(FormatFromJSON),
+    status: !exists(json, "status") ? undefined : json["status"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function WorkbookToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        sheets: value.sheets === undefined
-            ? undefined
-            : value.sheets.map(SheetToJSON),
-        formats: value.formats === undefined
-            ? undefined
-            : value.formats.map(FormatToJSON),
-        status: value.status,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    sheets:
+      value.sheets === undefined ? undefined : value.sheets.map(SheetToJSON),
+    formats:
+      value.formats === undefined ? undefined : value.formats.map(FormatToJSON),
+    status: value.status,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -84,10 +82,10 @@ export function WorkbookToJSON(value) {
  */
 export var WorkbookStatusEnum;
 (function (WorkbookStatusEnum) {
-    WorkbookStatusEnum["WORKBOOKOPEN"] = "open";
-    WorkbookStatusEnum["WORKBOOKCLOSED"] = "closed";
-    WorkbookStatusEnum["WORKBOOKARCHIVED"] = "archived";
-    WorkbookStatusEnum["WORKBOOKERROR"] = "error";
-    WorkbookStatusEnum["WORKBOOKINVALID"] = "invalid";
+  WorkbookStatusEnum["WORKBOOKOPEN"] = "open";
+  WorkbookStatusEnum["WORKBOOKCLOSED"] = "closed";
+  WorkbookStatusEnum["WORKBOOKARCHIVED"] = "archived";
+  WorkbookStatusEnum["WORKBOOKERROR"] = "error";
+  WorkbookStatusEnum["WORKBOOKINVALID"] = "invalid";
 })(WorkbookStatusEnum || (WorkbookStatusEnum = {}));
 //# sourceMappingURL=Workbook.js.map

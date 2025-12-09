@@ -30,51 +30,51 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { SalesOrderFromJSON, SalesOrderToJSON } from "./";
 export function InvoiceFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        customerId: json["customerId"],
-        invoiceDate: new Date(json["invoiceDate"]),
-        dueDate: new Date(json["dueDate"]),
-        amount: json["amount"],
-        status: json["status"],
-        salesOrder: !exists(json, "salesOrder")
-            ? undefined
-            : SalesOrderFromJSON(json["salesOrder"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    customerId: json["customerId"],
+    invoiceDate: new Date(json["invoiceDate"]),
+    dueDate: new Date(json["dueDate"]),
+    amount: json["amount"],
+    status: json["status"],
+    salesOrder: !exists(json, "salesOrder")
+      ? undefined
+      : SalesOrderFromJSON(json["salesOrder"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function InvoiceToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        customerId: value.customerId,
-        invoiceDate: value.invoiceDate.toISOString(),
-        dueDate: value.dueDate.toISOString(),
-        amount: value.amount,
-        status: value.status,
-        salesOrder: SalesOrderToJSON(value.salesOrder),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    customerId: value.customerId,
+    invoiceDate: value.invoiceDate.toISOString(),
+    dueDate: value.dueDate.toISOString(),
+    amount: value.amount,
+    status: value.status,
+    salesOrder: SalesOrderToJSON(value.salesOrder),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -82,10 +82,10 @@ export function InvoiceToJSON(value) {
  */
 export var InvoiceStatusEnum;
 (function (InvoiceStatusEnum) {
-    InvoiceStatusEnum["DRAFT"] = "draft";
-    InvoiceStatusEnum["SENT"] = "sent";
-    InvoiceStatusEnum["PAID"] = "paid";
-    InvoiceStatusEnum["OVERDUE"] = "overdue";
-    InvoiceStatusEnum["CANCELED"] = "canceled";
+  InvoiceStatusEnum["DRAFT"] = "draft";
+  InvoiceStatusEnum["SENT"] = "sent";
+  InvoiceStatusEnum["PAID"] = "paid";
+  InvoiceStatusEnum["OVERDUE"] = "overdue";
+  InvoiceStatusEnum["CANCELED"] = "canceled";
 })(InvoiceStatusEnum || (InvoiceStatusEnum = {}));
 //# sourceMappingURL=Invoice.js.map

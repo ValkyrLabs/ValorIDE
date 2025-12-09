@@ -29,53 +29,55 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function FileMetadataFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        filename: json["filename"],
-        status: json["status"],
-        id: json["id"],
-        mimeType: !exists(json, "mimeType") ? undefined : json["mimeType"],
-        sizeBytes: !exists(json, "sizeBytes") ? undefined : json["sizeBytes"],
-        createdAt: !exists(json, "createdAt")
-            ? undefined
-            : new Date(json["createdAt"]),
-        updatedAt: !exists(json, "updatedAt")
-            ? undefined
-            : new Date(json["updatedAt"]),
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    filename: json["filename"],
+    status: json["status"],
+    id: json["id"],
+    mimeType: !exists(json, "mimeType") ? undefined : json["mimeType"],
+    sizeBytes: !exists(json, "sizeBytes") ? undefined : json["sizeBytes"],
+    createdAt: !exists(json, "createdAt")
+      ? undefined
+      : new Date(json["createdAt"]),
+    updatedAt: !exists(json, "updatedAt")
+      ? undefined
+      : new Date(json["updatedAt"]),
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function FileMetadataToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        filename: value.filename,
-        status: value.status,
-        mimeType: value.mimeType,
-        sizeBytes: value.sizeBytes,
-        createdAt: value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
-        updatedAt: value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    filename: value.filename,
+    status: value.status,
+    mimeType: value.mimeType,
+    sizeBytes: value.sizeBytes,
+    createdAt:
+      value.createdAt === undefined ? undefined : value.createdAt.toISOString(),
+    updatedAt:
+      value.updatedAt === undefined ? undefined : value.updatedAt.toISOString(),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -83,11 +85,11 @@ export function FileMetadataToJSON(value) {
  */
 export var FileMetadataStatusEnum;
 (function (FileMetadataStatusEnum) {
-    FileMetadataStatusEnum["UPLOADING"] = "uploading";
-    FileMetadataStatusEnum["SCANNING"] = "scanning";
-    FileMetadataStatusEnum["AVAILABLE"] = "available";
-    FileMetadataStatusEnum["BLOCKED"] = "blocked";
-    FileMetadataStatusEnum["DELETED"] = "deleted";
-    FileMetadataStatusEnum["FAILED"] = "failed";
+  FileMetadataStatusEnum["UPLOADING"] = "uploading";
+  FileMetadataStatusEnum["SCANNING"] = "scanning";
+  FileMetadataStatusEnum["AVAILABLE"] = "available";
+  FileMetadataStatusEnum["BLOCKED"] = "blocked";
+  FileMetadataStatusEnum["DELETED"] = "deleted";
+  FileMetadataStatusEnum["FAILED"] = "failed";
 })(FileMetadataStatusEnum || (FileMetadataStatusEnum = {}));
 //# sourceMappingURL=FileMetadata.js.map

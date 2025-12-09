@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: BlankRange
 */
-export const BlankRangeMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const BlankRangeMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("BlankRange MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=BlankRangeApiMiddleware.js.map

@@ -31,60 +31,60 @@ export const LIST_WORKFLOWSTATE_REQUEST = "LIST_WORKFLOWSTATE_REQUEST";
 export const LIST_WORKFLOWSTATE_SUCCESS = "LIST_WORKFLOWSTATE_SUCCESS";
 export const LIST_WORKFLOWSTATE_FAILURE = "LIST_WORKFLOWSTATE_FAILURE";
 export const addWorkflowStateRequest = () => ({
-    type: ADD_WORKFLOWSTATE_REQUEST,
+  type: ADD_WORKFLOWSTATE_REQUEST,
 });
 export const addWorkflowStateSuccess = (WorkflowStates) => ({
-    type: ADD_WORKFLOWSTATE_SUCCESS,
-    payload: WorkflowStates,
+  type: ADD_WORKFLOWSTATE_SUCCESS,
+  payload: WorkflowStates,
 });
 export const addWorkflowStateFailure = (error) => ({
-    type: ADD_WORKFLOWSTATE_FAILURE,
-    payload: error,
+  type: ADD_WORKFLOWSTATE_FAILURE,
+  payload: error,
 });
 export const fetchWorkflowStateRequest = () => ({
-    type: FETCH_WORKFLOWSTATE_REQUEST,
+  type: FETCH_WORKFLOWSTATE_REQUEST,
 });
 export const fetchWorkflowStateSuccess = (WorkflowStates) => ({
-    type: FETCH_WORKFLOWSTATE_SUCCESS,
-    payload: WorkflowStates,
+  type: FETCH_WORKFLOWSTATE_SUCCESS,
+  payload: WorkflowStates,
 });
 export const fetchWorkflowStateFailure = (error) => ({
-    type: FETCH_WORKFLOWSTATE_FAILURE,
-    payload: error,
+  type: FETCH_WORKFLOWSTATE_FAILURE,
+  payload: error,
 });
 export const listWorkflowStateRequest = () => ({
-    type: LIST_WORKFLOWSTATE_REQUEST,
+  type: LIST_WORKFLOWSTATE_REQUEST,
 });
 export const listWorkflowStateSuccess = (WorkflowStates) => ({
-    type: LIST_WORKFLOWSTATE_SUCCESS,
-    payload: WorkflowStates,
+  type: LIST_WORKFLOWSTATE_SUCCESS,
+  payload: WorkflowStates,
 });
 export const listWorkflowStateFailure = (error) => ({
-    type: LIST_WORKFLOWSTATE_FAILURE,
-    payload: error,
+  type: LIST_WORKFLOWSTATE_FAILURE,
+  payload: error,
 });
 export const updateWorkflowStateRequest = (WorkflowState) => ({
-    type: UPDATE_WORKFLOWSTATE_REQUEST,
-    payload: WorkflowState,
+  type: UPDATE_WORKFLOWSTATE_REQUEST,
+  payload: WorkflowState,
 });
 export const updateWorkflowStateSuccess = (WorkflowState) => ({
-    type: UPDATE_WORKFLOWSTATE_SUCCESS,
-    payload: WorkflowState,
+  type: UPDATE_WORKFLOWSTATE_SUCCESS,
+  payload: WorkflowState,
 });
 export const updateWorkflowStateFailure = (error) => ({
-    type: UPDATE_WORKFLOWSTATE_FAILURE,
-    payload: error,
+  type: UPDATE_WORKFLOWSTATE_FAILURE,
+  payload: error,
 });
 export const deleteWorkflowStateRequest = (WorkflowState) => ({
-    type: DELETE_WORKFLOWSTATE_REQUEST,
-    payload: WorkflowState,
+  type: DELETE_WORKFLOWSTATE_REQUEST,
+  payload: WorkflowState,
 });
 export const deleteWorkflowStateSuccess = (WorkflowState) => ({
-    type: DELETE_WORKFLOWSTATE_SUCCESS,
-    payload: WorkflowState,
+  type: DELETE_WORKFLOWSTATE_SUCCESS,
+  payload: WorkflowState,
 });
 export const deleteWorkflowStateFailure = (error) => ({
-    type: DELETE_WORKFLOWSTATE_FAILURE,
-    payload: error,
+  type: DELETE_WORKFLOWSTATE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=WorkflowStateApiAction.js.map

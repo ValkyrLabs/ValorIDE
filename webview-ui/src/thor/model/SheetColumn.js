@@ -30,54 +30,50 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { CellFromJSON, CellToJSON } from "./";
 export function SheetColumnFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
-        colIndex: !exists(json, "colIndex") ? undefined : json["colIndex"],
-        hidden: !exists(json, "hidden") ? undefined : json["hidden"],
-        collapsed: !exists(json, "collapsed") ? undefined : json["collapsed"],
-        outlineLevel: !exists(json, "outlineLevel")
-            ? undefined
-            : json["outlineLevel"],
-        cells: !exists(json, "cells")
-            ? undefined
-            : json["cells"].map(CellFromJSON),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
+    colIndex: !exists(json, "colIndex") ? undefined : json["colIndex"],
+    hidden: !exists(json, "hidden") ? undefined : json["hidden"],
+    collapsed: !exists(json, "collapsed") ? undefined : json["collapsed"],
+    outlineLevel: !exists(json, "outlineLevel")
+      ? undefined
+      : json["outlineLevel"],
+    cells: !exists(json, "cells") ? undefined : json["cells"].map(CellFromJSON),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function SheetColumnToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        sheetId: value.sheetId,
-        colIndex: value.colIndex,
-        hidden: value.hidden,
-        collapsed: value.collapsed,
-        outlineLevel: value.outlineLevel,
-        cells: value.cells === undefined
-            ? undefined
-            : value.cells.map(CellToJSON),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    sheetId: value.sheetId,
+    colIndex: value.colIndex,
+    hidden: value.hidden,
+    collapsed: value.collapsed,
+    outlineLevel: value.outlineLevel,
+    cells: value.cells === undefined ? undefined : value.cells.map(CellToJSON),
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=SheetColumn.js.map

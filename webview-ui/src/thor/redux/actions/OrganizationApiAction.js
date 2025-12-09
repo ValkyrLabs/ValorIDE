@@ -31,60 +31,60 @@ export const LIST_ORGANIZATION_REQUEST = "LIST_ORGANIZATION_REQUEST";
 export const LIST_ORGANIZATION_SUCCESS = "LIST_ORGANIZATION_SUCCESS";
 export const LIST_ORGANIZATION_FAILURE = "LIST_ORGANIZATION_FAILURE";
 export const addOrganizationRequest = () => ({
-    type: ADD_ORGANIZATION_REQUEST,
+  type: ADD_ORGANIZATION_REQUEST,
 });
 export const addOrganizationSuccess = (Organizations) => ({
-    type: ADD_ORGANIZATION_SUCCESS,
-    payload: Organizations,
+  type: ADD_ORGANIZATION_SUCCESS,
+  payload: Organizations,
 });
 export const addOrganizationFailure = (error) => ({
-    type: ADD_ORGANIZATION_FAILURE,
-    payload: error,
+  type: ADD_ORGANIZATION_FAILURE,
+  payload: error,
 });
 export const fetchOrganizationRequest = () => ({
-    type: FETCH_ORGANIZATION_REQUEST,
+  type: FETCH_ORGANIZATION_REQUEST,
 });
 export const fetchOrganizationSuccess = (Organizations) => ({
-    type: FETCH_ORGANIZATION_SUCCESS,
-    payload: Organizations,
+  type: FETCH_ORGANIZATION_SUCCESS,
+  payload: Organizations,
 });
 export const fetchOrganizationFailure = (error) => ({
-    type: FETCH_ORGANIZATION_FAILURE,
-    payload: error,
+  type: FETCH_ORGANIZATION_FAILURE,
+  payload: error,
 });
 export const listOrganizationRequest = () => ({
-    type: LIST_ORGANIZATION_REQUEST,
+  type: LIST_ORGANIZATION_REQUEST,
 });
 export const listOrganizationSuccess = (Organizations) => ({
-    type: LIST_ORGANIZATION_SUCCESS,
-    payload: Organizations,
+  type: LIST_ORGANIZATION_SUCCESS,
+  payload: Organizations,
 });
 export const listOrganizationFailure = (error) => ({
-    type: LIST_ORGANIZATION_FAILURE,
-    payload: error,
+  type: LIST_ORGANIZATION_FAILURE,
+  payload: error,
 });
 export const updateOrganizationRequest = (Organization) => ({
-    type: UPDATE_ORGANIZATION_REQUEST,
-    payload: Organization,
+  type: UPDATE_ORGANIZATION_REQUEST,
+  payload: Organization,
 });
 export const updateOrganizationSuccess = (Organization) => ({
-    type: UPDATE_ORGANIZATION_SUCCESS,
-    payload: Organization,
+  type: UPDATE_ORGANIZATION_SUCCESS,
+  payload: Organization,
 });
 export const updateOrganizationFailure = (error) => ({
-    type: UPDATE_ORGANIZATION_FAILURE,
-    payload: error,
+  type: UPDATE_ORGANIZATION_FAILURE,
+  payload: error,
 });
 export const deleteOrganizationRequest = (Organization) => ({
-    type: DELETE_ORGANIZATION_REQUEST,
-    payload: Organization,
+  type: DELETE_ORGANIZATION_REQUEST,
+  payload: Organization,
 });
 export const deleteOrganizationSuccess = (Organization) => ({
-    type: DELETE_ORGANIZATION_SUCCESS,
-    payload: Organization,
+  type: DELETE_ORGANIZATION_SUCCESS,
+  payload: Organization,
 });
 export const deleteOrganizationFailure = (error) => ({
-    type: DELETE_ORGANIZATION_FAILURE,
-    payload: error,
+  type: DELETE_ORGANIZATION_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=OrganizationApiAction.js.map

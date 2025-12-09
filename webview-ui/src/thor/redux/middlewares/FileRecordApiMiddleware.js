@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: FileRecord
 */
-export const FileRecordMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const FileRecordMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("FileRecord MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=FileRecordApiMiddleware.js.map

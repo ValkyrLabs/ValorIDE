@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: FileAuditLog
 */
-export const FileAuditLogMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const FileAuditLogMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("FileAuditLog MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=FileAuditLogApiMiddleware.js.map

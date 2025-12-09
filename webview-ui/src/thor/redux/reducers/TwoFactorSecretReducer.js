@@ -16,29 +16,39 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const TwoFactorSecretSlice = createSlice({
-    name: "TwoFactorSecrets",
-    initialState: [],
-    reducers: {
-        TwoFactorSecretAdded(state, action) {
-            state.push(action.payload);
-        },
-        TwoFactorSecretValueToggled(state, action) {
-            console.log("TwoFactorSecret TOGGLE");
-            console.warn(JSON.stringify(action));
-            const TwoFactorSecret = state.find((TwoFactorSecret) => TwoFactorSecret.id === action.payload.TwoFactorSecretId);
-            if (TwoFactorSecret) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        TwoFactorSecretpropertySet(state, action) {
-            const TwoFactorSecret = state.find((TwoFactorSecret) => TwoFactorSecret.id === action.payload.TwoFactorSecretId);
-            if (TwoFactorSecret) {
-                //  TwoFactorSecret[action.property] = action.payload[action.property];
-            }
-        },
+  name: "TwoFactorSecrets",
+  initialState: [],
+  reducers: {
+    TwoFactorSecretAdded(state, action) {
+      state.push(action.payload);
     },
+    TwoFactorSecretValueToggled(state, action) {
+      console.log("TwoFactorSecret TOGGLE");
+      console.warn(JSON.stringify(action));
+      const TwoFactorSecret = state.find(
+        (TwoFactorSecret) =>
+          TwoFactorSecret.id === action.payload.TwoFactorSecretId,
+      );
+      if (TwoFactorSecret) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    TwoFactorSecretpropertySet(state, action) {
+      const TwoFactorSecret = state.find(
+        (TwoFactorSecret) =>
+          TwoFactorSecret.id === action.payload.TwoFactorSecretId,
+      );
+      if (TwoFactorSecret) {
+        //  TwoFactorSecret[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { TwoFactorSecretAdded, TwoFactorSecretValueToggled, TwoFactorSecretpropertySet, } = TwoFactorSecretSlice.actions;
+export const {
+  TwoFactorSecretAdded,
+  TwoFactorSecretValueToggled,
+  TwoFactorSecretpropertySet,
+} = TwoFactorSecretSlice.actions;
 export default TwoFactorSecretSlice.reducer;
 //# sourceMappingURL=TwoFactorSecretReducer.js.map

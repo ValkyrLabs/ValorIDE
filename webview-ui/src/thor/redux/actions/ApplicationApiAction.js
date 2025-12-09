@@ -31,60 +31,60 @@ export const LIST_APPLICATION_REQUEST = "LIST_APPLICATION_REQUEST";
 export const LIST_APPLICATION_SUCCESS = "LIST_APPLICATION_SUCCESS";
 export const LIST_APPLICATION_FAILURE = "LIST_APPLICATION_FAILURE";
 export const addApplicationRequest = () => ({
-    type: ADD_APPLICATION_REQUEST,
+  type: ADD_APPLICATION_REQUEST,
 });
 export const addApplicationSuccess = (Applications) => ({
-    type: ADD_APPLICATION_SUCCESS,
-    payload: Applications,
+  type: ADD_APPLICATION_SUCCESS,
+  payload: Applications,
 });
 export const addApplicationFailure = (error) => ({
-    type: ADD_APPLICATION_FAILURE,
-    payload: error,
+  type: ADD_APPLICATION_FAILURE,
+  payload: error,
 });
 export const fetchApplicationRequest = () => ({
-    type: FETCH_APPLICATION_REQUEST,
+  type: FETCH_APPLICATION_REQUEST,
 });
 export const fetchApplicationSuccess = (Applications) => ({
-    type: FETCH_APPLICATION_SUCCESS,
-    payload: Applications,
+  type: FETCH_APPLICATION_SUCCESS,
+  payload: Applications,
 });
 export const fetchApplicationFailure = (error) => ({
-    type: FETCH_APPLICATION_FAILURE,
-    payload: error,
+  type: FETCH_APPLICATION_FAILURE,
+  payload: error,
 });
 export const listApplicationRequest = () => ({
-    type: LIST_APPLICATION_REQUEST,
+  type: LIST_APPLICATION_REQUEST,
 });
 export const listApplicationSuccess = (Applications) => ({
-    type: LIST_APPLICATION_SUCCESS,
-    payload: Applications,
+  type: LIST_APPLICATION_SUCCESS,
+  payload: Applications,
 });
 export const listApplicationFailure = (error) => ({
-    type: LIST_APPLICATION_FAILURE,
-    payload: error,
+  type: LIST_APPLICATION_FAILURE,
+  payload: error,
 });
 export const updateApplicationRequest = (Application) => ({
-    type: UPDATE_APPLICATION_REQUEST,
-    payload: Application,
+  type: UPDATE_APPLICATION_REQUEST,
+  payload: Application,
 });
 export const updateApplicationSuccess = (Application) => ({
-    type: UPDATE_APPLICATION_SUCCESS,
-    payload: Application,
+  type: UPDATE_APPLICATION_SUCCESS,
+  payload: Application,
 });
 export const updateApplicationFailure = (error) => ({
-    type: UPDATE_APPLICATION_FAILURE,
-    payload: error,
+  type: UPDATE_APPLICATION_FAILURE,
+  payload: error,
 });
 export const deleteApplicationRequest = (Application) => ({
-    type: DELETE_APPLICATION_REQUEST,
-    payload: Application,
+  type: DELETE_APPLICATION_REQUEST,
+  payload: Application,
 });
 export const deleteApplicationSuccess = (Application) => ({
-    type: DELETE_APPLICATION_SUCCESS,
-    payload: Application,
+  type: DELETE_APPLICATION_SUCCESS,
+  payload: Application,
 });
 export const deleteApplicationFailure = (error) => ({
-    type: DELETE_APPLICATION_FAILURE,
-    payload: error,
+  type: DELETE_APPLICATION_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=ApplicationApiAction.js.map

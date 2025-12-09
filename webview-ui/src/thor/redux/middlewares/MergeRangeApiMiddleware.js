@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: MergeRange
 */
-export const MergeRangeMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const MergeRangeMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("MergeRange MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=MergeRangeApiMiddleware.js.map

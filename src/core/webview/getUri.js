@@ -11,6 +11,6 @@ import { Uri } from "vscode";
  * @returns A URI pointing to the file/resource
  */
 export function getUri(webview, extensionUri, pathList) {
-    return webview.asWebviewUri(Uri.joinPath(extensionUri, ...pathList));
+  return webview.asWebviewUri(Uri.joinPath(extensionUri, ...pathList));
 }
 //# sourceMappingURL=getUri.js.map

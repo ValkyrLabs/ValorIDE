@@ -29,47 +29,47 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function SalesActivityFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        opportunityId: json["opportunityId"],
-        type: json["type"],
-        activityDate: new Date(json["activityDate"]),
-        performedBy: json["performedBy"],
-        details: !exists(json, "details") ? undefined : json["details"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    opportunityId: json["opportunityId"],
+    type: json["type"],
+    activityDate: new Date(json["activityDate"]),
+    performedBy: json["performedBy"],
+    details: !exists(json, "details") ? undefined : json["details"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function SalesActivityToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        opportunityId: value.opportunityId,
-        type: value.type,
-        activityDate: value.activityDate.toISOString(),
-        performedBy: value.performedBy,
-        details: value.details,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    opportunityId: value.opportunityId,
+    type: value.type,
+    activityDate: value.activityDate.toISOString(),
+    performedBy: value.performedBy,
+    details: value.details,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -77,9 +77,9 @@ export function SalesActivityToJSON(value) {
  */
 export var SalesActivityTypeEnum;
 (function (SalesActivityTypeEnum) {
-    SalesActivityTypeEnum["CALL"] = "call";
-    SalesActivityTypeEnum["MEETING"] = "meeting";
-    SalesActivityTypeEnum["EMAIL"] = "email";
-    SalesActivityTypeEnum["FOLLOWUP"] = "follow-up";
+  SalesActivityTypeEnum["CALL"] = "call";
+  SalesActivityTypeEnum["MEETING"] = "meeting";
+  SalesActivityTypeEnum["EMAIL"] = "email";
+  SalesActivityTypeEnum["FOLLOWUP"] = "follow-up";
 })(SalesActivityTypeEnum || (SalesActivityTypeEnum = {}));
 //# sourceMappingURL=SalesActivity.js.map

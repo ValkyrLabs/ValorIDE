@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: ChatCompletionResponse
 */
-export const ChatCompletionResponseMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const ChatCompletionResponseMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("ChatCompletionResponse MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=ChatCompletionResponseApiMiddleware.js.map

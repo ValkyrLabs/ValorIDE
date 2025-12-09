@@ -29,99 +29,104 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function RunFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        executionId: !exists(json, "executionId") ? undefined : json["executionId"],
-        taskId: !exists(json, "taskId") ? undefined : json["taskId"],
-        execModuleId: !exists(json, "execModuleId")
-            ? undefined
-            : json["execModuleId"],
-        attempt: !exists(json, "attempt") ? undefined : json["attempt"],
-        state: !exists(json, "state") ? undefined : json["state"],
-        leaseUntil: !exists(json, "leaseUntil")
-            ? undefined
-            : new Date(json["leaseUntil"]),
-        leasedBy: !exists(json, "leasedBy") ? undefined : json["leasedBy"],
-        runnerId: !exists(json, "runnerId") ? undefined : json["runnerId"],
-        idempotencyKey: !exists(json, "idempotencyKey")
-            ? undefined
-            : json["idempotencyKey"],
-        inputsHash: !exists(json, "inputsHash") ? undefined : json["inputsHash"],
-        configHash: !exists(json, "configHash") ? undefined : json["configHash"],
-        startedAt: !exists(json, "startedAt")
-            ? undefined
-            : new Date(json["startedAt"]),
-        finishedAt: !exists(json, "finishedAt")
-            ? undefined
-            : new Date(json["finishedAt"]),
-        heartbeatAt: !exists(json, "heartbeatAt")
-            ? undefined
-            : new Date(json["heartbeatAt"]),
-        outputs: !exists(json, "outputs") ? undefined : json["outputs"],
-        error: !exists(json, "error") ? undefined : json["error"],
-        errorType: !exists(json, "errorType") ? undefined : json["errorType"],
-        retryReadyAt: !exists(json, "retryReadyAt")
-            ? undefined
-            : new Date(json["retryReadyAt"]),
-        durationMs: !exists(json, "durationMs") ? undefined : json["durationMs"],
-        costTokens: !exists(json, "costTokens") ? undefined : json["costTokens"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    executionId: !exists(json, "executionId") ? undefined : json["executionId"],
+    taskId: !exists(json, "taskId") ? undefined : json["taskId"],
+    execModuleId: !exists(json, "execModuleId")
+      ? undefined
+      : json["execModuleId"],
+    attempt: !exists(json, "attempt") ? undefined : json["attempt"],
+    state: !exists(json, "state") ? undefined : json["state"],
+    leaseUntil: !exists(json, "leaseUntil")
+      ? undefined
+      : new Date(json["leaseUntil"]),
+    leasedBy: !exists(json, "leasedBy") ? undefined : json["leasedBy"],
+    runnerId: !exists(json, "runnerId") ? undefined : json["runnerId"],
+    idempotencyKey: !exists(json, "idempotencyKey")
+      ? undefined
+      : json["idempotencyKey"],
+    inputsHash: !exists(json, "inputsHash") ? undefined : json["inputsHash"],
+    configHash: !exists(json, "configHash") ? undefined : json["configHash"],
+    startedAt: !exists(json, "startedAt")
+      ? undefined
+      : new Date(json["startedAt"]),
+    finishedAt: !exists(json, "finishedAt")
+      ? undefined
+      : new Date(json["finishedAt"]),
+    heartbeatAt: !exists(json, "heartbeatAt")
+      ? undefined
+      : new Date(json["heartbeatAt"]),
+    outputs: !exists(json, "outputs") ? undefined : json["outputs"],
+    error: !exists(json, "error") ? undefined : json["error"],
+    errorType: !exists(json, "errorType") ? undefined : json["errorType"],
+    retryReadyAt: !exists(json, "retryReadyAt")
+      ? undefined
+      : new Date(json["retryReadyAt"]),
+    durationMs: !exists(json, "durationMs") ? undefined : json["durationMs"],
+    costTokens: !exists(json, "costTokens") ? undefined : json["costTokens"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function RunToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        executionId: value.executionId,
-        taskId: value.taskId,
-        execModuleId: value.execModuleId,
-        attempt: value.attempt,
-        state: value.state,
-        leaseUntil: value.leaseUntil === undefined
-            ? undefined
-            : value.leaseUntil.toISOString(),
-        leasedBy: value.leasedBy,
-        runnerId: value.runnerId,
-        idempotencyKey: value.idempotencyKey,
-        inputsHash: value.inputsHash,
-        configHash: value.configHash,
-        startedAt: value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
-        finishedAt: value.finishedAt === undefined
-            ? undefined
-            : value.finishedAt.toISOString(),
-        heartbeatAt: value.heartbeatAt === undefined
-            ? undefined
-            : value.heartbeatAt.toISOString(),
-        outputs: value.outputs,
-        error: value.error,
-        errorType: value.errorType,
-        retryReadyAt: value.retryReadyAt === undefined
-            ? undefined
-            : value.retryReadyAt.toISOString(),
-        durationMs: value.durationMs,
-        costTokens: value.costTokens,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    executionId: value.executionId,
+    taskId: value.taskId,
+    execModuleId: value.execModuleId,
+    attempt: value.attempt,
+    state: value.state,
+    leaseUntil:
+      value.leaseUntil === undefined
+        ? undefined
+        : value.leaseUntil.toISOString(),
+    leasedBy: value.leasedBy,
+    runnerId: value.runnerId,
+    idempotencyKey: value.idempotencyKey,
+    inputsHash: value.inputsHash,
+    configHash: value.configHash,
+    startedAt:
+      value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
+    finishedAt:
+      value.finishedAt === undefined
+        ? undefined
+        : value.finishedAt.toISOString(),
+    heartbeatAt:
+      value.heartbeatAt === undefined
+        ? undefined
+        : value.heartbeatAt.toISOString(),
+    outputs: value.outputs,
+    error: value.error,
+    errorType: value.errorType,
+    retryReadyAt:
+      value.retryReadyAt === undefined
+        ? undefined
+        : value.retryReadyAt.toISOString(),
+    durationMs: value.durationMs,
+    costTokens: value.costTokens,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -129,13 +134,13 @@ export function RunToJSON(value) {
  */
 export var RunStateEnum;
 (function (RunStateEnum) {
-    RunStateEnum["PENDING"] = "pending";
-    RunStateEnum["LEASED"] = "leased";
-    RunStateEnum["RUNNING"] = "running";
-    RunStateEnum["SUCCESS"] = "success";
-    RunStateEnum["FAILED"] = "failed";
-    RunStateEnum["DLQ"] = "dlq";
-    RunStateEnum["CANCELLED"] = "cancelled";
+  RunStateEnum["PENDING"] = "pending";
+  RunStateEnum["LEASED"] = "leased";
+  RunStateEnum["RUNNING"] = "running";
+  RunStateEnum["SUCCESS"] = "success";
+  RunStateEnum["FAILED"] = "failed";
+  RunStateEnum["DLQ"] = "dlq";
+  RunStateEnum["CANCELLED"] = "cancelled";
 })(RunStateEnum || (RunStateEnum = {}));
 /**
  * @export
@@ -143,9 +148,9 @@ export var RunStateEnum;
  */
 export var RunErrorTypeEnum;
 (function (RunErrorTypeEnum) {
-    RunErrorTypeEnum["TRANSIENT"] = "transient";
-    RunErrorTypeEnum["PERMANENT"] = "permanent";
-    RunErrorTypeEnum["TIMEOUT"] = "timeout";
-    RunErrorTypeEnum["CIRCUITOPEN"] = "circuit_open";
+  RunErrorTypeEnum["TRANSIENT"] = "transient";
+  RunErrorTypeEnum["PERMANENT"] = "permanent";
+  RunErrorTypeEnum["TIMEOUT"] = "timeout";
+  RunErrorTypeEnum["CIRCUITOPEN"] = "circuit_open";
 })(RunErrorTypeEnum || (RunErrorTypeEnum = {}));
 //# sourceMappingURL=Run.js.map

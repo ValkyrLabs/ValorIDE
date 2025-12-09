@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Organization
 */
-export const OrganizationMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const OrganizationMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Organization MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=OrganizationApiMiddleware.js.map

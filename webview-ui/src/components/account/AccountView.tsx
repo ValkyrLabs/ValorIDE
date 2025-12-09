@@ -117,9 +117,10 @@ const AccountView = ({ onDone }: AccountViewProps) => {
   const {
     data: balanceData,
     isLoading: isBalanceLoading,
+    isFetching: isBalanceFetching,
     refetch: refetchBalance,
   } = useGetAccountBalanceQuery(accountId, {
-    skip: !authed || !accountId,
+    skip: !accountId,
   });
 
   const {
@@ -140,7 +141,11 @@ const AccountView = ({ onDone }: AccountViewProps) => {
   });
 
   // Combined loading state
-  const loading = isBalanceLoading || isUsageLoading || isPaymentsLoading;
+  const loading =
+    isBalanceLoading ||
+    isBalanceFetching ||
+    isUsageLoading ||
+    isPaymentsLoading;
 
   const [loginUser] = useLoginUserMutation();
   const [addUsageTransaction] = useAddUsageTransactionMutation();
@@ -487,8 +492,9 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                     <VSCodeButton
                       appearance="icon"
                       className="mt-1"
-                      onClick={() => {
-                        refetchBalance();
+                      disabled={!accountId}
+                      onClick={async () => {
+                        await refetchBalance();
                         if (authed) {
                           refetchUsage();
                           refetchPayments();
@@ -506,8 +512,8 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                   authenticatedPrincipal={
                     resolvedPrincipal || authenticatedUser || userInfo
                   }
-                  onPurchaseSuccess={() => {
-                    refetchBalance();
+                  onPurchaseSuccess={async () => {
+                    await refetchBalance();
                     refetchUsage();
                     refetchPayments();
                   }}

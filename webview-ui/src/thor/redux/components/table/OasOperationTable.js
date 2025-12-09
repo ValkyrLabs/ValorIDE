@@ -1,4 +1,8 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import {
+  jsx as _jsx,
+  jsxs as _jsxs,
+  Fragment as _Fragment,
+} from "react/jsx-runtime";
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -19,13 +23,30 @@ import React, { useState, useEffect, useRef } from "react";
 import { Form as BSForm, ButtonGroup, Modal } from "react-bootstrap";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { BASE_PATH } from "@thor/src";
-import { FaFilter, FaSync, FaChevronRight, FaChevronLeft, FaChevronDown, FaPlus, FaTrash, FaCopy, FaPaste, FaUserShield, } from "react-icons/fa";
+import {
+  FaFilter,
+  FaSync,
+  FaChevronRight,
+  FaChevronLeft,
+  FaChevronDown,
+  FaPlus,
+  FaTrash,
+  FaCopy,
+  FaPaste,
+  FaUserShield,
+} from "react-icons/fa";
 const ICON_SIZE = 22;
 import OasOperationForm from "@thor/redux/components/form/OasOperationForm";
 import CoolButton from "@valkyr/component-library/CoolButton";
 // Removed SplitPane usage; using floating toolbar for edit form
 // ** Import the LAZY paged hook only **
-import { useLazyGetOasOperationsPagedQuery, useAddOasOperationMutation, useUpdateOasOperationMutation, useDeleteOasOperationMutation, useDeleteOasOperationCascadeMutation, } from "@thor/redux/services/OasOperationService";
+import {
+  useLazyGetOasOperationsPagedQuery,
+  useAddOasOperationMutation,
+  useUpdateOasOperationMutation,
+  useDeleteOasOperationMutation,
+  useDeleteOasOperationCascadeMutation,
+} from "@thor/redux/services/OasOperationService";
 import { RBGrid } from "@valkyr/component-library/BootstrapGrid";
 import QBEPicker from "@valkyr/component-library/QBEPicker";
 import MarkdownEditorModal from "@valkyr/component-library/MarkdownEditorModal";
@@ -33,812 +54,1077 @@ import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
 import FloatingControlPanel from "@valkyr/component-library/OpenAPIViz/FloatingControlPanel";
 // Fields to hide by default
 const fieldSkipList = [
-    "keyHash",
-    "workflowStateId",
-    "createdDate",
-    "lastAccessedById",
-    "lastAccessedDate",
-    "lastModifiedDate",
-    "lastModifiedById",
-    "trashed",
+  "keyHash",
+  "workflowStateId",
+  "createdDate",
+  "lastAccessedById",
+  "lastAccessedDate",
+  "lastModifiedDate",
+  "lastModifiedById",
+  "trashed",
 ];
 // Column schema hard-coded from model metadata (enums, dates, booleans)
 const columnSchema = {
-    createdDate: { type: "datetime" },
-    lastAccessedDate: { type: "datetime" },
-    lastModifiedDate: { type: "datetime" },
-    trashed: { type: "boolean" },
+  createdDate: { type: "datetime" },
+  lastAccessedDate: { type: "datetime" },
+  lastModifiedDate: { type: "datetime" },
+  trashed: { type: "boolean" },
 };
 const stringFieldCandidates = [
-    "description",
-    "oasPathId",
-    "summary",
-    "operationId",
-    "id",
-    "ownerId",
-    "keyHash",
-    "lastAccessedById",
-    "lastModifiedById",
+  "description",
+  "oasPathId",
+  "summary",
+  "operationId",
+  "id",
+  "ownerId",
+  "keyHash",
+  "lastAccessedById",
+  "lastModifiedById",
 ];
 const computeRefType = (field) => {
-    if (!field)
-        return null;
-    if (/^id$/i.test(field))
-        return null;
-    // Handle fields ending in 'Id' (including compound names like apiKeyIntegrationAccountId)
-    if (/id$/i.test(field)) {
-        const base = field.replace(/id$/i, "");
-        // Only treat as FK if base is at least 2 chars (avoid "sid" → "S", "bid" → "B", etc)
-        if (!base || base.length < 2)
-            return null;
-        // Convert camelCase to PascalCase
-        // For "apiKeyIntegrationAccount" → "ApiKeyIntegrationAccount"
-        // For "integrationAccount" → "IntegrationAccount"
-        // For "user" → "User"
-        return base.charAt(0).toUpperCase() + base.slice(1);
-    }
-    if (/uuid$/i.test(field)) {
-        const base = field.replace(/uuid$/i, "");
-        // Same 2-char minimum for uuid suffix
-        if (!base || base.length < 2)
-            return null;
-        return base.charAt(0).toUpperCase() + base.slice(1);
-    }
-    return null;
+  if (!field) return null;
+  if (/^id$/i.test(field)) return null;
+  // Handle fields ending in 'Id' (including compound names like apiKeyIntegrationAccountId)
+  if (/id$/i.test(field)) {
+    const base = field.replace(/id$/i, "");
+    // Only treat as FK if base is at least 2 chars (avoid "sid" → "S", "bid" → "B", etc)
+    if (!base || base.length < 2) return null;
+    // Convert camelCase to PascalCase
+    // For "apiKeyIntegrationAccount" → "ApiKeyIntegrationAccount"
+    // For "integrationAccount" → "IntegrationAccount"
+    // For "user" → "User"
+    return base.charAt(0).toUpperCase() + base.slice(1);
+  }
+  if (/uuid$/i.test(field)) {
+    const base = field.replace(/uuid$/i, "");
+    // Same 2-char minimum for uuid suffix
+    if (!base || base.length < 2) return null;
+    return base.charAt(0).toUpperCase() + base.slice(1);
+  }
+  return null;
 };
 const refLabelFromRecord = (value) => {
-    if (!value)
-        return "";
-    return (value.label ||
-        value.name ||
-        value.description ||
-        value.title ||
-        value.id ||
-        value.keyHash ||
-        "");
+  if (!value) return "";
+  return (
+    value.label ||
+    value.name ||
+    value.description ||
+    value.title ||
+    value.id ||
+    value.keyHash ||
+    ""
+  );
 };
 const normalizeRefValue = (value) => {
-    if (!value)
-        return null;
-    return {
-        id: value.id ?? value.keyHash ?? value.uuid ?? value.value ?? null,
-        label: refLabelFromRecord(value),
-        raw: value,
-    };
+  if (!value) return null;
+  return {
+    id: value.id ?? value.keyHash ?? value.uuid ?? value.value ?? null,
+    label: refLabelFromRecord(value),
+    raw: value,
+  };
 };
 const OasOperationTable = () => {
-    // -------------------------------------------------------------------
-    // 1) "Lazy" RTK Query Hook: We manually trigger page fetches
-    // -------------------------------------------------------------------
-    // destructure: [triggerFn, { data, isFetching, isError }]
-    const [triggerGetPage, { data: fetchedPageData = [], isFetching, isError }] = useLazyGetOasOperationsPagedQuery();
-    // We track the current page number in state
-    const [page, setPage] = useState(1);
-    // A local array accumulating all results from pages 1..N
-    const [allData, setAllData] = useState([]);
-    // Keep track if there's more data to load
-    const [hasMore, setHasMore] = useState(true);
-    // -------------------------------------------------------------------
-    // 2) Load first page on user action (no auto-load)
-    // -------------------------------------------------------------------
-    const [dataLoaded, setDataLoaded] = useState(false);
-    const handleLoadData = () => {
-        setPage(1);
-        setAllData([]);
-        setHasMore(true);
-        const arg = { page: 1 };
-        if (qbeExample)
-            arg.example = qbeExample;
-        triggerGetPage(arg);
-        setDataLoaded(true);
-    };
-    // Whenever `fetchedPageData` changes, merge into `allData` by id (replace in place)
-    useEffect(() => {
-        if (fetchedPageData.length === 0 && page > 1) {
-            // We tried to load a subsequent page but got no items => end
-            setHasMore(false);
-            return;
+  // -------------------------------------------------------------------
+  // 1) "Lazy" RTK Query Hook: We manually trigger page fetches
+  // -------------------------------------------------------------------
+  // destructure: [triggerFn, { data, isFetching, isError }]
+  const [triggerGetPage, { data: fetchedPageData = [], isFetching, isError }] =
+    useLazyGetOasOperationsPagedQuery();
+  // We track the current page number in state
+  const [page, setPage] = useState(1);
+  // A local array accumulating all results from pages 1..N
+  const [allData, setAllData] = useState([]);
+  // Keep track if there's more data to load
+  const [hasMore, setHasMore] = useState(true);
+  // -------------------------------------------------------------------
+  // 2) Load first page on user action (no auto-load)
+  // -------------------------------------------------------------------
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const handleLoadData = () => {
+    setPage(1);
+    setAllData([]);
+    setHasMore(true);
+    const arg = { page: 1 };
+    if (qbeExample) arg.example = qbeExample;
+    triggerGetPage(arg);
+    setDataLoaded(true);
+  };
+  // Whenever `fetchedPageData` changes, merge into `allData` by id (replace in place)
+  useEffect(() => {
+    if (fetchedPageData.length === 0 && page > 1) {
+      // We tried to load a subsequent page but got no items => end
+      setHasMore(false);
+      return;
+    }
+    if (fetchedPageData.length > 0) {
+      // Merge newly fetched data: replace existing rows by id; append new ones
+      setAllData((prev) => {
+        const updated = [...prev];
+        for (const item of fetchedPageData) {
+          const id = item.id ?? item.keyHash;
+          if (id == null) continue;
+          const idx = updated.findIndex((r) => (r.id ?? r.keyHash) === id);
+          if (idx >= 0) updated[idx] = item;
+          else updated.push(item);
         }
-        if (fetchedPageData.length > 0) {
-            // Merge newly fetched data: replace existing rows by id; append new ones
-            setAllData((prev) => {
-                const updated = [...prev];
-                for (const item of fetchedPageData) {
-                    const id = item.id ?? item.keyHash;
-                    if (id == null)
-                        continue;
-                    const idx = updated.findIndex((r) => (r.id ?? r.keyHash) === id);
-                    if (idx >= 0)
-                        updated[idx] = item;
-                    else
-                        updated.push(item);
-                }
-                return updated;
-            });
-            // Update loaded timestamp (HH:MM)
+        return updated;
+      });
+      // Update loaded timestamp (HH:MM)
+      try {
+        const t = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        setLastLoadedAt(t);
+      } catch (e) {
+        setLastLoadedAt(new Date().toISOString());
+      }
+    }
+  }, [fetchedPageData, page]);
+  // -------------------------------------------------------------------
+  // Mutations (Add, Update, etc.)
+  // -------------------------------------------------------------------
+  const [addOasOperation] = useAddOasOperationMutation();
+  const [updateOasOperation] = useUpdateOasOperationMutation();
+  const [deleteOasOperation] = useDeleteOasOperationMutation();
+  const [deleteOasOperationCascade] = useDeleteOasOperationCascadeMutation();
+  // -------------------------------------------------------------------
+  // UI states (editing, modals, etc.)
+  // -------------------------------------------------------------------
+  const [editRowId, setEditRowId] = useState(null);
+  const [formData, setFormData] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalData, setModalData] = useState({});
+  const [richModal, setRichModal] = useState({ show: false, content: "" });
+  const [selectedRows, setSelectedRows] = useState(new Set());
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showQbeModal, setShowQbeModal] = useState(false);
+  const [qbeText, setQbeText] = useState("");
+  const [qbeExample, setQbeExample] = useState(null);
+  const [copiedRow, setCopiedRow] = useState(null);
+  const inputRef = useRef(null);
+  const [showAllFields, setShowAllFields] = useState(false);
+  const [lastLoadedAt, setLastLoadedAt] = useState(null);
+  // QBE reference picker state
+  const [qbePicker, setQbePicker] = useState({ show: false });
+  // Sorting state
+  const [sortColumn, setSortColumn] = useState();
+  const [sortDirection, setSortDirection] = useState("asc");
+  // Save loading state
+  const [savingCellId, setSavingCellId] = useState(null);
+  const [savingModalId, setSavingModalId] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+  const [saveSuccess, setSaveSuccess] = useState(null);
+  // Floating toolbar state/measurements
+  const [toolbarOpen, setToolbarOpen] = useState(false);
+  const panelRef = useRef(null);
+  const [panelWidth, setPanelWidth] = useState(360);
+  useEffect(() => {
+    const w = panelRef.current?.offsetWidth;
+    if (w && w !== panelWidth) setPanelWidth(w);
+  }, [panelRef.current]);
+  // For object expansions
+  const [expandedObjects, setExpandedObjects] = useState({});
+  // For keyboard navigation
+  const [activeCell, setActiveCell] = useState(null);
+  // Track whether the initial load already ran
+  const autoLoadRef = useRef(false);
+  // -------------------------------------------------------------------
+  // Permission Management State
+  // -------------------------------------------------------------------
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [selectedObjectForPermissions, setSelectedObjectForPermissions] =
+    useState(null);
+  // const token: string = sessionStorage.getItem("jwtToken"); // for testing
+  const currentUser = JSON.parse(
+    sessionStorage.getItem("authenticatedPrincipal"),
+  );
+  // -------------------------------------------------------------------
+  // Ensure grid rows always have a required `id: string`
+  // (Some generated model types declare `id?: string`)
+  // -------------------------------------------------------------------
+  const tableData = React.useMemo(() => {
+    return (allData ?? []).map((row, idx) => ({
+      id: row.id ?? row.keyHash ?? String(idx),
+      ...row,
+    }));
+  }, [allData]);
+  // -------------------------------------------------------------------
+  // Derive the columns from all rows (not just first row)
+  // -------------------------------------------------------------------
+  const columns = React.useMemo(() => {
+    if (!tableData.length) return [];
+    // Collect all unique keys from all rows in order of first appearance
+    const allKeys = [];
+    const seen = new Set();
+    for (const row of tableData) {
+      for (const key of Object.keys(row)) {
+        if (!seen.has(key)) {
+          allKeys.push(key);
+          seen.add(key);
+        }
+      }
+    }
+    // Filter skiplist
+    return allKeys.filter(
+      (key) => showAllFields || !fieldSkipList.includes(key),
+    );
+  }, [tableData, showAllFields]);
+  const resolvedColumnSchema = React.useMemo(() => {
+    const schema = { ...columnSchema };
+    stringFieldCandidates.forEach((field) => {
+      const refType = computeRefType(field);
+      if (refType) {
+        schema[field] = { ...(schema[field] ?? {}), refType };
+      }
+    });
+    if (tableData.length) {
+      const sample = tableData[0];
+      Object.keys(sample).forEach((key) => {
+        if (schema[key]) return;
+        const value = sample[key];
+        // Detect complex nested objects
+        if (value && typeof value === "object" && !Array.isArray(value)) {
+          // Check if it's a simple reference object (only has id/name/label) vs complex object
+          const keys = Object.keys(value);
+          if (
+            keys.length > 3 ||
+            (keys.length > 0 &&
+              !keys.every((k) =>
+                [
+                  "id",
+                  "name",
+                  "label",
+                  "description",
+                  "keyHash",
+                  "uuid",
+                ].includes(k),
+              ))
+          ) {
+            // It's a complex nested object
+            schema[key] = { type: "object" };
+          }
+        }
+        // Only infer refType for fields ending in 'Id' or 'Uuid' (foreign key pattern)
+        const refType = computeRefType(key);
+        if (refType && !schema[key]) {
+          schema[key] = { ...(schema[key] ?? {}), refType };
+        }
+      });
+    }
+    return schema;
+  }, [tableData]);
+  // Reference picker bridge used by RBGrid
+  const onReferencePick = async (rowId, columnKey, refType) => {
+    return new Promise((resolve) => {
+      setQbePicker({ show: true, refType, resolve, allowCreate: true });
+    });
+  };
+  // Auto-load on mount after this table renders
+  useEffect(() => {
+    if (!autoLoadRef.current) {
+      autoLoadRef.current = true;
+      handleLoadData();
+    }
+  }, []);
+  // -------------------------------------------------------------------
+  // Row selection & delete
+  // -------------------------------------------------------------------
+  const handleRowSelect = (id) => {
+    setSelectedRows((prev) => {
+      const updated = new Set(prev);
+      if (updated.has(id)) updated.delete(id);
+      else updated.add(id);
+      return updated;
+    });
+  };
+  const handleDelete = () => {
+    if (!selectedRows.size) {
+      alert("Select at least one row to delete.");
+      return;
+    }
+    setShowDeleteModal(true);
+  };
+  const confirmDelete = async () => {
+    const ids = Array.from(selectedRows);
+    if (!ids.length) {
+      setShowDeleteModal(false);
+      return;
+    }
+    try {
+      await Promise.all(
+        ids.map(async (id) => {
+          try {
+            await deleteOasOperationCascade({
+              id,
+              cascade: true,
+              trash: true,
+            }).unwrap();
+          } catch (e) {
+            console.error("Failed to cascade delete id", id, e);
             try {
-                const t = new Date().toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                });
-                setLastLoadedAt(t);
+              await deleteOasOperation(id).unwrap();
+            } catch (inner) {
+              console.error("Fallback delete also failed for id", id, inner);
             }
-            catch (e) {
-                setLastLoadedAt(new Date().toISOString());
-            }
-        }
-    }, [fetchedPageData, page]);
-    // -------------------------------------------------------------------
-    // Mutations (Add, Update, etc.)
-    // -------------------------------------------------------------------
-    const [addOasOperation] = useAddOasOperationMutation();
-    const [updateOasOperation] = useUpdateOasOperationMutation();
-    const [deleteOasOperation] = useDeleteOasOperationMutation();
-    const [deleteOasOperationCascade] = useDeleteOasOperationCascadeMutation();
-    // -------------------------------------------------------------------
-    // UI states (editing, modals, etc.)
-    // -------------------------------------------------------------------
-    const [editRowId, setEditRowId] = useState(null);
-    const [formData, setFormData] = useState({});
-    const [modalVisible, setModalVisible] = useState(false);
-    const [modalData, setModalData] = useState({});
-    const [richModal, setRichModal] = useState({ show: false, content: "" });
-    const [selectedRows, setSelectedRows] = useState(new Set());
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [showCreateModal, setShowCreateModal] = useState(false);
-    const [showQbeModal, setShowQbeModal] = useState(false);
-    const [qbeText, setQbeText] = useState("");
-    const [qbeExample, setQbeExample] = useState(null);
-    const [copiedRow, setCopiedRow] = useState(null);
-    const inputRef = useRef(null);
-    const [showAllFields, setShowAllFields] = useState(false);
-    const [lastLoadedAt, setLastLoadedAt] = useState(null);
-    // QBE reference picker state
-    const [qbePicker, setQbePicker] = useState({ show: false });
-    // Sorting state
-    const [sortColumn, setSortColumn] = useState();
-    const [sortDirection, setSortDirection] = useState("asc");
-    // Save loading state
-    const [savingCellId, setSavingCellId] = useState(null);
-    const [savingModalId, setSavingModalId] = useState(false);
-    const [saveError, setSaveError] = useState(null);
-    const [saveSuccess, setSaveSuccess] = useState(null);
-    // Floating toolbar state/measurements
-    const [toolbarOpen, setToolbarOpen] = useState(false);
-    const panelRef = useRef(null);
-    const [panelWidth, setPanelWidth] = useState(360);
-    useEffect(() => {
-        const w = panelRef.current?.offsetWidth;
-        if (w && w !== panelWidth)
-            setPanelWidth(w);
-    }, [panelRef.current]);
-    // For object expansions
-    const [expandedObjects, setExpandedObjects] = useState({});
-    // For keyboard navigation
-    const [activeCell, setActiveCell] = useState(null);
-    // Track whether the initial load already ran
-    const autoLoadRef = useRef(false);
-    // -------------------------------------------------------------------
-    // Permission Management State
-    // -------------------------------------------------------------------
-    const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-    const [selectedObjectForPermissions, setSelectedObjectForPermissions] = useState(null);
-    // const token: string = sessionStorage.getItem("jwtToken"); // for testing
-    const currentUser = JSON.parse(sessionStorage.getItem("authenticatedPrincipal"));
-    // -------------------------------------------------------------------
-    // Ensure grid rows always have a required `id: string`
-    // (Some generated model types declare `id?: string`)
-    // -------------------------------------------------------------------
-    const tableData = React.useMemo(() => {
-        return (allData ?? []).map((row, idx) => ({
-            id: row.id ?? row.keyHash ?? String(idx),
-            ...row,
-        }));
-    }, [allData]);
-    // -------------------------------------------------------------------
-    // Derive the columns from all rows (not just first row)
-    // -------------------------------------------------------------------
-    const columns = React.useMemo(() => {
-        if (!tableData.length)
-            return [];
-        // Collect all unique keys from all rows in order of first appearance
-        const allKeys = [];
-        const seen = new Set();
-        for (const row of tableData) {
-            for (const key of Object.keys(row)) {
-                if (!seen.has(key)) {
-                    allKeys.push(key);
-                    seen.add(key);
-                }
-            }
-        }
-        // Filter skiplist
-        return allKeys.filter((key) => showAllFields || !fieldSkipList.includes(key));
-    }, [tableData, showAllFields]);
-    const resolvedColumnSchema = React.useMemo(() => {
-        const schema = { ...columnSchema };
-        stringFieldCandidates.forEach((field) => {
-            const refType = computeRefType(field);
-            if (refType) {
-                schema[field] = { ...(schema[field] ?? {}), refType };
-            }
-        });
-        if (tableData.length) {
-            const sample = tableData[0];
-            Object.keys(sample).forEach((key) => {
-                if (schema[key])
-                    return;
-                const value = sample[key];
-                // Detect complex nested objects
-                if (value && typeof value === "object" && !Array.isArray(value)) {
-                    // Check if it's a simple reference object (only has id/name/label) vs complex object
-                    const keys = Object.keys(value);
-                    if (keys.length > 3 ||
-                        (keys.length > 0 &&
-                            !keys.every((k) => [
-                                "id",
-                                "name",
-                                "label",
-                                "description",
-                                "keyHash",
-                                "uuid",
-                            ].includes(k)))) {
-                        // It's a complex nested object
-                        schema[key] = { type: "object" };
-                    }
-                }
-                // Only infer refType for fields ending in 'Id' or 'Uuid' (foreign key pattern)
-                const refType = computeRefType(key);
-                if (refType && !schema[key]) {
-                    schema[key] = { ...(schema[key] ?? {}), refType };
-                }
-            });
-        }
-        return schema;
-    }, [tableData]);
-    // Reference picker bridge used by RBGrid
-    const onReferencePick = async (rowId, columnKey, refType) => {
-        return new Promise((resolve) => {
-            setQbePicker({ show: true, refType, resolve, allowCreate: true });
-        });
-    };
-    // Auto-load on mount after this table renders
-    useEffect(() => {
-        if (!autoLoadRef.current) {
-            autoLoadRef.current = true;
-            handleLoadData();
-        }
-    }, []);
-    // -------------------------------------------------------------------
-    // Row selection & delete
-    // -------------------------------------------------------------------
-    const handleRowSelect = (id) => {
-        setSelectedRows((prev) => {
-            const updated = new Set(prev);
-            if (updated.has(id))
-                updated.delete(id);
-            else
-                updated.add(id);
-            return updated;
-        });
-    };
-    const handleDelete = () => {
-        if (!selectedRows.size) {
-            alert("Select at least one row to delete.");
-            return;
-        }
-        setShowDeleteModal(true);
-    };
-    const confirmDelete = async () => {
-        const ids = Array.from(selectedRows);
-        if (!ids.length) {
-            setShowDeleteModal(false);
-            return;
-        }
-        try {
-            await Promise.all(ids.map(async (id) => {
+          }
+        }),
+      );
+      setAllData((prev) => prev.filter((item) => !selectedRows.has(item.id)));
+    } finally {
+      setSelectedRows(new Set());
+      setShowDeleteModal(false);
+    }
+  };
+  // AddressToJSON(value?: Address)
+  // -------------------------------------------------------------------
+  // Add, Copy, Paste
+  // -------------------------------------------------------------------
+  const handleAddRow = async () => {
+    try {
+      if (selectedRows.size !== 1) {
+        alert("Select exactly one row to duplicate.");
+        return;
+      }
+      const rowId = Array.from(selectedRows)[0];
+      const source = allData.find((item) => item.id === rowId);
+      if (!source) {
+        alert("Could not find selected row.");
+        return;
+      }
+      const payload = { ...source };
+      delete payload.id;
+      const created = await addOasOperation(payload).unwrap();
+      setAllData((prev) => [created, ...prev]);
+    } catch (error) {
+      console.error("Failed to add OasOperation:", error);
+      alert("Failed to add. See console for details.");
+    }
+  };
+  const handleCopyRow = () => {
+    if (selectedRows.size === 1) {
+      const rowId = Array.from(selectedRows)[0];
+      const rowToCopy = allData.find((item) => item.id === rowId) || null;
+      setCopiedRow(rowToCopy);
+    } else {
+      alert("Select exactly one row to copy.");
+    }
+  };
+  const handlePasteRow = async () => {
+    if (!copiedRow) {
+      alert("No row copied. Please copy a row first.");
+      return;
+    }
+    try {
+      const payload = { ...copiedRow };
+      delete payload.id;
+      const created = await addOasOperation(payload).unwrap();
+      setAllData((prev) => [created, ...prev]);
+    } catch (error) {
+      console.error("Failed to paste (create) OasOperation:", error);
+      alert("Failed to paste. See console for details.");
+    }
+  };
+  // -------------------------------------------------------------------
+  // Editing (inline & modal)
+  // -------------------------------------------------------------------
+  const handleDoubleClick = (id, key, value) => {
+    // Check if this is a reference field
+    const schema = resolvedColumnSchema?.[key];
+    const refType = schema?.refType;
+    // If it's a reference field, open the picker
+    if (refType) {
+      setQbePicker({
+        show: true,
+        refType,
+        resolve: (picked) => {
+          if (picked) {
+            // Update formData and then save
+            const idToUpdate = id;
+            const keyToUpdate = key;
+            const newValue = picked.id;
+            setFormData({ [keyToUpdate]: newValue });
+            setEditRowId(`${idToUpdate}~${keyToUpdate}`);
+            // Use a small delay to ensure formData is updated before saving
+            setTimeout(() => {
+              setFormData((prev) => {
+                const row = allData.find((item) => item.id === idToUpdate);
+                if (!row) return prev;
+                const updated = { ...row, [keyToUpdate]: newValue };
                 try {
-                    await deleteOasOperationCascade({
-                        id,
-                        cascade: true,
-                        trash: true,
-                    }).unwrap();
+                  updateOasOperation(updated);
+                  setAllData((prevData) =>
+                    prevData.map((i) => (i.id === idToUpdate ? updated : i)),
+                  );
+                } catch (error) {
+                  console.error("Failed to update OasOperation:", error);
                 }
-                catch (e) {
-                    console.error("Failed to cascade delete id", id, e);
-                    try {
-                        await deleteOasOperation(id).unwrap();
-                    }
-                    catch (inner) {
-                        console.error("Fallback delete also failed for id", id, inner);
-                    }
-                }
-            }));
-            setAllData((prev) => prev.filter((item) => !selectedRows.has(item.id)));
-        }
-        finally {
-            setSelectedRows(new Set());
-            setShowDeleteModal(false);
-        }
-    };
-    // AddressToJSON(value?: Address)
-    // -------------------------------------------------------------------
-    // Add, Copy, Paste
-    // -------------------------------------------------------------------
-    const handleAddRow = async () => {
+                setEditRowId(null);
+                return {};
+              });
+            }, 50);
+          }
+        },
+        allowCreate: true,
+      });
+      return;
+    }
+    let val = value ?? "";
+    if (typeof val === "string") {
+      // Long text -> optionally open markdown rich view
+      if (val.length > 1000) {
         try {
-            if (selectedRows.size !== 1) {
-                alert("Select exactly one row to duplicate.");
-                return;
-            }
-            const rowId = Array.from(selectedRows)[0];
-            const source = allData.find((item) => item.id === rowId);
-            if (!source) {
-                alert("Could not find selected row.");
-                return;
-            }
-            const payload = { ...source };
-            delete payload.id;
-            const created = await addOasOperation(payload).unwrap();
-            setAllData((prev) => [created, ...prev]);
-        }
-        catch (error) {
-            console.error("Failed to add OasOperation:", error);
-            alert("Failed to add. See console for details.");
-        }
-    };
-    const handleCopyRow = () => {
-        if (selectedRows.size === 1) {
-            const rowId = Array.from(selectedRows)[0];
-            const rowToCopy = allData.find((item) => item.id === rowId) || null;
-            setCopiedRow(rowToCopy);
-        }
-        else {
-            alert("Select exactly one row to copy.");
-        }
-    };
-    const handlePasteRow = async () => {
-        if (!copiedRow) {
-            alert("No row copied. Please copy a row first.");
-            return;
-        }
-        try {
-            const payload = { ...copiedRow };
-            delete payload.id;
-            const created = await addOasOperation(payload).unwrap();
-            setAllData((prev) => [created, ...prev]);
-        }
-        catch (error) {
-            console.error("Failed to paste (create) OasOperation:", error);
-            alert("Failed to paste. See console for details.");
-        }
-    };
-    // -------------------------------------------------------------------
-    // Editing (inline & modal)
-    // -------------------------------------------------------------------
-    const handleDoubleClick = (id, key, value) => {
-        // Check if this is a reference field
-        const schema = resolvedColumnSchema?.[key];
-        const refType = schema?.refType;
-        // If it's a reference field, open the picker
-        if (refType) {
-            setQbePicker({
+          const askPref = localStorage.getItem("UX:AskRichText") ?? "ask";
+          if (askPref === "ask") {
+            const open = window.confirm(
+              "Open in rich text (Markdown) editor? Click Cancel to use plain text and do not ask again.",
+            );
+            if (open) {
+              setRichModal({
                 show: true,
-                refType,
-                resolve: (picked) => {
-                    if (picked) {
-                        // Update formData and then save
-                        const idToUpdate = id;
-                        const keyToUpdate = key;
-                        const newValue = picked.id;
-                        setFormData({ [keyToUpdate]: newValue });
-                        setEditRowId(`${idToUpdate}~${keyToUpdate}`);
-                        // Use a small delay to ensure formData is updated before saving
-                        setTimeout(() => {
-                            setFormData((prev) => {
-                                const row = allData.find((item) => item.id === idToUpdate);
-                                if (!row)
-                                    return prev;
-                                const updated = { ...row, [keyToUpdate]: newValue };
-                                try {
-                                    updateOasOperation(updated);
-                                    setAllData((prevData) => prevData.map((i) => (i.id === idToUpdate ? updated : i)));
-                                }
-                                catch (error) {
-                                    console.error("Failed to update OasOperation:", error);
-                                }
-                                setEditRowId(null);
-                                return {};
-                            });
-                        }, 50);
-                    }
-                },
-                allowCreate: true,
-            });
-            return;
-        }
-        let val = value ?? "";
-        if (typeof val === "string") {
-            // Long text -> optionally open markdown rich view
-            if (val.length > 1000) {
-                try {
-                    const askPref = localStorage.getItem("UX:AskRichText") ?? "ask";
-                    if (askPref === "ask") {
-                        const open = window.confirm("Open in rich text (Markdown) editor? Click Cancel to use plain text and do not ask again.");
-                        if (open) {
-                            setRichModal({
-                                show: true,
-                                content: val,
-                                title: key,
-                                rowId: id,
-                                field: key,
-                            });
-                            return;
-                        }
-                        else {
-                            localStorage.setItem("UX:AskRichText", "never");
-                        }
-                    }
-                }
-                catch { }
+                content: val,
+                title: key,
+                rowId: id,
+                field: key,
+              });
+              return;
+            } else {
+              localStorage.setItem("UX:AskRichText", "never");
             }
-            // short => inline
-            if (val.length <= 20) {
-                setEditRowId(`${id}~${key}`);
-                const row = allData.find((item) => item.id === id);
-                if (row)
-                    setFormData({ [key]: row[key] });
-            }
-            else {
-                // big => modal
-                setModalData({ id, key, value: val });
-                setModalVisible(true);
-            }
-        }
-        else if (typeof val === "object") {
-            // expand/collapse
-            const objKey = `${id}~${key}`;
-            setExpandedObjects((prev) => ({ ...prev, [objKey]: !prev[objKey] }));
-        }
-        else {
-            // numeric or boolean
-            const sVal = String(val);
-            if (sVal.length <= 20) {
-                setEditRowId(`${id}~${key}`);
-                const row = allData.find((r) => r.id === id);
-                if (row)
-                    setFormData({ [key]: row[key] });
-            }
-            else {
-                setModalData({ id, key, value: sVal });
-                setModalVisible(true);
-            }
-        }
-    };
-    const handleSave = async (editKey) => {
-        setSavingCellId(editKey);
-        setSaveError(null);
-        setSaveSuccess(null);
-        const [id, key] = editKey.split("~");
+          }
+        } catch {}
+      }
+      // short => inline
+      if (val.length <= 20) {
+        setEditRowId(`${id}~${key}`);
         const row = allData.find((item) => item.id === id);
-        if (!row) {
-            setSavingCellId(null);
-            return;
-        }
-        const updatedItem = { ...row, [key]: formData[key] };
-        try {
-            await updateOasOperation(updatedItem).unwrap();
-            setAllData((prev) => prev.map((i) => (i.id === id ? updatedItem : i)));
-            setSaveSuccess(`${key} saved successfully`);
-            setTimeout(() => setSaveSuccess(null), 3000);
-        }
-        catch (error) {
-            const errorMsg = error instanceof Error
-                ? error.message
-                : "Failed to update OasOperation";
-            console.error("Failed to update OasOperation:", error);
-            setSaveError(errorMsg);
-            setTimeout(() => setSaveError(null), 5000);
-        }
-        finally {
-            setSavingCellId(null);
-            setEditRowId(null);
-            setFormData({});
-        }
-    };
-    const handleCancel = () => {
-        setEditRowId(null);
-        setFormData({});
-    };
-    const handleInputChange = (field, value) => {
-        setFormData((prev) => ({ ...prev, [field]: value }));
-    };
-    const handleKeyDownEdit = (e, editKey) => {
-        if (e.key === "Enter")
-            handleSave(editKey);
-        else if (e.key === "Escape")
-            handleCancel();
-    };
-    const handleBlur = () => {
-        if (editRowId)
-            handleSave(editRowId);
-    };
-    // Toggle object field expansion (for RBGrid)
-    const handleToggleExpandObject = (id, key) => {
-        const objKey = `${id}~${key}`;
-        setExpandedObjects((prev) => ({ ...prev, [objKey]: !prev[objKey] }));
-    };
-    // Apply object field change to local state (RBGrid expanded panel)
-    const handleObjectFieldChange = (rowId, key, updatedObj) => {
-        setAllData((prev) => prev.map((d) => d.id === rowId ? { ...d, [key]: updatedObj } : d));
-    };
-    // Select/Deselect all visible rows
-    const handleToggleAll = () => {
-        if (selectedRows.size === tableData.length) {
-            setSelectedRows(new Set());
-        }
-        else {
-            setSelectedRows(new Set(tableData.map((d) => d.id)));
-        }
-    };
-    // -------------------------------------------------------------------
-    // Keyboard navigation
-    // -------------------------------------------------------------------
-    const handleCellFocus = (rowIndex, colIndex) => {
-        setActiveCell({ rowIndex, colIndex });
-    };
-    const handleCellKeyDownNav = (e, rowIndex, colIndex, itemId, columnKey, cellValue) => {
-        if (editRowId)
-            return;
-        switch (e.key) {
-            case "ArrowRight":
-                e.preventDefault();
-                setActiveCell({
-                    rowIndex,
-                    colIndex: Math.min(colIndex + 1, columns.length - 1),
-                });
-                break;
-            case "ArrowLeft":
-                e.preventDefault();
-                setActiveCell({ rowIndex, colIndex: Math.max(colIndex - 1, 0) });
-                break;
-            case "ArrowDown":
-                e.preventDefault();
-                setActiveCell({
-                    rowIndex: Math.min(rowIndex + 1, allData.length - 1),
-                    colIndex,
-                });
-                break;
-            case "ArrowUp":
-                e.preventDefault();
-                setActiveCell({ rowIndex: Math.max(rowIndex - 1, 0), colIndex });
-                break;
-            case "Enter":
-                e.preventDefault();
-                handleDoubleClick(itemId, columnKey, cellValue);
-                break;
-            default:
-                break;
-        }
-    };
-    // -------------------------------------------------------------------
-    // Render helpers
-    // -------------------------------------------------------------------
-    const renderValue = (value, itemId, key) => {
-        if (value == null)
-            return "";
-        if (typeof value === "object") {
-            const objKey = `${itemId}~${key}`;
-            const isExpanded = expandedObjects[objKey] || false;
-            return (_jsxs(CoolButton, { variant: "info", onClick: () => handleDoubleClick(itemId, key, value), children: [isExpanded ? _jsx(FaChevronDown, {}) : _jsx(FaChevronRight, {}), " ", key] }));
-        }
-        return value;
-    };
-    const handleModalSave = async () => {
-        setSavingModalId(true);
-        setSaveError(null);
-        setSaveSuccess(null);
-        const { id, key, value } = modalData;
-        if (!id || !key) {
-            setSavingModalId(false);
-            setModalVisible(false);
-            return;
-        }
+        if (row) setFormData({ [key]: row[key] });
+      } else {
+        // big => modal
+        setModalData({ id, key, value: val });
+        setModalVisible(true);
+      }
+    } else if (typeof val === "object") {
+      // expand/collapse
+      const objKey = `${id}~${key}`;
+      setExpandedObjects((prev) => ({ ...prev, [objKey]: !prev[objKey] }));
+    } else {
+      // numeric or boolean
+      const sVal = String(val);
+      if (sVal.length <= 20) {
+        setEditRowId(`${id}~${key}`);
         const row = allData.find((r) => r.id === id);
-        if (!row) {
-            setSavingModalId(false);
-            setModalVisible(false);
-            return;
-        }
-        const updatedItem = { ...row, [key]: value };
-        try {
-            await updateOasOperation(updatedItem).unwrap();
-            setAllData((prev) => prev.map((d) => (d.id === id ? updatedItem : d)));
-            setSaveSuccess(`${key} saved successfully`);
-            setTimeout(() => setSaveSuccess(null), 3000);
-        }
-        catch (error) {
-            const errorMsg = error instanceof Error
-                ? error.message
-                : "Failed to update OasOperation";
-            console.error("Failed to update from modal:", error);
-            setSaveError(errorMsg);
-            setTimeout(() => setSaveError(null), 5000);
-        }
-        finally {
-            setSavingModalId(false);
-            setModalVisible(false);
-        }
-    };
-    const handleModalChange = (newValue) => {
-        setModalData((prev) => ({ ...prev, value: newValue }));
-    };
-    // -------------------------------------------------------------------
-    // Permission Management Functions
-    // -------------------------------------------------------------------
-    const handleManagePermissions = () => {
-        if (selectedRows.size === 1) {
-            const rowId = Array.from(selectedRows)[0];
-            setSelectedObjectForPermissions({
-                objectType: "com.valkyrlabs.model.OasOperation",
-                objectId: rowId,
-            });
-            setShowPermissionDialog(true);
-        }
-        else {
-            alert("Select exactly one row to manage permissions.");
-        }
-    };
-    // Handle permissions for a specific row (direct click)
-    const handleRowPermissions = (itemId) => {
-        setSelectedObjectForPermissions({
-            objectType: "com.valkyrlabs.model.OasOperation",
-            objectId: itemId,
+        if (row) setFormData({ [key]: row[key] });
+      } else {
+        setModalData({ id, key, value: sVal });
+        setModalVisible(true);
+      }
+    }
+  };
+  const handleSave = async (editKey) => {
+    setSavingCellId(editKey);
+    setSaveError(null);
+    setSaveSuccess(null);
+    const [id, key] = editKey.split("~");
+    const row = allData.find((item) => item.id === id);
+    if (!row) {
+      setSavingCellId(null);
+      return;
+    }
+    const updatedItem = { ...row, [key]: formData[key] };
+    try {
+      await updateOasOperation(updatedItem).unwrap();
+      setAllData((prev) => prev.map((i) => (i.id === id ? updatedItem : i)));
+      setSaveSuccess(`${key} saved successfully`);
+      setTimeout(() => setSaveSuccess(null), 3000);
+    } catch (error) {
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "Failed to update OasOperation";
+      console.error("Failed to update OasOperation:", error);
+      setSaveError(errorMsg);
+      setTimeout(() => setSaveError(null), 5000);
+    } finally {
+      setSavingCellId(null);
+      setEditRowId(null);
+      setFormData({});
+    }
+  };
+  const handleCancel = () => {
+    setEditRowId(null);
+    setFormData({});
+  };
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+  const handleKeyDownEdit = (e, editKey) => {
+    if (e.key === "Enter") handleSave(editKey);
+    else if (e.key === "Escape") handleCancel();
+  };
+  const handleBlur = () => {
+    if (editRowId) handleSave(editRowId);
+  };
+  // Toggle object field expansion (for RBGrid)
+  const handleToggleExpandObject = (id, key) => {
+    const objKey = `${id}~${key}`;
+    setExpandedObjects((prev) => ({ ...prev, [objKey]: !prev[objKey] }));
+  };
+  // Apply object field change to local state (RBGrid expanded panel)
+  const handleObjectFieldChange = (rowId, key, updatedObj) => {
+    setAllData((prev) =>
+      prev.map((d) => (d.id === rowId ? { ...d, [key]: updatedObj } : d)),
+    );
+  };
+  // Select/Deselect all visible rows
+  const handleToggleAll = () => {
+    if (selectedRows.size === tableData.length) {
+      setSelectedRows(new Set());
+    } else {
+      setSelectedRows(new Set(tableData.map((d) => d.id)));
+    }
+  };
+  // -------------------------------------------------------------------
+  // Keyboard navigation
+  // -------------------------------------------------------------------
+  const handleCellFocus = (rowIndex, colIndex) => {
+    setActiveCell({ rowIndex, colIndex });
+  };
+  const handleCellKeyDownNav = (
+    e,
+    rowIndex,
+    colIndex,
+    itemId,
+    columnKey,
+    cellValue,
+  ) => {
+    if (editRowId) return;
+    switch (e.key) {
+      case "ArrowRight":
+        e.preventDefault();
+        setActiveCell({
+          rowIndex,
+          colIndex: Math.min(colIndex + 1, columns.length - 1),
         });
-        setShowPermissionDialog(true);
-    };
-    const handlePermissionDialogClose = () => {
-        setShowPermissionDialog(false);
-        setSelectedObjectForPermissions(null);
-    };
-    const handlePermissionsSave = (grants) => {
-        console.log("Permissions saved:", grants);
-        // Optionally refresh data or show success message
-    };
-    const createReferenceRecord = async (refType) => {
-        const name = window.prompt(`Enter name for new ${refType}`);
-        if (!name)
-            return null;
-        const description = window.prompt(`Optional description for new ${refType}`) || undefined;
-        const payload = { name };
-        if (description && description.trim())
-            payload.description = description.trim();
-        const res = await fetch(`${BASE_PATH}/${refType}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
+        break;
+      case "ArrowLeft":
+        e.preventDefault();
+        setActiveCell({ rowIndex, colIndex: Math.max(colIndex - 1, 0) });
+        break;
+      case "ArrowDown":
+        e.preventDefault();
+        setActiveCell({
+          rowIndex: Math.min(rowIndex + 1, allData.length - 1),
+          colIndex,
         });
-        if (!res.ok) {
-            const text = await res.text().catch(() => "");
-            throw new Error(`Failed to create ${refType}: ${res.status} ${text}`);
-        }
-        const created = await res.json();
-        return normalizeRefValue(created);
-    };
-    const handleReferenceCreate = async (refType) => {
-        if (!refType)
-            return null;
-        try {
-            return await createReferenceRecord(refType);
-        }
-        catch (err) {
-            console.error(err);
-            alert(err.message || "Failed to create reference record");
-            return null;
-        }
-    };
-    // -------------------------------------------------------------------
-    // Component render
-    // -------------------------------------------------------------------
-    return (_jsxs(_Fragment, { children: [_jsx(RBGrid, { data: tableData, columns: columns, columnSchema: resolvedColumnSchema, selectedRows: selectedRows, onToggleRow: handleRowSelect, onToggleAll: handleToggleAll, onRowPermissions: handleRowPermissions, editCellId: editRowId, formData: formData, onInputChange: handleInputChange, onKeyDownEdit: handleKeyDownEdit, onBlurEdit: handleBlur, onCellDoubleClick: handleDoubleClick, activeCell: activeCell, onCellFocus: handleCellFocus, onCellKeyDownNav: handleCellKeyDownNav, expandedObjects: expandedObjects, onToggleExpandObject: handleToggleExpandObject, onObjectFieldChange: handleObjectFieldChange, showAllFields: showAllFields, onToggleShowAllFields: () => setShowAllFields(!showAllFields), storageKey: "OasOperationTable", onReferencePick: onReferencePick, onRequestMoreRows: (dir) => {
-                    if (dir === "down" && hasMore && !isFetching && dataLoaded) {
-                        const nextPage = page + 1;
-                        setPage(nextPage);
-                        const arg = { page: nextPage };
-                        if (qbeExample)
-                            arg.example = qbeExample;
-                        triggerGetPage(arg);
-                    }
-                } }), isFetching && _jsx(LoadingSpinner, { style: { margin: "2em" } }), _jsx("div", { ref: panelRef, style: {
-                    position: "fixed",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    right: toolbarOpen ? 20 : `-${Math.max(panelWidth - 100, 0)}px`,
-                    zIndex: 9999,
-                    pointerEvents: "auto",
-                }, children: _jsxs(FloatingControlPanel, { description: "OasOperation Actions", className: "grid-toolbar", style: {
-                        pointerEvents: "auto",
-                        width: 360,
-                        maxWidth: 420,
-                        boxShadow: "0 6px 20px rgba(0,0,0,0.3)",
-                    }, children: [_jsx("div", { role: "button", "aria-label": toolbarOpen ? "Hide actions" : "Show actions", onClick: () => setToolbarOpen(!toolbarOpen), style: {
-                                position: "absolute",
-                                left: -0,
-                                top: "50%",
-                                transform: "translate(-100%, -50%)",
-                                width: 48,
-                                height: 64,
-                                borderRadius: "8px 0 0 8px",
-                                background: "rgba(0,0,0,0.6)",
-                                color: "#fff",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                cursor: "pointer",
-                                boxShadow: "0 4px 10px rgba(0,0,0,0.35)",
-                            }, children: toolbarOpen ? (_jsx(FaChevronRight, { size: ICON_SIZE })) : (_jsx(FaChevronLeft, { size: ICON_SIZE })) }), _jsx("div", { children: _jsxs(ButtonGroup, { children: [_jsx(CoolButton, { variant: "secondary", onClick: handleLoadData, className: "py-3 px-3", children: _jsx(FaSync, { size: ICON_SIZE }) }), _jsx(CoolButton, { variant: "primary", onClick: () => setShowCreateModal(true), className: "py-3 px-3", children: _jsx(FaPlus, { size: ICON_SIZE }) }), _jsx(CoolButton, { disabled: selectedRows.size !== 1, variant: "secondary", onClick: handleCopyRow, className: "py-3 px-3", children: _jsx(FaCopy, { size: ICON_SIZE }) }), _jsx(CoolButton, { variant: "secondary", onClick: handlePasteRow, className: "py-3 px-3", children: _jsx(FaPaste, { size: ICON_SIZE }) }), _jsxs(CoolButton, { variant: "secondary", onClick: () => setShowQbeModal(true), className: "py-3 px-3", children: [_jsx(FaFilter, { size: ICON_SIZE }), " Filter (QBE)"] }), _jsx(CoolButton, { variant: "warning", onClick: handleDelete, disabled: selectedRows.size === 0, className: "py-3 px-3", children: _jsx(FaTrash, { size: ICON_SIZE }) }), _jsx(CoolButton, { variant: "info", onClick: handleManagePermissions, disabled: selectedRows.size !== 1, className: "py-3 px-3", children: _jsx(FaUserShield, { size: ICON_SIZE }) })] }) })] }) }), _jsxs(Modal, { show: showCreateModal, onHide: () => setShowCreateModal(false), centered: true, size: "lg", children: [_jsx(Modal.Header, { closeButton: true, children: _jsx(Modal.Title, { children: "Create OasOperation" }) }), _jsx(Modal.Body, { children: _jsx(OasOperationForm, {}) })] }), _jsxs(Modal, { show: showQbeModal, onHide: () => setShowQbeModal(false), centered: true, size: "lg", children: [_jsx(Modal.Header, { closeButton: true, children: _jsx(Modal.Title, { children: "Filter OasOperation (Query By Example)" }) }), _jsxs(Modal.Body, { children: [_jsx("p", { children: "Enter a JSON example. Non-null fields will be matched. Strings use case-insensitive contains; exact match for non-strings." }), _jsx(BSForm.Control, { as: "textarea", rows: 10, value: qbeText, onChange: (e) => setQbeText(e.target.value), placeholder: '{"name":"acme","status":"active"}' })] }), _jsxs(Modal.Footer, { children: [_jsx(CoolButton, { variant: "secondary", onClick: () => {
-                                    setQbeText("");
-                                    setQbeExample(null);
-                                    setShowQbeModal(false);
-                                }, children: "Clear" }), _jsx(CoolButton, { variant: "primary", onClick: () => {
-                                    try {
-                                        const obj = qbeText ? JSON.parse(qbeText) : null;
-                                        setQbeExample(obj);
-                                        setShowQbeModal(false);
-                                        setPage(1);
-                                        setAllData([]);
-                                        setHasMore(true);
-                                        const arg = { page: 1 };
-                                        if (obj)
-                                            arg.example = obj;
-                                        triggerGetPage(arg);
-                                        setDataLoaded(true);
-                                    }
-                                    catch (err) {
-                                        alert("Invalid JSON");
-                                    }
-                                }, children: "Apply" })] })] }), _jsxs(Modal, { show: showDeleteModal, onHide: () => setShowDeleteModal(false), centered: true, children: [_jsx(Modal.Header, { closeButton: true, children: _jsx(Modal.Title, { children: "Confirm Deletion" }) }), _jsx(Modal.Body, { children: "This will cascade-delete (soft/trashed) all selected rows and related children. Proceed?" }), _jsxs(Modal.Footer, { children: [_jsx(CoolButton, { variant: "secondary", onClick: () => setShowDeleteModal(false), children: "Cancel" }), _jsx(CoolButton, { variant: "danger", onClick: confirmDelete, children: "Delete" })] })] }), _jsxs(Modal, { show: modalVisible, onHide: () => setModalVisible(false), centered: true, children: [_jsx(Modal.Header, { closeButton: true, children: _jsx(Modal.Title, { children: "Editing OasOperation" }) }), _jsxs(Modal.Body, { children: [modalData.value && typeof modalData.value === "string" ? (_jsx(BSForm.Control, { as: "textarea", rows: 10, value: modalData.value, onChange: (e) => handleModalChange(e.target.value) })) : (_jsx("div", { children: "No large text data available or unsupported type." })), saveSuccess && (_jsxs("div", { style: {
-                                    color: "green",
-                                    marginTop: 12,
-                                    padding: 8,
-                                    backgroundColor: "rgba(0,255,0,0.1)",
-                                    borderRadius: 4,
-                                }, children: ["\u2713 ", saveSuccess] })), saveError && (_jsxs("div", { style: {
-                                    color: "red",
-                                    marginTop: 12,
-                                    padding: 8,
-                                    backgroundColor: "rgba(255,0,0,0.1)",
-                                    borderRadius: 4,
-                                }, children: ["\u2717 ", saveError] }))] }), _jsxs(Modal.Footer, { children: [_jsx(CoolButton, { variant: "secondary", onClick: () => setModalVisible(false), disabled: savingModalId, children: "Cancel" }), _jsxs(CoolButton, { variant: "primary", onClick: handleModalSave, disabled: savingModalId, children: [savingModalId && (_jsx("span", { style: { float: "left", minHeight: 0, marginRight: 6 }, children: _jsx(LoadingSpinner, { label: "", size: 16 }) })), "Save"] })] })] }), _jsx(MarkdownEditorModal, { show: richModal.show, title: `Rich Text: ${richModal.title || ""}`, initialValue: richModal.content, onCancel: () => setRichModal({ show: false, content: "" }), onSave: async (updatedText) => {
-                    try {
-                        const rid = richModal.rowId;
-                        const field = richModal.field;
-                        if (!rid || !field) {
-                            setRichModal({ show: false, content: "" });
-                            return;
-                        }
-                        const row = allData.find((r) => r.id === rid);
-                        if (!row) {
-                            setRichModal({ show: false, content: "" });
-                            return;
-                        }
-                        const updated = { ...row, [field]: updatedText };
-                        await updateOasOperation(updated).unwrap();
-                        setAllData((prev) => prev.map((r) => (r.id === rid ? updated : r)));
-                    }
-                    catch (e) {
-                        console.error("Failed to save markdown field", e);
-                    }
-                    setRichModal({ show: false, content: "" });
-                } }), selectedObjectForPermissions && (_jsx(PermissionDialog, { objectType: selectedObjectForPermissions.objectType, objectId: selectedObjectForPermissions.objectId, isVisible: showPermissionDialog, onClose: handlePermissionDialogClose, onSave: handlePermissionsSave, currentUser: currentUser })), isError && (_jsxs("div", { style: { color: "red", marginTop: 12 }, children: ["Error fetching page ", page, " of OasOperations."] })), _jsx(QBEPicker, { show: qbePicker.show, refType: qbePicker.refType || "OasOperation", allowCreate: qbePicker.allowCreate, onCancel: () => setQbePicker({ show: false }), onPick: (val) => {
-                    const r = qbePicker.resolve;
-                    setQbePicker({ show: false });
-                    r && r(normalizeRefValue(val));
-                }, onCreate: qbePicker.refType
-                    ? () => handleReferenceCreate(qbePicker.refType)
-                    : undefined })] }));
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setActiveCell({ rowIndex: Math.max(rowIndex - 1, 0), colIndex });
+        break;
+      case "Enter":
+        e.preventDefault();
+        handleDoubleClick(itemId, columnKey, cellValue);
+        break;
+      default:
+        break;
+    }
+  };
+  // -------------------------------------------------------------------
+  // Render helpers
+  // -------------------------------------------------------------------
+  const renderValue = (value, itemId, key) => {
+    if (value == null) return "";
+    if (typeof value === "object") {
+      const objKey = `${itemId}~${key}`;
+      const isExpanded = expandedObjects[objKey] || false;
+      return _jsxs(CoolButton, {
+        variant: "info",
+        onClick: () => handleDoubleClick(itemId, key, value),
+        children: [
+          isExpanded ? _jsx(FaChevronDown, {}) : _jsx(FaChevronRight, {}),
+          " ",
+          key,
+        ],
+      });
+    }
+    return value;
+  };
+  const handleModalSave = async () => {
+    setSavingModalId(true);
+    setSaveError(null);
+    setSaveSuccess(null);
+    const { id, key, value } = modalData;
+    if (!id || !key) {
+      setSavingModalId(false);
+      setModalVisible(false);
+      return;
+    }
+    const row = allData.find((r) => r.id === id);
+    if (!row) {
+      setSavingModalId(false);
+      setModalVisible(false);
+      return;
+    }
+    const updatedItem = { ...row, [key]: value };
+    try {
+      await updateOasOperation(updatedItem).unwrap();
+      setAllData((prev) => prev.map((d) => (d.id === id ? updatedItem : d)));
+      setSaveSuccess(`${key} saved successfully`);
+      setTimeout(() => setSaveSuccess(null), 3000);
+    } catch (error) {
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "Failed to update OasOperation";
+      console.error("Failed to update from modal:", error);
+      setSaveError(errorMsg);
+      setTimeout(() => setSaveError(null), 5000);
+    } finally {
+      setSavingModalId(false);
+      setModalVisible(false);
+    }
+  };
+  const handleModalChange = (newValue) => {
+    setModalData((prev) => ({ ...prev, value: newValue }));
+  };
+  // -------------------------------------------------------------------
+  // Permission Management Functions
+  // -------------------------------------------------------------------
+  const handleManagePermissions = () => {
+    if (selectedRows.size === 1) {
+      const rowId = Array.from(selectedRows)[0];
+      setSelectedObjectForPermissions({
+        objectType: "com.valkyrlabs.model.OasOperation",
+        objectId: rowId,
+      });
+      setShowPermissionDialog(true);
+    } else {
+      alert("Select exactly one row to manage permissions.");
+    }
+  };
+  // Handle permissions for a specific row (direct click)
+  const handleRowPermissions = (itemId) => {
+    setSelectedObjectForPermissions({
+      objectType: "com.valkyrlabs.model.OasOperation",
+      objectId: itemId,
+    });
+    setShowPermissionDialog(true);
+  };
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setSelectedObjectForPermissions(null);
+  };
+  const handlePermissionsSave = (grants) => {
+    console.log("Permissions saved:", grants);
+    // Optionally refresh data or show success message
+  };
+  const createReferenceRecord = async (refType) => {
+    const name = window.prompt(`Enter name for new ${refType}`);
+    if (!name) return null;
+    const description =
+      window.prompt(`Optional description for new ${refType}`) || undefined;
+    const payload = { name };
+    if (description && description.trim())
+      payload.description = description.trim();
+    const res = await fetch(`${BASE_PATH}/${refType}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(`Failed to create ${refType}: ${res.status} ${text}`);
+    }
+    const created = await res.json();
+    return normalizeRefValue(created);
+  };
+  const handleReferenceCreate = async (refType) => {
+    if (!refType) return null;
+    try {
+      return await createReferenceRecord(refType);
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Failed to create reference record");
+      return null;
+    }
+  };
+  // -------------------------------------------------------------------
+  // Component render
+  // -------------------------------------------------------------------
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx(RBGrid, {
+        data: tableData,
+        columns: columns,
+        columnSchema: resolvedColumnSchema,
+        selectedRows: selectedRows,
+        onToggleRow: handleRowSelect,
+        onToggleAll: handleToggleAll,
+        onRowPermissions: handleRowPermissions,
+        editCellId: editRowId,
+        formData: formData,
+        onInputChange: handleInputChange,
+        onKeyDownEdit: handleKeyDownEdit,
+        onBlurEdit: handleBlur,
+        onCellDoubleClick: handleDoubleClick,
+        activeCell: activeCell,
+        onCellFocus: handleCellFocus,
+        onCellKeyDownNav: handleCellKeyDownNav,
+        expandedObjects: expandedObjects,
+        onToggleExpandObject: handleToggleExpandObject,
+        onObjectFieldChange: handleObjectFieldChange,
+        showAllFields: showAllFields,
+        onToggleShowAllFields: () => setShowAllFields(!showAllFields),
+        storageKey: "OasOperationTable",
+        onReferencePick: onReferencePick,
+        onRequestMoreRows: (dir) => {
+          if (dir === "down" && hasMore && !isFetching && dataLoaded) {
+            const nextPage = page + 1;
+            setPage(nextPage);
+            const arg = { page: nextPage };
+            if (qbeExample) arg.example = qbeExample;
+            triggerGetPage(arg);
+          }
+        },
+      }),
+      isFetching && _jsx(LoadingSpinner, { style: { margin: "2em" } }),
+      _jsx("div", {
+        ref: panelRef,
+        style: {
+          position: "fixed",
+          top: "50%",
+          transform: "translateY(-50%)",
+          right: toolbarOpen ? 20 : `-${Math.max(panelWidth - 100, 0)}px`,
+          zIndex: 9999,
+          pointerEvents: "auto",
+        },
+        children: _jsxs(FloatingControlPanel, {
+          description: "OasOperation Actions",
+          className: "grid-toolbar",
+          style: {
+            pointerEvents: "auto",
+            width: 360,
+            maxWidth: 420,
+            boxShadow: "0 6px 20px rgba(0,0,0,0.3)",
+          },
+          children: [
+            _jsx("div", {
+              role: "button",
+              "aria-label": toolbarOpen ? "Hide actions" : "Show actions",
+              onClick: () => setToolbarOpen(!toolbarOpen),
+              style: {
+                position: "absolute",
+                left: -0,
+                top: "50%",
+                transform: "translate(-100%, -50%)",
+                width: 48,
+                height: 64,
+                borderRadius: "8px 0 0 8px",
+                background: "rgba(0,0,0,0.6)",
+                color: "#fff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                boxShadow: "0 4px 10px rgba(0,0,0,0.35)",
+              },
+              children: toolbarOpen
+                ? _jsx(FaChevronRight, { size: ICON_SIZE })
+                : _jsx(FaChevronLeft, { size: ICON_SIZE }),
+            }),
+            _jsx("div", {
+              children: _jsxs(ButtonGroup, {
+                children: [
+                  _jsx(CoolButton, {
+                    variant: "secondary",
+                    onClick: handleLoadData,
+                    className: "py-3 px-3",
+                    children: _jsx(FaSync, { size: ICON_SIZE }),
+                  }),
+                  _jsx(CoolButton, {
+                    variant: "primary",
+                    onClick: () => setShowCreateModal(true),
+                    className: "py-3 px-3",
+                    children: _jsx(FaPlus, { size: ICON_SIZE }),
+                  }),
+                  _jsx(CoolButton, {
+                    disabled: selectedRows.size !== 1,
+                    variant: "secondary",
+                    onClick: handleCopyRow,
+                    className: "py-3 px-3",
+                    children: _jsx(FaCopy, { size: ICON_SIZE }),
+                  }),
+                  _jsx(CoolButton, {
+                    variant: "secondary",
+                    onClick: handlePasteRow,
+                    className: "py-3 px-3",
+                    children: _jsx(FaPaste, { size: ICON_SIZE }),
+                  }),
+                  _jsxs(CoolButton, {
+                    variant: "secondary",
+                    onClick: () => setShowQbeModal(true),
+                    className: "py-3 px-3",
+                    children: [
+                      _jsx(FaFilter, { size: ICON_SIZE }),
+                      " Filter (QBE)",
+                    ],
+                  }),
+                  _jsx(CoolButton, {
+                    variant: "warning",
+                    onClick: handleDelete,
+                    disabled: selectedRows.size === 0,
+                    className: "py-3 px-3",
+                    children: _jsx(FaTrash, { size: ICON_SIZE }),
+                  }),
+                  _jsx(CoolButton, {
+                    variant: "info",
+                    onClick: handleManagePermissions,
+                    disabled: selectedRows.size !== 1,
+                    className: "py-3 px-3",
+                    children: _jsx(FaUserShield, { size: ICON_SIZE }),
+                  }),
+                ],
+              }),
+            }),
+          ],
+        }),
+      }),
+      _jsxs(Modal, {
+        show: showCreateModal,
+        onHide: () => setShowCreateModal(false),
+        centered: true,
+        size: "lg",
+        children: [
+          _jsx(Modal.Header, {
+            closeButton: true,
+            children: _jsx(Modal.Title, { children: "Create OasOperation" }),
+          }),
+          _jsx(Modal.Body, { children: _jsx(OasOperationForm, {}) }),
+        ],
+      }),
+      _jsxs(Modal, {
+        show: showQbeModal,
+        onHide: () => setShowQbeModal(false),
+        centered: true,
+        size: "lg",
+        children: [
+          _jsx(Modal.Header, {
+            closeButton: true,
+            children: _jsx(Modal.Title, {
+              children: "Filter OasOperation (Query By Example)",
+            }),
+          }),
+          _jsxs(Modal.Body, {
+            children: [
+              _jsx("p", {
+                children:
+                  "Enter a JSON example. Non-null fields will be matched. Strings use case-insensitive contains; exact match for non-strings.",
+              }),
+              _jsx(BSForm.Control, {
+                as: "textarea",
+                rows: 10,
+                value: qbeText,
+                onChange: (e) => setQbeText(e.target.value),
+                placeholder: '{"name":"acme","status":"active"}',
+              }),
+            ],
+          }),
+          _jsxs(Modal.Footer, {
+            children: [
+              _jsx(CoolButton, {
+                variant: "secondary",
+                onClick: () => {
+                  setQbeText("");
+                  setQbeExample(null);
+                  setShowQbeModal(false);
+                },
+                children: "Clear",
+              }),
+              _jsx(CoolButton, {
+                variant: "primary",
+                onClick: () => {
+                  try {
+                    const obj = qbeText ? JSON.parse(qbeText) : null;
+                    setQbeExample(obj);
+                    setShowQbeModal(false);
+                    setPage(1);
+                    setAllData([]);
+                    setHasMore(true);
+                    const arg = { page: 1 };
+                    if (obj) arg.example = obj;
+                    triggerGetPage(arg);
+                    setDataLoaded(true);
+                  } catch (err) {
+                    alert("Invalid JSON");
+                  }
+                },
+                children: "Apply",
+              }),
+            ],
+          }),
+        ],
+      }),
+      _jsxs(Modal, {
+        show: showDeleteModal,
+        onHide: () => setShowDeleteModal(false),
+        centered: true,
+        children: [
+          _jsx(Modal.Header, {
+            closeButton: true,
+            children: _jsx(Modal.Title, { children: "Confirm Deletion" }),
+          }),
+          _jsx(Modal.Body, {
+            children:
+              "This will cascade-delete (soft/trashed) all selected rows and related children. Proceed?",
+          }),
+          _jsxs(Modal.Footer, {
+            children: [
+              _jsx(CoolButton, {
+                variant: "secondary",
+                onClick: () => setShowDeleteModal(false),
+                children: "Cancel",
+              }),
+              _jsx(CoolButton, {
+                variant: "danger",
+                onClick: confirmDelete,
+                children: "Delete",
+              }),
+            ],
+          }),
+        ],
+      }),
+      _jsxs(Modal, {
+        show: modalVisible,
+        onHide: () => setModalVisible(false),
+        centered: true,
+        children: [
+          _jsx(Modal.Header, {
+            closeButton: true,
+            children: _jsx(Modal.Title, { children: "Editing OasOperation" }),
+          }),
+          _jsxs(Modal.Body, {
+            children: [
+              modalData.value && typeof modalData.value === "string"
+                ? _jsx(BSForm.Control, {
+                    as: "textarea",
+                    rows: 10,
+                    value: modalData.value,
+                    onChange: (e) => handleModalChange(e.target.value),
+                  })
+                : _jsx("div", {
+                    children:
+                      "No large text data available or unsupported type.",
+                  }),
+              saveSuccess &&
+                _jsxs("div", {
+                  style: {
+                    color: "green",
+                    marginTop: 12,
+                    padding: 8,
+                    backgroundColor: "rgba(0,255,0,0.1)",
+                    borderRadius: 4,
+                  },
+                  children: ["\u2713 ", saveSuccess],
+                }),
+              saveError &&
+                _jsxs("div", {
+                  style: {
+                    color: "red",
+                    marginTop: 12,
+                    padding: 8,
+                    backgroundColor: "rgba(255,0,0,0.1)",
+                    borderRadius: 4,
+                  },
+                  children: ["\u2717 ", saveError],
+                }),
+            ],
+          }),
+          _jsxs(Modal.Footer, {
+            children: [
+              _jsx(CoolButton, {
+                variant: "secondary",
+                onClick: () => setModalVisible(false),
+                disabled: savingModalId,
+                children: "Cancel",
+              }),
+              _jsxs(CoolButton, {
+                variant: "primary",
+                onClick: handleModalSave,
+                disabled: savingModalId,
+                children: [
+                  savingModalId &&
+                    _jsx("span", {
+                      style: { float: "left", minHeight: 0, marginRight: 6 },
+                      children: _jsx(LoadingSpinner, { label: "", size: 16 }),
+                    }),
+                  "Save",
+                ],
+              }),
+            ],
+          }),
+        ],
+      }),
+      _jsx(MarkdownEditorModal, {
+        show: richModal.show,
+        title: `Rich Text: ${richModal.title || ""}`,
+        initialValue: richModal.content,
+        onCancel: () => setRichModal({ show: false, content: "" }),
+        onSave: async (updatedText) => {
+          try {
+            const rid = richModal.rowId;
+            const field = richModal.field;
+            if (!rid || !field) {
+              setRichModal({ show: false, content: "" });
+              return;
+            }
+            const row = allData.find((r) => r.id === rid);
+            if (!row) {
+              setRichModal({ show: false, content: "" });
+              return;
+            }
+            const updated = { ...row, [field]: updatedText };
+            await updateOasOperation(updated).unwrap();
+            setAllData((prev) => prev.map((r) => (r.id === rid ? updated : r)));
+          } catch (e) {
+            console.error("Failed to save markdown field", e);
+          }
+          setRichModal({ show: false, content: "" });
+        },
+      }),
+      selectedObjectForPermissions &&
+        _jsx(PermissionDialog, {
+          objectType: selectedObjectForPermissions.objectType,
+          objectId: selectedObjectForPermissions.objectId,
+          isVisible: showPermissionDialog,
+          onClose: handlePermissionDialogClose,
+          onSave: handlePermissionsSave,
+          currentUser: currentUser,
+        }),
+      isError &&
+        _jsxs("div", {
+          style: { color: "red", marginTop: 12 },
+          children: ["Error fetching page ", page, " of OasOperations."],
+        }),
+      _jsx(QBEPicker, {
+        show: qbePicker.show,
+        refType: qbePicker.refType || "OasOperation",
+        allowCreate: qbePicker.allowCreate,
+        onCancel: () => setQbePicker({ show: false }),
+        onPick: (val) => {
+          const r = qbePicker.resolve;
+          setQbePicker({ show: false });
+          r && r(normalizeRefValue(val));
+        },
+        onCreate: qbePicker.refType
+          ? () => handleReferenceCreate(qbePicker.refType)
+          : undefined,
+      }),
+    ],
+  });
 };
 export default OasOperationTable;
 //# sourceMappingURL=OasOperationTable.js.map

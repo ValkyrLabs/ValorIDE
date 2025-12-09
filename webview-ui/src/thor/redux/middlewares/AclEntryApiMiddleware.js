@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: AclEntry
 */
-export const AclEntryMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const AclEntryMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("AclEntry MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=AclEntryApiMiddleware.js.map

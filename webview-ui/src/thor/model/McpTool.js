@@ -28,79 +28,79 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { OasObjectSchemaFromJSON, OasObjectSchemaToJSON, } from "./";
+import { OasObjectSchemaFromJSON, OasObjectSchemaToJSON } from "./";
 export function McpToolFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: json["name"],
-        mcpServerId: !exists(json, "mcpServerId") ? undefined : json["mcpServerId"],
-        slug: !exists(json, "slug") ? undefined : json["slug"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        category: !exists(json, "category") ? undefined : json["category"],
-        capabilities: !exists(json, "capabilities")
-            ? undefined
-            : json["capabilities"],
-        inputSchemaRef: !exists(json, "inputSchemaRef")
-            ? undefined
-            : OasObjectSchemaFromJSON(json["inputSchemaRef"]),
-        outputSchemaRef: !exists(json, "outputSchemaRef")
-            ? undefined
-            : OasObjectSchemaFromJSON(json["outputSchemaRef"]),
-        invocationStyle: !exists(json, "invocationStyle")
-            ? undefined
-            : json["invocationStyle"],
-        streamingSupported: !exists(json, "streamingSupported")
-            ? undefined
-            : json["streamingSupported"],
-        autoApprove: !exists(json, "autoApprove") ? undefined : json["autoApprove"],
-        defaultAutoApprove: !exists(json, "defaultAutoApprove")
-            ? undefined
-            : json["defaultAutoApprove"],
-        docsUrl: !exists(json, "docsUrl") ? undefined : json["docsUrl"],
-        inputSchema: !exists(json, "inputSchema") ? undefined : json["inputSchema"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: json["name"],
+    mcpServerId: !exists(json, "mcpServerId") ? undefined : json["mcpServerId"],
+    slug: !exists(json, "slug") ? undefined : json["slug"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    category: !exists(json, "category") ? undefined : json["category"],
+    capabilities: !exists(json, "capabilities")
+      ? undefined
+      : json["capabilities"],
+    inputSchemaRef: !exists(json, "inputSchemaRef")
+      ? undefined
+      : OasObjectSchemaFromJSON(json["inputSchemaRef"]),
+    outputSchemaRef: !exists(json, "outputSchemaRef")
+      ? undefined
+      : OasObjectSchemaFromJSON(json["outputSchemaRef"]),
+    invocationStyle: !exists(json, "invocationStyle")
+      ? undefined
+      : json["invocationStyle"],
+    streamingSupported: !exists(json, "streamingSupported")
+      ? undefined
+      : json["streamingSupported"],
+    autoApprove: !exists(json, "autoApprove") ? undefined : json["autoApprove"],
+    defaultAutoApprove: !exists(json, "defaultAutoApprove")
+      ? undefined
+      : json["defaultAutoApprove"],
+    docsUrl: !exists(json, "docsUrl") ? undefined : json["docsUrl"],
+    inputSchema: !exists(json, "inputSchema") ? undefined : json["inputSchema"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function McpToolToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        mcpServerId: value.mcpServerId,
-        slug: value.slug,
-        description: value.description,
-        category: value.category,
-        capabilities: value.capabilities,
-        inputSchemaRef: OasObjectSchemaToJSON(value.inputSchemaRef),
-        outputSchemaRef: OasObjectSchemaToJSON(value.outputSchemaRef),
-        invocationStyle: value.invocationStyle,
-        streamingSupported: value.streamingSupported,
-        autoApprove: value.autoApprove,
-        defaultAutoApprove: value.defaultAutoApprove,
-        docsUrl: value.docsUrl,
-        inputSchema: value.inputSchema,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    mcpServerId: value.mcpServerId,
+    slug: value.slug,
+    description: value.description,
+    category: value.category,
+    capabilities: value.capabilities,
+    inputSchemaRef: OasObjectSchemaToJSON(value.inputSchemaRef),
+    outputSchemaRef: OasObjectSchemaToJSON(value.outputSchemaRef),
+    invocationStyle: value.invocationStyle,
+    streamingSupported: value.streamingSupported,
+    autoApprove: value.autoApprove,
+    defaultAutoApprove: value.defaultAutoApprove,
+    docsUrl: value.docsUrl,
+    inputSchema: value.inputSchema,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -108,14 +108,14 @@ export function McpToolToJSON(value) {
  */
 export var McpToolCategoryEnum;
 (function (McpToolCategoryEnum) {
-    McpToolCategoryEnum["CLOUDPLATFORM"] = "cloud_platform";
-    McpToolCategoryEnum["DEVOPS"] = "devops";
-    McpToolCategoryEnum["SECURITY"] = "security";
-    McpToolCategoryEnum["OBSERVABILITY"] = "observability";
-    McpToolCategoryEnum["DATAENGINEERING"] = "data_engineering";
-    McpToolCategoryEnum["AIASSISTANT"] = "ai_assistant";
-    McpToolCategoryEnum["PRODUCTIVITY"] = "productivity";
-    McpToolCategoryEnum["CUSTOMIZATION"] = "customization";
+  McpToolCategoryEnum["CLOUDPLATFORM"] = "cloud_platform";
+  McpToolCategoryEnum["DEVOPS"] = "devops";
+  McpToolCategoryEnum["SECURITY"] = "security";
+  McpToolCategoryEnum["OBSERVABILITY"] = "observability";
+  McpToolCategoryEnum["DATAENGINEERING"] = "data_engineering";
+  McpToolCategoryEnum["AIASSISTANT"] = "ai_assistant";
+  McpToolCategoryEnum["PRODUCTIVITY"] = "productivity";
+  McpToolCategoryEnum["CUSTOMIZATION"] = "customization";
 })(McpToolCategoryEnum || (McpToolCategoryEnum = {}));
 /**
  * @export
@@ -123,9 +123,9 @@ export var McpToolCategoryEnum;
  */
 export var McpToolInvocationStyleEnum;
 (function (McpToolInvocationStyleEnum) {
-    McpToolInvocationStyleEnum["SINGLECALL"] = "single_call";
-    McpToolInvocationStyleEnum["CONVERSATIONAL"] = "conversational";
-    McpToolInvocationStyleEnum["STREAMING"] = "streaming";
-    McpToolInvocationStyleEnum["BACKGROUND"] = "background";
+  McpToolInvocationStyleEnum["SINGLECALL"] = "single_call";
+  McpToolInvocationStyleEnum["CONVERSATIONAL"] = "conversational";
+  McpToolInvocationStyleEnum["STREAMING"] = "streaming";
+  McpToolInvocationStyleEnum["BACKGROUND"] = "background";
 })(McpToolInvocationStyleEnum || (McpToolInvocationStyleEnum = {}));
 //# sourceMappingURL=McpTool.js.map

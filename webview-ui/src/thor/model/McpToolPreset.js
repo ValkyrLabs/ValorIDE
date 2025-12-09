@@ -28,65 +28,71 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { McpMarketplaceItemTagFromJSON, McpMarketplaceItemTagToJSON, McpToolFromJSON, McpToolToJSON, } from "./";
+import {
+  McpMarketplaceItemTagFromJSON,
+  McpMarketplaceItemTagToJSON,
+  McpToolFromJSON,
+  McpToolToJSON,
+} from "./";
 export function McpToolPresetFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        slug: json["slug"],
-        displayName: json["displayName"],
-        tool: McpToolFromJSON(json["tool"]),
-        summary: !exists(json, "summary") ? undefined : json["summary"],
-        category: !exists(json, "category") ? undefined : json["category"],
-        tags: !exists(json, "tags")
-            ? undefined
-            : json["tags"].map(McpMarketplaceItemTagFromJSON),
-        recommendedFor: !exists(json, "recommendedFor")
-            ? undefined
-            : json["recommendedFor"],
-        documentationUrl: !exists(json, "documentationUrl")
-            ? undefined
-            : json["documentationUrl"],
-        autoApprove: !exists(json, "autoApprove") ? undefined : json["autoApprove"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    slug: json["slug"],
+    displayName: json["displayName"],
+    tool: McpToolFromJSON(json["tool"]),
+    summary: !exists(json, "summary") ? undefined : json["summary"],
+    category: !exists(json, "category") ? undefined : json["category"],
+    tags: !exists(json, "tags")
+      ? undefined
+      : json["tags"].map(McpMarketplaceItemTagFromJSON),
+    recommendedFor: !exists(json, "recommendedFor")
+      ? undefined
+      : json["recommendedFor"],
+    documentationUrl: !exists(json, "documentationUrl")
+      ? undefined
+      : json["documentationUrl"],
+    autoApprove: !exists(json, "autoApprove") ? undefined : json["autoApprove"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function McpToolPresetToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        slug: value.slug,
-        displayName: value.displayName,
-        tool: McpToolToJSON(value.tool),
-        summary: value.summary,
-        category: value.category,
-        tags: value.tags === undefined
-            ? undefined
-            : value.tags.map(McpMarketplaceItemTagToJSON),
-        recommendedFor: value.recommendedFor,
-        documentationUrl: value.documentationUrl,
-        autoApprove: value.autoApprove,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    slug: value.slug,
+    displayName: value.displayName,
+    tool: McpToolToJSON(value.tool),
+    summary: value.summary,
+    category: value.category,
+    tags:
+      value.tags === undefined
+        ? undefined
+        : value.tags.map(McpMarketplaceItemTagToJSON),
+    recommendedFor: value.recommendedFor,
+    documentationUrl: value.documentationUrl,
+    autoApprove: value.autoApprove,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -94,13 +100,13 @@ export function McpToolPresetToJSON(value) {
  */
 export var McpToolPresetCategoryEnum;
 (function (McpToolPresetCategoryEnum) {
-    McpToolPresetCategoryEnum["CLOUDPLATFORM"] = "cloud_platform";
-    McpToolPresetCategoryEnum["DEVOPS"] = "devops";
-    McpToolPresetCategoryEnum["SECURITY"] = "security";
-    McpToolPresetCategoryEnum["OBSERVABILITY"] = "observability";
-    McpToolPresetCategoryEnum["DATAENGINEERING"] = "data_engineering";
-    McpToolPresetCategoryEnum["AIASSISTANT"] = "ai_assistant";
-    McpToolPresetCategoryEnum["PRODUCTIVITY"] = "productivity";
-    McpToolPresetCategoryEnum["CUSTOMIZATION"] = "customization";
+  McpToolPresetCategoryEnum["CLOUDPLATFORM"] = "cloud_platform";
+  McpToolPresetCategoryEnum["DEVOPS"] = "devops";
+  McpToolPresetCategoryEnum["SECURITY"] = "security";
+  McpToolPresetCategoryEnum["OBSERVABILITY"] = "observability";
+  McpToolPresetCategoryEnum["DATAENGINEERING"] = "data_engineering";
+  McpToolPresetCategoryEnum["AIASSISTANT"] = "ai_assistant";
+  McpToolPresetCategoryEnum["PRODUCTIVITY"] = "productivity";
+  McpToolPresetCategoryEnum["CUSTOMIZATION"] = "customization";
 })(McpToolPresetCategoryEnum || (McpToolPresetCategoryEnum = {}));
 //# sourceMappingURL=McpToolPreset.js.map

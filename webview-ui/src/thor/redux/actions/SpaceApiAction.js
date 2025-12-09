@@ -31,60 +31,60 @@ export const LIST_SPACE_REQUEST = "LIST_SPACE_REQUEST";
 export const LIST_SPACE_SUCCESS = "LIST_SPACE_SUCCESS";
 export const LIST_SPACE_FAILURE = "LIST_SPACE_FAILURE";
 export const addSpaceRequest = () => ({
-    type: ADD_SPACE_REQUEST,
+  type: ADD_SPACE_REQUEST,
 });
 export const addSpaceSuccess = (Spaces) => ({
-    type: ADD_SPACE_SUCCESS,
-    payload: Spaces,
+  type: ADD_SPACE_SUCCESS,
+  payload: Spaces,
 });
 export const addSpaceFailure = (error) => ({
-    type: ADD_SPACE_FAILURE,
-    payload: error,
+  type: ADD_SPACE_FAILURE,
+  payload: error,
 });
 export const fetchSpaceRequest = () => ({
-    type: FETCH_SPACE_REQUEST,
+  type: FETCH_SPACE_REQUEST,
 });
 export const fetchSpaceSuccess = (Spaces) => ({
-    type: FETCH_SPACE_SUCCESS,
-    payload: Spaces,
+  type: FETCH_SPACE_SUCCESS,
+  payload: Spaces,
 });
 export const fetchSpaceFailure = (error) => ({
-    type: FETCH_SPACE_FAILURE,
-    payload: error,
+  type: FETCH_SPACE_FAILURE,
+  payload: error,
 });
 export const listSpaceRequest = () => ({
-    type: LIST_SPACE_REQUEST,
+  type: LIST_SPACE_REQUEST,
 });
 export const listSpaceSuccess = (Spaces) => ({
-    type: LIST_SPACE_SUCCESS,
-    payload: Spaces,
+  type: LIST_SPACE_SUCCESS,
+  payload: Spaces,
 });
 export const listSpaceFailure = (error) => ({
-    type: LIST_SPACE_FAILURE,
-    payload: error,
+  type: LIST_SPACE_FAILURE,
+  payload: error,
 });
 export const updateSpaceRequest = (Space) => ({
-    type: UPDATE_SPACE_REQUEST,
-    payload: Space,
+  type: UPDATE_SPACE_REQUEST,
+  payload: Space,
 });
 export const updateSpaceSuccess = (Space) => ({
-    type: UPDATE_SPACE_SUCCESS,
-    payload: Space,
+  type: UPDATE_SPACE_SUCCESS,
+  payload: Space,
 });
 export const updateSpaceFailure = (error) => ({
-    type: UPDATE_SPACE_FAILURE,
-    payload: error,
+  type: UPDATE_SPACE_FAILURE,
+  payload: error,
 });
 export const deleteSpaceRequest = (Space) => ({
-    type: DELETE_SPACE_REQUEST,
-    payload: Space,
+  type: DELETE_SPACE_REQUEST,
+  payload: Space,
 });
 export const deleteSpaceSuccess = (Space) => ({
-    type: DELETE_SPACE_SUCCESS,
-    payload: Space,
+  type: DELETE_SPACE_SUCCESS,
+  payload: Space,
 });
 export const deleteSpaceFailure = (error) => ({
-    type: DELETE_SPACE_FAILURE,
-    payload: error,
+  type: DELETE_SPACE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=SpaceApiAction.js.map

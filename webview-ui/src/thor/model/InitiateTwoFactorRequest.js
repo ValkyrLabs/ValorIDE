@@ -29,41 +29,41 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function InitiateTwoFactorRequestFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        principalId: json["principalId"],
-        method: !exists(json, "method") ? undefined : json["method"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    principalId: json["principalId"],
+    method: !exists(json, "method") ? undefined : json["method"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function InitiateTwoFactorRequestToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        principalId: value.principalId,
-        method: value.method,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    principalId: value.principalId,
+    method: value.method,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -71,7 +71,10 @@ export function InitiateTwoFactorRequestToJSON(value) {
  */
 export var InitiateTwoFactorRequestMethodEnum;
 (function (InitiateTwoFactorRequestMethodEnum) {
-    InitiateTwoFactorRequestMethodEnum["TOTP"] = "totp";
-    InitiateTwoFactorRequestMethodEnum["SMS"] = "sms";
-})(InitiateTwoFactorRequestMethodEnum || (InitiateTwoFactorRequestMethodEnum = {}));
+  InitiateTwoFactorRequestMethodEnum["TOTP"] = "totp";
+  InitiateTwoFactorRequestMethodEnum["SMS"] = "sms";
+})(
+  InitiateTwoFactorRequestMethodEnum ||
+    (InitiateTwoFactorRequestMethodEnum = {}),
+);
 //# sourceMappingURL=InitiateTwoFactorRequest.js.map

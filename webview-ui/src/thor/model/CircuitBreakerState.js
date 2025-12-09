@@ -29,71 +29,75 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function CircuitBreakerStateFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        target: !exists(json, "target") ? undefined : json["target"],
-        state: !exists(json, "state") ? undefined : json["state"],
-        failureCount: !exists(json, "failureCount")
-            ? undefined
-            : json["failureCount"],
-        successCount: !exists(json, "successCount")
-            ? undefined
-            : json["successCount"],
-        lastFailureAt: !exists(json, "lastFailureAt")
-            ? undefined
-            : new Date(json["lastFailureAt"]),
-        openedAt: !exists(json, "openedAt")
-            ? undefined
-            : new Date(json["openedAt"]),
-        nextRetryAt: !exists(json, "nextRetryAt")
-            ? undefined
-            : new Date(json["nextRetryAt"]),
-        windowStartAt: !exists(json, "windowStartAt")
-            ? undefined
-            : new Date(json["windowStartAt"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    target: !exists(json, "target") ? undefined : json["target"],
+    state: !exists(json, "state") ? undefined : json["state"],
+    failureCount: !exists(json, "failureCount")
+      ? undefined
+      : json["failureCount"],
+    successCount: !exists(json, "successCount")
+      ? undefined
+      : json["successCount"],
+    lastFailureAt: !exists(json, "lastFailureAt")
+      ? undefined
+      : new Date(json["lastFailureAt"]),
+    openedAt: !exists(json, "openedAt")
+      ? undefined
+      : new Date(json["openedAt"]),
+    nextRetryAt: !exists(json, "nextRetryAt")
+      ? undefined
+      : new Date(json["nextRetryAt"]),
+    windowStartAt: !exists(json, "windowStartAt")
+      ? undefined
+      : new Date(json["windowStartAt"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function CircuitBreakerStateToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        target: value.target,
-        state: value.state,
-        failureCount: value.failureCount,
-        successCount: value.successCount,
-        lastFailureAt: value.lastFailureAt === undefined
-            ? undefined
-            : value.lastFailureAt.toISOString(),
-        openedAt: value.openedAt === undefined ? undefined : value.openedAt.toISOString(),
-        nextRetryAt: value.nextRetryAt === undefined
-            ? undefined
-            : value.nextRetryAt.toISOString(),
-        windowStartAt: value.windowStartAt === undefined
-            ? undefined
-            : value.windowStartAt.toISOString(),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    target: value.target,
+    state: value.state,
+    failureCount: value.failureCount,
+    successCount: value.successCount,
+    lastFailureAt:
+      value.lastFailureAt === undefined
+        ? undefined
+        : value.lastFailureAt.toISOString(),
+    openedAt:
+      value.openedAt === undefined ? undefined : value.openedAt.toISOString(),
+    nextRetryAt:
+      value.nextRetryAt === undefined
+        ? undefined
+        : value.nextRetryAt.toISOString(),
+    windowStartAt:
+      value.windowStartAt === undefined
+        ? undefined
+        : value.windowStartAt.toISOString(),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -101,8 +105,8 @@ export function CircuitBreakerStateToJSON(value) {
  */
 export var CircuitBreakerStateStateEnum;
 (function (CircuitBreakerStateStateEnum) {
-    CircuitBreakerStateStateEnum["CLOSED"] = "closed";
-    CircuitBreakerStateStateEnum["OPEN"] = "open";
-    CircuitBreakerStateStateEnum["HALFOPEN"] = "half_open";
+  CircuitBreakerStateStateEnum["CLOSED"] = "closed";
+  CircuitBreakerStateStateEnum["OPEN"] = "open";
+  CircuitBreakerStateStateEnum["HALFOPEN"] = "half_open";
 })(CircuitBreakerStateStateEnum || (CircuitBreakerStateStateEnum = {}));
 //# sourceMappingURL=CircuitBreakerState.js.map

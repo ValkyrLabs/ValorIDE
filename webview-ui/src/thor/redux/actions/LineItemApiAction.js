@@ -31,60 +31,60 @@ export const LIST_LINEITEM_REQUEST = "LIST_LINEITEM_REQUEST";
 export const LIST_LINEITEM_SUCCESS = "LIST_LINEITEM_SUCCESS";
 export const LIST_LINEITEM_FAILURE = "LIST_LINEITEM_FAILURE";
 export const addLineItemRequest = () => ({
-    type: ADD_LINEITEM_REQUEST,
+  type: ADD_LINEITEM_REQUEST,
 });
 export const addLineItemSuccess = (LineItems) => ({
-    type: ADD_LINEITEM_SUCCESS,
-    payload: LineItems,
+  type: ADD_LINEITEM_SUCCESS,
+  payload: LineItems,
 });
 export const addLineItemFailure = (error) => ({
-    type: ADD_LINEITEM_FAILURE,
-    payload: error,
+  type: ADD_LINEITEM_FAILURE,
+  payload: error,
 });
 export const fetchLineItemRequest = () => ({
-    type: FETCH_LINEITEM_REQUEST,
+  type: FETCH_LINEITEM_REQUEST,
 });
 export const fetchLineItemSuccess = (LineItems) => ({
-    type: FETCH_LINEITEM_SUCCESS,
-    payload: LineItems,
+  type: FETCH_LINEITEM_SUCCESS,
+  payload: LineItems,
 });
 export const fetchLineItemFailure = (error) => ({
-    type: FETCH_LINEITEM_FAILURE,
-    payload: error,
+  type: FETCH_LINEITEM_FAILURE,
+  payload: error,
 });
 export const listLineItemRequest = () => ({
-    type: LIST_LINEITEM_REQUEST,
+  type: LIST_LINEITEM_REQUEST,
 });
 export const listLineItemSuccess = (LineItems) => ({
-    type: LIST_LINEITEM_SUCCESS,
-    payload: LineItems,
+  type: LIST_LINEITEM_SUCCESS,
+  payload: LineItems,
 });
 export const listLineItemFailure = (error) => ({
-    type: LIST_LINEITEM_FAILURE,
-    payload: error,
+  type: LIST_LINEITEM_FAILURE,
+  payload: error,
 });
 export const updateLineItemRequest = (LineItem) => ({
-    type: UPDATE_LINEITEM_REQUEST,
-    payload: LineItem,
+  type: UPDATE_LINEITEM_REQUEST,
+  payload: LineItem,
 });
 export const updateLineItemSuccess = (LineItem) => ({
-    type: UPDATE_LINEITEM_SUCCESS,
-    payload: LineItem,
+  type: UPDATE_LINEITEM_SUCCESS,
+  payload: LineItem,
 });
 export const updateLineItemFailure = (error) => ({
-    type: UPDATE_LINEITEM_FAILURE,
-    payload: error,
+  type: UPDATE_LINEITEM_FAILURE,
+  payload: error,
 });
 export const deleteLineItemRequest = (LineItem) => ({
-    type: DELETE_LINEITEM_REQUEST,
-    payload: LineItem,
+  type: DELETE_LINEITEM_REQUEST,
+  payload: LineItem,
 });
 export const deleteLineItemSuccess = (LineItem) => ({
-    type: DELETE_LINEITEM_SUCCESS,
-    payload: LineItem,
+  type: DELETE_LINEITEM_SUCCESS,
+  payload: LineItem,
 });
 export const deleteLineItemFailure = (error) => ({
-    type: DELETE_LINEITEM_FAILURE,
-    payload: error,
+  type: DELETE_LINEITEM_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=LineItemApiAction.js.map

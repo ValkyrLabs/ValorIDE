@@ -28,66 +28,73 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { GoalDependencyFromJSON, GoalDependencyToJSON, KeyMetricFromJSON, KeyMetricToJSON, } from "./";
+import {
+  GoalDependencyFromJSON,
+  GoalDependencyToJSON,
+  KeyMetricFromJSON,
+  KeyMetricToJSON,
+} from "./";
 export function GoalFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        strategicPriorityId: !exists(json, "strategicPriorityId")
-            ? undefined
-            : json["strategicPriorityId"],
-        name: !exists(json, "name") ? undefined : json["name"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        keyMetrics: !exists(json, "keyMetrics")
-            ? undefined
-            : json["keyMetrics"].map(KeyMetricFromJSON),
-        goalDependencies: !exists(json, "goalDependencies")
-            ? undefined
-            : json["goalDependencies"].map(GoalDependencyFromJSON),
-        expectedOutcome: !exists(json, "expectedOutcome")
-            ? undefined
-            : json["expectedOutcome"],
-        risks: !exists(json, "risks") ? undefined : json["risks"],
-        timeline: !exists(json, "timeline") ? undefined : json["timeline"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    strategicPriorityId: !exists(json, "strategicPriorityId")
+      ? undefined
+      : json["strategicPriorityId"],
+    name: !exists(json, "name") ? undefined : json["name"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    keyMetrics: !exists(json, "keyMetrics")
+      ? undefined
+      : json["keyMetrics"].map(KeyMetricFromJSON),
+    goalDependencies: !exists(json, "goalDependencies")
+      ? undefined
+      : json["goalDependencies"].map(GoalDependencyFromJSON),
+    expectedOutcome: !exists(json, "expectedOutcome")
+      ? undefined
+      : json["expectedOutcome"],
+    risks: !exists(json, "risks") ? undefined : json["risks"],
+    timeline: !exists(json, "timeline") ? undefined : json["timeline"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function GoalToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        strategicPriorityId: value.strategicPriorityId,
-        name: value.name,
-        description: value.description,
-        keyMetrics: value.keyMetrics === undefined
-            ? undefined
-            : value.keyMetrics.map(KeyMetricToJSON),
-        goalDependencies: value.goalDependencies === undefined
-            ? undefined
-            : value.goalDependencies.map(GoalDependencyToJSON),
-        expectedOutcome: value.expectedOutcome,
-        risks: value.risks,
-        timeline: value.timeline,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    strategicPriorityId: value.strategicPriorityId,
+    name: value.name,
+    description: value.description,
+    keyMetrics:
+      value.keyMetrics === undefined
+        ? undefined
+        : value.keyMetrics.map(KeyMetricToJSON),
+    goalDependencies:
+      value.goalDependencies === undefined
+        ? undefined
+        : value.goalDependencies.map(GoalDependencyToJSON),
+    expectedOutcome: value.expectedOutcome,
+    risks: value.risks,
+    timeline: value.timeline,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=Goal.js.map

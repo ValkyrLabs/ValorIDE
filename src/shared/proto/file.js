@@ -6,18 +6,18 @@
 import { Empty, StringRequest } from "./common";
 export const protobufPackage = "valoride";
 export const FileServiceDefinition = {
-    name: "FileService",
-    fullName: "valoride.FileService",
-    methods: {
-        /** Opens a file in the editor */
-        openFile: {
-            name: "openFile",
-            requestType: StringRequest,
-            requestStream: false,
-            responseType: Empty,
-            responseStream: false,
-            options: {},
-        },
+  name: "FileService",
+  fullName: "valoride.FileService",
+  methods: {
+    /** Opens a file in the editor */
+    openFile: {
+      name: "openFile",
+      requestType: StringRequest,
+      requestStream: false,
+      responseType: Empty,
+      responseStream: false,
+      options: {},
     },
+  },
 };
 //# sourceMappingURL=file.js.map

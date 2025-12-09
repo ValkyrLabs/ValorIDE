@@ -16,31 +16,41 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const VerifyTwoFactorResponseSlice = createSlice({
-    name: "VerifyTwoFactorResponses",
-    initialState: [],
-    reducers: {
-        VerifyTwoFactorResponseAdded(state, action) {
-            state.push(action.payload);
-        },
-        VerifyTwoFactorResponseValueToggled(state, action) {
-            console.log("VerifyTwoFactorResponse TOGGLE");
-            console.warn(JSON.stringify(action));
-            const VerifyTwoFactorResponse = state.find((VerifyTwoFactorResponse) => VerifyTwoFactorResponse.id ===
-                action.payload.VerifyTwoFactorResponseId);
-            if (VerifyTwoFactorResponse) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        VerifyTwoFactorResponsepropertySet(state, action) {
-            const VerifyTwoFactorResponse = state.find((VerifyTwoFactorResponse) => VerifyTwoFactorResponse.id ===
-                action.payload.VerifyTwoFactorResponseId);
-            if (VerifyTwoFactorResponse) {
-                //  VerifyTwoFactorResponse[action.property] = action.payload[action.property];
-            }
-        },
+  name: "VerifyTwoFactorResponses",
+  initialState: [],
+  reducers: {
+    VerifyTwoFactorResponseAdded(state, action) {
+      state.push(action.payload);
     },
+    VerifyTwoFactorResponseValueToggled(state, action) {
+      console.log("VerifyTwoFactorResponse TOGGLE");
+      console.warn(JSON.stringify(action));
+      const VerifyTwoFactorResponse = state.find(
+        (VerifyTwoFactorResponse) =>
+          VerifyTwoFactorResponse.id ===
+          action.payload.VerifyTwoFactorResponseId,
+      );
+      if (VerifyTwoFactorResponse) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    VerifyTwoFactorResponsepropertySet(state, action) {
+      const VerifyTwoFactorResponse = state.find(
+        (VerifyTwoFactorResponse) =>
+          VerifyTwoFactorResponse.id ===
+          action.payload.VerifyTwoFactorResponseId,
+      );
+      if (VerifyTwoFactorResponse) {
+        //  VerifyTwoFactorResponse[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { VerifyTwoFactorResponseAdded, VerifyTwoFactorResponseValueToggled, VerifyTwoFactorResponsepropertySet, } = VerifyTwoFactorResponseSlice.actions;
+export const {
+  VerifyTwoFactorResponseAdded,
+  VerifyTwoFactorResponseValueToggled,
+  VerifyTwoFactorResponsepropertySet,
+} = VerifyTwoFactorResponseSlice.actions;
 export default VerifyTwoFactorResponseSlice.reducer;
 //# sourceMappingURL=VerifyTwoFactorResponseReducer.js.map

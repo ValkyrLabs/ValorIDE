@@ -29,56 +29,56 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function McpDownloadResponseFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        githubUrl: json["githubUrl"],
-        name: json["name"],
-        author: json["author"],
-        description: json["description"],
-        requiresApiKey: json["requiresApiKey"],
-        mcpId: !exists(json, "mcpId") ? undefined : json["mcpId"],
-        readmeContent: !exists(json, "readmeContent")
-            ? undefined
-            : json["readmeContent"],
-        llmsInstallationContent: !exists(json, "llmsInstallationContent")
-            ? undefined
-            : json["llmsInstallationContent"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    githubUrl: json["githubUrl"],
+    name: json["name"],
+    author: json["author"],
+    description: json["description"],
+    requiresApiKey: json["requiresApiKey"],
+    mcpId: !exists(json, "mcpId") ? undefined : json["mcpId"],
+    readmeContent: !exists(json, "readmeContent")
+      ? undefined
+      : json["readmeContent"],
+    llmsInstallationContent: !exists(json, "llmsInstallationContent")
+      ? undefined
+      : json["llmsInstallationContent"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function McpDownloadResponseToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        githubUrl: value.githubUrl,
-        name: value.name,
-        author: value.author,
-        description: value.description,
-        requiresApiKey: value.requiresApiKey,
-        mcpId: value.mcpId,
-        readmeContent: value.readmeContent,
-        llmsInstallationContent: value.llmsInstallationContent,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    githubUrl: value.githubUrl,
+    name: value.name,
+    author: value.author,
+    description: value.description,
+    requiresApiKey: value.requiresApiKey,
+    mcpId: value.mcpId,
+    readmeContent: value.readmeContent,
+    llmsInstallationContent: value.llmsInstallationContent,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=McpDownloadResponse.js.map

@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Rating
 */
-export const RatingMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const RatingMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Rating MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=RatingApiMiddleware.js.map

@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: DeadLetterQueue
 */
-export const DeadLetterQueueMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const DeadLetterQueueMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("DeadLetterQueue MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=DeadLetterQueueApiMiddleware.js.map

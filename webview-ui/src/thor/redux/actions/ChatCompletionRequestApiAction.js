@@ -15,76 +15,91 @@ Template file: typescript-redux-query/modelAction.mustache
 */
 // defines the Redux Actions for ChatCompletionRequest
 // ChatCompletionRequest
-export const FETCH_CHATCOMPLETIONREQUEST_REQUEST = "FETCH_CHATCOMPLETIONREQUEST_REQUEST";
-export const FETCH_CHATCOMPLETIONREQUEST_SUCCESS = "FETCH_CHATCOMPLETIONREQUEST_SUCCESS";
-export const FETCH_CHATCOMPLETIONREQUEST_FAILURE = "FETCH_CHATCOMPLETIONREQUEST_FAILURE";
-export const ADD_CHATCOMPLETIONREQUEST_REQUEST = "ADD_CHATCOMPLETIONREQUEST_REQUEST";
-export const ADD_CHATCOMPLETIONREQUEST_SUCCESS = "ADD_CHATCOMPLETIONREQUEST_SUCCESS";
-export const ADD_CHATCOMPLETIONREQUEST_FAILURE = "ADD_CHATCOMPLETIONREQUEST_FAILURE";
-export const UPDATE_CHATCOMPLETIONREQUEST_REQUEST = "UPDATE_CHATCOMPLETIONREQUEST_REQUEST";
-export const UPDATE_CHATCOMPLETIONREQUEST_SUCCESS = "UPDATE_CHATCOMPLETIONREQUEST_SUCCESS";
-export const UPDATE_CHATCOMPLETIONREQUEST_FAILURE = "UPDATE_CHATCOMPLETIONREQUEST_FAILURE";
-export const DELETE_CHATCOMPLETIONREQUEST_REQUEST = "DELETE_CHATCOMPLETIONREQUEST_REQUEST";
-export const DELETE_CHATCOMPLETIONREQUEST_SUCCESS = "DELETE_CHATCOMPLETIONREQUEST_SUCCESS";
-export const DELETE_CHATCOMPLETIONREQUEST_FAILURE = "DELETE_CHATCOMPLETIONREQUEST_FAILURE";
-export const LIST_CHATCOMPLETIONREQUEST_REQUEST = "LIST_CHATCOMPLETIONREQUEST_REQUEST";
-export const LIST_CHATCOMPLETIONREQUEST_SUCCESS = "LIST_CHATCOMPLETIONREQUEST_SUCCESS";
-export const LIST_CHATCOMPLETIONREQUEST_FAILURE = "LIST_CHATCOMPLETIONREQUEST_FAILURE";
+export const FETCH_CHATCOMPLETIONREQUEST_REQUEST =
+  "FETCH_CHATCOMPLETIONREQUEST_REQUEST";
+export const FETCH_CHATCOMPLETIONREQUEST_SUCCESS =
+  "FETCH_CHATCOMPLETIONREQUEST_SUCCESS";
+export const FETCH_CHATCOMPLETIONREQUEST_FAILURE =
+  "FETCH_CHATCOMPLETIONREQUEST_FAILURE";
+export const ADD_CHATCOMPLETIONREQUEST_REQUEST =
+  "ADD_CHATCOMPLETIONREQUEST_REQUEST";
+export const ADD_CHATCOMPLETIONREQUEST_SUCCESS =
+  "ADD_CHATCOMPLETIONREQUEST_SUCCESS";
+export const ADD_CHATCOMPLETIONREQUEST_FAILURE =
+  "ADD_CHATCOMPLETIONREQUEST_FAILURE";
+export const UPDATE_CHATCOMPLETIONREQUEST_REQUEST =
+  "UPDATE_CHATCOMPLETIONREQUEST_REQUEST";
+export const UPDATE_CHATCOMPLETIONREQUEST_SUCCESS =
+  "UPDATE_CHATCOMPLETIONREQUEST_SUCCESS";
+export const UPDATE_CHATCOMPLETIONREQUEST_FAILURE =
+  "UPDATE_CHATCOMPLETIONREQUEST_FAILURE";
+export const DELETE_CHATCOMPLETIONREQUEST_REQUEST =
+  "DELETE_CHATCOMPLETIONREQUEST_REQUEST";
+export const DELETE_CHATCOMPLETIONREQUEST_SUCCESS =
+  "DELETE_CHATCOMPLETIONREQUEST_SUCCESS";
+export const DELETE_CHATCOMPLETIONREQUEST_FAILURE =
+  "DELETE_CHATCOMPLETIONREQUEST_FAILURE";
+export const LIST_CHATCOMPLETIONREQUEST_REQUEST =
+  "LIST_CHATCOMPLETIONREQUEST_REQUEST";
+export const LIST_CHATCOMPLETIONREQUEST_SUCCESS =
+  "LIST_CHATCOMPLETIONREQUEST_SUCCESS";
+export const LIST_CHATCOMPLETIONREQUEST_FAILURE =
+  "LIST_CHATCOMPLETIONREQUEST_FAILURE";
 export const addChatCompletionRequestRequest = () => ({
-    type: ADD_CHATCOMPLETIONREQUEST_REQUEST,
+  type: ADD_CHATCOMPLETIONREQUEST_REQUEST,
 });
 export const addChatCompletionRequestSuccess = (ChatCompletionRequests) => ({
-    type: ADD_CHATCOMPLETIONREQUEST_SUCCESS,
-    payload: ChatCompletionRequests,
+  type: ADD_CHATCOMPLETIONREQUEST_SUCCESS,
+  payload: ChatCompletionRequests,
 });
 export const addChatCompletionRequestFailure = (error) => ({
-    type: ADD_CHATCOMPLETIONREQUEST_FAILURE,
-    payload: error,
+  type: ADD_CHATCOMPLETIONREQUEST_FAILURE,
+  payload: error,
 });
 export const fetchChatCompletionRequestRequest = () => ({
-    type: FETCH_CHATCOMPLETIONREQUEST_REQUEST,
+  type: FETCH_CHATCOMPLETIONREQUEST_REQUEST,
 });
 export const fetchChatCompletionRequestSuccess = (ChatCompletionRequests) => ({
-    type: FETCH_CHATCOMPLETIONREQUEST_SUCCESS,
-    payload: ChatCompletionRequests,
+  type: FETCH_CHATCOMPLETIONREQUEST_SUCCESS,
+  payload: ChatCompletionRequests,
 });
 export const fetchChatCompletionRequestFailure = (error) => ({
-    type: FETCH_CHATCOMPLETIONREQUEST_FAILURE,
-    payload: error,
+  type: FETCH_CHATCOMPLETIONREQUEST_FAILURE,
+  payload: error,
 });
 export const listChatCompletionRequestRequest = () => ({
-    type: LIST_CHATCOMPLETIONREQUEST_REQUEST,
+  type: LIST_CHATCOMPLETIONREQUEST_REQUEST,
 });
 export const listChatCompletionRequestSuccess = (ChatCompletionRequests) => ({
-    type: LIST_CHATCOMPLETIONREQUEST_SUCCESS,
-    payload: ChatCompletionRequests,
+  type: LIST_CHATCOMPLETIONREQUEST_SUCCESS,
+  payload: ChatCompletionRequests,
 });
 export const listChatCompletionRequestFailure = (error) => ({
-    type: LIST_CHATCOMPLETIONREQUEST_FAILURE,
-    payload: error,
+  type: LIST_CHATCOMPLETIONREQUEST_FAILURE,
+  payload: error,
 });
 export const updateChatCompletionRequestRequest = (ChatCompletionRequest) => ({
-    type: UPDATE_CHATCOMPLETIONREQUEST_REQUEST,
-    payload: ChatCompletionRequest,
+  type: UPDATE_CHATCOMPLETIONREQUEST_REQUEST,
+  payload: ChatCompletionRequest,
 });
 export const updateChatCompletionRequestSuccess = (ChatCompletionRequest) => ({
-    type: UPDATE_CHATCOMPLETIONREQUEST_SUCCESS,
-    payload: ChatCompletionRequest,
+  type: UPDATE_CHATCOMPLETIONREQUEST_SUCCESS,
+  payload: ChatCompletionRequest,
 });
 export const updateChatCompletionRequestFailure = (error) => ({
-    type: UPDATE_CHATCOMPLETIONREQUEST_FAILURE,
-    payload: error,
+  type: UPDATE_CHATCOMPLETIONREQUEST_FAILURE,
+  payload: error,
 });
 export const deleteChatCompletionRequestRequest = (ChatCompletionRequest) => ({
-    type: DELETE_CHATCOMPLETIONREQUEST_REQUEST,
-    payload: ChatCompletionRequest,
+  type: DELETE_CHATCOMPLETIONREQUEST_REQUEST,
+  payload: ChatCompletionRequest,
 });
 export const deleteChatCompletionRequestSuccess = (ChatCompletionRequest) => ({
-    type: DELETE_CHATCOMPLETIONREQUEST_SUCCESS,
-    payload: ChatCompletionRequest,
+  type: DELETE_CHATCOMPLETIONREQUEST_SUCCESS,
+  payload: ChatCompletionRequest,
 });
 export const deleteChatCompletionRequestFailure = (error) => ({
-    type: DELETE_CHATCOMPLETIONREQUEST_FAILURE,
-    payload: error,
+  type: DELETE_CHATCOMPLETIONREQUEST_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=ChatCompletionRequestApiAction.js.map

@@ -7,9 +7,9 @@ import { getBrowserConnectionInfo } from "./getBrowserConnectionInfo";
 import { testBrowserConnection } from "./testBrowserConnection";
 // Register all browser service methods
 export function registerAllMethods() {
-    // Register each method with the registry
-    registerMethod("discoverBrowser", discoverBrowser);
-    registerMethod("getBrowserConnectionInfo", getBrowserConnectionInfo);
-    registerMethod("testBrowserConnection", testBrowserConnection);
+  // Register each method with the registry
+  registerMethod("discoverBrowser", discoverBrowser);
+  registerMethod("getBrowserConnectionInfo", getBrowserConnectionInfo);
+  registerMethod("testBrowserConnection", testBrowserConnection);
 }
 //# sourceMappingURL=methods.js.map

@@ -16,34 +16,32 @@ import MermaidBlock from "@/components/common/MermaidBlock";
  * This caused the entire content to disappear because the structure became invalid.
  */
 const remarkUrlToLink = () => {
-    return (tree) => {
-        // Visit all "text" nodes in the markdown AST (Abstract Syntax Tree)
-        visit(tree, "text", (node, index, parent) => {
-            const urlRegex = /https?:\/\/[^\s<>)"]+/g;
-            const matches = node.value.match(urlRegex);
-            if (!matches)
-                return;
-            const parts = node.value.split(urlRegex);
-            const children = [];
-            parts.forEach((part, i) => {
-                if (part)
-                    children.push({ type: "text", value: part });
-                if (matches[i]) {
-                    children.push({
-                        type: "link",
-                        url: matches[i],
-                        children: [{ type: "text", value: matches[i] }],
-                    });
-                }
-            });
-            // Fix: Instead of converting the node to a paragraph (which broke things),
-            // we replace the original text node with our new nodes in the parent's children array.
-            // This preserves the document structure while adding our links.
-            if (parent) {
-                parent.children.splice(index, 1, ...children);
-            }
-        });
-    };
+  return (tree) => {
+    // Visit all "text" nodes in the markdown AST (Abstract Syntax Tree)
+    visit(tree, "text", (node, index, parent) => {
+      const urlRegex = /https?:\/\/[^\s<>)"]+/g;
+      const matches = node.value.match(urlRegex);
+      if (!matches) return;
+      const parts = node.value.split(urlRegex);
+      const children = [];
+      parts.forEach((part, i) => {
+        if (part) children.push({ type: "text", value: part });
+        if (matches[i]) {
+          children.push({
+            type: "link",
+            url: matches[i],
+            children: [{ type: "text", value: matches[i] }],
+          });
+        }
+      });
+      // Fix: Instead of converting the node to a paragraph (which broke things),
+      // we replace the original text node with our new nodes in the parent's children array.
+      // This preserves the document structure while adding our links.
+      if (parent) {
+        parent.children.splice(index, 1, ...children);
+      }
+    });
+  };
 };
 /**
  * Custom remark plugin that prevents filenames with extensions from being parsed as bold text
@@ -51,39 +49,37 @@ const remarkUrlToLink = () => {
  * Solves https://github.com/valkyrlabs/valoride/issues/1028
  */
 const remarkPreventBoldFilenames = () => {
-    return (tree) => {
-        visit(tree, "strong", (node, index, parent) => {
-            // Only process if there's a next node (potential file extension)
-            if (!parent ||
-                typeof index === "undefined" ||
-                index === parent.children.length - 1)
-                return;
-            const nextNode = parent.children[index + 1];
-            // Check if next node is text and starts with . followed by extension
-            if (nextNode.type !== "text" ||
-                !nextNode.value.match(/^\.[a-zA-Z0-9]+/))
-                return;
-            // If the strong node has multiple children, something weird is happening
-            if (node.children?.length !== 1)
-                return;
-            // Get the text content from inside the strong node
-            const strongContent = node.children?.[0]?.value;
-            if (!strongContent || typeof strongContent !== "string")
-                return;
-            // Validate that the strong content is a valid filename
-            if (!strongContent.match(/^[a-zA-Z0-9_-]+$/))
-                return;
-            // Combine into a single text node
-            const newNode = {
-                type: "text",
-                value: `__${strongContent}__${nextNode.value}`,
-            };
-            // Replace both nodes with the combined text node
-            parent.children.splice(index, 2, newNode);
-        });
-    };
+  return (tree) => {
+    visit(tree, "strong", (node, index, parent) => {
+      // Only process if there's a next node (potential file extension)
+      if (
+        !parent ||
+        typeof index === "undefined" ||
+        index === parent.children.length - 1
+      )
+        return;
+      const nextNode = parent.children[index + 1];
+      // Check if next node is text and starts with . followed by extension
+      if (nextNode.type !== "text" || !nextNode.value.match(/^\.[a-zA-Z0-9]+/))
+        return;
+      // If the strong node has multiple children, something weird is happening
+      if (node.children?.length !== 1) return;
+      // Get the text content from inside the strong node
+      const strongContent = node.children?.[0]?.value;
+      if (!strongContent || typeof strongContent !== "string") return;
+      // Validate that the strong content is a valid filename
+      if (!strongContent.match(/^[a-zA-Z0-9_-]+$/)) return;
+      // Combine into a single text node
+      const newNode = {
+        type: "text",
+        value: `__${strongContent}__${nextNode.value}`,
+      };
+      // Replace both nodes with the combined text node
+      parent.children.splice(index, 2, newNode);
+    });
+  };
 };
-const StyledMarkdown = styled.div `
+const StyledMarkdown = styled.div`
   pre {
     background-color: ${CODE_BLOCK_BG_COLOR};
     border-radius: 3px;
@@ -176,139 +172,151 @@ const StyledMarkdown = styled.div `
     }
   }
 `;
-const StyledPre = styled.pre `
+const StyledPre = styled.pre`
   & .hljs {
     color: var(--vscode-editor-foreground, #fff);
   }
 
-  ${(props) => Object.keys(props.theme)
-    .map((key, index) => {
-    return `
+  ${(props) =>
+    Object.keys(props.theme)
+      .map((key, index) => {
+        return `
       & ${key} {
         color: ${props.theme[key]};
       }
     `;
-})
-    .join("")}
+      })
+      .join("")}
 `;
 const rehypeFlattenInvalidBlocks = () => {
-    // List of block-level elements per HTML5 spec
-    const BLOCK_TAGS = new Set([
-        "address",
-        "article",
-        "aside",
-        "blockquote",
-        "canvas",
-        "dd",
-        "div",
-        "dl",
-        "dt",
-        "fieldset",
-        "figcaption",
-        "figure",
-        "footer",
-        "form",
-        "h1",
-        "h2",
-        "h3",
-        "h4",
-        "h5",
-        "h6",
-        "header",
-        "hr",
-        "li",
-        "main",
-        "nav",
-        "noscript",
-        "ol",
-        "output",
-        "p",
-        "pre",
-        "section",
-        "table",
-        "tfoot",
-        "ul",
-        "video",
-    ]);
-    return (tree) => {
-        visit(tree, (node, index, parent) => {
-            if (!parent || typeof index !== "number")
-                return;
-            // If this node is a block element and its parent is also a block element (and not allowed to nest)
-            if (BLOCK_TAGS.has(node.tagName) &&
-                BLOCK_TAGS.has(parent.tagName) &&
-                // Allow <li> inside <ul>/<ol>, <dt>/<dd> inside <dl>
-                !((parent.tagName === "ul" && node.tagName === "li") ||
-                    (parent.tagName === "ol" && node.tagName === "li") ||
-                    (parent.tagName === "dl" &&
-                        (node.tagName === "dt" || node.tagName === "dd")))) {
-                // Move this node out to be a sibling of its parent
-                parent.children.splice(index, 1);
-                const grandparent = parent.parent;
-                if (grandparent && Array.isArray(grandparent.children)) {
-                    const parentIdx = grandparent.children.indexOf(parent);
-                    if (parentIdx !== -1) {
-                        grandparent.children.splice(parentIdx + 1, 0, node);
-                    }
-                }
-            }
-        });
-    };
+  // List of block-level elements per HTML5 spec
+  const BLOCK_TAGS = new Set([
+    "address",
+    "article",
+    "aside",
+    "blockquote",
+    "canvas",
+    "dd",
+    "div",
+    "dl",
+    "dt",
+    "fieldset",
+    "figcaption",
+    "figure",
+    "footer",
+    "form",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "header",
+    "hr",
+    "li",
+    "main",
+    "nav",
+    "noscript",
+    "ol",
+    "output",
+    "p",
+    "pre",
+    "section",
+    "table",
+    "tfoot",
+    "ul",
+    "video",
+  ]);
+  return (tree) => {
+    visit(tree, (node, index, parent) => {
+      if (!parent || typeof index !== "number") return;
+      // If this node is a block element and its parent is also a block element (and not allowed to nest)
+      if (
+        BLOCK_TAGS.has(node.tagName) &&
+        BLOCK_TAGS.has(parent.tagName) &&
+        // Allow <li> inside <ul>/<ol>, <dt>/<dd> inside <dl>
+        !(
+          (parent.tagName === "ul" && node.tagName === "li") ||
+          (parent.tagName === "ol" && node.tagName === "li") ||
+          (parent.tagName === "dl" &&
+            (node.tagName === "dt" || node.tagName === "dd"))
+        )
+      ) {
+        // Move this node out to be a sibling of its parent
+        parent.children.splice(index, 1);
+        const grandparent = parent.parent;
+        if (grandparent && Array.isArray(grandparent.children)) {
+          const parentIdx = grandparent.children.indexOf(parent);
+          if (parentIdx !== -1) {
+            grandparent.children.splice(parentIdx + 1, 0, node);
+          }
+        }
+      }
+    });
+  };
 };
 const MarkdownBlock = memo(({ markdown }) => {
-    const { theme } = useExtensionState();
-    const [reactContent, setMarkdown] = useRemark({
-        remarkPlugins: [
-            remarkPreventBoldFilenames,
-            remarkUrlToLink,
-            () => {
-                return (tree) => {
-                    visit(tree, "code", (node) => {
-                        if (!node.lang) {
-                            node.lang = "javascript";
-                        }
-                        else if (node.lang.includes(".")) {
-                            node.lang = node.lang.split(".").slice(-1)[0];
-                        }
-                    });
-                };
-            },
-        ],
-        rehypePlugins: [
-            rehypeHighlight,
-            rehypeFlattenInvalidBlocks,
-            {
-            // languages: {},
-            },
-        ],
-        rehypeReactOptions: {
-            components: {
-                pre: ({ node, children, ...preProps }) => {
-                    if (Array.isArray(children) &&
-                        children.length === 1 &&
-                        React.isValidElement(children[0])) {
-                        const child = children[0];
-                        if (child.props?.className?.includes("language-mermaid")) {
-                            return child;
-                        }
-                    }
-                    return (_jsx(StyledPre, { ...preProps, theme: theme, children: children }));
-                },
-                code: (props) => {
-                    const className = props.className || "";
-                    if (className.includes("language-mermaid")) {
-                        const codeText = String(props.children || "");
-                        return _jsx(MermaidBlock, { code: codeText });
-                    }
-                    return _jsx("code", { ...props });
-                },
-            },
+  const { theme } = useExtensionState();
+  const [reactContent, setMarkdown] = useRemark({
+    remarkPlugins: [
+      remarkPreventBoldFilenames,
+      remarkUrlToLink,
+      () => {
+        return (tree) => {
+          visit(tree, "code", (node) => {
+            if (!node.lang) {
+              node.lang = "javascript";
+            } else if (node.lang.includes(".")) {
+              node.lang = node.lang.split(".").slice(-1)[0];
+            }
+          });
+        };
+      },
+    ],
+    rehypePlugins: [
+      rehypeHighlight,
+      rehypeFlattenInvalidBlocks,
+      {
+        // languages: {},
+      },
+    ],
+    rehypeReactOptions: {
+      components: {
+        pre: ({ node, children, ...preProps }) => {
+          if (
+            Array.isArray(children) &&
+            children.length === 1 &&
+            React.isValidElement(children[0])
+          ) {
+            const child = children[0];
+            if (child.props?.className?.includes("language-mermaid")) {
+              return child;
+            }
+          }
+          return _jsx(StyledPre, {
+            ...preProps,
+            theme: theme,
+            children: children,
+          });
         },
-    });
-    useEffect(() => {
-        setMarkdown(markdown || "");
-    }, [markdown, setMarkdown, theme]);
-    return (_jsx("div", { style: {}, children: _jsx(StyledMarkdown, { children: reactContent }) }));
+        code: (props) => {
+          const className = props.className || "";
+          if (className.includes("language-mermaid")) {
+            const codeText = String(props.children || "");
+            return _jsx(MermaidBlock, { code: codeText });
+          }
+          return _jsx("code", { ...props });
+        },
+      },
+    },
+  });
+  useEffect(() => {
+    setMarkdown(markdown || "");
+  }, [markdown, setMarkdown, theme]);
+  return _jsx("div", {
+    style: {},
+    children: _jsx(StyledMarkdown, { children: reactContent }),
+  });
 });
 export default MarkdownBlock;
 //# sourceMappingURL=MarkdownBlock.js.map

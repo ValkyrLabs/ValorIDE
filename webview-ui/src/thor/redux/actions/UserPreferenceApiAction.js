@@ -31,60 +31,60 @@ export const LIST_USERPREFERENCE_REQUEST = "LIST_USERPREFERENCE_REQUEST";
 export const LIST_USERPREFERENCE_SUCCESS = "LIST_USERPREFERENCE_SUCCESS";
 export const LIST_USERPREFERENCE_FAILURE = "LIST_USERPREFERENCE_FAILURE";
 export const addUserPreferenceRequest = () => ({
-    type: ADD_USERPREFERENCE_REQUEST,
+  type: ADD_USERPREFERENCE_REQUEST,
 });
 export const addUserPreferenceSuccess = (UserPreferences) => ({
-    type: ADD_USERPREFERENCE_SUCCESS,
-    payload: UserPreferences,
+  type: ADD_USERPREFERENCE_SUCCESS,
+  payload: UserPreferences,
 });
 export const addUserPreferenceFailure = (error) => ({
-    type: ADD_USERPREFERENCE_FAILURE,
-    payload: error,
+  type: ADD_USERPREFERENCE_FAILURE,
+  payload: error,
 });
 export const fetchUserPreferenceRequest = () => ({
-    type: FETCH_USERPREFERENCE_REQUEST,
+  type: FETCH_USERPREFERENCE_REQUEST,
 });
 export const fetchUserPreferenceSuccess = (UserPreferences) => ({
-    type: FETCH_USERPREFERENCE_SUCCESS,
-    payload: UserPreferences,
+  type: FETCH_USERPREFERENCE_SUCCESS,
+  payload: UserPreferences,
 });
 export const fetchUserPreferenceFailure = (error) => ({
-    type: FETCH_USERPREFERENCE_FAILURE,
-    payload: error,
+  type: FETCH_USERPREFERENCE_FAILURE,
+  payload: error,
 });
 export const listUserPreferenceRequest = () => ({
-    type: LIST_USERPREFERENCE_REQUEST,
+  type: LIST_USERPREFERENCE_REQUEST,
 });
 export const listUserPreferenceSuccess = (UserPreferences) => ({
-    type: LIST_USERPREFERENCE_SUCCESS,
-    payload: UserPreferences,
+  type: LIST_USERPREFERENCE_SUCCESS,
+  payload: UserPreferences,
 });
 export const listUserPreferenceFailure = (error) => ({
-    type: LIST_USERPREFERENCE_FAILURE,
-    payload: error,
+  type: LIST_USERPREFERENCE_FAILURE,
+  payload: error,
 });
 export const updateUserPreferenceRequest = (UserPreference) => ({
-    type: UPDATE_USERPREFERENCE_REQUEST,
-    payload: UserPreference,
+  type: UPDATE_USERPREFERENCE_REQUEST,
+  payload: UserPreference,
 });
 export const updateUserPreferenceSuccess = (UserPreference) => ({
-    type: UPDATE_USERPREFERENCE_SUCCESS,
-    payload: UserPreference,
+  type: UPDATE_USERPREFERENCE_SUCCESS,
+  payload: UserPreference,
 });
 export const updateUserPreferenceFailure = (error) => ({
-    type: UPDATE_USERPREFERENCE_FAILURE,
-    payload: error,
+  type: UPDATE_USERPREFERENCE_FAILURE,
+  payload: error,
 });
 export const deleteUserPreferenceRequest = (UserPreference) => ({
-    type: DELETE_USERPREFERENCE_REQUEST,
-    payload: UserPreference,
+  type: DELETE_USERPREFERENCE_REQUEST,
+  payload: UserPreference,
 });
 export const deleteUserPreferenceSuccess = (UserPreference) => ({
-    type: DELETE_USERPREFERENCE_SUCCESS,
-    payload: UserPreference,
+  type: DELETE_USERPREFERENCE_SUCCESS,
+  payload: UserPreference,
 });
 export const deleteUserPreferenceFailure = (error) => ({
-    type: DELETE_USERPREFERENCE_FAILURE,
-    payload: error,
+  type: DELETE_USERPREFERENCE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=UserPreferenceApiAction.js.map

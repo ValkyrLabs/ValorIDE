@@ -31,60 +31,60 @@ export const LIST_SECUREKEY_REQUEST = "LIST_SECUREKEY_REQUEST";
 export const LIST_SECUREKEY_SUCCESS = "LIST_SECUREKEY_SUCCESS";
 export const LIST_SECUREKEY_FAILURE = "LIST_SECUREKEY_FAILURE";
 export const addSecureKeyRequest = () => ({
-    type: ADD_SECUREKEY_REQUEST,
+  type: ADD_SECUREKEY_REQUEST,
 });
 export const addSecureKeySuccess = (SecureKeys) => ({
-    type: ADD_SECUREKEY_SUCCESS,
-    payload: SecureKeys,
+  type: ADD_SECUREKEY_SUCCESS,
+  payload: SecureKeys,
 });
 export const addSecureKeyFailure = (error) => ({
-    type: ADD_SECUREKEY_FAILURE,
-    payload: error,
+  type: ADD_SECUREKEY_FAILURE,
+  payload: error,
 });
 export const fetchSecureKeyRequest = () => ({
-    type: FETCH_SECUREKEY_REQUEST,
+  type: FETCH_SECUREKEY_REQUEST,
 });
 export const fetchSecureKeySuccess = (SecureKeys) => ({
-    type: FETCH_SECUREKEY_SUCCESS,
-    payload: SecureKeys,
+  type: FETCH_SECUREKEY_SUCCESS,
+  payload: SecureKeys,
 });
 export const fetchSecureKeyFailure = (error) => ({
-    type: FETCH_SECUREKEY_FAILURE,
-    payload: error,
+  type: FETCH_SECUREKEY_FAILURE,
+  payload: error,
 });
 export const listSecureKeyRequest = () => ({
-    type: LIST_SECUREKEY_REQUEST,
+  type: LIST_SECUREKEY_REQUEST,
 });
 export const listSecureKeySuccess = (SecureKeys) => ({
-    type: LIST_SECUREKEY_SUCCESS,
-    payload: SecureKeys,
+  type: LIST_SECUREKEY_SUCCESS,
+  payload: SecureKeys,
 });
 export const listSecureKeyFailure = (error) => ({
-    type: LIST_SECUREKEY_FAILURE,
-    payload: error,
+  type: LIST_SECUREKEY_FAILURE,
+  payload: error,
 });
 export const updateSecureKeyRequest = (SecureKey) => ({
-    type: UPDATE_SECUREKEY_REQUEST,
-    payload: SecureKey,
+  type: UPDATE_SECUREKEY_REQUEST,
+  payload: SecureKey,
 });
 export const updateSecureKeySuccess = (SecureKey) => ({
-    type: UPDATE_SECUREKEY_SUCCESS,
-    payload: SecureKey,
+  type: UPDATE_SECUREKEY_SUCCESS,
+  payload: SecureKey,
 });
 export const updateSecureKeyFailure = (error) => ({
-    type: UPDATE_SECUREKEY_FAILURE,
-    payload: error,
+  type: UPDATE_SECUREKEY_FAILURE,
+  payload: error,
 });
 export const deleteSecureKeyRequest = (SecureKey) => ({
-    type: DELETE_SECUREKEY_REQUEST,
-    payload: SecureKey,
+  type: DELETE_SECUREKEY_REQUEST,
+  payload: SecureKey,
 });
 export const deleteSecureKeySuccess = (SecureKey) => ({
-    type: DELETE_SECUREKEY_SUCCESS,
-    payload: SecureKey,
+  type: DELETE_SECUREKEY_SUCCESS,
+  payload: SecureKey,
 });
 export const deleteSecureKeyFailure = (error) => ({
-    type: DELETE_SECUREKEY_FAILURE,
-    payload: error,
+  type: DELETE_SECUREKEY_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=SecureKeyApiAction.js.map

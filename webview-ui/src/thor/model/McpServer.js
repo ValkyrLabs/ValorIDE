@@ -28,67 +28,75 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { McpResourceFromJSON, McpResourceToJSON, McpResourceTemplateFromJSON, McpResourceTemplateToJSON, McpToolFromJSON, McpToolToJSON, } from "./";
+import {
+  McpResourceFromJSON,
+  McpResourceToJSON,
+  McpResourceTemplateFromJSON,
+  McpResourceTemplateToJSON,
+  McpToolFromJSON,
+  McpToolToJSON,
+} from "./";
 export function McpServerFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: json["name"],
-        config: json["config"],
-        status: json["status"],
-        error: !exists(json, "error") ? undefined : json["error"],
-        tools: !exists(json, "tools")
-            ? undefined
-            : json["tools"].map(McpToolFromJSON),
-        resources: !exists(json, "resources")
-            ? undefined
-            : json["resources"].map(McpResourceFromJSON),
-        resourceTemplates: !exists(json, "resourceTemplates")
-            ? undefined
-            : json["resourceTemplates"].map(McpResourceTemplateFromJSON),
-        disabled: !exists(json, "disabled") ? undefined : json["disabled"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: json["name"],
+    config: json["config"],
+    status: json["status"],
+    error: !exists(json, "error") ? undefined : json["error"],
+    tools: !exists(json, "tools")
+      ? undefined
+      : json["tools"].map(McpToolFromJSON),
+    resources: !exists(json, "resources")
+      ? undefined
+      : json["resources"].map(McpResourceFromJSON),
+    resourceTemplates: !exists(json, "resourceTemplates")
+      ? undefined
+      : json["resourceTemplates"].map(McpResourceTemplateFromJSON),
+    disabled: !exists(json, "disabled") ? undefined : json["disabled"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function McpServerToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        config: value.config,
-        status: value.status,
-        error: value.error,
-        tools: value.tools === undefined
-            ? undefined
-            : value.tools.map(McpToolToJSON),
-        resources: value.resources === undefined
-            ? undefined
-            : value.resources.map(McpResourceToJSON),
-        resourceTemplates: value.resourceTemplates === undefined
-            ? undefined
-            : value.resourceTemplates.map(McpResourceTemplateToJSON),
-        disabled: value.disabled,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    config: value.config,
+    status: value.status,
+    error: value.error,
+    tools:
+      value.tools === undefined ? undefined : value.tools.map(McpToolToJSON),
+    resources:
+      value.resources === undefined
+        ? undefined
+        : value.resources.map(McpResourceToJSON),
+    resourceTemplates:
+      value.resourceTemplates === undefined
+        ? undefined
+        : value.resourceTemplates.map(McpResourceTemplateToJSON),
+    disabled: value.disabled,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -96,8 +104,8 @@ export function McpServerToJSON(value) {
  */
 export var McpServerStatusEnum;
 (function (McpServerStatusEnum) {
-    McpServerStatusEnum["CONNECTED"] = "connected";
-    McpServerStatusEnum["CONNECTING"] = "connecting";
-    McpServerStatusEnum["DISCONNECTED"] = "disconnected";
+  McpServerStatusEnum["CONNECTED"] = "connected";
+  McpServerStatusEnum["CONNECTING"] = "connecting";
+  McpServerStatusEnum["DISCONNECTED"] = "disconnected";
 })(McpServerStatusEnum || (McpServerStatusEnum = {}));
 //# sourceMappingURL=McpServer.js.map

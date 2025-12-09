@@ -1,4 +1,8 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import {
+  jsx as _jsx,
+  jsxs as _jsxs,
+  Fragment as _Fragment,
+} from "react/jsx-runtime";
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -15,16 +19,16 @@ Template file: typescript-redux-query/modelForm.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-import { ErrorMessage, Field, Formik, } from "formik";
+import { ErrorMessage, Field, Formik } from "formik";
 import { useState } from "react";
-import { Form as BSForm, Accordion, Alert, } from "react-bootstrap";
+import { Form as BSForm, Accordion, Alert } from "react-bootstrap";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { FaCheckCircle, FaCogs, FaRegPlusSquare } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import * as Yup from "yup";
 import { SmartField } from "@valkyr/component-library/ForeignKey/SmartField";
 import { PermissionDialog } from "@valkyr/component-library/PermissionDialog";
-import { PermissionType, } from "@valkyr/component-library/PermissionDialog/types";
+import { PermissionType } from "@valkyr/component-library/PermissionDialog/types";
 import { useAddFormatMutation } from "../../services/FormatService";
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -48,196 +52,703 @@ GridHeim Formatting Object
    ENUM VALIDATION ARRAYS (Yup oneOf checks), if any
 -------------------------------------------------------- */
 const FontWeightValidation = () => {
-    return [200, 400, 700];
+  return [200, 400, 700];
 };
 const UnderlineValidation = () => {
-    return [0, 1, 2, 21, 22];
+  return [0, 1, 2, 21, 22];
 };
 const ColorValidation = () => {
-    return [
-        "Black",
-        "White",
-        "Red",
-        "BrightGreen",
-        "Blue",
-        "Yellow",
-        "Pink",
-        "Turquoise",
-        "DarkRed",
-        "Orange",
-        "DarkYellow",
-        "Green",
-        "Teal",
-        "LightBlue",
-        "Violet",
-        "Gray80",
-    ];
+  return [
+    "Black",
+    "White",
+    "Red",
+    "BrightGreen",
+    "Blue",
+    "Yellow",
+    "Pink",
+    "Turquoise",
+    "DarkRed",
+    "Orange",
+    "DarkYellow",
+    "Green",
+    "Teal",
+    "LightBlue",
+    "Violet",
+    "Gray80",
+  ];
 };
 const AlignmentHorizontalValidation = () => {
-    return [
-        "Left",
-        "Center",
-        "Right",
-        "Fill",
-        "Justify",
-        "CenterAcrossSelection",
-    ];
+  return [
+    "Left",
+    "Center",
+    "Right",
+    "Fill",
+    "Justify",
+    "CenterAcrossSelection",
+  ];
 };
 const AlignmentVerticalValidation = () => {
-    return ["Top", "Middle", "Bottom", "Justify"];
+  return ["Top", "Middle", "Bottom", "Justify"];
 };
 const PatternValidation = () => {
-    return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 };
 /* -----------------------------------------------------
    YUP VALIDATION SCHEMA (skip read-only fields)
 -------------------------------------------------------- */
-const asNumber = (schema) => schema.transform((val, orig) => orig === "" || orig === null ? undefined : val);
+const asNumber = (schema) =>
+  schema.transform((val, orig) =>
+    orig === "" || orig === null ? undefined : val,
+  );
 const validationSchema = Yup.object().shape({
-    workbookId: Yup.string(),
-    fontWeight: Yup.mixed().oneOf(FontWeightValidation(), "Invalid value for fontWeight"),
-    fontSize: asNumber(Yup.number().integer().typeError("fontSize must be a number")),
-    fontFace: Yup.string(),
-    underline: Yup.mixed().oneOf(UnderlineValidation(), "Invalid value for underline"),
-    color: Yup.mixed().oneOf(ColorValidation(), "Invalid value for color"),
-    alignmentHorizontal: Yup.mixed().oneOf(AlignmentHorizontalValidation(), "Invalid value for alignmentHorizontal"),
-    alignmentVertical: Yup.mixed().oneOf(AlignmentVerticalValidation(), "Invalid value for alignmentVertical"),
-    pattern: Yup.mixed().oneOf(PatternValidation(), "Invalid value for pattern"),
-    trashed: Yup.boolean(),
+  workbookId: Yup.string(),
+  fontWeight: Yup.mixed().oneOf(
+    FontWeightValidation(),
+    "Invalid value for fontWeight",
+  ),
+  fontSize: asNumber(
+    Yup.number().integer().typeError("fontSize must be a number"),
+  ),
+  fontFace: Yup.string(),
+  underline: Yup.mixed().oneOf(
+    UnderlineValidation(),
+    "Invalid value for underline",
+  ),
+  color: Yup.mixed().oneOf(ColorValidation(), "Invalid value for color"),
+  alignmentHorizontal: Yup.mixed().oneOf(
+    AlignmentHorizontalValidation(),
+    "Invalid value for alignmentHorizontal",
+  ),
+  alignmentVertical: Yup.mixed().oneOf(
+    AlignmentVerticalValidation(),
+    "Invalid value for alignmentVertical",
+  ),
+  pattern: Yup.mixed().oneOf(PatternValidation(), "Invalid value for pattern"),
+  trashed: Yup.boolean(),
 });
 /* -----------------------------------------------------
    COMPONENT
 -------------------------------------------------------- */
 const FormatForm = () => {
-    const [addFormat, addFormatResult] = useAddFormatMutation();
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null);
-    // Permission Management State
-    const [showPermissionDialog, setShowPermissionDialog] = useState(false);
-    const [createdObjectId, setCreatedObjectId] = useState(null);
-    // Mock current user - in real implementation, this would come from auth context
-    const currentUser = {
-        username: "current_user",
-        permissions: {
-            isOwner: true,
-            isAdmin: true,
-            canGrantPermissions: true,
-            permissions: [
-                PermissionType.READ,
-                PermissionType.WRITE,
-                PermissionType.CREATE,
-                PermissionType.DELETE,
-                PermissionType.ADMINISTRATION,
-            ],
-        },
-    };
-    /* -----------------------------------------------------
+  const [addFormat, addFormatResult] = useAddFormatMutation();
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+  // Permission Management State
+  const [showPermissionDialog, setShowPermissionDialog] = useState(false);
+  const [createdObjectId, setCreatedObjectId] = useState(null);
+  // Mock current user - in real implementation, this would come from auth context
+  const currentUser = {
+    username: "current_user",
+    permissions: {
+      isOwner: true,
+      isAdmin: true,
+      canGrantPermissions: true,
+      permissions: [
+        PermissionType.READ,
+        PermissionType.WRITE,
+        PermissionType.CREATE,
+        PermissionType.DELETE,
+        PermissionType.ADMINISTRATION,
+      ],
+    },
+  };
+  /* -----------------------------------------------------
        INITIAL VALUES - only NON read-only fields
     -------------------------------------------------------- */
-    const initialValues = {
-        workbookId: "",
-        fontWeight: undefined,
-        fontSize: 0,
-        fontFace: "",
-        underline: undefined,
-        color: undefined,
-        alignmentHorizontal: undefined,
-        alignmentVertical: undefined,
-        pattern: undefined,
-        trashed: false,
-    };
-    // Permission Management Handlers
-    const handleManagePermissions = (objectId) => {
-        setCreatedObjectId(objectId);
-        setShowPermissionDialog(true);
-    };
-    const handlePermissionDialogClose = () => {
-        setShowPermissionDialog(false);
-        setCreatedObjectId(null);
-    };
-    const handlePermissionsSave = (grants) => {
-        console.log("Permissions saved for new Format:", grants);
-    };
-    /* SUBMIT HANDLER */
-    const handleSubmit = async (values, { setSubmitting }) => {
-        try {
-            setSuccessMessage(null);
-            setErrorMessage(null);
-            console.log("Format form values:", values);
-            // NOTE: depending on your generated endpoint, you may need { body: values }
-            const result = await addFormat(values).unwrap();
-            if (result && result.id && currentUser.permissions.canGrantPermissions) {
-                const shouldSetPermissions = window.confirm(`Format created successfully! Would you like to set permissions for this object?`);
-                if (shouldSetPermissions) {
-                    handleManagePermissions(result.id);
-                }
-            }
-            setSuccessMessage("Saved successfully.");
+  const initialValues = {
+    workbookId: "",
+    fontWeight: undefined,
+    fontSize: 0,
+    fontFace: "",
+    underline: undefined,
+    color: undefined,
+    alignmentHorizontal: undefined,
+    alignmentVertical: undefined,
+    pattern: undefined,
+    trashed: false,
+  };
+  // Permission Management Handlers
+  const handleManagePermissions = (objectId) => {
+    setCreatedObjectId(objectId);
+    setShowPermissionDialog(true);
+  };
+  const handlePermissionDialogClose = () => {
+    setShowPermissionDialog(false);
+    setCreatedObjectId(null);
+  };
+  const handlePermissionsSave = (grants) => {
+    console.log("Permissions saved for new Format:", grants);
+  };
+  /* SUBMIT HANDLER */
+  const handleSubmit = async (values, { setSubmitting }) => {
+    try {
+      setSuccessMessage(null);
+      setErrorMessage(null);
+      console.log("Format form values:", values);
+      // NOTE: depending on your generated endpoint, you may need { body: values }
+      const result = await addFormat(values).unwrap();
+      if (result && result.id && currentUser.permissions.canGrantPermissions) {
+        const shouldSetPermissions = window.confirm(
+          `Format created successfully! Would you like to set permissions for this object?`,
+        );
+        if (shouldSetPermissions) {
+          handleManagePermissions(result.id);
         }
-        catch (error) {
-            console.error("Failed to create Format:", error);
-            setErrorMessage("Failed to save. Please try again.");
-        }
-        setSubmitting(false);
-    };
-    return (_jsxs("div", { children: [_jsx(Formik, { validateOnBlur: true, initialValues: initialValues, validationSchema: validationSchema, onSubmit: handleSubmit, children: ({ isSubmitting, isValid, errors, values, setFieldValue, touched, setFieldTouched, handleSubmit, }) => {
-                    const isSaving = isSubmitting || addFormatResult.isLoading;
-                    return (_jsx("form", { onSubmit: handleSubmit, className: "form", children: _jsxs(Accordion, { defaultActiveKey: "1", children: [_jsxs(Accordion.Item, { eventKey: "1", children: [_jsxs(Accordion.Header, { children: [_jsx(FaRegPlusSquare, { size: 28 }), " \u00A0 Add New Format"] }), _jsxs(Accordion.Body, { children: [_jsxs("label", { htmlFor: "workbookId", className: "nice-form-control", children: [_jsxs("b", { children: ["Workbook Id:", touched.workbookId && !errors.workbookId && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "workbookId", value: values?.workbookId, placeholder: "Workbook Id", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "workbookId", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "fontWeight", className: "nice-form-control", children: [_jsxs("b", { children: ["Font Weight:", touched.fontWeight && !errors.fontWeight && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "fontWeight", value: values.fontWeight || "", className: errors.fontWeight
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("fontWeight", true);
-                                                                setFieldValue("fontWeight", e.target.value === ""
-                                                                    ? undefined
-                                                                    : Number(e.target.value));
-                                                            }, children: [_jsx("option", { value: "", label: "Select Font Weight" }), _jsx(FontWeightLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "fontWeight", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "fontSize", className: "nice-form-control", children: [_jsxs("b", { children: ["Font Size:", touched.fontSize && !errors.fontSize && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(Field, { name: "fontSize", type: "number", value: values.fontSize || "", onChange: (e) => {
-                                                                setFieldTouched("fontSize", true);
-                                                                const v = e.target.value;
-                                                                setFieldValue("fontSize", v === "" ? undefined : Number(v));
-                                                            }, className: errors.fontSize
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control" }), _jsx(ErrorMessage, { className: "error", name: "fontSize", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "fontFace", className: "nice-form-control", children: [_jsxs("b", { children: ["Font Face:", touched.fontFace && !errors.fontFace && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(SmartField, { name: "fontFace", value: values?.fontFace, placeholder: "Font Face", setFieldValue: setFieldValue, setFieldTouched: setFieldTouched }), _jsx(ErrorMessage, { className: "error", name: "fontFace", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "underline", className: "nice-form-control", children: [_jsxs("b", { children: ["Underline:", touched.underline && !errors.underline && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "underline", value: values.underline || "", className: errors.underline
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("underline", true);
-                                                                setFieldValue("underline", e.target.value === ""
-                                                                    ? undefined
-                                                                    : Number(e.target.value));
-                                                            }, children: [_jsx("option", { value: "", label: "Select Underline" }), _jsx(UnderlineLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "underline", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "color", className: "nice-form-control", children: [_jsxs("b", { children: ["Color:", touched.color && !errors.color && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "color", value: values.color || "", className: errors.color
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("color", true);
-                                                                setFieldValue("color", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Color" }), _jsx(ColorLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "color", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "alignmentHorizontal", className: "nice-form-control", children: [_jsxs("b", { children: ["Alignment - horizontal:", touched.alignmentHorizontal &&
-                                                                    !errors.alignmentHorizontal && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "alignmentHorizontal", value: values.alignmentHorizontal || "", className: errors.alignmentHorizontal
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("alignmentHorizontal", true);
-                                                                setFieldValue("alignmentHorizontal", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Alignment - horizontal" }), _jsx(AlignmentHorizontalLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "alignmentHorizontal", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "alignmentVertical", className: "nice-form-control", children: [_jsxs("b", { children: ["Alignment - vertical:", touched.alignmentVertical &&
-                                                                    !errors.alignmentVertical && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "alignmentVertical", value: values.alignmentVertical || "", className: errors.alignmentVertical
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("alignmentVertical", true);
-                                                                setFieldValue("alignmentVertical", e.target.value || undefined);
-                                                            }, children: [_jsx("option", { value: "", label: "Select Alignment - vertical" }), _jsx(AlignmentVerticalLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "alignmentVertical", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "pattern", className: "nice-form-control", children: [_jsxs("b", { children: ["Pattern:", touched.pattern && !errors.pattern && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsxs(BSForm.Select, { name: "pattern", value: values.pattern || "", className: errors.pattern
-                                                                ? "form-control field-error"
-                                                                : "nice-form-control form-control", onChange: (e) => {
-                                                                setFieldTouched("pattern", true);
-                                                                setFieldValue("pattern", e.target.value === ""
-                                                                    ? undefined
-                                                                    : Number(e.target.value));
-                                                            }, children: [_jsx("option", { value: "", label: "Select Pattern" }), _jsx(PatternLookup, {})] }), _jsx(ErrorMessage, { className: "error", name: "pattern", component: "span" })] }), _jsx("br", {}), _jsxs("label", { htmlFor: "trashed", className: "nice-form-control", children: [_jsxs("b", { children: ["Trashed:", touched.trashed && !errors.trashed && (_jsxs("span", { className: "okCheck", children: [_jsx(FaCheckCircle, {}), " looks good!"] }))] }), _jsx(BSForm.Check, { id: "trashed", name: "trashed", checked: values.trashed || false, onChange: (e) => {
-                                                                setFieldTouched("trashed", true);
-                                                                setFieldValue("trashed", e.target.checked);
-                                                            }, isInvalid: !!errors.trashed, className: errors.trashed ? "error" : "" }), _jsx(ErrorMessage, { className: "error", name: "trashed", component: "span" })] }), _jsx("br", {}), _jsxs(CoolButton, { variant: isValid
-                                                        ? isSaving
-                                                            ? "disabled"
-                                                            : "success"
-                                                        : "warning", type: "submit", disabled: !isValid || isSaving, children: [isSaving && (_jsx("span", { style: { float: "left", minHeight: 0 }, children: _jsx(LoadingSpinner, { label: "", size: 18 }) })), _jsx(FaCheckCircle, { size: 28 }), " Create New Format"] }), (addFormatResult.isError || errorMessage) && (_jsx(Alert, { variant: "danger", className: "mt-3", children: errorMessage ||
-                                                        JSON.stringify("data" in addFormatResult.error
-                                                            ? addFormatResult.error.data
-                                                            : addFormatResult.error) })), (addFormatResult.isSuccess || successMessage) && (_jsx(Alert, { variant: "success", className: "mt-3", children: successMessage || "Saved successfully." }))] })] }), _jsxs(Accordion.Item, { eventKey: "0", children: [_jsxs(Accordion.Header, { children: [_jsx(FaCogs, { size: 28 }), " \u00A0Server Messages"] }), _jsxs(Accordion.Body, { children: ["errors: ", JSON.stringify(errors), _jsx("br", {}), "addFormatResult: ", JSON.stringify(addFormatResult)] })] })] }) }));
-                } }), createdObjectId && (_jsx(PermissionDialog, { objectType: "com.valkyrlabs.model.Format", objectId: createdObjectId, isVisible: showPermissionDialog, onClose: handlePermissionDialogClose, onSave: handlePermissionsSave, currentUser: currentUser }))] }));
+      }
+      setSuccessMessage("Saved successfully.");
+    } catch (error) {
+      console.error("Failed to create Format:", error);
+      setErrorMessage("Failed to save. Please try again.");
+    }
+    setSubmitting(false);
+  };
+  return _jsxs("div", {
+    children: [
+      _jsx(Formik, {
+        validateOnBlur: true,
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: handleSubmit,
+        children: ({
+          isSubmitting,
+          isValid,
+          errors,
+          values,
+          setFieldValue,
+          touched,
+          setFieldTouched,
+          handleSubmit,
+        }) => {
+          const isSaving = isSubmitting || addFormatResult.isLoading;
+          return _jsx("form", {
+            onSubmit: handleSubmit,
+            className: "form",
+            children: _jsxs(Accordion, {
+              defaultActiveKey: "1",
+              children: [
+                _jsxs(Accordion.Item, {
+                  eventKey: "1",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaRegPlusSquare, { size: 28 }),
+                        " \u00A0 Add New Format",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        _jsxs("label", {
+                          htmlFor: "workbookId",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Workbook Id:",
+                                touched.workbookId &&
+                                  !errors.workbookId &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "workbookId",
+                              value: values?.workbookId,
+                              placeholder: "Workbook Id",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "workbookId",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "fontWeight",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Font Weight:",
+                                touched.fontWeight &&
+                                  !errors.fontWeight &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "fontWeight",
+                              value: values.fontWeight || "",
+                              className: errors.fontWeight
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("fontWeight", true);
+                                setFieldValue(
+                                  "fontWeight",
+                                  e.target.value === ""
+                                    ? undefined
+                                    : Number(e.target.value),
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Font Weight",
+                                }),
+                                _jsx(FontWeightLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "fontWeight",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "fontSize",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Font Size:",
+                                touched.fontSize &&
+                                  !errors.fontSize &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(Field, {
+                              name: "fontSize",
+                              type: "number",
+                              value: values.fontSize || "",
+                              onChange: (e) => {
+                                setFieldTouched("fontSize", true);
+                                const v = e.target.value;
+                                setFieldValue(
+                                  "fontSize",
+                                  v === "" ? undefined : Number(v),
+                                );
+                              },
+                              className: errors.fontSize
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "fontSize",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "fontFace",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Font Face:",
+                                touched.fontFace &&
+                                  !errors.fontFace &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(SmartField, {
+                              name: "fontFace",
+                              value: values?.fontFace,
+                              placeholder: "Font Face",
+                              setFieldValue: setFieldValue,
+                              setFieldTouched: setFieldTouched,
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "fontFace",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "underline",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Underline:",
+                                touched.underline &&
+                                  !errors.underline &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "underline",
+                              value: values.underline || "",
+                              className: errors.underline
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("underline", true);
+                                setFieldValue(
+                                  "underline",
+                                  e.target.value === ""
+                                    ? undefined
+                                    : Number(e.target.value),
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Underline",
+                                }),
+                                _jsx(UnderlineLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "underline",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "color",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Color:",
+                                touched.color &&
+                                  !errors.color &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "color",
+                              value: values.color || "",
+                              className: errors.color
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("color", true);
+                                setFieldValue(
+                                  "color",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Color",
+                                }),
+                                _jsx(ColorLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "color",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "alignmentHorizontal",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Alignment - horizontal:",
+                                touched.alignmentHorizontal &&
+                                  !errors.alignmentHorizontal &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "alignmentHorizontal",
+                              value: values.alignmentHorizontal || "",
+                              className: errors.alignmentHorizontal
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("alignmentHorizontal", true);
+                                setFieldValue(
+                                  "alignmentHorizontal",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Alignment - horizontal",
+                                }),
+                                _jsx(AlignmentHorizontalLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "alignmentHorizontal",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "alignmentVertical",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Alignment - vertical:",
+                                touched.alignmentVertical &&
+                                  !errors.alignmentVertical &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "alignmentVertical",
+                              value: values.alignmentVertical || "",
+                              className: errors.alignmentVertical
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("alignmentVertical", true);
+                                setFieldValue(
+                                  "alignmentVertical",
+                                  e.target.value || undefined,
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Alignment - vertical",
+                                }),
+                                _jsx(AlignmentVerticalLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "alignmentVertical",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "pattern",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Pattern:",
+                                touched.pattern &&
+                                  !errors.pattern &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsxs(BSForm.Select, {
+                              name: "pattern",
+                              value: values.pattern || "",
+                              className: errors.pattern
+                                ? "form-control field-error"
+                                : "nice-form-control form-control",
+                              onChange: (e) => {
+                                setFieldTouched("pattern", true);
+                                setFieldValue(
+                                  "pattern",
+                                  e.target.value === ""
+                                    ? undefined
+                                    : Number(e.target.value),
+                                );
+                              },
+                              children: [
+                                _jsx("option", {
+                                  value: "",
+                                  label: "Select Pattern",
+                                }),
+                                _jsx(PatternLookup, {}),
+                              ],
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "pattern",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs("label", {
+                          htmlFor: "trashed",
+                          className: "nice-form-control",
+                          children: [
+                            _jsxs("b", {
+                              children: [
+                                "Trashed:",
+                                touched.trashed &&
+                                  !errors.trashed &&
+                                  _jsxs("span", {
+                                    className: "okCheck",
+                                    children: [
+                                      _jsx(FaCheckCircle, {}),
+                                      " looks good!",
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            _jsx(BSForm.Check, {
+                              id: "trashed",
+                              name: "trashed",
+                              checked: values.trashed || false,
+                              onChange: (e) => {
+                                setFieldTouched("trashed", true);
+                                setFieldValue("trashed", e.target.checked);
+                              },
+                              isInvalid: !!errors.trashed,
+                              className: errors.trashed ? "error" : "",
+                            }),
+                            _jsx(ErrorMessage, {
+                              className: "error",
+                              name: "trashed",
+                              component: "span",
+                            }),
+                          ],
+                        }),
+                        _jsx("br", {}),
+                        _jsxs(CoolButton, {
+                          variant: isValid
+                            ? isSaving
+                              ? "disabled"
+                              : "success"
+                            : "warning",
+                          type: "submit",
+                          disabled: !isValid || isSaving,
+                          children: [
+                            isSaving &&
+                              _jsx("span", {
+                                style: { float: "left", minHeight: 0 },
+                                children: _jsx(LoadingSpinner, {
+                                  label: "",
+                                  size: 18,
+                                }),
+                              }),
+                            _jsx(FaCheckCircle, { size: 28 }),
+                            " Create New Format",
+                          ],
+                        }),
+                        (addFormatResult.isError || errorMessage) &&
+                          _jsx(Alert, {
+                            variant: "danger",
+                            className: "mt-3",
+                            children:
+                              errorMessage ||
+                              JSON.stringify(
+                                "data" in addFormatResult.error
+                                  ? addFormatResult.error.data
+                                  : addFormatResult.error,
+                              ),
+                          }),
+                        (addFormatResult.isSuccess || successMessage) &&
+                          _jsx(Alert, {
+                            variant: "success",
+                            className: "mt-3",
+                            children: successMessage || "Saved successfully.",
+                          }),
+                      ],
+                    }),
+                  ],
+                }),
+                _jsxs(Accordion.Item, {
+                  eventKey: "0",
+                  children: [
+                    _jsxs(Accordion.Header, {
+                      children: [
+                        _jsx(FaCogs, { size: 28 }),
+                        " \u00A0Server Messages",
+                      ],
+                    }),
+                    _jsxs(Accordion.Body, {
+                      children: [
+                        "errors: ",
+                        JSON.stringify(errors),
+                        _jsx("br", {}),
+                        "addFormatResult: ",
+                        JSON.stringify(addFormatResult),
+                      ],
+                    }),
+                  ],
+                }),
+              ],
+            }),
+          });
+        },
+      }),
+      createdObjectId &&
+        _jsx(PermissionDialog, {
+          objectType: "com.valkyrlabs.model.Format",
+          objectId: createdObjectId,
+          isVisible: showPermissionDialog,
+          onClose: handlePermissionDialogClose,
+          onSave: handlePermissionsSave,
+          currentUser: currentUser,
+        }),
+    ],
+  });
 };
 /*
 lowercase fontweightlookup
@@ -248,7 +759,13 @@ camelcase fontWeightLookup
 kebabcase font-weight-lookup
 */
 const FontWeightLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "200", label: "fontWeightLight" }), _jsx("option", { value: "400", label: "fontWeightRegular" }), _jsx("option", { value: "700", label: "fontWeightBold" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "200", label: "fontWeightLight" }),
+      _jsx("option", { value: "400", label: "fontWeightRegular" }),
+      _jsx("option", { value: "700", label: "fontWeightBold" }),
+    ],
+  });
 };
 /*
 lowercase underlinelookup
@@ -259,7 +776,15 @@ camelcase underlineLookup
 kebabcase underline-lookup
 */
 const UnderlineLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "0", label: "underlineNone" }), _jsx("option", { value: "1", label: "underlineSingle" }), _jsx("option", { value: "2", label: "underlineDouble" }), _jsx("option", { value: "21", label: "underlineSingleAccounting" }), _jsx("option", { value: "22", label: "underlineDoubleAccounting" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "0", label: "underlineNone" }),
+      _jsx("option", { value: "1", label: "underlineSingle" }),
+      _jsx("option", { value: "2", label: "underlineDouble" }),
+      _jsx("option", { value: "21", label: "underlineSingleAccounting" }),
+      _jsx("option", { value: "22", label: "underlineDoubleAccounting" }),
+    ],
+  });
 };
 /*
 lowercase colorlookup
@@ -270,7 +795,26 @@ camelcase colorLookup
 kebabcase color-lookup
 */
 const ColorLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "Black", label: "Color Black" }), _jsx("option", { value: "White", label: "Color White" }), _jsx("option", { value: "Red", label: "Color Red" }), _jsx("option", { value: "BrightGreen", label: "Color Bright Green" }), _jsx("option", { value: "Blue", label: "Color Blue" }), _jsx("option", { value: "Yellow", label: "Color Yellow" }), _jsx("option", { value: "Pink", label: "Color Pink" }), _jsx("option", { value: "Turquoise", label: "Color Turquoise" }), _jsx("option", { value: "DarkRed", label: "Color Dark Red" }), _jsx("option", { value: "Orange", label: "Color Orange" }), _jsx("option", { value: "DarkYellow", label: "Color Dark Yellow" }), _jsx("option", { value: "Green", label: "Color Green" }), _jsx("option", { value: "Teal", label: "Color Teal" }), _jsx("option", { value: "LightBlue", label: "Color Light Blue" }), _jsx("option", { value: "Violet", label: "Color Violet" }), _jsx("option", { value: "Gray80", label: "Color Gray 80" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "Black", label: "Color Black" }),
+      _jsx("option", { value: "White", label: "Color White" }),
+      _jsx("option", { value: "Red", label: "Color Red" }),
+      _jsx("option", { value: "BrightGreen", label: "Color Bright Green" }),
+      _jsx("option", { value: "Blue", label: "Color Blue" }),
+      _jsx("option", { value: "Yellow", label: "Color Yellow" }),
+      _jsx("option", { value: "Pink", label: "Color Pink" }),
+      _jsx("option", { value: "Turquoise", label: "Color Turquoise" }),
+      _jsx("option", { value: "DarkRed", label: "Color Dark Red" }),
+      _jsx("option", { value: "Orange", label: "Color Orange" }),
+      _jsx("option", { value: "DarkYellow", label: "Color Dark Yellow" }),
+      _jsx("option", { value: "Green", label: "Color Green" }),
+      _jsx("option", { value: "Teal", label: "Color Teal" }),
+      _jsx("option", { value: "LightBlue", label: "Color Light Blue" }),
+      _jsx("option", { value: "Violet", label: "Color Violet" }),
+      _jsx("option", { value: "Gray80", label: "Color Gray 80" }),
+    ],
+  });
 };
 /*
 lowercase alignment-horizontallookup
@@ -281,7 +825,19 @@ camelcase alignmentHorizontalLookup
 kebabcase alignmenthorizontal-lookup
 */
 const AlignmentHorizontalLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "Left", label: "Align Left" }), _jsx("option", { value: "Center", label: "Align Center" }), _jsx("option", { value: "Right", label: "Align Right" }), _jsx("option", { value: "Fill", label: "Align Fill" }), _jsx("option", { value: "Justify", label: "Align Justify" }), _jsx("option", { value: "CenterAcrossSelection", label: "Align Center Across Selection" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "Left", label: "Align Left" }),
+      _jsx("option", { value: "Center", label: "Align Center" }),
+      _jsx("option", { value: "Right", label: "Align Right" }),
+      _jsx("option", { value: "Fill", label: "Align Fill" }),
+      _jsx("option", { value: "Justify", label: "Align Justify" }),
+      _jsx("option", {
+        value: "CenterAcrossSelection",
+        label: "Align Center Across Selection",
+      }),
+    ],
+  });
 };
 /*
 lowercase alignment-verticallookup
@@ -292,7 +848,14 @@ camelcase alignmentVerticalLookup
 kebabcase alignmentvertical-lookup
 */
 const AlignmentVerticalLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "Top", label: "Align Top" }), _jsx("option", { value: "Middle", label: "Align Middle" }), _jsx("option", { value: "Bottom", label: "Align Bottom" }), _jsx("option", { value: "Justify", label: "Align Justify" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "Top", label: "Align Top" }),
+      _jsx("option", { value: "Middle", label: "Align Middle" }),
+      _jsx("option", { value: "Bottom", label: "Align Bottom" }),
+      _jsx("option", { value: "Justify", label: "Align Justify" }),
+    ],
+  });
 };
 /*
 lowercase patternlookup
@@ -303,7 +866,20 @@ camelcase patternLookup
 kebabcase pattern-lookup
 */
 const PatternLookup = () => {
-    return (_jsxs(_Fragment, { children: [_jsx("option", { value: "0", label: "patternNone" }), _jsx("option", { value: "1", label: "patternFilled" }), _jsx("option", { value: "2", label: "patternLightFill" }), _jsx("option", { value: "3", label: "patternMediumFill" }), _jsx("option", { value: "4", label: "patternHeavyFill" }), _jsx("option", { value: "5", label: "patternHorizontalStripes" }), _jsx("option", { value: "6", label: "patternVerticalStripes" }), _jsx("option", { value: "7", label: "patternDiagonalStripes" }), _jsx("option", { value: "8", label: "patternDiagonalStripesAlt" }), _jsx("option", { value: "9", label: "patternCheckerboard" })] }));
+  return _jsxs(_Fragment, {
+    children: [
+      _jsx("option", { value: "0", label: "patternNone" }),
+      _jsx("option", { value: "1", label: "patternFilled" }),
+      _jsx("option", { value: "2", label: "patternLightFill" }),
+      _jsx("option", { value: "3", label: "patternMediumFill" }),
+      _jsx("option", { value: "4", label: "patternHeavyFill" }),
+      _jsx("option", { value: "5", label: "patternHorizontalStripes" }),
+      _jsx("option", { value: "6", label: "patternVerticalStripes" }),
+      _jsx("option", { value: "7", label: "patternDiagonalStripes" }),
+      _jsx("option", { value: "8", label: "patternDiagonalStripesAlt" }),
+      _jsx("option", { value: "9", label: "patternCheckerboard" }),
+    ],
+  });
 };
 /* Export the generated form */
 export default FormatForm;

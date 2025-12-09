@@ -29,61 +29,62 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function SkillProfileFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        jobSeekerId: json["jobSeekerId"],
-        skillName: json["skillName"],
-        proficiency: !exists(json, "proficiency") ? undefined : json["proficiency"],
-        yearsOfExperience: !exists(json, "yearsOfExperience")
-            ? undefined
-            : json["yearsOfExperience"],
-        verifiedByAI: !exists(json, "verifiedByAI")
-            ? undefined
-            : json["verifiedByAI"],
-        verifiedByRecruiters: !exists(json, "verifiedByRecruiters")
-            ? undefined
-            : json["verifiedByRecruiters"],
-        lastUsedDate: !exists(json, "lastUsedDate")
-            ? undefined
-            : new Date(json["lastUsedDate"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    jobSeekerId: json["jobSeekerId"],
+    skillName: json["skillName"],
+    proficiency: !exists(json, "proficiency") ? undefined : json["proficiency"],
+    yearsOfExperience: !exists(json, "yearsOfExperience")
+      ? undefined
+      : json["yearsOfExperience"],
+    verifiedByAI: !exists(json, "verifiedByAI")
+      ? undefined
+      : json["verifiedByAI"],
+    verifiedByRecruiters: !exists(json, "verifiedByRecruiters")
+      ? undefined
+      : json["verifiedByRecruiters"],
+    lastUsedDate: !exists(json, "lastUsedDate")
+      ? undefined
+      : new Date(json["lastUsedDate"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function SkillProfileToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        jobSeekerId: value.jobSeekerId,
-        skillName: value.skillName,
-        proficiency: value.proficiency,
-        yearsOfExperience: value.yearsOfExperience,
-        verifiedByAI: value.verifiedByAI,
-        verifiedByRecruiters: value.verifiedByRecruiters,
-        lastUsedDate: value.lastUsedDate === undefined
-            ? undefined
-            : value.lastUsedDate.toISOString(),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    jobSeekerId: value.jobSeekerId,
+    skillName: value.skillName,
+    proficiency: value.proficiency,
+    yearsOfExperience: value.yearsOfExperience,
+    verifiedByAI: value.verifiedByAI,
+    verifiedByRecruiters: value.verifiedByRecruiters,
+    lastUsedDate:
+      value.lastUsedDate === undefined
+        ? undefined
+        : value.lastUsedDate.toISOString(),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -91,9 +92,9 @@ export function SkillProfileToJSON(value) {
  */
 export var SkillProfileProficiencyEnum;
 (function (SkillProfileProficiencyEnum) {
-    SkillProfileProficiencyEnum["BEGINNER"] = "beginner";
-    SkillProfileProficiencyEnum["INTERMEDIATE"] = "intermediate";
-    SkillProfileProficiencyEnum["ADVANCED"] = "advanced";
-    SkillProfileProficiencyEnum["EXPERT"] = "expert";
+  SkillProfileProficiencyEnum["BEGINNER"] = "beginner";
+  SkillProfileProficiencyEnum["INTERMEDIATE"] = "intermediate";
+  SkillProfileProficiencyEnum["ADVANCED"] = "advanced";
+  SkillProfileProficiencyEnum["EXPERT"] = "expert";
 })(SkillProfileProficiencyEnum || (SkillProfileProficiencyEnum = {}));
 //# sourceMappingURL=SkillProfile.js.map

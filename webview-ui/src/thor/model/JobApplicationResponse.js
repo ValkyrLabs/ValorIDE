@@ -28,64 +28,65 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { CareerOpportunityFromJSON, CareerOpportunityToJSON, } from "./";
+import { CareerOpportunityFromJSON, CareerOpportunityToJSON } from "./";
 export function JobApplicationResponseFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        applicationId: json["applicationId"],
-        status: json["status"],
-        confirmationMessage: !exists(json, "confirmationMessage")
-            ? undefined
-            : json["confirmationMessage"],
-        recommendedOpportunities: !exists(json, "recommendedOpportunities")
-            ? undefined
-            : json["recommendedOpportunities"].map(CareerOpportunityFromJSON),
-        matchScore: !exists(json, "matchScore") ? undefined : json["matchScore"],
-        consultingProfileOption: !exists(json, "consultingProfileOption")
-            ? undefined
-            : json["consultingProfileOption"],
-        nextSteps: !exists(json, "nextSteps") ? undefined : json["nextSteps"],
-        recruitmentContactEmail: !exists(json, "recruitmentContactEmail")
-            ? undefined
-            : json["recruitmentContactEmail"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    applicationId: json["applicationId"],
+    status: json["status"],
+    confirmationMessage: !exists(json, "confirmationMessage")
+      ? undefined
+      : json["confirmationMessage"],
+    recommendedOpportunities: !exists(json, "recommendedOpportunities")
+      ? undefined
+      : json["recommendedOpportunities"].map(CareerOpportunityFromJSON),
+    matchScore: !exists(json, "matchScore") ? undefined : json["matchScore"],
+    consultingProfileOption: !exists(json, "consultingProfileOption")
+      ? undefined
+      : json["consultingProfileOption"],
+    nextSteps: !exists(json, "nextSteps") ? undefined : json["nextSteps"],
+    recruitmentContactEmail: !exists(json, "recruitmentContactEmail")
+      ? undefined
+      : json["recruitmentContactEmail"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function JobApplicationResponseToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        applicationId: value.applicationId,
-        status: value.status,
-        confirmationMessage: value.confirmationMessage,
-        recommendedOpportunities: value.recommendedOpportunities === undefined
-            ? undefined
-            : value.recommendedOpportunities.map(CareerOpportunityToJSON),
-        matchScore: value.matchScore,
-        consultingProfileOption: value.consultingProfileOption,
-        nextSteps: value.nextSteps,
-        recruitmentContactEmail: value.recruitmentContactEmail,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    applicationId: value.applicationId,
+    status: value.status,
+    confirmationMessage: value.confirmationMessage,
+    recommendedOpportunities:
+      value.recommendedOpportunities === undefined
+        ? undefined
+        : value.recommendedOpportunities.map(CareerOpportunityToJSON),
+    matchScore: value.matchScore,
+    consultingProfileOption: value.consultingProfileOption,
+    nextSteps: value.nextSteps,
+    recruitmentContactEmail: value.recruitmentContactEmail,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=JobApplicationResponse.js.map

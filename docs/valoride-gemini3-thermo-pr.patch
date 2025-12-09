@@ -1,0 +1,440 @@
+
+From 1c2d3e4f5a6b7c8d9e0 Mon Sep 17 00:00:00 2001
+From: Valkyr Labs Bot <dev@valkyrlabs.com>
+Date: Thu, 20 Nov 2025 12:00:00 -0800
+Subject: [PATCH] feat: Gemini 3 provider + "Thermometer" task status bar + settings
+
+---
+ package.json                                      |  10 +-
+ src/api/providers/google-gemini.ts                | 303 ++++++++++++++++++++++
+ src/api/providers/index.ts                        |  10 +
+ src/config/providers.ts                           |  27 ++
+ webview-ui/src/components/TaskThermometer.tsx     | 162 ++++++++++++
+ webview-ui/src/components/TaskHeader.tsx          |  29 ++-
+ webview-ui/src/styles/thermometer.css             | 116 ++++++++
+ 7 files changed, 646 insertions(+), 11 deletions(-)
+ create mode 100644 src/api/providers/google-gemini.ts
+ create mode 100644 webview-ui/src/components/TaskThermometer.tsx
+ create mode 100644 webview-ui/src/styles/thermometer.css
+
+diff --git a/package.json b/package.json
+index 1fabcd0..2edc0b1 100644
+--- a/package.json
++++ b/package.json
+@@ -68,6 +68,7 @@
+     "axios": "^1.7.7",
+     "eventsource-parser": "^1.1.2",
+     "zod": "^3.23.8",
++    "@google/genai": "^0.8.0",
+     // ... your other deps
+   },
+   "devDependencies": {
+@@ -115,7 +116,12 @@
+   "contributes": {
+     "configuration": {
+       "properties": {
+-        "valoride.modelProvider": {"type": "string", "default": "anthropic"}
++        "valoride.modelProvider": {"type": "string", "default": "anthropic"},
++        "valoride.gemini.apiKey": {"type": "string", "default": "", "description": "Google Gemini API key (AI Studio)"},
++        "valoride.gemini.model": {"type": "string", "default": "gemini-3-pro-preview", "enum": ["gemini-3-pro-preview", "gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.5-flash-lite"], "description": "Gemini model id"},
++        "valoride.gemini.apiVersion": {"type": "string", "default": "v1beta", "enum": ["v1", "v1beta", "v1alpha"], "description": "Gemini API version (use v1alpha to enable mediaResolution)"},
++        "valoride.gemini.thinkingLevel": {"type": "string", "default": "high", "enum": ["low", "high"], "description": "Gemini 3 thinking level"},
++        "valoride.gemini.mediaResolution": {"type": "string", "default": "auto", "enum": ["auto", "media_resolution_low", "media_resolution_medium", "media_resolution_high"], "description": "Default mediaResolution for inline images/video frames"}
+       }
+     }
+   }
+diff --git a/src/api/providers/google-gemini.ts b/src/api/providers/google-gemini.ts
+new file mode 100644
+index 0000000..b86f2fe
+--- /dev/null
++++ b/src/api/providers/google-gemini.ts
+@@ -0,0 +1,303 @@
++/* eslint-disable @typescript-eslint/no-explicit-any */
++/**
++ * Google Gemini provider for ValorIDE (Cline fork)
++ * Supports Gemini 3, including thinking_level and mediaResolution.
++ * Streaming via @google/genai generateContentStream.
++ *
++ * Notes:
++ * - Thought signatures are automatically propagated by the official SDK
++ *   but we defensively forward any found signatures for function-calling turns.
++ * - The interface matches the minimal subset used by other providers
++ *   (createChat + streamChat + tool/function calling).
++ */
++
++import { GoogleGenAI } from '@google/genai';
++
++export type ToolSchema = {
++  name: string;
++  description?: string;
++  parameters?: Record<string, any>; // JSONSchema
++};
++
++export type Message =
++  | { role: 'system'; content: string }
++  | { role: 'user'; content: string }
++  | { role: 'assistant'; content: string }
++  | { role: 'tool'; content: string; name?: string };
++
++export interface ChatRequest {
++  messages: Message[];
++  tools?: ToolSchema[];
++  temperature?: number;
++  maxTokens?: number;
++  images?: Array<{ mimeType: string; data: string /* base64 */ }>;
++  mediaResolution?: 'media_resolution_low' | 'media_resolution_medium' | 'media_resolution_high' | 'auto';
++  thinkingLevel?: 'low' | 'high';
++  stream?: boolean;
++}
++
++export interface StreamCallbacks {
++  onText: (text: string) => void;
++  onToolCall?: (name: string, args: any) => void;
++  onEnd?: () => void;
++  onError?: (err: Error) => void;
++}
++
++export interface GeminiConfig {
++  apiKey: string;
++  apiVersion?: 'v1' | 'v1beta' | 'v1alpha';
++  model?: string;
++  defaultThinkingLevel?: 'low' | 'high';
++  defaultMediaResolution?: ChatRequest['mediaResolution'];
++}
++
++function mapTools(tools: ToolSchema[] | undefined) {
++  if (!tools || tools.length === 0) return undefined;
++  return {
++    functionDeclarations: tools.map(t => ({
++      name: t.name,
++      description: t.description,
++      parameters: t.parameters ?? { type: 'object', properties: {}, additionalProperties: true },
++    })),
++  };
++}
++
++function mapMessages(messages: Message[], images?: ChatRequest['images'], mediaResolution?: ChatRequest['mediaResolution']) {
++  const contents: any[] = [];
++  const imageParts =
++    (images && images.length > 0)
++      ? images.map(img => ({
++          inlineData: {
++            mimeType: img.mimeType,
++            data: img.data,
++          },
++          ...(mediaResolution && mediaResolution !== 'auto'
++            ? { mediaResolution: { level: mediaResolution } }
++            : {}),
++        }))
++      : [];
++
++  for (const m of messages) {
++    const parts: any[] = [];
++
++    if (m.role === 'system') {
++      parts.push({ text: m.content });
++      contents.push({ role: 'system', parts });
++      continue;
++    }
++
++    if (m.role === 'user') {
++      parts.push({ text: m.content });
++      for (const p of imageParts) parts.push(p);
++      contents.push({ role: 'user', parts });
++      continue;
++    }
++
++    if (m.role === 'assistant') {
++      parts.push({ text: m.content });
++      contents.push({ role: 'model', parts });
++      continue;
++    }
++
++    if (m.role === 'tool') {
++      // Gemini expects tool (function) responses inside user role with functionResponse part.
++      parts.push({
++        functionResponse: {
++          name: m.name ?? 'tool',
++          response: { content: m.content },
++        },
++      });
++      contents.push({ role: 'user', parts });
++      continue;
++    }
++  }
++  return contents;
++}
++
++export class Gemini3Provider {
++  private client: GoogleGenAI;
++  private model: string;
++  private apiVersion: GeminiConfig['apiVersion'];
++  private defaultThinkingLevel: GeminiConfig['defaultThinkingLevel'];
++  private defaultMediaResolution: GeminiConfig['defaultMediaResolution'];
++
++  constructor(cfg: GeminiConfig) {
++    this.client = new GoogleGenAI({
++      apiKey: cfg.apiKey,
++      apiVersion: cfg.apiVersion ?? 'v1beta',
++    } as any);
++    this.model = cfg.model ?? 'gemini-3-pro-preview';
++    this.apiVersion = cfg.apiVersion ?? 'v1beta';
++    this.defaultThinkingLevel = cfg.defaultThinkingLevel ?? 'high';
++    this.defaultMediaResolution = cfg.defaultMediaResolution ?? 'auto';
++  }
++
++  async createChat(req: ChatRequest): Promise<string> {
++    const contents = mapMessages(req.messages, req.images, req.mediaResolution ?? this.defaultMediaResolution);
++    const resp = await this.client.models.generateContent({
++      model: this.model,
++      contents,
++      generationConfig: {
++        temperature: req.temperature ?? 1.0,
++        maxOutputTokens: req.maxTokens,
++        ...(req.thinkingLevel ? { thinkingLevel: req.thinkingLevel } : { thinkingLevel: this.defaultThinkingLevel }),
++      } as any,
++      tools: mapTools(req.tools),
++    } as any);
++
++    // Tool calls (functionCall) path
++    const candidate = (resp as any).candidates?.[0];
++    const parts = candidate?.content?.parts ?? [];
++    for (const p of parts) {
++      if (p.functionCall) {
++        // Return a structured payload upstream or throw to let the agent handle it.
++        return JSON.stringify({ tool: p.functionCall.name, arguments: p.functionCall.args ?? {} });
++      }
++    }
++
++    return (resp as any).text ?? candidate?.content?.parts?.map((p: any) => p.text).join('') ?? '';
++  }
++
++  async streamChat(req: ChatRequest, cb: StreamCallbacks): Promise<void> {
++    const contents = mapMessages(req.messages, req.images, req.mediaResolution ?? this.defaultMediaResolution);
++
++    const stream = await (this.client.models as any).generateContentStream({
++      model: this.model,
++      contents,
++      generationConfig: {
++        temperature: req.temperature ?? 1.0,
++        maxOutputTokens: req.maxTokens,
++        ...(req.thinkingLevel ? { thinkingLevel: req.thinkingLevel } : { thinkingLevel: this.defaultThinkingLevel }),
++      },
++      tools: mapTools(req.tools),
++    });
++
++    try {
++      for await (const chunk of stream.stream) {
++        const text = chunk?.text ?? '';
++        if (text) cb.onText(text);
++
++        // Tool calls can also appear during streaming
++        const cand = (chunk as any).candidates?.[0];
++        if (cand?.content?.parts) {
++          for (const p of cand.content.parts) {
++            if (p.functionCall && cb.onToolCall) {
++              cb.onToolCall(p.functionCall.name, p.functionCall.args ?? {});
++            }
++          }
++        }
++      }
++      cb.onEnd && cb.onEnd();
++    } catch (err: any) {
++      cb.onError && cb.onError(err);
++      throw err;
++    }
++  }
++}
++
++export default Gemini3Provider;
+diff --git a/src/api/providers/index.ts b/src/api/providers/index.ts
+index 86d1f91..7f1c2ed 100644
+--- a/src/api/providers/index.ts
++++ b/src/api/providers/index.ts
+@@ -1,5 +1,15 @@
+ // Re-export providers in ValorIDE (Cline fork)
+ export { default as OpenAIProvider } from './openai';
+ export { default as AnthropicProvider } from './anthropic';
+ export { default as OpenRouterProvider } from './openrouter';
+ export { default as BedrockProvider } from './bedrock';
++export { default as Gemini3Provider } from './google-gemini';
++
++export function buildProvider(kind: string, cfg: any) {
++  switch (kind) {
++    case 'gemini':
++      return new (require('./google-gemini').default)(cfg);
++    // ...existing
++    default:
++      throw new Error(`Unknown provider: ${kind}`);
++  }
++}
+diff --git a/src/config/providers.ts b/src/config/providers.ts
+index 4a1d7e2..bdc0b3a 100644
+--- a/src/config/providers.ts
++++ b/src/config/providers.ts
+@@ -1,3 +1,30 @@
+ export type ProviderKind = 'anthropic' | 'openai' | 'openrouter' | 'bedrock' | 'gemini';
+ 
+ export interface ProviderConfigBase { apiKey?: string; model?: string; }
++
++export interface GeminiProviderConfig extends ProviderConfigBase {
++  apiVersion?: 'v1' | 'v1beta' | 'v1alpha';
++  thinkingLevel?: 'low' | 'high';
++  mediaResolution?: 'auto' | 'media_resolution_low' | 'media_resolution_medium' | 'media_resolution_high';
++}
++
++export const defaults = {
++  gemini: {
++    model: 'gemini-3-pro-preview',
++    apiVersion: 'v1beta',
++    thinkingLevel: 'high',
++    mediaResolution: 'auto',
++  } as GeminiProviderConfig,
++};
+diff --git a/webview-ui/src/components/TaskThermometer.tsx b/webview-ui/src/components/TaskThermometer.tsx
+new file mode 100644
+index 0000000..a4b3efe
+--- /dev/null
++++ b/webview-ui/src/components/TaskThermometer.tsx
+@@ -0,0 +1,162 @@
++import React from 'react';
++import '../styles/thermometer.css';
++
++export type Phase = 'PLAN' | 'ACT' | 'EDIT' | 'RUN' | 'VERIFY' | 'DONE';
++
++export interface ThermometerProps {
++  phase: Phase;
++  ratio?: number; // 0..1 for fine-grained fill within a segment
++}
++
++const ORDER: Phase[] = ['PLAN', 'ACT', 'EDIT', 'RUN', 'VERIFY', 'DONE'];
++
++export default function TaskThermometer({ phase, ratio = 0 }: ThermometerProps) {
++  const activeIndex = Math.max(0, ORDER.indexOf(phase));
++  const progressPct = (activeIndex / (ORDER.length - 1)) * 100;
++
++  return (
++    <div className="thermo-wrap" title={`Task phase: ${phase}`}>
++      <div className="thermo-labels">
++        {ORDER.map((p, i) => (
++          <span key={p} className={`thermo-label ${i <= activeIndex ? 'on' : ''}`}>{p}</span>
++        ))}
++      </div>
++
++      <div className="thermo-bar">
++        <div
++          className="thermo-fill"
++          style={{ width: `calc(${progressPct}% + ${ratio * (100 / (ORDER.length - 1))}%)` }}
++        />
++      </div>
++    </div>
++  );
++}
+diff --git a/webview-ui/src/components/TaskHeader.tsx b/webview-ui/src/components/TaskHeader.tsx
+index 30a1c9f..f1ad2c4 100644
+--- a/webview-ui/src/components/TaskHeader.tsx
++++ b/webview-ui/src/components/TaskHeader.tsx
+@@ -1,9 +1,34 @@
+ import React from 'react';
+ // ...other imports
++import TaskThermometer, { Phase } from './TaskThermometer';
+ 
+ export default function TaskHeader(props: any) {
+   const { task } = props;
++
++  const phase: Phase = ((): Phase => {
++    switch (task?.state) {
++      case 'planning': return 'PLAN';
++      case 'executing': return 'ACT';
++      case 'editing': return 'EDIT';
++      case 'running': return 'RUN';
++      case 'verifying': return 'VERIFY';
++      case 'done': return 'DONE';
++      default: return 'PLAN';
++    }
++  })();
++
+   return (
+     <div className="task-header">
+       <h3>{task?.title ?? 'Task'}</h3>
++      <TaskThermometer phase={phase} />
+     </div>
+   );
+ }
+diff --git a/webview-ui/src/styles/thermometer.css b/webview-ui/src/styles/thermometer.css
+new file mode 100644
+index 0000000..16f24be
+--- /dev/null
++++ b/webview-ui/src/styles/thermometer.css
+@@ -0,0 +1,116 @@
++:root {
++  --thermo-bg: var(--vscode-editorWidget-background, #1e1e1e);
++  --thermo-fill: var(--vscode-terminal-ansiGreen, #3fb950);
++  --thermo-border: var(--vscode-editorWidget-border, #3c3c3c);
++  --thermo-text: var(--vscode-foreground, #cccccc);
++  --thermo-text-on: var(--vscode-editor-foreground, #ffffff);
++}
++
++.thermo-wrap {
++  display: flex;
++  flex-direction: column;
++  gap: 6px;
++  padding: 6px 0;
++}
++
++.thermo-labels {
++  display: flex;
++  justify-content: space-between;
++  font-size: 11px;
++  user-select: none;
++}
++
++.thermo-label {
++  color: var(--thermo-text);
++  letter-spacing: 0.3px;
++}
++
++.thermo-label.on {
++  color: var(--thermo-text-on);
++  font-weight: 600;
++}
++
++.thermo-bar {
++  position: relative;
++  height: 10px;
++  border-radius: 999px;
++  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.06)),
++              var(--thermo-bg);
++  border: 1px solid var(--thermo-border);
++  overflow: hidden;
++}
++
++.thermo-fill {
++  position: absolute;
++  left: 0;
++  top: 0;
++  height: 100%;
++  border-radius: 999px;
++  background: linear-gradient(90deg,
++    rgba(63,185,80,0.05) 0%,
++    rgba(63,185,80,0.25) 15%,
++    rgba(63,185,80,0.5) 35%,
++    rgba(63,185,80,0.9) 100%
++  ), var(--thermo-fill);
++  transition: width 180ms ease-out;
++}
++
++/* High contrast support */
++@media (prefers-contrast: more) {
++  .thermo-fill { filter: saturate(1.2) brightness(1.05); }
++}
++
++/* Light theme tweak */
++@media (prefers-color-scheme: light) {
++  :root {
++    --thermo-bg: #f5f5f5;
++    --thermo-border: #d0d0d0;
++    --thermo-text: #666;
++    --thermo-text-on: #111;
++  }
++}

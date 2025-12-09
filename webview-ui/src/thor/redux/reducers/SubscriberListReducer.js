@@ -16,29 +16,39 @@ Template file: typescript-redux-query/modelReducer.mustache
 */
 import { createSlice } from "@reduxjs/toolkit";
 const SubscriberListSlice = createSlice({
-    name: "SubscriberLists",
-    initialState: [],
-    reducers: {
-        SubscriberListAdded(state, action) {
-            state.push(action.payload);
-        },
-        SubscriberListValueToggled(state, action) {
-            console.log("SubscriberList TOGGLE");
-            console.warn(JSON.stringify(action));
-            const SubscriberList = state.find((SubscriberList) => SubscriberList.id === action.payload.SubscriberListId);
-            if (SubscriberList) {
-                if (action.payload.target === "SOMETHING") {
-                }
-            }
-        },
-        SubscriberListpropertySet(state, action) {
-            const SubscriberList = state.find((SubscriberList) => SubscriberList.id === action.payload.SubscriberListId);
-            if (SubscriberList) {
-                //  SubscriberList[action.property] = action.payload[action.property];
-            }
-        },
+  name: "SubscriberLists",
+  initialState: [],
+  reducers: {
+    SubscriberListAdded(state, action) {
+      state.push(action.payload);
     },
+    SubscriberListValueToggled(state, action) {
+      console.log("SubscriberList TOGGLE");
+      console.warn(JSON.stringify(action));
+      const SubscriberList = state.find(
+        (SubscriberList) =>
+          SubscriberList.id === action.payload.SubscriberListId,
+      );
+      if (SubscriberList) {
+        if (action.payload.target === "SOMETHING") {
+        }
+      }
+    },
+    SubscriberListpropertySet(state, action) {
+      const SubscriberList = state.find(
+        (SubscriberList) =>
+          SubscriberList.id === action.payload.SubscriberListId,
+      );
+      if (SubscriberList) {
+        //  SubscriberList[action.property] = action.payload[action.property];
+      }
+    },
+  },
 });
-export const { SubscriberListAdded, SubscriberListValueToggled, SubscriberListpropertySet, } = SubscriberListSlice.actions;
+export const {
+  SubscriberListAdded,
+  SubscriberListValueToggled,
+  SubscriberListpropertySet,
+} = SubscriberListSlice.actions;
 export default SubscriberListSlice.reducer;
 //# sourceMappingURL=SubscriberListReducer.js.map

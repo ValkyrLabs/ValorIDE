@@ -30,75 +30,76 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { ChartSeriesFromJSON, ChartSeriesToJSON } from "./";
 export function ChartFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
-        name: !exists(json, "name") ? undefined : json["name"],
-        chartType: !exists(json, "chartType") ? undefined : json["chartType"],
-        title: !exists(json, "title") ? undefined : json["title"],
-        axisLabelX: !exists(json, "axisLabelX") ? undefined : json["axisLabelX"],
-        axisLabelY: !exists(json, "axisLabelY") ? undefined : json["axisLabelY"],
-        categoryRange: !exists(json, "categoryRange")
-            ? undefined
-            : json["categoryRange"],
-        dataSeries: !exists(json, "dataSeries")
-            ? undefined
-            : json["dataSeries"].map(ChartSeriesFromJSON),
-        embedded: !exists(json, "embedded") ? undefined : json["embedded"],
-        anchorCell: !exists(json, "anchorCell") ? undefined : json["anchorCell"],
-        anchorOffsetX: !exists(json, "anchorOffsetX")
-            ? undefined
-            : json["anchorOffsetX"],
-        anchorOffsetY: !exists(json, "anchorOffsetY")
-            ? undefined
-            : json["anchorOffsetY"],
-        width: !exists(json, "width") ? undefined : json["width"],
-        height: !exists(json, "height") ? undefined : json["height"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
+    name: !exists(json, "name") ? undefined : json["name"],
+    chartType: !exists(json, "chartType") ? undefined : json["chartType"],
+    title: !exists(json, "title") ? undefined : json["title"],
+    axisLabelX: !exists(json, "axisLabelX") ? undefined : json["axisLabelX"],
+    axisLabelY: !exists(json, "axisLabelY") ? undefined : json["axisLabelY"],
+    categoryRange: !exists(json, "categoryRange")
+      ? undefined
+      : json["categoryRange"],
+    dataSeries: !exists(json, "dataSeries")
+      ? undefined
+      : json["dataSeries"].map(ChartSeriesFromJSON),
+    embedded: !exists(json, "embedded") ? undefined : json["embedded"],
+    anchorCell: !exists(json, "anchorCell") ? undefined : json["anchorCell"],
+    anchorOffsetX: !exists(json, "anchorOffsetX")
+      ? undefined
+      : json["anchorOffsetX"],
+    anchorOffsetY: !exists(json, "anchorOffsetY")
+      ? undefined
+      : json["anchorOffsetY"],
+    width: !exists(json, "width") ? undefined : json["width"],
+    height: !exists(json, "height") ? undefined : json["height"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ChartToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        sheetId: value.sheetId,
-        name: value.name,
-        chartType: value.chartType,
-        title: value.title,
-        axisLabelX: value.axisLabelX,
-        axisLabelY: value.axisLabelY,
-        categoryRange: value.categoryRange,
-        dataSeries: value.dataSeries === undefined
-            ? undefined
-            : value.dataSeries.map(ChartSeriesToJSON),
-        embedded: value.embedded,
-        anchorCell: value.anchorCell,
-        anchorOffsetX: value.anchorOffsetX,
-        anchorOffsetY: value.anchorOffsetY,
-        width: value.width,
-        height: value.height,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    sheetId: value.sheetId,
+    name: value.name,
+    chartType: value.chartType,
+    title: value.title,
+    axisLabelX: value.axisLabelX,
+    axisLabelY: value.axisLabelY,
+    categoryRange: value.categoryRange,
+    dataSeries:
+      value.dataSeries === undefined
+        ? undefined
+        : value.dataSeries.map(ChartSeriesToJSON),
+    embedded: value.embedded,
+    anchorCell: value.anchorCell,
+    anchorOffsetX: value.anchorOffsetX,
+    anchorOffsetY: value.anchorOffsetY,
+    width: value.width,
+    height: value.height,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -106,14 +107,14 @@ export function ChartToJSON(value) {
  */
 export var ChartChartTypeEnum;
 (function (ChartChartTypeEnum) {
-    ChartChartTypeEnum["AREA"] = "area";
-    ChartChartTypeEnum["BAR"] = "bar";
-    ChartChartTypeEnum["COLUMN"] = "column";
-    ChartChartTypeEnum["LINE"] = "line";
-    ChartChartTypeEnum["PIE"] = "pie";
-    ChartChartTypeEnum["SCATTER"] = "scatter";
-    ChartChartTypeEnum["RADAR"] = "radar";
-    ChartChartTypeEnum["DOUGHNUT"] = "doughnut";
-    ChartChartTypeEnum["STOCK"] = "stock";
+  ChartChartTypeEnum["AREA"] = "area";
+  ChartChartTypeEnum["BAR"] = "bar";
+  ChartChartTypeEnum["COLUMN"] = "column";
+  ChartChartTypeEnum["LINE"] = "line";
+  ChartChartTypeEnum["PIE"] = "pie";
+  ChartChartTypeEnum["SCATTER"] = "scatter";
+  ChartChartTypeEnum["RADAR"] = "radar";
+  ChartChartTypeEnum["DOUGHNUT"] = "doughnut";
+  ChartChartTypeEnum["STOCK"] = "stock";
 })(ChartChartTypeEnum || (ChartChartTypeEnum = {}));
 //# sourceMappingURL=Chart.js.map

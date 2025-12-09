@@ -29,20 +29,20 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function CompleteUploadRequestPartsInnerFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        partNumber: !exists(json, "partNumber") ? undefined : json["partNumber"],
-        etag: !exists(json, "etag") ? undefined : json["etag"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    partNumber: !exists(json, "partNumber") ? undefined : json["partNumber"],
+    etag: !exists(json, "etag") ? undefined : json["etag"],
+  };
 }
 export function CompleteUploadRequestPartsInnerToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        partNumber: value.partNumber,
-        etag: value.etag,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    partNumber: value.partNumber,
+    etag: value.etag,
+  };
 }
 //# sourceMappingURL=CompleteUploadRequestPartsInner.js.map

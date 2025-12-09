@@ -29,46 +29,46 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function OasInfoFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        oasOpenAPISpecId: !exists(json, "oasOpenAPISpecId")
-            ? undefined
-            : json["oasOpenAPISpecId"],
-        title: !exists(json, "title") ? undefined : json["title"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        version: !exists(json, "version") ? undefined : json["version"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    oasOpenAPISpecId: !exists(json, "oasOpenAPISpecId")
+      ? undefined
+      : json["oasOpenAPISpecId"],
+    title: !exists(json, "title") ? undefined : json["title"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    version: !exists(json, "version") ? undefined : json["version"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function OasInfoToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        oasOpenAPISpecId: value.oasOpenAPISpecId,
-        title: value.title,
-        description: value.description,
-        version: value.version,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    oasOpenAPISpecId: value.oasOpenAPISpecId,
+    title: value.title,
+    description: value.description,
+    version: value.version,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=OasInfo.js.map

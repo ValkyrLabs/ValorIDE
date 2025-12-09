@@ -29,59 +29,59 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function HostInstanceFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: json["name"],
-        domain: !exists(json, "domain") ? undefined : json["domain"],
-        cluste: !exists(json, "cluste") ? undefined : json["cluste"],
-        serviceArn: !exists(json, "serviceArn") ? undefined : json["serviceArn"],
-        targetGroupArn: !exists(json, "targetGroupArn")
-            ? undefined
-            : json["targetGroupArn"],
-        listenerRuleArn: !exists(json, "listenerRuleArn")
-            ? undefined
-            : json["listenerRuleArn"],
-        status: !exists(json, "status") ? undefined : json["status"],
-        cpus: !exists(json, "cpus") ? undefined : json["cpus"],
-        memory: !exists(json, "memory") ? undefined : json["memory"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: json["name"],
+    domain: !exists(json, "domain") ? undefined : json["domain"],
+    cluste: !exists(json, "cluste") ? undefined : json["cluste"],
+    serviceArn: !exists(json, "serviceArn") ? undefined : json["serviceArn"],
+    targetGroupArn: !exists(json, "targetGroupArn")
+      ? undefined
+      : json["targetGroupArn"],
+    listenerRuleArn: !exists(json, "listenerRuleArn")
+      ? undefined
+      : json["listenerRuleArn"],
+    status: !exists(json, "status") ? undefined : json["status"],
+    cpus: !exists(json, "cpus") ? undefined : json["cpus"],
+    memory: !exists(json, "memory") ? undefined : json["memory"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function HostInstanceToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        domain: value.domain,
-        cluste: value.cluste,
-        serviceArn: value.serviceArn,
-        targetGroupArn: value.targetGroupArn,
-        listenerRuleArn: value.listenerRuleArn,
-        status: value.status,
-        cpus: value.cpus,
-        memory: value.memory,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    domain: value.domain,
+    cluste: value.cluste,
+    serviceArn: value.serviceArn,
+    targetGroupArn: value.targetGroupArn,
+    listenerRuleArn: value.listenerRuleArn,
+    status: value.status,
+    cpus: value.cpus,
+    memory: value.memory,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -89,9 +89,9 @@ export function HostInstanceToJSON(value) {
  */
 export var HostInstanceStatusEnum;
 (function (HostInstanceStatusEnum) {
-    HostInstanceStatusEnum["STARTING"] = "starting";
-    HostInstanceStatusEnum["RUNNING"] = "running";
-    HostInstanceStatusEnum["STOPPED"] = "stopped";
-    HostInstanceStatusEnum["ERROR"] = "error";
+  HostInstanceStatusEnum["STARTING"] = "starting";
+  HostInstanceStatusEnum["RUNNING"] = "running";
+  HostInstanceStatusEnum["STOPPED"] = "stopped";
+  HostInstanceStatusEnum["ERROR"] = "error";
 })(HostInstanceStatusEnum || (HostInstanceStatusEnum = {}));
 //# sourceMappingURL=HostInstance.js.map

@@ -28,67 +28,72 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { ProductFromJSON, ProductToJSON, WorkflowFromJSON, WorkflowToJSON, } from "./";
+import {
+  ProductFromJSON,
+  ProductToJSON,
+  WorkflowFromJSON,
+  WorkflowToJSON,
+} from "./";
 export function ProductDeliveryConfigFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        productId: json["productId"],
-        deliveryType: json["deliveryType"],
-        product: !exists(json, "product")
-            ? undefined
-            : ProductFromJSON(json["product"]),
-        autoFulfill: !exists(json, "autoFulfill") ? undefined : json["autoFulfill"],
-        fulfillmentWorkflowId: !exists(json, "fulfillmentWorkflowId")
-            ? undefined
-            : json["fulfillmentWorkflowId"],
-        fulfillmentWorkflow: !exists(json, "fulfillmentWorkflow")
-            ? undefined
-            : WorkflowFromJSON(json["fulfillmentWorkflow"]),
-        notificationTemplate: !exists(json, "notificationTemplate")
-            ? undefined
-            : json["notificationTemplate"],
-        maxConcurrentFulfillments: !exists(json, "maxConcurrentFulfillments")
-            ? undefined
-            : json["maxConcurrentFulfillments"],
-        retryPolicy: !exists(json, "retryPolicy") ? undefined : json["retryPolicy"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    productId: json["productId"],
+    deliveryType: json["deliveryType"],
+    product: !exists(json, "product")
+      ? undefined
+      : ProductFromJSON(json["product"]),
+    autoFulfill: !exists(json, "autoFulfill") ? undefined : json["autoFulfill"],
+    fulfillmentWorkflowId: !exists(json, "fulfillmentWorkflowId")
+      ? undefined
+      : json["fulfillmentWorkflowId"],
+    fulfillmentWorkflow: !exists(json, "fulfillmentWorkflow")
+      ? undefined
+      : WorkflowFromJSON(json["fulfillmentWorkflow"]),
+    notificationTemplate: !exists(json, "notificationTemplate")
+      ? undefined
+      : json["notificationTemplate"],
+    maxConcurrentFulfillments: !exists(json, "maxConcurrentFulfillments")
+      ? undefined
+      : json["maxConcurrentFulfillments"],
+    retryPolicy: !exists(json, "retryPolicy") ? undefined : json["retryPolicy"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ProductDeliveryConfigToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        productId: value.productId,
-        deliveryType: value.deliveryType,
-        product: ProductToJSON(value.product),
-        autoFulfill: value.autoFulfill,
-        fulfillmentWorkflowId: value.fulfillmentWorkflowId,
-        fulfillmentWorkflow: WorkflowToJSON(value.fulfillmentWorkflow),
-        notificationTemplate: value.notificationTemplate,
-        maxConcurrentFulfillments: value.maxConcurrentFulfillments,
-        retryPolicy: value.retryPolicy,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    productId: value.productId,
+    deliveryType: value.deliveryType,
+    product: ProductToJSON(value.product),
+    autoFulfill: value.autoFulfill,
+    fulfillmentWorkflowId: value.fulfillmentWorkflowId,
+    fulfillmentWorkflow: WorkflowToJSON(value.fulfillmentWorkflow),
+    notificationTemplate: value.notificationTemplate,
+    maxConcurrentFulfillments: value.maxConcurrentFulfillments,
+    retryPolicy: value.retryPolicy,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -96,10 +101,15 @@ export function ProductDeliveryConfigToJSON(value) {
  */
 export var ProductDeliveryConfigDeliveryTypeEnum;
 (function (ProductDeliveryConfigDeliveryTypeEnum) {
-    ProductDeliveryConfigDeliveryTypeEnum["INSTANTDIGITAL"] = "instant_digital";
-    ProductDeliveryConfigDeliveryTypeEnum["SCHEDULEDDIGITAL"] = "scheduled_digital";
-    ProductDeliveryConfigDeliveryTypeEnum["MANUALREVIEW"] = "manual_review";
-    ProductDeliveryConfigDeliveryTypeEnum["PHYSICALSHIPMENT"] = "physical_shipment";
-    ProductDeliveryConfigDeliveryTypeEnum["HYBRID"] = "hybrid";
-})(ProductDeliveryConfigDeliveryTypeEnum || (ProductDeliveryConfigDeliveryTypeEnum = {}));
+  ProductDeliveryConfigDeliveryTypeEnum["INSTANTDIGITAL"] = "instant_digital";
+  ProductDeliveryConfigDeliveryTypeEnum["SCHEDULEDDIGITAL"] =
+    "scheduled_digital";
+  ProductDeliveryConfigDeliveryTypeEnum["MANUALREVIEW"] = "manual_review";
+  ProductDeliveryConfigDeliveryTypeEnum["PHYSICALSHIPMENT"] =
+    "physical_shipment";
+  ProductDeliveryConfigDeliveryTypeEnum["HYBRID"] = "hybrid";
+})(
+  ProductDeliveryConfigDeliveryTypeEnum ||
+    (ProductDeliveryConfigDeliveryTypeEnum = {}),
+);
 //# sourceMappingURL=ProductDeliveryConfig.js.map

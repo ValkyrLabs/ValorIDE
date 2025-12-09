@@ -28,54 +28,59 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { AclClassFromJSON, AclClassToJSON, AclSidFromJSON, AclSidToJSON, } from "./";
+import {
+  AclClassFromJSON,
+  AclClassToJSON,
+  AclSidFromJSON,
+  AclSidToJSON,
+} from "./";
 export function AclObjectIdentityFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        objectIdIdentity: json["objectIdIdentity"],
-        entriesInheriting: json["entriesInheriting"],
-        aclClass: !exists(json, "aclClass")
-            ? undefined
-            : AclClassFromJSON(json["aclClass"]),
-        parentObject: !exists(json, "parentObject")
-            ? undefined
-            : AclObjectIdentityFromJSON(json["parentObject"]),
-        ownerSid: !exists(json, "ownerSid")
-            ? undefined
-            : AclSidFromJSON(json["ownerSid"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    objectIdIdentity: json["objectIdIdentity"],
+    entriesInheriting: json["entriesInheriting"],
+    aclClass: !exists(json, "aclClass")
+      ? undefined
+      : AclClassFromJSON(json["aclClass"]),
+    parentObject: !exists(json, "parentObject")
+      ? undefined
+      : AclObjectIdentityFromJSON(json["parentObject"]),
+    ownerSid: !exists(json, "ownerSid")
+      ? undefined
+      : AclSidFromJSON(json["ownerSid"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function AclObjectIdentityToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        objectIdIdentity: value.objectIdIdentity,
-        entriesInheriting: value.entriesInheriting,
-        aclClass: AclClassToJSON(value.aclClass),
-        parentObject: AclObjectIdentityToJSON(value.parentObject),
-        ownerSid: AclSidToJSON(value.ownerSid),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    objectIdIdentity: value.objectIdIdentity,
+    entriesInheriting: value.entriesInheriting,
+    aclClass: AclClassToJSON(value.aclClass),
+    parentObject: AclObjectIdentityToJSON(value.parentObject),
+    ownerSid: AclSidToJSON(value.ownerSid),
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=AclObjectIdentity.js.map

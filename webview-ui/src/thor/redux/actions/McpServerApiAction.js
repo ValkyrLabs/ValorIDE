@@ -31,60 +31,60 @@ export const LIST_MCPSERVER_REQUEST = "LIST_MCPSERVER_REQUEST";
 export const LIST_MCPSERVER_SUCCESS = "LIST_MCPSERVER_SUCCESS";
 export const LIST_MCPSERVER_FAILURE = "LIST_MCPSERVER_FAILURE";
 export const addMcpServerRequest = () => ({
-    type: ADD_MCPSERVER_REQUEST,
+  type: ADD_MCPSERVER_REQUEST,
 });
 export const addMcpServerSuccess = (McpServers) => ({
-    type: ADD_MCPSERVER_SUCCESS,
-    payload: McpServers,
+  type: ADD_MCPSERVER_SUCCESS,
+  payload: McpServers,
 });
 export const addMcpServerFailure = (error) => ({
-    type: ADD_MCPSERVER_FAILURE,
-    payload: error,
+  type: ADD_MCPSERVER_FAILURE,
+  payload: error,
 });
 export const fetchMcpServerRequest = () => ({
-    type: FETCH_MCPSERVER_REQUEST,
+  type: FETCH_MCPSERVER_REQUEST,
 });
 export const fetchMcpServerSuccess = (McpServers) => ({
-    type: FETCH_MCPSERVER_SUCCESS,
-    payload: McpServers,
+  type: FETCH_MCPSERVER_SUCCESS,
+  payload: McpServers,
 });
 export const fetchMcpServerFailure = (error) => ({
-    type: FETCH_MCPSERVER_FAILURE,
-    payload: error,
+  type: FETCH_MCPSERVER_FAILURE,
+  payload: error,
 });
 export const listMcpServerRequest = () => ({
-    type: LIST_MCPSERVER_REQUEST,
+  type: LIST_MCPSERVER_REQUEST,
 });
 export const listMcpServerSuccess = (McpServers) => ({
-    type: LIST_MCPSERVER_SUCCESS,
-    payload: McpServers,
+  type: LIST_MCPSERVER_SUCCESS,
+  payload: McpServers,
 });
 export const listMcpServerFailure = (error) => ({
-    type: LIST_MCPSERVER_FAILURE,
-    payload: error,
+  type: LIST_MCPSERVER_FAILURE,
+  payload: error,
 });
 export const updateMcpServerRequest = (McpServer) => ({
-    type: UPDATE_MCPSERVER_REQUEST,
-    payload: McpServer,
+  type: UPDATE_MCPSERVER_REQUEST,
+  payload: McpServer,
 });
 export const updateMcpServerSuccess = (McpServer) => ({
-    type: UPDATE_MCPSERVER_SUCCESS,
-    payload: McpServer,
+  type: UPDATE_MCPSERVER_SUCCESS,
+  payload: McpServer,
 });
 export const updateMcpServerFailure = (error) => ({
-    type: UPDATE_MCPSERVER_FAILURE,
-    payload: error,
+  type: UPDATE_MCPSERVER_FAILURE,
+  payload: error,
 });
 export const deleteMcpServerRequest = (McpServer) => ({
-    type: DELETE_MCPSERVER_REQUEST,
-    payload: McpServer,
+  type: DELETE_MCPSERVER_REQUEST,
+  payload: McpServer,
 });
 export const deleteMcpServerSuccess = (McpServer) => ({
-    type: DELETE_MCPSERVER_SUCCESS,
-    payload: McpServer,
+  type: DELETE_MCPSERVER_SUCCESS,
+  payload: McpServer,
 });
 export const deleteMcpServerFailure = (error) => ({
-    type: DELETE_MCPSERVER_FAILURE,
-    payload: error,
+  type: DELETE_MCPSERVER_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=McpServerApiAction.js.map

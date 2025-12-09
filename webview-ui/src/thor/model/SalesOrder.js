@@ -28,77 +28,87 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { CustomerFromJSON, CustomerToJSON, DiscountFromJSON, DiscountToJSON, LineItemFromJSON, LineItemToJSON, } from "./";
+import {
+  CustomerFromJSON,
+  CustomerToJSON,
+  DiscountFromJSON,
+  DiscountToJSON,
+  LineItemFromJSON,
+  LineItemToJSON,
+} from "./";
 export function SalesOrderFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        customer: CustomerFromJSON(json["customer"]),
-        totalAmount: json["totalAmount"],
-        orderDate: new Date(json["orderDate"]),
-        status: json["status"],
-        customerId: !exists(json, "customerId") ? undefined : json["customerId"],
-        orderItems: !exists(json, "orderItems")
-            ? undefined
-            : json["orderItems"].map(LineItemFromJSON),
-        orderDiscounts: !exists(json, "orderDiscounts")
-            ? undefined
-            : json["orderDiscounts"].map(DiscountFromJSON),
-        taxAmount: !exists(json, "taxAmount") ? undefined : json["taxAmount"],
-        tariffAmount: !exists(json, "tariffAmount")
-            ? undefined
-            : json["tariffAmount"],
-        subtotalAmount: !exists(json, "subtotalAmount")
-            ? undefined
-            : json["subtotalAmount"],
-        expirationDate: !exists(json, "expirationDate")
-            ? undefined
-            : new Date(json["expirationDate"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    customer: CustomerFromJSON(json["customer"]),
+    totalAmount: json["totalAmount"],
+    orderDate: new Date(json["orderDate"]),
+    status: json["status"],
+    customerId: !exists(json, "customerId") ? undefined : json["customerId"],
+    orderItems: !exists(json, "orderItems")
+      ? undefined
+      : json["orderItems"].map(LineItemFromJSON),
+    orderDiscounts: !exists(json, "orderDiscounts")
+      ? undefined
+      : json["orderDiscounts"].map(DiscountFromJSON),
+    taxAmount: !exists(json, "taxAmount") ? undefined : json["taxAmount"],
+    tariffAmount: !exists(json, "tariffAmount")
+      ? undefined
+      : json["tariffAmount"],
+    subtotalAmount: !exists(json, "subtotalAmount")
+      ? undefined
+      : json["subtotalAmount"],
+    expirationDate: !exists(json, "expirationDate")
+      ? undefined
+      : new Date(json["expirationDate"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function SalesOrderToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        customer: CustomerToJSON(value.customer),
-        totalAmount: value.totalAmount,
-        orderDate: value.orderDate.toISOString(),
-        status: value.status,
-        customerId: value.customerId,
-        orderItems: value.orderItems === undefined
-            ? undefined
-            : value.orderItems.map(LineItemToJSON),
-        orderDiscounts: value.orderDiscounts === undefined
-            ? undefined
-            : value.orderDiscounts.map(DiscountToJSON),
-        taxAmount: value.taxAmount,
-        tariffAmount: value.tariffAmount,
-        subtotalAmount: value.subtotalAmount,
-        expirationDate: value.expirationDate === undefined
-            ? undefined
-            : value.expirationDate.toISOString(),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    customer: CustomerToJSON(value.customer),
+    totalAmount: value.totalAmount,
+    orderDate: value.orderDate.toISOString(),
+    status: value.status,
+    customerId: value.customerId,
+    orderItems:
+      value.orderItems === undefined
+        ? undefined
+        : value.orderItems.map(LineItemToJSON),
+    orderDiscounts:
+      value.orderDiscounts === undefined
+        ? undefined
+        : value.orderDiscounts.map(DiscountToJSON),
+    taxAmount: value.taxAmount,
+    tariffAmount: value.tariffAmount,
+    subtotalAmount: value.subtotalAmount,
+    expirationDate:
+      value.expirationDate === undefined
+        ? undefined
+        : value.expirationDate.toISOString(),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -106,10 +116,10 @@ export function SalesOrderToJSON(value) {
  */
 export var SalesOrderStatusEnum;
 (function (SalesOrderStatusEnum) {
-    SalesOrderStatusEnum["SHOPPING"] = "shopping";
-    SalesOrderStatusEnum["PENDING"] = "pending";
-    SalesOrderStatusEnum["SHIPPED"] = "shipped";
-    SalesOrderStatusEnum["DELIVERED"] = "delivered";
-    SalesOrderStatusEnum["CANCELED"] = "canceled";
+  SalesOrderStatusEnum["SHOPPING"] = "shopping";
+  SalesOrderStatusEnum["PENDING"] = "pending";
+  SalesOrderStatusEnum["SHIPPED"] = "shipped";
+  SalesOrderStatusEnum["DELIVERED"] = "delivered";
+  SalesOrderStatusEnum["CANCELED"] = "canceled";
 })(SalesOrderStatusEnum || (SalesOrderStatusEnum = {}));
 //# sourceMappingURL=SalesOrder.js.map

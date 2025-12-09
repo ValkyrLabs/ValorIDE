@@ -30,65 +30,63 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { GoalFromJSON, GoalToJSON } from "./";
 export function StrategicPriorityFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: !exists(json, "name") ? undefined : json["name"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        priorityLevel: !exists(json, "priorityLevel")
-            ? undefined
-            : json["priorityLevel"],
-        imageUrl: !exists(json, "imageUrl") ? undefined : json["imageUrl"],
-        startDate: !exists(json, "startDate")
-            ? undefined
-            : new Date(json["startDate"]),
-        targetDate: !exists(json, "targetDate")
-            ? undefined
-            : new Date(json["targetDate"]),
-        goals: !exists(json, "goals")
-            ? undefined
-            : json["goals"].map(GoalFromJSON),
-        status: !exists(json, "status") ? undefined : json["status"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: !exists(json, "name") ? undefined : json["name"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    priorityLevel: !exists(json, "priorityLevel")
+      ? undefined
+      : json["priorityLevel"],
+    imageUrl: !exists(json, "imageUrl") ? undefined : json["imageUrl"],
+    startDate: !exists(json, "startDate")
+      ? undefined
+      : new Date(json["startDate"]),
+    targetDate: !exists(json, "targetDate")
+      ? undefined
+      : new Date(json["targetDate"]),
+    goals: !exists(json, "goals") ? undefined : json["goals"].map(GoalFromJSON),
+    status: !exists(json, "status") ? undefined : json["status"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function StrategicPriorityToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        description: value.description,
-        priorityLevel: value.priorityLevel,
-        imageUrl: value.imageUrl,
-        startDate: value.startDate === undefined ? undefined : value.startDate.toISOString(),
-        targetDate: value.targetDate === undefined
-            ? undefined
-            : value.targetDate.toISOString(),
-        goals: value.goals === undefined
-            ? undefined
-            : value.goals.map(GoalToJSON),
-        status: value.status,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    description: value.description,
+    priorityLevel: value.priorityLevel,
+    imageUrl: value.imageUrl,
+    startDate:
+      value.startDate === undefined ? undefined : value.startDate.toISOString(),
+    targetDate:
+      value.targetDate === undefined
+        ? undefined
+        : value.targetDate.toISOString(),
+    goals: value.goals === undefined ? undefined : value.goals.map(GoalToJSON),
+    status: value.status,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -96,19 +94,22 @@ export function StrategicPriorityToJSON(value) {
  */
 export var StrategicPriorityPriorityLevelEnum;
 (function (StrategicPriorityPriorityLevelEnum) {
-    StrategicPriorityPriorityLevelEnum["LOW"] = "low";
-    StrategicPriorityPriorityLevelEnum["MEDIUM"] = "medium";
-    StrategicPriorityPriorityLevelEnum["HIGH"] = "high";
-    StrategicPriorityPriorityLevelEnum["CRITICAL"] = "critical";
-})(StrategicPriorityPriorityLevelEnum || (StrategicPriorityPriorityLevelEnum = {}));
+  StrategicPriorityPriorityLevelEnum["LOW"] = "low";
+  StrategicPriorityPriorityLevelEnum["MEDIUM"] = "medium";
+  StrategicPriorityPriorityLevelEnum["HIGH"] = "high";
+  StrategicPriorityPriorityLevelEnum["CRITICAL"] = "critical";
+})(
+  StrategicPriorityPriorityLevelEnum ||
+    (StrategicPriorityPriorityLevelEnum = {}),
+);
 /**
  * @export
  * @enum {string}
  */
 export var StrategicPriorityStatusEnum;
 (function (StrategicPriorityStatusEnum) {
-    StrategicPriorityStatusEnum["NOTSTARTED"] = "not-started";
-    StrategicPriorityStatusEnum["INPROGRESS"] = "in-progress";
-    StrategicPriorityStatusEnum["COMPLETE"] = "complete";
+  StrategicPriorityStatusEnum["NOTSTARTED"] = "not-started";
+  StrategicPriorityStatusEnum["INPROGRESS"] = "in-progress";
+  StrategicPriorityStatusEnum["COMPLETE"] = "complete";
 })(StrategicPriorityStatusEnum || (StrategicPriorityStatusEnum = {}));
 //# sourceMappingURL=StrategicPriority.js.map

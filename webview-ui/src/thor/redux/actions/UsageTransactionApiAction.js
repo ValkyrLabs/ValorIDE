@@ -21,70 +21,76 @@ export const FETCH_USAGETRANSACTION_FAILURE = "FETCH_USAGETRANSACTION_FAILURE";
 export const ADD_USAGETRANSACTION_REQUEST = "ADD_USAGETRANSACTION_REQUEST";
 export const ADD_USAGETRANSACTION_SUCCESS = "ADD_USAGETRANSACTION_SUCCESS";
 export const ADD_USAGETRANSACTION_FAILURE = "ADD_USAGETRANSACTION_FAILURE";
-export const UPDATE_USAGETRANSACTION_REQUEST = "UPDATE_USAGETRANSACTION_REQUEST";
-export const UPDATE_USAGETRANSACTION_SUCCESS = "UPDATE_USAGETRANSACTION_SUCCESS";
-export const UPDATE_USAGETRANSACTION_FAILURE = "UPDATE_USAGETRANSACTION_FAILURE";
-export const DELETE_USAGETRANSACTION_REQUEST = "DELETE_USAGETRANSACTION_REQUEST";
-export const DELETE_USAGETRANSACTION_SUCCESS = "DELETE_USAGETRANSACTION_SUCCESS";
-export const DELETE_USAGETRANSACTION_FAILURE = "DELETE_USAGETRANSACTION_FAILURE";
+export const UPDATE_USAGETRANSACTION_REQUEST =
+  "UPDATE_USAGETRANSACTION_REQUEST";
+export const UPDATE_USAGETRANSACTION_SUCCESS =
+  "UPDATE_USAGETRANSACTION_SUCCESS";
+export const UPDATE_USAGETRANSACTION_FAILURE =
+  "UPDATE_USAGETRANSACTION_FAILURE";
+export const DELETE_USAGETRANSACTION_REQUEST =
+  "DELETE_USAGETRANSACTION_REQUEST";
+export const DELETE_USAGETRANSACTION_SUCCESS =
+  "DELETE_USAGETRANSACTION_SUCCESS";
+export const DELETE_USAGETRANSACTION_FAILURE =
+  "DELETE_USAGETRANSACTION_FAILURE";
 export const LIST_USAGETRANSACTION_REQUEST = "LIST_USAGETRANSACTION_REQUEST";
 export const LIST_USAGETRANSACTION_SUCCESS = "LIST_USAGETRANSACTION_SUCCESS";
 export const LIST_USAGETRANSACTION_FAILURE = "LIST_USAGETRANSACTION_FAILURE";
 export const addUsageTransactionRequest = () => ({
-    type: ADD_USAGETRANSACTION_REQUEST,
+  type: ADD_USAGETRANSACTION_REQUEST,
 });
 export const addUsageTransactionSuccess = (UsageTransactions) => ({
-    type: ADD_USAGETRANSACTION_SUCCESS,
-    payload: UsageTransactions,
+  type: ADD_USAGETRANSACTION_SUCCESS,
+  payload: UsageTransactions,
 });
 export const addUsageTransactionFailure = (error) => ({
-    type: ADD_USAGETRANSACTION_FAILURE,
-    payload: error,
+  type: ADD_USAGETRANSACTION_FAILURE,
+  payload: error,
 });
 export const fetchUsageTransactionRequest = () => ({
-    type: FETCH_USAGETRANSACTION_REQUEST,
+  type: FETCH_USAGETRANSACTION_REQUEST,
 });
 export const fetchUsageTransactionSuccess = (UsageTransactions) => ({
-    type: FETCH_USAGETRANSACTION_SUCCESS,
-    payload: UsageTransactions,
+  type: FETCH_USAGETRANSACTION_SUCCESS,
+  payload: UsageTransactions,
 });
 export const fetchUsageTransactionFailure = (error) => ({
-    type: FETCH_USAGETRANSACTION_FAILURE,
-    payload: error,
+  type: FETCH_USAGETRANSACTION_FAILURE,
+  payload: error,
 });
 export const listUsageTransactionRequest = () => ({
-    type: LIST_USAGETRANSACTION_REQUEST,
+  type: LIST_USAGETRANSACTION_REQUEST,
 });
 export const listUsageTransactionSuccess = (UsageTransactions) => ({
-    type: LIST_USAGETRANSACTION_SUCCESS,
-    payload: UsageTransactions,
+  type: LIST_USAGETRANSACTION_SUCCESS,
+  payload: UsageTransactions,
 });
 export const listUsageTransactionFailure = (error) => ({
-    type: LIST_USAGETRANSACTION_FAILURE,
-    payload: error,
+  type: LIST_USAGETRANSACTION_FAILURE,
+  payload: error,
 });
 export const updateUsageTransactionRequest = (UsageTransaction) => ({
-    type: UPDATE_USAGETRANSACTION_REQUEST,
-    payload: UsageTransaction,
+  type: UPDATE_USAGETRANSACTION_REQUEST,
+  payload: UsageTransaction,
 });
 export const updateUsageTransactionSuccess = (UsageTransaction) => ({
-    type: UPDATE_USAGETRANSACTION_SUCCESS,
-    payload: UsageTransaction,
+  type: UPDATE_USAGETRANSACTION_SUCCESS,
+  payload: UsageTransaction,
 });
 export const updateUsageTransactionFailure = (error) => ({
-    type: UPDATE_USAGETRANSACTION_FAILURE,
-    payload: error,
+  type: UPDATE_USAGETRANSACTION_FAILURE,
+  payload: error,
 });
 export const deleteUsageTransactionRequest = (UsageTransaction) => ({
-    type: DELETE_USAGETRANSACTION_REQUEST,
-    payload: UsageTransaction,
+  type: DELETE_USAGETRANSACTION_REQUEST,
+  payload: UsageTransaction,
 });
 export const deleteUsageTransactionSuccess = (UsageTransaction) => ({
-    type: DELETE_USAGETRANSACTION_SUCCESS,
-    payload: UsageTransaction,
+  type: DELETE_USAGETRANSACTION_SUCCESS,
+  payload: UsageTransaction,
 });
 export const deleteUsageTransactionFailure = (error) => ({
-    type: DELETE_USAGETRANSACTION_FAILURE,
-    payload: error,
+  type: DELETE_USAGETRANSACTION_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=UsageTransactionApiAction.js.map

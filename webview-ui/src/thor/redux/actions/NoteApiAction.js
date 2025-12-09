@@ -31,60 +31,60 @@ export const LIST_NOTE_REQUEST = "LIST_NOTE_REQUEST";
 export const LIST_NOTE_SUCCESS = "LIST_NOTE_SUCCESS";
 export const LIST_NOTE_FAILURE = "LIST_NOTE_FAILURE";
 export const addNoteRequest = () => ({
-    type: ADD_NOTE_REQUEST,
+  type: ADD_NOTE_REQUEST,
 });
 export const addNoteSuccess = (Notes) => ({
-    type: ADD_NOTE_SUCCESS,
-    payload: Notes,
+  type: ADD_NOTE_SUCCESS,
+  payload: Notes,
 });
 export const addNoteFailure = (error) => ({
-    type: ADD_NOTE_FAILURE,
-    payload: error,
+  type: ADD_NOTE_FAILURE,
+  payload: error,
 });
 export const fetchNoteRequest = () => ({
-    type: FETCH_NOTE_REQUEST,
+  type: FETCH_NOTE_REQUEST,
 });
 export const fetchNoteSuccess = (Notes) => ({
-    type: FETCH_NOTE_SUCCESS,
-    payload: Notes,
+  type: FETCH_NOTE_SUCCESS,
+  payload: Notes,
 });
 export const fetchNoteFailure = (error) => ({
-    type: FETCH_NOTE_FAILURE,
-    payload: error,
+  type: FETCH_NOTE_FAILURE,
+  payload: error,
 });
 export const listNoteRequest = () => ({
-    type: LIST_NOTE_REQUEST,
+  type: LIST_NOTE_REQUEST,
 });
 export const listNoteSuccess = (Notes) => ({
-    type: LIST_NOTE_SUCCESS,
-    payload: Notes,
+  type: LIST_NOTE_SUCCESS,
+  payload: Notes,
 });
 export const listNoteFailure = (error) => ({
-    type: LIST_NOTE_FAILURE,
-    payload: error,
+  type: LIST_NOTE_FAILURE,
+  payload: error,
 });
 export const updateNoteRequest = (Note) => ({
-    type: UPDATE_NOTE_REQUEST,
-    payload: Note,
+  type: UPDATE_NOTE_REQUEST,
+  payload: Note,
 });
 export const updateNoteSuccess = (Note) => ({
-    type: UPDATE_NOTE_SUCCESS,
-    payload: Note,
+  type: UPDATE_NOTE_SUCCESS,
+  payload: Note,
 });
 export const updateNoteFailure = (error) => ({
-    type: UPDATE_NOTE_FAILURE,
-    payload: error,
+  type: UPDATE_NOTE_FAILURE,
+  payload: error,
 });
 export const deleteNoteRequest = (Note) => ({
-    type: DELETE_NOTE_REQUEST,
-    payload: Note,
+  type: DELETE_NOTE_REQUEST,
+  payload: Note,
 });
 export const deleteNoteSuccess = (Note) => ({
-    type: DELETE_NOTE_SUCCESS,
-    payload: Note,
+  type: DELETE_NOTE_SUCCESS,
+  payload: Note,
 });
 export const deleteNoteFailure = (error) => ({
-    type: DELETE_NOTE_FAILURE,
-    payload: error,
+  type: DELETE_NOTE_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=NoteApiAction.js.map

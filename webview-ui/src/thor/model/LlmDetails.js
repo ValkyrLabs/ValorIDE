@@ -28,95 +28,97 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 */
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
-import { IntegrationAccountFromJSON, IntegrationAccountToJSON, } from "./";
+import { IntegrationAccountFromJSON, IntegrationAccountToJSON } from "./";
 export function LlmDetailsFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        name: json["name"],
-        provider: json["provider"],
-        apiType: json["apiType"],
-        version: !exists(json, "version") ? undefined : json["version"],
-        notes: !exists(json, "notes") ? undefined : json["notes"],
-        role: !exists(json, "role") ? undefined : json["role"],
-        initialPrompt: !exists(json, "initialPrompt")
-            ? undefined
-            : json["initialPrompt"],
-        apiKeyIntegrationAccount: !exists(json, "apiKeyIntegrationAccount")
-            ? undefined
-            : IntegrationAccountFromJSON(json["apiKeyIntegrationAccount"]),
-        credential: !exists(json, "credential") ? undefined : json["credential"],
-        credentialPassword: !exists(json, "credentialPassword")
-            ? undefined
-            : json["credentialPassword"],
-        temperature: !exists(json, "temperature") ? undefined : json["temperature"],
-        contextWindow: !exists(json, "contextWindow")
-            ? undefined
-            : json["contextWindow"],
-        maxTokens: !exists(json, "maxTokens") ? undefined : json["maxTokens"],
-        supportsImages: !exists(json, "supportsImages")
-            ? undefined
-            : json["supportsImages"],
-        supportsPromptCache: !exists(json, "supportsPromptCache")
-            ? undefined
-            : json["supportsPromptCache"],
-        inputPrice: !exists(json, "inputPrice") ? undefined : json["inputPrice"],
-        outputPrice: !exists(json, "outputPrice") ? undefined : json["outputPrice"],
-        description: !exists(json, "description") ? undefined : json["description"],
-        url: !exists(json, "url") ? undefined : json["url"],
-        requestParameters: !exists(json, "requestParameters")
-            ? undefined
-            : json["requestParameters"],
-        metaData: !exists(json, "metaData") ? undefined : json["metaData"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    name: json["name"],
+    provider: json["provider"],
+    apiType: json["apiType"],
+    version: !exists(json, "version") ? undefined : json["version"],
+    notes: !exists(json, "notes") ? undefined : json["notes"],
+    role: !exists(json, "role") ? undefined : json["role"],
+    initialPrompt: !exists(json, "initialPrompt")
+      ? undefined
+      : json["initialPrompt"],
+    apiKeyIntegrationAccount: !exists(json, "apiKeyIntegrationAccount")
+      ? undefined
+      : IntegrationAccountFromJSON(json["apiKeyIntegrationAccount"]),
+    credential: !exists(json, "credential") ? undefined : json["credential"],
+    credentialPassword: !exists(json, "credentialPassword")
+      ? undefined
+      : json["credentialPassword"],
+    temperature: !exists(json, "temperature") ? undefined : json["temperature"],
+    contextWindow: !exists(json, "contextWindow")
+      ? undefined
+      : json["contextWindow"],
+    maxTokens: !exists(json, "maxTokens") ? undefined : json["maxTokens"],
+    supportsImages: !exists(json, "supportsImages")
+      ? undefined
+      : json["supportsImages"],
+    supportsPromptCache: !exists(json, "supportsPromptCache")
+      ? undefined
+      : json["supportsPromptCache"],
+    inputPrice: !exists(json, "inputPrice") ? undefined : json["inputPrice"],
+    outputPrice: !exists(json, "outputPrice") ? undefined : json["outputPrice"],
+    description: !exists(json, "description") ? undefined : json["description"],
+    url: !exists(json, "url") ? undefined : json["url"],
+    requestParameters: !exists(json, "requestParameters")
+      ? undefined
+      : json["requestParameters"],
+    metaData: !exists(json, "metaData") ? undefined : json["metaData"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function LlmDetailsToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        name: value.name,
-        provider: value.provider,
-        apiType: value.apiType,
-        version: value.version,
-        notes: value.notes,
-        role: value.role,
-        initialPrompt: value.initialPrompt,
-        apiKeyIntegrationAccount: IntegrationAccountToJSON(value.apiKeyIntegrationAccount),
-        credential: value.credential,
-        credentialPassword: value.credentialPassword,
-        temperature: value.temperature,
-        contextWindow: value.contextWindow,
-        maxTokens: value.maxTokens,
-        supportsImages: value.supportsImages,
-        supportsPromptCache: value.supportsPromptCache,
-        inputPrice: value.inputPrice,
-        outputPrice: value.outputPrice,
-        description: value.description,
-        url: value.url,
-        requestParameters: value.requestParameters,
-        metaData: value.metaData,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    name: value.name,
+    provider: value.provider,
+    apiType: value.apiType,
+    version: value.version,
+    notes: value.notes,
+    role: value.role,
+    initialPrompt: value.initialPrompt,
+    apiKeyIntegrationAccount: IntegrationAccountToJSON(
+      value.apiKeyIntegrationAccount,
+    ),
+    credential: value.credential,
+    credentialPassword: value.credentialPassword,
+    temperature: value.temperature,
+    contextWindow: value.contextWindow,
+    maxTokens: value.maxTokens,
+    supportsImages: value.supportsImages,
+    supportsPromptCache: value.supportsPromptCache,
+    inputPrice: value.inputPrice,
+    outputPrice: value.outputPrice,
+    description: value.description,
+    url: value.url,
+    requestParameters: value.requestParameters,
+    metaData: value.metaData,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -124,16 +126,16 @@ export function LlmDetailsToJSON(value) {
  */
 export var LlmDetailsProviderEnum;
 (function (LlmDetailsProviderEnum) {
-    LlmDetailsProviderEnum["VALKYRAI"] = "valkyrai";
-    LlmDetailsProviderEnum["OPENAI"] = "openai";
-    LlmDetailsProviderEnum["LLAMA"] = "llama";
-    LlmDetailsProviderEnum["PHI"] = "phi";
-    LlmDetailsProviderEnum["GEMMA"] = "gemma";
-    LlmDetailsProviderEnum["MISTRAL"] = "mistral";
-    LlmDetailsProviderEnum["CLAUDE"] = "claude";
-    LlmDetailsProviderEnum["GEMINI"] = "gemini";
-    LlmDetailsProviderEnum["OTHER"] = "other";
-    LlmDetailsProviderEnum["CHATGPTPASSTHROUGH"] = "chatgpt_pass_through";
+  LlmDetailsProviderEnum["VALKYRAI"] = "valkyrai";
+  LlmDetailsProviderEnum["OPENAI"] = "openai";
+  LlmDetailsProviderEnum["LLAMA"] = "llama";
+  LlmDetailsProviderEnum["PHI"] = "phi";
+  LlmDetailsProviderEnum["GEMMA"] = "gemma";
+  LlmDetailsProviderEnum["MISTRAL"] = "mistral";
+  LlmDetailsProviderEnum["CLAUDE"] = "claude";
+  LlmDetailsProviderEnum["GEMINI"] = "gemini";
+  LlmDetailsProviderEnum["OTHER"] = "other";
+  LlmDetailsProviderEnum["CHATGPTPASSTHROUGH"] = "chatgpt_pass_through";
 })(LlmDetailsProviderEnum || (LlmDetailsProviderEnum = {}));
 /**
  * @export
@@ -141,9 +143,9 @@ export var LlmDetailsProviderEnum;
  */
 export var LlmDetailsApiTypeEnum;
 (function (LlmDetailsApiTypeEnum) {
-    LlmDetailsApiTypeEnum["OPENAI"] = "openai";
-    LlmDetailsApiTypeEnum["OLLAMA"] = "ollama";
-    LlmDetailsApiTypeEnum["OTHER"] = "other";
+  LlmDetailsApiTypeEnum["OPENAI"] = "openai";
+  LlmDetailsApiTypeEnum["OLLAMA"] = "ollama";
+  LlmDetailsApiTypeEnum["OTHER"] = "other";
 })(LlmDetailsApiTypeEnum || (LlmDetailsApiTypeEnum = {}));
 /**
  * @export
@@ -151,7 +153,7 @@ export var LlmDetailsApiTypeEnum;
  */
 export var LlmDetailsRoleEnum;
 (function (LlmDetailsRoleEnum) {
-    LlmDetailsRoleEnum["USER"] = "user";
-    LlmDetailsRoleEnum["ASSISTANT"] = "assistant";
+  LlmDetailsRoleEnum["USER"] = "user";
+  LlmDetailsRoleEnum["ASSISTANT"] = "assistant";
 })(LlmDetailsRoleEnum || (LlmDetailsRoleEnum = {}));
 //# sourceMappingURL=LlmDetails.js.map

@@ -29,63 +29,63 @@ Template file: typescript-redux-query/modelGeneric.ts.mustache
 import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 export function McpTransportConfigFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        mcpServerId: json["mcpServerId"],
-        transportType: json["transportType"],
-        executablePath: !exists(json, "executablePath")
-            ? undefined
-            : json["executablePath"],
-        baseUrl: !exists(json, "baseUrl") ? undefined : json["baseUrl"],
-        authHeaderName: !exists(json, "authHeaderName")
-            ? undefined
-            : json["authHeaderName"],
-        authToken: !exists(json, "authToken") ? undefined : json["authToken"],
-        functionArn: !exists(json, "functionArn") ? undefined : json["functionArn"],
-        roleArn: !exists(json, "roleArn") ? undefined : json["roleArn"],
-        customConfig: !exists(json, "customConfig")
-            ? undefined
-            : json["customConfig"],
-        isActive: !exists(json, "isActive") ? undefined : json["isActive"],
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    mcpServerId: json["mcpServerId"],
+    transportType: json["transportType"],
+    executablePath: !exists(json, "executablePath")
+      ? undefined
+      : json["executablePath"],
+    baseUrl: !exists(json, "baseUrl") ? undefined : json["baseUrl"],
+    authHeaderName: !exists(json, "authHeaderName")
+      ? undefined
+      : json["authHeaderName"],
+    authToken: !exists(json, "authToken") ? undefined : json["authToken"],
+    functionArn: !exists(json, "functionArn") ? undefined : json["functionArn"],
+    roleArn: !exists(json, "roleArn") ? undefined : json["roleArn"],
+    customConfig: !exists(json, "customConfig")
+      ? undefined
+      : json["customConfig"],
+    isActive: !exists(json, "isActive") ? undefined : json["isActive"],
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function McpTransportConfigToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        mcpServerId: value.mcpServerId,
-        transportType: value.transportType,
-        executablePath: value.executablePath,
-        baseUrl: value.baseUrl,
-        authHeaderName: value.authHeaderName,
-        authToken: value.authToken,
-        functionArn: value.functionArn,
-        roleArn: value.roleArn,
-        customConfig: value.customConfig,
-        isActive: value.isActive,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    mcpServerId: value.mcpServerId,
+    transportType: value.transportType,
+    executablePath: value.executablePath,
+    baseUrl: value.baseUrl,
+    authHeaderName: value.authHeaderName,
+    authToken: value.authToken,
+    functionArn: value.functionArn,
+    roleArn: value.roleArn,
+    customConfig: value.customConfig,
+    isActive: value.isActive,
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -93,11 +93,14 @@ export function McpTransportConfigToJSON(value) {
  */
 export var McpTransportConfigTransportTypeEnum;
 (function (McpTransportConfigTransportTypeEnum) {
-    McpTransportConfigTransportTypeEnum["STDIO"] = "stdio";
-    McpTransportConfigTransportTypeEnum["HTTP"] = "http";
-    McpTransportConfigTransportTypeEnum["WEBSOCKET"] = "websocket";
-    McpTransportConfigTransportTypeEnum["SSE"] = "sse";
-    McpTransportConfigTransportTypeEnum["LAMBDA"] = "lambda";
-    McpTransportConfigTransportTypeEnum["CUSTOM"] = "custom";
-})(McpTransportConfigTransportTypeEnum || (McpTransportConfigTransportTypeEnum = {}));
+  McpTransportConfigTransportTypeEnum["STDIO"] = "stdio";
+  McpTransportConfigTransportTypeEnum["HTTP"] = "http";
+  McpTransportConfigTransportTypeEnum["WEBSOCKET"] = "websocket";
+  McpTransportConfigTransportTypeEnum["SSE"] = "sse";
+  McpTransportConfigTransportTypeEnum["LAMBDA"] = "lambda";
+  McpTransportConfigTransportTypeEnum["CUSTOM"] = "custom";
+})(
+  McpTransportConfigTransportTypeEnum ||
+    (McpTransportConfigTransportTypeEnum = {}),
+);
 //# sourceMappingURL=McpTransportConfig.js.map

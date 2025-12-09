@@ -31,60 +31,60 @@ export const LIST_RUN_REQUEST = "LIST_RUN_REQUEST";
 export const LIST_RUN_SUCCESS = "LIST_RUN_SUCCESS";
 export const LIST_RUN_FAILURE = "LIST_RUN_FAILURE";
 export const addRunRequest = () => ({
-    type: ADD_RUN_REQUEST,
+  type: ADD_RUN_REQUEST,
 });
 export const addRunSuccess = (Runs) => ({
-    type: ADD_RUN_SUCCESS,
-    payload: Runs,
+  type: ADD_RUN_SUCCESS,
+  payload: Runs,
 });
 export const addRunFailure = (error) => ({
-    type: ADD_RUN_FAILURE,
-    payload: error,
+  type: ADD_RUN_FAILURE,
+  payload: error,
 });
 export const fetchRunRequest = () => ({
-    type: FETCH_RUN_REQUEST,
+  type: FETCH_RUN_REQUEST,
 });
 export const fetchRunSuccess = (Runs) => ({
-    type: FETCH_RUN_SUCCESS,
-    payload: Runs,
+  type: FETCH_RUN_SUCCESS,
+  payload: Runs,
 });
 export const fetchRunFailure = (error) => ({
-    type: FETCH_RUN_FAILURE,
-    payload: error,
+  type: FETCH_RUN_FAILURE,
+  payload: error,
 });
 export const listRunRequest = () => ({
-    type: LIST_RUN_REQUEST,
+  type: LIST_RUN_REQUEST,
 });
 export const listRunSuccess = (Runs) => ({
-    type: LIST_RUN_SUCCESS,
-    payload: Runs,
+  type: LIST_RUN_SUCCESS,
+  payload: Runs,
 });
 export const listRunFailure = (error) => ({
-    type: LIST_RUN_FAILURE,
-    payload: error,
+  type: LIST_RUN_FAILURE,
+  payload: error,
 });
 export const updateRunRequest = (Run) => ({
-    type: UPDATE_RUN_REQUEST,
-    payload: Run,
+  type: UPDATE_RUN_REQUEST,
+  payload: Run,
 });
 export const updateRunSuccess = (Run) => ({
-    type: UPDATE_RUN_SUCCESS,
-    payload: Run,
+  type: UPDATE_RUN_SUCCESS,
+  payload: Run,
 });
 export const updateRunFailure = (error) => ({
-    type: UPDATE_RUN_FAILURE,
-    payload: error,
+  type: UPDATE_RUN_FAILURE,
+  payload: error,
 });
 export const deleteRunRequest = (Run) => ({
-    type: DELETE_RUN_REQUEST,
-    payload: Run,
+  type: DELETE_RUN_REQUEST,
+  payload: Run,
 });
 export const deleteRunSuccess = (Run) => ({
-    type: DELETE_RUN_SUCCESS,
-    payload: Run,
+  type: DELETE_RUN_SUCCESS,
+  payload: Run,
 });
 export const deleteRunFailure = (error) => ({
-    type: DELETE_RUN_FAILURE,
-    payload: error,
+  type: DELETE_RUN_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=RunApiAction.js.map

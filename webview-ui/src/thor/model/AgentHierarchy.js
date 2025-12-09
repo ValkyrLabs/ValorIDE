@@ -30,52 +30,53 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { AgentFromJSON, AgentToJSON } from "./";
 export function AgentHierarchyFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        agentId: !exists(json, "agentId") ? undefined : json["agentId"],
-        parentAgentId: !exists(json, "parentAgentId")
-            ? undefined
-            : json["parentAgentId"],
-        childAgents: !exists(json, "childAgents")
-            ? undefined
-            : json["childAgents"].map(AgentFromJSON),
-        depth: !exists(json, "depth") ? undefined : json["depth"],
-        maxChildren: !exists(json, "maxChildren") ? undefined : json["maxChildren"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    agentId: !exists(json, "agentId") ? undefined : json["agentId"],
+    parentAgentId: !exists(json, "parentAgentId")
+      ? undefined
+      : json["parentAgentId"],
+    childAgents: !exists(json, "childAgents")
+      ? undefined
+      : json["childAgents"].map(AgentFromJSON),
+    depth: !exists(json, "depth") ? undefined : json["depth"],
+    maxChildren: !exists(json, "maxChildren") ? undefined : json["maxChildren"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function AgentHierarchyToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        agentId: value.agentId,
-        parentAgentId: value.parentAgentId,
-        childAgents: value.childAgents === undefined
-            ? undefined
-            : value.childAgents.map(AgentToJSON),
-        depth: value.depth,
-        maxChildren: value.maxChildren,
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    agentId: value.agentId,
+    parentAgentId: value.parentAgentId,
+    childAgents:
+      value.childAgents === undefined
+        ? undefined
+        : value.childAgents.map(AgentToJSON),
+    depth: value.depth,
+    maxChildren: value.maxChildren,
+    trashed: value.trashed,
+  };
 }
 //# sourceMappingURL=AgentHierarchy.js.map

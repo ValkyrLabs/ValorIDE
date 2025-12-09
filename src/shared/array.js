@@ -7,17 +7,17 @@
  * findLastIndex immediately returns that element index. Otherwise, findLastIndex returns -1.
  */
 export function findLastIndex(array, predicate) {
-    let l = array.length;
-    while (l--) {
-        if (predicate(array[l], l, array)) {
-            return l;
-        }
+  let l = array.length;
+  while (l--) {
+    if (predicate(array[l], l, array)) {
+      return l;
     }
-    return -1;
+  }
+  return -1;
 }
 export function findLast(array, predicate) {
-    const index = findLastIndex(array, predicate);
-    return index === -1 ? undefined : array[index];
+  const index = findLastIndex(array, predicate);
+  return index === -1 ? undefined : array[index];
 }
 /**
  * Converts a partial or complete stringified array into an actual array.
@@ -27,28 +27,27 @@ export function findLast(array, predicate) {
  * @returns Array of strings parsed from the input
  */
 export function parsePartialArrayString(arrayString) {
-    try {
-        // Try parsing as complete JSON first
-        return JSON.parse(arrayString);
+  try {
+    // Try parsing as complete JSON first
+    return JSON.parse(arrayString);
+  } catch {
+    // If JSON parsing fails, handle as partial string
+    const trimmed = arrayString.trim();
+    if (!trimmed.startsWith('["')) {
+      return [];
     }
-    catch {
-        // If JSON parsing fails, handle as partial string
-        const trimmed = arrayString.trim();
-        if (!trimmed.startsWith('["')) {
-            return [];
-        }
-        // Remove leading ["
-        let content = trimmed.slice(2);
-        // Remove trailing "] if it exists
-        content = content.replace(/"]$/, "");
-        if (!content) {
-            return [];
-        }
-        // Split on ", " token and handle the parts
-        return content
-            .split('", "')
-            .map((item) => item.trim())
-            .filter(Boolean);
+    // Remove leading ["
+    let content = trimmed.slice(2);
+    // Remove trailing "] if it exists
+    content = content.replace(/"]$/, "");
+    if (!content) {
+      return [];
     }
+    // Split on ", " token and handle the parts
+    return content
+      .split('", "')
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
 }
 //# sourceMappingURL=array.js.map

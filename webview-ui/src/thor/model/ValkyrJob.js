@@ -30,67 +30,70 @@ import { exists } from "../src/runtime";
 import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
 import { FileRecordFromJSON, FileRecordToJSON } from "./";
 export function ValkyrJobFromJSON(json) {
-    return {
-        ...DataObjectFromJSON(json),
-        type: json["type"],
-        status: json["status"],
-        progress: !exists(json, "progress") ? undefined : json["progress"],
-        metadata: !exists(json, "metadata") ? undefined : json["metadata"],
-        result: !exists(json, "result") ? undefined : json["result"],
-        error: !exists(json, "error") ? undefined : json["error"],
-        fileRecords: !exists(json, "fileRecords")
-            ? undefined
-            : json["fileRecords"].map(FileRecordFromJSON),
-        startedDate: !exists(json, "startedDate")
-            ? undefined
-            : new Date(json["startedDate"]),
-        completedDate: !exists(json, "completedDate")
-            ? undefined
-            : new Date(json["completedDate"]),
-        id: !exists(json, "id") ? undefined : json["id"],
-        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !exists(json, "createdDate")
-            ? undefined
-            : new Date(json["createdDate"]),
-        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !exists(json, "lastAccessedById")
-            ? undefined
-            : json["lastAccessedById"],
-        lastAccessedDate: !exists(json, "lastAccessedDate")
-            ? undefined
-            : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !exists(json, "lastModifiedById")
-            ? undefined
-            : json["lastModifiedById"],
-        lastModifiedDate: !exists(json, "lastModifiedDate")
-            ? undefined
-            : new Date(json["lastModifiedDate"]),
-        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
-    };
+  return {
+    ...DataObjectFromJSON(json),
+    type: json["type"],
+    status: json["status"],
+    progress: !exists(json, "progress") ? undefined : json["progress"],
+    metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+    result: !exists(json, "result") ? undefined : json["result"],
+    error: !exists(json, "error") ? undefined : json["error"],
+    fileRecords: !exists(json, "fileRecords")
+      ? undefined
+      : json["fileRecords"].map(FileRecordFromJSON),
+    startedDate: !exists(json, "startedDate")
+      ? undefined
+      : new Date(json["startedDate"]),
+    completedDate: !exists(json, "completedDate")
+      ? undefined
+      : new Date(json["completedDate"]),
+    id: !exists(json, "id") ? undefined : json["id"],
+    ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+    createdDate: !exists(json, "createdDate")
+      ? undefined
+      : new Date(json["createdDate"]),
+    keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+    lastAccessedById: !exists(json, "lastAccessedById")
+      ? undefined
+      : json["lastAccessedById"],
+    lastAccessedDate: !exists(json, "lastAccessedDate")
+      ? undefined
+      : new Date(json["lastAccessedDate"]),
+    lastModifiedById: !exists(json, "lastModifiedById")
+      ? undefined
+      : json["lastModifiedById"],
+    lastModifiedDate: !exists(json, "lastModifiedDate")
+      ? undefined
+      : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
+  };
 }
 export function ValkyrJobToJSON(value) {
-    if (value === undefined) {
-        return undefined;
-    }
-    return {
-        ...DataObjectToJSON(value),
-        type: value.type,
-        status: value.status,
-        progress: value.progress,
-        metadata: value.metadata,
-        result: value.result,
-        error: value.error,
-        fileRecords: value.fileRecords === undefined
-            ? undefined
-            : value.fileRecords.map(FileRecordToJSON),
-        startedDate: value.startedDate === undefined
-            ? undefined
-            : value.startedDate.toISOString(),
-        completedDate: value.completedDate === undefined
-            ? undefined
-            : value.completedDate.toISOString(),
-        trashed: value.trashed,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  return {
+    ...DataObjectToJSON(value),
+    type: value.type,
+    status: value.status,
+    progress: value.progress,
+    metadata: value.metadata,
+    result: value.result,
+    error: value.error,
+    fileRecords:
+      value.fileRecords === undefined
+        ? undefined
+        : value.fileRecords.map(FileRecordToJSON),
+    startedDate:
+      value.startedDate === undefined
+        ? undefined
+        : value.startedDate.toISOString(),
+    completedDate:
+      value.completedDate === undefined
+        ? undefined
+        : value.completedDate.toISOString(),
+    trashed: value.trashed,
+  };
 }
 /**
  * @export
@@ -98,11 +101,11 @@ export function ValkyrJobToJSON(value) {
  */
 export var ValkyrJobTypeEnum;
 (function (ValkyrJobTypeEnum) {
-    ValkyrJobTypeEnum["FILEPROCESSING"] = "file_processing";
-    ValkyrJobTypeEnum["BULKUPLOAD"] = "bulk_upload";
-    ValkyrJobTypeEnum["EXPORT"] = "export";
-    ValkyrJobTypeEnum["VIRUSSCAN"] = "virus_scan";
-    ValkyrJobTypeEnum["THUMBNAILGENERATION"] = "thumbnail_generation";
+  ValkyrJobTypeEnum["FILEPROCESSING"] = "file_processing";
+  ValkyrJobTypeEnum["BULKUPLOAD"] = "bulk_upload";
+  ValkyrJobTypeEnum["EXPORT"] = "export";
+  ValkyrJobTypeEnum["VIRUSSCAN"] = "virus_scan";
+  ValkyrJobTypeEnum["THUMBNAILGENERATION"] = "thumbnail_generation";
 })(ValkyrJobTypeEnum || (ValkyrJobTypeEnum = {}));
 /**
  * @export
@@ -110,10 +113,10 @@ export var ValkyrJobTypeEnum;
  */
 export var ValkyrJobStatusEnum;
 (function (ValkyrJobStatusEnum) {
-    ValkyrJobStatusEnum["PENDING"] = "pending";
-    ValkyrJobStatusEnum["RUNNING"] = "running";
-    ValkyrJobStatusEnum["COMPLETED"] = "completed";
-    ValkyrJobStatusEnum["FAILED"] = "failed";
-    ValkyrJobStatusEnum["CANCELLED"] = "cancelled";
+  ValkyrJobStatusEnum["PENDING"] = "pending";
+  ValkyrJobStatusEnum["RUNNING"] = "running";
+  ValkyrJobStatusEnum["COMPLETED"] = "completed";
+  ValkyrJobStatusEnum["FAILED"] = "failed";
+  ValkyrJobStatusEnum["CANCELLED"] = "cancelled";
 })(ValkyrJobStatusEnum || (ValkyrJobStatusEnum = {}));
 //# sourceMappingURL=ValkyrJob.js.map

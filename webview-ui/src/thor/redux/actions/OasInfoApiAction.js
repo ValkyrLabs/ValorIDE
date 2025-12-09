@@ -31,60 +31,60 @@ export const LIST_OASINFO_REQUEST = "LIST_OASINFO_REQUEST";
 export const LIST_OASINFO_SUCCESS = "LIST_OASINFO_SUCCESS";
 export const LIST_OASINFO_FAILURE = "LIST_OASINFO_FAILURE";
 export const addOasInfoRequest = () => ({
-    type: ADD_OASINFO_REQUEST,
+  type: ADD_OASINFO_REQUEST,
 });
 export const addOasInfoSuccess = (OasInfos) => ({
-    type: ADD_OASINFO_SUCCESS,
-    payload: OasInfos,
+  type: ADD_OASINFO_SUCCESS,
+  payload: OasInfos,
 });
 export const addOasInfoFailure = (error) => ({
-    type: ADD_OASINFO_FAILURE,
-    payload: error,
+  type: ADD_OASINFO_FAILURE,
+  payload: error,
 });
 export const fetchOasInfoRequest = () => ({
-    type: FETCH_OASINFO_REQUEST,
+  type: FETCH_OASINFO_REQUEST,
 });
 export const fetchOasInfoSuccess = (OasInfos) => ({
-    type: FETCH_OASINFO_SUCCESS,
-    payload: OasInfos,
+  type: FETCH_OASINFO_SUCCESS,
+  payload: OasInfos,
 });
 export const fetchOasInfoFailure = (error) => ({
-    type: FETCH_OASINFO_FAILURE,
-    payload: error,
+  type: FETCH_OASINFO_FAILURE,
+  payload: error,
 });
 export const listOasInfoRequest = () => ({
-    type: LIST_OASINFO_REQUEST,
+  type: LIST_OASINFO_REQUEST,
 });
 export const listOasInfoSuccess = (OasInfos) => ({
-    type: LIST_OASINFO_SUCCESS,
-    payload: OasInfos,
+  type: LIST_OASINFO_SUCCESS,
+  payload: OasInfos,
 });
 export const listOasInfoFailure = (error) => ({
-    type: LIST_OASINFO_FAILURE,
-    payload: error,
+  type: LIST_OASINFO_FAILURE,
+  payload: error,
 });
 export const updateOasInfoRequest = (OasInfo) => ({
-    type: UPDATE_OASINFO_REQUEST,
-    payload: OasInfo,
+  type: UPDATE_OASINFO_REQUEST,
+  payload: OasInfo,
 });
 export const updateOasInfoSuccess = (OasInfo) => ({
-    type: UPDATE_OASINFO_SUCCESS,
-    payload: OasInfo,
+  type: UPDATE_OASINFO_SUCCESS,
+  payload: OasInfo,
 });
 export const updateOasInfoFailure = (error) => ({
-    type: UPDATE_OASINFO_FAILURE,
-    payload: error,
+  type: UPDATE_OASINFO_FAILURE,
+  payload: error,
 });
 export const deleteOasInfoRequest = (OasInfo) => ({
-    type: DELETE_OASINFO_REQUEST,
-    payload: OasInfo,
+  type: DELETE_OASINFO_REQUEST,
+  payload: OasInfo,
 });
 export const deleteOasInfoSuccess = (OasInfo) => ({
-    type: DELETE_OASINFO_SUCCESS,
-    payload: OasInfo,
+  type: DELETE_OASINFO_SUCCESS,
+  payload: OasInfo,
 });
 export const deleteOasInfoFailure = (error) => ({
-    type: DELETE_OASINFO_FAILURE,
-    payload: error,
+  type: DELETE_OASINFO_FAILURE,
+  payload: error,
 });
 //# sourceMappingURL=OasInfoApiAction.js.map

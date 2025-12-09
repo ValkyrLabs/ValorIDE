@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: Campaign
 */
-export const CampaignMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const CampaignMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("Campaign MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=CampaignApiMiddleware.js.map

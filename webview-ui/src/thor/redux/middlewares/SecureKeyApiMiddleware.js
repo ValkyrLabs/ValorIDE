@@ -28,12 +28,15 @@ Template file: typescript-redux-query/apiREST.mustache
 
 Description: SecureKey
 */
-export const SecureKeyMiddleware = ({ dispatch }) => (next) => async (action) => {
+export const SecureKeyMiddleware =
+  ({ dispatch }) =>
+  (next) =>
+  async (action) => {
     console.log("SecureKey MIDDLEWARE: " + JSON.stringify(action));
     next(action);
     switch (action.type) {
-        default:
-            break;
+      default:
+        break;
     }
-};
+  };
 //# sourceMappingURL=SecureKeyApiMiddleware.js.map
