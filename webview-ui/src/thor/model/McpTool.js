@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.McpToolInvocationStyleEnum = exports.McpToolCategoryEnum = void 0;
-exports.McpToolFromJSON = McpToolFromJSON;
-exports.McpToolToJSON = McpToolToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,106 +19,94 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function McpToolFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { OasObjectSchemaFromJSON, OasObjectSchemaToJSON, } from "./";
+export function McpToolFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         name: json["name"],
-        mcpServerId: !(0, runtime_1.exists)(json, "mcpServerId") ? undefined : json["mcpServerId"],
-        slug: !(0, runtime_1.exists)(json, "slug") ? undefined : json["slug"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        category: !(0, runtime_1.exists)(json, "category") ? undefined : json["category"],
-        capabilities: !(0, runtime_1.exists)(json, "capabilities")
+        mcpServerId: !exists(json, "mcpServerId") ? undefined : json["mcpServerId"],
+        slug: !exists(json, "slug") ? undefined : json["slug"],
+        description: !exists(json, "description") ? undefined : json["description"],
+        category: !exists(json, "category") ? undefined : json["category"],
+        capabilities: !exists(json, "capabilities")
             ? undefined
             : json["capabilities"],
-        inputSchemaRef: !(0, runtime_1.exists)(json, "inputSchemaRef")
+        inputSchemaRef: !exists(json, "inputSchemaRef")
             ? undefined
-            : (0, _1.OasObjectSchemaFromJSON)(json["inputSchemaRef"]),
-        outputSchemaRef: !(0, runtime_1.exists)(json, "outputSchemaRef")
+            : OasObjectSchemaFromJSON(json["inputSchemaRef"]),
+        outputSchemaRef: !exists(json, "outputSchemaRef")
             ? undefined
-            : (0, _1.OasObjectSchemaFromJSON)(json["outputSchemaRef"]),
-        invocationStyle: !(0, runtime_1.exists)(json, "invocationStyle")
+            : OasObjectSchemaFromJSON(json["outputSchemaRef"]),
+        invocationStyle: !exists(json, "invocationStyle")
             ? undefined
             : json["invocationStyle"],
-        streamingSupported: !(0, runtime_1.exists)(json, "streamingSupported")
+        streamingSupported: !exists(json, "streamingSupported")
             ? undefined
             : json["streamingSupported"],
-        autoApprove: !(0, runtime_1.exists)(json, "autoApprove") ? undefined : json["autoApprove"],
-        defaultAutoApprove: !(0, runtime_1.exists)(json, "defaultAutoApprove")
+        autoApprove: !exists(json, "autoApprove") ? undefined : json["autoApprove"],
+        defaultAutoApprove: !exists(json, "defaultAutoApprove")
             ? undefined
             : json["defaultAutoApprove"],
-        docsUrl: !(0, runtime_1.exists)(json, "docsUrl") ? undefined : json["docsUrl"],
-        inputSchema: !(0, runtime_1.exists)(json, "inputSchema") ? undefined : json["inputSchema"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        docsUrl: !exists(json, "docsUrl") ? undefined : json["docsUrl"],
+        inputSchema: !exists(json, "inputSchema") ? undefined : json["inputSchema"],
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function McpToolToJSON(value) {
+export function McpToolToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         name: value.name,
         mcpServerId: value.mcpServerId,
         slug: value.slug,
         description: value.description,
         category: value.category,
         capabilities: value.capabilities,
-        inputSchemaRef: (0, _1.OasObjectSchemaToJSON)(value.inputSchemaRef),
-        outputSchemaRef: (0, _1.OasObjectSchemaToJSON)(value.outputSchemaRef),
+        inputSchemaRef: OasObjectSchemaToJSON(value.inputSchemaRef),
+        outputSchemaRef: OasObjectSchemaToJSON(value.outputSchemaRef),
         invocationStyle: value.invocationStyle,
         streamingSupported: value.streamingSupported,
         autoApprove: value.autoApprove,
         defaultAutoApprove: value.defaultAutoApprove,
         docsUrl: value.docsUrl,
         inputSchema: value.inputSchema,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var McpToolCategoryEnum;
+export var McpToolCategoryEnum;
 (function (McpToolCategoryEnum) {
     McpToolCategoryEnum["CLOUDPLATFORM"] = "cloud_platform";
     McpToolCategoryEnum["DEVOPS"] = "devops";
@@ -133,16 +116,16 @@ var McpToolCategoryEnum;
     McpToolCategoryEnum["AIASSISTANT"] = "ai_assistant";
     McpToolCategoryEnum["PRODUCTIVITY"] = "productivity";
     McpToolCategoryEnum["CUSTOMIZATION"] = "customization";
-})(McpToolCategoryEnum || (exports.McpToolCategoryEnum = McpToolCategoryEnum = {}));
+})(McpToolCategoryEnum || (McpToolCategoryEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var McpToolInvocationStyleEnum;
+export var McpToolInvocationStyleEnum;
 (function (McpToolInvocationStyleEnum) {
     McpToolInvocationStyleEnum["SINGLECALL"] = "single_call";
     McpToolInvocationStyleEnum["CONVERSATIONAL"] = "conversational";
     McpToolInvocationStyleEnum["STREAMING"] = "streaming";
     McpToolInvocationStyleEnum["BACKGROUND"] = "background";
-})(McpToolInvocationStyleEnum || (exports.McpToolInvocationStyleEnum = McpToolInvocationStyleEnum = {}));
+})(McpToolInvocationStyleEnum || (McpToolInvocationStyleEnum = {}));
 //# sourceMappingURL=McpTool.js.map

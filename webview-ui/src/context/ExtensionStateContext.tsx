@@ -264,7 +264,10 @@ export const ExtensionStateContextProvider: React.FC<{
               config.sambanovaApiKey,
             ].some((key) => key !== undefined)
           : false;
-        setShowWelcome(!hasKey);
+        // Show welcome only if NO API keys AND NOT authenticated (both backend + local storage)
+        const isAuthed = incoming.isLoggedIn || incoming.authenticatedPrincipal;
+        const hasStoredAuth = !!(sessionStorage.getItem("jwtToken") || localStorage.getItem("jwtToken"));
+        setShowWelcome(!hasKey && !isAuthed && !hasStoredAuth);
         setDidHydrateState(true);
         break;
       }

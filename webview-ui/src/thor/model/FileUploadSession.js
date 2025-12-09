@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,9 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.FileUploadSessionFromJSON = FileUploadSessionFromJSON;
-exports.FileUploadSessionToJSON = FileUploadSessionToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -23,89 +19,77 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function FileUploadSessionFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { FileRecordFromJSON, FileRecordToJSON, PrincipalFromJSON, PrincipalToJSON, } from "./";
+export function FileUploadSessionFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         uploadId: json["uploadId"],
         storageDriverId: json["storageDriverId"],
         storageKey: json["storageKey"],
         fileId: json["fileId"],
         initiatedById: json["initiatedById"],
         expiresAt: new Date(json["expiresAt"]),
-        file: !(0, runtime_1.exists)(json, "file") ? undefined : (0, _1.FileRecordFromJSON)(json["file"]),
-        initiatedBy: !(0, runtime_1.exists)(json, "initiatedBy")
+        file: !exists(json, "file") ? undefined : FileRecordFromJSON(json["file"]),
+        initiatedBy: !exists(json, "initiatedBy")
             ? undefined
-            : (0, _1.PrincipalFromJSON)(json["initiatedBy"]),
-        completedAt: !(0, runtime_1.exists)(json, "completedAt")
+            : PrincipalFromJSON(json["initiatedBy"]),
+        completedAt: !exists(json, "completedAt")
             ? undefined
             : new Date(json["completedAt"]),
-        partSizeBytes: !(0, runtime_1.exists)(json, "partSizeBytes")
+        partSizeBytes: !exists(json, "partSizeBytes")
             ? undefined
             : json["partSizeBytes"],
-        metadata: !(0, runtime_1.exists)(json, "metadata") ? undefined : json["metadata"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function FileUploadSessionToJSON(value) {
+export function FileUploadSessionToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         uploadId: value.uploadId,
         storageDriverId: value.storageDriverId,
         storageKey: value.storageKey,
         fileId: value.fileId,
         initiatedById: value.initiatedById,
         expiresAt: value.expiresAt.toISOString(),
-        file: (0, _1.FileRecordToJSON)(value.file),
-        initiatedBy: (0, _1.PrincipalToJSON)(value.initiatedBy),
+        file: FileRecordToJSON(value.file),
+        initiatedBy: PrincipalToJSON(value.initiatedBy),
         completedAt: value.completedAt === undefined
             ? undefined
             : value.completedAt.toISOString(),
         partSizeBytes: value.partSizeBytes,
         metadata: value.metadata,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 //# sourceMappingURL=FileUploadSession.js.map

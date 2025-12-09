@@ -293,6 +293,9 @@ export interface ValorIDEMessage {
   conversationHistoryIndex?: number;
   conversationHistoryDeletedRange?: [number, number]; // for when conversation history is truncated for API requests
   changesSummary?: ValorIDEChangesSummary;
+  summaryMarkdown?: string;
+  summaryTitle?: string;
+  summaryCompletedAt?: string;
 }
 
 export type ValorIDEAsk =
@@ -307,6 +310,7 @@ export type ValorIDEAsk =
   | "resume_completed_task"
   | "mistake_limit_reached"
   | "auto_approval_max_req_reached"
+  | "browser_action"
   | "browser_action_launch"
   | "use_mcp_server"
   | "new_task"

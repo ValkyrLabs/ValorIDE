@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,9 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.JobApplicationResponseFromJSON = JobApplicationResponseFromJSON;
-exports.JobApplicationResponseToJSON = JobApplicationResponseToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -23,85 +19,73 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function JobApplicationResponseFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { CareerOpportunityFromJSON, CareerOpportunityToJSON, } from "./";
+export function JobApplicationResponseFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         applicationId: json["applicationId"],
         status: json["status"],
-        confirmationMessage: !(0, runtime_1.exists)(json, "confirmationMessage")
+        confirmationMessage: !exists(json, "confirmationMessage")
             ? undefined
             : json["confirmationMessage"],
-        recommendedOpportunities: !(0, runtime_1.exists)(json, "recommendedOpportunities")
+        recommendedOpportunities: !exists(json, "recommendedOpportunities")
             ? undefined
-            : json["recommendedOpportunities"].map(_1.CareerOpportunityFromJSON),
-        matchScore: !(0, runtime_1.exists)(json, "matchScore") ? undefined : json["matchScore"],
-        consultingProfileOption: !(0, runtime_1.exists)(json, "consultingProfileOption")
+            : json["recommendedOpportunities"].map(CareerOpportunityFromJSON),
+        matchScore: !exists(json, "matchScore") ? undefined : json["matchScore"],
+        consultingProfileOption: !exists(json, "consultingProfileOption")
             ? undefined
             : json["consultingProfileOption"],
-        nextSteps: !(0, runtime_1.exists)(json, "nextSteps") ? undefined : json["nextSteps"],
-        recruitmentContactEmail: !(0, runtime_1.exists)(json, "recruitmentContactEmail")
+        nextSteps: !exists(json, "nextSteps") ? undefined : json["nextSteps"],
+        recruitmentContactEmail: !exists(json, "recruitmentContactEmail")
             ? undefined
             : json["recruitmentContactEmail"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function JobApplicationResponseToJSON(value) {
+export function JobApplicationResponseToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         applicationId: value.applicationId,
         status: value.status,
         confirmationMessage: value.confirmationMessage,
         recommendedOpportunities: value.recommendedOpportunities === undefined
             ? undefined
-            : value.recommendedOpportunities.map(_1.CareerOpportunityToJSON),
+            : value.recommendedOpportunities.map(CareerOpportunityToJSON),
         matchScore: value.matchScore,
         consultingProfileOption: value.consultingProfileOption,
         nextSteps: value.nextSteps,
         recruitmentContactEmail: value.recruitmentContactEmail,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 //# sourceMappingURL=JobApplicationResponse.js.map

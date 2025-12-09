@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.JobMetadataStatusEnum = void 0;
-exports.JobMetadataFromJSON = JobMetadataFromJSON;
-exports.JobMetadataToJSON = JobMetadataToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,66 +19,66 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-function JobMetadataFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+export function JobMetadataFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         type: json["type"],
         status: json["status"],
         createdAt: new Date(json["createdAt"]),
         id: json["id"],
-        inputJson: !(0, runtime_1.exists)(json, "inputJson") ? undefined : json["inputJson"],
-        outputJson: !(0, runtime_1.exists)(json, "outputJson") ? undefined : json["outputJson"],
-        error: !(0, runtime_1.exists)(json, "error") ? undefined : json["error"],
-        updatedAt: !(0, runtime_1.exists)(json, "updatedAt")
+        inputJson: !exists(json, "inputJson") ? undefined : json["inputJson"],
+        outputJson: !exists(json, "outputJson") ? undefined : json["outputJson"],
+        error: !exists(json, "error") ? undefined : json["error"],
+        updatedAt: !exists(json, "updatedAt")
             ? undefined
             : new Date(json["updatedAt"]),
-        startedAt: !(0, runtime_1.exists)(json, "startedAt")
+        startedAt: !exists(json, "startedAt")
             ? undefined
             : new Date(json["startedAt"]),
-        finishedAt: !(0, runtime_1.exists)(json, "finishedAt")
+        finishedAt: !exists(json, "finishedAt")
             ? undefined
             : new Date(json["finishedAt"]),
-        idempotencyKey: !(0, runtime_1.exists)(json, "idempotencyKey")
+        idempotencyKey: !exists(json, "idempotencyKey")
             ? undefined
             : json["idempotencyKey"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function JobMetadataToJSON(value) {
+export function JobMetadataToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         type: value.type,
         status: value.status,
         createdAt: value.createdAt.toISOString(),
-        id: value.id,
         inputJson: value.inputJson,
         outputJson: value.outputJson,
         error: value.error,
@@ -93,31 +88,19 @@ function JobMetadataToJSON(value) {
             ? undefined
             : value.finishedAt.toISOString(),
         idempotencyKey: value.idempotencyKey,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var JobMetadataStatusEnum;
+export var JobMetadataStatusEnum;
 (function (JobMetadataStatusEnum) {
     JobMetadataStatusEnum["QUEUED"] = "queued";
     JobMetadataStatusEnum["RUNNING"] = "running";
     JobMetadataStatusEnum["COMPLETED"] = "completed";
     JobMetadataStatusEnum["FAILED"] = "failed";
     JobMetadataStatusEnum["CANCELLED"] = "cancelled";
-})(JobMetadataStatusEnum || (exports.JobMetadataStatusEnum = JobMetadataStatusEnum = {}));
+})(JobMetadataStatusEnum || (JobMetadataStatusEnum = {}));
 //# sourceMappingURL=JobMetadata.js.map

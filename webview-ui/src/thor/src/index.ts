@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/index.mustache

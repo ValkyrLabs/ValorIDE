@@ -400,7 +400,7 @@ interface ChatRowProps {
   sendMessageFromChatRow?: (text: string, images: string[]) => void;
 }
 
-interface ChatRowContentProps extends Omit<ChatRowProps, "onHeightChange"> {}
+interface ChatRowContentProps extends Omit<ChatRowProps, "onHeightChange"> { }
 
 export const ProgressIndicator = () => (
   <div
@@ -432,6 +432,75 @@ const Markdown = memo(({ markdown }: { markdown?: string }) => {
     </div>
   );
 });
+
+const CompletionSummaryCard = memo(
+  ({
+    markdown,
+    title,
+    completedAt,
+  }: {
+    markdown?: string;
+    title?: string;
+    completedAt?: string;
+  }) => {
+    if (!markdown) {
+      return null;
+    }
+    let completedLabel: string | undefined;
+    if (completedAt) {
+      const date = new Date(completedAt);
+      completedLabel = Number.isNaN(date.getTime())
+        ? undefined
+        : `Completed ${date.toLocaleString()}`;
+    }
+
+    return (
+      <div
+        style={{
+          marginTop: 12,
+          borderRadius: 10,
+          border:
+            "1px solid var(--vscode-editorWidget-border, rgba(255,255,255,0.08))",
+          background:
+            "color-mix(in srgb, var(--vscode-editor-background) 90%, transparent)",
+          padding: 12,
+          display: "flex",
+          flexDirection: "column",
+          gap: 8,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            color: "var(--vscode-foreground)",
+          }}
+        >
+          <FaCheckCircle color="var(--vscode-charts-green)" />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontWeight: 700, fontSize: 13 }}>
+              {title ? `Task Summary — ${title}` : "Task Summary"}
+            </div>
+            {completedLabel && (
+              <div
+                style={{
+                  fontSize: 12,
+                  color: "var(--vscode-descriptionForeground)",
+                }}
+              >
+                {completedLabel}
+              </div>
+            )}
+          </div>
+        </div>
+        <div style={{ marginTop: 4 }}>
+          <Markdown markdown={markdown} />
+        </div>
+      </div>
+    );
+  },
+);
 
 const ChatRow = memo(
   (props: ChatRowProps) => {
@@ -496,8 +565,8 @@ export const ChatRowContent = ({
   const [cost, apiReqCancelReason, apiReqStreamingFailedMessage] =
     useMemo(() => {
       if (message.text != null && message.say === "api_req_started") {
-        const info: ValorIDEApiReqInfo = JSON.parse(message.text);
-        return [info.cost, info.cancelReason, info.streamingFailedMessage];
+        const info = safeParseJSON<ValorIDEApiReqInfo>(message.text);
+        return [info?.cost, info?.cancelReason, info?.streamingFailedMessage];
       }
       return [undefined, undefined, undefined];
     }, [message.text, message.say]);
@@ -508,11 +577,17 @@ export const ChatRowContent = ({
       ? lastModifiedMessage?.text
       : undefined;
 
+  const isCommandMessage =
+    lastModifiedMessage?.ask === "command" ||
+    lastModifiedMessage?.say === "command" ||
+    lastModifiedMessage?.ask === "command_output" ||
+    lastModifiedMessage?.say === "command_output";
+
   const isCommandExecuting =
     isLast &&
-    (lastModifiedMessage?.ask === "command" ||
-      lastModifiedMessage?.say === "command") &&
-    lastModifiedMessage?.text?.includes(COMMAND_OUTPUT_STRING);
+    isCommandMessage &&
+    (lastModifiedMessage?.partial ||
+      !lastModifiedMessage?.text?.includes(COMMAND_OUTPUT_STRING));
 
   const isMcpServerResponding =
     isLast && lastModifiedMessage?.say === "mcp_server_request_started";
@@ -606,6 +681,7 @@ export const ChatRowContent = ({
           </span>,
         ];
       case "command":
+      case "command_output":
         return [
           isCommandExecuting ? (
             <ProgressIndicator />
@@ -622,9 +698,9 @@ export const ChatRowContent = ({
           </span>,
         ];
       case "use_mcp_server":
-        const mcpServerUse = JSON.parse(
-          message.text || "{}",
-        ) as ValorIDEAskUseMcpServer;
+        const mcpServerUse =
+          safeParseJSON<ValorIDEAskUseMcpServer>(message.text) ||
+          ({} as ValorIDEAskUseMcpServer);
         return [
           isMcpServerResponding ? (
             <ProgressIndicator />
@@ -783,12 +859,8 @@ export const ChatRowContent = ({
 
   const tool = useMemo(() => {
     if (message.ask === "tool" || message.say === "tool") {
-      try {
-        return JSON.parse(message.text || "{}") as ValorIDESayTool;
-      } catch (error) {
-        console.warn("Failed to parse tool payload", error, message.text);
-        return null;
-      }
+      const t = safeParseJSON<ValorIDESayTool>(message.text);
+      return t ?? null;
     }
     return null;
   }, [message.ask, message.say, message.text]);
@@ -871,7 +943,9 @@ export const ChatRowContent = ({
         let parsedContent: any;
 
         try {
-          parsedContent = tool.content ? JSON.parse(tool.content) : undefined;
+          parsedContent = tool.content
+            ? safeParseJSON<Record<string, any>>(tool.content)
+            : undefined;
           if (parsedContent) {
             prettyContent = JSON.stringify(parsedContent, null, 2);
           }
@@ -910,6 +984,22 @@ export const ChatRowContent = ({
         }
 
         const summary = summaryParts.join(" • ");
+        const statusLabel =
+          (parsedContent?.result?.status as string | undefined) ??
+          (parsedContent?.result?.outcome as string | undefined) ??
+          (parsedContent?.result?.success === false
+            ? "Failed"
+            : parsedContent?.result?.success === true
+              ? "Succeeded"
+              : undefined) ??
+          (message.type === "ask" ? "Pending approval" : "Completed");
+        const statusLower = (statusLabel || "").toLowerCase();
+        const statusColor = statusLower.includes("fail")
+          ? "var(--vscode-errorForeground)"
+          : "var(--vscode-charts-green)";
+        const statusBg = statusLower.includes("fail")
+          ? "color-mix(in srgb, var(--vscode-errorForeground) 10%, transparent)"
+          : "color-mix(in srgb, var(--vscode-charts-green) 10%, transparent)";
         const titleText =
           message.type === "ask"
             ? "ValorIDE wants to run precision search & replace on this file:"
@@ -928,15 +1018,57 @@ export const ChatRowContent = ({
                 )}
               <span style={{ fontWeight: "bold" }}>{titleText}</span>
             </div>
-            {summary && (
+            {(summary || statusLabel) && (
               <div
+                onClick={onToggleExpand}
+                role="button"
                 style={{
                   marginBottom: "8px",
                   fontSize: "12px",
                   color: "var(--vscode-descriptionForeground)",
+                  border: "1px solid var(--vscode-editorWidget-border)",
+                  borderRadius: 6,
+                  padding: "8px 10px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  cursor: "pointer",
+                  background:
+                    "var(--vscode-editorWidget-background, var(--vscode-editor-background))",
                 }}
               >
-                {summary}
+                {statusLabel && (
+                  <span
+                    style={{
+                      padding: "4px 8px",
+                      borderRadius: 999,
+                      background: statusBg,
+                      color: statusColor,
+                      fontWeight: 600,
+                      fontSize: "11px",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {statusLabel}
+                  </span>
+                )}
+                <span style={{ flex: 1 }}>
+                  {summary || "Precision search & replace details"}
+                  <span
+                    style={{
+                      marginLeft: 8,
+                      color: "var(--vscode-textLink-foreground)",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {isExpanded ? "Tap to collapse" : "Tap to open"}
+                  </span>
+                </span>
+                {isExpanded ? (
+                  <FaChevronDown size={12} />
+                ) : (
+                  <FaChevronRight size={12} />
+                )}
               </div>
             )}
             <CodeAccordian
@@ -1127,11 +1259,16 @@ export const ChatRowContent = ({
     }
   }
 
-  if (message.ask === "command" || message.say === "command") {
+  if (
+    message.ask === "command" ||
+    message.say === "command" ||
+    message.ask === "command_output" ||
+    message.say === "command_output"
+  ) {
     const splitMessage = (text: string) => {
       const outputIndex = text.indexOf(COMMAND_OUTPUT_STRING);
       if (outputIndex === -1) {
-        return { command: text, output: "" };
+        return { command: text.trim(), output: "", hadDelimiter: false };
       }
       return {
         command: text.slice(0, outputIndex).trim(),
@@ -1154,15 +1291,48 @@ export const ChatRowContent = ({
             }
           })
           .join(""),
+        hadDelimiter: true,
       };
     };
 
-    const { command: rawCommand, output } = splitMessage(message.text || "");
+    const { command: rawCommand, output, hadDelimiter } = splitMessage(
+      message.text || "",
+    );
+
+    const isOutputOnly =
+      (message.ask === "command_output" || message.say === "command_output") &&
+      !hadDelimiter;
 
     const requestsApproval = rawCommand.endsWith(COMMAND_REQ_APP_STRING);
     const command = requestsApproval
       ? rawCommand.slice(0, -COMMAND_REQ_APP_STRING.length)
       : rawCommand;
+
+    const resolvedOutput =
+      isOutputOnly && command.length > 0 ? command : output;
+    const normalizedOutput = resolvedOutput || "";
+    const hasOutputContent = normalizedOutput.trim().length > 0;
+    const outputPreview = (() => {
+      const condensed = normalizedOutput
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+        .slice(0, 2)
+        .join(" · ");
+      if (!condensed) return "";
+      return condensed.length > 140
+        ? `${condensed.slice(0, 137)}...`
+        : condensed;
+    })();
+    const outputBody = hasOutputContent
+      ? normalizedOutput
+      : "[no command output captured yet]";
+    const shouldRenderOutputSection =
+      message.ask === "command" ||
+      message.say === "command" ||
+      hadDelimiter ||
+      isOutputOnly ||
+      hasOutputContent;
 
     return (
       <>
@@ -1182,7 +1352,7 @@ export const ChatRowContent = ({
             source={`${"```"}shell\n${command}\n${"```"}`}
             forceWrap={true}
           />
-          {output.length > 0 && (
+          {shouldRenderOutputSection && (
             <div style={{ width: "100%" }}>
               <div
                 onClick={onToggleExpand}
@@ -1197,10 +1367,32 @@ export const ChatRowContent = ({
                 }}
               >
                 {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
-                <span style={{ fontSize: "0.8em" }}>Command Output</span>
+                <span
+                  style={{
+                    fontSize: "0.8em",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <span>{isOutputOnly ? "Command Output" : "Command Output"}</span>
+                  {!isExpanded && (
+                    <span
+                      style={{
+                        color: "var(--vscode-descriptionForeground)",
+                        fontSize: "0.8em",
+                      }}
+                    >
+                      {outputPreview || "No output yet"}
+                    </span>
+                  )}
+                </span>
               </div>
               {isExpanded && (
-                <CodeBlock source={`${"```"}shell\n${output}\n${"```"}`} />
+                <CodeBlock
+                  source={`${"```"}shell\n${outputBody}\n${"```"}`}
+                />
               )}
             </div>
           )}
@@ -1227,9 +1419,9 @@ export const ChatRowContent = ({
   }
 
   if (message.ask === "use_mcp_server" || message.say === "use_mcp_server") {
-    const useMcpServer = JSON.parse(
-      message.text || "{}",
-    ) as ValorIDEAskUseMcpServer;
+    const useMcpServer =
+      safeParseJSON<ValorIDEAskUseMcpServer>(message.text) ||
+      ({} as ValorIDEAskUseMcpServer);
     const server = mcpServers.find(
       (server) => server.name === useMcpServer.serverName,
     );
@@ -1321,7 +1513,7 @@ export const ChatRowContent = ({
                   ...headerStyle,
                   marginBottom:
                     (cost == null && apiRequestFailedMessage) ||
-                    apiReqStreamingFailedMessage
+                      apiReqStreamingFailedMessage
                       ? 10
                       : 0,
                   justifyContent: "space-between",
@@ -1355,69 +1547,72 @@ export const ChatRowContent = ({
               </div>
               {((cost == null && apiRequestFailedMessage) ||
                 apiReqStreamingFailedMessage) && (
-                <>
-                  {(() => {
-                    // Try to parse the error message as JSON for credit limit error
-                    const errorData = parseErrorText(apiRequestFailedMessage);
-                    if (errorData) {
-                      if (
-                        errorData.code === "insufficient_credits" &&
-                        typeof errorData.current_balance === "number" &&
-                        typeof errorData.total_spent === "number" &&
-                        typeof errorData.total_promotions === "number" &&
-                        typeof errorData.message === "string"
-                      ) {
-                        return (
-                          <CreditLimitError
-                            currentBalance={errorData.current_balance}
-                            totalSpent={errorData.total_spent}
-                            totalPromotions={errorData.total_promotions}
-                            message={errorData.message}
-                          />
-                        );
+                  <>
+                    {(() => {
+                      // Try to parse the error message as JSON for credit limit error
+                      const errorData = parseErrorText(apiRequestFailedMessage);
+                      if (errorData) {
+                        if (
+                          errorData.code === "insufficient_credits" &&
+                          typeof errorData.current_balance === "number" &&
+                          typeof errorData.total_spent === "number" &&
+                          typeof errorData.total_promotions === "number" &&
+                          typeof errorData.message === "string"
+                        ) {
+                          return (
+                            <CreditLimitError
+                              currentBalance={errorData.current_balance}
+                              totalSpent={errorData.total_spent}
+                              totalPromotions={errorData.total_promotions}
+                              message={errorData.message}
+                            />
+                          );
+                        }
                       }
-                    }
 
-                    // Default error display
-                    return (
-                      <p
-                        style={{
-                          ...pStyle,
-                          color: "var(--vscode-errorForeground)",
-                        }}
-                      >
-                        {apiRequestFailedMessage ||
-                          apiReqStreamingFailedMessage}
-                        {apiRequestFailedMessage
-                          ?.toLowerCase()
-                          .includes("powershell") && (
-                          <>
-                            <br />
-                            <br />
-                            It seems like you're having Windows PowerShell
-                            issues, please see this{" "}
-                            <a
-                              href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
-                              style={{
-                                color: "inherit",
-                                textDecoration: "underline",
-                              }}
-                            >
-                              troubleshooting guide
-                            </a>
-                            .
-                          </>
-                        )}
-                      </p>
-                    );
-                  })()}
-                </>
-              )}
+                      // Default error display
+                      return (
+                        <p
+                          style={{
+                            ...pStyle,
+                            color: "var(--vscode-errorForeground)",
+                          }}
+                        >
+                          {apiRequestFailedMessage ||
+                            apiReqStreamingFailedMessage}
+                          {apiRequestFailedMessage
+                            ?.toLowerCase()
+                            .includes("powershell") && (
+                              <>
+                                <br />
+                                <br />
+                                It seems like you're having Windows PowerShell
+                                issues, please see this{" "}
+                                <a
+                                  href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
+                                  style={{
+                                    color: "inherit",
+                                    textDecoration: "underline",
+                                  }}
+                                >
+                                  troubleshooting guide
+                                </a>
+                                .
+                              </>
+                            )}
+                        </p>
+                      );
+                    })()}
+                  </>
+                )}
 
               {isExpanded && (
                 <div style={{ marginTop: "10px" }}>
                   <CodeAccordian
-                    code={JSON.parse(message.text || "{}").request}
+                    code={
+                      (safeParseJSON<{ request?: string }>(message.text)
+                        ?.request as string) || ""
+                    }
                     language="markdown"
                     isExpanded={true}
                     onToggleExpand={onToggleExpand}
@@ -1437,61 +1632,81 @@ export const ChatRowContent = ({
             </div>
           );
         case "reasoning":
+          if (!message.text) {
+            return null;
+          }
           return (
-            <>
-              {message.text && (
-                <div
-                  onClick={onToggleExpand}
+            <div
+              onClick={onToggleExpand}
+              style={{
+                cursor: "pointer",
+                background:
+                  "color-mix(in srgb, var(--vscode-editorWidget-background) 75%, transparent)",
+                border:
+                  "1px solid var(--vscode-editorWidget-border, rgba(255, 255, 255, 0.08))",
+                borderRadius: 8,
+                padding: 8,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: isExpanded ? 6 : 2,
+                  color: "var(--vscode-foreground)",
+                }}
+              >
+                <FaBrain color="var(--vscode-charts-yellow)" />
+                <span style={{ fontWeight: 700, fontSize: 12 }}>
+                  {message.partial ? "Thinking..." : "Comments"}
+                </span>
+                <span
                   style={{
-                    // marginBottom: 15,
-                    cursor: "pointer",
+                    marginLeft: "auto",
+                    fontSize: 11,
                     color: "var(--vscode-descriptionForeground)",
-
-                    fontStyle: "italic",
-                    overflow: "hidden",
                   }}
                 >
-                  {isExpanded ? (
-                    <div style={{ marginTop: -3 }}>
-                      <span
-                        style={{
-                          fontWeight: "bold",
-                          display: "block",
-                          marginBottom: "4px",
-                        }}
-                      >
-                        <FaBrain
-                          className="chatTextArea"
-                          color="red"
-                          size={32}
-                        />{" "}
-                        Thinking
-                      </span>
-                      {message.text}
-                    </div>
-                  ) : (
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <span style={{ fontWeight: "bold", marginRight: "4px" }}>
-                        Thinking:
-                      </span>
-                      <span
-                        style={{
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          direction: "rtl",
-                          textAlign: "left",
-                          flex: 1,
-                        }}
-                      >
-                        {message.text + "\u200E"}
-                      </span>
-                      <FaArrowRight />
-                    </div>
-                  )}
+                  {isExpanded ? "Collapse" : "Tap to expand"}
+                </span>
+              </div>
+              {isExpanded ? (
+                <div
+                  style={{
+                    fontStyle: "italic",
+                    lineHeight: 1.5,
+                    color: "var(--vscode-foreground)",
+                  }}
+                >
+                  {message.text}
+                </div>
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    color: "var(--vscode-descriptionForeground)",
+                    fontStyle: "italic",
+                  }}
+                >
+                  <span
+                    style={{
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      direction: "rtl",
+                      textAlign: "left",
+                      flex: 1,
+                    }}
+                  >
+                    {message.text + "\u200E"}
+                  </span>
+                  <FaArrowRight />
                 </div>
               )}
-            </>
+            </div>
           );
         case "user_feedback":
           return (
@@ -1502,8 +1717,11 @@ export const ChatRowContent = ({
               sendMessageFromChatRow={sendMessageFromChatRow}
             />
           );
-        case "user_feedback_diff":
-          const tool = JSON.parse(message.text || "{}") as ValorIDESayTool;
+        case "user_feedback_diff": {
+          const feedbackTool = safeParseJSON<ValorIDESayTool>(message.text);
+
+          if (!feedbackTool || !feedbackTool.diff) return null;
+
           return (
             <div
               style={{
@@ -1512,13 +1730,14 @@ export const ChatRowContent = ({
               }}
             >
               <CodeAccordian
-                diff={tool.diff!}
+                diff={feedbackTool.diff}
                 isFeedback={true}
                 isExpanded={isExpanded}
                 onToggleExpand={onToggleExpand}
               />
             </div>
           );
+        }
         case "error":
           return (
             <>
@@ -1707,6 +1926,11 @@ export const ChatRowContent = ({
                 }}
               >
                 <Markdown markdown={text} />
+                <CompletionSummaryCard
+                  markdown={message.summaryMarkdown}
+                  title={message.summaryTitle}
+                  completedAt={message.summaryCompletedAt}
+                />
                 {message.partial !== true &&
                   hasChanges &&
                   (message.changesSummary ? (
@@ -1834,81 +2058,88 @@ export const ChatRowContent = ({
               </p>
             </>
           );
-        case "completion_result":
-          if (message.text) {
-            const hasChanges =
-              message.text.endsWith(COMPLETION_RESULT_CHANGES_FLAG) ?? false;
-            const text = hasChanges
-              ? message.text.slice(0, -COMPLETION_RESULT_CHANGES_FLAG.length)
-              : message.text;
-            return (
-              <div>
-                <div
-                  style={{
-                    ...headerStyle,
-                    marginBottom: "10px",
-                  }}
-                >
-                  {icon}
-                  {title}
-                  <TaskFeedbackButtons
-                    messageTs={message.ts}
-                    isFromHistory={
-                      !isLast ||
-                      lastModifiedMessage?.ask === "resume_completed_task" ||
-                      lastModifiedMessage?.ask === "resume_task"
-                    }
-                    style={{
-                      marginLeft: "auto",
-                    }}
-                  />
-                </div>
-                <div
-                  style={{
-                    color: "var(--vscode-charts-green)",
-                    paddingTop: 10,
-                  }}
-                >
-                  <Markdown markdown={text} />
-                  {message.partial !== true &&
-                    hasChanges &&
-                    (message.changesSummary ? (
-                      <CompletionChangesSummary
-                        summary={message.changesSummary}
-                        disabled={seeNewChangesDisabled}
-                        onOpenAllChanges={handleOpenAllChanges}
-                        onOpenFileDiff={handleOpenFileDiff}
-                      />
-                    ) : (
-                      <div style={{ marginTop: 15 }}>
-                        <SuccessButton
-                          appearance="secondary"
-                          disabled={seeNewChangesDisabled}
-                          onClick={handleOpenAllChanges}
-                        >
-                          <FaFile />
-                          See new changes
-                        </SuccessButton>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            );
-          } else {
-            return null; // Don't render anything when we get a completion_result ask without text
+        case "completion_result": {
+          const hasChanges =
+            message.text?.endsWith(COMPLETION_RESULT_CHANGES_FLAG) ?? false;
+          const text = hasChanges
+            ? message.text?.slice(0, -COMPLETION_RESULT_CHANGES_FLAG.length)
+            : message.text;
+          const hasSummary = !!message.summaryMarkdown;
+          if (!text && !hasSummary && !hasChanges) {
+            return null; // nothing to show
           }
+          return (
+            <div>
+              <div
+                style={{
+                  ...headerStyle,
+                  marginBottom: "10px",
+                }}
+              >
+                {icon}
+                {title}
+                <TaskFeedbackButtons
+                  messageTs={message.ts}
+                  isFromHistory={
+                    !isLast ||
+                    lastModifiedMessage?.ask === "resume_completed_task" ||
+                    lastModifiedMessage?.ask === "resume_task"
+                  }
+                  style={{
+                    marginLeft: "auto",
+                  }}
+                />
+              </div>
+              <div
+                style={{
+                  color: "var(--vscode-charts-green)",
+                  paddingTop: 10,
+                }}
+              >
+                {text && <Markdown markdown={text} />}
+                <CompletionSummaryCard
+                  markdown={message.summaryMarkdown}
+                  title={message.summaryTitle}
+                  completedAt={message.summaryCompletedAt}
+                />
+                {message.partial !== true &&
+                  hasChanges &&
+                  (message.changesSummary ? (
+                    <CompletionChangesSummary
+                      summary={message.changesSummary}
+                      disabled={seeNewChangesDisabled}
+                      onOpenAllChanges={handleOpenAllChanges}
+                      onOpenFileDiff={handleOpenFileDiff}
+                    />
+                  ) : (
+                    <div style={{ marginTop: 15 }}>
+                      <SuccessButton
+                        appearance="secondary"
+                        disabled={seeNewChangesDisabled}
+                        onClick={handleOpenAllChanges}
+                      >
+                        <FaFile />
+                        See new changes
+                      </SuccessButton>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          );
+        }
         case "followup":
           let question: string | undefined;
           let options: string[] | undefined;
           let selected: string | undefined;
-          try {
-            const parsedMessage = JSON.parse(
-              message.text || "{}",
-            ) as ValorIDEAskQuestion;
+          const parsedMessage = safeParseJSON<ValorIDEAskQuestion>(
+            message.text,
+          );
+
+          if (parsedMessage) {
             question = parsedMessage.question;
             options = parsedMessage.options;
             selected = parsedMessage.selected;
-          } catch (e) {
+          } else {
             // legacy messages would pass question directly
             question = message.text;
           }
@@ -1961,14 +2192,15 @@ export const ChatRowContent = ({
           let response: string | undefined;
           let options: string[] | undefined;
           let selected: string | undefined;
-          try {
-            const parsedMessage = JSON.parse(
-              message.text || "{}",
-            ) as ValorIDEPlanModeResponse;
+          const parsedMessage = safeParseJSON<ValorIDEPlanModeResponse>(
+            message.text,
+          );
+
+          if (parsedMessage) {
             response = parsedMessage.response;
             options = parsedMessage.options;
             selected = parsedMessage.selected;
-          } catch (e) {
+          } else {
             // legacy messages would pass response directly
             response = message.text;
           }
@@ -1991,19 +2223,33 @@ export const ChatRowContent = ({
   }
 };
 
-function parseErrorText(text: string | undefined) {
-  if (!text) {
-    return undefined;
+/** Safely parse JSON and return a fallback (or undefined) on error. */
+function safeParseJSON<T = any>(text?: string, fallback?: T): T | undefined {
+  if (!text) return fallback;
+  try {
+    return JSON.parse(text) as T;
+  } catch (err) {
+    // Avoid noisy errors in production UI but keep a debug line for devs
+    // eslint-disable-next-line no-console
+    console.debug("safeParseJSON failed to parse text", text);
+    return fallback;
   }
+}
+
+function parseErrorText(text?: string): Record<string, any> | undefined {
+  if (!text) return undefined;
   try {
     const startIndex = text.indexOf("{");
     const endIndex = text.lastIndexOf("}");
-    if (startIndex !== -1 && endIndex !== -1) {
-      const jsonStr = text.substring(startIndex, endIndex + 1);
-      const errorObject = JSON.parse(jsonStr);
-      return errorObject;
+    if (startIndex === -1 || endIndex === -1 || endIndex <= startIndex) {
+      return undefined;
     }
-  } catch (e) {
-    // Not JSON or missing required fields
+    const jsonStr = text.substring(startIndex, endIndex + 1);
+    const errorObject = safeParseJSON<Record<string, any>>(jsonStr);
+    return typeof errorObject === "object" && errorObject !== null
+      ? errorObject
+      : undefined;
+  } catch {
+    return undefined;
   }
 }

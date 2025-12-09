@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.FileProcessingJobStatusEnum = exports.FileProcessingJobTypeEnum = void 0;
-exports.FileProcessingJobFromJSON = FileProcessingJobFromJSON;
-exports.FileProcessingJobToJSON = FileProcessingJobToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,60 +19,61 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function FileProcessingJobFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { FileRecordFromJSON, FileRecordToJSON } from "./";
+export function FileProcessingJobFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         type: json["type"],
         status: json["status"],
-        progress: !(0, runtime_1.exists)(json, "progress") ? undefined : json["progress"],
-        metadata: !(0, runtime_1.exists)(json, "metadata") ? undefined : json["metadata"],
-        result: !(0, runtime_1.exists)(json, "result") ? undefined : json["result"],
-        error: !(0, runtime_1.exists)(json, "error") ? undefined : json["error"],
-        relatedFiles: !(0, runtime_1.exists)(json, "relatedFiles")
+        progress: !exists(json, "progress") ? undefined : json["progress"],
+        metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+        result: !exists(json, "result") ? undefined : json["result"],
+        error: !exists(json, "error") ? undefined : json["error"],
+        relatedFiles: !exists(json, "relatedFiles")
             ? undefined
-            : json["relatedFiles"].map(_1.FileRecordFromJSON),
-        startedAt: !(0, runtime_1.exists)(json, "startedAt")
+            : json["relatedFiles"].map(FileRecordFromJSON),
+        startedAt: !exists(json, "startedAt")
             ? undefined
             : new Date(json["startedAt"]),
-        completedAt: !(0, runtime_1.exists)(json, "completedAt")
+        completedAt: !exists(json, "completedAt")
             ? undefined
             : new Date(json["completedAt"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function FileProcessingJobToJSON(value) {
+export function FileProcessingJobToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         type: value.type,
         status: value.status,
         progress: value.progress,
@@ -86,49 +82,36 @@ function FileProcessingJobToJSON(value) {
         error: value.error,
         relatedFiles: value.relatedFiles === undefined
             ? undefined
-            : value.relatedFiles.map(_1.FileRecordToJSON),
+            : value.relatedFiles.map(FileRecordToJSON),
         startedAt: value.startedAt === undefined ? undefined : value.startedAt.toISOString(),
         completedAt: value.completedAt === undefined
             ? undefined
             : value.completedAt.toISOString(),
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var FileProcessingJobTypeEnum;
+export var FileProcessingJobTypeEnum;
 (function (FileProcessingJobTypeEnum) {
     FileProcessingJobTypeEnum["FILEPROCESSING"] = "file_processing";
     FileProcessingJobTypeEnum["BULKUPLOAD"] = "bulk_upload";
     FileProcessingJobTypeEnum["EXPORT"] = "export";
     FileProcessingJobTypeEnum["VIRUSSCAN"] = "virus_scan";
     FileProcessingJobTypeEnum["THUMBNAILGENERATION"] = "thumbnail_generation";
-})(FileProcessingJobTypeEnum || (exports.FileProcessingJobTypeEnum = FileProcessingJobTypeEnum = {}));
+})(FileProcessingJobTypeEnum || (FileProcessingJobTypeEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var FileProcessingJobStatusEnum;
+export var FileProcessingJobStatusEnum;
 (function (FileProcessingJobStatusEnum) {
     FileProcessingJobStatusEnum["PENDING"] = "pending";
     FileProcessingJobStatusEnum["RUNNING"] = "running";
     FileProcessingJobStatusEnum["COMPLETED"] = "completed";
     FileProcessingJobStatusEnum["FAILED"] = "failed";
     FileProcessingJobStatusEnum["CANCELLED"] = "cancelled";
-})(FileProcessingJobStatusEnum || (exports.FileProcessingJobStatusEnum = FileProcessingJobStatusEnum = {}));
+})(FileProcessingJobStatusEnum || (FileProcessingJobStatusEnum = {}));
 //# sourceMappingURL=FileProcessingJob.js.map

@@ -4,7 +4,7 @@ import deepEqual from "fast-deep-equal";
 import { memo, useCallback, useEffect, useMemo, useRef, useState, } from "react";
 import { useEvent, useSize } from "react-use";
 import styled from "styled-components";
-import { FaExclamationTriangle, FaExclamationCircle, FaTerminal, FaServer, FaCheck, FaQuestion, FaChevronDown, FaChevronUp, FaChevronRight, FaEdit, FaSignOutAlt, FaFileCode, FaExternalLinkAlt, FaFolderOpen, FaSearch, FaFile, FaBook, FaArrowRight, FaPlus, FaExclamationTriangle as FaWarning, FaBrain, FaCarCrash, FaMagic, FaFileUpload, } from "react-icons/fa";
+import { FaExclamationTriangle, FaExclamationCircle, FaTerminal, FaServer, FaCheck, FaQuestion, FaChevronDown, FaChevronUp, FaChevronRight, FaEdit, FaSignOutAlt, FaFileCode, FaExternalLinkAlt, FaFolderOpen, FaSearch, FaFile, FaBook, FaArrowRight, FaPlus, FaExclamationTriangle as FaWarning, FaCheckCircle, FaBrain, FaCarCrash, FaMagic, FaFileUpload, } from "react-icons/fa";
 import { VscError, VscCheck } from "react-icons/vsc";
 import { COMPLETION_RESULT_CHANGES_FLAG } from "@shared/ExtensionMessage";
 import { COMMAND_OUTPUT_STRING, COMMAND_REQ_APP_STRING, } from "@shared/combineCommandSequences";
@@ -237,6 +237,36 @@ const Markdown = memo(({ markdown }) => {
             marginBottom: -15,
             marginTop: -15,
         }, children: _jsx(MarkdownBlock, { markdown: markdown }) }));
+});
+const CompletionSummaryCard = memo(({ markdown, title, completedAt, }) => {
+    if (!markdown) {
+        return null;
+    }
+    let completedLabel;
+    if (completedAt) {
+        const date = new Date(completedAt);
+        completedLabel = Number.isNaN(date.getTime())
+            ? undefined
+            : `Completed ${date.toLocaleString()}`;
+    }
+    return (_jsxs("div", { style: {
+            marginTop: 12,
+            borderRadius: 10,
+            border: "1px solid var(--vscode-editorWidget-border, rgba(255,255,255,0.08))",
+            background: "color-mix(in srgb, var(--vscode-editor-background) 90%, transparent)",
+            padding: 12,
+            display: "flex",
+            flexDirection: "column",
+            gap: 8,
+        }, children: [_jsxs("div", { style: {
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    color: "var(--vscode-foreground)",
+                }, children: [_jsx(FaCheckCircle, { color: "var(--vscode-charts-green)" }), _jsxs("div", { style: { flex: 1, minWidth: 0 }, children: [_jsx("div", { style: { fontWeight: 700, fontSize: 13 }, children: title ? `Task Summary — ${title}` : "Task Summary" }), completedLabel && (_jsx("div", { style: {
+                                    fontSize: 12,
+                                    color: "var(--vscode-descriptionForeground)",
+                                }, children: completedLabel }))] })] }), _jsx("div", { style: { marginTop: 4 }, children: _jsx(Markdown, { markdown: markdown }) })] }));
 });
 const ChatRow = memo((props) => {
     const { isLast, onHeightChange, message, lastModifiedMessage, inputValue, setInputValue, } = props;
@@ -706,24 +736,43 @@ export const ChatRowContent = ({ message, isExpanded, onToggleExpand, lastModifi
                 case "text":
                     return (_jsx("div", { children: _jsx(Markdown, { markdown: message.text }) }));
                 case "reasoning":
-                    return (_jsx(_Fragment, { children: message.text && (_jsx("div", { onClick: onToggleExpand, style: {
-                                // marginBottom: 15,
-                                cursor: "pointer",
-                                color: "var(--vscode-descriptionForeground)",
-                                fontStyle: "italic",
-                                overflow: "hidden",
-                            }, children: isExpanded ? (_jsxs("div", { style: { marginTop: -3 }, children: [_jsxs("span", { style: {
-                                            fontWeight: "bold",
-                                            display: "block",
-                                            marginBottom: "4px",
-                                        }, children: [_jsx(FaBrain, { className: "chatTextArea", color: "red", size: 32 }), " ", "Thinking"] }), message.text] })) : (_jsxs("div", { style: { display: "flex", alignItems: "center" }, children: [_jsx("span", { style: { fontWeight: "bold", marginRight: "4px" }, children: "Thinking:" }), _jsx("span", { style: {
+                    if (!message.text) {
+                        return null;
+                    }
+                    return (_jsxs("div", { onClick: onToggleExpand, style: {
+                            cursor: "pointer",
+                            background: "color-mix(in srgb, var(--vscode-editorWidget-background) 75%, transparent)",
+                            border: "1px solid var(--vscode-editorWidget-border, rgba(255, 255, 255, 0.08))",
+                            borderRadius: 8,
+                            padding: 8,
+                        }, children: [_jsxs("div", { style: {
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 8,
+                                    marginBottom: isExpanded ? 6 : 2,
+                                    color: "var(--vscode-foreground)",
+                                }, children: [_jsx(FaBrain, { color: "var(--vscode-charts-yellow)" }), _jsx("span", { style: { fontWeight: 700, fontSize: 12 }, children: message.partial ? "Thinking..." : "Comments" }), _jsx("span", { style: {
+                                            marginLeft: "auto",
+                                            fontSize: 11,
+                                            color: "var(--vscode-descriptionForeground)",
+                                        }, children: isExpanded ? "Collapse" : "Tap to expand" })] }), isExpanded ? (_jsx("div", { style: {
+                                    fontStyle: "italic",
+                                    lineHeight: 1.5,
+                                    color: "var(--vscode-foreground)",
+                                }, children: message.text })) : (_jsxs("div", { style: {
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 6,
+                                    color: "var(--vscode-descriptionForeground)",
+                                    fontStyle: "italic",
+                                }, children: [_jsx("span", { style: {
                                             whiteSpace: "nowrap",
                                             overflow: "hidden",
                                             textOverflow: "ellipsis",
                                             direction: "rtl",
                                             textAlign: "left",
                                             flex: 1,
-                                        }, children: message.text + "\u200E" }), _jsx(FaArrowRight, {})] })) })) }));
+                                        }, children: message.text + "\u200E" }), _jsx(FaArrowRight, {})] }))] }));
                 case "user_feedback":
                     return (_jsx(UserMessage, { text: message.text, images: message.images, messageTs: message.ts, sendMessageFromChatRow: sendMessageFromChatRow }));
                 case "user_feedback_diff":
@@ -810,7 +859,7 @@ export const ChatRowContent = ({ message, isExpanded, onToggleExpand, lastModifi
                                         } })] }), _jsxs("div", { style: {
                                     color: "var(--vscode-charts-green)",
                                     paddingTop: 10,
-                                }, children: [_jsx(Markdown, { markdown: text }), message.partial !== true &&
+                                }, children: [_jsx(Markdown, { markdown: text }), _jsx(CompletionSummaryCard, { markdown: message.summaryMarkdown, title: message.summaryTitle, completedAt: message.summaryCompletedAt }), message.partial !== true &&
                                         hasChanges &&
                                         (message.changesSummary ? (_jsx(CompletionChangesSummary, { summary: message.changesSummary, disabled: seeNewChangesDisabled, onOpenAllChanges: handleOpenAllChanges, onOpenFileDiff: handleOpenFileDiff })) : (_jsx("div", { style: { marginTop: 17 }, children: _jsxs(SuccessButton, { disabled: seeNewChangesDisabled, onClick: handleOpenAllChanges, style: {
                                                     cursor: seeNewChangesDisabled ? "wait" : "pointer",
@@ -850,29 +899,29 @@ export const ChatRowContent = ({ message, isExpanded, onToggleExpand, lastModifi
                                     ...pStyle,
                                     color: "var(--vscode-errorForeground)",
                                 }, children: message.text })] }));
-                case "completion_result":
-                    if (message.text) {
-                        const hasChanges = message.text.endsWith(COMPLETION_RESULT_CHANGES_FLAG) ?? false;
-                        const text = hasChanges
-                            ? message.text.slice(0, -COMPLETION_RESULT_CHANGES_FLAG.length)
-                            : message.text;
-                        return (_jsxs("div", { children: [_jsxs("div", { style: {
-                                        ...headerStyle,
-                                        marginBottom: "10px",
-                                    }, children: [icon, title, _jsx(TaskFeedbackButtons, { messageTs: message.ts, isFromHistory: !isLast ||
-                                                lastModifiedMessage?.ask === "resume_completed_task" ||
-                                                lastModifiedMessage?.ask === "resume_task", style: {
-                                                marginLeft: "auto",
-                                            } })] }), _jsxs("div", { style: {
-                                        color: "var(--vscode-charts-green)",
-                                        paddingTop: 10,
-                                    }, children: [_jsx(Markdown, { markdown: text }), message.partial !== true &&
-                                            hasChanges &&
-                                            (message.changesSummary ? (_jsx(CompletionChangesSummary, { summary: message.changesSummary, disabled: seeNewChangesDisabled, onOpenAllChanges: handleOpenAllChanges, onOpenFileDiff: handleOpenFileDiff })) : (_jsx("div", { style: { marginTop: 15 }, children: _jsxs(SuccessButton, { appearance: "secondary", disabled: seeNewChangesDisabled, onClick: handleOpenAllChanges, children: [_jsx(FaFile, {}), "See new changes"] }) })))] })] }));
+                case "completion_result": {
+                    const hasChanges = message.text?.endsWith(COMPLETION_RESULT_CHANGES_FLAG) ?? false;
+                    const text = hasChanges
+                        ? message.text?.slice(0, -COMPLETION_RESULT_CHANGES_FLAG.length)
+                        : message.text;
+                    const hasSummary = !!message.summaryMarkdown;
+                    if (!text && !hasSummary && !hasChanges) {
+                        return null; // nothing to show
                     }
-                    else {
-                        return null; // Don't render anything when we get a completion_result ask without text
-                    }
+                    return (_jsxs("div", { children: [_jsxs("div", { style: {
+                                    ...headerStyle,
+                                    marginBottom: "10px",
+                                }, children: [icon, title, _jsx(TaskFeedbackButtons, { messageTs: message.ts, isFromHistory: !isLast ||
+                                            lastModifiedMessage?.ask === "resume_completed_task" ||
+                                            lastModifiedMessage?.ask === "resume_task", style: {
+                                            marginLeft: "auto",
+                                        } })] }), _jsxs("div", { style: {
+                                    color: "var(--vscode-charts-green)",
+                                    paddingTop: 10,
+                                }, children: [text && _jsx(Markdown, { markdown: text }), _jsx(CompletionSummaryCard, { markdown: message.summaryMarkdown, title: message.summaryTitle, completedAt: message.summaryCompletedAt }), message.partial !== true &&
+                                        hasChanges &&
+                                        (message.changesSummary ? (_jsx(CompletionChangesSummary, { summary: message.changesSummary, disabled: seeNewChangesDisabled, onOpenAllChanges: handleOpenAllChanges, onOpenFileDiff: handleOpenFileDiff })) : (_jsx("div", { style: { marginTop: 15 }, children: _jsxs(SuccessButton, { appearance: "secondary", disabled: seeNewChangesDisabled, onClick: handleOpenAllChanges, children: [_jsx(FaFile, {}), "See new changes"] }) })))] })] }));
+                }
                 case "followup":
                     let question;
                     let options;

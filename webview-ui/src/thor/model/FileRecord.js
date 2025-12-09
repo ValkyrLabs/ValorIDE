@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.FileRecordVirusScanStatusEnum = exports.FileRecordStatusEnum = void 0;
-exports.FileRecordFromJSON = FileRecordFromJSON;
-exports.FileRecordToJSON = FileRecordToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,109 +19,106 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function FileRecordFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { OrganizationFromJSON, OrganizationToJSON, PrincipalFromJSON, PrincipalToJSON, } from "./";
+export function FileRecordFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         storageDriverId: json["storageDriverId"],
         storageKey: json["storageKey"],
         filename: json["filename"],
         sizeBytes: json["sizeBytes"],
         status: json["status"],
-        organizationId: !(0, runtime_1.exists)(json, "organizationId")
+        organizationId: !exists(json, "organizationId")
             ? undefined
             : json["organizationId"],
-        organization: !(0, runtime_1.exists)(json, "organization")
+        organization: !exists(json, "organization")
             ? undefined
-            : (0, _1.OrganizationFromJSON)(json["organization"]),
-        uploaderId: !(0, runtime_1.exists)(json, "uploaderId") ? undefined : json["uploaderId"],
-        uploader: !(0, runtime_1.exists)(json, "uploader")
+            : OrganizationFromJSON(json["organization"]),
+        uploaderId: !exists(json, "uploaderId") ? undefined : json["uploaderId"],
+        uploader: !exists(json, "uploader")
             ? undefined
-            : (0, _1.PrincipalFromJSON)(json["uploader"]),
-        spaceId: !(0, runtime_1.exists)(json, "spaceId") ? undefined : json["spaceId"],
-        mimeType: !(0, runtime_1.exists)(json, "mimeType") ? undefined : json["mimeType"],
-        checksumSha256: !(0, runtime_1.exists)(json, "checksumSha256")
+            : PrincipalFromJSON(json["uploader"]),
+        spaceId: !exists(json, "spaceId") ? undefined : json["spaceId"],
+        mimeType: !exists(json, "mimeType") ? undefined : json["mimeType"],
+        checksumSha256: !exists(json, "checksumSha256")
             ? undefined
             : json["checksumSha256"],
-        providerEtag: !(0, runtime_1.exists)(json, "providerEtag")
+        providerEtag: !exists(json, "providerEtag")
             ? undefined
             : json["providerEtag"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        directoryPath: !(0, runtime_1.exists)(json, "directoryPath")
+        description: !exists(json, "description") ? undefined : json["description"],
+        directoryPath: !exists(json, "directoryPath")
             ? undefined
             : json["directoryPath"],
-        tags: !(0, runtime_1.exists)(json, "tags")
-            ? undefined
-            : json["tags"].map(_1.TagFromJSON),
-        metadata: !(0, runtime_1.exists)(json, "metadata") ? undefined : json["metadata"],
-        virusScanStatus: !(0, runtime_1.exists)(json, "virusScanStatus")
+        tags: !exists(json, "tags") ? undefined : json["tags"],
+        metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+        virusScanStatus: !exists(json, "virusScanStatus")
             ? undefined
             : json["virusScanStatus"],
-        retentionExpiresAt: !(0, runtime_1.exists)(json, "retentionExpiresAt")
+        retentionExpiresAt: !exists(json, "retentionExpiresAt")
             ? undefined
             : new Date(json["retentionExpiresAt"]),
-        deletedAt: !(0, runtime_1.exists)(json, "deletedAt")
+        deletedAt: !exists(json, "deletedAt")
             ? undefined
             : new Date(json["deletedAt"]),
-        latestVersionNumber: !(0, runtime_1.exists)(json, "latestVersionNumber")
+        latestVersionNumber: !exists(json, "latestVersionNumber")
             ? undefined
             : json["latestVersionNumber"],
-        currentVersionId: !(0, runtime_1.exists)(json, "currentVersionId")
+        currentVersionId: !exists(json, "currentVersionId")
             ? undefined
             : json["currentVersionId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function FileRecordToJSON(value) {
+export function FileRecordToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         storageDriverId: value.storageDriverId,
         storageKey: value.storageKey,
         filename: value.filename,
         sizeBytes: value.sizeBytes,
         status: value.status,
         organizationId: value.organizationId,
-        organization: (0, _1.OrganizationToJSON)(value.organization),
+        organization: OrganizationToJSON(value.organization),
         uploaderId: value.uploaderId,
-        uploader: (0, _1.PrincipalToJSON)(value.uploader),
+        uploader: PrincipalToJSON(value.uploader),
         spaceId: value.spaceId,
         mimeType: value.mimeType,
         checksumSha256: value.checksumSha256,
         providerEtag: value.providerEtag,
         description: value.description,
         directoryPath: value.directoryPath,
-        tags: value.tags === undefined
-            ? undefined
-            : value.tags.map(_1.TagToJSON),
+        tags: value.tags,
         metadata: value.metadata,
         virusScanStatus: value.virusScanStatus,
         retentionExpiresAt: value.retentionExpiresAt === undefined
@@ -135,27 +127,14 @@ function FileRecordToJSON(value) {
         deletedAt: value.deletedAt === undefined ? undefined : value.deletedAt.toISOString(),
         latestVersionNumber: value.latestVersionNumber,
         currentVersionId: value.currentVersionId,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var FileRecordStatusEnum;
+export var FileRecordStatusEnum;
 (function (FileRecordStatusEnum) {
     FileRecordStatusEnum["UPLOADING"] = "uploading";
     FileRecordStatusEnum["SCANNING"] = "scanning";
@@ -163,17 +142,17 @@ var FileRecordStatusEnum;
     FileRecordStatusEnum["BLOCKED"] = "blocked";
     FileRecordStatusEnum["DELETED"] = "deleted";
     FileRecordStatusEnum["FAILED"] = "failed";
-})(FileRecordStatusEnum || (exports.FileRecordStatusEnum = FileRecordStatusEnum = {}));
+})(FileRecordStatusEnum || (FileRecordStatusEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var FileRecordVirusScanStatusEnum;
+export var FileRecordVirusScanStatusEnum;
 (function (FileRecordVirusScanStatusEnum) {
     FileRecordVirusScanStatusEnum["PENDING"] = "pending";
     FileRecordVirusScanStatusEnum["INPROGRESS"] = "in_progress";
     FileRecordVirusScanStatusEnum["CLEAN"] = "clean";
     FileRecordVirusScanStatusEnum["INFECTED"] = "infected";
     FileRecordVirusScanStatusEnum["SKIPPED"] = "skipped";
-})(FileRecordVirusScanStatusEnum || (exports.FileRecordVirusScanStatusEnum = FileRecordVirusScanStatusEnum = {}));
+})(FileRecordVirusScanStatusEnum || (FileRecordVirusScanStatusEnum = {}));
 //# sourceMappingURL=FileRecord.js.map

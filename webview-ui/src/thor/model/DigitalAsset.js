@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DigitalAssetAccessModelEnum = exports.DigitalAssetDeliveryMethodEnum = void 0;
-exports.DigitalAssetFromJSON = DigitalAssetFromJSON;
-exports.DigitalAssetToJSON = DigitalAssetToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,109 +19,97 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function DigitalAssetFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { FileRecordFromJSON, FileRecordToJSON, ProductFromJSON, ProductToJSON, } from "./";
+export function DigitalAssetFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         productId: json["productId"],
         fileId: json["fileId"],
         deliveryMethod: json["deliveryMethod"],
-        product: !(0, runtime_1.exists)(json, "product")
+        product: !exists(json, "product")
             ? undefined
-            : (0, _1.ProductFromJSON)(json["product"]),
-        file: !(0, runtime_1.exists)(json, "file") ? undefined : (0, _1.FileRecordFromJSON)(json["file"]),
-        accessModel: !(0, runtime_1.exists)(json, "accessModel") ? undefined : json["accessModel"],
-        maxDownloads: !(0, runtime_1.exists)(json, "maxDownloads")
+            : ProductFromJSON(json["product"]),
+        file: !exists(json, "file") ? undefined : FileRecordFromJSON(json["file"]),
+        accessModel: !exists(json, "accessModel") ? undefined : json["accessModel"],
+        maxDownloads: !exists(json, "maxDownloads")
             ? undefined
             : json["maxDownloads"],
-        expiresAfterDays: !(0, runtime_1.exists)(json, "expiresAfterDays")
+        expiresAfterDays: !exists(json, "expiresAfterDays")
             ? undefined
             : json["expiresAfterDays"],
-        notifyCustomerOnExpiry: !(0, runtime_1.exists)(json, "notifyCustomerOnExpiry")
+        notifyCustomerOnExpiry: !exists(json, "notifyCustomerOnExpiry")
             ? undefined
             : json["notifyCustomerOnExpiry"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function DigitalAssetToJSON(value) {
+export function DigitalAssetToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         productId: value.productId,
         fileId: value.fileId,
         deliveryMethod: value.deliveryMethod,
-        product: (0, _1.ProductToJSON)(value.product),
-        file: (0, _1.FileRecordToJSON)(value.file),
+        product: ProductToJSON(value.product),
+        file: FileRecordToJSON(value.file),
         accessModel: value.accessModel,
         maxDownloads: value.maxDownloads,
         expiresAfterDays: value.expiresAfterDays,
         notifyCustomerOnExpiry: value.notifyCustomerOnExpiry,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var DigitalAssetDeliveryMethodEnum;
+export var DigitalAssetDeliveryMethodEnum;
 (function (DigitalAssetDeliveryMethodEnum) {
     DigitalAssetDeliveryMethodEnum["DIRECTDOWNLOAD"] = "direct_download";
     DigitalAssetDeliveryMethodEnum["EMAILDELIVERY"] = "email_delivery";
     DigitalAssetDeliveryMethodEnum["PORTALACCESS"] = "portal_access";
     DigitalAssetDeliveryMethodEnum["STREAMING"] = "streaming";
     DigitalAssetDeliveryMethodEnum["APIKEY"] = "api_key";
-})(DigitalAssetDeliveryMethodEnum || (exports.DigitalAssetDeliveryMethodEnum = DigitalAssetDeliveryMethodEnum = {}));
+})(DigitalAssetDeliveryMethodEnum || (DigitalAssetDeliveryMethodEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var DigitalAssetAccessModelEnum;
+export var DigitalAssetAccessModelEnum;
 (function (DigitalAssetAccessModelEnum) {
     DigitalAssetAccessModelEnum["PERPETUAL"] = "perpetual";
     DigitalAssetAccessModelEnum["SUBSCRIPTION"] = "subscription";
     DigitalAssetAccessModelEnum["TRIAL"] = "trial";
     DigitalAssetAccessModelEnum["LICENSEKEY"] = "license_key";
     DigitalAssetAccessModelEnum["ONETIME"] = "one_time";
-})(DigitalAssetAccessModelEnum || (exports.DigitalAssetAccessModelEnum = DigitalAssetAccessModelEnum = {}));
+})(DigitalAssetAccessModelEnum || (DigitalAssetAccessModelEnum = {}));
 //# sourceMappingURL=DigitalAsset.js.map

@@ -20,7 +20,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -36,12 +36,21 @@ import {
   Authority,
   AuthorityFromJSON,
   AuthorityToJSON,
+  LoginAudit,
+  LoginAuditFromJSON,
+  LoginAuditToJSON,
   Organization,
   OrganizationFromJSON,
   OrganizationToJSON,
+  PhoneVerification,
+  PhoneVerificationFromJSON,
+  PhoneVerificationToJSON,
   Role,
   RoleFromJSON,
   RoleToJSON,
+  TwoFactorSecret,
+  TwoFactorSecretFromJSON,
+  TwoFactorSecretToJSON,
   UserPreference,
   UserPreferenceFromJSON,
   UserPreferenceToJSON,
@@ -140,7 +149,7 @@ export type Principal = DataObject & {
    */
   phone?: string;
   /**
-   * The username for your primary social account (if any)
+   * The user for your primary social account (if any)
    * @type {string}
    * @memberof Principal
    */
@@ -224,53 +233,101 @@ export type Principal = DataObject & {
    */
   userPreferences?: Array<UserPreference>;
   /**
+   * Whether 2FA is enabled for this account
+   * @type {boolean}
+   * @memberof Principal
+   */
+  twoFactorEnabled?: boolean;
+  /**
+   * TOTP secret for this Principal (lazy loaded)
+   * @type {TwoFactorSecret}
+   * @memberof Principal
+   */
+  twoFactorSecret?: TwoFactorSecret;
+  /**
+   * Phone numbers verified for this Principal
+   * @type {Array<PhoneVerification>}
+   * @memberof Principal
+   */
+  phoneVerifications?: Array<PhoneVerification>;
+  /**
+   * When this Principal last successfully logged in
+   * @type {Date}
+   * @memberof Principal
+   */
+  readonly lastLoginAt?: Date;
+  /**
+   * Number of failed login attempts (reset on success)
+   * @type {number}
+   * @memberof Principal
+   */
+  loginAttempts?: number;
+  /**
+   * Account lockout expiration (null if not locked)
+   * @type {Date}
+   * @memberof Principal
+   */
+  lockoutUntil?: Date;
+  /**
+   * Recent login audit trail
+   * @type {Array<LoginAudit>}
+   * @memberof Principal
+   */
+  loginAudits?: Array<LoginAudit>;
+  /**
    * Unique identifier for object in the system
    * @type {string}
    * @memberof Principal
    */
-  id?: string;
+  readonly id?: string;
   /**
    * UUID of owner of the object in the system
    * @type {string}
    * @memberof Principal
    */
-  ownerId?: string;
+  readonly ownerId?: string;
   /**
    * Date of object creation
    * @type {Date}
    * @memberof Principal
    */
-  createdDate?: Date;
+  readonly createdDate?: Date;
   /**
    * Data, including hash of the key(s) used to encrypt this record.
    * @type {string}
    * @memberof Principal
    */
-  keyHash?: string;
+  readonly keyHash?: string;
   /**
    * Last user to access object
    * @type {string}
    * @memberof Principal
    */
-  lastAccessedById?: string;
+  readonly lastAccessedById?: string;
   /**
    * Timestamp of last access of object
    * @type {Date}
    * @memberof Principal
    */
-  lastAccessedDate?: Date;
+  readonly lastAccessedDate?: Date;
   /**
    * Unique identifier for user who last modifed the object in the system
    * @type {string}
    * @memberof Principal
    */
-  lastModifiedById?: string;
+  readonly lastModifiedById?: string;
   /**
    * Date of last object modification
    * @type {Date}
    * @memberof Principal
    */
-  lastModifiedDate?: Date;
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof Principal
+   */
+  trashed?: boolean;
 };
 
 export function PrincipalFromJSON(json: any): Principal {
@@ -328,6 +385,29 @@ export function PrincipalFromJSON(json: any): Principal {
     userPreferences: !exists(json, "userPreferences")
       ? undefined
       : (json["userPreferences"] as Array<any>).map(UserPreferenceFromJSON),
+    twoFactorEnabled: !exists(json, "twoFactorEnabled")
+      ? undefined
+      : json["twoFactorEnabled"],
+    twoFactorSecret: !exists(json, "twoFactorSecret")
+      ? undefined
+      : TwoFactorSecretFromJSON(json["twoFactorSecret"]),
+    phoneVerifications: !exists(json, "phoneVerifications")
+      ? undefined
+      : (json["phoneVerifications"] as Array<any>).map(
+          PhoneVerificationFromJSON,
+        ),
+    lastLoginAt: !exists(json, "lastLoginAt")
+      ? undefined
+      : new Date(json["lastLoginAt"]),
+    loginAttempts: !exists(json, "loginAttempts")
+      ? undefined
+      : json["loginAttempts"],
+    lockoutUntil: !exists(json, "lockoutUntil")
+      ? undefined
+      : new Date(json["lockoutUntil"]),
+    loginAudits: !exists(json, "loginAudits")
+      ? undefined
+      : (json["loginAudits"] as Array<any>).map(LoginAuditFromJSON),
     id: !exists(json, "id") ? undefined : json["id"],
     ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
     createdDate: !exists(json, "createdDate")
@@ -346,6 +426,7 @@ export function PrincipalFromJSON(json: any): Principal {
     lastModifiedDate: !exists(json, "lastModifiedDate")
       ? undefined
       : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
   };
 }
 
@@ -388,22 +469,21 @@ export function PrincipalToJSON(value?: Principal): any {
       value.userPreferences === undefined
         ? undefined
         : (value.userPreferences as Array<any>).map(UserPreferenceToJSON),
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
+    twoFactorEnabled: value.twoFactorEnabled,
+    twoFactorSecret: TwoFactorSecretToJSON(value.twoFactorSecret),
+    phoneVerifications:
+      value.phoneVerifications === undefined
         ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
+        : (value.phoneVerifications as Array<any>).map(PhoneVerificationToJSON),
+    loginAttempts: value.loginAttempts,
+    lockoutUntil:
+      value.lockoutUntil === undefined
         ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
+        : value.lockoutUntil.toISOString(),
+    loginAudits:
+      value.loginAudits === undefined
         ? undefined
-        : value.lastModifiedDate.toISOString(),
+        : (value.loginAudits as Array<any>).map(LoginAuditToJSON),
+    trashed: value.trashed,
   };
 }

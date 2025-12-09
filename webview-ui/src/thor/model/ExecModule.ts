@@ -20,7 +20,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -125,6 +125,12 @@ export type ExecModule = DataObject & {
    */
   status?: ExecModuleStatusEnum;
   /**
+   *
+   * @type {IntegrationAccount}
+   * @memberof ExecModule
+   */
+  execModuleIntegrationAccount?: IntegrationAccount;
+  /**
    * an array of OpenAPI specs to be referenced by the Tasks/Modules
    * @type {Array<OasOpenAPISpec>}
    * @memberof ExecModule
@@ -135,49 +141,55 @@ export type ExecModule = DataObject & {
    * @type {string}
    * @memberof ExecModule
    */
-  id?: string;
+  readonly id?: string;
   /**
    * UUID of owner of the object in the system
    * @type {string}
    * @memberof ExecModule
    */
-  ownerId?: string;
+  readonly ownerId?: string;
   /**
    * Date of object creation
    * @type {Date}
    * @memberof ExecModule
    */
-  createdDate?: Date;
+  readonly createdDate?: Date;
   /**
    * Data, including hash of the key(s) used to encrypt this record.
    * @type {string}
    * @memberof ExecModule
    */
-  keyHash?: string;
+  readonly keyHash?: string;
   /**
    * Last user to access object
    * @type {string}
    * @memberof ExecModule
    */
-  lastAccessedById?: string;
+  readonly lastAccessedById?: string;
   /**
    * Timestamp of last access of object
    * @type {Date}
    * @memberof ExecModule
    */
-  lastAccessedDate?: Date;
+  readonly lastAccessedDate?: Date;
   /**
    * Unique identifier for user who last modifed the object in the system
    * @type {string}
    * @memberof ExecModule
    */
-  lastModifiedById?: string;
+  readonly lastModifiedById?: string;
   /**
    * Date of last object modification
    * @type {Date}
    * @memberof ExecModule
    */
-  lastModifiedDate?: Date;
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof ExecModule
+   */
+  trashed?: boolean;
 };
 
 export function ExecModuleFromJSON(json: any): ExecModule {
@@ -200,6 +212,9 @@ export function ExecModuleFromJSON(json: any): ExecModule {
     moduleData: !exists(json, "moduleData") ? undefined : json["moduleData"],
     config: !exists(json, "config") ? undefined : json["config"],
     status: !exists(json, "status") ? undefined : json["status"],
+    execModuleIntegrationAccount: !exists(json, "execModuleIntegrationAccount")
+      ? undefined
+      : IntegrationAccountFromJSON(json["execModuleIntegrationAccount"]),
     specs: !exists(json, "specs")
       ? undefined
       : (json["specs"] as Array<any>).map(OasOpenAPISpecFromJSON),
@@ -221,6 +236,7 @@ export function ExecModuleFromJSON(json: any): ExecModule {
     lastModifiedDate: !exists(json, "lastModifiedDate")
       ? undefined
       : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
   };
 }
 
@@ -243,27 +259,14 @@ export function ExecModuleToJSON(value?: ExecModule): any {
     moduleData: value.moduleData,
     config: value.config,
     status: value.status,
+    execModuleIntegrationAccount: IntegrationAccountToJSON(
+      value.execModuleIntegrationAccount,
+    ),
     specs:
       value.specs === undefined
         ? undefined
         : (value.specs as Array<any>).map(OasOpenAPISpecToJSON),
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
+    trashed: value.trashed,
   };
 }
 

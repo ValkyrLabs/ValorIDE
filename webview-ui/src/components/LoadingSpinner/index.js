@@ -30,10 +30,25 @@ const injectKeyframes = () => {
     style.innerHTML = `@keyframes vl-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`;
     document.head.appendChild(style);
 };
+const presetSizes = {
+    sm: 24,
+    md: 48,
+    lg: 72,
+};
+const resolveSize = (size) => {
+    if (typeof size === "number") {
+        return size;
+    }
+    if (!size) {
+        return 64;
+    }
+    return presetSizes[size] ?? 64;
+};
 export const LoadingSpinner = ({ label = "Loading…", size = 64, style, ...rest }) => {
     if (typeof window !== "undefined")
         injectKeyframes();
-    const s = Math.max(12, size);
+    const resolved = resolveSize(size);
+    const s = Math.max(12, resolved);
     const spinner = {
         ...spinnerStyle,
         width: s,
@@ -42,7 +57,7 @@ export const LoadingSpinner = ({ label = "Loading…", size = 64, style, ...rest
     };
     return (_jsxs("div", { style: {
             ...container,
-            ...(size < 32 ? { minHeight: 0, gap: 8 } : {}),
+            ...(resolved < 32 ? { minHeight: 0, gap: 8 } : {}),
             ...style,
         }, ...rest, children: [_jsx("div", { style: spinner }), _jsx("div", { style: labelStyle, children: label })] }));
 };

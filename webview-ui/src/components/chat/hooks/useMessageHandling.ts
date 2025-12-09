@@ -88,6 +88,12 @@ export const useMessageHandling = ({
               });
               break;
           }
+        } else {
+          vscode.postMessage({
+            type: "userMessage",
+            text,
+            images,
+          });
         }
         clearChatInput();
         setTextAreaDisabled(true);

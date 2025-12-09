@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConsultingProfileConsultingTypeEnum = void 0;
-exports.ConsultingProfileFromJSON = ConsultingProfileFromJSON;
-exports.ConsultingProfileToJSON = ConsultingProfileToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,71 +19,72 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-function ConsultingProfileFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+export function ConsultingProfileFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         jobSeekerId: json["jobSeekerId"],
         consultingType: json["consultingType"],
-        expertiseAreas: !(0, runtime_1.exists)(json, "expertiseAreas")
+        expertiseAreas: !exists(json, "expertiseAreas")
             ? undefined
             : json["expertiseAreas"],
-        maximumHourlyRate: !(0, runtime_1.exists)(json, "maximumHourlyRate")
+        maximumHourlyRate: !exists(json, "maximumHourlyRate")
             ? undefined
             : json["maximumHourlyRate"],
-        minimumMonthlyCommitment: !(0, runtime_1.exists)(json, "minimumMonthlyCommitment")
+        minimumMonthlyCommitment: !exists(json, "minimumMonthlyCommitment")
             ? undefined
             : json["minimumMonthlyCommitment"],
-        geographicFocus: !(0, runtime_1.exists)(json, "geographicFocus")
+        geographicFocus: !exists(json, "geographicFocus")
             ? undefined
             : json["geographicFocus"],
-        projectPortfolio: !(0, runtime_1.exists)(json, "projectPortfolio")
+        projectPortfolio: !exists(json, "projectPortfolio")
             ? undefined
             : json["projectPortfolio"],
-        profileCompletionScore: !(0, runtime_1.exists)(json, "profileCompletionScore")
+        profileCompletionScore: !exists(json, "profileCompletionScore")
             ? undefined
             : json["profileCompletionScore"],
-        isAvailable: !(0, runtime_1.exists)(json, "isAvailable") ? undefined : json["isAvailable"],
-        availableStartDate: !(0, runtime_1.exists)(json, "availableStartDate")
+        isAvailable: !exists(json, "isAvailable") ? undefined : json["isAvailable"],
+        availableStartDate: !exists(json, "availableStartDate")
             ? undefined
             : new Date(json["availableStartDate"]),
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        updatedDate: !(0, runtime_1.exists)(json, "updatedDate")
+        updatedDate: !exists(json, "updatedDate")
             ? undefined
             : new Date(json["updatedDate"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function ConsultingProfileToJSON(value) {
+export function ConsultingProfileToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         jobSeekerId: value.jobSeekerId,
         consultingType: value.consultingType,
         expertiseAreas: value.expertiseAreas,
@@ -101,34 +97,21 @@ function ConsultingProfileToJSON(value) {
         availableStartDate: value.availableStartDate === undefined
             ? undefined
             : value.availableStartDate.toISOString(),
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
         updatedDate: value.updatedDate === undefined
             ? undefined
             : value.updatedDate.toISOString(),
-        id: value.id,
-        ownerId: value.ownerId,
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var ConsultingProfileConsultingTypeEnum;
+export var ConsultingProfileConsultingTypeEnum;
 (function (ConsultingProfileConsultingTypeEnum) {
     ConsultingProfileConsultingTypeEnum["INDEPENDENT_CONSULTANT"] = "independent_consultant";
     ConsultingProfileConsultingTypeEnum["AGENCY_OWNER"] = "agency_owner";
     ConsultingProfileConsultingTypeEnum["FREELANCER"] = "freelancer";
     ConsultingProfileConsultingTypeEnum["RESELLER_PARTNER"] = "reseller_partner";
-})(ConsultingProfileConsultingTypeEnum || (exports.ConsultingProfileConsultingTypeEnum = ConsultingProfileConsultingTypeEnum = {}));
+})(ConsultingProfileConsultingTypeEnum || (ConsultingProfileConsultingTypeEnum = {}));
 //# sourceMappingURL=ConsultingProfile.js.map

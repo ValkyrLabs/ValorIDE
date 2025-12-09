@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RunErrorTypeEnum = exports.RunStateEnum = void 0;
-exports.RunFromJSON = RunFromJSON;
-exports.RunToJSON = RunToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,78 +19,79 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-function RunFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+export function RunFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
-        executionId: !(0, runtime_1.exists)(json, "executionId") ? undefined : json["executionId"],
-        taskId: !(0, runtime_1.exists)(json, "taskId") ? undefined : json["taskId"],
-        execModuleId: !(0, runtime_1.exists)(json, "execModuleId")
+        ...DataObjectFromJSON(json),
+        executionId: !exists(json, "executionId") ? undefined : json["executionId"],
+        taskId: !exists(json, "taskId") ? undefined : json["taskId"],
+        execModuleId: !exists(json, "execModuleId")
             ? undefined
             : json["execModuleId"],
-        attempt: !(0, runtime_1.exists)(json, "attempt") ? undefined : json["attempt"],
-        state: !(0, runtime_1.exists)(json, "state") ? undefined : json["state"],
-        leaseUntil: !(0, runtime_1.exists)(json, "leaseUntil")
+        attempt: !exists(json, "attempt") ? undefined : json["attempt"],
+        state: !exists(json, "state") ? undefined : json["state"],
+        leaseUntil: !exists(json, "leaseUntil")
             ? undefined
             : new Date(json["leaseUntil"]),
-        leasedBy: !(0, runtime_1.exists)(json, "leasedBy") ? undefined : json["leasedBy"],
-        runnerId: !(0, runtime_1.exists)(json, "runnerId") ? undefined : json["runnerId"],
-        idempotencyKey: !(0, runtime_1.exists)(json, "idempotencyKey")
+        leasedBy: !exists(json, "leasedBy") ? undefined : json["leasedBy"],
+        runnerId: !exists(json, "runnerId") ? undefined : json["runnerId"],
+        idempotencyKey: !exists(json, "idempotencyKey")
             ? undefined
             : json["idempotencyKey"],
-        inputsHash: !(0, runtime_1.exists)(json, "inputsHash") ? undefined : json["inputsHash"],
-        configHash: !(0, runtime_1.exists)(json, "configHash") ? undefined : json["configHash"],
-        startedAt: !(0, runtime_1.exists)(json, "startedAt")
+        inputsHash: !exists(json, "inputsHash") ? undefined : json["inputsHash"],
+        configHash: !exists(json, "configHash") ? undefined : json["configHash"],
+        startedAt: !exists(json, "startedAt")
             ? undefined
             : new Date(json["startedAt"]),
-        finishedAt: !(0, runtime_1.exists)(json, "finishedAt")
+        finishedAt: !exists(json, "finishedAt")
             ? undefined
             : new Date(json["finishedAt"]),
-        heartbeatAt: !(0, runtime_1.exists)(json, "heartbeatAt")
+        heartbeatAt: !exists(json, "heartbeatAt")
             ? undefined
             : new Date(json["heartbeatAt"]),
-        outputs: !(0, runtime_1.exists)(json, "outputs") ? undefined : json["outputs"],
-        error: !(0, runtime_1.exists)(json, "error") ? undefined : json["error"],
-        errorType: !(0, runtime_1.exists)(json, "errorType") ? undefined : json["errorType"],
-        retryReadyAt: !(0, runtime_1.exists)(json, "retryReadyAt")
+        outputs: !exists(json, "outputs") ? undefined : json["outputs"],
+        error: !exists(json, "error") ? undefined : json["error"],
+        errorType: !exists(json, "errorType") ? undefined : json["errorType"],
+        retryReadyAt: !exists(json, "retryReadyAt")
             ? undefined
             : new Date(json["retryReadyAt"]),
-        durationMs: !(0, runtime_1.exists)(json, "durationMs") ? undefined : json["durationMs"],
-        costTokens: !(0, runtime_1.exists)(json, "costTokens") ? undefined : json["costTokens"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        durationMs: !exists(json, "durationMs") ? undefined : json["durationMs"],
+        costTokens: !exists(json, "costTokens") ? undefined : json["costTokens"],
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function RunToJSON(value) {
+export function RunToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         executionId: value.executionId,
         taskId: value.taskId,
         execModuleId: value.execModuleId,
@@ -124,27 +120,14 @@ function RunToJSON(value) {
             : value.retryReadyAt.toISOString(),
         durationMs: value.durationMs,
         costTokens: value.costTokens,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var RunStateEnum;
+export var RunStateEnum;
 (function (RunStateEnum) {
     RunStateEnum["PENDING"] = "pending";
     RunStateEnum["LEASED"] = "leased";
@@ -153,16 +136,16 @@ var RunStateEnum;
     RunStateEnum["FAILED"] = "failed";
     RunStateEnum["DLQ"] = "dlq";
     RunStateEnum["CANCELLED"] = "cancelled";
-})(RunStateEnum || (exports.RunStateEnum = RunStateEnum = {}));
+})(RunStateEnum || (RunStateEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var RunErrorTypeEnum;
+export var RunErrorTypeEnum;
 (function (RunErrorTypeEnum) {
     RunErrorTypeEnum["TRANSIENT"] = "transient";
     RunErrorTypeEnum["PERMANENT"] = "permanent";
     RunErrorTypeEnum["TIMEOUT"] = "timeout";
     RunErrorTypeEnum["CIRCUITOPEN"] = "circuit_open";
-})(RunErrorTypeEnum || (exports.RunErrorTypeEnum = RunErrorTypeEnum = {}));
+})(RunErrorTypeEnum || (RunErrorTypeEnum = {}));
 //# sourceMappingURL=Run.js.map

@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,9 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GoalFromJSON = GoalFromJSON;
-exports.GoalToJSON = GoalToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -23,87 +19,75 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function GoalFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { GoalDependencyFromJSON, GoalDependencyToJSON, KeyMetricFromJSON, KeyMetricToJSON, } from "./";
+export function GoalFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
-        strategicPriorityId: !(0, runtime_1.exists)(json, "strategicPriorityId")
+        ...DataObjectFromJSON(json),
+        strategicPriorityId: !exists(json, "strategicPriorityId")
             ? undefined
             : json["strategicPriorityId"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        keyMetrics: !(0, runtime_1.exists)(json, "keyMetrics")
+        name: !exists(json, "name") ? undefined : json["name"],
+        description: !exists(json, "description") ? undefined : json["description"],
+        keyMetrics: !exists(json, "keyMetrics")
             ? undefined
-            : json["keyMetrics"].map(_1.KeyMetricFromJSON),
-        goalDependencies: !(0, runtime_1.exists)(json, "goalDependencies")
+            : json["keyMetrics"].map(KeyMetricFromJSON),
+        goalDependencies: !exists(json, "goalDependencies")
             ? undefined
-            : json["goalDependencies"].map(_1.GoalDependencyFromJSON),
-        expectedOutcome: !(0, runtime_1.exists)(json, "expectedOutcome")
+            : json["goalDependencies"].map(GoalDependencyFromJSON),
+        expectedOutcome: !exists(json, "expectedOutcome")
             ? undefined
             : json["expectedOutcome"],
-        risks: !(0, runtime_1.exists)(json, "risks") ? undefined : json["risks"],
-        timeline: !(0, runtime_1.exists)(json, "timeline") ? undefined : json["timeline"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        risks: !exists(json, "risks") ? undefined : json["risks"],
+        timeline: !exists(json, "timeline") ? undefined : json["timeline"],
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function GoalToJSON(value) {
+export function GoalToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         strategicPriorityId: value.strategicPriorityId,
         name: value.name,
         description: value.description,
         keyMetrics: value.keyMetrics === undefined
             ? undefined
-            : value.keyMetrics.map(_1.KeyMetricToJSON),
+            : value.keyMetrics.map(KeyMetricToJSON),
         goalDependencies: value.goalDependencies === undefined
             ? undefined
-            : value.goalDependencies.map(_1.GoalDependencyToJSON),
+            : value.goalDependencies.map(GoalDependencyToJSON),
         expectedOutcome: value.expectedOutcome,
         risks: value.risks,
         timeline: value.timeline,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 //# sourceMappingURL=Goal.js.map

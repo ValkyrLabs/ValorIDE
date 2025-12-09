@@ -64,6 +64,13 @@ export const useMessageHandling = ({ messages, valorideAsk, clearChatInput, setT
                         break;
                 }
             }
+            else {
+                vscode.postMessage({
+                    type: "userMessage",
+                    text,
+                    images,
+                });
+            }
             clearChatInput();
             setTextAreaDisabled(true);
             setValorIDEAsk(undefined);

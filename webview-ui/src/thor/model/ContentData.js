@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ContentDataStatusEnum = exports.ContentDataCategoryEnum = exports.ContentDataDeliveryModeEnum = exports.ContentDataPriceTierEnum = exports.ContentDataContentTypeEnum = void 0;
-exports.ContentDataFromJSON = ContentDataFromJSON;
-exports.ContentDataToJSON = ContentDataToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,88 +19,85 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function ContentDataFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { ContentMediaLinkFromJSON, ContentMediaLinkToJSON, PrincipalFromJSON, PrincipalToJSON, } from "./";
+export function ContentDataFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
-        authorName: !(0, runtime_1.exists)(json, "authorName") ? undefined : json["authorName"],
-        title: !(0, runtime_1.exists)(json, "title") ? undefined : json["title"],
-        subtitle: !(0, runtime_1.exists)(json, "subtitle") ? undefined : json["subtitle"],
-        tags: !(0, runtime_1.exists)(json, "tags")
-            ? undefined
-            : json["tags"].map(_1.TagFromJSON),
-        fileName: !(0, runtime_1.exists)(json, "fileName") ? undefined : json["fileName"],
-        contentUrl: !(0, runtime_1.exists)(json, "contentUrl") ? undefined : json["contentUrl"],
-        contentData: !(0, runtime_1.exists)(json, "contentData") ? undefined : json["contentData"],
-        contentType: !(0, runtime_1.exists)(json, "contentType") ? undefined : json["contentType"],
-        brand: !(0, runtime_1.exists)(json, "brand") ? undefined : json["brand"],
-        targetAudience: !(0, runtime_1.exists)(json, "targetAudience")
+        ...DataObjectFromJSON(json),
+        authorName: !exists(json, "authorName") ? undefined : json["authorName"],
+        title: !exists(json, "title") ? undefined : json["title"],
+        subtitle: !exists(json, "subtitle") ? undefined : json["subtitle"],
+        tags: !exists(json, "tags") ? undefined : json["tags"],
+        fileName: !exists(json, "fileName") ? undefined : json["fileName"],
+        contentUrl: !exists(json, "contentUrl") ? undefined : json["contentUrl"],
+        contentData: !exists(json, "contentData") ? undefined : json["contentData"],
+        contentType: !exists(json, "contentType") ? undefined : json["contentType"],
+        brand: !exists(json, "brand") ? undefined : json["brand"],
+        targetAudience: !exists(json, "targetAudience")
             ? undefined
             : json["targetAudience"],
-        priceTier: !(0, runtime_1.exists)(json, "priceTier") ? undefined : json["priceTier"],
-        deliveryMode: !(0, runtime_1.exists)(json, "deliveryMode")
+        priceTier: !exists(json, "priceTier") ? undefined : json["priceTier"],
+        deliveryMode: !exists(json, "deliveryMode")
             ? undefined
             : json["deliveryMode"],
-        heroBenefit: !(0, runtime_1.exists)(json, "heroBenefit") ? undefined : json["heroBenefit"],
-        version: !(0, runtime_1.exists)(json, "version") ? undefined : json["version"],
-        metadata: !(0, runtime_1.exists)(json, "metadata") ? undefined : json["metadata"],
-        thumbnailImage: !(0, runtime_1.exists)(json, "thumbnailImage")
+        heroBenefit: !exists(json, "heroBenefit") ? undefined : json["heroBenefit"],
+        version: !exists(json, "version") ? undefined : json["version"],
+        metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+        thumbnailImage: !exists(json, "thumbnailImage")
             ? undefined
             : json["thumbnailImage"],
-        largeImage: !(0, runtime_1.exists)(json, "largeImage") ? undefined : json["largeImage"],
-        category: !(0, runtime_1.exists)(json, "category") ? undefined : json["category"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        releaseDate: !(0, runtime_1.exists)(json, "releaseDate")
+        largeImage: !exists(json, "largeImage") ? undefined : json["largeImage"],
+        category: !exists(json, "category") ? undefined : json["category"],
+        status: !exists(json, "status") ? undefined : json["status"],
+        releaseDate: !exists(json, "releaseDate")
             ? undefined
             : new Date(json["releaseDate"]),
-        contentMedia: !(0, runtime_1.exists)(json, "contentMedia")
+        contentMedia: !exists(json, "contentMedia")
             ? undefined
-            : json["contentMedia"].map(_1.ContentMediaLinkFromJSON),
-        author: !(0, runtime_1.exists)(json, "author")
+            : json["contentMedia"].map(ContentMediaLinkFromJSON),
+        author: !exists(json, "author")
             ? undefined
-            : (0, _1.PrincipalFromJSON)(json["author"]),
-        slug: !(0, runtime_1.exists)(json, "slug") ? undefined : json["slug"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+            : PrincipalFromJSON(json["author"]),
+        slug: !exists(json, "slug") ? undefined : json["slug"],
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function ContentDataToJSON(value) {
+export function ContentDataToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         authorName: value.authorName,
         title: value.title,
         subtitle: value.subtitle,
-        tags: value.tags === undefined
-            ? undefined
-            : value.tags.map(_1.TagToJSON),
+        tags: value.tags,
         fileName: value.fileName,
         contentUrl: value.contentUrl,
         contentData: value.contentData,
@@ -126,30 +118,17 @@ function ContentDataToJSON(value) {
             : value.releaseDate.toISOString(),
         contentMedia: value.contentMedia === undefined
             ? undefined
-            : value.contentMedia.map(_1.ContentMediaLinkToJSON),
-        author: (0, _1.PrincipalToJSON)(value.author),
+            : value.contentMedia.map(ContentMediaLinkToJSON),
+        author: PrincipalToJSON(value.author),
         slug: value.slug,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var ContentDataContentTypeEnum;
+export var ContentDataContentTypeEnum;
 (function (ContentDataContentTypeEnum) {
     ContentDataContentTypeEnum["PLAINTEXT"] = "plaintext";
     ContentDataContentTypeEnum["MARKDOWN"] = "markdown";
@@ -167,35 +146,35 @@ var ContentDataContentTypeEnum;
     ContentDataContentTypeEnum["DOCUMENT"] = "document";
     ContentDataContentTypeEnum["EBOOK"] = "ebook";
     ContentDataContentTypeEnum["FUNNEL"] = "funnel";
-})(ContentDataContentTypeEnum || (exports.ContentDataContentTypeEnum = ContentDataContentTypeEnum = {}));
+})(ContentDataContentTypeEnum || (ContentDataContentTypeEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var ContentDataPriceTierEnum;
+export var ContentDataPriceTierEnum;
 (function (ContentDataPriceTierEnum) {
     ContentDataPriceTierEnum["FREE"] = "free";
     ContentDataPriceTierEnum["LOW"] = "low";
     ContentDataPriceTierEnum["MEDIUM"] = "medium";
     ContentDataPriceTierEnum["HIGH"] = "high";
     ContentDataPriceTierEnum["PREMIUM"] = "premium";
-})(ContentDataPriceTierEnum || (exports.ContentDataPriceTierEnum = ContentDataPriceTierEnum = {}));
+})(ContentDataPriceTierEnum || (ContentDataPriceTierEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var ContentDataDeliveryModeEnum;
+export var ContentDataDeliveryModeEnum;
 (function (ContentDataDeliveryModeEnum) {
     ContentDataDeliveryModeEnum["DIGITAL"] = "digital";
     ContentDataDeliveryModeEnum["PHYSICAL"] = "physical";
     ContentDataDeliveryModeEnum["HYBRID"] = "hybrid";
     ContentDataDeliveryModeEnum["SERVICE"] = "service";
-})(ContentDataDeliveryModeEnum || (exports.ContentDataDeliveryModeEnum = ContentDataDeliveryModeEnum = {}));
+})(ContentDataDeliveryModeEnum || (ContentDataDeliveryModeEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var ContentDataCategoryEnum;
+export var ContentDataCategoryEnum;
 (function (ContentDataCategoryEnum) {
     ContentDataCategoryEnum["CODEGEN"] = "codegen";
     ContentDataCategoryEnum["SLIDES"] = "slides";
@@ -221,16 +200,16 @@ var ContentDataCategoryEnum;
     ContentDataCategoryEnum["WEBINAR"] = "webinar";
     ContentDataCategoryEnum["COURSE"] = "course";
     ContentDataCategoryEnum["OTHER"] = "other";
-})(ContentDataCategoryEnum || (exports.ContentDataCategoryEnum = ContentDataCategoryEnum = {}));
+})(ContentDataCategoryEnum || (ContentDataCategoryEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var ContentDataStatusEnum;
+export var ContentDataStatusEnum;
 (function (ContentDataStatusEnum) {
     ContentDataStatusEnum["HOLDING"] = "holding";
     ContentDataStatusEnum["EDITING"] = "editing";
     ContentDataStatusEnum["PUBLISHED"] = "published";
     ContentDataStatusEnum["DRAFT"] = "draft";
-})(ContentDataStatusEnum || (exports.ContentDataStatusEnum = ContentDataStatusEnum = {}));
+})(ContentDataStatusEnum || (ContentDataStatusEnum = {}));
 //# sourceMappingURL=ContentData.js.map

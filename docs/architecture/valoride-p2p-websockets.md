@@ -44,6 +44,7 @@ All messages sent over the websocket will adhere to a standard envelope structur
 This message type is used to "echo" the response from the local LLM to other peers. It allows other instances to see the conversation progress.
 
 **Payload Structure:**
+
 ```json
 {
   "taskId": "<string>",
@@ -54,6 +55,7 @@ This message type is used to "echo" the response from the local LLM to other pee
 ```
 
 **Flow:**
+
 1. User sends a prompt to the local ValorIDE.
 2. The LLM processes it and generates a response.
 3. After processing, the `ValkyraiLlmService` (or equivalent) broadcasts an `llm_response` message to all peers.
@@ -63,6 +65,7 @@ This message type is used to "echo" the response from the local LLM to other pee
 This message type is used to send a command to another ValorIDE instance, which will be treated as if it were user input. This is the core of the remote control functionality.
 
 **Payload Structure:**
+
 ```json
 {
   "taskId": "<string|null>",
@@ -70,11 +73,13 @@ This message type is used to send a command to another ValorIDE instance, which 
   "args": {}
 }
 ```
+
 - `taskId`: If specified, the command is executed within the context of an existing task. If `null`, a new task is created.
 - `command`: The text prompt to be injected into the recipient's chat view.
 - `args`: (Reserved for future use) Additional arguments or context for the command.
 
 **Flow:**
+
 1. The sending ValorIDE instance (e.g., via an LLM tool call) constructs a `user_command` message.
 2. It sends this message to a specific `targetId`.
 3. The recipient's `CommunicationService` receives the message.

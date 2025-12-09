@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WebsocketMessageTypeEnum = void 0;
-exports.WebsocketMessageFromJSON = WebsocketMessageFromJSON;
-exports.WebsocketMessageToJSON = WebsocketMessageToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,78 +19,66 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function WebsocketMessageFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { PrincipalFromJSON, PrincipalToJSON } from "./";
+export function WebsocketMessageFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
-        websocketSessionId: !(0, runtime_1.exists)(json, "websocketSessionId")
+        ...DataObjectFromJSON(json),
+        websocketSessionId: !exists(json, "websocketSessionId")
             ? undefined
             : json["websocketSessionId"],
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        payload: !(0, runtime_1.exists)(json, "payload") ? undefined : json["payload"],
-        time: !(0, runtime_1.exists)(json, "time") ? undefined : json["time"],
-        user: !(0, runtime_1.exists)(json, "user") ? undefined : (0, _1.PrincipalFromJSON)(json["user"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        type: !exists(json, "type") ? undefined : json["type"],
+        payload: !exists(json, "payload") ? undefined : json["payload"],
+        time: !exists(json, "time") ? undefined : json["time"],
+        user: !exists(json, "user") ? undefined : PrincipalFromJSON(json["user"]),
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function WebsocketMessageToJSON(value) {
+export function WebsocketMessageToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         websocketSessionId: value.websocketSessionId,
         type: value.type,
         payload: value.payload,
         time: value.time,
-        user: (0, _1.PrincipalToJSON)(value.user),
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        user: PrincipalToJSON(value.user),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var WebsocketMessageTypeEnum;
+export var WebsocketMessageTypeEnum;
 (function (WebsocketMessageTypeEnum) {
     WebsocketMessageTypeEnum["COMMAND"] = "command";
     WebsocketMessageTypeEnum["SERVICE"] = "service";
@@ -110,5 +93,5 @@ var WebsocketMessageTypeEnum;
     WebsocketMessageTypeEnum["ERROR"] = "error";
     WebsocketMessageTypeEnum["INFO"] = "info";
     WebsocketMessageTypeEnum["DEBUG"] = "debug";
-})(WebsocketMessageTypeEnum || (exports.WebsocketMessageTypeEnum = WebsocketMessageTypeEnum = {}));
+})(WebsocketMessageTypeEnum || (WebsocketMessageTypeEnum = {}));
 //# sourceMappingURL=WebsocketMessage.js.map

@@ -18,6 +18,7 @@ import {
 } from "@integrations/misc/link-preview";
 import { openImage } from "@integrations/misc/open-file";
 import { handleFileServiceRequest } from "./file";
+import { buildOpenApiHeaders } from "./openApiImport";
 import { selectImages } from "@integrations/misc/process-images";
 import { getTheme } from "@integrations/theme/getTheme";
 import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
@@ -509,6 +510,13 @@ export class Controller {
       case "askResponse":
         this.task?.handleWebviewAskResponse(
           message.askResponse!,
+          message.text,
+          message.images,
+        );
+        break;
+      case "userMessage":
+        this.task?.handleWebviewAskResponse(
+          "messageResponse",
           message.text,
           message.images,
         );
@@ -1500,7 +1508,12 @@ export class Controller {
       }
       case "uploadOpenAPISpec": {
         try {
-          const { filename, fileContent, fileSize } = message;
+          const {
+            filename,
+            fileContent,
+            fileSize,
+            jwtToken: providedJwt,
+          } = message;
 
           if (!filename || !fileContent) {
             throw new Error("Missing filename or file content");
@@ -1599,13 +1612,9 @@ export class Controller {
           });
 
           // Get JWT token for ThorAPI call
-          const jwtToken = await getSecret(this.context, "jwtToken");
-          const headers: any = {
-            "Content-Type": "application/json",
-          };
-          if (jwtToken) {
-            headers["Authorization"] = `Bearer ${jwtToken}`;
-          }
+          const jwtToken =
+            providedJwt || (await getSecret(this.context, "jwtToken"));
+          const headers = buildOpenApiHeaders(filename, jwtToken);
 
           // Call ThorAPI /v1/thorapi/specs/import endpoint
           const apiBaseUrl = getValkyraiBasePath();

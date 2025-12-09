@@ -21,8 +21,8 @@ import SystemAlerts from "@/components/SystemAlerts";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useCommunicationService } from "@/context/CommunicationServiceContext";
 import UserPreferences from "./UserPreferences";
-import BuyCredits from "../BuyCredits";
-import { storeJwtToken, writeStoredPrincipal } from "@/utils/accessControl";
+import BuyCredits from "@/components/BuyCredits";
+import { storeJwtToken, useAccessControl, writeStoredPrincipal, readStoredPrincipal, } from "@/utils/accessControl";
 const AccountView = ({ onDone }) => {
     const { userInfo, authenticatedUser, isLoggedIn, jwtToken } = useExtensionState();
     // Read live messages once at top-level to respect Hooks rules
@@ -34,9 +34,12 @@ const AccountView = ({ onDone }) => {
     // Also consider presence of a stored JWT to avoid timing gaps
     const hasStoredJwt = useMemo(() => {
         try {
-            return Boolean(sessionStorage.getItem("jwtToken") ||
+            const storedPrincipal = readStoredPrincipal();
+            const storedToken = sessionStorage.getItem("jwtToken") ||
                 localStorage.getItem("jwtToken") ||
-                localStorage.getItem("authToken"));
+                localStorage.getItem("authToken");
+            // Both principal AND token must exist for auth to be valid
+            return Boolean(storedPrincipal && storedToken);
         }
         catch {
             return false;
@@ -56,8 +59,15 @@ const AccountView = ({ onDone }) => {
             setActiveTab("login");
         }
     }, [authed]);
-    const { data: balanceData, isLoading: isBalanceLoading, refetch: refetchBalance, } = useGetAccountBalanceQuery(authenticatedUser?.id ?? "", {
-        skip: !authed || !authenticatedUser?.id,
+    const { principal: resolvedPrincipal } = useAccessControl(authenticatedUser || userInfo);
+    const principalId = resolvedPrincipal?.id;
+    const accountId = typeof principalId === "string"
+        ? principalId
+        : principalId !== undefined && principalId !== null
+            ? String(principalId)
+            : "";
+    const { data: balanceData, isLoading: isBalanceLoading, refetch: refetchBalance, } = useGetAccountBalanceQuery(accountId, {
+        skip: !authed || !accountId,
     });
     const { data: usageData, isLoading: isUsageLoading, refetch: refetchUsage, } = useGetUsageTransactionsQuery(undefined, {
         // Use broader auth signal so queries mount as soon as a token exists
@@ -227,7 +237,11 @@ const AccountView = ({ onDone }) => {
                                                         refetchUsage();
                                                         refetchPayments();
                                                     }
-                                                }, children: _jsx(FaRecycle, {}) })] })) }), _jsxs("div", { className: "w-full", children: [_jsx(VSCodeButtonLink, { href: "https://app.valkyrlabs.com/v1/credits/#buy", className: "w-full", children: "Buy Credits" }), _jsx(BuyCredits, {})] })] }), _jsx(VSCodeDivider, { className: "mt-6 mb-3 w-full" }), _jsx("div", { className: "flex-grow flex flex-col min-h-0 pb-[0px]", children: _jsx(CreditsHistoryTable, { isLoading: loading, usageData: usageData || [], paymentsData: paymentsData || [] }) })] }) })) : (_jsx(_Fragment, { children: "nothing selected" }))] }));
+                                                }, children: _jsx(FaRecycle, {}) })] })) }), _jsx("div", { className: "w-full", children: _jsx(BuyCredits, { authenticatedPrincipal: resolvedPrincipal || authenticatedUser || userInfo, onPurchaseSuccess: () => {
+                                            refetchBalance();
+                                            refetchUsage();
+                                            refetchPayments();
+                                        }, className: "w-full" }) })] }), _jsx(VSCodeDivider, { className: "mt-6 mb-3 w-full" }), _jsx("div", { className: "flex-grow flex flex-col min-h-0 pb-[0px]", children: _jsx(CreditsHistoryTable, { isLoading: loading, usageData: usageData || [], paymentsData: paymentsData || [] }) })] }) })) : (_jsx(_Fragment, { children: "nothing selected" }))] }));
 };
 export default memo(AccountView);
 //# sourceMappingURL=AccountView.js.map

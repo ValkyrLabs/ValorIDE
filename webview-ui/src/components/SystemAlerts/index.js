@@ -7,13 +7,26 @@ import { useGetAccountBalanceQuery, isInsufficientFunds, } from "@/services/cred
 import { getApiMetrics } from "@shared/getApiMetrics";
 import BuyCredits from "@/components/BuyCredits";
 const SystemAlerts = () => {
-    const { valorideMessages, jwtToken, advancedSettings, authenticatedUser } = useExtensionState();
+    const { valorideMessages, jwtToken, advancedSettings, authenticatedUser, userInfo, } = useExtensionState();
     const [alerts, setAlerts] = useState([]);
     const [dismissedAlerts, setDismissedAlerts] = useState(new Set());
     const [showBuyCreditsModal, setShowBuyCreditsModal] = useState(false);
+    const accountId = useMemo(() => {
+        const rawId = authenticatedUser?.id ?? userInfo?.id;
+        if (rawId === null || rawId === undefined) {
+            return "";
+        }
+        try {
+            return String(rawId).trim();
+        }
+        catch {
+            return "";
+        }
+    }, [authenticatedUser?.id, userInfo?.id]);
+    const shouldFetchBalance = Boolean(jwtToken && accountId);
     // Get balance data for budget alerts using the new creditsApi
-    const { data: balanceData } = useGetAccountBalanceQuery(authenticatedUser?.id ?? "", {
-        skip: !jwtToken || !authenticatedUser?.id,
+    const { data: balanceData } = useGetAccountBalanceQuery(accountId, {
+        skip: !shouldFetchBalance,
     });
     // Calculate current API metrics
     const apiMetrics = useMemo(() => getApiMetrics(valorideMessages || []), [valorideMessages]);

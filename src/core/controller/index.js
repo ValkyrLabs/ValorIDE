@@ -13,6 +13,7 @@ import { extractLocalZip, isZipBuffer } from "@utils/zipExtractor";
 import { fetchOpenGraphData, isImageUrl, } from "@integrations/misc/link-preview";
 import { openImage } from "@integrations/misc/open-file";
 import { handleFileServiceRequest } from "./file";
+import { buildOpenApiHeaders } from "./openApiImport";
 import { selectImages } from "@integrations/misc/process-images";
 import { getTheme } from "@integrations/theme/getTheme";
 import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
@@ -355,6 +356,9 @@ export class Controller {
                 break;
             case "askResponse":
                 this.task?.handleWebviewAskResponse(message.askResponse, message.text, message.images);
+                break;
+            case "userMessage":
+                this.task?.handleWebviewAskResponse("messageResponse", message.text, message.images);
                 break;
             case "didShowAnnouncement":
                 await updateGlobalState(this.context, "lastShownAnnouncementId", this.latestAnnouncementId);
@@ -1171,7 +1175,7 @@ export class Controller {
             }
             case "uploadOpenAPISpec": {
                 try {
-                    const { filename, fileContent, fileSize } = message;
+                    const { filename, fileContent, fileSize, jwtToken: providedJwt, } = message;
                     if (!filename || !fileContent) {
                         throw new Error("Missing filename or file content");
                     }
@@ -1240,13 +1244,8 @@ export class Controller {
                         message: `Successfully processed ${filename}. OpenAPI spec is ready for import.`,
                     });
                     // Get JWT token for ThorAPI call
-                    const jwtToken = await getSecret(this.context, "jwtToken");
-                    const headers = {
-                        "Content-Type": "application/json",
-                    };
-                    if (jwtToken) {
-                        headers["Authorization"] = `Bearer ${jwtToken}`;
-                    }
+                    const jwtToken = providedJwt || (await getSecret(this.context, "jwtToken"));
+                    const headers = buildOpenApiHeaders(filename, jwtToken);
                     // Call ThorAPI /v1/thorapi/specs/import endpoint
                     const apiBaseUrl = getValkyraiBasePath();
                     const importUrl = `${apiBaseUrl}/thorapi/specs/import`;

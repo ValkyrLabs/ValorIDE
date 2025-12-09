@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.NoteEntityTypeEnum = void 0;
-exports.NoteFromJSON = NoteFromJSON;
-exports.NoteToJSON = NoteToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,83 +19,71 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-function NoteFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+export function NoteFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         content: json["content"],
-        noteId: !(0, runtime_1.exists)(json, "noteId") ? undefined : json["noteId"],
-        associatedEntityId: !(0, runtime_1.exists)(json, "associatedEntityId")
+        noteId: !exists(json, "noteId") ? undefined : json["noteId"],
+        associatedEntityId: !exists(json, "associatedEntityId")
             ? undefined
             : json["associatedEntityId"],
-        entityType: !(0, runtime_1.exists)(json, "entityType") ? undefined : json["entityType"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        entityType: !exists(json, "entityType") ? undefined : json["entityType"],
+        name: !exists(json, "name") ? undefined : json["name"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        createdBy: !(0, runtime_1.exists)(json, "createdBy") ? undefined : json["createdBy"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        createdBy: !exists(json, "createdBy") ? undefined : json["createdBy"],
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function NoteToJSON(value) {
+export function NoteToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         content: value.content,
         noteId: value.noteId,
         associatedEntityId: value.associatedEntityId,
         entityType: value.entityType,
         name: value.name,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
         createdBy: value.createdBy,
-        id: value.id,
-        ownerId: value.ownerId,
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var NoteEntityTypeEnum;
+export var NoteEntityTypeEnum;
 (function (NoteEntityTypeEnum) {
     NoteEntityTypeEnum["CUSTOMER"] = "customer";
     NoteEntityTypeEnum["OPPORTUNITY"] = "opportunity";
     NoteEntityTypeEnum["CONTACT"] = "contact";
     NoteEntityTypeEnum["SALESACTIVITY"] = "sales-activity";
-})(NoteEntityTypeEnum || (exports.NoteEntityTypeEnum = NoteEntityTypeEnum = {}));
+})(NoteEntityTypeEnum || (NoteEntityTypeEnum = {}));
 //# sourceMappingURL=Note.js.map

@@ -146,6 +146,7 @@ import { ErrorHandlingUtils } from "./ErrorHandlingUtils";
 import { ToolApprovalManager } from "./ToolApprovalManager";
 import { ToolExecutionEngine } from "./ToolExecutionEngine";
 import { getStatusBarService } from "@services/StatusBarService";
+import { buildTaskSummary } from "./summary/TaskSummaryBuilder";
 
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -217,6 +218,8 @@ export class Task {
     | Anthropic.ImageBlockParam
   )[] = [];
   private userMessageContentReady = false;
+  private pendingUserMessages: { text?: string; images?: string[] }[] = [];
+  private awaitingAskResponse = false;
   private didRejectTool = false;
   private didAlreadyUseTool = false;
   private didCompleteReadingStream = false;
@@ -1024,7 +1027,12 @@ export class Task {
     type: ValorIDEAsk,
     text?: string,
     partial?: boolean,
-    options?: { changesSummary?: ValorIDEChangesSummary },
+    options?: {
+      changesSummary?: ValorIDEChangesSummary;
+      summaryMarkdown?: string;
+      summaryTitle?: string;
+      summaryCompletedAt?: string;
+    },
   ): Promise<{
     response: ValorIDEAskResponse;
     text?: string;
@@ -1035,8 +1043,16 @@ export class Task {
       throw new Error("ValorIDE instance aborted");
     }
     const changesSummary = options?.changesSummary;
+    const summaryMarkdown = options?.summaryMarkdown;
+    const summaryTitle = options?.summaryTitle;
+    const summaryCompletedAt = options?.summaryCompletedAt;
     const shouldUpdateChangesSummary = options
       ? Object.prototype.hasOwnProperty.call(options, "changesSummary")
+      : false;
+    const shouldUpdateSummary = options
+      ? ["summaryMarkdown", "summaryTitle", "summaryCompletedAt"].some((key) =>
+          Object.prototype.hasOwnProperty.call(options, key),
+        )
       : false;
     let askTs: number;
     if (partial !== undefined) {
@@ -1053,6 +1069,11 @@ export class Task {
           lastMessage.partial = partial;
           if (shouldUpdateChangesSummary) {
             lastMessage.changesSummary = changesSummary;
+          }
+          if (shouldUpdateSummary) {
+            lastMessage.summaryMarkdown = summaryMarkdown;
+            lastMessage.summaryTitle = summaryTitle;
+            lastMessage.summaryCompletedAt = summaryCompletedAt;
           }
           // todo be more efficient about saving and posting only new data or one whole message at a time so ignore partial for saves, and only post parts of partial message instead of whole array in new listener
           // await this.saveValorIDEMessagesAndUpdateHistory()
@@ -1078,6 +1099,11 @@ export class Task {
           };
           if (shouldUpdateChangesSummary) {
             messageToAdd.changesSummary = changesSummary;
+          }
+          if (shouldUpdateSummary) {
+            messageToAdd.summaryMarkdown = summaryMarkdown;
+            messageToAdd.summaryTitle = summaryTitle;
+            messageToAdd.summaryCompletedAt = summaryCompletedAt;
           }
           await this.addToValorIDEMessages(messageToAdd);
           await this.postStateToWebview();
@@ -1105,6 +1131,11 @@ export class Task {
           if (shouldUpdateChangesSummary) {
             lastMessage.changesSummary = changesSummary;
           }
+          if (shouldUpdateSummary) {
+            lastMessage.summaryMarkdown = summaryMarkdown;
+            lastMessage.summaryTitle = summaryTitle;
+            lastMessage.summaryCompletedAt = summaryCompletedAt;
+          }
           await this.saveValorIDEMessagesAndUpdateHistory();
           // await this.postStateToWebview()
           await this.postMessageToWebview({
@@ -1127,6 +1158,11 @@ export class Task {
           if (shouldUpdateChangesSummary) {
             messageToAdd.changesSummary = changesSummary;
           }
+          if (shouldUpdateSummary) {
+            messageToAdd.summaryMarkdown = summaryMarkdown;
+            messageToAdd.summaryTitle = summaryTitle;
+            messageToAdd.summaryCompletedAt = summaryCompletedAt;
+          }
           await this.addToValorIDEMessages(messageToAdd);
           await this.postStateToWebview();
         }
@@ -1148,26 +1184,36 @@ export class Task {
       if (shouldUpdateChangesSummary) {
         messageToAdd.changesSummary = changesSummary;
       }
+      if (shouldUpdateSummary) {
+        messageToAdd.summaryMarkdown = summaryMarkdown;
+        messageToAdd.summaryTitle = summaryTitle;
+        messageToAdd.summaryCompletedAt = summaryCompletedAt;
+      }
       await this.addToValorIDEMessages(messageToAdd);
       await this.postStateToWebview();
     }
 
-    await pWaitFor(
-      () => this.askResponse !== undefined || this.lastMessageTs !== askTs,
-      { interval: 100 },
-    );
-    if (this.lastMessageTs !== askTs) {
-      throw new Error("Current ask promise was ignored"); // could happen if we send multiple asks in a row i.e. with command_output. It's important that when we know an ask could fail, it is handled gracefully
+    this.awaitingAskResponse = true;
+    try {
+      await pWaitFor(
+        () => this.askResponse !== undefined || this.lastMessageTs !== askTs,
+        { interval: 100 },
+      );
+      if (this.lastMessageTs !== askTs) {
+        throw new Error("Current ask promise was ignored"); // could happen if we send multiple asks in a row i.e. with command_output. It's important that when we know an ask could fail, it is handled gracefully
+      }
+      const result = {
+        response: this.askResponse!,
+        text: this.askResponseText,
+        images: this.askResponseImages,
+      };
+      this.askResponse = undefined;
+      this.askResponseText = undefined;
+      this.askResponseImages = undefined;
+      return result;
+    } finally {
+      this.awaitingAskResponse = false;
     }
-    const result = {
-      response: this.askResponse!,
-      text: this.askResponseText,
-      images: this.askResponseImages,
-    };
-    this.askResponse = undefined;
-    this.askResponseText = undefined;
-    this.askResponseImages = undefined;
-    return result;
   }
 
   async handleWebviewAskResponse(
@@ -1175,6 +1221,24 @@ export class Task {
     text?: string,
     images?: string[],
   ) {
+    const hasPendingAsk = this.awaitingAskResponse;
+    const normalizedText = text?.trim();
+    const hasContent =
+      (normalizedText && normalizedText.length > 0) ||
+      (images && images.length > 0);
+
+    if (!hasPendingAsk) {
+      // Treat unsolicited user input as inline feedback to be applied on the next loop
+      if (askResponse === "messageResponse" && hasContent) {
+        await this.say("user_feedback", normalizedText, images);
+        this.pendingUserMessages.push({
+          text: normalizedText,
+          images,
+        });
+      }
+      return;
+    }
+
     this.askResponse = askResponse;
     this.askResponseText = text;
     this.askResponseImages = images;
@@ -4493,6 +4557,22 @@ export class Task {
             let lastCompletionChangesSummary:
               | ValorIDEChangesSummary
               | undefined;
+            const summaryTitle =
+              this.valorideMessages.find((m) => m.say === "task")?.text ||
+              this.valorideMessages[0]?.text ||
+              "Task";
+            const summaryCompletedAt = new Date().toISOString();
+            const buildSummaryMarkdown = (
+              changesSummary?: ValorIDEChangesSummary,
+            ) =>
+              buildTaskSummary({
+                taskId: this.taskId,
+                title: summaryTitle,
+                status: "completed",
+                resultText: result,
+                changesSummary,
+                completedAt: summaryCompletedAt,
+              });
 
             const addNewChangesFlagToLastCompletionResultMessage =
               async (): Promise<ValorIDEChangesSummary | undefined> => {
@@ -4659,12 +4739,39 @@ export class Task {
                 }
 
                 // we already sent completion_result says, an empty string asks relinquishes control over button and field
+                const summaryMarkdown = buildSummaryMarkdown(
+                  lastCompletionChangesSummary,
+                );
+                const lastCompletionResultMessage = findLast(
+                  this.valorideMessages,
+                  (m) => m.say === "completion_result",
+                );
+                if (lastCompletionResultMessage) {
+                  lastCompletionResultMessage.summaryMarkdown = summaryMarkdown;
+                  lastCompletionResultMessage.summaryTitle = summaryTitle;
+                  lastCompletionResultMessage.summaryCompletedAt =
+                    summaryCompletedAt;
+                  await this.saveValorIDEMessagesAndUpdateHistory();
+                  await this.postMessageToWebview({
+                    type: "partialMessage",
+                    partialMessage: lastCompletionResultMessage,
+                  });
+                }
                 const { response, text, images } = await this.ask(
                   "completion_result",
                   "",
                   false,
-                  { changesSummary: lastCompletionChangesSummary },
+                  {
+                    changesSummary: lastCompletionChangesSummary,
+                    summaryMarkdown,
+                    summaryTitle,
+                    summaryCompletedAt,
+                  },
                 );
+                // Halt the API Request spinner after task completion
+                getStatusBarService().update({
+                  status: "idle",
+                });
                 if (response === "yesButtonClicked") {
                   // Submit completed task to ContentData
                   try {
@@ -4696,7 +4803,7 @@ export class Task {
                   | Anthropic.TextBlockParam
                   | Anthropic.ImageBlockParam
                 )[] = [];
-                
+
                 // Preserve the original completion result markdown
                 if (result) {
                   toolResults.push({
@@ -4704,7 +4811,7 @@ export class Task {
                     text: result,
                   });
                 }
-                
+
                 if (commandResult) {
                   if (typeof commandResult === "string") {
                     toolResults.push({
@@ -4791,6 +4898,18 @@ export class Task {
           this.chatSettings.mode,
         );
       } catch {}
+    }
+
+    if (this.pendingUserMessages.length > 0) {
+      const queuedMessages = this.pendingUserMessages.splice(0);
+      queuedMessages.forEach(({ text, images }) => {
+        if (text && text.trim().length > 0) {
+          userContent.push({ type: "text", text: text.trim() });
+        }
+        if (images && images.length > 0) {
+          userContent.push(...formatResponse.imageBlocks(images));
+        }
+      });
     }
 
     if (this.consecutiveMistakeCount >= 3) {

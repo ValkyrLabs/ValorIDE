@@ -20,7 +20,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -36,9 +36,6 @@ import {
   Principal,
   PrincipalFromJSON,
   PrincipalToJSON,
-  Tag,
-  TagFromJSON,
-  TagToJSON,
 } from "./";
 
 // thorapi
@@ -69,10 +66,10 @@ export type ContentData = DataObject & {
   subtitle?: string;
   /**
    * comma separated list of tags
-   * @type {Array<Tag>}
+   * @type {string}
    * @memberof ContentData
    */
-  tags?: Array<Tag>;
+  tags?: string;
   /**
    *
    * @type {string}
@@ -192,49 +189,55 @@ export type ContentData = DataObject & {
    * @type {string}
    * @memberof ContentData
    */
-  id?: string;
+  readonly id?: string;
   /**
    * UUID of owner of the object in the system
    * @type {string}
    * @memberof ContentData
    */
-  ownerId?: string;
+  readonly ownerId?: string;
   /**
    * Date of object creation
    * @type {Date}
    * @memberof ContentData
    */
-  createdDate?: Date;
+  readonly createdDate?: Date;
   /**
    * Data, including hash of the key(s) used to encrypt this record.
    * @type {string}
    * @memberof ContentData
    */
-  keyHash?: string;
+  readonly keyHash?: string;
   /**
    * Last user to access object
    * @type {string}
    * @memberof ContentData
    */
-  lastAccessedById?: string;
+  readonly lastAccessedById?: string;
   /**
    * Timestamp of last access of object
    * @type {Date}
    * @memberof ContentData
    */
-  lastAccessedDate?: Date;
+  readonly lastAccessedDate?: Date;
   /**
    * Unique identifier for user who last modifed the object in the system
    * @type {string}
    * @memberof ContentData
    */
-  lastModifiedById?: string;
+  readonly lastModifiedById?: string;
   /**
    * Date of last object modification
    * @type {Date}
    * @memberof ContentData
    */
-  lastModifiedDate?: Date;
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof ContentData
+   */
+  trashed?: boolean;
 };
 
 export function ContentDataFromJSON(json: any): ContentData {
@@ -243,9 +246,7 @@ export function ContentDataFromJSON(json: any): ContentData {
     authorName: !exists(json, "authorName") ? undefined : json["authorName"],
     title: !exists(json, "title") ? undefined : json["title"],
     subtitle: !exists(json, "subtitle") ? undefined : json["subtitle"],
-    tags: !exists(json, "tags")
-      ? undefined
-      : (json["tags"] as Array<any>).map(TagFromJSON),
+    tags: !exists(json, "tags") ? undefined : json["tags"],
     fileName: !exists(json, "fileName") ? undefined : json["fileName"],
     contentUrl: !exists(json, "contentUrl") ? undefined : json["contentUrl"],
     contentData: !exists(json, "contentData") ? undefined : json["contentData"],
@@ -295,6 +296,7 @@ export function ContentDataFromJSON(json: any): ContentData {
     lastModifiedDate: !exists(json, "lastModifiedDate")
       ? undefined
       : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
   };
 }
 
@@ -307,10 +309,7 @@ export function ContentDataToJSON(value?: ContentData): any {
     authorName: value.authorName,
     title: value.title,
     subtitle: value.subtitle,
-    tags:
-      value.tags === undefined
-        ? undefined
-        : (value.tags as Array<any>).map(TagToJSON),
+    tags: value.tags,
     fileName: value.fileName,
     contentUrl: value.contentUrl,
     contentData: value.contentData,
@@ -336,23 +335,7 @@ export function ContentDataToJSON(value?: ContentData): any {
         : (value.contentMedia as Array<any>).map(ContentMediaLinkToJSON),
     author: PrincipalToJSON(value.author),
     slug: value.slug,
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
+    trashed: value.trashed,
   };
 }
 

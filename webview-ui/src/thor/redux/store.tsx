@@ -60,6 +60,8 @@ import { ChatResponseService } from "./services/ChatResponseService";
 import { CircuitBreakerStateService } from "./services/CircuitBreakerStateService";
 import { CompleteUploadRequestService } from "./services/CompleteUploadRequestService";
 import { CompleteUploadRequestPartsInnerService } from "./services/CompleteUploadRequestPartsInnerService";
+import { ConfirmPasswordResetRequestService } from "./services/ConfirmPasswordResetRequestService";
+import { ConfirmPasswordResetResponseService } from "./services/ConfirmPasswordResetResponseService";
 import { ConsultingProfileService } from "./services/ConsultingProfileService";
 import { ContentDataService } from "./services/ContentDataService";
 import { ContentMediaLinkService } from "./services/ContentMediaLinkService";
@@ -92,8 +94,11 @@ import { GoalService } from "./services/GoalService";
 import { GoalDependencyService } from "./services/GoalDependencyService";
 import { GrantPermissionRequestService } from "./services/GrantPermissionRequestService";
 import { HostInstanceService } from "./services/HostInstanceService";
+import { IdempotencyKeyService } from "./services/IdempotencyKeyService";
 import { InitUploadRequestService } from "./services/InitUploadRequestService";
 import { InitUploadResponseService } from "./services/InitUploadResponseService";
+import { InitiateTwoFactorRequestService } from "./services/InitiateTwoFactorRequestService";
+import { InitiateTwoFactorResponseService } from "./services/InitiateTwoFactorResponseService";
 import { IntegrationAccountService } from "./services/IntegrationAccountService";
 import { InvoiceService } from "./services/InvoiceService";
 import { InvokeMcpToolRequestService } from "./services/InvokeMcpToolRequestService";
@@ -107,6 +112,9 @@ import { LegalPrecedentService } from "./services/LegalPrecedentService";
 import { LineItemService } from "./services/LineItemService";
 import { LlmDetailsService } from "./services/LlmDetailsService";
 import { LoginService } from "./services/LoginService";
+import { LoginAuditService } from "./services/LoginAuditService";
+import { LoginRequestService } from "./services/LoginRequestService";
+import { LoginResponseService } from "./services/LoginResponseService";
 import { LogoutService } from "./services/LogoutService";
 import { McpService } from "./services/McpService";
 import { McpContentService } from "./services/McpContentService";
@@ -144,8 +152,12 @@ import { OasServerService } from "./services/OasServerService";
 import { OpportunityService } from "./services/OpportunityService";
 import { OrderFulfillmentTaskService } from "./services/OrderFulfillmentTaskService";
 import { OrganizationService } from "./services/OrganizationService";
+import { PasswordResetTokenService } from "./services/PasswordResetTokenService";
 import { PaymentTransactionService } from "./services/PaymentTransactionService";
 import { PersistentLoginService } from "./services/PersistentLoginService";
+import { PhoneVerificationService } from "./services/PhoneVerificationService";
+import { PhoneVerificationRequestService } from "./services/PhoneVerificationRequestService";
+import { PhoneVerificationResponseService } from "./services/PhoneVerificationResponseService";
 import { PivotTableService } from "./services/PivotTableService";
 import { PresignRequestService } from "./services/PresignRequestService";
 import { PresignResponseService } from "./services/PresignResponseService";
@@ -156,9 +168,6 @@ import { ProductDeliveryConfigService } from "./services/ProductDeliveryConfigSe
 import { ProductFeatureService } from "./services/ProductFeatureService";
 import { ProductFunnelWizardService } from "./services/ProductFunnelWizardService";
 import { ProductLandingPageService } from "./services/ProductLandingPageService";
-import { PromptService } from "./services/PromptService";
-import { PromptRatingService } from "./services/PromptRatingService";
-import { PromptSelectionBroadcastService } from "./services/PromptSelectionBroadcastService";
 import { PtgService } from "./services/PtgService";
 import { PtgRefService } from "./services/PtgRefService";
 import { PublishFunnel200ResponseService } from "./services/PublishFunnel200ResponseService";
@@ -168,6 +177,8 @@ import { QuotaService } from "./services/QuotaService";
 import { RatingService } from "./services/RatingService";
 import { ReactionService } from "./services/ReactionService";
 import { ReferralLinkService } from "./services/ReferralLinkService";
+import { RequestPasswordResetRequestService } from "./services/RequestPasswordResetRequestService";
+import { RequestPasswordResetResponseService } from "./services/RequestPasswordResetResponseService";
 import { RequeueDeadLetterEntryRequestService } from "./services/RequeueDeadLetterEntryRequestService";
 import { RequeueDeadLetterEntryResponseService } from "./services/RequeueDeadLetterEntryResponseService";
 import { RetryPolicyService } from "./services/RetryPolicyService";
@@ -187,6 +198,7 @@ import { SpaceFileService } from "./services/SpaceFileService";
 import { SpaceMemberService } from "./services/SpaceMemberService";
 import { StackService } from "./services/StackService";
 import { StrategicPriorityService } from "./services/StrategicPriorityService";
+import { SubscriberListService } from "./services/SubscriberListService";
 import { SwarmService } from "./services/SwarmService";
 import { SwarmAgentSummaryService } from "./services/SwarmAgentSummaryService";
 import { SwarmCommandRequestService } from "./services/SwarmCommandRequestService";
@@ -201,13 +213,15 @@ import { SwarmRegisterResponseService } from "./services/SwarmRegisterResponseSe
 import { SwarmSecurityService } from "./services/SwarmSecurityService";
 import { SwarmUnregisterRequestService } from "./services/SwarmUnregisterRequestService";
 import { SwarmUnregisterResponseService } from "./services/SwarmUnregisterResponseService";
-import { TagService } from "./services/TagService";
 import { TaskService } from "./services/TaskService";
-import { ToolFailureService } from "./services/ToolFailureService";
+import { TwoFactorSecretService } from "./services/TwoFactorSecretService";
 import { UpdateFileRequestService } from "./services/UpdateFileRequestService";
 import { UsageTransactionService } from "./services/UsageTransactionService";
 import { UserPreferenceService } from "./services/UserPreferenceService";
 import { ValkyrJobService } from "./services/ValkyrJobService";
+import { VerifyPhoneOTPRequestService } from "./services/VerifyPhoneOTPRequestService";
+import { VerifyTwoFactorRequestService } from "./services/VerifyTwoFactorRequestService";
+import { VerifyTwoFactorResponseService } from "./services/VerifyTwoFactorResponseService";
 import { WebsocketMessageService } from "./services/WebsocketMessageService";
 import { WebsocketSessionService } from "./services/WebsocketSessionService";
 import { WizardStartResponseService } from "./services/WizardStartResponseService";
@@ -270,6 +284,10 @@ export const reducer = {
     CompleteUploadRequestService.reducer,
   [CompleteUploadRequestPartsInnerService.reducerPath]:
     CompleteUploadRequestPartsInnerService.reducer,
+  [ConfirmPasswordResetRequestService.reducerPath]:
+    ConfirmPasswordResetRequestService.reducer,
+  [ConfirmPasswordResetResponseService.reducerPath]:
+    ConfirmPasswordResetResponseService.reducer,
   [ConsultingProfileService.reducerPath]: ConsultingProfileService.reducer,
   [ContentDataService.reducerPath]: ContentDataService.reducer,
   [ContentMediaLinkService.reducerPath]: ContentMediaLinkService.reducer,
@@ -307,8 +325,13 @@ export const reducer = {
   [GrantPermissionRequestService.reducerPath]:
     GrantPermissionRequestService.reducer,
   [HostInstanceService.reducerPath]: HostInstanceService.reducer,
+  [IdempotencyKeyService.reducerPath]: IdempotencyKeyService.reducer,
   [InitUploadRequestService.reducerPath]: InitUploadRequestService.reducer,
   [InitUploadResponseService.reducerPath]: InitUploadResponseService.reducer,
+  [InitiateTwoFactorRequestService.reducerPath]:
+    InitiateTwoFactorRequestService.reducer,
+  [InitiateTwoFactorResponseService.reducerPath]:
+    InitiateTwoFactorResponseService.reducer,
   [IntegrationAccountService.reducerPath]: IntegrationAccountService.reducer,
   [InvoiceService.reducerPath]: InvoiceService.reducer,
   [InvokeMcpToolRequestService.reducerPath]:
@@ -325,6 +348,9 @@ export const reducer = {
   [LineItemService.reducerPath]: LineItemService.reducer,
   [LlmDetailsService.reducerPath]: LlmDetailsService.reducer,
   [LoginService.reducerPath]: LoginService.reducer,
+  [LoginAuditService.reducerPath]: LoginAuditService.reducer,
+  [LoginRequestService.reducerPath]: LoginRequestService.reducer,
+  [LoginResponseService.reducerPath]: LoginResponseService.reducer,
   [LogoutService.reducerPath]: LogoutService.reducer,
   [McpService.reducerPath]: McpService.reducer,
   [McpContentService.reducerPath]: McpContentService.reducer,
@@ -365,8 +391,14 @@ export const reducer = {
   [OrderFulfillmentTaskService.reducerPath]:
     OrderFulfillmentTaskService.reducer,
   [OrganizationService.reducerPath]: OrganizationService.reducer,
+  [PasswordResetTokenService.reducerPath]: PasswordResetTokenService.reducer,
   [PaymentTransactionService.reducerPath]: PaymentTransactionService.reducer,
   [PersistentLoginService.reducerPath]: PersistentLoginService.reducer,
+  [PhoneVerificationService.reducerPath]: PhoneVerificationService.reducer,
+  [PhoneVerificationRequestService.reducerPath]:
+    PhoneVerificationRequestService.reducer,
+  [PhoneVerificationResponseService.reducerPath]:
+    PhoneVerificationResponseService.reducer,
   [PivotTableService.reducerPath]: PivotTableService.reducer,
   [PresignRequestService.reducerPath]: PresignRequestService.reducer,
   [PresignResponseService.reducerPath]: PresignResponseService.reducer,
@@ -378,10 +410,6 @@ export const reducer = {
   [ProductFeatureService.reducerPath]: ProductFeatureService.reducer,
   [ProductFunnelWizardService.reducerPath]: ProductFunnelWizardService.reducer,
   [ProductLandingPageService.reducerPath]: ProductLandingPageService.reducer,
-  [PromptService.reducerPath]: PromptService.reducer,
-  [PromptRatingService.reducerPath]: PromptRatingService.reducer,
-  [PromptSelectionBroadcastService.reducerPath]:
-    PromptSelectionBroadcastService.reducer,
   [PtgService.reducerPath]: PtgService.reducer,
   [PtgRefService.reducerPath]: PtgRefService.reducer,
   [PublishFunnel200ResponseService.reducerPath]:
@@ -394,6 +422,10 @@ export const reducer = {
   [RatingService.reducerPath]: RatingService.reducer,
   [ReactionService.reducerPath]: ReactionService.reducer,
   [ReferralLinkService.reducerPath]: ReferralLinkService.reducer,
+  [RequestPasswordResetRequestService.reducerPath]:
+    RequestPasswordResetRequestService.reducer,
+  [RequestPasswordResetResponseService.reducerPath]:
+    RequestPasswordResetResponseService.reducer,
   [RequeueDeadLetterEntryRequestService.reducerPath]:
     RequeueDeadLetterEntryRequestService.reducer,
   [RequeueDeadLetterEntryResponseService.reducerPath]:
@@ -415,6 +447,7 @@ export const reducer = {
   [SpaceMemberService.reducerPath]: SpaceMemberService.reducer,
   [StackService.reducerPath]: StackService.reducer,
   [StrategicPriorityService.reducerPath]: StrategicPriorityService.reducer,
+  [SubscriberListService.reducerPath]: SubscriberListService.reducer,
   [SwarmService.reducerPath]: SwarmService.reducer,
   [SwarmAgentSummaryService.reducerPath]: SwarmAgentSummaryService.reducer,
   [SwarmCommandRequestService.reducerPath]: SwarmCommandRequestService.reducer,
@@ -434,13 +467,18 @@ export const reducer = {
     SwarmUnregisterRequestService.reducer,
   [SwarmUnregisterResponseService.reducerPath]:
     SwarmUnregisterResponseService.reducer,
-  [TagService.reducerPath]: TagService.reducer,
   [TaskService.reducerPath]: TaskService.reducer,
-  [ToolFailureService.reducerPath]: ToolFailureService.reducer,
+  [TwoFactorSecretService.reducerPath]: TwoFactorSecretService.reducer,
   [UpdateFileRequestService.reducerPath]: UpdateFileRequestService.reducer,
   [UsageTransactionService.reducerPath]: UsageTransactionService.reducer,
   [UserPreferenceService.reducerPath]: UserPreferenceService.reducer,
   [ValkyrJobService.reducerPath]: ValkyrJobService.reducer,
+  [VerifyPhoneOTPRequestService.reducerPath]:
+    VerifyPhoneOTPRequestService.reducer,
+  [VerifyTwoFactorRequestService.reducerPath]:
+    VerifyTwoFactorRequestService.reducer,
+  [VerifyTwoFactorResponseService.reducerPath]:
+    VerifyTwoFactorResponseService.reducer,
   [WebsocketMessageService.reducerPath]: WebsocketMessageService.reducer,
   [WebsocketSessionService.reducerPath]: WebsocketSessionService.reducer,
   [WizardStartResponseService.reducerPath]: WizardStartResponseService.reducer,
@@ -498,6 +536,8 @@ export const getMiddleWare: Middleware = () => {
       .concat(CircuitBreakerStateService.middleware as Middleware)
       .concat(CompleteUploadRequestService.middleware as Middleware)
       .concat(CompleteUploadRequestPartsInnerService.middleware as Middleware)
+      .concat(ConfirmPasswordResetRequestService.middleware as Middleware)
+      .concat(ConfirmPasswordResetResponseService.middleware as Middleware)
       .concat(ConsultingProfileService.middleware as Middleware)
       .concat(ContentDataService.middleware as Middleware)
       .concat(ContentMediaLinkService.middleware as Middleware)
@@ -530,8 +570,11 @@ export const getMiddleWare: Middleware = () => {
       .concat(GoalDependencyService.middleware as Middleware)
       .concat(GrantPermissionRequestService.middleware as Middleware)
       .concat(HostInstanceService.middleware as Middleware)
+      .concat(IdempotencyKeyService.middleware as Middleware)
       .concat(InitUploadRequestService.middleware as Middleware)
       .concat(InitUploadResponseService.middleware as Middleware)
+      .concat(InitiateTwoFactorRequestService.middleware as Middleware)
+      .concat(InitiateTwoFactorResponseService.middleware as Middleware)
       .concat(IntegrationAccountService.middleware as Middleware)
       .concat(InvoiceService.middleware as Middleware)
       .concat(InvokeMcpToolRequestService.middleware as Middleware)
@@ -545,6 +588,9 @@ export const getMiddleWare: Middleware = () => {
       .concat(LineItemService.middleware as Middleware)
       .concat(LlmDetailsService.middleware as Middleware)
       .concat(LoginService.middleware as Middleware)
+      .concat(LoginAuditService.middleware as Middleware)
+      .concat(LoginRequestService.middleware as Middleware)
+      .concat(LoginResponseService.middleware as Middleware)
       .concat(LogoutService.middleware as Middleware)
       .concat(McpService.middleware as Middleware)
       .concat(McpContentService.middleware as Middleware)
@@ -582,8 +628,12 @@ export const getMiddleWare: Middleware = () => {
       .concat(OpportunityService.middleware as Middleware)
       .concat(OrderFulfillmentTaskService.middleware as Middleware)
       .concat(OrganizationService.middleware as Middleware)
+      .concat(PasswordResetTokenService.middleware as Middleware)
       .concat(PaymentTransactionService.middleware as Middleware)
       .concat(PersistentLoginService.middleware as Middleware)
+      .concat(PhoneVerificationService.middleware as Middleware)
+      .concat(PhoneVerificationRequestService.middleware as Middleware)
+      .concat(PhoneVerificationResponseService.middleware as Middleware)
       .concat(PivotTableService.middleware as Middleware)
       .concat(PresignRequestService.middleware as Middleware)
       .concat(PresignResponseService.middleware as Middleware)
@@ -594,9 +644,6 @@ export const getMiddleWare: Middleware = () => {
       .concat(ProductFeatureService.middleware as Middleware)
       .concat(ProductFunnelWizardService.middleware as Middleware)
       .concat(ProductLandingPageService.middleware as Middleware)
-      .concat(PromptService.middleware as Middleware)
-      .concat(PromptRatingService.middleware as Middleware)
-      .concat(PromptSelectionBroadcastService.middleware as Middleware)
       .concat(PtgService.middleware as Middleware)
       .concat(PtgRefService.middleware as Middleware)
       .concat(PublishFunnel200ResponseService.middleware as Middleware)
@@ -606,6 +653,8 @@ export const getMiddleWare: Middleware = () => {
       .concat(RatingService.middleware as Middleware)
       .concat(ReactionService.middleware as Middleware)
       .concat(ReferralLinkService.middleware as Middleware)
+      .concat(RequestPasswordResetRequestService.middleware as Middleware)
+      .concat(RequestPasswordResetResponseService.middleware as Middleware)
       .concat(RequeueDeadLetterEntryRequestService.middleware as Middleware)
       .concat(RequeueDeadLetterEntryResponseService.middleware as Middleware)
       .concat(RetryPolicyService.middleware as Middleware)
@@ -625,6 +674,7 @@ export const getMiddleWare: Middleware = () => {
       .concat(SpaceMemberService.middleware as Middleware)
       .concat(StackService.middleware as Middleware)
       .concat(StrategicPriorityService.middleware as Middleware)
+      .concat(SubscriberListService.middleware as Middleware)
       .concat(SwarmService.middleware as Middleware)
       .concat(SwarmAgentSummaryService.middleware as Middleware)
       .concat(SwarmCommandRequestService.middleware as Middleware)
@@ -639,13 +689,15 @@ export const getMiddleWare: Middleware = () => {
       .concat(SwarmSecurityService.middleware as Middleware)
       .concat(SwarmUnregisterRequestService.middleware as Middleware)
       .concat(SwarmUnregisterResponseService.middleware as Middleware)
-      .concat(TagService.middleware as Middleware)
       .concat(TaskService.middleware as Middleware)
-      .concat(ToolFailureService.middleware as Middleware)
+      .concat(TwoFactorSecretService.middleware as Middleware)
       .concat(UpdateFileRequestService.middleware as Middleware)
       .concat(UsageTransactionService.middleware as Middleware)
       .concat(UserPreferenceService.middleware as Middleware)
       .concat(ValkyrJobService.middleware as Middleware)
+      .concat(VerifyPhoneOTPRequestService.middleware as Middleware)
+      .concat(VerifyTwoFactorRequestService.middleware as Middleware)
+      .concat(VerifyTwoFactorResponseService.middleware as Middleware)
       .concat(WebsocketMessageService.middleware as Middleware)
       .concat(WebsocketSessionService.middleware as Middleware)
       .concat(WizardStartResponseService.middleware as Middleware)
@@ -703,6 +755,8 @@ export const store = configureStore({
     .concat(CircuitBreakerStateService.middleware as Middleware)
     .concat(CompleteUploadRequestService.middleware as Middleware)
     .concat(CompleteUploadRequestPartsInnerService.middleware as Middleware)
+    .concat(ConfirmPasswordResetRequestService.middleware as Middleware)
+    .concat(ConfirmPasswordResetResponseService.middleware as Middleware)
     .concat(ConsultingProfileService.middleware as Middleware)
     .concat(ContentDataService.middleware as Middleware)
     .concat(ContentMediaLinkService.middleware as Middleware)
@@ -735,8 +789,11 @@ export const store = configureStore({
     .concat(GoalDependencyService.middleware as Middleware)
     .concat(GrantPermissionRequestService.middleware as Middleware)
     .concat(HostInstanceService.middleware as Middleware)
+    .concat(IdempotencyKeyService.middleware as Middleware)
     .concat(InitUploadRequestService.middleware as Middleware)
     .concat(InitUploadResponseService.middleware as Middleware)
+    .concat(InitiateTwoFactorRequestService.middleware as Middleware)
+    .concat(InitiateTwoFactorResponseService.middleware as Middleware)
     .concat(IntegrationAccountService.middleware as Middleware)
     .concat(InvoiceService.middleware as Middleware)
     .concat(InvokeMcpToolRequestService.middleware as Middleware)
@@ -750,6 +807,9 @@ export const store = configureStore({
     .concat(LineItemService.middleware as Middleware)
     .concat(LlmDetailsService.middleware as Middleware)
     .concat(LoginService.middleware as Middleware)
+    .concat(LoginAuditService.middleware as Middleware)
+    .concat(LoginRequestService.middleware as Middleware)
+    .concat(LoginResponseService.middleware as Middleware)
     .concat(LogoutService.middleware as Middleware)
     .concat(McpService.middleware as Middleware)
     .concat(McpContentService.middleware as Middleware)
@@ -787,8 +847,12 @@ export const store = configureStore({
     .concat(OpportunityService.middleware as Middleware)
     .concat(OrderFulfillmentTaskService.middleware as Middleware)
     .concat(OrganizationService.middleware as Middleware)
+    .concat(PasswordResetTokenService.middleware as Middleware)
     .concat(PaymentTransactionService.middleware as Middleware)
     .concat(PersistentLoginService.middleware as Middleware)
+    .concat(PhoneVerificationService.middleware as Middleware)
+    .concat(PhoneVerificationRequestService.middleware as Middleware)
+    .concat(PhoneVerificationResponseService.middleware as Middleware)
     .concat(PivotTableService.middleware as Middleware)
     .concat(PresignRequestService.middleware as Middleware)
     .concat(PresignResponseService.middleware as Middleware)
@@ -799,9 +863,6 @@ export const store = configureStore({
     .concat(ProductFeatureService.middleware as Middleware)
     .concat(ProductFunnelWizardService.middleware as Middleware)
     .concat(ProductLandingPageService.middleware as Middleware)
-    .concat(PromptService.middleware as Middleware)
-    .concat(PromptRatingService.middleware as Middleware)
-    .concat(PromptSelectionBroadcastService.middleware as Middleware)
     .concat(PtgService.middleware as Middleware)
     .concat(PtgRefService.middleware as Middleware)
     .concat(PublishFunnel200ResponseService.middleware as Middleware)
@@ -811,6 +872,8 @@ export const store = configureStore({
     .concat(RatingService.middleware as Middleware)
     .concat(ReactionService.middleware as Middleware)
     .concat(ReferralLinkService.middleware as Middleware)
+    .concat(RequestPasswordResetRequestService.middleware as Middleware)
+    .concat(RequestPasswordResetResponseService.middleware as Middleware)
     .concat(RequeueDeadLetterEntryRequestService.middleware as Middleware)
     .concat(RequeueDeadLetterEntryResponseService.middleware as Middleware)
     .concat(RetryPolicyService.middleware as Middleware)
@@ -830,6 +893,7 @@ export const store = configureStore({
     .concat(SpaceMemberService.middleware as Middleware)
     .concat(StackService.middleware as Middleware)
     .concat(StrategicPriorityService.middleware as Middleware)
+    .concat(SubscriberListService.middleware as Middleware)
     .concat(SwarmService.middleware as Middleware)
     .concat(SwarmAgentSummaryService.middleware as Middleware)
     .concat(SwarmCommandRequestService.middleware as Middleware)
@@ -844,13 +908,15 @@ export const store = configureStore({
     .concat(SwarmSecurityService.middleware as Middleware)
     .concat(SwarmUnregisterRequestService.middleware as Middleware)
     .concat(SwarmUnregisterResponseService.middleware as Middleware)
-    .concat(TagService.middleware as Middleware)
     .concat(TaskService.middleware as Middleware)
-    .concat(ToolFailureService.middleware as Middleware)
+    .concat(TwoFactorSecretService.middleware as Middleware)
     .concat(UpdateFileRequestService.middleware as Middleware)
     .concat(UsageTransactionService.middleware as Middleware)
     .concat(UserPreferenceService.middleware as Middleware)
     .concat(ValkyrJobService.middleware as Middleware)
+    .concat(VerifyPhoneOTPRequestService.middleware as Middleware)
+    .concat(VerifyTwoFactorRequestService.middleware as Middleware)
+    .concat(VerifyTwoFactorResponseService.middleware as Middleware)
     .concat(WebsocketMessageService.middleware as Middleware)
     .concat(WebsocketSessionService.middleware as Middleware)
     .concat(WizardStartResponseService.middleware as Middleware)

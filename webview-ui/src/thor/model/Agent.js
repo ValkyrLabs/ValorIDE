@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,9 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AgentFromJSON = AgentFromJSON;
-exports.AgentToJSON = AgentToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -23,87 +19,75 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function AgentFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { AgentEventTriggerFromJSON, AgentEventTriggerToJSON, ApplicationFromJSON, ApplicationToJSON, RoleFromJSON, RoleToJSON, WorkflowFromJSON, WorkflowToJSON, } from "./";
+export function AgentFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        application: !(0, runtime_1.exists)(json, "application")
+        ...DataObjectFromJSON(json),
+        name: !exists(json, "name") ? undefined : json["name"],
+        application: !exists(json, "application")
             ? undefined
-            : (0, _1.ApplicationFromJSON)(json["application"]),
-        workflows: !(0, runtime_1.exists)(json, "workflows")
+            : ApplicationFromJSON(json["application"]),
+        workflows: !exists(json, "workflows")
             ? undefined
-            : json["workflows"].map(_1.WorkflowFromJSON),
-        role: !(0, runtime_1.exists)(json, "role") ? undefined : (0, _1.RoleFromJSON)(json["role"]),
-        cronSchedule: !(0, runtime_1.exists)(json, "cronSchedule")
+            : json["workflows"].map(WorkflowFromJSON),
+        role: !exists(json, "role") ? undefined : RoleFromJSON(json["role"]),
+        cronSchedule: !exists(json, "cronSchedule")
             ? undefined
             : json["cronSchedule"],
-        eventTriggers: !(0, runtime_1.exists)(json, "eventTriggers")
+        eventTriggers: !exists(json, "eventTriggers")
             ? undefined
-            : json["eventTriggers"].map(_1.AgentEventTriggerFromJSON),
-        heartbeatEnabled: !(0, runtime_1.exists)(json, "heartbeatEnabled")
+            : json["eventTriggers"].map(AgentEventTriggerFromJSON),
+        heartbeatEnabled: !exists(json, "heartbeatEnabled")
             ? undefined
             : json["heartbeatEnabled"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function AgentToJSON(value) {
+export function AgentToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         name: value.name,
-        application: (0, _1.ApplicationToJSON)(value.application),
+        application: ApplicationToJSON(value.application),
         workflows: value.workflows === undefined
             ? undefined
-            : value.workflows.map(_1.WorkflowToJSON),
-        role: (0, _1.RoleToJSON)(value.role),
+            : value.workflows.map(WorkflowToJSON),
+        role: RoleToJSON(value.role),
         cronSchedule: value.cronSchedule,
         eventTriggers: value.eventTriggers === undefined
             ? undefined
-            : value.eventTriggers.map(_1.AgentEventTriggerToJSON),
+            : value.eventTriggers.map(AgentEventTriggerToJSON),
         heartbeatEnabled: value.heartbeatEnabled,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 //# sourceMappingURL=Agent.js.map

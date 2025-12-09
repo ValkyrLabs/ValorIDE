@@ -48,7 +48,7 @@ const CreditLimitError: React.FC<CreditLimitErrorProps> = ({
       </div>
 
       <VSCodeButtonLink
-        href="https://app.valkyrlabs.com/v1/credits/#buy"
+        href="https://valkyrlabs.com/buy-credits"
         style={{
           width: "100%",
           marginBottom: "8px",

@@ -24,6 +24,7 @@ export const SYSTEM_PROMPT = async (
   Allowed first tags: <read_file>, <list_files>, <search_files>, <write_to_file>,
   <precision_search_and_replace>, <replace_in_file>, <execute_command>, <browser_action>,
   <use_mcp_tool>, <ask_followup_question>, <attempt_completion>
+- Never try to read a directory as a file, avoid ValorIDE getting "EISDIR: illegal operation on a directory" error. LIST files in directories, read file contents only.
 - Never output: "Working...", "Thinking:", "awaiting approval", "wants to execute", "Are you sure".
 - If a tool call fails due to missing/invalid args, rebuild args from schema and RE-INVOKE SILENTLY.
 - If you have enough info to proceed, DO NOT ask questions; execute a tool. Ask only as last resort.
@@ -160,7 +161,8 @@ for p in 3000 5173 5174 6006; do !lsof -i :$p > /dev/null 2>&1 && PORT=$p && bre
 
 **Dev server:** \`cd ${cwd} && { pm } run dev --port $PORT\`
 
-${supportsBrowserUse
+${
+  supportsBrowserUse
     ? `**Browser flow (${browserSettings.viewport.width}x${browserSettings.viewport.height}):**
 <browser_action><action>launch</action><url>http://localhost:{PORT}/workflow/builder</url></browser_action>
 <browser_action><action>scroll_down</action></browser_action>
@@ -173,7 +175,7 @@ Confirm key selectors via screenshot/logs:
 - [data-testid="task-node"]
 - [data-testid="exec-module-chip"]`
     : `(Browser unavailable — use Playwright for UI verification)`
-  }
+}
 
 ================================================================================
 §5 THORAPI — NON-NEGOTIABLE RULES
@@ -276,26 +278,26 @@ Ingest agent rules from:
 §7 MCP INTEGRATION — LEVERAGE CONNECTED TOOLS
 ================================================================================
 ${(() => {
-    const servers = mcpHub.getServers().filter((s) => s.status === "connected");
-    if (!servers.length)
-      return "**No MCP servers connected** — focus on built-in tools.";
-    return (
-      "**Connected MCP servers:**\n" +
-      servers
-        .map((s) => {
-          const cfg = JSON.parse(s.config || "{}");
-          const cmd =
-            cfg.command +
-            (Array.isArray(cfg.args) && cfg.args.length
-              ? ` ${cfg.args.join(" ")}`
-              : "");
-          const toolList = s.tools?.map((t) => t.name).join(", ") || "no tools";
-          return `- **${s.name}** (\`${cmd}\`) — tools: ${toolList}`;
-        })
-        .join("\n") +
-      "\n\n**USE MCP TOOLS AGGRESSIVELY** — they extend your capabilities."
-    );
-  })()}
+  const servers = mcpHub.getServers().filter((s) => s.status === "connected");
+  if (!servers.length)
+    return "**No MCP servers connected** — focus on built-in tools.";
+  return (
+    "**Connected MCP servers:**\n" +
+    servers
+      .map((s) => {
+        const cfg = JSON.parse(s.config || "{}");
+        const cmd =
+          cfg.command +
+          (Array.isArray(cfg.args) && cfg.args.length
+            ? ` ${cfg.args.join(" ")}`
+            : "");
+        const toolList = s.tools?.map((t) => t.name).join(", ") || "no tools";
+        return `- **${s.name}** (\`${cmd}\`) — tools: ${toolList}`;
+      })
+      .join("\n") +
+    "\n\n**USE MCP TOOLS AGGRESSIVELY** — they extend your capabilities."
+  );
+})()}
 
 Call MCP tools via:
 \`\`\`xml

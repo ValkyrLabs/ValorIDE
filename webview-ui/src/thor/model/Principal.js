@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,9 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PrincipalFromJSON = PrincipalFromJSON;
-exports.PrincipalToJSON = PrincipalToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -23,102 +19,124 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function PrincipalFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { AddressFromJSON, AddressToJSON, AuthorityFromJSON, AuthorityToJSON, LoginAuditFromJSON, LoginAuditToJSON, OrganizationFromJSON, OrganizationToJSON, PhoneVerificationFromJSON, PhoneVerificationToJSON, RoleFromJSON, RoleToJSON, TwoFactorSecretFromJSON, TwoFactorSecretToJSON, UserPreferenceFromJSON, UserPreferenceToJSON, } from "./";
+export function PrincipalFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         username: json["username"],
         password: json["password"],
         email: json["email"],
-        roleList: json["roleList"].map(_1.RoleFromJSON),
-        authorityList: json["authorityList"].map(_1.AuthorityFromJSON),
-        firstName: !(0, runtime_1.exists)(json, "firstName") ? undefined : json["firstName"],
-        middleName: !(0, runtime_1.exists)(json, "middleName") ? undefined : json["middleName"],
-        lastName: !(0, runtime_1.exists)(json, "lastName") ? undefined : json["lastName"],
-        fingerprint: !(0, runtime_1.exists)(json, "fingerprint") ? undefined : json["fingerprint"],
-        federalIdentification: !(0, runtime_1.exists)(json, "federalIdentification")
+        roleList: json["roleList"].map(RoleFromJSON),
+        authorityList: json["authorityList"].map(AuthorityFromJSON),
+        firstName: !exists(json, "firstName") ? undefined : json["firstName"],
+        middleName: !exists(json, "middleName") ? undefined : json["middleName"],
+        lastName: !exists(json, "lastName") ? undefined : json["lastName"],
+        fingerprint: !exists(json, "fingerprint") ? undefined : json["fingerprint"],
+        federalIdentification: !exists(json, "federalIdentification")
             ? undefined
             : json["federalIdentification"],
-        residenceCountry: !(0, runtime_1.exists)(json, "residenceCountry")
+        residenceCountry: !exists(json, "residenceCountry")
             ? undefined
             : json["residenceCountry"],
-        stateIdentification: !(0, runtime_1.exists)(json, "stateIdentification")
+        stateIdentification: !exists(json, "stateIdentification")
             ? undefined
             : json["stateIdentification"],
-        residenceState: !(0, runtime_1.exists)(json, "residenceState")
+        residenceState: !exists(json, "residenceState")
             ? undefined
             : json["residenceState"],
-        phone: !(0, runtime_1.exists)(json, "phone") ? undefined : json["phone"],
-        social: !(0, runtime_1.exists)(json, "social") ? undefined : json["social"],
-        bio: !(0, runtime_1.exists)(json, "bio") ? undefined : json["bio"],
-        notes: !(0, runtime_1.exists)(json, "notes") ? undefined : json["notes"],
-        avatarUrl: !(0, runtime_1.exists)(json, "avatarUrl") ? undefined : json["avatarUrl"],
-        organization: !(0, runtime_1.exists)(json, "organization")
+        phone: !exists(json, "phone") ? undefined : json["phone"],
+        social: !exists(json, "social") ? undefined : json["social"],
+        bio: !exists(json, "bio") ? undefined : json["bio"],
+        notes: !exists(json, "notes") ? undefined : json["notes"],
+        avatarUrl: !exists(json, "avatarUrl") ? undefined : json["avatarUrl"],
+        organization: !exists(json, "organization")
             ? undefined
-            : (0, _1.OrganizationFromJSON)(json["organization"]),
-        addresses: !(0, runtime_1.exists)(json, "addresses")
+            : OrganizationFromJSON(json["organization"]),
+        addresses: !exists(json, "addresses")
             ? undefined
-            : json["addresses"].map(_1.AddressFromJSON),
-        acceptedCookies: !(0, runtime_1.exists)(json, "acceptedCookies")
+            : json["addresses"].map(AddressFromJSON),
+        acceptedCookies: !exists(json, "acceptedCookies")
             ? undefined
             : json["acceptedCookies"],
-        acceptedTos: !(0, runtime_1.exists)(json, "acceptedTos") ? undefined : json["acceptedTos"],
-        enabled: !(0, runtime_1.exists)(json, "enabled") ? undefined : json["enabled"],
-        credentialNonExpired: !(0, runtime_1.exists)(json, "credentialNonExpired")
+        acceptedTos: !exists(json, "acceptedTos") ? undefined : json["acceptedTos"],
+        enabled: !exists(json, "enabled") ? undefined : json["enabled"],
+        credentialNonExpired: !exists(json, "credentialNonExpired")
             ? undefined
             : json["credentialNonExpired"],
-        accountEnabled: !(0, runtime_1.exists)(json, "accountEnabled")
+        accountEnabled: !exists(json, "accountEnabled")
             ? undefined
             : json["accountEnabled"],
-        accountNonLocked: !(0, runtime_1.exists)(json, "accountNonLocked")
+        accountNonLocked: !exists(json, "accountNonLocked")
             ? undefined
             : json["accountNonLocked"],
-        accountNonExpired: !(0, runtime_1.exists)(json, "accountNonExpired")
+        accountNonExpired: !exists(json, "accountNonExpired")
             ? undefined
             : json["accountNonExpired"],
-        userPreferences: !(0, runtime_1.exists)(json, "userPreferences")
+        userPreferences: !exists(json, "userPreferences")
             ? undefined
-            : json["userPreferences"].map(_1.UserPreferenceFromJSON),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+            : json["userPreferences"].map(UserPreferenceFromJSON),
+        twoFactorEnabled: !exists(json, "twoFactorEnabled")
+            ? undefined
+            : json["twoFactorEnabled"],
+        twoFactorSecret: !exists(json, "twoFactorSecret")
+            ? undefined
+            : TwoFactorSecretFromJSON(json["twoFactorSecret"]),
+        phoneVerifications: !exists(json, "phoneVerifications")
+            ? undefined
+            : json["phoneVerifications"].map(PhoneVerificationFromJSON),
+        lastLoginAt: !exists(json, "lastLoginAt")
+            ? undefined
+            : new Date(json["lastLoginAt"]),
+        loginAttempts: !exists(json, "loginAttempts")
+            ? undefined
+            : json["loginAttempts"],
+        lockoutUntil: !exists(json, "lockoutUntil")
+            ? undefined
+            : new Date(json["lockoutUntil"]),
+        loginAudits: !exists(json, "loginAudits")
+            ? undefined
+            : json["loginAudits"].map(LoginAuditFromJSON),
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function PrincipalToJSON(value) {
+export function PrincipalToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         username: value.username,
         password: value.password,
         email: value.email,
-        roleList: value.roleList.map(_1.RoleToJSON),
-        authorityList: value.authorityList.map(_1.AuthorityToJSON),
+        roleList: value.roleList.map(RoleToJSON),
+        authorityList: value.authorityList.map(AuthorityToJSON),
         firstName: value.firstName,
         middleName: value.middleName,
         lastName: value.lastName,
@@ -131,10 +149,10 @@ function PrincipalToJSON(value) {
         bio: value.bio,
         notes: value.notes,
         avatarUrl: value.avatarUrl,
-        organization: (0, _1.OrganizationToJSON)(value.organization),
+        organization: OrganizationToJSON(value.organization),
         addresses: value.addresses === undefined
             ? undefined
-            : value.addresses.map(_1.AddressToJSON),
+            : value.addresses.map(AddressToJSON),
         acceptedCookies: value.acceptedCookies,
         acceptedTos: value.acceptedTos,
         enabled: value.enabled,
@@ -144,21 +162,20 @@ function PrincipalToJSON(value) {
         accountNonExpired: value.accountNonExpired,
         userPreferences: value.userPreferences === undefined
             ? undefined
-            : value.userPreferences.map(_1.UserPreferenceToJSON),
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
+            : value.userPreferences.map(UserPreferenceToJSON),
+        twoFactorEnabled: value.twoFactorEnabled,
+        twoFactorSecret: TwoFactorSecretToJSON(value.twoFactorSecret),
+        phoneVerifications: value.phoneVerifications === undefined
             ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
+            : value.phoneVerifications.map(PhoneVerificationToJSON),
+        loginAttempts: value.loginAttempts,
+        lockoutUntil: value.lockoutUntil === undefined
             ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
+            : value.lockoutUntil.toISOString(),
+        loginAudits: value.loginAudits === undefined
             ? undefined
-            : value.lastModifiedDate.toISOString(),
+            : value.loginAudits.map(LoginAuditToJSON),
+        trashed: value.trashed,
     };
 }
 //# sourceMappingURL=Principal.js.map

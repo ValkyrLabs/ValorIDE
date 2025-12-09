@@ -34,11 +34,30 @@ const injectKeyframes = () => {
   document.head.appendChild(style);
 };
 
+type SpinnerSize = number | "sm" | "md" | "lg";
+
+const presetSizes: Record<Exclude<SpinnerSize, number>, number> = {
+  sm: 24,
+  md: 48,
+  lg: 72,
+};
+
+const resolveSize = (size: SpinnerSize | undefined): number => {
+  if (typeof size === "number") {
+    return size;
+  }
+  if (!size) {
+    return 64;
+  }
+  return presetSizes[size] ?? 64;
+};
+
 export const LoadingSpinner: React.FC<
-  { label?: string; size?: number } & React.HTMLAttributes<HTMLDivElement>
+  { label?: string; size?: SpinnerSize } & React.HTMLAttributes<HTMLDivElement>
 > = ({ label = "Loading…", size = 64, style, ...rest }) => {
   if (typeof window !== "undefined") injectKeyframes();
-  const s = Math.max(12, size);
+  const resolved = resolveSize(size);
+  const s = Math.max(12, resolved);
   const spinner: React.CSSProperties = {
     ...spinnerStyle,
     width: s,
@@ -49,7 +68,7 @@ export const LoadingSpinner: React.FC<
     <div
       style={{
         ...container,
-        ...(size < 32 ? { minHeight: 0, gap: 8 } : {}),
+        ...(resolved < 32 ? { minHeight: 0, gap: 8 } : {}),
         ...style,
       }}
       {...rest}

@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.OasParameterLocationEnum = void 0;
-exports.OasParameterFromJSON = OasParameterFromJSON;
-exports.OasParameterToJSON = OasParameterToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,86 +19,74 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function OasParameterFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { OasObjectSchemaFromJSON, OasObjectSchemaToJSON, } from "./";
+export function OasParameterFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
-        oasOperationId: !(0, runtime_1.exists)(json, "oasOperationId")
+        ...DataObjectFromJSON(json),
+        oasOperationId: !exists(json, "oasOperationId")
             ? undefined
             : json["oasOperationId"],
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        location: !(0, runtime_1.exists)(json, "location") ? undefined : json["location"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        required: !(0, runtime_1.exists)(json, "required") ? undefined : json["required"],
-        schema: !(0, runtime_1.exists)(json, "schema")
+        name: !exists(json, "name") ? undefined : json["name"],
+        location: !exists(json, "location") ? undefined : json["location"],
+        description: !exists(json, "description") ? undefined : json["description"],
+        required: !exists(json, "required") ? undefined : json["required"],
+        schema: !exists(json, "schema")
             ? undefined
-            : (0, _1.OasObjectSchemaFromJSON)(json["schema"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+            : OasObjectSchemaFromJSON(json["schema"]),
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function OasParameterToJSON(value) {
+export function OasParameterToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         oasOperationId: value.oasOperationId,
         name: value.name,
         location: value.location,
         description: value.description,
         required: value.required,
-        schema: (0, _1.OasObjectSchemaToJSON)(value.schema),
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        schema: OasObjectSchemaToJSON(value.schema),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var OasParameterLocationEnum;
+export var OasParameterLocationEnum;
 (function (OasParameterLocationEnum) {
     OasParameterLocationEnum["QUERY"] = "query";
     OasParameterLocationEnum["HEADER"] = "header";
     OasParameterLocationEnum["PATH"] = "path";
     OasParameterLocationEnum["COOKIE"] = "cookie";
-})(OasParameterLocationEnum || (exports.OasParameterLocationEnum = OasParameterLocationEnum = {}));
+})(OasParameterLocationEnum || (OasParameterLocationEnum = {}));
 //# sourceMappingURL=OasParameter.js.map

@@ -33,9 +33,7 @@ In each selected `tsconfig`:
       "@thor/redux/services/*": ["<rel>/src/thor/redux/services/*"]
     }
   },
-  "include": [
-    "<rel>/src"
-  ]
+  "include": ["<rel>/src"]
 }
 ```
 

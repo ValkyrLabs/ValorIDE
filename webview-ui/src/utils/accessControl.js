@@ -1,239 +1,590 @@
-"use strict";
 /**
- * Access control utilities for storing and managing user authentication state
+ * ACCESS CONTROL UTILITIES
+ *
+ * CRITICAL FIX: Symbol Serialization Prevention
+ * ============================================
+ * Generated Thor model objects (Principal, Role, Authority) contain Symbol fields
+ * that cannot be JSON serialized. When attempted, causes RTK Query to crash during
+ * subscription cleanup with "Cannot convert a symbol to a string".
+ *
+ * SOLUTION: Two-layer sanitization
+ * 1. WRITE (writeStoredPrincipal): Extract ONLY primitive fields + string arrays before stringify
+ *    - roleList[] → roleNames[] (extract name/id only)
+ *    - authorityList[] → authorityStrings[] (extract string representation)
+ * 2. READ (coercePrincipalFromString): Rebuild Principal from stored primitives only
+ *    - Never re-serialize complex objects back to storage
+ *
+ * Result: sessionStorage contains only safe, serializable data.
+ * All code reading Principal from storage gets properly reconstructed objects.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.shouldPersistJwt = shouldPersistJwt;
-exports.writeStoredPrincipal = writeStoredPrincipal;
-exports.readStoredPrincipal = readStoredPrincipal;
-exports.clearStoredPrincipal = clearStoredPrincipal;
-exports.storeJwtToken = storeJwtToken;
-exports.hydrateStoredCredentials = hydrateStoredCredentials;
-exports.clearStoredJwtToken = clearStoredJwtToken;
-exports.hasRole = hasRole;
-exports.hasPermission = hasPermission;
-const PERSIST_FLAG_KEY = "valoride.persistJwt";
-const JWT_TOKEN_KEY = "jwtToken";
-const LEGACY_JWT_KEYS = ["jwtToken", "authToken"];
-const PRINCIPAL_PRIMARY_KEY = "authenticatedPrincipal";
-const PRINCIPAL_FALLBACK_KEY = "authenticatedUser";
-const inBrowser = typeof window !== "undefined";
-function dispatchJwtTokenUpdated(token, source) {
-    if (!inBrowser)
-        return;
-    try {
-        window.dispatchEvent(new CustomEvent("jwt-token-updated", {
-            detail: { token, timestamp: Date.now(), source },
-        }));
-    }
-    catch {
-        // ignore
-    }
-}
-function safeSet(storage, key, value) {
-    if (!storage)
-        return;
-    try {
-        storage.setItem(key, value);
-    }
-    catch {
-        // ignore quota/sandbox issues
-    }
-}
-function safeRemove(storage, key) {
-    if (!storage)
-        return;
-    try {
-        storage.removeItem(key);
-    }
-    catch {
-        // ignore
-    }
-}
-function safeGet(storage, key) {
-    if (!storage)
-        return null;
-    try {
-        return storage.getItem(key);
-    }
-    catch {
-        return null;
-    }
-}
-function shouldPersistJwt() {
-    if (!inBrowser)
-        return true;
-    try {
-        const value = window.localStorage.getItem(PERSIST_FLAG_KEY);
-        return value === null ? true : value === "true";
-    }
-    catch {
-        return true;
-    }
-}
-function storePrincipalInStorage(storage, principalData) {
-    safeSet(storage, PRINCIPAL_PRIMARY_KEY, principalData);
-    safeSet(storage, PRINCIPAL_FALLBACK_KEY, principalData);
-}
+import { useMemo, useSyncExternalStore } from "react";
+const STORAGE_KEY = "authenticatedPrincipal";
+const PRINCIPAL_STORAGE_EVENT = "principal-storage-changed";
+const ROLE_PREFIX = "ROLE_";
+const JWT_STORAGE_KEY = "jwtToken";
+const AUTH_TOKEN_KEY = "authToken";
+const AUTH_USER_STORAGE_KEY = "authenticatedUser";
+const JWT_PERSIST_FLAG_KEY = "valoride.persistJwt";
 /**
- * Writes the authenticated principal to storage
- * @param principal The principal object to store
+ * CRITICAL: Global JSON.stringify replacer to filter out Symbol fields
+ * RTK Query may try to serialize Principal objects; this ensures Symbols are skipped
  */
-function writeStoredPrincipal(principal) {
-    if (!inBrowser)
-        return;
-    try {
-        if (!principal) {
-            console.warn("Cannot store null or undefined principal");
-            return;
+const safeReplacer = (key, value) => {
+    // Skip Symbol properties completely
+    if (typeof value === "symbol") {
+        return undefined;
+    }
+    // Skip Symbol-keyed properties (if they somehow slip through)
+    if (key === "" && typeof value === "object" && value !== null) {
+        const cleaned = {};
+        for (const k in value) {
+            if (typeof k === "string" && typeof value[k] !== "symbol") {
+                cleaned[k] = value[k];
+            }
         }
-        const principalData = JSON.stringify(principal);
-        storePrincipalInStorage(window.sessionStorage, principalData);
-        if (shouldPersistJwt()) {
-            storePrincipalInStorage(window.localStorage, principalData);
+        return cleaned;
+    }
+    return value;
+};
+const normalizeRoleName = (value) => {
+    if (!value) {
+        return null;
+    }
+    const normalized = value.toUpperCase();
+    return normalized.startsWith(ROLE_PREFIX)
+        ? normalized
+        : `${ROLE_PREFIX}${normalized}`;
+};
+const normalizePrincipalShape = (principal) => {
+    if (!principal) {
+        return null;
+    }
+    try {
+        const existing = { ...principal };
+        const derivedId = existing.id ??
+            existing.principalId ??
+            existing.ownerId ??
+            existing.username ??
+            existing.email ??
+            null;
+        if (!derivedId) {
+            console.warn("accessControl: principal has no stable identifier; downstream lookups may fail", principal);
+        }
+        const resolvedId = derivedId ? String(derivedId) : undefined;
+        const normalized = {
+            username: typeof existing.username === "string" ? existing.username : "",
+            password: typeof existing.password === "string" ? existing.password : "",
+            email: typeof existing.email === "string" ? existing.email : "",
+            roleList: Array.isArray(existing.roleList)
+                ? existing.roleList
+                : [],
+            authorityList: Array.isArray(existing.authorityList)
+                ? existing.authorityList
+                : [],
+            ...principal,
+            id: principal.id ?? resolvedId,
+            ownerId: principal.ownerId ?? resolvedId,
+        };
+        return normalized;
+    }
+    catch (error) {
+        console.warn("Unable to normalize principal shape", error);
+        return null;
+    }
+};
+/**
+ * Principal is now stored and retrieved with REAL field names (roleList, authorityList).
+ * No conversion functions needed - we use the actual model everywhere.
+ */
+/**
+ * WRAPPER: Parse Principal from storage, sanitizing Symbol fields.
+ * When JSON.stringify + parse happens on Principal objects, Symbols get corrupted.
+ * This wrapper reads back the REAL Principal model with REAL field names.
+ */
+const coercePrincipalFromString = (raw) => {
+    if (!raw) {
+        return null;
+    }
+    try {
+        const parsed = JSON.parse(raw);
+        // STANDARDIZE ON REAL MODEL: Use exact same field names as Principal.tsx
+        // Support both 'roleList' (correct) and 'roles' (legacy fallback from server error)
+        if (parsed && typeof parsed === "object") {
+            const safe = {
+                id: parsed.id,
+                username: parsed.username,
+                email: parsed.email,
+                principalId: parsed.principalId,
+                ownerId: parsed.ownerId,
+                firstName: parsed.firstName,
+                lastName: parsed.lastName,
+                middleName: parsed.middleName,
+                phone: parsed.phone,
+                bio: parsed.bio,
+                avatarUrl: parsed.avatarUrl,
+                // Support both 'roleList' (correct) and 'roles' (legacy fallback)
+                roleList: parsed.roleList || parsed.roles || [],
+                authorityList: parsed.authorityList || [],
+            };
+            // Filter out undefined values
+            Object.keys(safe).forEach((k) => safe[k] === undefined && delete safe[k]);
+            return normalizePrincipalShape(safe);
+        }
+        return normalizePrincipalShape(parsed ?? null);
+    }
+    catch (error) {
+        console.warn("Failed to parse stored authenticated principal", error);
+        return null;
+    }
+};
+export const resolvePrincipal = (candidate) => {
+    if (candidate === null || candidate === undefined) {
+        return null;
+    }
+    if (typeof candidate === "string") {
+        return coercePrincipalFromString(candidate);
+    }
+    return normalizePrincipalShape(candidate ?? null);
+};
+let cachedPrincipalRaw;
+let cachedPrincipalValue = null;
+const syncPrincipalCache = (raw) => {
+    if (raw === cachedPrincipalRaw) {
+        return cachedPrincipalValue;
+    }
+    cachedPrincipalRaw = raw;
+    cachedPrincipalValue = coercePrincipalFromString(raw);
+    return cachedPrincipalValue;
+};
+export const readStoredPrincipal = () => {
+    if (typeof window === "undefined") {
+        return null;
+    }
+    try {
+        const raw = sessionStorage.getItem(STORAGE_KEY);
+        const value = syncPrincipalCache(raw);
+        if (value && raw) {
+            try {
+                const parsedRaw = JSON.parse(raw);
+                if (parsedRaw &&
+                    (parsedRaw.id === undefined || parsedRaw.id === null) &&
+                    value.id) {
+                    // CRITICAL: Sanitize before re-stringify to remove any Symbol corruption
+                    const sanitized = sanitizePrincipalForStorage(value);
+                    const normalizedString = JSON.stringify(sanitized ?? {});
+                    sessionStorage.setItem(STORAGE_KEY, normalizedString);
+                    cachedPrincipalRaw = normalizedString;
+                }
+            }
+            catch {
+                /* noop */
+            }
+        }
+        return value;
+    }
+    catch (error) {
+        console.warn("Unable to read stored principal", error);
+        cachedPrincipalRaw = undefined;
+        cachedPrincipalValue = null;
+        return null;
+    }
+};
+const dispatchPrincipalChange = () => {
+    if (typeof window === "undefined") {
+        return;
+    }
+    window.dispatchEvent(new Event(PRINCIPAL_STORAGE_EVENT));
+};
+/**
+ * Sanitize Principal to safe serializable object before stringify.
+ * Removes Symbol fields and complex objects that cannot be JSON serialized.
+ * CRITICAL: Keeps the REAL model structure - roleList stays roleList, authorityList stays authorityList
+ */
+const sanitizePrincipalForStorage = (principal) => {
+    if (!principal)
+        return null;
+    try {
+        const p = principal;
+        // Convert roleList items to strings (they might be objects with Symbols)
+        const roleList = Array.isArray(p.roleList)
+            ? p.roleList.map((r) => {
+                if (typeof r === "string")
+                    return r;
+                if (r && typeof r === "object") {
+                    // If it's an object, try to get the string representation
+                    return (r.roleName ||
+                        r.role ||
+                        r.name ||
+                        r.authority ||
+                        String(r).replace(/\[object Object\]/g, ""));
+                }
+                return String(r);
+            })
+            : undefined;
+        // Convert authorityList items to strings (they might be objects with Symbols)
+        const authorityList = Array.isArray(p.authorityList)
+            ? p.authorityList.map((a) => {
+                if (typeof a === "string")
+                    return a;
+                if (a && typeof a === "object") {
+                    return (a.authority ||
+                        a.name ||
+                        a.id ||
+                        String(a).replace(/\[object Object\]/g, ""));
+                }
+                return String(a);
+            })
+            : undefined;
+        // STANDARDIZE ON REAL MODEL: Use exact same field names as Principal.tsx
+        const sanitized = {
+            id: p.id,
+            username: p.username,
+            email: p.email,
+            principalId: p.principalId,
+            ownerId: p.ownerId,
+            firstName: p.firstName,
+            lastName: p.lastName,
+            middleName: p.middleName,
+            phone: p.phone,
+            bio: p.bio,
+            avatarUrl: p.avatarUrl,
+            // Omit complex nested objects that might have Symbols
+        };
+        if (roleList !== undefined) {
+            sanitized.roleList = roleList;
+        }
+        if (authorityList !== undefined) {
+            sanitized.authorityList = authorityList;
+        }
+        return sanitized;
+    }
+    catch (error) {
+        console.warn("sanitizePrincipalForStorage: failed to sanitize principal", error);
+        return null;
+    }
+};
+export const writeStoredPrincipal = (value) => {
+    if (typeof window === "undefined") {
+        return;
+    }
+    const shallowEqualPrincipal = (a, b) => {
+        if (a === b)
+            return true;
+        if (!a || !b)
+            return false;
+        const fields = [
+            "id",
+            "username",
+            "email",
+            "ownerId",
+            "principalId",
+            "firstName",
+            "lastName",
+            "middleName",
+            "avatarUrl",
+        ];
+        for (const f of fields) {
+            if (a[f] !== b[f])
+                return false;
+        }
+        const normalizeRoles = (list) => Array.isArray(list)
+            ? list
+                .map((r) => {
+                if (!r)
+                    return null;
+                if (typeof r === "string")
+                    return r;
+                return r.roleName || r.name || r.authority || r.role || null;
+            })
+                .filter(Boolean)
+                .join("|")
+            : "";
+        if (normalizeRoles(a.roleList) !==
+            normalizeRoles(b.roleList)) {
+            return false;
+        }
+        if (normalizeRoles(a.authorityList) !==
+            normalizeRoles(b.authorityList)) {
+            return false;
+        }
+        return true;
+    };
+    try {
+        if (value === null || value === undefined) {
+            sessionStorage.removeItem(STORAGE_KEY);
+            sessionStorage.removeItem(AUTH_USER_STORAGE_KEY);
+            try {
+                window.localStorage?.removeItem(STORAGE_KEY);
+                window.localStorage?.removeItem(AUTH_USER_STORAGE_KEY);
+            }
+            catch {
+                /* ignore localStorage issues */
+            }
+            syncPrincipalCache(null);
         }
         else {
-            safeRemove(window.localStorage, PRINCIPAL_PRIMARY_KEY);
-            safeRemove(window.localStorage, PRINCIPAL_FALLBACK_KEY);
+            let normalizedValue = null;
+            let sanitized = null;
+            let serialized;
+            if (typeof value === "string") {
+                normalizedValue = coercePrincipalFromString(value);
+                // Sanitize before stringify to remove Symbols
+                sanitized = sanitizePrincipalForStorage(normalizedValue);
+                serialized = sanitized ? JSON.stringify(sanitized) : value;
+            }
+            else {
+                normalizedValue = normalizePrincipalShape(value ?? null);
+                // CRITICAL: Sanitize before stringify to remove Symbol corruption
+                sanitized = sanitizePrincipalForStorage(normalizedValue);
+                serialized = JSON.stringify(sanitized ?? {});
+            }
+            const existing = sessionStorage.getItem(STORAGE_KEY);
+            const resolvedExisting = resolvePrincipal(existing || null);
+            // Short-circuit if nothing meaningful changed to avoid storage events/re-renders
+            if (existing === serialized ||
+                shallowEqualPrincipal(resolvedExisting, normalizedValue)) {
+                cachedPrincipalRaw = existing || serialized;
+                cachedPrincipalValue = resolvedExisting ?? normalizedValue;
+                return;
+            }
+            sessionStorage.setItem(STORAGE_KEY, serialized);
+            sessionStorage.setItem(AUTH_USER_STORAGE_KEY, serialized);
+            try {
+                window.localStorage?.setItem(STORAGE_KEY, serialized);
+                window.localStorage?.setItem(AUTH_USER_STORAGE_KEY, serialized);
+            }
+            catch {
+                /* ignore localStorage issues */
+            }
+            cachedPrincipalRaw = serialized;
+            const resolved = resolvePrincipal(serialized);
+            cachedPrincipalValue = resolved ?? syncPrincipalCache(serialized);
         }
     }
     catch (error) {
-        console.error("Failed to store principal:", error);
+        console.warn("Unable to persist authenticated principal", error);
+        cachedPrincipalRaw = undefined;
+        cachedPrincipalValue = null;
     }
-}
-/**
- * Reads the stored principal from storage
- * @returns The stored principal or null if not found
- */
-function readStoredPrincipal() {
-    if (!inBrowser)
-        return null;
-    try {
-        let principalData = safeGet(window.sessionStorage, PRINCIPAL_PRIMARY_KEY) ??
-            safeGet(window.sessionStorage, PRINCIPAL_FALLBACK_KEY);
-        if (!principalData) {
-            principalData =
-                safeGet(window.localStorage, PRINCIPAL_PRIMARY_KEY) ??
-                    safeGet(window.localStorage, PRINCIPAL_FALLBACK_KEY);
-        }
-        if (principalData) {
-            return JSON.parse(principalData);
-        }
-        return null;
+    finally {
+        dispatchPrincipalChange();
     }
-    catch (error) {
-        console.error("Failed to read stored principal:", error);
-        return null;
-    }
-}
-/**
- * Clears the stored principal from all storage locations
- */
-function clearStoredPrincipal(source = "manual") {
-    if (!inBrowser)
+};
+export const clearStoredPrincipal = (_reason) => writeStoredPrincipal(null);
+export const storeJwtToken = (token, source) => {
+    if (typeof window === "undefined") {
         return;
-    try {
-        safeRemove(window.sessionStorage, PRINCIPAL_PRIMARY_KEY);
-        safeRemove(window.sessionStorage, PRINCIPAL_FALLBACK_KEY);
-        safeRemove(window.localStorage, PRINCIPAL_PRIMARY_KEY);
-        safeRemove(window.localStorage, PRINCIPAL_FALLBACK_KEY);
     }
-    catch (error) {
-        console.error("Failed to clear stored principal:", error);
-    }
-}
-/**
- * Persist a JWT token according to user preference.
- * Mirrors into sessionStorage, optionally localStorage, and notifies listeners.
- */
-function storeJwtToken(token, source = "manual") {
-    if (!inBrowser)
-        return;
-    if (!token) {
+    if (token === null || token === undefined) {
         clearStoredJwtToken(source);
         return;
     }
-    safeSet(window.sessionStorage, JWT_TOKEN_KEY, token);
-    if (shouldPersistJwt()) {
-        safeSet(window.localStorage, JWT_TOKEN_KEY, token);
-        // legacy key support
-        safeSet(window.localStorage, LEGACY_JWT_KEYS[1], token);
+    try {
+        sessionStorage.setItem(JWT_STORAGE_KEY, token);
+        const persistFlag = window.localStorage?.getItem(JWT_PERSIST_FLAG_KEY)?.toLowerCase() ??
+            "true";
+        const shouldPersist = persistFlag !== "false" && persistFlag !== "0";
+        if (shouldPersist) {
+            window.localStorage?.setItem(JWT_STORAGE_KEY, token);
+            window.localStorage?.setItem(AUTH_TOKEN_KEY, token);
+        }
+        else {
+            window.localStorage?.removeItem(JWT_STORAGE_KEY);
+            window.localStorage?.removeItem(AUTH_TOKEN_KEY);
+        }
+        window.dispatchEvent?.(new CustomEvent("jwtTokenChanged", {
+            detail: { token, source },
+        }));
     }
-    else {
-        safeRemove(window.localStorage, JWT_TOKEN_KEY);
-        safeRemove(window.localStorage, LEGACY_JWT_KEYS[1]);
+    catch (error) {
+        console.warn("Unable to persist JWT token", error);
     }
-    dispatchJwtTokenUpdated(token, source);
-}
-/**
- * Hydrate JWT + principal from persistent storage into sessionStorage so the
- * app can treat them as active credentials.
- */
-function hydrateStoredCredentials(source = "hydrate") {
-    if (!inBrowser)
-        return {};
-    let token = safeGet(window.sessionStorage, JWT_TOKEN_KEY) ?? undefined;
-    if (!token) {
-        for (const key of LEGACY_JWT_KEYS) {
-            const value = safeGet(window.localStorage, key);
-            if (value) {
-                token = value;
-                safeSet(window.sessionStorage, JWT_TOKEN_KEY, value);
-                break;
-            }
+};
+export const clearStoredJwtToken = (source) => {
+    if (typeof window === "undefined") {
+        return;
+    }
+    try {
+        sessionStorage.removeItem(JWT_STORAGE_KEY);
+        window.localStorage?.removeItem(JWT_STORAGE_KEY);
+        window.localStorage?.removeItem(AUTH_TOKEN_KEY);
+        window.dispatchEvent?.(new CustomEvent("jwtTokenChanged", {
+            detail: { token: null, source },
+        }));
+    }
+    catch (error) {
+        console.warn("Unable to clear JWT token", error);
+    }
+};
+export const hydrateStoredCredentials = (source) => {
+    let token;
+    let principal = null;
+    if (typeof window === "undefined") {
+        return { token, principal };
+    }
+    try {
+        const persistedToken = window.localStorage?.getItem(JWT_STORAGE_KEY) ||
+            window.localStorage?.getItem(AUTH_TOKEN_KEY);
+        if (persistedToken) {
+            token = persistedToken;
+            sessionStorage.setItem(JWT_STORAGE_KEY, persistedToken);
         }
-        if (token) {
-            dispatchJwtTokenUpdated(token, source);
+        const persistedPrincipalRaw = window.localStorage?.getItem(STORAGE_KEY) ||
+            window.localStorage?.getItem(AUTH_USER_STORAGE_KEY);
+        if (persistedPrincipalRaw) {
+            principal = resolvePrincipal(persistedPrincipalRaw);
+            writeStoredPrincipal(principal ?? null);
+        }
+        if (token || principal) {
+            window.dispatchEvent?.(new CustomEvent("credentialsHydrated", {
+                detail: { token, principal, source },
+            }));
         }
     }
-    let principal;
-    let principalRaw = safeGet(window.sessionStorage, PRINCIPAL_PRIMARY_KEY) ??
-        safeGet(window.sessionStorage, PRINCIPAL_FALLBACK_KEY);
-    if (!principalRaw) {
-        principalRaw =
-            safeGet(window.localStorage, PRINCIPAL_PRIMARY_KEY) ??
-                safeGet(window.localStorage, PRINCIPAL_FALLBACK_KEY);
-        if (principalRaw) {
-            storePrincipalInStorage(window.sessionStorage, principalRaw);
-        }
-    }
-    if (principalRaw) {
-        try {
-            principal = JSON.parse(principalRaw);
-        }
-        catch (error) {
-            console.error("Failed to parse stored principal:", error);
-        }
+    catch (error) {
+        console.warn("Unable to hydrate stored credentials", error);
     }
     return { token, principal };
-}
-/**
- * Clears JWT tokens from all storage locations.
- */
-function clearStoredJwtToken(source = "manual") {
-    if (!inBrowser)
-        return;
-    safeRemove(window.sessionStorage, JWT_TOKEN_KEY);
-    safeRemove(window.localStorage, JWT_TOKEN_KEY);
-    safeRemove(window.localStorage, LEGACY_JWT_KEYS[1]);
-    dispatchJwtTokenUpdated(null, source);
-}
-/**
- * Checks if the current user has a specific role
- * @param role The role to check for
- * @returns True if the user has the role, false otherwise
- */
-function hasRole(role) {
-    const principal = readStoredPrincipal();
-    return principal?.roles?.includes(role) ?? false;
-}
-/**
- * Checks if the current user has a specific permission
- * @param permission The permission to check for
- * @returns True if the user has the permission, false otherwise
- */
-function hasPermission(permission) {
-    const principal = readStoredPrincipal();
-    return principal?.permissions?.includes(permission) ?? false;
-}
+};
+const subscribeToPrincipalStore = (listener) => {
+    if (typeof window === "undefined") {
+        return () => undefined;
+    }
+    const handleCustomEvent = () => listener();
+    const handleStorageEvent = (event) => {
+        if (event.storageArea === window.sessionStorage &&
+            event.key === STORAGE_KEY) {
+            listener();
+        }
+    };
+    window.addEventListener(PRINCIPAL_STORAGE_EVENT, handleCustomEvent);
+    window.addEventListener("storage", handleStorageEvent);
+    return () => {
+        window.removeEventListener(PRINCIPAL_STORAGE_EVENT, handleCustomEvent);
+        window.removeEventListener("storage", handleStorageEvent);
+    };
+};
+const getStoredPrincipalSnapshot = () => readStoredPrincipal();
+export const useStoredPrincipal = () => useSyncExternalStore(subscribeToPrincipalStore, getStoredPrincipalSnapshot, getStoredPrincipalSnapshot);
+const extractRolesFromRoleList = (roleList) => {
+    if (!roleList || !Array.isArray(roleList)) {
+        return [];
+    }
+    return roleList
+        .map((role) => {
+        if (!role) {
+            return null;
+        }
+        if (typeof role === "string") {
+            return normalizeRoleName(role);
+        }
+        const name = role.roleName ??
+            role.role ??
+            role.name ??
+            role.authority;
+        return normalizeRoleName(typeof name === "string" ? name : null);
+    })
+        .filter((roleName) => Boolean(roleName));
+};
+const extractRolesFromAuthorities = (authorityList) => {
+    if (!authorityList || !Array.isArray(authorityList)) {
+        return [];
+    }
+    return authorityList
+        .map((authority) => {
+        if (!authority)
+            return null;
+        // Handle string authorities (after sanitization, they are strings)
+        if (typeof authority === "string") {
+            return normalizeRoleName(authority);
+        }
+        // Handle object authorities
+        return normalizeRoleName(authority?.authority ?? null);
+    })
+        .filter((roleName) => Boolean(roleName));
+};
+export const getPrincipalRoles = (principal) => {
+    if (!principal) {
+        return [];
+    }
+    try {
+        const roleList = principal.roleList;
+        const authorityList = principal.authorityList;
+        const deduped = new Set();
+        const rolesFromRoleList = extractRolesFromRoleList(roleList);
+        const rolesFromAuthorities = extractRolesFromAuthorities(authorityList);
+        rolesFromRoleList?.forEach((role) => deduped.add(role));
+        rolesFromAuthorities?.forEach((role) => deduped.add(role));
+        return Array.from(deduped);
+    }
+    catch (error) {
+        console.warn("getPrincipalRoles: failed to read roles", error);
+        return [];
+    }
+};
+export const principalHasRole = (principal, role) => {
+    if (!principal || !role) {
+        return false;
+    }
+    const target = normalizeRoleName(role);
+    if (!target) {
+        return false;
+    }
+    return getPrincipalRoles(principal).some((current) => current === target);
+};
+export const principalIsAdmin = (principal) => principalHasRole(principal, "ADMIN");
+export const principalOwns = (principal, ...ownerIds) => {
+    if (!principal?.id) {
+        return false;
+    }
+    const principalId = String(principal.id).toLowerCase();
+    const normalizeOwnerId = (candidate) => {
+        if (candidate === null || candidate === undefined) {
+            return null;
+        }
+        try {
+            return String(candidate).toLowerCase();
+        }
+        catch (error) {
+            console.warn("Unable to normalize owner identifier", candidate, error);
+            return null;
+        }
+    };
+    return ownerIds
+        .map((candidate) => normalizeOwnerId(candidate))
+        .filter((candidate) => Boolean(candidate))
+        .some((candidate) => candidate === principalId);
+};
+export const useAccessControl = (principalSource) => {
+    const storedPrincipal = useStoredPrincipal();
+    return useMemo(() => {
+        const principal = principalSource === undefined
+            ? storedPrincipal
+            : resolvePrincipal(principalSource);
+        const roles = getPrincipalRoles(principal);
+        const hasRole = (role) => principalHasRole(principal, role);
+        const isAdmin = principalIsAdmin(principal);
+        const isOwner = (...ownerIds) => principalOwns(principal, ...ownerIds);
+        return {
+            principal,
+            roles,
+            hasRole,
+            isAdmin,
+            isOwner,
+        };
+    }, [principalSource, storedPrincipal]);
+};
+export const accessControl = {
+    readStoredPrincipal,
+    writeStoredPrincipal,
+    clearStoredPrincipal,
+    storeJwtToken,
+    clearStoredJwtToken,
+    hydrateStoredCredentials,
+    resolvePrincipal,
+    getPrincipalRoles,
+    principalHasRole,
+    principalIsAdmin,
+    principalOwns,
+};
 //# sourceMappingURL=accessControl.js.map

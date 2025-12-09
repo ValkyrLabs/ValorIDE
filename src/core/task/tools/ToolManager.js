@@ -1,5 +1,6 @@
 import { FileToolHandler } from "./FileToolHandler";
 import { CommandToolHandler } from "./CommandToolHandler";
+import { BrowserToolHandler } from "./BrowserToolHandler";
 import { formatResponse } from "@core/prompts/responses";
 export class ToolManager {
     handlers;
@@ -17,6 +18,9 @@ export class ToolManager {
         // Register command handler
         const commandHandler = new CommandToolHandler(context);
         this.handlers.set("execute_command", commandHandler);
+        // Register browser handler
+        const browserHandler = new BrowserToolHandler(context);
+        this.handlers.set("browser_action", browserHandler);
     }
     async executeTool(block, partial, didRejectTool, didAlreadyUseTool) {
         if (block.type !== "tool_use") {

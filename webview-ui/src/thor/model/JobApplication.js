@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.JobApplicationStatusEnum = void 0;
-exports.JobApplicationFromJSON = JobApplicationFromJSON;
-exports.JobApplicationToJSON = JobApplicationToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,74 +19,75 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-function JobApplicationFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+export function JobApplicationFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         jobSeekerId: json["jobSeekerId"],
-        opportunityId: !(0, runtime_1.exists)(json, "opportunityId")
+        opportunityId: !exists(json, "opportunityId")
             ? undefined
             : json["opportunityId"],
-        appliedDate: !(0, runtime_1.exists)(json, "appliedDate")
+        appliedDate: !exists(json, "appliedDate")
             ? undefined
             : new Date(json["appliedDate"]),
-        resumeAttachmentUrl: !(0, runtime_1.exists)(json, "resumeAttachmentUrl")
+        resumeAttachmentUrl: !exists(json, "resumeAttachmentUrl")
             ? undefined
             : json["resumeAttachmentUrl"],
-        coverLetterText: !(0, runtime_1.exists)(json, "coverLetterText")
+        coverLetterText: !exists(json, "coverLetterText")
             ? undefined
             : json["coverLetterText"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        matchScore: !(0, runtime_1.exists)(json, "matchScore") ? undefined : json["matchScore"],
-        matchReasons: !(0, runtime_1.exists)(json, "matchReasons")
+        status: !exists(json, "status") ? undefined : json["status"],
+        matchScore: !exists(json, "matchScore") ? undefined : json["matchScore"],
+        matchReasons: !exists(json, "matchReasons")
             ? undefined
             : json["matchReasons"],
-        recommendedNextSteps: !(0, runtime_1.exists)(json, "recommendedNextSteps")
+        recommendedNextSteps: !exists(json, "recommendedNextSteps")
             ? undefined
             : json["recommendedNextSteps"],
-        assignedRecruiter: !(0, runtime_1.exists)(json, "assignedRecruiter")
+        assignedRecruiter: !exists(json, "assignedRecruiter")
             ? undefined
             : json["assignedRecruiter"],
-        internalNotes: !(0, runtime_1.exists)(json, "internalNotes")
+        internalNotes: !exists(json, "internalNotes")
             ? undefined
             : json["internalNotes"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        updatedDate: !(0, runtime_1.exists)(json, "updatedDate")
+        updatedDate: !exists(json, "updatedDate")
             ? undefined
             : new Date(json["updatedDate"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function JobApplicationToJSON(value) {
+export function JobApplicationToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         jobSeekerId: value.jobSeekerId,
         opportunityId: value.opportunityId,
         appliedDate: value.appliedDate === undefined
@@ -105,30 +101,17 @@ function JobApplicationToJSON(value) {
         recommendedNextSteps: value.recommendedNextSteps,
         assignedRecruiter: value.assignedRecruiter,
         internalNotes: value.internalNotes,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
         updatedDate: value.updatedDate === undefined
             ? undefined
             : value.updatedDate.toISOString(),
-        id: value.id,
-        ownerId: value.ownerId,
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var JobApplicationStatusEnum;
+export var JobApplicationStatusEnum;
 (function (JobApplicationStatusEnum) {
     JobApplicationStatusEnum["SUBMITTED"] = "submitted";
     JobApplicationStatusEnum["REVIEWED"] = "reviewed";
@@ -136,5 +119,5 @@ var JobApplicationStatusEnum;
     JobApplicationStatusEnum["REJECTED"] = "rejected";
     JobApplicationStatusEnum["OFFER_SENT"] = "offer_sent";
     JobApplicationStatusEnum["HIRED"] = "hired";
-})(JobApplicationStatusEnum || (exports.JobApplicationStatusEnum = JobApplicationStatusEnum = {}));
+})(JobApplicationStatusEnum || (JobApplicationStatusEnum = {}));
 //# sourceMappingURL=JobApplication.js.map

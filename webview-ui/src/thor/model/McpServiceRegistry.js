@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.McpServiceRegistryCategoryEnum = void 0;
-exports.McpServiceRegistryFromJSON = McpServiceRegistryFromJSON;
-exports.McpServiceRegistryToJSON = McpServiceRegistryToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,67 +19,68 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-function McpServiceRegistryFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+export function McpServiceRegistryFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         slug: json["slug"],
         displayName: json["displayName"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        category: !(0, runtime_1.exists)(json, "category") ? undefined : json["category"],
-        author: !(0, runtime_1.exists)(json, "author") ? undefined : json["author"],
-        manifestUrl: !(0, runtime_1.exists)(json, "manifestUrl") ? undefined : json["manifestUrl"],
-        apiBaseUrl: !(0, runtime_1.exists)(json, "apiBaseUrl") ? undefined : json["apiBaseUrl"],
-        healthCheckUrl: !(0, runtime_1.exists)(json, "healthCheckUrl")
+        description: !exists(json, "description") ? undefined : json["description"],
+        category: !exists(json, "category") ? undefined : json["category"],
+        author: !exists(json, "author") ? undefined : json["author"],
+        manifestUrl: !exists(json, "manifestUrl") ? undefined : json["manifestUrl"],
+        apiBaseUrl: !exists(json, "apiBaseUrl") ? undefined : json["apiBaseUrl"],
+        healthCheckUrl: !exists(json, "healthCheckUrl")
             ? undefined
             : json["healthCheckUrl"],
-        version: !(0, runtime_1.exists)(json, "version") ? undefined : json["version"],
-        isPublished: !(0, runtime_1.exists)(json, "isPublished") ? undefined : json["isPublished"],
-        installCount: !(0, runtime_1.exists)(json, "installCount")
+        version: !exists(json, "version") ? undefined : json["version"],
+        isPublished: !exists(json, "isPublished") ? undefined : json["isPublished"],
+        installCount: !exists(json, "installCount")
             ? undefined
             : json["installCount"],
-        tags: !(0, runtime_1.exists)(json, "tags") ? undefined : json["tags"],
-        publishedDate: !(0, runtime_1.exists)(json, "publishedDate")
+        tags: !exists(json, "tags") ? undefined : json["tags"],
+        publishedDate: !exists(json, "publishedDate")
             ? undefined
             : new Date(json["publishedDate"]),
-        updatedDate: !(0, runtime_1.exists)(json, "updatedDate")
+        updatedDate: !exists(json, "updatedDate")
             ? undefined
             : new Date(json["updatedDate"]),
-        mcpServerId: !(0, runtime_1.exists)(json, "mcpServerId") ? undefined : json["mcpServerId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        mcpServerId: !exists(json, "mcpServerId") ? undefined : json["mcpServerId"],
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function McpServiceRegistryToJSON(value) {
+export function McpServiceRegistryToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         slug: value.slug,
         displayName: value.displayName,
         description: value.description,
@@ -104,27 +100,14 @@ function McpServiceRegistryToJSON(value) {
             ? undefined
             : value.updatedDate.toISOString(),
         mcpServerId: value.mcpServerId,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var McpServiceRegistryCategoryEnum;
+export var McpServiceRegistryCategoryEnum;
 (function (McpServiceRegistryCategoryEnum) {
     McpServiceRegistryCategoryEnum["CODEGENERATION"] = "code_generation";
     McpServiceRegistryCategoryEnum["AUTOMATION"] = "automation";
@@ -132,5 +115,5 @@ var McpServiceRegistryCategoryEnum;
     McpServiceRegistryCategoryEnum["INTEGRATION"] = "integration";
     McpServiceRegistryCategoryEnum["ANALYTICS"] = "analytics";
     McpServiceRegistryCategoryEnum["CUSTOM"] = "custom";
-})(McpServiceRegistryCategoryEnum || (exports.McpServiceRegistryCategoryEnum = McpServiceRegistryCategoryEnum = {}));
+})(McpServiceRegistryCategoryEnum || (McpServiceRegistryCategoryEnum = {}));
 //# sourceMappingURL=McpServiceRegistry.js.map

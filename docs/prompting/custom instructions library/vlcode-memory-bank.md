@@ -3,7 +3,6 @@
 ### 1. Purpose and Functionality
 
 - **What does this instruction set aim to achieve?**
-
   - This instruction set transforms ValorIDE into a self-documenting development system that maintains context across sessions through a structured "Memory Bank". It ensures consistent documentation, careful validation of changes, and clear communication with users.
 
 - **What types of projects or tasks is this best suited for?**
@@ -22,7 +21,6 @@
 <img width="345" alt="Screenshot 2024-12-26 at 11 22 20 AM" src="https://github.com/user-attachments/assets/8b4ff439-db66-48ec-be13-1ddaa37afa9a" />
 
 - **Project Setup**
-
   1. Create an empty `valoride_docs` folder in your project root (i.e. YOUR-PROJECT-FOLDER/valoride_docs)
   2. For first use, provide a project brief and ask ValorIDE to "initialize memory bank"
 
@@ -106,7 +104,6 @@ progress.md
 ### During Development
 
 1. For normal development:
-
    - Follow Memory Bank patterns
    - Update docs after significant changes
 

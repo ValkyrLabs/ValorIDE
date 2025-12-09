@@ -259,7 +259,7 @@ const Form: React.FC<FormProps> = ({
                       }
                       // disabled={!(touched && isValid && (loginUserResult.status == 'uninitialized'))}
                       type="submit"
-                      onClick={() => { }}
+                      onClick={() => {}}
                     >
                       {isSubmitting && (
                         <Spinner

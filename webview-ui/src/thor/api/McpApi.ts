@@ -8,7 +8,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 
@@ -27,6 +27,9 @@ import {
 } from "redux-query";
 import * as runtime from "../src/runtime";
 import {
+  Application,
+  ApplicationFromJSON,
+  ApplicationToJSON,
   InvokeMcpToolRequest,
   InvokeMcpToolRequestFromJSON,
   InvokeMcpToolRequestToJSON,
@@ -77,6 +80,10 @@ export interface UnpublishMcpServiceApiRequest {
 export interface UpdateMcpServiceApiRequest {
   slug: string;
   mcpServiceRegistry: McpServiceRegistry;
+}
+
+export interface UploadOpenAPIAndCreateApplicationApiRequest {
+  specification: Blob;
 }
 
 /**
@@ -582,4 +589,68 @@ export function updateMcpService<T>(
   requestConfig?: runtime.TypedQueryConfig<T, McpServiceRegistry>,
 ): QueryConfig<T> {
   return updateMcpServiceRaw(requestParameters, requestConfig);
+}
+
+/**
+ * Uploads an OpenAPI specification file (YAML or JSON), validates it, and creates a new Application record with all metadata fields populated from the spec. Returns the created Application object.
+ * Upload OpenAPI spec and create Application
+ */
+function uploadOpenAPIAndCreateApplicationRaw<T>(
+  requestParameters: UploadOpenAPIAndCreateApplicationApiRequest,
+  requestConfig: runtime.TypedQueryConfig<T, Application> = {},
+): QueryConfig<T> {
+  if (
+    requestParameters.specification === null ||
+    requestParameters.specification === undefined
+  ) {
+    throw new runtime.RequiredError(
+      "specification",
+      "Required parameter requestParameters.specification was null or undefined when calling uploadOpenAPIAndCreateApplication.",
+    );
+  }
+
+  let queryParameters = null;
+
+  const headerParameters: runtime.HttpHeaders = {};
+
+  const { meta = {} } = requestConfig;
+
+  const formData = new FormData();
+  if (requestParameters.specification !== undefined) {
+    formData.append("specification", requestParameters.specification as any);
+  }
+
+  const config: QueryConfig<T> = {
+    url: `${runtime.Configuration.basePath}/mcp/openapi/upload`,
+    meta,
+    update: requestConfig.update,
+    queryKey: requestConfig.queryKey,
+    optimisticUpdate: requestConfig.optimisticUpdate,
+    force: requestConfig.force,
+    rollback: requestConfig.rollback,
+    options: {
+      method: "POST",
+      headers: headerParameters,
+    },
+    body: formData,
+  };
+
+  const { transform: requestTransform } = requestConfig;
+  if (requestTransform) {
+    config.transform = (body: ResponseBody, text: ResponseBody) =>
+      requestTransform(ApplicationFromJSON(body), text);
+  }
+
+  return config;
+}
+
+/**
+ * Uploads an OpenAPI specification file (YAML or JSON), validates it, and creates a new Application record with all metadata fields populated from the spec. Returns the created Application object.
+ * Upload OpenAPI spec and create Application
+ */
+export function uploadOpenAPIAndCreateApplication<T>(
+  requestParameters: UploadOpenAPIAndCreateApplicationApiRequest,
+  requestConfig?: runtime.TypedQueryConfig<T, Application>,
+): QueryConfig<T> {
+  return uploadOpenAPIAndCreateApplicationRaw(requestParameters, requestConfig);
 }

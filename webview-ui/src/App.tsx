@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useLayoutEffect } from "react";
 import { useEvent } from "react-use";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import ChatView from "./components/chat/ChatView";
@@ -27,6 +27,10 @@ import useValorIDEMothership from "./hooks/useValorIDEMothership";
 import LoadingSpinner from "./components/LoadingSpinner";
 
 import { vscode } from "./utils/vscode";
+import {
+  readStoredPrincipal,
+  hydrateStoredCredentials,
+} from "./utils/accessControl";
 import McpView from "./components/mcp/configuration/McpConfigurationView";
 import { McpViewTab } from "@shared/mcp";
 
@@ -38,6 +42,24 @@ const AppContent = () => {
     telemetrySetting,
     vscMachineId,
   } = useExtensionState();
+  const [hasStoredAuth, setHasStoredAuth] = useState(false);
+
+  // Check for stored credentials BEFORE rendering to prevent welcome flicker
+  useLayoutEffect(() => {
+    // Restore JWT & Principal from localStorage if they exist (for sticky auth)
+    const { token, principal } = hydrateStoredCredentials("app-init");
+
+    // Also check sessionStorage directly as backup
+    const sessionToken = sessionStorage.getItem("jwtToken");
+    const sessionPrincipal = readStoredPrincipal();
+    
+    // Auth is valid if we have BOTH token AND principal (credentials are complete)
+    const hasAuth = (token || sessionToken) && (principal || sessionPrincipal);
+    
+    if (hasAuth) {
+      setHasStoredAuth(true);
+    }
+  }, []);
   const [showSettings, setShowSettings] = useState(false);
   const hideSettings = useCallback(() => setShowSettings(false), []);
   const [showHistory, setShowHistory] = useState(false);
@@ -241,7 +263,9 @@ const AppContent = () => {
     setCurrentApplicationId(undefined);
   }, []);
 
-  if (!didHydrateState) {
+  // While state is hydrating, show loading only if we DON'T have stored auth
+  // If we have stored auth, go straight to the app (don't show welcome)
+  if (!didHydrateState && !hasStoredAuth) {
     return (
       <div
         style={{
@@ -267,7 +291,7 @@ const AppContent = () => {
 
   return (
     <>
-      {showWelcome ? (
+      {showWelcome && !hasStoredAuth ? (
         <WelcomeView />
       ) : (
         <>

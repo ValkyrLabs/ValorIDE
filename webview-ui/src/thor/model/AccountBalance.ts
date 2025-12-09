@@ -20,7 +20,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -75,49 +75,55 @@ export type AccountBalance = DataObject & {
    * @type {string}
    * @memberof AccountBalance
    */
-  id?: string;
+  readonly id?: string;
   /**
    * UUID of owner of the object in the system
    * @type {string}
    * @memberof AccountBalance
    */
-  ownerId?: string;
+  readonly ownerId?: string;
   /**
    * Date of object creation
    * @type {Date}
    * @memberof AccountBalance
    */
-  createdDate?: Date;
+  readonly createdDate?: Date;
   /**
    * Data, including hash of the key(s) used to encrypt this record.
    * @type {string}
    * @memberof AccountBalance
    */
-  keyHash?: string;
+  readonly keyHash?: string;
   /**
    * Last user to access object
    * @type {string}
    * @memberof AccountBalance
    */
-  lastAccessedById?: string;
+  readonly lastAccessedById?: string;
   /**
    * Timestamp of last access of object
    * @type {Date}
    * @memberof AccountBalance
    */
-  lastAccessedDate?: Date;
+  readonly lastAccessedDate?: Date;
   /**
    * Unique identifier for user who last modifed the object in the system
    * @type {string}
    * @memberof AccountBalance
    */
-  lastModifiedById?: string;
+  readonly lastModifiedById?: string;
   /**
    * Date of last object modification
    * @type {Date}
    * @memberof AccountBalance
    */
-  lastModifiedDate?: Date;
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof AccountBalance
+   */
+  trashed?: boolean;
 };
 
 export function AccountBalanceFromJSON(json: any): AccountBalance {
@@ -151,6 +157,7 @@ export function AccountBalanceFromJSON(json: any): AccountBalance {
     lastModifiedDate: !exists(json, "lastModifiedDate")
       ? undefined
       : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
   };
 }
 
@@ -168,22 +175,6 @@ export function AccountBalanceToJSON(value?: AccountBalance): any {
       PaymentTransactionToJSON,
     ),
     currentBalance: value.currentBalance,
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
+    trashed: value.trashed,
   };
 }

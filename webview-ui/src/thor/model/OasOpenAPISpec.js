@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.OasOpenAPISpecOpenapiEnum = exports.OasOpenAPISpecSourceTypeEnum = void 0;
-exports.OasOpenAPISpecFromJSON = OasOpenAPISpecFromJSON;
-exports.OasOpenAPISpecToJSON = OasOpenAPISpecToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,98 +19,86 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function OasOpenAPISpecFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { OasComponentFromJSON, OasComponentToJSON, OasInfoFromJSON, OasInfoToJSON, OasPathFromJSON, OasPathToJSON, OasServerFromJSON, OasServerToJSON, } from "./";
+export function OasOpenAPISpecFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         sourcePath: json["sourcePath"],
         sourceType: json["sourceType"],
-        execModuleId: !(0, runtime_1.exists)(json, "execModuleId")
+        execModuleId: !exists(json, "execModuleId")
             ? undefined
             : json["execModuleId"],
-        sourceDetails: !(0, runtime_1.exists)(json, "sourceDetails")
+        sourceDetails: !exists(json, "sourceDetails")
             ? undefined
             : json["sourceDetails"],
-        openapi: !(0, runtime_1.exists)(json, "openapi") ? undefined : json["openapi"],
-        info: !(0, runtime_1.exists)(json, "info") ? undefined : (0, _1.OasInfoFromJSON)(json["info"]),
-        servers: !(0, runtime_1.exists)(json, "servers")
+        openapi: !exists(json, "openapi") ? undefined : json["openapi"],
+        info: !exists(json, "info") ? undefined : OasInfoFromJSON(json["info"]),
+        servers: !exists(json, "servers")
             ? undefined
-            : json["servers"].map(_1.OasServerFromJSON),
-        paths: !(0, runtime_1.exists)(json, "paths")
+            : json["servers"].map(OasServerFromJSON),
+        paths: !exists(json, "paths")
             ? undefined
-            : json["paths"].map(_1.OasPathFromJSON),
-        components: !(0, runtime_1.exists)(json, "components")
+            : json["paths"].map(OasPathFromJSON),
+        components: !exists(json, "components")
             ? undefined
-            : (0, _1.OasComponentFromJSON)(json["components"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+            : OasComponentFromJSON(json["components"]),
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function OasOpenAPISpecToJSON(value) {
+export function OasOpenAPISpecToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         sourcePath: value.sourcePath,
         sourceType: value.sourceType,
         execModuleId: value.execModuleId,
         sourceDetails: value.sourceDetails,
         openapi: value.openapi,
-        info: (0, _1.OasInfoToJSON)(value.info),
+        info: OasInfoToJSON(value.info),
         servers: value.servers === undefined
             ? undefined
-            : value.servers.map(_1.OasServerToJSON),
+            : value.servers.map(OasServerToJSON),
         paths: value.paths === undefined
             ? undefined
-            : value.paths.map(_1.OasPathToJSON),
-        components: (0, _1.OasComponentToJSON)(value.components),
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+            : value.paths.map(OasPathToJSON),
+        components: OasComponentToJSON(value.components),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var OasOpenAPISpecSourceTypeEnum;
+export var OasOpenAPISpecSourceTypeEnum;
 (function (OasOpenAPISpecSourceTypeEnum) {
     OasOpenAPISpecSourceTypeEnum["VALKYRLABS"] = "valkyrlabs";
     OasOpenAPISpecSourceTypeEnum["GITHUB"] = "github";
@@ -124,12 +107,12 @@ var OasOpenAPISpecSourceTypeEnum;
     OasOpenAPISpecSourceTypeEnum["BITBUCKET"] = "bitbucket";
     OasOpenAPISpecSourceTypeEnum["VENDOR"] = "vendor";
     OasOpenAPISpecSourceTypeEnum["NOTFOUND"] = "notfound";
-})(OasOpenAPISpecSourceTypeEnum || (exports.OasOpenAPISpecSourceTypeEnum = OasOpenAPISpecSourceTypeEnum = {}));
+})(OasOpenAPISpecSourceTypeEnum || (OasOpenAPISpecSourceTypeEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var OasOpenAPISpecOpenapiEnum;
+export var OasOpenAPISpecOpenapiEnum;
 (function (OasOpenAPISpecOpenapiEnum) {
     OasOpenAPISpecOpenapiEnum["_00"] = "3.0.0";
     OasOpenAPISpecOpenapiEnum["_01"] = "3.0.1";
@@ -137,5 +120,5 @@ var OasOpenAPISpecOpenapiEnum;
     OasOpenAPISpecOpenapiEnum["_03"] = "3.0.3";
     OasOpenAPISpecOpenapiEnum["_04"] = "3.0.4";
     OasOpenAPISpecOpenapiEnum["_10"] = "3.1.0";
-})(OasOpenAPISpecOpenapiEnum || (exports.OasOpenAPISpecOpenapiEnum = OasOpenAPISpecOpenapiEnum = {}));
+})(OasOpenAPISpecOpenapiEnum || (OasOpenAPISpecOpenapiEnum = {}));
 //# sourceMappingURL=OasOpenAPISpec.js.map

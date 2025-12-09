@@ -16,7 +16,10 @@ import {
   ValorIDESayBrowserAction,
 } from "@shared/ExtensionMessage";
 import { combineApiRequests } from "@shared/combineApiRequests";
-import { combineCommandSequences } from "@shared/combineCommandSequences";
+import {
+  COMMAND_OUTPUT_STRING,
+  combineCommandSequences,
+} from "@shared/combineCommandSequences";
 import { getApiMetrics } from "@shared/getApiMetrics";
 import { normalizeApiConfiguration } from "@/components/settings/ApiOptions";
 import TaskHeader from "@/components/chat/TaskHeader";
@@ -239,6 +242,29 @@ const TaskView: React.FC<TaskViewProps> = ({
 
     return result;
   }, [visibleMessages]);
+
+  useEffect(() => {
+    const last = modifiedMessages.at(-1);
+    if (!last) return;
+
+    const isCommandLike =
+      last.ask === "command" ||
+      last.say === "command" ||
+      last.ask === "command_output" ||
+      last.say === "command_output";
+
+    const hasRenderableOutput =
+      typeof last.text === "string" &&
+      (last.text.includes(COMMAND_OUTPUT_STRING) ||
+        last.ask === "command_output" ||
+        last.say === "command_output");
+
+    if (isCommandLike && hasRenderableOutput) {
+      setExpandedRows((prev) =>
+        prev[last.ts] ? prev : { ...prev, [last.ts]: true },
+      );
+    }
+  }, [modifiedMessages]);
 
   const itemContent = useCallback(
     (index: number, messageOrGroup: ValorIDEMessage | ValorIDEMessage[]) => {

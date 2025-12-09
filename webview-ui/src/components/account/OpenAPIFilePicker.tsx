@@ -121,12 +121,26 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
         message: `Uploading ${selectedFile.name}...`,
       });
 
+      let jwtToken: string | undefined;
+      try {
+        jwtToken =
+          (((globalThis as any).__TEST_JWT__ as string | undefined) ??
+            (typeof window !== "undefined"
+              ? window.sessionStorage?.getItem("jwtToken") ||
+                window.localStorage?.getItem("jwtToken")
+              : undefined)) ||
+          undefined;
+      } catch {
+        jwtToken = undefined;
+      }
+
       // Send to extension for processing
       vscode.postMessage({
         type: "uploadOpenAPISpec",
         filename: selectedFile.name,
         fileContent: fileContent,
         fileSize: selectedFile.size,
+        jwtToken,
       });
 
       // Wait for response from extension (listener below)

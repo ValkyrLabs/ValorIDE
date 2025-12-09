@@ -20,7 +20,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -97,7 +97,7 @@ export type CareerOpportunity = DataObject & {
    * @type {Date}
    * @memberof CareerOpportunity
    */
-  createdDate?: Date;
+  readonly createdDate?: Date;
   /**
    * Last update time
    * @type {Date}
@@ -109,43 +109,49 @@ export type CareerOpportunity = DataObject & {
    * @type {string}
    * @memberof CareerOpportunity
    */
-  id?: string;
+  readonly id?: string;
   /**
    * UUID of owner of the object in the system
    * @type {string}
    * @memberof CareerOpportunity
    */
-  ownerId?: string;
+  readonly ownerId?: string;
   /**
    * Data, including hash of the key(s) used to encrypt this record.
    * @type {string}
    * @memberof CareerOpportunity
    */
-  keyHash?: string;
+  readonly keyHash?: string;
   /**
    * Last user to access object
    * @type {string}
    * @memberof CareerOpportunity
    */
-  lastAccessedById?: string;
+  readonly lastAccessedById?: string;
   /**
    * Timestamp of last access of object
    * @type {Date}
    * @memberof CareerOpportunity
    */
-  lastAccessedDate?: Date;
+  readonly lastAccessedDate?: Date;
   /**
    * Unique identifier for user who last modifed the object in the system
    * @type {string}
    * @memberof CareerOpportunity
    */
-  lastModifiedById?: string;
+  readonly lastModifiedById?: string;
   /**
    * Date of last object modification
    * @type {Date}
    * @memberof CareerOpportunity
    */
-  lastModifiedDate?: Date;
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof CareerOpportunity
+   */
+  trashed?: boolean;
 };
 
 export function CareerOpportunityFromJSON(json: any): CareerOpportunity {
@@ -189,6 +195,7 @@ export function CareerOpportunityFromJSON(json: any): CareerOpportunity {
     lastModifiedDate: !exists(json, "lastModifiedDate")
       ? undefined
       : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
   };
 }
 
@@ -207,27 +214,11 @@ export function CareerOpportunityToJSON(value?: CareerOpportunity): any {
     experienceYearsMax: value.experienceYearsMax,
     commitment: value.commitment,
     isActive: value.isActive,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
     updatedDate:
       value.updatedDate === undefined
         ? undefined
         : value.updatedDate.toISOString(),
-    id: value.id,
-    ownerId: value.ownerId,
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
+    trashed: value.trashed,
   };
 }
 

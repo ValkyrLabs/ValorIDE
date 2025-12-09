@@ -7,6 +7,10 @@ import ApiOptions from "@/components/settings/ApiOptions";
 import SystemAlerts from "@/components/SystemAlerts";
 import Image from "react-bootstrap/Image";
 import valorIdeHorizontal from "../../assets/valorIde-horizontal.png";
+import {
+  readStoredPrincipal,
+  hydrateStoredCredentials,
+} from "@/utils/accessControl";
 
 const WelcomeView = memo(() => {
   const { apiConfiguration } = useExtensionState();
@@ -14,6 +18,22 @@ const WelcomeView = memo(() => {
     undefined,
   );
   const [showApiOptions, setShowApiOptions] = useState(false);
+  const [hasStoredAuth, setHasStoredAuth] = useState(false);
+
+  // Check for stored credentials on mount
+  useEffect(() => {
+    // Restore JWT & Principal from localStorage if they exist (for sticky auth)
+    hydrateStoredCredentials("welcome-view-init");
+
+    const storedPrincipal = readStoredPrincipal();
+    const storedToken =
+      sessionStorage.getItem("jwtToken") || localStorage.getItem("jwtToken");
+    if (storedPrincipal && storedToken) {
+      setHasStoredAuth(true);
+      // Skip welcome if authenticated
+      return;
+    }
+  }, []);
 
   const disableLetsGoButton = apiErrorMessage != null;
 
@@ -28,6 +48,13 @@ const WelcomeView = memo(() => {
   useEffect(() => {
     setApiErrorMessage(validateApiConfiguration(apiConfiguration));
   }, [apiConfiguration]);
+
+  // If stored auth exists, user should already be logged in - don't show welcome
+  // This prevents accidental welcome screen flicker
+  if (hasStoredAuth) {
+    // Return empty, as the parent App.tsx will route to the main chat interface instead
+    return null;
+  }
 
   return (
     <>

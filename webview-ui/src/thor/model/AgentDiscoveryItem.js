@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AgentDiscoveryItemStatusEnum = void 0;
-exports.AgentDiscoveryItemFromJSON = AgentDiscoveryItemFromJSON;
-exports.AgentDiscoveryItemToJSON = AgentDiscoveryItemToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,53 +19,54 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-function AgentDiscoveryItemFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+export function AgentDiscoveryItemFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
-        agentId: !(0, runtime_1.exists)(json, "agentId") ? undefined : json["agentId"],
-        instanceId: !(0, runtime_1.exists)(json, "instanceId") ? undefined : json["instanceId"],
-        username: !(0, runtime_1.exists)(json, "username") ? undefined : json["username"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        lastSeen: !(0, runtime_1.exists)(json, "lastSeen")
+        ...DataObjectFromJSON(json),
+        agentId: !exists(json, "agentId") ? undefined : json["agentId"],
+        instanceId: !exists(json, "instanceId") ? undefined : json["instanceId"],
+        username: !exists(json, "username") ? undefined : json["username"],
+        status: !exists(json, "status") ? undefined : json["status"],
+        lastSeen: !exists(json, "lastSeen")
             ? undefined
             : new Date(json["lastSeen"]),
-        location: !(0, runtime_1.exists)(json, "location") ? undefined : json["location"],
-        metadata: !(0, runtime_1.exists)(json, "metadata") ? undefined : json["metadata"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        location: !exists(json, "location") ? undefined : json["location"],
+        metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function AgentDiscoveryItemToJSON(value) {
+export function AgentDiscoveryItemToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         agentId: value.agentId,
         instanceId: value.instanceId,
         username: value.username,
@@ -78,32 +74,19 @@ function AgentDiscoveryItemToJSON(value) {
         lastSeen: value.lastSeen === undefined ? undefined : value.lastSeen.toISOString(),
         location: value.location,
         metadata: value.metadata,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var AgentDiscoveryItemStatusEnum;
+export var AgentDiscoveryItemStatusEnum;
 (function (AgentDiscoveryItemStatusEnum) {
     AgentDiscoveryItemStatusEnum["ONLINE"] = "online";
     AgentDiscoveryItemStatusEnum["OFFLINE"] = "offline";
     AgentDiscoveryItemStatusEnum["IDLE"] = "idle";
     AgentDiscoveryItemStatusEnum["BUSY"] = "busy";
     AgentDiscoveryItemStatusEnum["ERROR"] = "error";
-})(AgentDiscoveryItemStatusEnum || (exports.AgentDiscoveryItemStatusEnum = AgentDiscoveryItemStatusEnum = {}));
+})(AgentDiscoveryItemStatusEnum || (AgentDiscoveryItemStatusEnum = {}));
 //# sourceMappingURL=AgentDiscoveryItem.js.map

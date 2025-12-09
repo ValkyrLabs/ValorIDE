@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.LlmDetailsRoleEnum = exports.LlmDetailsApiTypeEnum = exports.LlmDetailsProviderEnum = void 0;
-exports.LlmDetailsFromJSON = LlmDetailsFromJSON;
-exports.LlmDetailsToJSON = LlmDetailsToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,77 +19,81 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-function LlmDetailsFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { IntegrationAccountFromJSON, IntegrationAccountToJSON, } from "./";
+export function LlmDetailsFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         name: json["name"],
         provider: json["provider"],
         apiType: json["apiType"],
-        version: !(0, runtime_1.exists)(json, "version") ? undefined : json["version"],
-        notes: !(0, runtime_1.exists)(json, "notes") ? undefined : json["notes"],
-        role: !(0, runtime_1.exists)(json, "role") ? undefined : json["role"],
-        initialPrompt: !(0, runtime_1.exists)(json, "initialPrompt")
+        version: !exists(json, "version") ? undefined : json["version"],
+        notes: !exists(json, "notes") ? undefined : json["notes"],
+        role: !exists(json, "role") ? undefined : json["role"],
+        initialPrompt: !exists(json, "initialPrompt")
             ? undefined
             : json["initialPrompt"],
-        apiKey: !(0, runtime_1.exists)(json, "apiKey") ? undefined : json["apiKey"],
-        credential: !(0, runtime_1.exists)(json, "credential") ? undefined : json["credential"],
-        credentialPassword: !(0, runtime_1.exists)(json, "credentialPassword")
+        apiKeyIntegrationAccount: !exists(json, "apiKeyIntegrationAccount")
+            ? undefined
+            : IntegrationAccountFromJSON(json["apiKeyIntegrationAccount"]),
+        credential: !exists(json, "credential") ? undefined : json["credential"],
+        credentialPassword: !exists(json, "credentialPassword")
             ? undefined
             : json["credentialPassword"],
-        temperature: !(0, runtime_1.exists)(json, "temperature") ? undefined : json["temperature"],
-        contextWindow: !(0, runtime_1.exists)(json, "contextWindow")
+        temperature: !exists(json, "temperature") ? undefined : json["temperature"],
+        contextWindow: !exists(json, "contextWindow")
             ? undefined
             : json["contextWindow"],
-        maxTokens: !(0, runtime_1.exists)(json, "maxTokens") ? undefined : json["maxTokens"],
-        supportsImages: !(0, runtime_1.exists)(json, "supportsImages")
+        maxTokens: !exists(json, "maxTokens") ? undefined : json["maxTokens"],
+        supportsImages: !exists(json, "supportsImages")
             ? undefined
             : json["supportsImages"],
-        supportsPromptCache: !(0, runtime_1.exists)(json, "supportsPromptCache")
+        supportsPromptCache: !exists(json, "supportsPromptCache")
             ? undefined
             : json["supportsPromptCache"],
-        inputPrice: !(0, runtime_1.exists)(json, "inputPrice") ? undefined : json["inputPrice"],
-        outputPrice: !(0, runtime_1.exists)(json, "outputPrice") ? undefined : json["outputPrice"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        url: !(0, runtime_1.exists)(json, "url") ? undefined : json["url"],
-        requestParameters: !(0, runtime_1.exists)(json, "requestParameters")
+        inputPrice: !exists(json, "inputPrice") ? undefined : json["inputPrice"],
+        outputPrice: !exists(json, "outputPrice") ? undefined : json["outputPrice"],
+        description: !exists(json, "description") ? undefined : json["description"],
+        url: !exists(json, "url") ? undefined : json["url"],
+        requestParameters: !exists(json, "requestParameters")
             ? undefined
             : json["requestParameters"],
-        metaData: !(0, runtime_1.exists)(json, "metaData") ? undefined : json["metaData"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        metaData: !exists(json, "metaData") ? undefined : json["metaData"],
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function LlmDetailsToJSON(value) {
+export function LlmDetailsToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         name: value.name,
         provider: value.provider,
         apiType: value.apiType,
@@ -102,7 +101,7 @@ function LlmDetailsToJSON(value) {
         notes: value.notes,
         role: value.role,
         initialPrompt: value.initialPrompt,
-        apiKey: value.apiKey,
+        apiKeyIntegrationAccount: IntegrationAccountToJSON(value.apiKeyIntegrationAccount),
         credential: value.credential,
         credentialPassword: value.credentialPassword,
         temperature: value.temperature,
@@ -116,27 +115,14 @@ function LlmDetailsToJSON(value) {
         url: value.url,
         requestParameters: value.requestParameters,
         metaData: value.metaData,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var LlmDetailsProviderEnum;
+export var LlmDetailsProviderEnum;
 (function (LlmDetailsProviderEnum) {
     LlmDetailsProviderEnum["VALKYRAI"] = "valkyrai";
     LlmDetailsProviderEnum["OPENAI"] = "openai";
@@ -148,24 +134,24 @@ var LlmDetailsProviderEnum;
     LlmDetailsProviderEnum["GEMINI"] = "gemini";
     LlmDetailsProviderEnum["OTHER"] = "other";
     LlmDetailsProviderEnum["CHATGPTPASSTHROUGH"] = "chatgpt_pass_through";
-})(LlmDetailsProviderEnum || (exports.LlmDetailsProviderEnum = LlmDetailsProviderEnum = {}));
+})(LlmDetailsProviderEnum || (LlmDetailsProviderEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var LlmDetailsApiTypeEnum;
+export var LlmDetailsApiTypeEnum;
 (function (LlmDetailsApiTypeEnum) {
     LlmDetailsApiTypeEnum["OPENAI"] = "openai";
     LlmDetailsApiTypeEnum["OLLAMA"] = "ollama";
     LlmDetailsApiTypeEnum["OTHER"] = "other";
-})(LlmDetailsApiTypeEnum || (exports.LlmDetailsApiTypeEnum = LlmDetailsApiTypeEnum = {}));
+})(LlmDetailsApiTypeEnum || (LlmDetailsApiTypeEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var LlmDetailsRoleEnum;
+export var LlmDetailsRoleEnum;
 (function (LlmDetailsRoleEnum) {
     LlmDetailsRoleEnum["USER"] = "user";
     LlmDetailsRoleEnum["ASSISTANT"] = "assistant";
-})(LlmDetailsRoleEnum || (exports.LlmDetailsRoleEnum = LlmDetailsRoleEnum = {}));
+})(LlmDetailsRoleEnum || (LlmDetailsRoleEnum = {}));
 //# sourceMappingURL=LlmDetails.js.map

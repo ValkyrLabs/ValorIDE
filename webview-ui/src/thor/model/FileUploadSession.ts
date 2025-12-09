@@ -20,7 +20,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -117,49 +117,55 @@ export type FileUploadSession = DataObject & {
    * @type {string}
    * @memberof FileUploadSession
    */
-  id?: string;
+  readonly id?: string;
   /**
    * UUID of owner of the object in the system
    * @type {string}
    * @memberof FileUploadSession
    */
-  ownerId?: string;
+  readonly ownerId?: string;
   /**
    * Date of object creation
    * @type {Date}
    * @memberof FileUploadSession
    */
-  createdDate?: Date;
+  readonly createdDate?: Date;
   /**
    * Data, including hash of the key(s) used to encrypt this record.
    * @type {string}
    * @memberof FileUploadSession
    */
-  keyHash?: string;
+  readonly keyHash?: string;
   /**
    * Last user to access object
    * @type {string}
    * @memberof FileUploadSession
    */
-  lastAccessedById?: string;
+  readonly lastAccessedById?: string;
   /**
    * Timestamp of last access of object
    * @type {Date}
    * @memberof FileUploadSession
    */
-  lastAccessedDate?: Date;
+  readonly lastAccessedDate?: Date;
   /**
    * Unique identifier for user who last modifed the object in the system
    * @type {string}
    * @memberof FileUploadSession
    */
-  lastModifiedById?: string;
+  readonly lastModifiedById?: string;
   /**
    * Date of last object modification
    * @type {Date}
    * @memberof FileUploadSession
    */
-  lastModifiedDate?: Date;
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof FileUploadSession
+   */
+  trashed?: boolean;
 };
 
 export function FileUploadSessionFromJSON(json: any): FileUploadSession {
@@ -200,6 +206,7 @@ export function FileUploadSessionFromJSON(json: any): FileUploadSession {
     lastModifiedDate: !exists(json, "lastModifiedDate")
       ? undefined
       : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
   };
 }
 
@@ -223,22 +230,6 @@ export function FileUploadSessionToJSON(value?: FileUploadSession): any {
         : value.completedAt.toISOString(),
     partSizeBytes: value.partSizeBytes,
     metadata: value.metadata,
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
+    trashed: value.trashed,
   };
 }

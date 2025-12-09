@@ -14,12 +14,10 @@ ValorIDE is your AI assistant that can:
 ## First Steps
 
 1. **Start a Task**
-
    - Type your request in the chat
    - Example: "Create a new React component called Header"
 
 2. **Provide Context**
-
    - Use @ mentions to add files, folders, URLs, diagnostics, terminal output, and more
    - Example: "@/src/components/App.tsx"
    - See the [Mentions Feature Guide](./mentions-guide.md) for details
@@ -31,19 +29,16 @@ ValorIDE is your AI assistant that can:
 ## Key Features
 
 1. **File Editing**
-
    - Create new files
    - Modify existing code
    - Search and replace across files
 
 2. **Terminal Commands**
-
    - Run npm commands
    - Start development servers
    - Install dependencies
 
 3. **Code Analysis**
-
    - Find and fix errors
    - Refactor code
    - Add documentation
@@ -60,7 +55,6 @@ For the most up-to-date implementation details, you can view the full source cod
 ValorIDE has access to the following tools for various tasks:
 
 1. **File Operations**
-
    - `write_to_file`: Create or overwrite files
    - `read_file`: Read file contents
    - `replace_in_file`: Make targeted edits to files
@@ -68,12 +62,10 @@ ValorIDE has access to the following tools for various tasks:
    - `list_files`: List directory contents
 
 2. **Terminal Operations**
-
    - `execute_command`: Run CLI commands
    - `list_code_definition_names`: List code definitions
 
 3. **MCP Tools**
-
    - `use_mcp_tool`: Use tools from MCP servers
    - `access_mcp_resource`: Access MCP server resources
    - Users can create custom MCP tools thatvaloride can then access
@@ -135,15 +127,12 @@ Each tool has specific parameters and usage patterns. Here are some examples:
 ## Common Tasks
 
 1. **Create a New Component**
-
    - "Create a new React component called Footer"
 
 2. **Fix a Bug**
-
    - "Fix the error in src/utils/format.ts"
 
 3. **Refactor Code**
-
    - "Refactor the Button component to use TypeScript"
 
 4. **Run Commands**

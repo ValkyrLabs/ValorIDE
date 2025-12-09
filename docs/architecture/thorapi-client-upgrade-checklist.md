@@ -7,7 +7,7 @@ When the ThorAPI client is regenerated (e.g., after an OpenAPI spec update), the
 ## 1. **Check for Removed or Renamed Exports**
 
 - **Error:** `has no exported member named 'useGenerateApplicationMutation'`
-- **Action:**  
+- **Action:**
   - Open `src/thor/redux/services/ApplicationService.tsx`
   - Use only the hooks/mutations that are actually exported (e.g., `useDeleteApplicationMutation`)
   - Remove or update any usage of missing hooks in your components.
@@ -17,7 +17,7 @@ When the ThorAPI client is regenerated (e.g., after an OpenAPI spec update), the
 ## 2. **Update API Calls to Match New Signatures**
 
 - **Error:** `Expected 1-2 arguments, but got 0.`
-- **Action:**  
+- **Action:**
   - Open the relevant API file (e.g., `src/thor/api/LoginApi.ts`)
   - Update all calls to `getLoginList`, `getLogoutList`, `getPrincipalList`, etc. to provide the required `requestParameters` argument.
 
@@ -26,7 +26,7 @@ When the ThorAPI client is regenerated (e.g., after an OpenAPI spec update), the
 ## 3. **Fix Import Paths for Missing Modules**
 
 - **Error:** `Cannot find module '../../redux/cache/rtkInvalidate'`
-- **Action:**  
+- **Action:**
   - Ensure the file exists at the specified path.
   - If the file was removed or renamed, update all imports and usages accordingly.
 
@@ -35,7 +35,7 @@ When the ThorAPI client is regenerated (e.g., after an OpenAPI spec update), the
 ## 4. **Fix Missing UI Components or Dependencies**
 
 - **Error:** `Cannot find name 'Spinner'`
-- **Action:**  
+- **Action:**
   - Import `Spinner` from your UI library (e.g., `import { Spinner } from 'react-bootstrap'`)
   - Or, add the missing dependency if not present.
 
@@ -44,7 +44,7 @@ When the ThorAPI client is regenerated (e.g., after an OpenAPI spec update), the
 ## 5. **Update Type Usages to Match New Models**
 
 - **Error:** `Object literal may only specify known properties, but 'organizationId' does not exist in type 'Principal'.`
-- **Action:**  
+- **Action:**
   - Check the new definition of `Principal` in the generated model.
   - Update your code to use the correct property (e.g., `organization` instead of `organizationId`).
 
@@ -53,7 +53,7 @@ When the ThorAPI client is regenerated (e.g., after an OpenAPI spec update), the
 ## 6. **Update WebSocket/Runtime Imports**
 
 - **Error:** `'WSS_BASE_PATH' has no exported member`
-- **Action:**  
+- **Action:**
   - Use `BASE_PATH` if that's the only available export.
   - Update all code to use the correct runtime constants.
 

@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,9 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CellFromJSON = CellFromJSON;
-exports.CellToJSON = CellToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -23,83 +19,71 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function CellFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { FormatFromJSON, FormatToJSON, FormulaFromJSON, FormulaToJSON, SheetColumnFromJSON, SheetColumnToJSON, SheetRowFromJSON, SheetRowToJSON, } from "./";
+export function CellFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
-        sheetId: !(0, runtime_1.exists)(json, "sheetId") ? undefined : json["sheetId"],
-        comment: !(0, runtime_1.exists)(json, "comment") ? undefined : json["comment"],
-        hyperlink: !(0, runtime_1.exists)(json, "hyperlink") ? undefined : json["hyperlink"],
-        row: !(0, runtime_1.exists)(json, "row") ? undefined : (0, _1.SheetRowFromJSON)(json["row"]),
-        column: !(0, runtime_1.exists)(json, "column")
+        ...DataObjectFromJSON(json),
+        sheetId: !exists(json, "sheetId") ? undefined : json["sheetId"],
+        comment: !exists(json, "comment") ? undefined : json["comment"],
+        hyperlink: !exists(json, "hyperlink") ? undefined : json["hyperlink"],
+        row: !exists(json, "row") ? undefined : SheetRowFromJSON(json["row"]),
+        column: !exists(json, "column")
             ? undefined
-            : (0, _1.SheetColumnFromJSON)(json["column"]),
-        stringValue: !(0, runtime_1.exists)(json, "stringValue") ? undefined : json["stringValue"],
-        numberValue: !(0, runtime_1.exists)(json, "numberValue") ? undefined : json["numberValue"],
-        formula: !(0, runtime_1.exists)(json, "formula")
+            : SheetColumnFromJSON(json["column"]),
+        stringValue: !exists(json, "stringValue") ? undefined : json["stringValue"],
+        numberValue: !exists(json, "numberValue") ? undefined : json["numberValue"],
+        formula: !exists(json, "formula")
             ? undefined
-            : (0, _1.FormulaFromJSON)(json["formula"]),
-        format: !(0, runtime_1.exists)(json, "format")
+            : FormulaFromJSON(json["formula"]),
+        format: !exists(json, "format")
             ? undefined
-            : (0, _1.FormatFromJSON)(json["format"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+            : FormatFromJSON(json["format"]),
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function CellToJSON(value) {
+export function CellToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         sheetId: value.sheetId,
         comment: value.comment,
         hyperlink: value.hyperlink,
-        row: (0, _1.SheetRowToJSON)(value.row),
-        column: (0, _1.SheetColumnToJSON)(value.column),
+        row: SheetRowToJSON(value.row),
+        column: SheetColumnToJSON(value.column),
         stringValue: value.stringValue,
         numberValue: value.numberValue,
-        formula: (0, _1.FormulaToJSON)(value.formula),
-        format: (0, _1.FormatToJSON)(value.format),
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        formula: FormulaToJSON(value.formula),
+        format: FormatToJSON(value.format),
+        trashed: value.trashed,
     };
 }
 //# sourceMappingURL=Cell.js.map

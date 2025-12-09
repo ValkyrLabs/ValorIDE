@@ -17,6 +17,7 @@ export interface WebviewMessage {
     | "newTask"
     | "condense"
     | "askResponse"
+    | "userMessage"
     | "didShowAnnouncement"
     | "selectImages"
     | "exportCurrentTask"
@@ -165,6 +166,7 @@ export interface WebviewMessage {
   // For uploadOpenAPISpec
   fileContent?: string;
   fileSize?: number;
+  jwtToken?: string;
   // For uploadOpenAPISpecResult
   success?: boolean;
   specPath?: string;

@@ -4,6 +4,23 @@ import React from "react";
 import OpenAPIFilePicker from "./OpenAPIFilePicker";
 import * as vscodeModule from "../../utils/vscode";
 
+// Polyfill File.text for the jsdom environment
+if (!(File.prototype as any).text) {
+  Object.defineProperty(File.prototype, "text", {
+    value: function text() {
+      if (typeof FileReader !== "undefined") {
+        return new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = () => reject(reader.error);
+          reader.readAsText(this);
+        });
+      }
+      return Promise.resolve("");
+    },
+  });
+}
+
 // Mock vscode
 vi.mock("../../utils/vscode", () => ({
   vscode: {
@@ -114,7 +131,7 @@ describe("OpenAPIFilePicker - Validation & Upload", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/missing required.*version field/),
+          screen.getByText(/missing 'openapi' or 'swagger' version/i),
         ).toBeInTheDocument();
       });
     });
@@ -255,6 +272,32 @@ describe("OpenAPIFilePicker - Validation & Upload", () => {
   });
 
   describe("Message Dispatch Structure", () => {
+    it("should include jwtToken in the message when available", async () => {
+      window.sessionStorage.setItem("jwtToken", "test-jwt-token");
+      vi.spyOn(window.sessionStorage, "getItem").mockReturnValue(
+        "test-jwt-token",
+      );
+      (globalThis as any).__TEST_JWT__ = "test-jwt-token";
+
+      render(<OpenAPIFilePicker />);
+      const fileInput = document.querySelector(
+        'input[type="file"]',
+      ) as HTMLInputElement;
+
+      const content =
+        "openapi: 3.0.0\ninfo:\n  title: Test\n  version: 1.0\npaths: {}";
+      const file = new File([content], "spec.yaml");
+
+      fireEvent.change(fileInput, { target: { files: [file] } });
+      const uploadButton = screen.getByText("Upload");
+      fireEvent.click(uploadButton);
+
+      await waitFor(() => {
+        const call = (vscodeModule.vscode.postMessage as any).mock.calls[0][0];
+        expect(call).toHaveProperty("jwtToken", "test-jwt-token");
+      });
+    });
+
     it("should include filename, fileContent, and fileSize in message", async () => {
       render(<OpenAPIFilePicker />);
       const fileInput = document.querySelector(

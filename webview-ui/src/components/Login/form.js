@@ -99,7 +99,7 @@ const Form = ({ onSubmit: externalOnSubmit, isLoggedIn = false, }) => {
                                                 : "warning"
                                             : "dark", 
                                         // disabled={!(touched && isValid && (loginUserResult.status == 'uninitialized'))}
-                                        type: "submit", onClick: () => { }, children: [isSubmitting && (_jsx(Spinner, { style: { float: "left", maxWidth: "16px" }, as: "span", animation: "grow", variant: "dark", "aria-hidden": "true" })), _jsx(FiUserCheck, { size: 30 }), " Login Now"] }) }) }), isSubmitting && (_jsx(LoadingSpinner, { size: 128, label: "Signing you in..." }))] }));
+                                        type: "submit", onClick: () => { }, children: [isSubmitting && (_jsx(Spinner, { style: { float: "left", maxWidth: "16px" }, as: "span", animation: "grow", variant: "dark", "aria-hidden": "true" })), _jsx(FiUserCheck, { size: 30 }), " Login Now"] }) }) }), isSubmitting && (_jsx(LoadingSpinner, { size: 64, label: "Signing you in..." }))] }));
                 } }))] }));
 };
 export default Form;

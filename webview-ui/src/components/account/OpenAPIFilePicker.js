@@ -86,12 +86,26 @@ const OpenAPIFilePicker = ({ onFileSelected, }) => {
                 type: null,
                 message: `Uploading ${selectedFile.name}...`,
             });
+            let jwtToken;
+            try {
+                jwtToken =
+                    (globalThis.__TEST_JWT__ ??
+                        (typeof window !== "undefined"
+                            ? window.sessionStorage?.getItem("jwtToken") ||
+                                window.localStorage?.getItem("jwtToken")
+                            : undefined)) ||
+                        undefined;
+            }
+            catch {
+                jwtToken = undefined;
+            }
             // Send to extension for processing
             vscode.postMessage({
                 type: "uploadOpenAPISpec",
                 filename: selectedFile.name,
                 fileContent: fileContent,
                 fileSize: selectedFile.size,
+                jwtToken,
             });
             // Wait for response from extension (listener below)
             // The success message will be shown via uploadOpenAPISpecResult message

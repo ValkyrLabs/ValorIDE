@@ -47,6 +47,7 @@ export function registerAliasCommands(context) {
                 canSelectMany: true,
                 openLabel: "Select Thor project folder(s)",
             })) || [];
+        // Check if user cancelled dialog
         if (!selectedFolders || selectedFolders.length === 0)
             return;
         // 2) Choose which tsconfig files to update
@@ -62,7 +63,6 @@ export function registerAliasCommands(context) {
         })), { canPickMany: true, title: "Select tsconfig files to update" });
         if (!picks || picks.length === 0)
             return;
-        // 3) Options
         const optionPicks = await vscode.window.showQuickPick([
             {
                 label: "Update paths for @thor and @valkyr/component-library",

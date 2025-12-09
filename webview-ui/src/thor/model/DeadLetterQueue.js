@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeadLetterQueueResolutionEnum = exports.DeadLetterQueueFailureTypeEnum = void 0;
-exports.DeadLetterQueueFromJSON = DeadLetterQueueFromJSON;
-exports.DeadLetterQueueToJSON = DeadLetterQueueToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,69 +19,70 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-function DeadLetterQueueFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+export function DeadLetterQueueFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
-        runId: !(0, runtime_1.exists)(json, "runId") ? undefined : json["runId"],
-        executionId: !(0, runtime_1.exists)(json, "executionId") ? undefined : json["executionId"],
-        taskId: !(0, runtime_1.exists)(json, "taskId") ? undefined : json["taskId"],
-        failureReason: !(0, runtime_1.exists)(json, "failureReason")
+        ...DataObjectFromJSON(json),
+        runId: !exists(json, "runId") ? undefined : json["runId"],
+        executionId: !exists(json, "executionId") ? undefined : json["executionId"],
+        taskId: !exists(json, "taskId") ? undefined : json["taskId"],
+        failureReason: !exists(json, "failureReason")
             ? undefined
             : json["failureReason"],
-        failureType: !(0, runtime_1.exists)(json, "failureType") ? undefined : json["failureType"],
-        originalInputs: !(0, runtime_1.exists)(json, "originalInputs")
+        failureType: !exists(json, "failureType") ? undefined : json["failureType"],
+        originalInputs: !exists(json, "originalInputs")
             ? undefined
             : json["originalInputs"],
-        originalConfig: !(0, runtime_1.exists)(json, "originalConfig")
+        originalConfig: !exists(json, "originalConfig")
             ? undefined
             : json["originalConfig"],
-        quarantinedAt: !(0, runtime_1.exists)(json, "quarantinedAt")
+        quarantinedAt: !exists(json, "quarantinedAt")
             ? undefined
             : new Date(json["quarantinedAt"]),
-        reviewedBy: !(0, runtime_1.exists)(json, "reviewedBy") ? undefined : json["reviewedBy"],
-        resolution: !(0, runtime_1.exists)(json, "resolution") ? undefined : json["resolution"],
-        resolvedAt: !(0, runtime_1.exists)(json, "resolvedAt")
+        reviewedBy: !exists(json, "reviewedBy") ? undefined : json["reviewedBy"],
+        resolution: !exists(json, "resolution") ? undefined : json["resolution"],
+        resolvedAt: !exists(json, "resolvedAt")
             ? undefined
             : new Date(json["resolvedAt"]),
-        notes: !(0, runtime_1.exists)(json, "notes") ? undefined : json["notes"],
-        requeuedAsRunId: !(0, runtime_1.exists)(json, "requeuedAsRunId")
+        notes: !exists(json, "notes") ? undefined : json["notes"],
+        requeuedAsRunId: !exists(json, "requeuedAsRunId")
             ? undefined
             : json["requeuedAsRunId"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function DeadLetterQueueToJSON(value) {
+export function DeadLetterQueueToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         runId: value.runId,
         executionId: value.executionId,
         taskId: value.taskId,
@@ -104,42 +100,29 @@ function DeadLetterQueueToJSON(value) {
             : value.resolvedAt.toISOString(),
         notes: value.notes,
         requeuedAsRunId: value.requeuedAsRunId,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var DeadLetterQueueFailureTypeEnum;
+export var DeadLetterQueueFailureTypeEnum;
 (function (DeadLetterQueueFailureTypeEnum) {
     DeadLetterQueueFailureTypeEnum["MAXRETRIES"] = "max_retries";
     DeadLetterQueueFailureTypeEnum["PERMANENTERROR"] = "permanent_error";
     DeadLetterQueueFailureTypeEnum["CIRCUITBREAKER"] = "circuit_breaker";
     DeadLetterQueueFailureTypeEnum["MANUAL"] = "manual";
-})(DeadLetterQueueFailureTypeEnum || (exports.DeadLetterQueueFailureTypeEnum = DeadLetterQueueFailureTypeEnum = {}));
+})(DeadLetterQueueFailureTypeEnum || (DeadLetterQueueFailureTypeEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var DeadLetterQueueResolutionEnum;
+export var DeadLetterQueueResolutionEnum;
 (function (DeadLetterQueueResolutionEnum) {
     DeadLetterQueueResolutionEnum["PENDING"] = "pending";
     DeadLetterQueueResolutionEnum["REQUEUED"] = "requeued";
     DeadLetterQueueResolutionEnum["FIXED"] = "fixed";
     DeadLetterQueueResolutionEnum["DISCARDED"] = "discarded";
-})(DeadLetterQueueResolutionEnum || (exports.DeadLetterQueueResolutionEnum = DeadLetterQueueResolutionEnum = {}));
+})(DeadLetterQueueResolutionEnum || (DeadLetterQueueResolutionEnum = {}));
 //# sourceMappingURL=DeadLetterQueue.js.map

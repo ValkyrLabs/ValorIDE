@@ -199,14 +199,14 @@ ValorIDE: Renders preview or generates HTML
 ```typescript
 // valoride/src/commands/funnelGenerator.ts
 export const registerFunnelGeneratorCommands = (
-  context: vscode.ExtensionContext
+  context: vscode.ExtensionContext,
 ) => {
   context.subscriptions.push(
     vscode.commands.registerCommand("valoride.generateFunnel", async () => {
       const inputs = await promptUserForFunnelInputs();
       const result = await callValkyrAI("generate_product_funnel", inputs);
       await displayFunnelResults(result);
-    })
+    }),
   );
 };
 ```
@@ -236,7 +236,7 @@ if (
 swarmClient.on("FUNNEL_GENERATED", (payload) => {
   // Display notification
   vscode.window.showInformationMessage(
-    `✅ Funnel generated for "${payload.offer}"`
+    `✅ Funnel generated for "${payload.offer}"`,
   );
 
   // Open results in editor

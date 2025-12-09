@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RetryPolicyBackoffStrategyEnum = void 0;
-exports.RetryPolicyFromJSON = RetryPolicyFromJSON;
-exports.RetryPolicyToJSON = RetryPolicyToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,57 +19,58 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-function RetryPolicyFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+export function RetryPolicyFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
-        maxAttempts: !(0, runtime_1.exists)(json, "maxAttempts") ? undefined : json["maxAttempts"],
-        backoffStrategy: !(0, runtime_1.exists)(json, "backoffStrategy")
+        ...DataObjectFromJSON(json),
+        maxAttempts: !exists(json, "maxAttempts") ? undefined : json["maxAttempts"],
+        backoffStrategy: !exists(json, "backoffStrategy")
             ? undefined
             : json["backoffStrategy"],
-        initialDelayMs: !(0, runtime_1.exists)(json, "initialDelayMs")
+        initialDelayMs: !exists(json, "initialDelayMs")
             ? undefined
             : json["initialDelayMs"],
-        maxDelayMs: !(0, runtime_1.exists)(json, "maxDelayMs") ? undefined : json["maxDelayMs"],
-        multiplier: !(0, runtime_1.exists)(json, "multiplier") ? undefined : json["multiplier"],
-        jitter: !(0, runtime_1.exists)(json, "jitter") ? undefined : json["jitter"],
-        retryableErrors: !(0, runtime_1.exists)(json, "retryableErrors")
+        maxDelayMs: !exists(json, "maxDelayMs") ? undefined : json["maxDelayMs"],
+        multiplier: !exists(json, "multiplier") ? undefined : json["multiplier"],
+        jitter: !exists(json, "jitter") ? undefined : json["jitter"],
+        retryableErrors: !exists(json, "retryableErrors")
             ? undefined
             : json["retryableErrors"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function RetryPolicyToJSON(value) {
+export function RetryPolicyToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         maxAttempts: value.maxAttempts,
         backoffStrategy: value.backoffStrategy,
         initialDelayMs: value.initialDelayMs,
@@ -82,30 +78,17 @@ function RetryPolicyToJSON(value) {
         multiplier: value.multiplier,
         jitter: value.jitter,
         retryableErrors: value.retryableErrors,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var RetryPolicyBackoffStrategyEnum;
+export var RetryPolicyBackoffStrategyEnum;
 (function (RetryPolicyBackoffStrategyEnum) {
     RetryPolicyBackoffStrategyEnum["FIXED"] = "fixed";
     RetryPolicyBackoffStrategyEnum["EXPONENTIAL"] = "exponential";
     RetryPolicyBackoffStrategyEnum["LINEAR"] = "linear";
-})(RetryPolicyBackoffStrategyEnum || (exports.RetryPolicyBackoffStrategyEnum = RetryPolicyBackoffStrategyEnum = {}));
+})(RetryPolicyBackoffStrategyEnum || (RetryPolicyBackoffStrategyEnum = {}));
 //# sourceMappingURL=RetryPolicy.js.map

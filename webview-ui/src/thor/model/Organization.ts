@@ -20,7 +20,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -34,17 +34,23 @@ import { Address, AddressFromJSON, AddressToJSON } from "./";
 // thorapi
 
 /**
- * An organization such as a company
+ * An organization such as a company. Name should be unique (case-insensitive) to prevent duplicates.
  * @export
  * @interface Organization
  */
 export type Organization = DataObject & {
   /**
-   *
+   * Organization name (unique, case-insensitive matching for deduplication)
    * @type {string}
    * @memberof Organization
    */
   name: string;
+  /**
+   * Lowercase, trimmed name used for deduplication matching
+   * @type {string}
+   * @memberof Organization
+   */
+  readonly normalizedName?: string;
   /**
    *
    * @type {string}
@@ -58,6 +64,18 @@ export type Organization = DataObject & {
    */
   phone?: string;
   /**
+   * Whether this organization has been verified/claimed
+   * @type {boolean}
+   * @memberof Organization
+   */
+  verified?: boolean;
+  /**
+   * Parent organization ID for hierarchical org structures
+   * @type {string}
+   * @memberof Organization
+   */
+  parentOrganizationId?: string;
+  /**
    *
    * @type {Address}
    * @memberof Organization
@@ -68,57 +86,70 @@ export type Organization = DataObject & {
    * @type {string}
    * @memberof Organization
    */
-  id?: string;
+  readonly id?: string;
   /**
    * UUID of owner of the object in the system
    * @type {string}
    * @memberof Organization
    */
-  ownerId?: string;
+  readonly ownerId?: string;
   /**
    * Date of object creation
    * @type {Date}
    * @memberof Organization
    */
-  createdDate?: Date;
+  readonly createdDate?: Date;
   /**
    * Data, including hash of the key(s) used to encrypt this record.
    * @type {string}
    * @memberof Organization
    */
-  keyHash?: string;
+  readonly keyHash?: string;
   /**
    * Last user to access object
    * @type {string}
    * @memberof Organization
    */
-  lastAccessedById?: string;
+  readonly lastAccessedById?: string;
   /**
    * Timestamp of last access of object
    * @type {Date}
    * @memberof Organization
    */
-  lastAccessedDate?: Date;
+  readonly lastAccessedDate?: Date;
   /**
    * Unique identifier for user who last modifed the object in the system
    * @type {string}
    * @memberof Organization
    */
-  lastModifiedById?: string;
+  readonly lastModifiedById?: string;
   /**
    * Date of last object modification
    * @type {Date}
    * @memberof Organization
    */
-  lastModifiedDate?: Date;
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof Organization
+   */
+  trashed?: boolean;
 };
 
 export function OrganizationFromJSON(json: any): Organization {
   return {
     ...DataObjectFromJSON(json),
     name: json["name"],
+    normalizedName: !exists(json, "normalizedName")
+      ? undefined
+      : json["normalizedName"],
     homePage: !exists(json, "homePage") ? undefined : json["homePage"],
     phone: !exists(json, "phone") ? undefined : json["phone"],
+    verified: !exists(json, "verified") ? undefined : json["verified"],
+    parentOrganizationId: !exists(json, "parentOrganizationId")
+      ? undefined
+      : json["parentOrganizationId"],
     address: !exists(json, "address")
       ? undefined
       : AddressFromJSON(json["address"]),
@@ -140,6 +171,7 @@ export function OrganizationFromJSON(json: any): Organization {
     lastModifiedDate: !exists(json, "lastModifiedDate")
       ? undefined
       : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
   };
 }
 
@@ -152,23 +184,9 @@ export function OrganizationToJSON(value?: Organization): any {
     name: value.name,
     homePage: value.homePage,
     phone: value.phone,
+    verified: value.verified,
+    parentOrganizationId: value.parentOrganizationId,
     address: AddressToJSON(value.address),
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    keyHash: value.keyHash,
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
+    trashed: value.trashed,
   };
 }

@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApplicationStatusEnum = exports.ApplicationTypeEnum = void 0;
-exports.ApplicationFromJSON = ApplicationFromJSON;
-exports.ApplicationToJSON = ApplicationToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,59 +19,60 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function ApplicationFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { ContentMediaLinkFromJSON, ContentMediaLinkToJSON, OasOpenAPISpecFromJSON, OasOpenAPISpecToJSON, } from "./";
+export function ApplicationFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        isTemplate: !(0, runtime_1.exists)(json, "isTemplate") ? undefined : json["isTemplate"],
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        status: !(0, runtime_1.exists)(json, "status") ? undefined : json["status"],
-        entrypointUrl: !(0, runtime_1.exists)(json, "entrypointUrl")
+        ...DataObjectFromJSON(json),
+        name: !exists(json, "name") ? undefined : json["name"],
+        description: !exists(json, "description") ? undefined : json["description"],
+        isTemplate: !exists(json, "isTemplate") ? undefined : json["isTemplate"],
+        type: !exists(json, "type") ? undefined : json["type"],
+        status: !exists(json, "status") ? undefined : json["status"],
+        entrypointUrl: !exists(json, "entrypointUrl")
             ? undefined
             : json["entrypointUrl"],
-        contentMedia: !(0, runtime_1.exists)(json, "contentMedia")
+        contentMedia: !exists(json, "contentMedia")
             ? undefined
-            : json["contentMedia"].map(_1.ContentMediaLinkFromJSON),
-        openAPISpec: !(0, runtime_1.exists)(json, "openAPISpec")
+            : json["contentMedia"].map(ContentMediaLinkFromJSON),
+        openAPISpec: !exists(json, "openAPISpec")
             ? undefined
-            : (0, _1.OasOpenAPISpecFromJSON)(json["openAPISpec"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+            : OasOpenAPISpecFromJSON(json["openAPISpec"]),
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function ApplicationToJSON(value) {
+export function ApplicationToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         name: value.name,
         description: value.description,
         isTemplate: value.isTemplate,
@@ -85,29 +81,16 @@ function ApplicationToJSON(value) {
         entrypointUrl: value.entrypointUrl,
         contentMedia: value.contentMedia === undefined
             ? undefined
-            : value.contentMedia.map(_1.ContentMediaLinkToJSON),
-        openAPISpec: (0, _1.OasOpenAPISpecToJSON)(value.openAPISpec),
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+            : value.contentMedia.map(ContentMediaLinkToJSON),
+        openAPISpec: OasOpenAPISpecToJSON(value.openAPISpec),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var ApplicationTypeEnum;
+export var ApplicationTypeEnum;
 (function (ApplicationTypeEnum) {
     ApplicationTypeEnum["FULLSTACK"] = "full-stack";
     ApplicationTypeEnum["AUTOMATION"] = "automation";
@@ -117,17 +100,17 @@ var ApplicationTypeEnum;
     ApplicationTypeEnum["MOBILE"] = "mobile";
     ApplicationTypeEnum["CICD"] = "ci-cd";
     ApplicationTypeEnum["LAMBDA"] = "lambda";
-})(ApplicationTypeEnum || (exports.ApplicationTypeEnum = ApplicationTypeEnum = {}));
+})(ApplicationTypeEnum || (ApplicationTypeEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var ApplicationStatusEnum;
+export var ApplicationStatusEnum;
 (function (ApplicationStatusEnum) {
     ApplicationStatusEnum["READY"] = "ready";
     ApplicationStatusEnum["DEPLOYED"] = "deployed";
     ApplicationStatusEnum["STAGING"] = "staging";
     ApplicationStatusEnum["ERROR"] = "error";
     ApplicationStatusEnum["DISABLED"] = "disabled";
-})(ApplicationStatusEnum || (exports.ApplicationStatusEnum = ApplicationStatusEnum = {}));
+})(ApplicationStatusEnum || (ApplicationStatusEnum = {}));
 //# sourceMappingURL=Application.js.map

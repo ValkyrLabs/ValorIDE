@@ -20,7 +20,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
@@ -73,7 +73,7 @@ export type SecureKey = DataObject & {
    * @type {string}
    * @memberof SecureKey
    */
-  keyHash?: string;
+  readonly keyHash?: string;
   /**
    * the exponential strength of the BCrypt hashing used by the Hashing cipher
    * @type {number}
@@ -85,43 +85,49 @@ export type SecureKey = DataObject & {
    * @type {string}
    * @memberof SecureKey
    */
-  id?: string;
+  readonly id?: string;
   /**
    * UUID of owner of the object in the system
    * @type {string}
    * @memberof SecureKey
    */
-  ownerId?: string;
+  readonly ownerId?: string;
   /**
    * Date of object creation
    * @type {Date}
    * @memberof SecureKey
    */
-  createdDate?: Date;
+  readonly createdDate?: Date;
   /**
    * Last user to access object
    * @type {string}
    * @memberof SecureKey
    */
-  lastAccessedById?: string;
+  readonly lastAccessedById?: string;
   /**
    * Timestamp of last access of object
    * @type {Date}
    * @memberof SecureKey
    */
-  lastAccessedDate?: Date;
+  readonly lastAccessedDate?: Date;
   /**
    * Unique identifier for user who last modifed the object in the system
    * @type {string}
    * @memberof SecureKey
    */
-  lastModifiedById?: string;
+  readonly lastModifiedById?: string;
   /**
    * Date of last object modification
    * @type {Date}
    * @memberof SecureKey
    */
-  lastModifiedDate?: Date;
+  readonly lastModifiedDate?: Date;
+  /**
+   * Indicates if the object is trashed (soft deleted)
+   * @type {boolean}
+   * @memberof SecureKey
+   */
+  trashed?: boolean;
 };
 
 export function SecureKeyFromJSON(json: any): SecureKey {
@@ -153,6 +159,7 @@ export function SecureKeyFromJSON(json: any): SecureKey {
     lastModifiedDate: !exists(json, "lastModifiedDate")
       ? undefined
       : new Date(json["lastModifiedDate"]),
+    trashed: !exists(json, "trashed") ? undefined : json["trashed"],
   };
 }
 
@@ -167,24 +174,8 @@ export function SecureKeyToJSON(value?: SecureKey): any {
     keyValue: value.keyValue,
     status: value.status,
     notes: value.notes,
-    keyHash: value.keyHash,
     cipherWorkCost: value.cipherWorkCost,
-    id: value.id,
-    ownerId: value.ownerId,
-    createdDate:
-      value.createdDate === undefined
-        ? undefined
-        : value.createdDate.toISOString(),
-    lastAccessedById: value.lastAccessedById,
-    lastAccessedDate:
-      value.lastAccessedDate === undefined
-        ? undefined
-        : value.lastAccessedDate.toISOString(),
-    lastModifiedById: value.lastModifiedById,
-    lastModifiedDate:
-      value.lastModifiedDate === undefined
-        ? undefined
-        : value.lastModifiedDate.toISOString(),
+    trashed: value.trashed,
   };
 }
 

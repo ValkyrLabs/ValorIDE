@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.McpTransportConfigTransportTypeEnum = void 0;
-exports.McpTransportConfigFromJSON = McpTransportConfigFromJSON;
-exports.McpTransportConfigToJSON = McpTransportConfigToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,60 +19,61 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-function McpTransportConfigFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+export function McpTransportConfigFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         mcpServerId: json["mcpServerId"],
         transportType: json["transportType"],
-        executablePath: !(0, runtime_1.exists)(json, "executablePath")
+        executablePath: !exists(json, "executablePath")
             ? undefined
             : json["executablePath"],
-        baseUrl: !(0, runtime_1.exists)(json, "baseUrl") ? undefined : json["baseUrl"],
-        authHeaderName: !(0, runtime_1.exists)(json, "authHeaderName")
+        baseUrl: !exists(json, "baseUrl") ? undefined : json["baseUrl"],
+        authHeaderName: !exists(json, "authHeaderName")
             ? undefined
             : json["authHeaderName"],
-        authToken: !(0, runtime_1.exists)(json, "authToken") ? undefined : json["authToken"],
-        functionArn: !(0, runtime_1.exists)(json, "functionArn") ? undefined : json["functionArn"],
-        roleArn: !(0, runtime_1.exists)(json, "roleArn") ? undefined : json["roleArn"],
-        customConfig: !(0, runtime_1.exists)(json, "customConfig")
+        authToken: !exists(json, "authToken") ? undefined : json["authToken"],
+        functionArn: !exists(json, "functionArn") ? undefined : json["functionArn"],
+        roleArn: !exists(json, "roleArn") ? undefined : json["roleArn"],
+        customConfig: !exists(json, "customConfig")
             ? undefined
             : json["customConfig"],
-        isActive: !(0, runtime_1.exists)(json, "isActive") ? undefined : json["isActive"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        isActive: !exists(json, "isActive") ? undefined : json["isActive"],
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function McpTransportConfigToJSON(value) {
+export function McpTransportConfigToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         mcpServerId: value.mcpServerId,
         transportType: value.transportType,
         executablePath: value.executablePath,
@@ -88,27 +84,14 @@ function McpTransportConfigToJSON(value) {
         roleArn: value.roleArn,
         customConfig: value.customConfig,
         isActive: value.isActive,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var McpTransportConfigTransportTypeEnum;
+export var McpTransportConfigTransportTypeEnum;
 (function (McpTransportConfigTransportTypeEnum) {
     McpTransportConfigTransportTypeEnum["STDIO"] = "stdio";
     McpTransportConfigTransportTypeEnum["HTTP"] = "http";
@@ -116,5 +99,5 @@ var McpTransportConfigTransportTypeEnum;
     McpTransportConfigTransportTypeEnum["SSE"] = "sse";
     McpTransportConfigTransportTypeEnum["LAMBDA"] = "lambda";
     McpTransportConfigTransportTypeEnum["CUSTOM"] = "custom";
-})(McpTransportConfigTransportTypeEnum || (exports.McpTransportConfigTransportTypeEnum = McpTransportConfigTransportTypeEnum = {}));
+})(McpTransportConfigTransportTypeEnum || (McpTransportConfigTransportTypeEnum = {}));
 //# sourceMappingURL=McpTransportConfig.js.map

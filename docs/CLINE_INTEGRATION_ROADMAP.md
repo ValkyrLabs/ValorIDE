@@ -16,11 +16,13 @@ Bring Cline's CLI agent mode, multi-agent orchestration, and multi-project check
 #### Deliverables
 
 ✅ **Discovery & Analysis**
+
 - `docs/cline-parity.md` — Feature matrix + technical plan
 - Analyzed Cline's cline-core.ts, task management, checkpoint system
 - Documented 8 gaps between Cline and ValorIDE
 
 ✅ **CLI Package**
+
 ```
 packages/valor-cli/
 ├── src/
@@ -40,12 +42,14 @@ packages/valor-cli/
 ```
 
 ✅ **Session Persistence Layer**
+
 - Create/load/list/delete sessions
 - UUID-based session IDs for IDE-CLI parity
 - lastActivity tracking
 - Isolated test cleanup
 
 ✅ **CLI Structure (Commander.js)**
+
 ```bash
 valor task run "description"         # Stub: create + run task
 valor task list                      # Stub: list all tasks
@@ -72,6 +76,7 @@ valor checkpoint compare             # Stub: diff checkpoints
 **Goal**: Enable role-scoped agents with baton-passing and persistent audit logs.
 
 **Tasks**:
+
 - [ ] Define 5 agent roles: planner, coder, tester, docs, integrator
 - [ ] Implement orchestrator contract (DAG builder + role dispatch)
 - [ ] Create agent ledger (JSONL in `~/.valoride/tasks/<taskId>/agent.ledger`)
@@ -80,6 +85,7 @@ valor checkpoint compare             # Stub: diff checkpoints
 - [ ] Integration with ValorIDE's Task loop
 
 **Key Interfaces** (already in types.ts):
+
 - `AgentRole` — role definition + system prompt
 - `AgentLedgerEntry` — audit trail entry (timestamp, agent, action, tokens, cost)
 
@@ -90,6 +96,7 @@ valor checkpoint compare             # Stub: diff checkpoints
 **Goal**: Cross-repo checkpoint creation, restore, and comparison.
 
 **Tasks**:
+
 - [ ] Parse workspace manifest (`.valoride/workspace.yml` or `.code-workspace`)
 - [ ] Implement checkpoint driver (git tags + bundles)
 - [ ] Git worktree per agent (parallel-safe isolation)
@@ -98,6 +105,7 @@ valor checkpoint compare             # Stub: diff checkpoints
 - [ ] Tests: multi-repo scenarios, partial failures, restore verification
 
 **Key Interfaces** (already in types.ts):
+
 - `WorkspaceManifest` — repos list + remotes
 - `CheckpointInfo` — task/step/repo/hash metadata
 
@@ -108,6 +116,7 @@ valor checkpoint compare             # Stub: diff checkpoints
 **Goal**: Bring Cline's plan/act UX to ValorIDE's webview.
 
 **Tasks**:
+
 - [ ] Add plan mode display (Mermaid DAG visualization)
 - [ ] Diff preview before execution ("Proceed While Running" equivalent)
 - [ ] Token/cost accounting inline
@@ -120,6 +129,7 @@ valor checkpoint compare             # Stub: diff checkpoints
 **Goal**: Documentation, migration guide, and PR submission.
 
 **Tasks**:
+
 - [ ] CLI Quickstart guide
 - [ ] Multi-Agent orchestration patterns
 - [ ] Multi-Project workspace guide
@@ -131,16 +141,16 @@ valor checkpoint compare             # Stub: diff checkpoints
 
 ## 🔗 Feature Parity Matrix
 
-| Feature | Cline | ValorIDE Current | ValorIDE Target | Status | Effort |
-|---------|-------|------------------|-----------------|--------|--------|
-| CLI Agent | ✅ | ❌ | ✅ (Phase 2) | Scaffolding | 40h |
-| Multi-Agent | 🟡 | ❌ | ✅ | Not Started | 60h |
-| Plan/Act UX | ✅ | 🟡 | ✅ | Partial | 30h |
-| Checkpoints | ✅ | 🟡 | ✅ | Single-repo only | 35h |
-| Persistent Ledger | 🟡 | ❌ | ✅ | Not Started | 15h |
-| Context Persistence | ✅ | 🟡 | ✅ | Partial | 25h |
-| MCP Auto-Binding | ✅ | 🟡 | ✅ | IDE only | 20h |
-| Workspace Manifest | ❌ | ❌ | ✅ | Not Started | 20h |
+| Feature             | Cline | ValorIDE Current | ValorIDE Target | Status           | Effort |
+| ------------------- | ----- | ---------------- | --------------- | ---------------- | ------ |
+| CLI Agent           | ✅    | ❌               | ✅ (Phase 2)    | Scaffolding      | 40h    |
+| Multi-Agent         | 🟡    | ❌               | ✅              | Not Started      | 60h    |
+| Plan/Act UX         | ✅    | 🟡               | ✅              | Partial          | 30h    |
+| Checkpoints         | ✅    | 🟡               | ✅              | Single-repo only | 35h    |
+| Persistent Ledger   | 🟡    | ❌               | ✅              | Not Started      | 15h    |
+| Context Persistence | ✅    | 🟡               | ✅              | Partial          | 25h    |
+| MCP Auto-Binding    | ✅    | 🟡               | ✅              | IDE only         | 20h    |
+| Workspace Manifest  | ❌    | ❌               | ✅              | Not Started      | 20h    |
 
 **Total Remaining Effort**: ~245h (3 weeks at full capacity)
 
@@ -149,15 +159,18 @@ valor checkpoint compare             # Stub: diff checkpoints
 ## 🧪 Testing Strategy
 
 ### Unit Tests (Phase 1)
+
 - ✅ SessionManager: 5/5 passing
 
 ### Integration Tests (Phase 2-3)
+
 - [ ] CLI task run → IDE context sync
 - [ ] Multi-agent handoff (planner → coder)
 - [ ] Checkpoint across 2+ repos
 - [ ] Session resume (CLI → IDE attach)
 
 ### E2E Tests (Phase 4-5)
+
 - [ ] Full task execution (CLI start → multi-agent turns → checkpoint)
 - [ ] Plan/Act workflow (plan mode → review → act mode)
 - [ ] Workspace restore (multi-repo, partial rollback scenarios)
@@ -175,6 +188,7 @@ npm run dev      # Watch mode
 ```
 
 For CLI testing:
+
 ```bash
 # Link locally
 npm link
@@ -190,6 +204,7 @@ valor instance ls
 ## 📦 Dependencies
 
 ### Already in ValorIDE
+
 - CheckpointManager (reuse for multi-repo)
 - SessionManager pattern (CLI mirrors IDE)
 - P2P WebSocket (CLI↔IDE communication)
@@ -197,6 +212,7 @@ valor instance ls
 - ThorAPI services (API integration)
 
 ### New for CLI
+
 - commander.js (CLI framework)
 - chalk (colored output)
 - ora (spinners/progress)

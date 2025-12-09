@@ -3,11 +3,12 @@ import { useState } from "react";
 import { Card, Form, InputGroup, Alert } from "react-bootstrap";
 import { FaCreditCard, FaShoppingCart, FaDollarSign } from "react-icons/fa";
 import CoolButton from "@valkyr/component-library/CoolButton";
-import { useRecordPaymentTransactionMutation } from "@/services/creditsApi";
+import { useRecordPaymentTransactionMutation } from "../../services/creditsApi";
 const BuyCredits = ({ authenticatedPrincipal, onPurchaseSuccess, style, className = "", }) => {
     const [amount, setAmount] = useState(10);
     const [isProcessing, setIsProcessing] = useState(false);
     const [message, setMessage] = useState(null);
+    // RTK Query mutations
     const [recordPaymentTransaction] = useRecordPaymentTransactionMutation();
     const handleAmountChange = (e) => {
         const value = parseInt(e.target.value, 10);
@@ -18,38 +19,32 @@ const BuyCredits = ({ authenticatedPrincipal, onPurchaseSuccess, style, classNam
     const handleQuickAmount = (quickAmount) => {
         setAmount(quickAmount);
     };
-    const extractAccountId = () => {
-        // First try direct principal properties
-        if (authenticatedPrincipal?.id ||
-            authenticatedPrincipal?.principalId ||
-            authenticatedPrincipal?.ownerId ||
-            authenticatedPrincipal?.userId) {
-            return (authenticatedPrincipal.id ||
-                authenticatedPrincipal.principalId ||
-                authenticatedPrincipal.ownerId ||
-                authenticatedPrincipal.userId);
-        }
-        // Fall back to JWT token parsing
-        const token = sessionStorage.getItem("jwtToken");
-        if (token) {
-            try {
-                const payload = JSON.parse(atob(token.split(".")[1]));
-                return payload.sub || payload.userId || payload.principalId;
-            }
-            catch {
-                // JWT parsing failed, continue
-            }
-        }
-        return null;
-    };
     const handlePurchase = async () => {
         if (!authenticatedPrincipal || amount < 1) {
             setMessage({ type: "error", text: "Please enter a valid amount" });
             return;
         }
-        const accountId = extractAccountId();
+        // Get the account ID from the principal
+        // Try multiple possible field names since it might be serialized differently
+        let accountId = authenticatedPrincipal.id ||
+            authenticatedPrincipal.principalId ||
+            authenticatedPrincipal.ownerId ||
+            authenticatedPrincipal.userId;
+        // If still not found, try to extract from JWT token
         if (!accountId) {
-            console.error("Unable to determine account ID from principal:", authenticatedPrincipal);
+            const token = sessionStorage.getItem("jwtToken");
+            if (token) {
+                try {
+                    const payload = JSON.parse(atob(token.split(".")[1]));
+                    accountId = payload.sub || payload.userId || payload.principalId;
+                }
+                catch (e) {
+                    // Failed to parse JWT
+                }
+            }
+        }
+        if (!accountId) {
+            console.error("Could not determine account ID. Principal:", authenticatedPrincipal);
             setMessage({
                 type: "error",
                 text: "Unable to determine account ID. Please log in again.",
@@ -59,6 +54,8 @@ const BuyCredits = ({ authenticatedPrincipal, onPurchaseSuccess, style, classNam
         setIsProcessing(true);
         setMessage(null);
         try {
+            // Record payment transaction - this is the primary operation
+            // The backend handles creating the account balance, transaction history, etc.
             const paymentTx = {
                 paidAt: new Date().toISOString(),
                 amountCents: Math.round(amount * 100),
@@ -66,7 +63,7 @@ const BuyCredits = ({ authenticatedPrincipal, onPurchaseSuccess, style, classNam
             };
             const idempotencyKey = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
             await recordPaymentTransaction({
-                accountId,
+                accountId: accountId,
                 payment: paymentTx,
                 idempotencyKey,
             }).unwrap();
@@ -74,8 +71,11 @@ const BuyCredits = ({ authenticatedPrincipal, onPurchaseSuccess, style, classNam
                 type: "success",
                 text: `Successfully added $${amount} credits! Your balance has been updated.`,
             });
+            // Call success callback
             onPurchaseSuccess?.(amount);
+            // Reset form
             setAmount(10);
+            // Auto-dismiss success message
             setTimeout(() => {
                 setMessage(null);
             }, 3000);
@@ -94,6 +94,7 @@ const BuyCredits = ({ authenticatedPrincipal, onPurchaseSuccess, style, classNam
     if (!authenticatedPrincipal) {
         return null;
     }
+    const disablePurchase = isProcessing || amount < 1;
     return (_jsxs(Card, { className: `lcars-panel ${className}`, style: {
             ...style,
             background: "linear-gradient(135deg, #06ffa515, #06ffa505)",
@@ -112,7 +113,7 @@ const BuyCredits = ({ authenticatedPrincipal, onPurchaseSuccess, style, classNam
                                                 borderColor: "#06ffa560",
                                                 color: amount === quickAmount ? "#000" : "#06ffa5",
                                                 backgroundColor: amount === quickAmount ? "#06ffa5" : "transparent",
-                                            }, onClick: () => handleQuickAmount(quickAmount), children: ["$", quickAmount] }, quickAmount))) })] }), _jsx("div", { className: "d-grid gap-2", children: _jsx(CoolButton, { type: "submit", disabled: isProcessing || amount < 1, customStyle: {
+                                            }, onClick: () => handleQuickAmount(quickAmount), children: ["$", quickAmount] }, quickAmount))) })] }), _jsx("div", { className: "d-grid gap-2", children: _jsx(CoolButton, { type: "submit", disabled: disablePurchase, customStyle: {
                                         background: isProcessing
                                             ? "linear-gradient(45deg, #666, #888)"
                                             : "linear-gradient(45deg, #06ffa5, #00d4ff)",

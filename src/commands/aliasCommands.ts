@@ -62,6 +62,7 @@ export function registerAliasCommands(context: vscode.ExtensionContext) {
             canSelectMany: true,
             openLabel: "Select Thor project folder(s)",
           })) || [];
+      // Check if user cancelled dialog
       if (!selectedFolders || selectedFolders.length === 0) return;
 
       // 2) Choose which tsconfig files to update
@@ -86,7 +87,14 @@ export function registerAliasCommands(context: vscode.ExtensionContext) {
       if (!picks || picks.length === 0) return;
 
       // 3) Options
-      const optionPicks = await vscode.window.showQuickPick(
+      interface UpdateOption {
+        label: string;
+        picked: boolean;
+        key: string;
+      }
+      const optionPicks = await vscode.window.showQuickPick<
+        UpdateOption & vscode.QuickPickItem
+      >(
         [
           {
             label: "Update paths for @thor and @valkyr/component-library",
@@ -106,12 +114,9 @@ export function registerAliasCommands(context: vscode.ExtensionContext) {
         ],
         { canPickMany: true, title: "What should be updated?" },
       );
-      const doPaths =
-        optionPicks?.some((p) => (p as any).key === "paths") !== false;
-      const doInclude =
-        optionPicks?.some((p) => (p as any).key === "include") !== false;
-      const doPreview =
-        optionPicks?.some((p) => (p as any).key === "preview") === true;
+      const doPaths = optionPicks?.some((p) => p.key === "paths") !== false;
+      const doInclude = optionPicks?.some((p) => p.key === "include") !== false;
+      const doPreview = optionPicks?.some((p) => p.key === "preview") === true;
 
       // 4) Compute and apply updates
       for (const pick of picks) {

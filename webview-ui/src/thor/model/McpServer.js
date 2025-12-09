@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.McpServerStatusEnum = void 0;
-exports.McpServerFromJSON = McpServerFromJSON;
-exports.McpServerToJSON = McpServerToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,97 +19,85 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function McpServerFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { McpResourceFromJSON, McpResourceToJSON, McpResourceTemplateFromJSON, McpResourceTemplateToJSON, McpToolFromJSON, McpToolToJSON, } from "./";
+export function McpServerFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         name: json["name"],
         config: json["config"],
         status: json["status"],
-        error: !(0, runtime_1.exists)(json, "error") ? undefined : json["error"],
-        tools: !(0, runtime_1.exists)(json, "tools")
+        error: !exists(json, "error") ? undefined : json["error"],
+        tools: !exists(json, "tools")
             ? undefined
-            : json["tools"].map(_1.McpToolFromJSON),
-        resources: !(0, runtime_1.exists)(json, "resources")
+            : json["tools"].map(McpToolFromJSON),
+        resources: !exists(json, "resources")
             ? undefined
-            : json["resources"].map(_1.McpResourceFromJSON),
-        resourceTemplates: !(0, runtime_1.exists)(json, "resourceTemplates")
+            : json["resources"].map(McpResourceFromJSON),
+        resourceTemplates: !exists(json, "resourceTemplates")
             ? undefined
-            : json["resourceTemplates"].map(_1.McpResourceTemplateFromJSON),
-        disabled: !(0, runtime_1.exists)(json, "disabled") ? undefined : json["disabled"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+            : json["resourceTemplates"].map(McpResourceTemplateFromJSON),
+        disabled: !exists(json, "disabled") ? undefined : json["disabled"],
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function McpServerToJSON(value) {
+export function McpServerToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         name: value.name,
         config: value.config,
         status: value.status,
         error: value.error,
         tools: value.tools === undefined
             ? undefined
-            : value.tools.map(_1.McpToolToJSON),
+            : value.tools.map(McpToolToJSON),
         resources: value.resources === undefined
             ? undefined
-            : value.resources.map(_1.McpResourceToJSON),
+            : value.resources.map(McpResourceToJSON),
         resourceTemplates: value.resourceTemplates === undefined
             ? undefined
-            : value.resourceTemplates.map(_1.McpResourceTemplateToJSON),
+            : value.resourceTemplates.map(McpResourceTemplateToJSON),
         disabled: value.disabled,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var McpServerStatusEnum;
+export var McpServerStatusEnum;
 (function (McpServerStatusEnum) {
     McpServerStatusEnum["CONNECTED"] = "connected";
     McpServerStatusEnum["CONNECTING"] = "connecting";
     McpServerStatusEnum["DISCONNECTED"] = "disconnected";
-})(McpServerStatusEnum || (exports.McpServerStatusEnum = McpServerStatusEnum = {}));
+})(McpServerStatusEnum || (McpServerStatusEnum = {}));
 //# sourceMappingURL=McpServer.js.map

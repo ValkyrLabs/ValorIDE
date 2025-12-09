@@ -10,17 +10,17 @@ Valkyrai LLM Pass-Through: Client Connection Guide
 Example curl
 
 curl -X POST "http://localhost:8080/v1/llm-details/123e4567-e89b-12d3-a456-426614174000/chat" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your-jwt-token>" \
-  -d '{
-    "role": "user",
-    "content": "What is the capital of France?"
-  }'
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer <your-jwt-token>" \
+ -d '{
+"role": "user",
+"content": "What is the capital of France?"
+}'
 
 Sample Response
 
 {
-  "content": "The capital of France is Paris."
+"content": "The capital of France is Paris."
 }
 
 LlmDetails Configuration (OpenAI pass-through)
@@ -36,4 +36,3 @@ LlmDetails Configuration (OpenAI pass-through)
 Summary
 
 Configure a `LlmDetails` record for your target provider/model, note its `id` (UUID), then POST a ChatMessage to `/v1/llm-details/{serviceId}/chat`. The Valkyrai server routes the request to the upstream model and returns the response content.
-

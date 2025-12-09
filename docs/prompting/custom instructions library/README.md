@@ -23,7 +23,6 @@ We encourage developers of all skill levels to contribute their custom instructi
 ### 1. Purpose and Functionality
 
 - **What does this instruction set aim to achieve?**
-
   - Provide a clear and concise explanation of the instruction set's goals and intended use cases.
   - Example: "This instruction set guides ValorIDE in generating unit tests for existing JavaScript functions."
 

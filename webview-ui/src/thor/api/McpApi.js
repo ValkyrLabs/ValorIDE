@@ -1,6 +1,6 @@
 // tslint:disable
 import * as runtime from "../src/runtime";
-import { InvokeMcpToolRequestToJSON, McpServiceRegistryFromJSON, McpServiceRegistryToJSON, McpServiceResponseFromJSON, PublishRestEndpointRequestToJSON, PublishWorkflowRequestToJSON, } from "../model";
+import { ApplicationFromJSON, InvokeMcpToolRequestToJSON, McpServiceRegistryFromJSON, McpServiceRegistryToJSON, McpServiceResponseFromJSON, PublishRestEndpointRequestToJSON, PublishWorkflowRequestToJSON, } from "../model";
 /**
  * Retrieves detailed information about a published MCP service
  * Get MCP service details
@@ -324,5 +324,48 @@ function updateMcpServiceRaw(requestParameters, requestConfig = {}) {
  */
 export function updateMcpService(requestParameters, requestConfig) {
     return updateMcpServiceRaw(requestParameters, requestConfig);
+}
+/**
+ * Uploads an OpenAPI specification file (YAML or JSON), validates it, and creates a new Application record with all metadata fields populated from the spec. Returns the created Application object.
+ * Upload OpenAPI spec and create Application
+ */
+function uploadOpenAPIAndCreateApplicationRaw(requestParameters, requestConfig = {}) {
+    if (requestParameters.specification === null ||
+        requestParameters.specification === undefined) {
+        throw new runtime.RequiredError("specification", "Required parameter requestParameters.specification was null or undefined when calling uploadOpenAPIAndCreateApplication.");
+    }
+    let queryParameters = null;
+    const headerParameters = {};
+    const { meta = {} } = requestConfig;
+    const formData = new FormData();
+    if (requestParameters.specification !== undefined) {
+        formData.append("specification", requestParameters.specification);
+    }
+    const config = {
+        url: `${runtime.Configuration.basePath}/mcp/openapi/upload`,
+        meta,
+        update: requestConfig.update,
+        queryKey: requestConfig.queryKey,
+        optimisticUpdate: requestConfig.optimisticUpdate,
+        force: requestConfig.force,
+        rollback: requestConfig.rollback,
+        options: {
+            method: "POST",
+            headers: headerParameters,
+        },
+        body: formData,
+    };
+    const { transform: requestTransform } = requestConfig;
+    if (requestTransform) {
+        config.transform = (body, text) => requestTransform(ApplicationFromJSON(body), text);
+    }
+    return config;
+}
+/**
+ * Uploads an OpenAPI specification file (YAML or JSON), validates it, and creates a new Application record with all metadata fields populated from the spec. Returns the created Application object.
+ * Upload OpenAPI spec and create Application
+ */
+export function uploadOpenAPIAndCreateApplication(requestParameters, requestConfig) {
+    return uploadOpenAPIAndCreateApplicationRaw(requestParameters, requestConfig);
 }
 //# sourceMappingURL=McpApi.js.map

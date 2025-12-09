@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ValkyrJobStatusEnum = exports.ValkyrJobTypeEnum = void 0;
-exports.ValkyrJobFromJSON = ValkyrJobFromJSON;
-exports.ValkyrJobToJSON = ValkyrJobToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,60 +19,61 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function ValkyrJobFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { FileRecordFromJSON, FileRecordToJSON } from "./";
+export function ValkyrJobFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         type: json["type"],
         status: json["status"],
-        progress: !(0, runtime_1.exists)(json, "progress") ? undefined : json["progress"],
-        metadata: !(0, runtime_1.exists)(json, "metadata") ? undefined : json["metadata"],
-        result: !(0, runtime_1.exists)(json, "result") ? undefined : json["result"],
-        error: !(0, runtime_1.exists)(json, "error") ? undefined : json["error"],
-        fileRecords: !(0, runtime_1.exists)(json, "fileRecords")
+        progress: !exists(json, "progress") ? undefined : json["progress"],
+        metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+        result: !exists(json, "result") ? undefined : json["result"],
+        error: !exists(json, "error") ? undefined : json["error"],
+        fileRecords: !exists(json, "fileRecords")
             ? undefined
-            : json["fileRecords"].map(_1.FileRecordFromJSON),
-        startedDate: !(0, runtime_1.exists)(json, "startedDate")
+            : json["fileRecords"].map(FileRecordFromJSON),
+        startedDate: !exists(json, "startedDate")
             ? undefined
             : new Date(json["startedDate"]),
-        completedDate: !(0, runtime_1.exists)(json, "completedDate")
+        completedDate: !exists(json, "completedDate")
             ? undefined
             : new Date(json["completedDate"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function ValkyrJobToJSON(value) {
+export function ValkyrJobToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         type: value.type,
         status: value.status,
         progress: value.progress,
@@ -86,51 +82,38 @@ function ValkyrJobToJSON(value) {
         error: value.error,
         fileRecords: value.fileRecords === undefined
             ? undefined
-            : value.fileRecords.map(_1.FileRecordToJSON),
+            : value.fileRecords.map(FileRecordToJSON),
         startedDate: value.startedDate === undefined
             ? undefined
             : value.startedDate.toISOString(),
         completedDate: value.completedDate === undefined
             ? undefined
             : value.completedDate.toISOString(),
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var ValkyrJobTypeEnum;
+export var ValkyrJobTypeEnum;
 (function (ValkyrJobTypeEnum) {
     ValkyrJobTypeEnum["FILEPROCESSING"] = "file_processing";
     ValkyrJobTypeEnum["BULKUPLOAD"] = "bulk_upload";
     ValkyrJobTypeEnum["EXPORT"] = "export";
     ValkyrJobTypeEnum["VIRUSSCAN"] = "virus_scan";
     ValkyrJobTypeEnum["THUMBNAILGENERATION"] = "thumbnail_generation";
-})(ValkyrJobTypeEnum || (exports.ValkyrJobTypeEnum = ValkyrJobTypeEnum = {}));
+})(ValkyrJobTypeEnum || (ValkyrJobTypeEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var ValkyrJobStatusEnum;
+export var ValkyrJobStatusEnum;
 (function (ValkyrJobStatusEnum) {
     ValkyrJobStatusEnum["PENDING"] = "pending";
     ValkyrJobStatusEnum["RUNNING"] = "running";
     ValkyrJobStatusEnum["COMPLETED"] = "completed";
     ValkyrJobStatusEnum["FAILED"] = "failed";
     ValkyrJobStatusEnum["CANCELLED"] = "cancelled";
-})(ValkyrJobStatusEnum || (exports.ValkyrJobStatusEnum = ValkyrJobStatusEnum = {}));
+})(ValkyrJobStatusEnum || (ValkyrJobStatusEnum = {}));
 //# sourceMappingURL=ValkyrJob.js.map

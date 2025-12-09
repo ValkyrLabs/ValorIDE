@@ -170,7 +170,9 @@ export const ExtensionStateContextProvider = ({ children }) => {
                         config.sambanovaApiKey,
                     ].some((key) => key !== undefined)
                     : false;
-                setShowWelcome(!hasKey);
+                // Show welcome only if NO API keys AND NOT authenticated
+                const isAuthed = incoming.isLoggedIn || incoming.authenticatedPrincipal;
+                setShowWelcome(!hasKey && !isAuthed);
                 setDidHydrateState(true);
                 break;
             }

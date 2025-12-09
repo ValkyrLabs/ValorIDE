@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.BackupConfigPriorityLevelEnum = exports.BackupConfigTypeEnum = void 0;
-exports.BackupConfigFromJSON = BackupConfigFromJSON;
-exports.BackupConfigToJSON = BackupConfigToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,60 +19,61 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-function BackupConfigFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+export function BackupConfigFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
-        name: !(0, runtime_1.exists)(json, "name") ? undefined : json["name"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        remoteConfigUrl: !(0, runtime_1.exists)(json, "remoteConfigUrl")
+        ...DataObjectFromJSON(json),
+        name: !exists(json, "name") ? undefined : json["name"],
+        description: !exists(json, "description") ? undefined : json["description"],
+        remoteConfigUrl: !exists(json, "remoteConfigUrl")
             ? undefined
             : json["remoteConfigUrl"],
-        runNumber: !(0, runtime_1.exists)(json, "runNumber") ? undefined : json["runNumber"],
-        percentComplete: !(0, runtime_1.exists)(json, "percentComplete")
+        runNumber: !exists(json, "runNumber") ? undefined : json["runNumber"],
+        percentComplete: !exists(json, "percentComplete")
             ? undefined
             : json["percentComplete"],
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        priorityLevel: !(0, runtime_1.exists)(json, "priorityLevel")
+        type: !exists(json, "type") ? undefined : json["type"],
+        priorityLevel: !exists(json, "priorityLevel")
             ? undefined
             : json["priorityLevel"],
-        backupDir: !(0, runtime_1.exists)(json, "backupDir") ? undefined : json["backupDir"],
-        workingDir: !(0, runtime_1.exists)(json, "workingDir") ? undefined : json["workingDir"],
-        skiplist: !(0, runtime_1.exists)(json, "skiplist") ? undefined : json["skiplist"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        backupDir: !exists(json, "backupDir") ? undefined : json["backupDir"],
+        workingDir: !exists(json, "workingDir") ? undefined : json["workingDir"],
+        skiplist: !exists(json, "skiplist") ? undefined : json["skiplist"],
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function BackupConfigToJSON(value) {
+export function BackupConfigToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         name: value.name,
         description: value.description,
         remoteConfigUrl: value.remoteConfigUrl,
@@ -88,43 +84,30 @@ function BackupConfigToJSON(value) {
         backupDir: value.backupDir,
         workingDir: value.workingDir,
         skiplist: value.skiplist,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var BackupConfigTypeEnum;
+export var BackupConfigTypeEnum;
 (function (BackupConfigTypeEnum) {
     BackupConfigTypeEnum["WORKSTATION"] = "workstation";
     BackupConfigTypeEnum["SERVER"] = "server";
     BackupConfigTypeEnum["DESKTOP"] = "desktop";
     BackupConfigTypeEnum["LAPTOP"] = "laptop";
     BackupConfigTypeEnum["DEVICE"] = "device";
-})(BackupConfigTypeEnum || (exports.BackupConfigTypeEnum = BackupConfigTypeEnum = {}));
+})(BackupConfigTypeEnum || (BackupConfigTypeEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var BackupConfigPriorityLevelEnum;
+export var BackupConfigPriorityLevelEnum;
 (function (BackupConfigPriorityLevelEnum) {
     BackupConfigPriorityLevelEnum["LOW"] = "low";
     BackupConfigPriorityLevelEnum["MEDIUM"] = "medium";
     BackupConfigPriorityLevelEnum["HIGH"] = "high";
     BackupConfigPriorityLevelEnum["CRITICAL"] = "critical";
-})(BackupConfigPriorityLevelEnum || (exports.BackupConfigPriorityLevelEnum = BackupConfigPriorityLevelEnum = {}));
+})(BackupConfigPriorityLevelEnum || (BackupConfigPriorityLevelEnum = {}));
 //# sourceMappingURL=BackupConfig.js.map

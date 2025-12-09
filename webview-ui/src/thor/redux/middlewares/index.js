@@ -5,7 +5,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/middleweares.index.mustache
@@ -57,6 +57,8 @@ import { ChatResponseService } from "../services/ChatResponseService";
 import { CircuitBreakerStateService } from "../services/CircuitBreakerStateService";
 import { CompleteUploadRequestService } from "../services/CompleteUploadRequestService";
 import { CompleteUploadRequestPartsInnerService } from "../services/CompleteUploadRequestPartsInnerService";
+import { ConfirmPasswordResetRequestService } from "../services/ConfirmPasswordResetRequestService";
+import { ConfirmPasswordResetResponseService } from "../services/ConfirmPasswordResetResponseService";
 import { ConsultingProfileService } from "../services/ConsultingProfileService";
 import { ContentDataService } from "../services/ContentDataService";
 import { ContentMediaLinkService } from "../services/ContentMediaLinkService";
@@ -89,8 +91,11 @@ import { GoalService } from "../services/GoalService";
 import { GoalDependencyService } from "../services/GoalDependencyService";
 import { GrantPermissionRequestService } from "../services/GrantPermissionRequestService";
 import { HostInstanceService } from "../services/HostInstanceService";
+import { IdempotencyKeyService } from "../services/IdempotencyKeyService";
 import { InitUploadRequestService } from "../services/InitUploadRequestService";
 import { InitUploadResponseService } from "../services/InitUploadResponseService";
+import { InitiateTwoFactorRequestService } from "../services/InitiateTwoFactorRequestService";
+import { InitiateTwoFactorResponseService } from "../services/InitiateTwoFactorResponseService";
 import { IntegrationAccountService } from "../services/IntegrationAccountService";
 import { InvoiceService } from "../services/InvoiceService";
 import { InvokeMcpToolRequestService } from "../services/InvokeMcpToolRequestService";
@@ -104,6 +109,9 @@ import { LegalPrecedentService } from "../services/LegalPrecedentService";
 import { LineItemService } from "../services/LineItemService";
 import { LlmDetailsService } from "../services/LlmDetailsService";
 import { LoginService } from "../services/LoginService";
+import { LoginAuditService } from "../services/LoginAuditService";
+import { LoginRequestService } from "../services/LoginRequestService";
+import { LoginResponseService } from "../services/LoginResponseService";
 import { LogoutService } from "../services/LogoutService";
 import { McpService } from "../services/McpService";
 import { McpContentService } from "../services/McpContentService";
@@ -141,8 +149,12 @@ import { OasServerService } from "../services/OasServerService";
 import { OpportunityService } from "../services/OpportunityService";
 import { OrderFulfillmentTaskService } from "../services/OrderFulfillmentTaskService";
 import { OrganizationService } from "../services/OrganizationService";
+import { PasswordResetTokenService } from "../services/PasswordResetTokenService";
 import { PaymentTransactionService } from "../services/PaymentTransactionService";
 import { PersistentLoginService } from "../services/PersistentLoginService";
+import { PhoneVerificationService } from "../services/PhoneVerificationService";
+import { PhoneVerificationRequestService } from "../services/PhoneVerificationRequestService";
+import { PhoneVerificationResponseService } from "../services/PhoneVerificationResponseService";
 import { PivotTableService } from "../services/PivotTableService";
 import { PresignRequestService } from "../services/PresignRequestService";
 import { PresignResponseService } from "../services/PresignResponseService";
@@ -153,9 +165,6 @@ import { ProductDeliveryConfigService } from "../services/ProductDeliveryConfigS
 import { ProductFeatureService } from "../services/ProductFeatureService";
 import { ProductFunnelWizardService } from "../services/ProductFunnelWizardService";
 import { ProductLandingPageService } from "../services/ProductLandingPageService";
-import { PromptService } from "../services/PromptService";
-import { PromptRatingService } from "../services/PromptRatingService";
-import { PromptSelectionBroadcastService } from "../services/PromptSelectionBroadcastService";
 import { PtgService } from "../services/PtgService";
 import { PtgRefService } from "../services/PtgRefService";
 import { PublishFunnel200ResponseService } from "../services/PublishFunnel200ResponseService";
@@ -165,6 +174,8 @@ import { QuotaService } from "../services/QuotaService";
 import { RatingService } from "../services/RatingService";
 import { ReactionService } from "../services/ReactionService";
 import { ReferralLinkService } from "../services/ReferralLinkService";
+import { RequestPasswordResetRequestService } from "../services/RequestPasswordResetRequestService";
+import { RequestPasswordResetResponseService } from "../services/RequestPasswordResetResponseService";
 import { RequeueDeadLetterEntryRequestService } from "../services/RequeueDeadLetterEntryRequestService";
 import { RequeueDeadLetterEntryResponseService } from "../services/RequeueDeadLetterEntryResponseService";
 import { RetryPolicyService } from "../services/RetryPolicyService";
@@ -184,6 +195,7 @@ import { SpaceFileService } from "../services/SpaceFileService";
 import { SpaceMemberService } from "../services/SpaceMemberService";
 import { StackService } from "../services/StackService";
 import { StrategicPriorityService } from "../services/StrategicPriorityService";
+import { SubscriberListService } from "../services/SubscriberListService";
 import { SwarmService } from "../services/SwarmService";
 import { SwarmAgentSummaryService } from "../services/SwarmAgentSummaryService";
 import { SwarmCommandRequestService } from "../services/SwarmCommandRequestService";
@@ -198,13 +210,15 @@ import { SwarmRegisterResponseService } from "../services/SwarmRegisterResponseS
 import { SwarmSecurityService } from "../services/SwarmSecurityService";
 import { SwarmUnregisterRequestService } from "../services/SwarmUnregisterRequestService";
 import { SwarmUnregisterResponseService } from "../services/SwarmUnregisterResponseService";
-import { TagService } from "../services/TagService";
 import { TaskService } from "../services/TaskService";
-import { ToolFailureService } from "../services/ToolFailureService";
+import { TwoFactorSecretService } from "../services/TwoFactorSecretService";
 import { UpdateFileRequestService } from "../services/UpdateFileRequestService";
 import { UsageTransactionService } from "../services/UsageTransactionService";
 import { UserPreferenceService } from "../services/UserPreferenceService";
 import { ValkyrJobService } from "../services/ValkyrJobService";
+import { VerifyPhoneOTPRequestService } from "../services/VerifyPhoneOTPRequestService";
+import { VerifyTwoFactorRequestService } from "../services/VerifyTwoFactorRequestService";
+import { VerifyTwoFactorResponseService } from "../services/VerifyTwoFactorResponseService";
 import { WebsocketMessageService } from "../services/WebsocketMessageService";
 import { WebsocketSessionService } from "../services/WebsocketSessionService";
 import { WizardStartResponseService } from "../services/WizardStartResponseService";
@@ -257,6 +271,8 @@ export const middlewares = [
     CircuitBreakerStateService.middleware,
     CompleteUploadRequestService.middleware,
     CompleteUploadRequestPartsInnerService.middleware,
+    ConfirmPasswordResetRequestService.middleware,
+    ConfirmPasswordResetResponseService.middleware,
     ConsultingProfileService.middleware,
     ContentDataService.middleware,
     ContentMediaLinkService.middleware,
@@ -289,8 +305,11 @@ export const middlewares = [
     GoalDependencyService.middleware,
     GrantPermissionRequestService.middleware,
     HostInstanceService.middleware,
+    IdempotencyKeyService.middleware,
     InitUploadRequestService.middleware,
     InitUploadResponseService.middleware,
+    InitiateTwoFactorRequestService.middleware,
+    InitiateTwoFactorResponseService.middleware,
     IntegrationAccountService.middleware,
     InvoiceService.middleware,
     InvokeMcpToolRequestService.middleware,
@@ -304,6 +323,9 @@ export const middlewares = [
     LineItemService.middleware,
     LlmDetailsService.middleware,
     LoginService.middleware,
+    LoginAuditService.middleware,
+    LoginRequestService.middleware,
+    LoginResponseService.middleware,
     LogoutService.middleware,
     McpService.middleware,
     McpContentService.middleware,
@@ -341,8 +363,12 @@ export const middlewares = [
     OpportunityService.middleware,
     OrderFulfillmentTaskService.middleware,
     OrganizationService.middleware,
+    PasswordResetTokenService.middleware,
     PaymentTransactionService.middleware,
     PersistentLoginService.middleware,
+    PhoneVerificationService.middleware,
+    PhoneVerificationRequestService.middleware,
+    PhoneVerificationResponseService.middleware,
     PivotTableService.middleware,
     PresignRequestService.middleware,
     PresignResponseService.middleware,
@@ -353,9 +379,6 @@ export const middlewares = [
     ProductFeatureService.middleware,
     ProductFunnelWizardService.middleware,
     ProductLandingPageService.middleware,
-    PromptService.middleware,
-    PromptRatingService.middleware,
-    PromptSelectionBroadcastService.middleware,
     PtgService.middleware,
     PtgRefService.middleware,
     PublishFunnel200ResponseService.middleware,
@@ -365,6 +388,8 @@ export const middlewares = [
     RatingService.middleware,
     ReactionService.middleware,
     ReferralLinkService.middleware,
+    RequestPasswordResetRequestService.middleware,
+    RequestPasswordResetResponseService.middleware,
     RequeueDeadLetterEntryRequestService.middleware,
     RequeueDeadLetterEntryResponseService.middleware,
     RetryPolicyService.middleware,
@@ -384,6 +409,7 @@ export const middlewares = [
     SpaceMemberService.middleware,
     StackService.middleware,
     StrategicPriorityService.middleware,
+    SubscriberListService.middleware,
     SwarmService.middleware,
     SwarmAgentSummaryService.middleware,
     SwarmCommandRequestService.middleware,
@@ -398,13 +424,15 @@ export const middlewares = [
     SwarmSecurityService.middleware,
     SwarmUnregisterRequestService.middleware,
     SwarmUnregisterResponseService.middleware,
-    TagService.middleware,
     TaskService.middleware,
-    ToolFailureService.middleware,
+    TwoFactorSecretService.middleware,
     UpdateFileRequestService.middleware,
     UsageTransactionService.middleware,
     UserPreferenceService.middleware,
     ValkyrJobService.middleware,
+    VerifyPhoneOTPRequestService.middleware,
+    VerifyTwoFactorRequestService.middleware,
+    VerifyTwoFactorResponseService.middleware,
     WebsocketMessageService.middleware,
     WebsocketSessionService.middleware,
     WizardStartResponseService.middleware,

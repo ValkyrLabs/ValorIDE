@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductTypeEnum = exports.ProductStatusEnum = void 0;
-exports.ProductFromJSON = ProductFromJSON;
-exports.ProductToJSON = ProductToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,62 +19,63 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function ProductFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { ContentDataFromJSON, ContentDataToJSON, ProductFeatureFromJSON, ProductFeatureToJSON, } from "./";
+export function ProductFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         name: json["name"],
         price: json["price"],
         status: json["status"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        salePrice: !(0, runtime_1.exists)(json, "salePrice") ? undefined : json["salePrice"],
-        taxRate: !(0, runtime_1.exists)(json, "taxRate") ? undefined : json["taxRate"],
-        duration: !(0, runtime_1.exists)(json, "duration") ? undefined : json["duration"],
-        productContentData: !(0, runtime_1.exists)(json, "productContentData")
+        description: !exists(json, "description") ? undefined : json["description"],
+        salePrice: !exists(json, "salePrice") ? undefined : json["salePrice"],
+        taxRate: !exists(json, "taxRate") ? undefined : json["taxRate"],
+        duration: !exists(json, "duration") ? undefined : json["duration"],
+        productContentData: !exists(json, "productContentData")
             ? undefined
-            : json["productContentData"].map(_1.ContentDataFromJSON),
-        type: !(0, runtime_1.exists)(json, "type") ? undefined : json["type"],
-        features: !(0, runtime_1.exists)(json, "features")
+            : json["productContentData"].map(ContentDataFromJSON),
+        type: !exists(json, "type") ? undefined : json["type"],
+        features: !exists(json, "features")
             ? undefined
-            : json["features"].map(_1.ProductFeatureFromJSON),
-        countryOfOrigin: !(0, runtime_1.exists)(json, "countryOfOrigin")
+            : json["features"].map(ProductFeatureFromJSON),
+        countryOfOrigin: !exists(json, "countryOfOrigin")
             ? undefined
             : json["countryOfOrigin"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function ProductToJSON(value) {
+export function ProductToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         name: value.name,
         price: value.price,
         status: value.status,
@@ -89,33 +85,20 @@ function ProductToJSON(value) {
         duration: value.duration,
         productContentData: value.productContentData === undefined
             ? undefined
-            : value.productContentData.map(_1.ContentDataToJSON),
+            : value.productContentData.map(ContentDataToJSON),
         type: value.type,
         features: value.features === undefined
             ? undefined
-            : value.features.map(_1.ProductFeatureToJSON),
+            : value.features.map(ProductFeatureToJSON),
         countryOfOrigin: value.countryOfOrigin,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var ProductStatusEnum;
+export var ProductStatusEnum;
 (function (ProductStatusEnum) {
     ProductStatusEnum["PENDING"] = "pending";
     ProductStatusEnum["SALE"] = "sale";
@@ -123,12 +106,12 @@ var ProductStatusEnum;
     ProductStatusEnum["AVAILABLE"] = "available";
     ProductStatusEnum["DISCONTINUED"] = "discontinued";
     ProductStatusEnum["OUTOFSTOCK"] = "out_of_stock";
-})(ProductStatusEnum || (exports.ProductStatusEnum = ProductStatusEnum = {}));
+})(ProductStatusEnum || (ProductStatusEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var ProductTypeEnum;
+export var ProductTypeEnum;
 (function (ProductTypeEnum) {
     ProductTypeEnum["PHYSICAL"] = "physical";
     ProductTypeEnum["SUBSCRIPTION"] = "subscription";
@@ -142,5 +125,5 @@ var ProductTypeEnum;
     ProductTypeEnum["MEDIA"] = "media";
     ProductTypeEnum["PERFORMANCE"] = "performance";
     ProductTypeEnum["OTHER"] = "other";
-})(ProductTypeEnum || (exports.ProductTypeEnum = ProductTypeEnum = {}));
+})(ProductTypeEnum || (ProductTypeEnum = {}));
 //# sourceMappingURL=Product.js.map

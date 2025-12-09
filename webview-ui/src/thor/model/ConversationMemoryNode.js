@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ConversationMemoryNodeMessageRoleEnum = void 0;
-exports.ConversationMemoryNodeFromJSON = ConversationMemoryNodeFromJSON;
-exports.ConversationMemoryNodeToJSON = ConversationMemoryNodeToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,76 +19,77 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function ConversationMemoryNodeFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { ConversationBranchFromJSON, ConversationBranchToJSON, } from "./";
+export function ConversationMemoryNodeFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
-        branch: (0, _1.ConversationBranchFromJSON)(json["branch"]),
+        ...DataObjectFromJSON(json),
+        branch: ConversationBranchFromJSON(json["branch"]),
         messageRole: json["messageRole"],
         sequenceNo: json["sequenceNo"],
         contentHash: json["contentHash"],
         contentChars: json["contentChars"],
         compressedPayload: json["compressedPayload"],
-        parent: !(0, runtime_1.exists)(json, "parent")
+        parent: !exists(json, "parent")
             ? undefined
             : ConversationMemoryNodeFromJSON(json["parent"]),
-        chatMessageId: !(0, runtime_1.exists)(json, "chatMessageId")
+        chatMessageId: !exists(json, "chatMessageId")
             ? undefined
             : json["chatMessageId"],
-        sessionId: !(0, runtime_1.exists)(json, "sessionId") ? undefined : json["sessionId"],
-        embeddingVector: !(0, runtime_1.exists)(json, "embeddingVector")
+        sessionId: !exists(json, "sessionId") ? undefined : json["sessionId"],
+        embeddingVector: !exists(json, "embeddingVector")
             ? undefined
             : json["embeddingVector"],
-        embeddingDimensions: !(0, runtime_1.exists)(json, "embeddingDimensions")
+        embeddingDimensions: !exists(json, "embeddingDimensions")
             ? undefined
             : json["embeddingDimensions"],
-        embeddingChecksum: !(0, runtime_1.exists)(json, "embeddingChecksum")
+        embeddingChecksum: !exists(json, "embeddingChecksum")
             ? undefined
             : json["embeddingChecksum"],
-        keywordsText: !(0, runtime_1.exists)(json, "keywordsText")
+        keywordsText: !exists(json, "keywordsText")
             ? undefined
             : json["keywordsText"],
-        metadata: !(0, runtime_1.exists)(json, "metadata") ? undefined : json["metadata"],
-        relevanceScore: !(0, runtime_1.exists)(json, "relevanceScore")
+        metadata: !exists(json, "metadata") ? undefined : json["metadata"],
+        relevanceScore: !exists(json, "relevanceScore")
             ? undefined
             : json["relevanceScore"],
-        archived: !(0, runtime_1.exists)(json, "archived") ? undefined : json["archived"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        archived: !exists(json, "archived") ? undefined : json["archived"],
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function ConversationMemoryNodeToJSON(value) {
+export function ConversationMemoryNodeToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
-        branch: (0, _1.ConversationBranchToJSON)(value.branch),
+        ...DataObjectToJSON(value),
+        branch: ConversationBranchToJSON(value.branch),
         messageRole: value.messageRole,
         sequenceNo: value.sequenceNo,
         contentHash: value.contentHash,
@@ -109,31 +105,18 @@ function ConversationMemoryNodeToJSON(value) {
         metadata: value.metadata,
         relevanceScore: value.relevanceScore,
         archived: value.archived,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var ConversationMemoryNodeMessageRoleEnum;
+export var ConversationMemoryNodeMessageRoleEnum;
 (function (ConversationMemoryNodeMessageRoleEnum) {
     ConversationMemoryNodeMessageRoleEnum["SYSTEM"] = "system";
     ConversationMemoryNodeMessageRoleEnum["USER"] = "user";
     ConversationMemoryNodeMessageRoleEnum["ASSISTANT"] = "assistant";
     ConversationMemoryNodeMessageRoleEnum["SUMMARY"] = "summary";
-})(ConversationMemoryNodeMessageRoleEnum || (exports.ConversationMemoryNodeMessageRoleEnum = ConversationMemoryNodeMessageRoleEnum = {}));
+})(ConversationMemoryNodeMessageRoleEnum || (ConversationMemoryNodeMessageRoleEnum = {}));
 //# sourceMappingURL=ConversationMemoryNode.js.map

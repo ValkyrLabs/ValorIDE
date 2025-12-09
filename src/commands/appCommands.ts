@@ -97,9 +97,17 @@ async function handleGenerateApp(
 
   // Poll status
   let status: string = "pending";
-  while (status === "pending") {
+  let attempts = 0;
+  const maxAttempts = 50;
+  while (status === "pending" && attempts < maxAttempts) {
+    attempts++;
     await new Promise((res) => setTimeout(res, 5000));
     status = await pollAppStatus(jwt, appId);
+  }
+
+  if (status === "pending") {
+    vscode.window.showErrorMessage(`Generation timed out for "${app.name}".`);
+    return;
   }
 
   if (status === "completed") {

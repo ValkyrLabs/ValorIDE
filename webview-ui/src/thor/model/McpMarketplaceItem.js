@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,9 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.McpMarketplaceItemFromJSON = McpMarketplaceItemFromJSON;
-exports.McpMarketplaceItemToJSON = McpMarketplaceItemToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -23,84 +19,85 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function McpMarketplaceItemFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { McpMarketplaceItemTagFromJSON, McpMarketplaceItemTagToJSON, } from "./";
+export function McpMarketplaceItemFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         githubUrl: json["githubUrl"],
         name: json["name"],
         author: json["author"],
         description: json["description"],
-        mcpMarketplaceCatalogId: !(0, runtime_1.exists)(json, "mcpMarketplaceCatalogId")
+        mcpMarketplaceCatalogId: !exists(json, "mcpMarketplaceCatalogId")
             ? undefined
             : json["mcpMarketplaceCatalogId"],
-        mcpServerId: !(0, runtime_1.exists)(json, "mcpServerId") ? undefined : json["mcpServerId"],
-        icon: !(0, runtime_1.exists)(json, "icon") ? undefined : json["icon"],
-        logoUrl: !(0, runtime_1.exists)(json, "logoUrl") ? undefined : json["logoUrl"],
-        category: !(0, runtime_1.exists)(json, "category") ? undefined : json["category"],
-        tags: !(0, runtime_1.exists)(json, "tags")
+        mcpServerId: !exists(json, "mcpServerId") ? undefined : json["mcpServerId"],
+        icon: !exists(json, "icon") ? undefined : json["icon"],
+        logoUrl: !exists(json, "logoUrl") ? undefined : json["logoUrl"],
+        category: !exists(json, "category") ? undefined : json["category"],
+        tags: !exists(json, "tags")
             ? undefined
-            : json["tags"].map(_1.McpMarketplaceItemTagFromJSON),
-        requiresApiKey: !(0, runtime_1.exists)(json, "requiresApiKey")
+            : json["tags"].map(McpMarketplaceItemTagFromJSON),
+        requiresApiKey: !exists(json, "requiresApiKey")
             ? undefined
             : json["requiresApiKey"],
-        readmeContent: !(0, runtime_1.exists)(json, "readmeContent")
+        readmeContent: !exists(json, "readmeContent")
             ? undefined
             : json["readmeContent"],
-        llmsInstallationContent: !(0, runtime_1.exists)(json, "llmsInstallationContent")
+        llmsInstallationContent: !exists(json, "llmsInstallationContent")
             ? undefined
             : json["llmsInstallationContent"],
-        isRecommended: !(0, runtime_1.exists)(json, "isRecommended")
+        isRecommended: !exists(json, "isRecommended")
             ? undefined
             : json["isRecommended"],
-        githubStars: !(0, runtime_1.exists)(json, "githubStars") ? undefined : json["githubStars"],
-        downloadCount: !(0, runtime_1.exists)(json, "downloadCount")
+        githubStars: !exists(json, "githubStars") ? undefined : json["githubStars"],
+        downloadCount: !exists(json, "downloadCount")
             ? undefined
             : json["downloadCount"],
-        createdAt: !(0, runtime_1.exists)(json, "createdAt")
+        createdAt: !exists(json, "createdAt")
             ? undefined
             : new Date(json["createdAt"]),
-        updatedAt: !(0, runtime_1.exists)(json, "updatedAt")
+        updatedAt: !exists(json, "updatedAt")
             ? undefined
             : new Date(json["updatedAt"]),
-        lastGithubSync: !(0, runtime_1.exists)(json, "lastGithubSync")
+        lastGithubSync: !exists(json, "lastGithubSync")
             ? undefined
             : new Date(json["lastGithubSync"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function McpMarketplaceItemToJSON(value) {
+export function McpMarketplaceItemToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         githubUrl: value.githubUrl,
         name: value.name,
         author: value.author,
@@ -112,7 +109,7 @@ function McpMarketplaceItemToJSON(value) {
         category: value.category,
         tags: value.tags === undefined
             ? undefined
-            : value.tags.map(_1.McpMarketplaceItemTagToJSON),
+            : value.tags.map(McpMarketplaceItemTagToJSON),
         requiresApiKey: value.requiresApiKey,
         readmeContent: value.readmeContent,
         llmsInstallationContent: value.llmsInstallationContent,
@@ -124,20 +121,7 @@ function McpMarketplaceItemToJSON(value) {
         lastGithubSync: value.lastGithubSync === undefined
             ? undefined
             : value.lastGithubSync.toISOString(),
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 //# sourceMappingURL=McpMarketplaceItem.js.map

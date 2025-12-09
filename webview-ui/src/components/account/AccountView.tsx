@@ -42,8 +42,13 @@ import SystemAlerts from "@/components/SystemAlerts";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { useCommunicationService } from "@/context/CommunicationServiceContext";
 import UserPreferences from "./UserPreferences";
-import BuyCredits from "../BuyCredits";
-import { storeJwtToken, writeStoredPrincipal } from "@/utils/accessControl";
+import BuyCredits from "@/components/BuyCredits";
+import {
+  storeJwtToken,
+  useAccessControl,
+  writeStoredPrincipal,
+  readStoredPrincipal,
+} from "@/utils/accessControl";
 
 type AccountViewProps = {
   onDone: () => void;
@@ -68,11 +73,13 @@ const AccountView = ({ onDone }: AccountViewProps) => {
   // Also consider presence of a stored JWT to avoid timing gaps
   const hasStoredJwt = useMemo(() => {
     try {
-      return Boolean(
+      const storedPrincipal = readStoredPrincipal();
+      const storedToken =
         sessionStorage.getItem("jwtToken") ||
-          localStorage.getItem("jwtToken") ||
-          localStorage.getItem("authToken"),
-      );
+        localStorage.getItem("jwtToken") ||
+        localStorage.getItem("authToken");
+      // Both principal AND token must exist for auth to be valid
+      return Boolean(storedPrincipal && storedToken);
     } catch {
       return false;
     }
@@ -96,12 +103,23 @@ const AccountView = ({ onDone }: AccountViewProps) => {
     }
   }, [authed]);
 
+  const { principal: resolvedPrincipal } = useAccessControl(
+    authenticatedUser || userInfo,
+  );
+  const principalId = resolvedPrincipal?.id;
+  const accountId =
+    typeof principalId === "string"
+      ? principalId
+      : principalId !== undefined && principalId !== null
+        ? String(principalId)
+        : "";
+
   const {
     data: balanceData,
     isLoading: isBalanceLoading,
     refetch: refetchBalance,
-  } = useGetAccountBalanceQuery(authenticatedUser?.id ?? "", {
-    skip: !authed || !authenticatedUser?.id,
+  } = useGetAccountBalanceQuery(accountId, {
+    skip: !authed || !accountId,
   });
 
   const {
@@ -366,11 +384,11 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                   <br />
                   Forgot your username?{" "}
                   <VSCodeLink
-                    href="https://valkyrlabs.com/restore-access"
+                    href="https://valkyrlabs.com/forgot-password"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Restore Access
+                    Forgot Password
                   </VSCodeLink>
                 </div>
               </Card.Footer>
@@ -484,13 +502,17 @@ const AccountView = ({ onDone }: AccountViewProps) => {
               </div>
 
               <div className="w-full">
-                <VSCodeButtonLink
-                  href="https://app.valkyrlabs.com/v1/credits/#buy"
+                <BuyCredits
+                  authenticatedPrincipal={
+                    resolvedPrincipal || authenticatedUser || userInfo
+                  }
+                  onPurchaseSuccess={() => {
+                    refetchBalance();
+                    refetchUsage();
+                    refetchPayments();
+                  }}
                   className="w-full"
-                >
-                  Buy Credits
-                </VSCodeButtonLink>
-                <BuyCredits />
+                />
               </div>
             </div>
 

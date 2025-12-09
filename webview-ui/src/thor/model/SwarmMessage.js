@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SwarmMessagePriorityEnum = exports.SwarmMessageTypeEnum = void 0;
-exports.SwarmMessageFromJSON = SwarmMessageFromJSON;
-exports.SwarmMessageToJSON = SwarmMessageToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,86 +19,74 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-const _1 = require("./");
-function SwarmMessageFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+import { SwarmFromJSON, SwarmToJSON, SwarmPayloadFromJSON, SwarmPayloadToJSON, SwarmSecurityFromJSON, SwarmSecurityToJSON, } from "./";
+export function SwarmMessageFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         type: json["type"],
-        from: (0, _1.SwarmFromJSON)(json["from"]),
-        to: (0, _1.SwarmFromJSON)(json["to"]),
+        from: SwarmFromJSON(json["from"]),
+        to: SwarmFromJSON(json["to"]),
         timestamp: new Date(json["timestamp"]),
-        payload: (0, _1.SwarmPayloadFromJSON)(json["payload"]),
-        ackId: !(0, runtime_1.exists)(json, "ackId") ? undefined : json["ackId"],
-        security: !(0, runtime_1.exists)(json, "security")
+        payload: SwarmPayloadFromJSON(json["payload"]),
+        ackId: !exists(json, "ackId") ? undefined : json["ackId"],
+        security: !exists(json, "security")
             ? undefined
-            : (0, _1.SwarmSecurityFromJSON)(json["security"]),
-        ttl: !(0, runtime_1.exists)(json, "ttl") ? undefined : json["ttl"],
-        priority: !(0, runtime_1.exists)(json, "priority") ? undefined : json["priority"],
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+            : SwarmSecurityFromJSON(json["security"]),
+        ttl: !exists(json, "ttl") ? undefined : json["ttl"],
+        priority: !exists(json, "priority") ? undefined : json["priority"],
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function SwarmMessageToJSON(value) {
+export function SwarmMessageToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         type: value.type,
-        from: (0, _1.SwarmToJSON)(value.from),
-        to: (0, _1.SwarmToJSON)(value.to),
+        from: SwarmToJSON(value.from),
+        to: SwarmToJSON(value.to),
         timestamp: value.timestamp.toISOString(),
-        payload: (0, _1.SwarmPayloadToJSON)(value.payload),
+        payload: SwarmPayloadToJSON(value.payload),
         ackId: value.ackId,
-        security: (0, _1.SwarmSecurityToJSON)(value.security),
+        security: SwarmSecurityToJSON(value.security),
         ttl: value.ttl,
         priority: value.priority,
-        id: value.id,
-        ownerId: value.ownerId,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var SwarmMessageTypeEnum;
+export var SwarmMessageTypeEnum;
 (function (SwarmMessageTypeEnum) {
     SwarmMessageTypeEnum["COMMAND"] = "command";
     SwarmMessageTypeEnum["RESPONSE"] = "response";
@@ -111,16 +94,16 @@ var SwarmMessageTypeEnum;
     SwarmMessageTypeEnum["EVENT"] = "event";
     SwarmMessageTypeEnum["ACK"] = "ack";
     SwarmMessageTypeEnum["NACK"] = "nack";
-})(SwarmMessageTypeEnum || (exports.SwarmMessageTypeEnum = SwarmMessageTypeEnum = {}));
+})(SwarmMessageTypeEnum || (SwarmMessageTypeEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var SwarmMessagePriorityEnum;
+export var SwarmMessagePriorityEnum;
 (function (SwarmMessagePriorityEnum) {
     SwarmMessagePriorityEnum["LOW"] = "low";
     SwarmMessagePriorityEnum["NORMAL"] = "normal";
     SwarmMessagePriorityEnum["HIGH"] = "high";
     SwarmMessagePriorityEnum["URGENT"] = "urgent";
-})(SwarmMessagePriorityEnum || (exports.SwarmMessagePriorityEnum = SwarmMessagePriorityEnum = {}));
+})(SwarmMessagePriorityEnum || (SwarmMessagePriorityEnum = {}));
 //# sourceMappingURL=SwarmMessage.js.map

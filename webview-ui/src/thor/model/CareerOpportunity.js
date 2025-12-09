@@ -1,4 +1,3 @@
-"use strict";
 // tslint:disable
 /**
  * ValkyrAI CORE API
@@ -11,10 +10,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CareerOpportunityCommitmentEnum = exports.CareerOpportunityOpportunityTypeEnum = void 0;
-exports.CareerOpportunityFromJSON = CareerOpportunityFromJSON;
-exports.CareerOpportunityToJSON = CareerOpportunityToJSON;
 // tslint:disable
 /**
 ############################## DO NOT EDIT: GENERATED FILE ##############################
@@ -24,64 +19,65 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/modelGeneric.ts.mustache
 
 ############################## DO NOT EDIT: GENERATED FILE ##############################
 */
-const runtime_1 = require("../src/runtime");
-const DataObject_1 = require("./DataObject");
-function CareerOpportunityFromJSON(json) {
+import { exists } from "../src/runtime";
+import { DataObjectFromJSON, DataObjectToJSON } from "./DataObject";
+export function CareerOpportunityFromJSON(json) {
     return {
-        ...(0, DataObject_1.DataObjectFromJSON)(json),
+        ...DataObjectFromJSON(json),
         title: json["title"],
         opportunityType: json["opportunityType"],
-        description: !(0, runtime_1.exists)(json, "description") ? undefined : json["description"],
-        requiredSkills: !(0, runtime_1.exists)(json, "requiredSkills")
+        description: !exists(json, "description") ? undefined : json["description"],
+        requiredSkills: !exists(json, "requiredSkills")
             ? undefined
             : json["requiredSkills"],
-        preferredSkills: !(0, runtime_1.exists)(json, "preferredSkills")
+        preferredSkills: !exists(json, "preferredSkills")
             ? undefined
             : json["preferredSkills"],
-        experienceYearsMin: !(0, runtime_1.exists)(json, "experienceYearsMin")
+        experienceYearsMin: !exists(json, "experienceYearsMin")
             ? undefined
             : json["experienceYearsMin"],
-        experienceYearsMax: !(0, runtime_1.exists)(json, "experienceYearsMax")
+        experienceYearsMax: !exists(json, "experienceYearsMax")
             ? undefined
             : json["experienceYearsMax"],
-        commitment: !(0, runtime_1.exists)(json, "commitment") ? undefined : json["commitment"],
-        isActive: !(0, runtime_1.exists)(json, "isActive") ? undefined : json["isActive"],
-        createdDate: !(0, runtime_1.exists)(json, "createdDate")
+        commitment: !exists(json, "commitment") ? undefined : json["commitment"],
+        isActive: !exists(json, "isActive") ? undefined : json["isActive"],
+        createdDate: !exists(json, "createdDate")
             ? undefined
             : new Date(json["createdDate"]),
-        updatedDate: !(0, runtime_1.exists)(json, "updatedDate")
+        updatedDate: !exists(json, "updatedDate")
             ? undefined
             : new Date(json["updatedDate"]),
-        id: !(0, runtime_1.exists)(json, "id") ? undefined : json["id"],
-        ownerId: !(0, runtime_1.exists)(json, "ownerId") ? undefined : json["ownerId"],
-        keyHash: !(0, runtime_1.exists)(json, "keyHash") ? undefined : json["keyHash"],
-        lastAccessedById: !(0, runtime_1.exists)(json, "lastAccessedById")
+        id: !exists(json, "id") ? undefined : json["id"],
+        ownerId: !exists(json, "ownerId") ? undefined : json["ownerId"],
+        keyHash: !exists(json, "keyHash") ? undefined : json["keyHash"],
+        lastAccessedById: !exists(json, "lastAccessedById")
             ? undefined
             : json["lastAccessedById"],
-        lastAccessedDate: !(0, runtime_1.exists)(json, "lastAccessedDate")
+        lastAccessedDate: !exists(json, "lastAccessedDate")
             ? undefined
             : new Date(json["lastAccessedDate"]),
-        lastModifiedById: !(0, runtime_1.exists)(json, "lastModifiedById")
+        lastModifiedById: !exists(json, "lastModifiedById")
             ? undefined
             : json["lastModifiedById"],
-        lastModifiedDate: !(0, runtime_1.exists)(json, "lastModifiedDate")
+        lastModifiedDate: !exists(json, "lastModifiedDate")
             ? undefined
             : new Date(json["lastModifiedDate"]),
+        trashed: !exists(json, "trashed") ? undefined : json["trashed"],
     };
 }
-function CareerOpportunityToJSON(value) {
+export function CareerOpportunityToJSON(value) {
     if (value === undefined) {
         return undefined;
     }
     return {
-        ...(0, DataObject_1.DataObjectToJSON)(value),
+        ...DataObjectToJSON(value),
         title: value.title,
         opportunityType: value.opportunityType,
         description: value.description,
@@ -91,45 +87,32 @@ function CareerOpportunityToJSON(value) {
         experienceYearsMax: value.experienceYearsMax,
         commitment: value.commitment,
         isActive: value.isActive,
-        createdDate: value.createdDate === undefined
-            ? undefined
-            : value.createdDate.toISOString(),
         updatedDate: value.updatedDate === undefined
             ? undefined
             : value.updatedDate.toISOString(),
-        id: value.id,
-        ownerId: value.ownerId,
-        keyHash: value.keyHash,
-        lastAccessedById: value.lastAccessedById,
-        lastAccessedDate: value.lastAccessedDate === undefined
-            ? undefined
-            : value.lastAccessedDate.toISOString(),
-        lastModifiedById: value.lastModifiedById,
-        lastModifiedDate: value.lastModifiedDate === undefined
-            ? undefined
-            : value.lastModifiedDate.toISOString(),
+        trashed: value.trashed,
     };
 }
 /**
  * @export
  * @enum {string}
  */
-var CareerOpportunityOpportunityTypeEnum;
+export var CareerOpportunityOpportunityTypeEnum;
 (function (CareerOpportunityOpportunityTypeEnum) {
     CareerOpportunityOpportunityTypeEnum["DIRECT_HIRE"] = "direct_hire";
     CareerOpportunityOpportunityTypeEnum["CONSULTING_ENGAGEMENT"] = "consulting_engagement";
     CareerOpportunityOpportunityTypeEnum["RESELLER_PARTNER"] = "reseller_partner";
     CareerOpportunityOpportunityTypeEnum["OPEN_SOURCE_CONTRIBUTOR"] = "open_source_contributor";
-})(CareerOpportunityOpportunityTypeEnum || (exports.CareerOpportunityOpportunityTypeEnum = CareerOpportunityOpportunityTypeEnum = {}));
+})(CareerOpportunityOpportunityTypeEnum || (CareerOpportunityOpportunityTypeEnum = {}));
 /**
  * @export
  * @enum {string}
  */
-var CareerOpportunityCommitmentEnum;
+export var CareerOpportunityCommitmentEnum;
 (function (CareerOpportunityCommitmentEnum) {
     CareerOpportunityCommitmentEnum["FULL_TIME"] = "full_time";
     CareerOpportunityCommitmentEnum["PART_TIME"] = "part_time";
     CareerOpportunityCommitmentEnum["CONTRACT"] = "contract";
     CareerOpportunityCommitmentEnum["HOURLY"] = "hourly";
-})(CareerOpportunityCommitmentEnum || (exports.CareerOpportunityCommitmentEnum = CareerOpportunityCommitmentEnum = {}));
+})(CareerOpportunityCommitmentEnum || (CareerOpportunityCommitmentEnum = {}));
 //# sourceMappingURL=CareerOpportunity.js.map

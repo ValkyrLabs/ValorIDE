@@ -6,7 +6,7 @@ Powered by Swagger Codegen: http://swagger.io
 
 Generated Details:
 **GENERATOR VERSION:** 7.5.0
-**GENERATED DATE:** 2025-11-16T09:57:41.565555-08:00[America/Los_Angeles]
+**GENERATED DATE:** 2025-12-07T16:29:11.456024-08:00[America/Los_Angeles]
 **GENERATOR CLASS:** org.openapitools.codegen.languages.TypeScriptReduxQueryClientCodegen
 
 Template file: typescript-redux-query/customBaseQuery.mustache
@@ -17,20 +17,18 @@ Template file: typescript-redux-query/customBaseQuery.mustache
   JWT Token handling for all API requests
 */
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { getValkyraiHost } from "@/utils/valkyraiHost";
-const buildBaseQuery = () => fetchBaseQuery({
-    baseUrl: getValkyraiHost(),
+import { BASE_PATH } from "../src";
+const customBaseQuery = fetchBaseQuery({
+    baseUrl: BASE_PATH, // Replace with your base URL
     prepareHeaders: (headers) => {
+        // Retrieve the token from session storage
         const token = sessionStorage.getItem("jwtToken");
         if (token) {
+            // Set the Authorization header
             headers.set("authorization", `Bearer ${token}`);
         }
         return headers;
     },
 });
-const customBaseQuery = (args, api, extraOptions) => {
-    const baseQuery = buildBaseQuery();
-    return baseQuery(args, api, extraOptions);
-};
 export default customBaseQuery;
 //# sourceMappingURL=customBaseQuery.js.map

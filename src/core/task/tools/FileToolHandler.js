@@ -168,8 +168,14 @@ export class FileToolHandler extends BaseToolHandler {
                     toolResponse: formatResponse.toolResult(withReport(dryRunMessage)),
                 };
             }
+            // Zero edits isn't a failure, it just means no patterns matched
             if (result.editsApplied === 0 && result.bytesDelta === 0) {
-                return handleNoop();
+                const noMatchMessage = "PSR: No edits matched the requested patterns. The file was not modified.";
+                telemetryService.captureToolUsage(this.context.taskId, "precision_search_and_replace", autoApproved, true);
+                return {
+                    shouldContinue: true,
+                    toolResponse: formatResponse.toolResult(withReport(noMatchMessage)),
+                };
             }
             if (!didChange) {
                 return handleNoop();

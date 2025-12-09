@@ -1,5 +1,5 @@
 import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useLayoutEffect } from "react";
 import { useEvent } from "react-use";
 import ChatView from "./components/chat/ChatView";
 import { ChatErrorBoundary } from "./components/chat/ChatErrorBoundary";
@@ -18,9 +18,21 @@ import StartupDebit from "./components/usage-tracking/StartupDebit";
 import useValorIDEMothership from "./hooks/useValorIDEMothership";
 import LoadingSpinner from "./components/LoadingSpinner";
 import { vscode } from "./utils/vscode";
+import { readStoredPrincipal, hydrateStoredCredentials, } from "./utils/accessControl";
 import McpView from "./components/mcp/configuration/McpConfigurationView";
 const AppContent = () => {
     const { didHydrateState, showWelcome, shouldShowAnnouncement, telemetrySetting, vscMachineId, } = useExtensionState();
+    const [hasStoredAuth, setHasStoredAuth] = useState(false);
+    // Check for stored credentials BEFORE rendering to prevent welcome flicker
+    useLayoutEffect(() => {
+        // Restore JWT & Principal from localStorage if they exist (for sticky auth)
+        hydrateStoredCredentials("app-init");
+        const storedPrincipal = readStoredPrincipal();
+        const storedToken = sessionStorage.getItem("jwtToken") || localStorage.getItem("jwtToken");
+        if (storedPrincipal && storedToken) {
+            setHasStoredAuth(true);
+        }
+    }, []);
     const [showSettings, setShowSettings] = useState(false);
     const hideSettings = useCallback(() => setShowSettings(false), []);
     const [showHistory, setShowHistory] = useState(false);
@@ -207,7 +219,7 @@ const AppContent = () => {
         showAccount ||
         showGeneratedFiles ||
         showServerConsole;
-    return (_jsx(_Fragment, { children: showWelcome ? (_jsx(WelcomeView, {})) : (_jsxs(_Fragment, { children: [showSettings && _jsx(SettingsView, { onDone: hideSettings }), showHistory && _jsx(HistoryView, { onDone: () => setShowHistory(false) }), showMcp && (_jsx(McpView, { initialTab: mcpTab, onDone: () => setShowMcp(false) })), showAccount && _jsx(AccountView, { onDone: () => setShowAccount(false) }), showGeneratedFiles && _jsx(GeneratedFilesView, {}), showServerConsole && _jsx(ServerConsole, {}), showApplicationProgress && (_jsx("div", { style: {
+    return (_jsx(_Fragment, { children: showWelcome && !hasStoredAuth ? (_jsx(WelcomeView, {})) : (_jsxs(_Fragment, { children: [showSettings && _jsx(SettingsView, { onDone: hideSettings }), showHistory && _jsx(HistoryView, { onDone: () => setShowHistory(false) }), showMcp && (_jsx(McpView, { initialTab: mcpTab, onDone: () => setShowMcp(false) })), showAccount && _jsx(AccountView, { onDone: () => setShowAccount(false) }), showGeneratedFiles && _jsx(GeneratedFilesView, {}), showServerConsole && _jsx(ServerConsole, {}), showApplicationProgress && (_jsx("div", { style: {
                         position: "absolute",
                         top: 0,
                         left: 0,
