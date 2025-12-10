@@ -5,7 +5,7 @@ import {
   pollAppStatus,
   getAppDownloadUrl,
 } from "../services/appService";
-import { Application } from "../../webview-ui/src/thor/model/Application";
+import { Application } from "../../webview-ui/src//model/Application";
 
 const JWT_SECRET_KEY = "valor_jwt_token";
 

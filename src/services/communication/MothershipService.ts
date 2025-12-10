@@ -3,7 +3,7 @@ import {
   WebsocketMessageTypeEnum,
   WebsocketMessageToJSON,
   WebsocketMessageFromJSON,
-} from "@thor/model";
+} from "@thorapi/model";
 import { EventEmitter } from "events";
 import {
   getValkyraiBasePath,

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DraggableModal from "@valkyr/component-library/DraggableModal";
 import CoolButton from "@valkyr/component-library/CoolButton";
-import { BASE_PATH } from "@thor/src";
+import { BASE_PATH } from "@thorapi/src";
 import { FaPlus } from "react-icons/fa";
 
 export type QBERecord = {

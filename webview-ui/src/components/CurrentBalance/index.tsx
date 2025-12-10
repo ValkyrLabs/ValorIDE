@@ -3,7 +3,7 @@ import { Badge, Spinner, Modal } from "react-bootstrap";
 import { FaCreditCard, FaDollarSign } from "react-icons/fa";
 import { useGetAccountBalanceQuery } from "../../services/creditsApi";
 import LoadingSpinner from "../LoadingSpinner";
-import { Principal } from "@thor/model";
+import { Principal } from "@thorapi/model";
 import { useAccessControl } from "../../utils/accessControl";
 import HelpTooltip from "../HelpTooltip";
 import BuyCredits from "../BuyCredits";

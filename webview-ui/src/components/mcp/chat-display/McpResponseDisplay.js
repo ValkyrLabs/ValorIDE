@@ -7,8 +7,8 @@ import { useEffect, useState, useCallback } from "react";
 import LinkPreview from "./LinkPreview";
 import ImagePreview from "./ImagePreview";
 import styled from "styled-components";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import ChatErrorBoundary from "@/components/chat/ChatErrorBoundary";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import ChatErrorBoundary from "@thorapi/components/chat/ChatErrorBoundary";
 import {
   isUrl,
   isLocalhostUrl,
@@ -175,7 +175,7 @@ const McpResponseDisplay = ({ responseText }) => {
           urlCount++;
         }
         console.log(
-          `Found ${matches.length} URLs in text, will check if they are images`,
+          `Found ${matches.length} URLs in text, will check if they are images`
         );
         // Set matches immediately so UI can start rendering with loading states
         setUrlMatches(matches.sort((a, b) => a.index - b.index));
@@ -184,7 +184,7 @@ const McpResponseDisplay = ({ responseText }) => {
         // Process image checks in the background - one at a time to avoid network flooding
         const processImageChecks = async () => {
           console.log(
-            `Starting sequential URL processing for ${matches.length} URLs`,
+            `Starting sequential URL processing for ${matches.length} URLs`
           );
           for (let i = 0; i < matches.length; i++) {
             // Skip already processed URLs (from extension check)
@@ -192,13 +192,13 @@ const McpResponseDisplay = ({ responseText }) => {
             // Check if processing has been canceled (switched to plain mode)
             if (processingCanceled) {
               console.log(
-                "URL processing canceled - display mode changed to plain",
+                "URL processing canceled - display mode changed to plain"
               );
               return undefined;
             }
             const match = matches[i];
             console.log(
-              `Processing URL ${i + 1} of ${matches.length}: ${match.url}`,
+              `Processing URL ${i + 1} of ${matches.length}: ${match.url}`
             );
             try {
               // Process each URL individually
@@ -225,14 +225,14 @@ const McpResponseDisplay = ({ responseText }) => {
             }
           }
           console.log(
-            `URL processing complete. Found ${matches.filter((m) => m.isImage).length} image URLs`,
+            `URL processing complete. Found ${matches.filter((m) => m.isImage).length} image URLs`
           );
         };
         // Start the background processing
         processImageChecks();
       } catch (error) {
         setError(
-          "Failed to process response content. Switch to plain text mode to view safely.",
+          "Failed to process response content. Switch to plain text mode to view safely."
         );
         setIsLoading(false);
       }
@@ -277,7 +277,7 @@ const McpResponseDisplay = ({ responseText }) => {
       // Add the text before the first URL
       if (urlMatches.length === 0) {
         segments.push(
-          _jsx(UrlText, { children: responseText }, `segment-${segmentIndex}`),
+          _jsx(UrlText, { children: responseText }, `segment-${segmentIndex}`)
         );
       } else {
         for (let i = 0; i < urlMatches.length; i++) {
@@ -289,13 +289,13 @@ const McpResponseDisplay = ({ responseText }) => {
               _jsx(
                 UrlText,
                 { children: responseText.substring(lastIndex, index) },
-                `segment-${segmentIndex++}`,
-              ),
+                `segment-${segmentIndex++}`
+              )
             );
           }
           // Add the URL text itself
           segments.push(
-            _jsx(UrlText, { children: fullMatch }, `url-${segmentIndex++}`),
+            _jsx(UrlText, { children: fullMatch }, `url-${segmentIndex++}`)
           );
           // Calculate the end position of this URL in the text
           const urlEndIndex = index + fullMatch.length;
@@ -310,8 +310,8 @@ const McpResponseDisplay = ({ responseText }) => {
                     url: formatUrlForOpening(url),
                   }),
                 },
-                `embed-image-${url}-${segmentIndex++}`,
-              ),
+                `embed-image-${url}-${segmentIndex++}`
+              )
             );
             embedCount++;
             // console.log(`Added image embed for ${url}, embed count: ${embedCount}`);
@@ -330,8 +330,8 @@ const McpResponseDisplay = ({ responseText }) => {
                         url: formatUrlForOpening(url),
                       }),
                     },
-                    `embed-${url}-${segmentIndex++}`,
-                  ),
+                    `embed-${url}-${segmentIndex++}`
+                  )
                 );
                 embedCount++;
                 // console.log(`Added link preview for ${url}, embed count: ${embedCount}`);
@@ -354,8 +354,8 @@ const McpResponseDisplay = ({ responseText }) => {
                     },
                     children: ["Failed to create preview for: ", url],
                   },
-                  `embed-error-${segmentIndex++}`,
-                ),
+                  `embed-error-${segmentIndex++}`
+                )
               );
             }
           }
@@ -368,8 +368,8 @@ const McpResponseDisplay = ({ responseText }) => {
             _jsx(
               UrlText,
               { children: responseText.substring(lastIndex) },
-              `segment-${segmentIndex++}`,
-            ),
+              `segment-${segmentIndex++}`
+            )
           );
         }
       }

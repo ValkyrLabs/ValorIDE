@@ -5,9 +5,9 @@ import rehypeHighlight, { Options } from "rehype-highlight";
 import styled from "styled-components";
 import { visit } from "unist-util-visit";
 import type { Node } from "unist";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import MermaidBlock from "@/components/common/MermaidBlock";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import MermaidBlock from "@thorapi/components/common/MermaidBlock";
 
 interface MarkdownBlockProps {
   markdown?: string;

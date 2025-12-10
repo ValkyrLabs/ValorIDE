@@ -1,7 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { DEFAULT_MCP_TIMEOUT_SECONDS } from "@shared/mcp";
 import { useState, useCallback } from "react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import {
   VSCodeButton,
   VSCodeCheckbox,
@@ -12,12 +12,12 @@ import {
   VSCodePanelView,
 } from "@vscode/webview-ui-toolkit/react";
 import { FaChevronDown, FaChevronRight, FaSync, FaTrash } from "react-icons/fa";
-import { getMcpServerDisplayName } from "@/utils/mcp";
-import DangerButton from "@/components/common/DangerButton";
+import { getMcpServerDisplayName } from "@thorapi/utils/mcp";
+import DangerButton from "@thorapi/components/common/DangerButton";
 import McpToolRow from "./McpToolRow";
 import McpResourceRow from "./McpResourceRow";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { McpServiceClient } from "@/services/grpc-client";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { McpServiceClient } from "@thorapi/services/grpc-client";
 import { convertProtoMcpServersToMcpServers } from "@shared/proto-conversions/mcp/mcp-server-conversion";
 // constant JSX.Elements
 const TimeoutOptions = [
@@ -31,8 +31,8 @@ const TimeoutOptions = [
   _jsx(
     VSCodeOption,
     { value: option.value, children: option.label },
-    option.value,
-  ),
+    option.value
+  )
 );
 const ServerRow = ({ server, isExpandable = true, hasTrashIcon = true }) => {
   const { mcpMarketplaceCatalog, autoApprovalSettings, setMcpServers } =
@@ -75,7 +75,7 @@ const ServerRow = ({ server, isExpandable = true, hasTrashIcon = true }) => {
     })
       .then((response) => {
         const mcpServers = convertProtoMcpServersToMcpServers(
-          response.mcpServers,
+          response.mcpServers
         );
         setMcpServers(mcpServers);
       })
@@ -112,7 +112,7 @@ const ServerRow = ({ server, isExpandable = true, hasTrashIcon = true }) => {
     })
       .then((response) => {
         const mcpServers = convertProtoMcpServersToMcpServers(
-          response.mcpServers,
+          response.mcpServers
         );
         setMcpServers(mcpServers);
       })
@@ -156,7 +156,7 @@ const ServerRow = ({ server, isExpandable = true, hasTrashIcon = true }) => {
             },
             children: getMcpServerDisplayName(
               server.name,
-              mcpMarketplaceCatalog,
+              mcpMarketplaceCatalog
             ),
           }),
           !server.error &&
@@ -331,8 +331,8 @@ const ServerRow = ({ server, isExpandable = true, hasTrashIcon = true }) => {
                                 _jsx(
                                   McpToolRow,
                                   { tool: tool, serverName: server.name },
-                                  tool.name,
-                                ),
+                                  tool.name
+                                )
                               ),
                               server.name &&
                                 autoApprovalSettings.enabled &&
@@ -340,7 +340,7 @@ const ServerRow = ({ server, isExpandable = true, hasTrashIcon = true }) => {
                                 _jsx(VSCodeCheckbox, {
                                   style: { marginBottom: -10 },
                                   checked: server.tools.every(
-                                    (tool) => tool.autoApprove,
+                                    (tool) => tool.autoApprove
                                   ),
                                   onChange: handleAutoApproveChange,
                                   "data-tool": "all-tools",
@@ -378,8 +378,8 @@ const ServerRow = ({ server, isExpandable = true, hasTrashIcon = true }) => {
                                 { item: item },
                                 "uriTemplate" in item
                                   ? item.uriTemplate
-                                  : item.uri,
-                              ),
+                                  : item.uri
+                              )
                             ),
                           })
                         : _jsx("div", {

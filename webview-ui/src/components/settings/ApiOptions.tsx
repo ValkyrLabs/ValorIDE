@@ -67,10 +67,10 @@ import {
   liteLlmModelInfoSaneDefaults,
 } from "@shared/api";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
-import { getAsVar, VSC_DESCRIPTION_FOREGROUND } from "@/utils/vscStyles";
-import VSCodeButtonLink from "@/components/common/VSCodeButtonLink";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
+import { getAsVar, VSC_DESCRIPTION_FOREGROUND } from "@thorapi/utils/vscStyles";
+import VSCodeButtonLink from "@thorapi/components/common/VSCodeButtonLink";
 import OpenRouterModelPicker, {
   ModelDescriptionMarkdown,
   OPENROUTER_MODEL_PICKER_Z_INDEX,
@@ -78,7 +78,7 @@ import OpenRouterModelPicker, {
 import { ValorIDEAccountInfoCard } from "./ValorIDEAccountInfoCard";
 import RequestyModelPicker from "./RequestyModelPicker";
 import LlmDetailsModelPicker from "./LlmDetailsModelPicker";
-import { useGetLlmDetailssQuery } from "@/thor/redux/services/LlmDetailsService";
+import { useGetLlmDetailssQuery } from "@thorapi//redux/services/LlmDetailsService";
 
 interface ApiOptionsProps {
   showModelOptions: boolean;
@@ -1977,14 +1977,14 @@ const ApiOptions = ({
               selectedModelId === "claude-3-7-sonnet-20250219") ||
               (selectedProvider === "bedrock" &&
                 selectedModelId ===
-                  "anthropic.claude-3-7-sonnet-20250219-v1:0") ||
+                "anthropic.claude-3-7-sonnet-20250219-v1:0") ||
               (selectedProvider === "vertex" &&
                 selectedModelId === "claude-3-7-sonnet@20250219")) && (
-              <ThinkingBudgetSlider
-                apiConfiguration={apiConfiguration}
-                setApiConfiguration={setApiConfiguration}
-              />
-            )}
+                <ThinkingBudgetSlider
+                  apiConfiguration={apiConfiguration}
+                  setApiConfiguration={setApiConfiguration}
+                />
+              )}
 
             {selectedProvider === "xai" &&
               selectedModelId.includes("3-mini") && (

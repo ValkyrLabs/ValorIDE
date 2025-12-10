@@ -7,7 +7,7 @@ import {
   ChatMessage,
   ChatMessageRoleEnum,
   ChatMessageSourceTypeEnum,
-} from "@thor/model";
+} from "@thorapi/model";
 
 export interface CommandResult {
   success: boolean;

@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { Login } from "@thor/model";
-import customBaseQuery from "../../thor/redux/customBaseQuery"; // Use Thor base query
+import { Login } from "@thorapi/model";
+import customBaseQuery from "../..//redux/customBaseQuery"; // Use ThorAPI base query
 
 type LoginResponse = Login[];
 
@@ -14,9 +14,9 @@ export const LoginService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Login" as const, id })),
-              { type: "Login", id: "LIST" },
-            ]
+            ...result.map(({ id }) => ({ type: "Login" as const, id })),
+            { type: "Login", id: "LIST" },
+          ]
           : [{ type: "Login", id: "LIST" }],
     }),
 

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addMessage } from "../components/ServerConsole/websocketSlice";
-import { WebsocketMessageTypeEnum } from "../thor/model";
+import { WebsocketMessageTypeEnum } from "@thorapi/model";
 const useWebSocket = (url) => {
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -12,7 +12,7 @@ const useWebSocket = (url) => {
         socket.send(message);
       }
     },
-    [socket],
+    [socket]
   );
   useEffect(() => {
     const newSocket = new WebSocket(url);
@@ -57,7 +57,7 @@ const useWebSocket = (url) => {
             type: WebsocketMessageTypeEnum.CONSOLE,
             payload: event.data,
             createdDate: new Date(),
-          }),
+          })
         );
       } catch (error) {
         console.error("Failed to parse WebSocket message:", error);
@@ -77,7 +77,7 @@ const useWebSocket = (url) => {
       };
       dispatch(addMessage(event));
     },
-    [sendMessage, dispatch],
+    [sendMessage, dispatch]
   );
   return { socket, isConnected, sendMessage: sendLoggedMessage };
 };

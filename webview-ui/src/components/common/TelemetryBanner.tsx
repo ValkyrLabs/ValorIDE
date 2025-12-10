@@ -1,7 +1,7 @@
 import { VSCodeButton, VSCodeLink } from "@vscode/webview-ui-toolkit/react";
 import { memo, useState } from "react";
 import styled from "styled-components";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
 
 const BannerContainer = styled.div`

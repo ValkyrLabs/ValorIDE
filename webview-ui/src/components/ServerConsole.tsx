@@ -109,7 +109,7 @@ const ServerConsole: React.FC = () => {
     }
 
     if (!connectionStatus.thorConnected) {
-      addLog("ERROR: Cannot send message - not connected to Thor");
+      addLog("ERROR: Cannot send message - not connected to ThorAPI");
       return;
     }
 
@@ -182,7 +182,7 @@ const ServerConsole: React.FC = () => {
           />
           <span>Status: {connectionStatus.phase}</span>
           <span style={{ opacity: 0.7 }}>
-            (Thor Connected: {connectionStatus.thorConnected ? "Yes" : "No"})
+            (ThorAPI Connected: {connectionStatus.thorConnected ? "Yes" : "No"})
           </span>
         </div>
         <VSCodeButton onClick={handleConnect}>

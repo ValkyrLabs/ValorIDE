@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { WebsocketMessageTypeEnum } from "@thor/model";
-import { vscode } from "@/utils/vscode";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
-import { TaskServiceClient } from "@/services/grpc-client";
+import { WebsocketMessageTypeEnum } from "@thorapi/model";
+import { vscode } from "@thorapi/utils/vscode";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
+import { TaskServiceClient } from "@thorapi/services/grpc-client";
 export const useWebSocketConnection = ({
   messages,
   containsValorIDEMention,
@@ -16,7 +16,7 @@ export const useWebSocketConnection = ({
   // Identify this instance for avoiding self-echo
   const ourSenderId = useMemo(
     () => communicationService?.senderId || "unknown",
-    [communicationService],
+    [communicationService]
   );
   // When we inject a peer prompt, flag the next assistant reply to broadcast back
   const pendingRemoteReplyRef = useRef(false);
@@ -31,14 +31,14 @@ export const useWebSocketConnection = ({
           user: { id: ourSenderId },
         };
         window.dispatchEvent(
-          new CustomEvent("websocket-send", { detail: wsMessage }),
+          new CustomEvent("websocket-send", { detail: wsMessage })
         );
         console.log("Broadcasted @valorone reply:", wsMessage);
       } catch (e) {
         console.warn("Failed to broadcast @valorone reply:", e);
       }
     },
-    [ourSenderId],
+    [ourSenderId]
   );
   const connectToMothership = useCallback(() => {
     setIsConnectingMothership(true);
@@ -50,7 +50,7 @@ export const useWebSocketConnection = ({
             timestamp: Date.now(),
             reason: "mothership-reconnect",
           },
-        }),
+        })
       );
       // Send rollcall BROADCAST after connection
       setTimeout(() => {
@@ -68,7 +68,7 @@ export const useWebSocketConnection = ({
         window.dispatchEvent(
           new CustomEvent("websocket-send", {
             detail: broadcastMessage,
-          }),
+          })
         );
         vscode.postMessage({
           type: "displayVSCodeInfo",
@@ -107,7 +107,7 @@ export const useWebSocketConnection = ({
         window.dispatchEvent(
           new CustomEvent("websocket-send", {
             detail: broadcastMessage,
-          }),
+          })
         );
         console.log("Sent mothership rollcall BROADCAST:", broadcastMessage);
       } catch (e) {
@@ -140,7 +140,7 @@ export const useWebSocketConnection = ({
             window.dispatchEvent(
               new CustomEvent("websocket-send", {
                 detail: ackMessage,
-              }),
+              })
             );
           } catch (e) {
             console.warn("Failed to send rollcall ack:", e);
@@ -170,7 +170,7 @@ export const useWebSocketConnection = ({
               // If no task exists yet, start one; else inject as a user message
               if ((messages?.length ?? 0) === 0) {
                 TaskServiceClient.newTask({ text: cleaned, images: [] }).catch(
-                  () => {},
+                  () => {}
                 );
               } else {
                 vscode.postMessage({
@@ -197,19 +197,19 @@ export const useWebSocketConnection = ({
     window.addEventListener("websocket-connected", handleWebSocketConnect);
     window.addEventListener(
       "websocket-disconnected",
-      handleWebSocketDisconnect,
+      handleWebSocketDisconnect
     );
     window.addEventListener("websocket-message", handleWebSocketMessage);
     return () => {
       window.removeEventListener("websocket-connected", handleWebSocketConnect);
       window.removeEventListener(
         "websocket-disconnected",
-        handleWebSocketDisconnect,
+        handleWebSocketDisconnect
       );
       window.removeEventListener("websocket-message", handleWebSocketMessage);
     };
   }, [communicationService, containsValorIDEMention, messages, ourSenderId]);
-  // Connect to the Thor/STOMP broker the same way ServerConsole does
+  // Connect to the ThorAPI/STOMP broker the same way ServerConsole does
   useEffect(() => {
     try {
       const jwt = sessionStorage.getItem("jwtToken");
@@ -217,7 +217,7 @@ export const useWebSocketConnection = ({
         window.dispatchEvent(
           new CustomEvent("P2P-connect-broker", {
             detail: { reason: "chatview-mount", timestamp: Date.now() },
-          }),
+          })
         );
       }
     } catch {

@@ -1,13 +1,13 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useCallback, useRef, useState } from "react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import {
   VSCodeButton,
   VSCodeLink,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
 import { useEvent } from "react-use";
-import { LINKS } from "@/constants";
+import { LINKS } from "@thorapi/constants";
 const AddRemoteServerForm = ({ onServerAdded }) => {
   const [serverName, setServerName] = useState("");
   const [serverUrl, setServerUrl] = useState("");
@@ -38,13 +38,13 @@ const AddRemoteServerForm = ({ onServerAdded }) => {
           // Handle error
           setIsSubmitting(false);
           setError(
-            message.addRemoteServerResult.error || "Failed to add server",
+            message.addRemoteServerResult.error || "Failed to add server"
           );
           setShowConnectingMessage(false);
         }
       }
     },
-    [isSubmitting, onServerAdded],
+    [isSubmitting, onServerAdded]
   );
   useEvent("message", handleMessage);
   const handleSubmit = (e) => {

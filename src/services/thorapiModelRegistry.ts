@@ -1,7 +1,7 @@
 /**
  * ThorAPIModelRegistry — Auto-discovery of generated models and services
  *
- * Scans `/generated`, `/thor`, `/thorapi` directories to build:
+ * Scans `/generated`, `/`, `/thorapi` directories to build:
  * - Model registry (name → fields → constraints → RBAC)
  * - Service registry (endpoint → model → CRUD operations)
  * - Dependency graph (which models depend on which)
@@ -80,7 +80,7 @@ export class ThorAPIModelRegistry {
 
     const scanPaths = [
       path.join(this.workspaceRoot, "generated"),
-      path.join(this.workspaceRoot, "webview-ui/src/thor"),
+      path.join(this.workspaceRoot, "webview-ui/src/"),
       path.join(this.workspaceRoot, "thorapi"),
     ];
 
@@ -181,7 +181,7 @@ export class ThorAPIModelRegistry {
   private extractPackage(filePath: string): string {
     const parts = filePath.split(path.sep);
     const idx = parts.findIndex(
-      (p) => p === "java" || p === "thor" || p === "generated",
+      (p) => p === "java" || p === "" || p === "generated",
     );
     return idx >= 0 ? parts.slice(idx).join(".") : "unknown";
   }

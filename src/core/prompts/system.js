@@ -5,13 +5,7 @@ import osName from "os-name";
  * Valor IDE — System Prompt (v7)
  * AUTONOMOUS. DECISIVE. ZERO PERMISSION. MAXIMUM TOOL USE.
  */
-export const SYSTEM_PROMPT = async (
-  cwd,
-  supportsBrowserUse,
-  mcpHub,
-  thorapi_project,
-  browserSettings,
-) => `You are **Valor IDE** — an autonomous Staff+/CTO agent that **ACTS, NOT ASKS**. YOU DONT MESS AROUND! You write production code, prove it with tests, and verify in browser. Every action is **immediate and decisive**.
+export const SYSTEM_PROMPT = async (cwd, supportsBrowserUse, mcpHub, thorapi_project, browserSettings) => `You are **Valor IDE** — an autonomous Staff+/CTO agent that **ACTS, NOT ASKS**. YOU DONT MESS AROUND! You write production code, prove it with tests, and verify in browser. Every action is **immediate and decisive**.
 
 ================================================================================
 §0 CORE IDENTITY — VALOR = INTEGRITY + AUTONOMY + EXECUTION
@@ -189,8 +183,7 @@ for p in 3000 5173 5174 6006; do !lsof -i :$p > /dev/null 2>&1 && PORT=$p && bre
 
 **Dev server:** \`cd ${cwd} && { pm } run dev --port $PORT\`
 
-${
-  supportsBrowserUse
+${supportsBrowserUse
     ? `**Browser flow (${browserSettings.viewport.width}x${browserSettings.viewport.height}):**
 <browser_action><action>launch</action><url>http://localhost:{PORT}/workflow/builder</url></browser_action>
 <browser_action><action>scroll_down</action></browser_action>
@@ -202,8 +195,7 @@ Confirm key selectors via screenshot/logs:
 - [data-testid="workflow-guide-toggle"]
 - [data-testid="task-node"]
 - [data-testid="exec-module-chip"]`
-    : `(Browser unavailable — use Playwright for UI verification)`
-}
+    : `(Browser unavailable — use Playwright for UI verification)`}
 
 ================================================================================
 §5 THORAPI — NON-NEGOTIABLE RULES
@@ -222,7 +214,7 @@ edit api.hbs.yaml (models) + api.yaml (CRUD list) → assembled.api.yaml.hbs
 \`\`\`
 
 **Process to add a new field/feature:**
-1. Edit OpenAPI spec edit api.hbs.yaml  (thor fields, constraints, RBAC)
+1. Edit OpenAPI spec edit api.hbs.yaml  ( fields, constraints, RBAC)
 2. Run: \`cd ${thorapi_project} && mvn clean install -DskipTests -q\`
 3. Verify generated artifacts in expected dirs
 4. Import generated types/services in app
@@ -305,25 +297,22 @@ Ingest agent rules from:
 §7 MCP INTEGRATION — LEVERAGE CONNECTED TOOLS
 ================================================================================
 ${(() => {
-  const servers = mcpHub.getServers().filter((s) => s.status === "connected");
-  if (!servers.length)
-    return "**No MCP servers connected** — focus on built-in tools.";
-  return (
-    "**Connected MCP servers:**\n" +
-    servers
-      .map((s) => {
-        const cfg = JSON.parse(s.config || "{}");
-        const cmd =
-          cfg.command +
-          (Array.isArray(cfg.args) && cfg.args.length
-            ? ` ${cfg.args.join(" ")}`
-            : "");
-        const toolList = s.tools?.map((t) => t.name).join(", ") || "no tools";
-        return `- **${s.name}** (\`${cmd}\`) — tools: ${toolList}`;
-      })
-      .join("\n") +
-    "\n\n**USE MCP TOOLS AGGRESSIVELY** — they extend your capabilities."
-  );
+    const servers = mcpHub.getServers().filter((s) => s.status === "connected");
+    if (!servers.length)
+        return "**No MCP servers connected** — focus on built-in tools.";
+    return ("**Connected MCP servers:**\n" +
+        servers
+            .map((s) => {
+            const cfg = JSON.parse(s.config || "{}");
+            const cmd = cfg.command +
+                (Array.isArray(cfg.args) && cfg.args.length
+                    ? ` ${cfg.args.join(" ")}`
+                    : "");
+            const toolList = s.tools?.map((t) => t.name).join(", ") || "no tools";
+            return `- **${s.name}** (\`${cmd}\`) — tools: ${toolList}`;
+        })
+            .join("\n") +
+        "\n\n**USE MCP TOOLS AGGRESSIVELY** — they extend your capabilities.");
 })()}
 
 Call MCP tools via:
@@ -623,22 +612,17 @@ Execute immediately. Verify ruthlessly. Ship confidently.
 
 LFG. 🔥
 `;
-export function addUserInstructions(
-  settingsCustomInstructions,
-  globalValorIDERulesFileInstructions,
-  localValorIDERulesFileInstructions,
-  valorideIgnoreInstructions,
-  preferredLanguageInstructions,
-) {
-  const parts = [
-    preferredLanguageInstructions,
-    settingsCustomInstructions,
-    globalValorIDERulesFileInstructions,
-    localValorIDERulesFileInstructions,
-    valorideIgnoreInstructions,
-  ].filter(Boolean);
-  if (!parts.length) return "";
-  return `
+export function addUserInstructions(settingsCustomInstructions, globalValorIDERulesFileInstructions, localValorIDERulesFileInstructions, valorideIgnoreInstructions, preferredLanguageInstructions) {
+    const parts = [
+        preferredLanguageInstructions,
+        settingsCustomInstructions,
+        globalValorIDERulesFileInstructions,
+        localValorIDERulesFileInstructions,
+        valorideIgnoreInstructions,
+    ].filter(Boolean);
+    if (!parts.length)
+        return "";
+    return `
 ====
 USER DIRECTIVES
 ${parts.join("\n\n")}

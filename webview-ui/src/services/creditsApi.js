@@ -8,7 +8,7 @@
  * This server-side computation ensures consistency across all clients.
  */
 import { createApi } from "@reduxjs/toolkit/query/react";
-import customBaseQuery from "@/thor/redux/customBaseQuery";
+import customBaseQuery from "@thorapi//redux/customBaseQuery";
 import { v4 as uuidv4 } from "uuid";
 // RTK Query API - matches ValkyrAI's creditsApi pattern
 export const creditsApi = createApi({

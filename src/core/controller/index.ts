@@ -18,7 +18,7 @@ import {
 } from "@integrations/misc/link-preview";
 import { openImage } from "@integrations/misc/open-file";
 import { handleFileServiceRequest } from "./file";
-import { buildOpenApiHeaders } from "./openApiImport";
+import { buildOpenApiImportConfig } from "./openApiImport";
 import { selectImages } from "@integrations/misc/process-images";
 import { getTheme } from "@integrations/theme/getTheme";
 import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
@@ -331,10 +331,10 @@ export class Controller {
         await this.setUserInfo(
           message.user
             ? {
-                username: message.user.name || null,
-                email: null, // Replace with actual email if available
-                avatarUrl: null, // Replace with actual avatar URL if available
-              }
+              username: message.user.name || null,
+              email: null, // Replace with actual email if available
+              avatarUrl: null, // Replace with actual avatar URL if available
+            }
             : undefined,
         );
         await this.postStateToWebview();
@@ -1616,7 +1616,7 @@ export class Controller {
           // Get JWT token for ThorAPI call
           const jwtToken =
             providedJwt || (await getSecret(this.context, "jwtToken"));
-          const headers = buildOpenApiHeaders(filename, jwtToken);
+          const axiosConfig = buildOpenApiImportConfig(filename, jwtToken);
 
           // Call ThorAPI /v1/thorapi/specs/import endpoint
           const apiBaseUrl = getValkyraiBasePath();
@@ -1630,10 +1630,7 @@ export class Controller {
                 content: fileContent,
                 fileType: isJson ? "json" : "yaml",
               },
-              {
-                headers,
-                timeout: 30000,
-              },
+              axiosConfig,
             );
 
             if (response.data?.success === true || response.status === 200) {
@@ -1761,10 +1758,9 @@ export class Controller {
               );
             } catch (extractionError) {
               throw new Error(
-                `Failed to extract archive: ${
-                  extractionError instanceof Error
-                    ? extractionError.message
-                    : String(extractionError)
+                `Failed to extract archive: ${extractionError instanceof Error
+                  ? extractionError.message
+                  : String(extractionError)
                 }`,
               );
             }
@@ -1779,10 +1775,9 @@ export class Controller {
 
             await fs.unlink(filePath).catch((unlinkError) => {
               console.warn(
-                `Failed to delete archive ${filePath}: ${
-                  unlinkError instanceof Error
-                    ? unlinkError.message
-                    : String(unlinkError)
+                `Failed to delete archive ${filePath}: ${unlinkError instanceof Error
+                  ? unlinkError.message
+                  : String(unlinkError)
                 }`,
               );
             });
@@ -2846,10 +2841,10 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       ?.map((folder) => folder.uri.fsPath)
       .at(0);
     if (!cwd) {
-      return "@/" + filePath;
+      return "@thorapi/" + filePath;
     }
     const relativePath = path.relative(cwd, filePath);
-    return "@/" + relativePath;
+    return "@thorapi/" + relativePath;
   }
 
   // 'Add to ValorIDE' context menu in editor and code action
@@ -3440,18 +3435,16 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
           }
         } catch (subdirError) {
           console.warn(
-            `findReadmeFile: unable to scan ${subdir}: ${
-              subdirError instanceof Error
-                ? subdirError.message
-                : String(subdirError)
+            `findReadmeFile: unable to scan ${subdir}: ${subdirError instanceof Error
+              ? subdirError.message
+              : String(subdirError)
             }`,
           );
         }
       }
     } catch (error) {
       console.warn(
-        `findReadmeFile: unable to scan ${directory}: ${
-          error instanceof Error ? error.message : String(error)
+        `findReadmeFile: unable to scan ${directory}: ${error instanceof Error ? error.message : String(error)
         }`,
       );
     }

@@ -12,11 +12,11 @@ import React, {
 import { useRemark } from "react-remark";
 import { useMount } from "react-use";
 import styled from "styled-components";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
 import { highlight } from "../history/HistoryView";
 import { ModelInfoView, normalizeApiConfiguration } from "./ApiOptions";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
 
 export interface LlmDetailsModelPickerProps {
   isPopup?: boolean;
@@ -56,7 +56,7 @@ const DropdownItem = styled.div<{ isSelected?: boolean }>`
       : "inherit"};
   border-left: 3px solid
     ${(props) =>
-      props.isSelected ? "var(--vscode-terminal-ansiBlue)" : "transparent"};
+    props.isSelected ? "var(--vscode-terminal-ansiBlue)" : "transparent"};
   user-select: none;
   white-space: nowrap;
   overflow: hidden;
@@ -87,9 +87,9 @@ const FeatureCard = styled.div<{ isSelected?: boolean }>`
   padding: 8px;
   border: 1px solid
     ${(props) =>
-      props.isSelected
-        ? "var(--vscode-terminal-ansiBlue)"
-        : "var(--vscode-panel-border)"};
+    props.isSelected
+      ? "var(--vscode-terminal-ansiBlue)"
+      : "var(--vscode-panel-border)"};
   border-radius: 4px;
   background-color: ${(props) =>
     props.isSelected

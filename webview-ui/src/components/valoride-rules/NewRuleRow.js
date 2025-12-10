@@ -4,7 +4,7 @@ import {
   Fragment as _Fragment,
 } from "react/jsx-runtime";
 import { useState, useRef, useEffect } from "react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { FaPlus } from "react-icons/fa";
 import { useClickAway } from "react-use";

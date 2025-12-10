@@ -1,4 +1,4 @@
-import { Configuration } from "@/thor/src/runtime";
+import { Configuration, setBasePath } from "../thorapi/src/runtime";
 
 type HostListener = (host: string) => void;
 
@@ -35,7 +35,7 @@ let currentHost =
   DEFAULT_VALKYRAI_HOST;
 
 currentHost = sanitizeHost(currentHost);
-Configuration.basePath = currentHost;
+setBasePath(currentHost);
 
 const notifyHostChange = (host: string) => {
   listeners.forEach((listener) => {
@@ -55,7 +55,7 @@ export const setValkyraiHost = (value?: string) => {
     return;
   }
   currentHost = nextHost;
-  Configuration.basePath = nextHost;
+  setBasePath(nextHost);
   try {
     if (typeof window !== "undefined") {
       (window as any).__valorideValkyraiBasePath = nextHost;

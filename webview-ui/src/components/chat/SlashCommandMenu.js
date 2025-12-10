@@ -1,6 +1,6 @@
 import { jsxs as _jsxs, jsx as _jsx } from "react/jsx-runtime";
 import { useCallback, useRef, useEffect } from "react";
-import { getMatchingSlashCommands } from "@/utils/slash-commands";
+import { getMatchingSlashCommands } from "@thorapi/utils/slash-commands";
 const SlashCommandMenu = ({
   onSelect,
   selectedIndex,
@@ -13,7 +13,7 @@ const SlashCommandMenu = ({
     (command) => {
       onSelect(command);
     },
-    [onSelect],
+    [onSelect]
   );
   // Auto-scroll logic remains the same...
   useEffect(() => {
@@ -67,8 +67,8 @@ const SlashCommandMenu = ({
                     }),
                   ],
                 },
-                command.name,
-              ),
+                command.name
+              )
             )
           : _jsxs("div", {
               className: "py-2 px-3 cursor-default flex flex-col",

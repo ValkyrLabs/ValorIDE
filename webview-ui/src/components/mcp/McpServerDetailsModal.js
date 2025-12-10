@@ -5,7 +5,7 @@ import {
   VSCodeTextField,
   VSCodeCheckbox,
 } from "@vscode/webview-ui-toolkit/react";
-import StatusBadge from "@/components/common/StatusBadge";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
 export const McpServerDetailsModal = ({
   server,
   visible,
@@ -159,8 +159,8 @@ export const McpServerDetailsModal = ({
                           title: tool.description || "",
                           children: tool.name,
                         },
-                        tool.name,
-                      ),
+                        tool.name
+                      )
                     )
                   : _jsx("span", {
                       style: { opacity: 0.7, fontSize: 12 },
@@ -205,8 +205,8 @@ export const McpServerDetailsModal = ({
                           onClick: () => alert(`Invoke tool: ${tool.name}`),
                           children: tool.name,
                         },
-                        tool.name,
-                      ),
+                        tool.name
+                      )
                     )
                   : _jsx("span", {
                       style: { opacity: 0.7, fontSize: 12 },
@@ -296,8 +296,8 @@ export const McpServerDetailsModal = ({
                       },
                       children: "\u2605",
                     },
-                    star,
-                  ),
+                    star
+                  )
                 ),
                 _jsx("span", {
                   style: {

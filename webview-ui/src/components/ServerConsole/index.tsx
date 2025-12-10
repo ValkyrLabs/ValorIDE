@@ -26,16 +26,16 @@ import {
   WebsocketMessageFromJSON,
   WebsocketMessageToJSON,
   WebsocketMessageTypeEnum,
-} from "../../thor/model";
+} from "../..//model";
 import { getWebsocketUrl, isValidWsUrl } from "../../websocket/websocket";
 import { useMothership } from "../../context/MothershipContext";
 import { addMessage, setConnected } from "./websocketSlice";
-import SystemAlerts from "@/components/SystemAlerts";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
 import "./ServerConsole.css";
 import { FaPaperPlane } from "react-icons/fa";
 import CoolButton from "../CoolButton";
-import { deriveWsUrlFromHost, getValkyraiHost } from "@/utils/valkyraiHost";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { deriveWsUrlFromHost, getValkyraiHost } from "@thorapi/utils/valkyraiHost";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 
 const { Client } = StompJs;
 
@@ -223,7 +223,7 @@ const ServerConsole = () => {
                   size="sm"
                   className="control-btn"
                   onClick={() => setIsCompact(!isCompact)}
-                  // title={isCompact ? 'Disable compact' : 'Enable compact'}
+                // title={isCompact ? 'Disable compact' : 'Enable compact'}
                 >
                   <FiList size={14} />
                 </CoolButton>
@@ -232,7 +232,7 @@ const ServerConsole = () => {
                   size="sm"
                   className="control-btn"
                   onClick={() => setIsMaximized(!isMaximized)}
-                  // title={isMaximized ? 'Minimize' : 'Maximize'}
+                // title={isMaximized ? 'Minimize' : 'Maximize'}
                 >
                   {isMaximized ? (
                     <FiMinimize2 size={14} />

@@ -26,8 +26,11 @@ import {
   hydrateStoredCredentials,
   storeJwtToken,
   writeStoredPrincipal,
-} from "@/utils/accessControl";
-import { DEFAULT_VALKYRAI_HOST, setValkyraiHost } from "@/utils/valkyraiHost";
+} from "@thorapi/utils/accessControl";
+import {
+  DEFAULT_VALKYRAI_HOST,
+  setValkyraiHost,
+} from "@thorapi/utils/valkyraiHost";
 const ExtensionStateContext = createContext(undefined);
 const normalizePrincipal = (value) => {
   if (!value || typeof value !== "object") {
@@ -105,7 +108,7 @@ export const ExtensionStateContextProvider = ({ children }) => {
         const incoming = message.state;
         if (!incoming) {
           console.warn(
-            "ExtensionStateContext: received state message without payload",
+            "ExtensionStateContext: received state message without payload"
           );
           setDidHydrateState(true);
           break;
@@ -215,7 +218,7 @@ export const ExtensionStateContextProvider = ({ children }) => {
           // worth noting it will never be possible for a more up-to-date message to be sent here or in normal messages post since the presentAssistantContent function uses lock
           const lastIndex = findLastIndex(
             prevState.valorideMessages,
-            (msg) => msg.ts === partialMessage.ts,
+            (msg) => msg.ts === partialMessage.ts
           );
           if (lastIndex !== -1) {
             const newValorIDEMessages = [...prevState.valorideMessages];
@@ -359,7 +362,7 @@ export const ExtensionStateContextProvider = ({ children }) => {
     }
     const timeoutId = window.setTimeout(() => {
       console.warn(
-        "ExtensionStateContext: timed out waiting for extension state, continuing with local defaults",
+        "ExtensionStateContext: timed out waiting for extension state, continuing with local defaults"
       );
       setDidHydrateState(true);
     }, 4000);
@@ -441,7 +444,7 @@ export const useExtensionState = () => {
   const context = useContext(ExtensionStateContext);
   if (context === undefined) {
     throw new Error(
-      "useExtensionState must be used within an ExtensionStateContextProvider",
+      "useExtensionState must be used within an ExtensionStateContextProvider"
     );
   }
   return context;

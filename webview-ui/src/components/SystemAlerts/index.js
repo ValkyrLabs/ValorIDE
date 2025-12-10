@@ -6,13 +6,13 @@ import {
 import { useState, useEffect, useMemo } from "react";
 import { Alert, Modal } from "react-bootstrap";
 import { FaSadTear, FaDollarSign, FaTimes, FaCreditCard } from "react-icons/fa";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import {
   useGetAccountBalanceQuery,
   isInsufficientFunds,
-} from "@/services/creditsApi";
+} from "@thorapi/services/creditsApi";
 import { getApiMetrics } from "@shared/getApiMetrics";
-import BuyCredits from "@/components/BuyCredits";
+import BuyCredits from "@thorapi/components/BuyCredits";
 const SystemAlerts = () => {
   const {
     valorideMessages,
@@ -43,7 +43,7 @@ const SystemAlerts = () => {
   // Calculate current API metrics
   const apiMetrics = useMemo(
     () => getApiMetrics(valorideMessages || []),
-    [valorideMessages],
+    [valorideMessages]
   );
   const budgetAlerts = useMemo(
     () =>
@@ -53,7 +53,7 @@ const SystemAlerts = () => {
         lowThreshold: 5,
         alertThreshold: 10,
       },
-    [advancedSettings?.budgetAlerts],
+    [advancedSettings?.budgetAlerts]
   );
   // Calculate effective balance using the new creditsApi AccountBalance
   const effectiveBalance = useMemo(() => {
@@ -337,8 +337,8 @@ const SystemAlerts = () => {
                 ],
               }),
             },
-            alert.id,
-          ),
+            alert.id
+          )
         ),
       }),
       _jsxs(Modal, {

@@ -1,11 +1,11 @@
 import { Client } from "@stomp/stompjs";
-import { getWebsocketUrl, isValidWsUrl } from "@/websocket/websocket";
-import { WebsocketMessageTypeEnum } from "@/thor/model";
+import { getWebsocketUrl, isValidWsUrl } from "@thorapi/websocket/websocket";
+import { WebsocketMessageTypeEnum } from "@thorapi//model";
 import {
   deriveWsUrlFromHost,
   getValkyraiHost,
   subscribeToValkyraiHost,
-} from "@/utils/valkyraiHost";
+} from "@thorapi/utils/valkyraiHost";
 const getFallbackWsBase = () =>
   deriveWsUrlFromHost(getValkyraiHost()) ?? "ws://localhost:8080";
 // Only initialize in browser contexts
@@ -60,7 +60,7 @@ if (typeof window !== "undefined") {
                     timestamp: Date.now(),
                     source: "thorBridge-localStorage",
                   },
-                }),
+                })
               );
             } catch {}
           }
@@ -77,7 +77,7 @@ if (typeof window !== "undefined") {
       return `${baseURL}${separator}token=${jwtToken}`;
     };
     const toAppMessage = (raw) => {
-      // Expect Thor WebsocketMessage payload to be either:
+      // Expect ThorAPI WebsocketMessage payload to be either:
       // - a JSON string body with shape { payload: string|object, ... }
       // - or already-parsed object
       // And the payload content to be a JSON string/object with shape:
@@ -132,7 +132,7 @@ if (typeof window !== "undefined") {
       }
     };
     const toThorBody = (msg) => {
-      const thor = {
+      const thorMessage = {
         type: WebsocketMessageTypeEnum.BROADCAST,
         payload: JSON.stringify({
           topic: msg.type,
@@ -142,7 +142,7 @@ if (typeof window !== "undefined") {
           timestamp: msg.timestamp,
         }),
       };
-      return JSON.stringify(thor);
+      return JSON.stringify(thorMessage);
     };
     const postStatus = (phase) => {
       try {
@@ -164,7 +164,7 @@ if (typeof window !== "undefined") {
       const authenticatedURL = getAuthenticatedBrokerURL();
       if (!authenticatedURL) {
         console.warn(
-          "thorBridge: Cannot connect without JWT token, will retry...",
+          "thorBridge: Cannot connect without JWT token, will retry..."
         );
         postStatus("error");
         // Retry every 2 seconds until token is available
@@ -187,7 +187,7 @@ if (typeof window !== "undefined") {
       }
       console.log(
         "thorBridge: Connecting to authenticated websocket:",
-        authenticatedURL,
+        authenticatedURL
       );
       stompClient = new Client({
         brokerURL: authenticatedURL,
@@ -241,7 +241,7 @@ if (typeof window !== "undefined") {
         console.error(
           "thorBridge STOMP error:",
           frame.headers["message"],
-          frame.body,
+          frame.body
         );
         postStatus("error");
         isConnecting = false;
@@ -286,7 +286,7 @@ if (typeof window !== "undefined") {
           // Remove explicit connect-broker listener if present
           window.removeEventListener(
             "P2P-connect-broker",
-            connectBrokerListener,
+            connectBrokerListener
           );
           window.removeEventListener("jwt-token-updated", jwtUpdatedListener);
           if (hostSubscription) {
@@ -307,7 +307,7 @@ if (typeof window !== "undefined") {
     hostSubscription = subscribeToValkyraiHost(() => {
       try {
         console.log(
-          "thorBridge: ValkyrAI host changed, reconnecting broker...",
+          "thorBridge: ValkyrAI host changed, reconnecting broker..."
         );
         if (connectionRetryInterval) {
           clearInterval(connectionRetryInterval);

@@ -5,7 +5,7 @@ import {
   getAsVar,
   VSC_DESCRIPTION_FOREGROUND,
   VSC_INACTIVE_SELECTION_BACKGROUND,
-} from "@/utils/vscStyles";
+} from "@thorapi/utils/vscStyles";
 import { FaRegWindowClose } from "react-icons/fa";
 const containerStyle = {
   backgroundColor: getAsVar(VSC_INACTIVE_SELECTION_BACKGROUND),

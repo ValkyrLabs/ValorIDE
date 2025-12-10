@@ -1,12 +1,12 @@
 import React from "react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import DOMPurify from "dompurify";
 import {
   getSafeHostname,
   formatUrlForOpening,
   checkIfImageUrl,
 } from "./utils/mcpRichUtil";
-import ChatErrorBoundary from "@/components/chat/ChatErrorBoundary";
+import ChatErrorBoundary from "@thorapi/components/chat/ChatErrorBoundary";
 
 interface ImagePreviewProps {
   url: string;

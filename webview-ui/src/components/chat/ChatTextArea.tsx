@@ -9,13 +9,13 @@ import React, {
   useState,
 } from "react";
 import DynamicTextArea from "react-textarea-autosize";
-import GlowingTextArea from "@/components/chat/GlowingTextArea";
+import GlowingTextArea from "@thorapi/components/chat/GlowingTextArea";
 import { useClickAway, useEvent, useWindowSize } from "react-use";
 import styled from "styled-components";
 import { FaAngry, FaCamera, FaPaperPlane, FaRedoAlt } from "react-icons/fa";
 import { mentionRegex, mentionRegexGlobal } from "@shared/context-mentions";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import {
   ContextMenuOptionType,
   getContextMenuOptions,
@@ -24,7 +24,7 @@ import {
   removeMention,
   shouldShowContextMenu,
   SearchResult,
-} from "@/utils/context-mentions";
+} from "@thorapi/utils/context-mentions";
 import {
   SlashCommand,
   slashCommandDeleteRegex,
@@ -33,19 +33,19 @@ import {
   insertSlashCommand,
   removeSlashCommand,
   validateSlashCommand,
-} from "@/utils/slash-commands";
-import { useMetaKeyDetection, useShortcut } from "@/utils/hooks";
-import { validateApiConfiguration, validateModelId } from "@/utils/validate";
-import { vscode } from "@/utils/vscode";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import Thumbnails from "@/components/common/Thumbnails";
-import Tooltip from "@/components/common/Tooltip";
+} from "@thorapi/utils/slash-commands";
+import { useMetaKeyDetection, useShortcut } from "@thorapi/utils/hooks";
+import { validateApiConfiguration, validateModelId } from "@thorapi/utils/validate";
+import { vscode } from "@thorapi/utils/vscode";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import Thumbnails from "@thorapi/components/common/Thumbnails";
+import Tooltip from "@thorapi/components/common/Tooltip";
 import ApiOptions, {
   normalizeApiConfiguration,
-} from "@/components/settings/ApiOptions";
-import { MAX_IMAGES_PER_MESSAGE } from "@/components/chat/ChatView";
-import ContextMenu from "@/components/chat/ContextMenu";
-import SlashCommandMenu from "@/components/chat/SlashCommandMenu";
+} from "@thorapi/components/settings/ApiOptions";
+import { MAX_IMAGES_PER_MESSAGE } from "@thorapi/components/chat/ChatView";
+import ContextMenu from "@thorapi/components/chat/ContextMenu";
+import SlashCommandMenu from "@thorapi/components/chat/SlashCommandMenu";
 import { ChatSettings } from "@shared/ChatSettings";
 import ServersToggleModal from "./ServersToggleModal";
 import ValorIDERulesToggleModal from "../valoride-rules/ValorIDERulesToggleModal";
@@ -85,9 +85,9 @@ const SwitchOption = styled.div<{ isActive: boolean }>`
 
   &:hover {
     background-color: ${(props) =>
-      !props.isActive
-        ? "var(--vscode-toolbar-hoverBackground)"
-        : "transparent"};
+    !props.isActive
+      ? "var(--vscode-toolbar-hoverBackground)"
+      : "transparent"};
   }
 `;
 
@@ -217,18 +217,18 @@ const ModelDisplayButton = styled.a<{ isActive?: boolean; disabled?: boolean }>`
   &:hover,
   &:focus {
     color: ${(props) =>
-      props.disabled
-        ? "var(--vscode-descriptionForeground)"
-        : "var(--vscode-foreground)"};
+    props.disabled
+      ? "var(--vscode-descriptionForeground)"
+      : "var(--vscode-foreground)"};
     text-decoration: ${(props) => (props.disabled ? "none" : "underline")};
     outline: none;
   }
 
   &:active {
     color: ${(props) =>
-      props.disabled
-        ? "var(--vscode-descriptionForeground)"
-        : "var(--vscode-foreground)"};
+    props.disabled
+      ? "var(--vscode-descriptionForeground)"
+      : "var(--vscode-foreground)"};
     text-decoration: ${(props) => (props.disabled ? "none" : "underline")};
     outline: none;
   }
@@ -1656,7 +1656,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
                     // Ensure images clear immediately after sending
                     try {
                       setSelectedImages([]);
-                    } catch {}
+                    } catch { }
                   }
                 }}
               >

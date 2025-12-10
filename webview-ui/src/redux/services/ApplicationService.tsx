@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { Application } from "../../thor/model";
-import customBaseQuery from "../../thor/redux/customBaseQuery"; // Import the custom base query
+import { Application } from "../..//model";
+import customBaseQuery from "../..//redux/customBaseQuery"; // Import the custom base query
 
 type ApplicationResponse = Application[];
 

@@ -6,7 +6,7 @@ import {
   ContentDataContentTypeEnum,
   ContentDataCategoryEnum,
   ContentDataStatusEnum,
-} from "@thor/model";
+} from "@thorapi/model";
 export class TaskCompletionSubmitter {
   static instance;
   constructor() {}
@@ -40,7 +40,7 @@ export class TaskCompletionSubmitter {
       const result = await bridge.createContentData(contentData);
       if (result) {
         console.log(
-          `Successfully submitted task completion to ContentData: ${data.taskId}`,
+          `Successfully submitted task completion to ContentData: ${data.taskId}`
         );
         return true;
       }

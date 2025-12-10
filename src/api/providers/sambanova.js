@@ -20,7 +20,7 @@ var __decorate =
 import OpenAI from "openai";
 import { withRetry } from "../retry";
 import { sambanovaDefaultModelId, sambanovaModels } from "@shared/api";
-import { convertToOpenAiMessages } from "@/api/transform/openai-format";
+import { convertToOpenAiMessages } from "@thorapi/api/transform/openai-format";
 import { convertToR1Format } from "@api/transform/r1-format";
 export class SambanovaHandler {
   options;

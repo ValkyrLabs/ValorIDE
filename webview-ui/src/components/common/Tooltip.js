@@ -7,7 +7,7 @@ import {
   VSC_SIDEBAR_BACKGROUND,
   VSC_INPUT_PLACEHOLDER_FOREGROUND,
   VSC_INPUT_BORDER,
-} from "@/utils/vscStyles";
+} from "@thorapi/utils/vscStyles";
 // add styled component for tooltip
 const TooltipBody = styled.div`
   position: absolute;

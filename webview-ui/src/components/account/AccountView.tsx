@@ -1,17 +1,17 @@
 import { memo, useState, useCallback, useEffect, useMemo } from "react";
 
-import { UsageTransaction, PaymentTransaction } from "@/thor/model";
-import { useGetAccountBalanceQuery } from "@/services/creditsApi";
+import { UsageTransaction, PaymentTransaction } from "@thorapi//model";
+import { useGetAccountBalanceQuery } from "@thorapi/services/creditsApi";
 import {
   useAddUsageTransactionMutation,
   useGetUsageTransactionsQuery,
-} from "@/thor/redux/services/UsageTransactionService";
-import { useGetPaymentTransactionsQuery } from "@/thor/redux/services/PaymentTransactionService";
+} from "@thorapi//redux/services/UsageTransactionService";
+import { useGetPaymentTransactionsQuery } from "@thorapi//redux/services/PaymentTransactionService";
 import VSCodeButtonLink from "../common/VSCodeButtonLink";
 import ValorIDELogoWhite from "../../assets/ValorIDELogoWhite";
 import CountUp from "react-countup";
 import CreditsHistoryTable from "./CreditsHistoryTable";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { getApiMetrics } from "@shared/getApiMetrics";
 import ApplicationsList from "./ApplicationsList";
 import OpenAPIFilePicker from "./OpenAPIFilePicker";
@@ -23,7 +23,7 @@ import {
   VSCodeDivider,
   VSCodeLink,
 } from "@vscode/webview-ui-toolkit/react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import {
   FaAppStore,
   FaBackward,
@@ -33,22 +33,22 @@ import {
 } from "react-icons/fa";
 import CoolButton from "../CoolButton";
 import { Card } from "react-bootstrap";
-import { Login } from "@thor/model";
+import { Login } from "@thorapi/model";
 import { FormikHelpers } from "formik";
 import { useLoginUserMutation } from "../../redux/services/AuthService";
-import StatusBadge from "@/components/common/StatusBadge";
-import OfflineBanner from "@/components/common/OfflineBanner";
-import SystemAlerts from "@/components/SystemAlerts";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
+import OfflineBanner from "@thorapi/components/common/OfflineBanner";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
+import LoadingSpinner from "@thorapi/components/LoadingSpinner";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 import UserPreferences from "./UserPreferences";
-import BuyCredits from "@/components/BuyCredits";
+import BuyCredits from "@thorapi/components/BuyCredits";
 import {
   storeJwtToken,
   useAccessControl,
   writeStoredPrincipal,
   readStoredPrincipal,
-} from "@/utils/accessControl";
+} from "@thorapi/utils/accessControl";
 
 type AccountViewProps = {
   onDone: () => void;

@@ -1,8 +1,8 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 
-import { Workflow } from "@thor/model"; // always use the generated when possible!
+import { Workflow } from "@thorapi/model"; // always use the generated when possible!
 
-import customBaseQuery from "../../thor/redux/customBaseQuery"; // Import the custom base query
+import customBaseQuery from "../..//redux/customBaseQuery"; // Import the custom base query
 
 type WorkflowResponse = Workflow[];
 
@@ -19,9 +19,9 @@ export const WorkflowService = createApi({
       providesTags: (result, page) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Workflow" as const, id })),
-              { type: "Workflow", id: `PAGE_${page}` },
-            ]
+            ...result.map(({ id }) => ({ type: "Workflow" as const, id })),
+            { type: "Workflow", id: `PAGE_${page}` },
+          ]
           : [],
     }),
     getWorkflows: build.query<WorkflowResponse, void>({
@@ -29,9 +29,9 @@ export const WorkflowService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Workflow" as const, id })),
-              { type: "Workflow", id: "LIST" },
-            ]
+            ...result.map(({ id }) => ({ type: "Workflow" as const, id })),
+            { type: "Workflow", id: "LIST" },
+          ]
           : [{ type: "Workflow", id: "LIST" }],
     }),
     addWorkflow: build.mutation<Workflow, Partial<Workflow>>({

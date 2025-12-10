@@ -65,31 +65,31 @@ import {
   COMMAND_OUTPUT_STRING,
   COMMAND_REQ_APP_STRING,
 } from "@shared/combineCommandSequences";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import {
   findMatchingResourceOrTemplate,
   getMcpServerDisplayName,
-} from "@/utils/mcp";
-import { vscode } from "@/utils/vscode";
-import { FileServiceClient } from "@/services/grpc-client";
-import { CheckmarkControl } from "@/components/common/CheckmarkControl";
+} from "@thorapi/utils/mcp";
+import { vscode } from "@thorapi/utils/vscode";
+import { FileServiceClient } from "@thorapi/services/grpc-client";
+import { CheckmarkControl } from "@thorapi/components/common/CheckmarkControl";
 import {
   CheckpointControls,
   CheckpointOverlay,
 } from "../common/CheckpointControls";
 import CodeAccordian, { cleanPathPrefix } from "../common/CodeAccordian";
-import CodeBlock, { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import MarkdownBlock from "@/components/common/MarkdownBlock";
-import Thumbnails from "@/components/common/Thumbnails";
-import McpToolRow from "@/components/mcp/configuration/tabs/installed/server-row/McpToolRow";
-import McpResponseDisplay from "@/components/mcp/chat-display/McpResponseDisplay";
-import CreditLimitError from "@/components/chat/CreditLimitError";
-import { OptionsButtons } from "@/components/chat/OptionsButtons";
+import CodeBlock, { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import MarkdownBlock from "@thorapi/components/common/MarkdownBlock";
+import Thumbnails from "@thorapi/components/common/Thumbnails";
+import McpToolRow from "@thorapi/components/mcp/configuration/tabs/installed/server-row/McpToolRow";
+import McpResponseDisplay from "@thorapi/components/mcp/chat-display/McpResponseDisplay";
+import CreditLimitError from "@thorapi/components/chat/CreditLimitError";
+import { OptionsButtons } from "@thorapi/components/chat/OptionsButtons";
 import { highlightText } from "./TaskHeader";
-import SuccessButton from "@/components/common/SuccessButton";
-import TaskFeedbackButtons from "@/components/chat/TaskFeedbackButtons";
+import SuccessButton from "@thorapi/components/common/SuccessButton";
+import TaskFeedbackButtons from "@thorapi/components/chat/TaskFeedbackButtons";
 import NewTaskPreview from "./NewTaskPreview";
-import McpResourceRow from "@/components/mcp/configuration/tabs/installed/server-row/McpResourceRow";
+import McpResourceRow from "@thorapi/components/mcp/configuration/tabs/installed/server-row/McpResourceRow";
 import UserMessage from "./UserMessage";
 
 const statusColorMap: Record<ValorIDEFileChangeStatus, string> = {
@@ -400,7 +400,7 @@ interface ChatRowProps {
   sendMessageFromChatRow?: (text: string, images: string[]) => void;
 }
 
-interface ChatRowContentProps extends Omit<ChatRowProps, "onHeightChange"> {}
+interface ChatRowContentProps extends Omit<ChatRowProps, "onHeightChange"> { }
 
 export const ProgressIndicator = () => (
   <div
@@ -433,7 +433,7 @@ const Markdown = memo(({ markdown }: { markdown?: string }) => {
   );
 });
 
-const CompletionSummaryCard = memo(
+export const CompletionSummaryCard = memo(
   ({
     markdown,
     title,
@@ -453,6 +453,17 @@ const CompletionSummaryCard = memo(
         ? undefined
         : `Completed ${date.toLocaleString()}`;
     }
+
+    // Avoid duplicating the task title in the rendered markdown by stripping
+    // the leading `# Task: {title}` heading if present. The card already shows
+    // the title in its header, so rendering it again inside the markdown makes
+    // the summary look like the initial task prompt, which is confusing.
+    const stripTaskTitleHeading = (md?: string) => {
+      if (!md) return md;
+      return md.replace(/^# Task: .*\n?/, "");
+    };
+
+    const bodyMarkdown = stripTaskTitleHeading(markdown);
 
     return (
       <div
@@ -495,7 +506,7 @@ const CompletionSummaryCard = memo(
           </div>
         </div>
         <div style={{ marginTop: 4 }}>
-          <Markdown markdown={markdown} />
+          <Markdown markdown={bodyMarkdown} />
         </div>
       </div>
     );
@@ -1525,7 +1536,7 @@ export const ChatRowContent = ({
                   ...headerStyle,
                   marginBottom:
                     (cost == null && apiRequestFailedMessage) ||
-                    apiReqStreamingFailedMessage
+                      apiReqStreamingFailedMessage
                       ? 10
                       : 0,
                   justifyContent: "space-between",
@@ -1559,64 +1570,64 @@ export const ChatRowContent = ({
               </div>
               {((cost == null && apiRequestFailedMessage) ||
                 apiReqStreamingFailedMessage) && (
-                <>
-                  {(() => {
-                    // Try to parse the error message as JSON for credit limit error
-                    const errorData = parseErrorText(apiRequestFailedMessage);
-                    if (errorData) {
-                      if (
-                        errorData.code === "insufficient_credits" &&
-                        typeof errorData.current_balance === "number" &&
-                        typeof errorData.total_spent === "number" &&
-                        typeof errorData.total_promotions === "number" &&
-                        typeof errorData.message === "string"
-                      ) {
-                        return (
-                          <CreditLimitError
-                            currentBalance={errorData.current_balance}
-                            totalSpent={errorData.total_spent}
-                            totalPromotions={errorData.total_promotions}
-                            message={errorData.message}
-                          />
-                        );
+                  <>
+                    {(() => {
+                      // Try to parse the error message as JSON for credit limit error
+                      const errorData = parseErrorText(apiRequestFailedMessage);
+                      if (errorData) {
+                        if (
+                          errorData.code === "insufficient_credits" &&
+                          typeof errorData.current_balance === "number" &&
+                          typeof errorData.total_spent === "number" &&
+                          typeof errorData.total_promotions === "number" &&
+                          typeof errorData.message === "string"
+                        ) {
+                          return (
+                            <CreditLimitError
+                              currentBalance={errorData.current_balance}
+                              totalSpent={errorData.total_spent}
+                              totalPromotions={errorData.total_promotions}
+                              message={errorData.message}
+                            />
+                          );
+                        }
                       }
-                    }
 
-                    // Default error display
-                    return (
-                      <p
-                        style={{
-                          ...pStyle,
-                          color: "var(--vscode-errorForeground)",
-                        }}
-                      >
-                        {apiRequestFailedMessage ||
-                          apiReqStreamingFailedMessage}
-                        {apiRequestFailedMessage
-                          ?.toLowerCase()
-                          .includes("powershell") && (
-                          <>
-                            <br />
-                            <br />
-                            It seems like you're having Windows PowerShell
-                            issues, please see this{" "}
-                            <a
-                              href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
-                              style={{
-                                color: "inherit",
-                                textDecoration: "underline",
-                              }}
-                            >
-                              troubleshooting guide
-                            </a>
-                            .
-                          </>
-                        )}
-                      </p>
-                    );
-                  })()}
-                </>
-              )}
+                      // Default error display
+                      return (
+                        <p
+                          style={{
+                            ...pStyle,
+                            color: "var(--vscode-errorForeground)",
+                          }}
+                        >
+                          {apiRequestFailedMessage ||
+                            apiReqStreamingFailedMessage}
+                          {apiRequestFailedMessage
+                            ?.toLowerCase()
+                            .includes("powershell") && (
+                              <>
+                                <br />
+                                <br />
+                                It seems like you're having Windows PowerShell
+                                issues, please see this{" "}
+                                <a
+                                  href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
+                                  style={{
+                                    color: "inherit",
+                                    textDecoration: "underline",
+                                  }}
+                                >
+                                  troubleshooting guide
+                                </a>
+                                .
+                              </>
+                            )}
+                        </p>
+                      );
+                    })()}
+                  </>
+                )}
 
               {isExpanded && (
                 <div style={{ marginTop: "10px", display: "flex", gap: 10 }}>

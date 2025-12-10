@@ -23,6 +23,7 @@ interface CoolButtonProps {
   type?: any;
   size?: any;
   customStyle?: any;
+  [key: string]: any;
 }
 
 const CoolButton: React.FC<CoolButtonProps> = ({
@@ -34,6 +35,7 @@ const CoolButton: React.FC<CoolButtonProps> = ({
   type,
   size,
   customStyle,
+  ...rest
 }) => {
   let classx = "btnx btn btn-" + variant;
   if (size === "tiny") {
@@ -47,8 +49,9 @@ const CoolButton: React.FC<CoolButtonProps> = ({
       style={customStyle}
       type={type}
       disabled={disabled}
-      onClick={(event) => onClick(event)}
+      onClick={(event) => onClick && onClick(event)}
       className={classx}
+      {...rest}
     >
       {children}
     </button>

@@ -1,5 +1,6 @@
 import { computeIsChatLoadingState } from "./chatLoadingState";
 import { ValorIDEMessage } from "./ExtensionMessage";
+import { deriveChatLoadingState } from "./chatLoadingState";
 
 const baseParams = {
   messages: [] as ValorIDEMessage[],
@@ -107,5 +108,24 @@ describe("computeIsChatLoadingState", () => {
     });
 
     expect(result).toBe(false);
+  });
+
+  it("marks inline spinner for in-flight api and suppresses overlay duplication", () => {
+    const apiStarted: ValorIDEMessage = {
+      ts: Date.now(),
+      type: "say",
+      say: "api_req_started",
+      text: JSON.stringify({ cancelReason: null }),
+    };
+
+    const derived = deriveChatLoadingState({
+      ...baseParams,
+      messages: [apiStarted],
+      lastMessage: apiStarted,
+    });
+
+    expect(derived.isChatLoading).toBe(true);
+    expect(derived.inlineSpinnerCount).toBe(1);
+    expect(derived.inlineSources).toContain("api");
   });
 });

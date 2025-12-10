@@ -1,7 +1,7 @@
-import { UserPreferencePreferenceTypeEnum } from "@thor/model"; // UserPreference";
+import { UserPreferencePreferenceTypeEnum } from "@thorapi/model"; // UserPreference";
 import store from "../redux/store";
 import { setThemeMode, setBootswatchTheme } from "../redux/slices/themeSlice";
-import { UserPreferenceService as UserPreferenceApi } from "../thor/redux/services/UserPreferenceService";
+import { UserPreferenceService as UserPreferenceApi } from "..//redux/services/UserPreferenceService";
 export class UserPreferenceService {
   static instance;
   preferences = new Map();
@@ -16,7 +16,7 @@ export class UserPreferenceService {
     try {
       // Use RTK Query to fetch preferences from backend
       const result = await store.dispatch(
-        UserPreferenceApi.endpoints.getUserPreferences.initiate(),
+        UserPreferenceApi.endpoints.getUserPreferences.initiate()
       );
       if (result.data) {
         // Store preferences in local map and update Redux store
@@ -60,7 +60,7 @@ export class UserPreferenceService {
       store.dispatch(setThemeMode(mode));
       // Save to backend using RTK Query
       const existingPref = this.preferences.get(
-        UserPreferencePreferenceTypeEnum.UXTHEME,
+        UserPreferencePreferenceTypeEnum.UXTHEME
       );
       const preferenceData = {
         preferenceType: UserPreferencePreferenceTypeEnum.UXTHEME,
@@ -84,21 +84,19 @@ export class UserPreferenceService {
           UserPreferenceApi.endpoints.updateUserPreference.initiate({
             id: existingPref.id,
             ...preferenceData,
-          }),
+          })
         );
       } else {
         // Create new preference
         result = await store.dispatch(
-          UserPreferenceApi.endpoints.addUserPreference.initiate(
-            preferenceData,
-          ),
+          UserPreferenceApi.endpoints.addUserPreference.initiate(preferenceData)
         );
       }
       // Update local preferences map with the saved preference
       if (result.data) {
         this.preferences.set(
           UserPreferencePreferenceTypeEnum.UXTHEME,
-          result.data,
+          result.data
         );
       }
     } catch (error) {
@@ -123,7 +121,7 @@ export class UserPreferenceService {
       localStorage.setItem("layout-mode", layout);
       // Save to backend using RTK Query
       const existingPref = this.preferences.get(
-        UserPreferencePreferenceTypeEnum.UXLAYOUT,
+        UserPreferencePreferenceTypeEnum.UXLAYOUT
       );
       const currentJson = this.parseLayoutJson(existingPref?.preference);
       currentJson.layoutMode = layout;
@@ -149,21 +147,19 @@ export class UserPreferenceService {
           UserPreferenceApi.endpoints.updateUserPreference.initiate({
             id: existingPref.id,
             ...preferenceData,
-          }),
+          })
         );
       } else {
         // Create new preference
         result = await store.dispatch(
-          UserPreferenceApi.endpoints.addUserPreference.initiate(
-            preferenceData,
-          ),
+          UserPreferenceApi.endpoints.addUserPreference.initiate(preferenceData)
         );
       }
       // Update local preferences map with the saved preference
       if (result.data) {
         this.preferences.set(
           UserPreferencePreferenceTypeEnum.UXLAYOUT,
-          result.data,
+          result.data
         );
       }
     } catch (error) {
@@ -173,7 +169,7 @@ export class UserPreferenceService {
   getThemePreference() {
     // First try to get from loaded preferences
     const backendPref = this.preferences.get(
-      UserPreferencePreferenceTypeEnum.UXTHEME,
+      UserPreferencePreferenceTypeEnum.UXTHEME
     );
     if (
       backendPref?.preference &&
@@ -188,7 +184,7 @@ export class UserPreferenceService {
   getLayoutPreference() {
     // First try to get from loaded preferences
     const backendPref = this.preferences.get(
-      UserPreferencePreferenceTypeEnum.UXLAYOUT,
+      UserPreferencePreferenceTypeEnum.UXLAYOUT
     );
     if (backendPref?.preference) {
       const json = this.parseLayoutJson(backendPref.preference);
@@ -222,14 +218,14 @@ export class UserPreferenceService {
   }
   async getGridPrefs() {
     const existingPref = this.preferences.get(
-      UserPreferencePreferenceTypeEnum.UXLAYOUT,
+      UserPreferencePreferenceTypeEnum.UXLAYOUT
     );
     return this.parseLayoutJson(existingPref?.preference);
   }
   async setGridPrefsKey(storageKey, patch) {
     try {
       let existingPref = this.preferences.get(
-        UserPreferencePreferenceTypeEnum.UXLAYOUT,
+        UserPreferencePreferenceTypeEnum.UXLAYOUT
       );
       const principalId = (() => {
         try {
@@ -243,20 +239,20 @@ export class UserPreferenceService {
       // If we don't have the preference loaded yet, fetch all and locate it to avoid duplicates.
       if (!existingPref) {
         const res = await store.dispatch(
-          UserPreferenceApi.endpoints.getUserPreferences.initiate(),
+          UserPreferenceApi.endpoints.getUserPreferences.initiate()
         );
         const items = res.data;
         if (items && items.length) {
           const found = items.find(
             (p) =>
               p.preferenceType === UserPreferencePreferenceTypeEnum.UXLAYOUT &&
-              (!principalId || p.principalId === principalId),
+              (!principalId || p.principalId === principalId)
           );
           if (found) {
             existingPref = found;
             this.preferences.set(
               UserPreferencePreferenceTypeEnum.UXLAYOUT,
-              found,
+              found
             );
           }
         }
@@ -277,19 +273,17 @@ export class UserPreferenceService {
           UserPreferenceApi.endpoints.updateUserPreference.initiate({
             id: existingPref.id,
             ...preferenceData,
-          }),
+          })
         );
       } else {
         result = await store.dispatch(
-          UserPreferenceApi.endpoints.addUserPreference.initiate(
-            preferenceData,
-          ),
+          UserPreferenceApi.endpoints.addUserPreference.initiate(preferenceData)
         );
       }
       if (result.data) {
         this.preferences.set(
           UserPreferencePreferenceTypeEnum.UXLAYOUT,
-          result.data,
+          result.data
         );
       }
     } catch (e) {

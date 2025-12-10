@@ -16,11 +16,11 @@ Template file: typescript-redux-query/types/AclTypes.ts.mustache
 // Permission types based on Spring Security ACL
 export var PermissionType;
 (function (PermissionType) {
-  PermissionType["READ"] = "READ";
-  PermissionType["WRITE"] = "WRITE";
-  PermissionType["CREATE"] = "CREATE";
-  PermissionType["DELETE"] = "DELETE";
-  PermissionType["ADMINISTRATION"] = "ADMINISTRATION";
-  PermissionType["VIEW_DECRYPTED"] = "VIEW_DECRYPTED";
+    PermissionType["READ"] = "READ";
+    PermissionType["WRITE"] = "WRITE";
+    PermissionType["CREATE"] = "CREATE";
+    PermissionType["DELETE"] = "DELETE";
+    PermissionType["ADMINISTRATION"] = "ADMINISTRATION";
+    PermissionType["VIEW_DECRYPTED"] = "VIEW_DECRYPTED";
 })(PermissionType || (PermissionType = {}));
 //# sourceMappingURL=types.js.map

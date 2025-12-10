@@ -1,9 +1,9 @@
 import React, { useState, useRef, forwardRef, useCallback } from "react";
-import Thumbnails from "@/components/common/Thumbnails";
+import Thumbnails from "@thorapi/components/common/Thumbnails";
 import { highlightText } from "./TaskHeader";
 import DynamicTextArea from "react-textarea-autosize";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { CheckpointsServiceClient } from "@/services/grpc-client";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { CheckpointsServiceClient } from "@thorapi/services/grpc-client";
 import { ValorIDECheckpointRestore } from "@shared/WebviewMessage";
 
 interface UserMessageProps {

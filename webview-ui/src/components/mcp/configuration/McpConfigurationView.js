@@ -6,18 +6,18 @@ import {
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
 import AddRemoteServerForm from "./tabs/add-server/AddRemoteServerForm";
 import McpMarketplaceView from "./tabs/marketplace/McpMarketplaceView";
 import InstalledServersView from "./tabs/installed/InstalledServersView";
-import StatusBadge from "@/components/common/StatusBadge";
-import SystemAlerts from "@/components/SystemAlerts";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 const McpConfigurationView = ({ onDone, initialTab }) => {
   const { mcpMarketplaceEnabled } = useExtensionState();
   const [activeTab, setActiveTab] = useState(
-    initialTab || (mcpMarketplaceEnabled ? "marketplace" : "installed"),
+    initialTab || (mcpMarketplaceEnabled ? "marketplace" : "installed")
   );
   const handleTabChange = (tab) => {
     setActiveTab(tab);

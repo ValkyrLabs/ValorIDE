@@ -4,11 +4,11 @@ import {
   Fragment as _Fragment,
 } from "react/jsx-runtime";
 import React, { useState, useRef, forwardRef } from "react";
-import Thumbnails from "@/components/common/Thumbnails";
+import Thumbnails from "@thorapi/components/common/Thumbnails";
 import { highlightText } from "./TaskHeader";
 import DynamicTextArea from "react-textarea-autosize";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { CheckpointsServiceClient } from "@/services/grpc-client";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { CheckpointsServiceClient } from "@thorapi/services/grpc-client";
 const UserMessage = ({ text, images, messageTs, sendMessageFromChatRow }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedText, setEditedText] = useState(text || "");
@@ -178,7 +178,7 @@ const RestoreButton = forwardRef(
       },
       children: label,
     });
-  },
+  }
 );
 export default UserMessage;
 //# sourceMappingURL=UserMessage.js.map

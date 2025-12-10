@@ -5,7 +5,7 @@ import {
   VSCodeTextField,
   VSCodeCheckbox,
 } from "@vscode/webview-ui-toolkit/react";
-import StatusBadge from "@/components/common/StatusBadge";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
 
 export const McpServerDetailsModal: React.FC<{
   server: McpServer;

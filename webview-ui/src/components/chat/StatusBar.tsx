@@ -1,7 +1,7 @@
 import React from "react";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { FaSpinner, FaPlug, FaRobot } from "react-icons/fa";
-import StatusBadge from "@/components/common/StatusBadge";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
 
 interface StatusBarProps {
   // WebSocket status
@@ -105,9 +105,9 @@ const StatusBar: React.FC<StatusBarProps> = ({
           style={
             isConnectingMothership
               ? {
-                  border: "1px solid #61dafb",
-                  boxShadow: "0 0 8px #61dafb",
-                }
+                border: "1px solid #61dafb",
+                boxShadow: "0 0 8px #61dafb",
+              }
               : undefined
           }
         />

@@ -5,7 +5,7 @@ import {
   getTotalEarnings,
   getCreatorServices,
   ManagedMcpService,
-} from "@/services/monetization/ServiceMonetizationService";
+} from "@thorapi/services/monetization/ServiceMonetizationService";
 import "./EarningsDashboard.css";
 
 /**
@@ -163,9 +163,9 @@ export const EarningsDashboard: React.FC = () => {
                   $
                   {monthlyEarnings.totalInvocations > 0
                     ? (
-                        monthlyEarnings.totalEarned /
-                        monthlyEarnings.totalInvocations
-                      ).toFixed(3)
+                      monthlyEarnings.totalEarned /
+                      monthlyEarnings.totalInvocations
+                    ).toFixed(3)
                     : "0.00"}
                 </div>
               </div>

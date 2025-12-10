@@ -2,7 +2,7 @@ import {
   WebsocketMessageTypeEnum,
   WebsocketMessageToJSON,
   WebsocketMessageFromJSON,
-} from "@thor/model";
+} from "@thorapi/model";
 import { EventEmitter } from "events";
 import {
   getValkyraiBasePath,
@@ -110,7 +110,7 @@ export class MothershipService extends EventEmitter {
         process.env.VALORIDE_WSS_BASE_PATH ??
         process.env.VITE_wssBasePath ??
         ""
-      ).trim() || undefined,
+      ).trim() || undefined
     );
     if (envOverride) return envOverride;
     const derived =
@@ -142,7 +142,7 @@ export class MothershipService extends EventEmitter {
       this.reconnectDelay *
       Math.pow(2, Math.min(this.reconnectAttempts - 1, 4));
     console.log(
-      `Scheduling mothership reconnect attempt ${this.reconnectAttempts} in ${delay}ms`,
+      `Scheduling mothership reconnect attempt ${this.reconnectAttempts} in ${delay}ms`
     );
     setTimeout(() => {
       if (!this.connected) {

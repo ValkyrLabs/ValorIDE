@@ -1,4 +1,4 @@
-import { Configuration } from "@/thor/src/runtime";
+import { Configuration, setBasePath } from "../thorapi/src/runtime";
 const rawDefault =
   (import.meta.env?.VITE_basePath &&
     String(import.meta.env.VITE_basePath).trim()) ||
@@ -26,7 +26,7 @@ let currentHost =
     window.__valorideValkyraiBasePath) ||
   DEFAULT_VALKYRAI_HOST;
 currentHost = sanitizeHost(currentHost);
-Configuration.basePath = currentHost;
+setBasePath(currentHost);
 const notifyHostChange = (host) => {
   listeners.forEach((listener) => {
     try {
@@ -43,7 +43,7 @@ export const setValkyraiHost = (value) => {
     return;
   }
   currentHost = nextHost;
-  Configuration.basePath = nextHost;
+  setBasePath(nextHost);
   try {
     if (typeof window !== "undefined") {
       window.__valorideValkyraiBasePath = nextHost;

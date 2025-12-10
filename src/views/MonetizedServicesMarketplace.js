@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import {
   getMarketplaceServices,
   subscribeToService,
-} from "@/services/monetization/ServiceMonetizationService";
+} from "@thorapi/services/monetization/ServiceMonetizationService";
 import "./MonetizedServicesMarketplace.css";
 /**
  * Browse and subscribe to monetized MCP services from creators.
@@ -226,7 +226,7 @@ export const MonetizedServicesMarketplace = () => {
                         _jsx("span", {
                           className: "created-date",
                           children: new Date(
-                            service.createdAt,
+                            service.createdAt
                           ).toLocaleDateString(),
                         }),
                       ],
@@ -251,8 +251,8 @@ export const MonetizedServicesMarketplace = () => {
                     }),
                   ],
                 },
-                service.id,
-              ),
+                service.id
+              )
             ),
           })
         : _jsxs("div", {

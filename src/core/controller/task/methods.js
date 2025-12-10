@@ -7,9 +7,9 @@ import { clearTask } from "./clearTask";
 import { newTask } from "./newTask";
 // Register all task service methods
 export function registerAllMethods() {
-  // Register each method with the registry
-  registerMethod("cancelTask", cancelTask);
-  registerMethod("clearTask", clearTask);
-  registerMethod("newTask", newTask);
+    // Register each method with the registry
+    registerMethod("cancelTask", cancelTask);
+    registerMethod("clearTask", clearTask);
+    registerMethod("newTask", newTask);
 }
 //# sourceMappingURL=methods.js.map

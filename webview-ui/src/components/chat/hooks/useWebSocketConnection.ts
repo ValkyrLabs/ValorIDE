@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { WebsocketMessage, WebsocketMessageTypeEnum } from "@thor/model";
-import { vscode } from "@/utils/vscode";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
-import { TaskServiceClient } from "@/services/grpc-client";
+import { WebsocketMessage, WebsocketMessageTypeEnum } from "@thorapi/model";
+import { vscode } from "@thorapi/utils/vscode";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
+import { TaskServiceClient } from "@thorapi/services/grpc-client";
 import { ValorIDEMessage } from "@shared/ExtensionMessage";
 
 interface UseWebSocketConnectionProps {
@@ -192,7 +192,7 @@ export const useWebSocketConnection = ({
               // If no task exists yet, start one; else inject as a user message
               if ((messages?.length ?? 0) === 0) {
                 TaskServiceClient.newTask({ text: cleaned, images: [] }).catch(
-                  () => {},
+                  () => { },
                 );
               } else {
                 vscode.postMessage({
@@ -234,7 +234,7 @@ export const useWebSocketConnection = ({
     };
   }, [communicationService, containsValorIDEMention, messages, ourSenderId]);
 
-  // Connect to the Thor/STOMP broker the same way ServerConsole does
+  // Connect to the ThorAPI/STOMP broker the same way ServerConsole does
   useEffect(() => {
     try {
       const jwt = sessionStorage.getItem("jwtToken");

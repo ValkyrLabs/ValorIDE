@@ -1,9 +1,9 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState } from "react";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { VSCodeDropdown, VSCodeOption } from "@vscode/webview-ui-toolkit/react";
-import StatusBadge from "@/components/common/StatusBadge";
-import McpServerDetailsModal from "@/components/mcp/McpServerDetailsModal";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
+import McpServerDetailsModal from "@thorapi/components/mcp/McpServerDetailsModal";
 export const McpServerSelector = ({ selectedServer, onSelect, isOwner }) => {
   const { mcpServers } = useExtensionState();
   const [detailsVisible, setDetailsVisible] = useState(false);
@@ -44,8 +44,8 @@ export const McpServerSelector = ({ selectedServer, onSelect, isOwner }) => {
                 }),
               ],
             },
-            server.name,
-          ),
+            server.name
+          )
         ),
       }),
       detailsServer &&

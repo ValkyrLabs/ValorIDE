@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import "./TaskThermometer.css";
-import { TASK_PHASES, phaseToIndex } from "@/utils/taskPhase";
+import { TASK_PHASES, phaseToIndex } from "@thorapi/utils/taskPhase";
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 export default function TaskThermometer({
   phase,
@@ -33,8 +33,8 @@ export default function TaskThermometer({
               },
               children: p,
             },
-            p,
-          ),
+            p
+          )
         ),
       }),
       _jsx("div", {

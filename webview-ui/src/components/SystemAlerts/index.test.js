@@ -6,10 +6,10 @@ const mockUseGetAccountBalanceQuery = vi.fn();
 const mockIsInsufficientFunds = vi.fn();
 const mockUseExtensionState = vi.fn();
 const mockGetApiMetrics = vi.fn();
-vi.mock("@/context/ExtensionStateContext", () => ({
+vi.mock("@thorapi/context/ExtensionStateContext", () => ({
   useExtensionState: () => mockUseExtensionState(),
 }));
-vi.mock("@/services/creditsApi", () => ({
+vi.mock("@thorapi/services/creditsApi", () => ({
   useGetAccountBalanceQuery: (...args) =>
     mockUseGetAccountBalanceQuery(...args),
   isInsufficientFunds: (...args) => mockIsInsufficientFunds(...args),
@@ -17,7 +17,7 @@ vi.mock("@/services/creditsApi", () => ({
 vi.mock("@shared/getApiMetrics", () => ({
   getApiMetrics: (...args) => mockGetApiMetrics(...args),
 }));
-vi.mock("@/components/BuyCredits", () => ({
+vi.mock("@thorapi/components/BuyCredits", () => ({
   __esModule: true,
   default: () => _jsx("div", { "data-testid": "buy-credits-component" }),
 }));
@@ -40,7 +40,7 @@ vi.mock("react-bootstrap", () => ({
         _jsx("div", { "data-testid": "modal-title", children: children }),
       Body: ({ children }) =>
         _jsx("div", { "data-testid": "modal-body", children: children }),
-    },
+    }
   ),
 }));
 const baseExtensionState = {
@@ -87,7 +87,7 @@ describe("SystemAlerts - Buy Credits modal visibility", () => {
     });
     render(_jsx(SystemAlerts, {}));
     await waitFor(() =>
-      expect(screen.getByText(/Insufficient Credits/i)).toBeInTheDocument(),
+      expect(screen.getByText(/Insufficient Credits/i)).toBeInTheDocument()
     );
     expect(screen.queryByTestId("buy-credits-modal")).not.toBeInTheDocument();
   });
@@ -109,10 +109,10 @@ describe("SystemAlerts - Buy Credits modal visibility", () => {
     });
     render(_jsx(SystemAlerts, {}));
     await waitFor(() =>
-      expect(screen.getByText(/Insufficient Credits/i)).toBeInTheDocument(),
+      expect(screen.getByText(/Insufficient Credits/i)).toBeInTheDocument()
     );
     await waitFor(() =>
-      expect(screen.getByTestId("buy-credits-modal")).toBeInTheDocument(),
+      expect(screen.getByTestId("buy-credits-modal")).toBeInTheDocument()
     );
   });
 });

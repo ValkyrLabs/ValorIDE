@@ -9,11 +9,11 @@ const mockIsInsufficientFunds = vi.fn();
 const mockUseExtensionState = vi.fn();
 const mockGetApiMetrics = vi.fn();
 
-vi.mock("@/context/ExtensionStateContext", () => ({
+vi.mock("@thorapi/context/ExtensionStateContext", () => ({
   useExtensionState: () => mockUseExtensionState(),
 }));
 
-vi.mock("@/services/creditsApi", () => ({
+vi.mock("@thorapi/services/creditsApi", () => ({
   useGetAccountBalanceQuery: (...args: any[]) =>
     mockUseGetAccountBalanceQuery(...args),
   isInsufficientFunds: (...args: any[]) => mockIsInsufficientFunds(...args),
@@ -23,7 +23,7 @@ vi.mock("@shared/getApiMetrics", () => ({
   getApiMetrics: (...args: any[]) => mockGetApiMetrics(...args),
 }));
 
-vi.mock("@/components/BuyCredits", () => ({
+vi.mock("@thorapi/components/BuyCredits", () => ({
   __esModule: true,
   default: () => <div data-testid="buy-credits-component" />,
 }));

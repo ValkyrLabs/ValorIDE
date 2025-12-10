@@ -77,7 +77,7 @@ const StartServerModal: React.FC<StartServerModalProps> = ({
             "Runs type checking and linting",
             "Generates client library for integration",
             "Creates distributable package",
-            "Updates tsconfig path aliases (@thor/* and @valkyr/component-library/*)",
+            "Updates tsconfig path aliases (@thorapi/* and @valkyr/component-library/*)",
           ],
         };
       default:

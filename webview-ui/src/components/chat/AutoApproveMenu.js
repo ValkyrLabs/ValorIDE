@@ -5,15 +5,15 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import { vscode } from "@/utils/vscode";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import { vscode } from "@thorapi/utils/vscode";
 import {
   getAsVar,
   VSC_FOREGROUND,
   VSC_TITLEBAR_INACTIVE_FOREGROUND,
   VSC_DESCRIPTION_FOREGROUND,
-} from "@/utils/vscStyles";
+} from "@thorapi/utils/vscStyles";
 import { useClickAway } from "react-use";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 const SubOptionAnimateIn = styled.div`
@@ -86,24 +86,24 @@ const AutoApproveMenu = ({ style }) => {
   const menuRef = useRef(null);
   // Careful not to use partials to mutate since spread operator only does shallow copy
   const enabledActions = ACTION_METADATA.filter(
-    (action) => autoApprovalSettings.actions[action.id],
+    (action) => autoApprovalSettings.actions[action.id]
   );
   const enabledActionsList = useMemo(() => {
     // When nested auto-approve options are used, display the more permissive one (file reads, edits, and commands)
     const readFilesEnabled = enabledActions.some(
-      (action) => action.id === "readFiles",
+      (action) => action.id === "readFiles"
     );
     const readFilesExternallyEnabled = enabledActions.some(
-      (action) => action.id === "readFilesExternally",
+      (action) => action.id === "readFilesExternally"
     );
     const editFilesEnabled = enabledActions.some(
-      (action) => action.id === "editFiles",
+      (action) => action.id === "editFiles"
     );
     const editFilesExternallyEnabled =
       enabledActions.some((action) => action.id === "editFilesExternally") ??
       false;
     const safeCommandsEnabled = enabledActions.some(
-      (action) => action.id === "executeSafeCommands",
+      (action) => action.id === "executeSafeCommands"
     );
     const allCommandsEnabled =
       enabledActions.some((action) => action.id === "executeAllCommands") ??
@@ -117,7 +117,7 @@ const AutoApproveMenu = ({ style }) => {
           action.id !== "editFiles" &&
           action.id !== "editFilesExternally" &&
           action.id !== "executeSafeCommands" &&
-          action.id !== "executeAllCommands",
+          action.id !== "executeAllCommands"
       )
       .map((action) => action.shortName);
     const labels = [];
@@ -180,7 +180,7 @@ const AutoApproveMenu = ({ style }) => {
         },
       });
     },
-    [extensionState.autoApprovalSettings],
+    [extensionState.autoApprovalSettings]
   );
   const updateAction = useCallback(
     (actionId, value) => {
@@ -203,7 +203,7 @@ const AutoApproveMenu = ({ style }) => {
         },
       });
     },
-    [extensionState.autoApprovalSettings],
+    [extensionState.autoApprovalSettings]
   );
   const updateMaxRequests = useCallback(
     (maxRequests) => {
@@ -217,7 +217,7 @@ const AutoApproveMenu = ({ style }) => {
         },
       });
     },
-    [extensionState.autoApprovalSettings],
+    [extensionState.autoApprovalSettings]
   );
   const updateNotifications = useCallback(
     (enableNotifications) => {
@@ -231,7 +231,7 @@ const AutoApproveMenu = ({ style }) => {
         },
       });
     },
-    [extensionState.autoApprovalSettings],
+    [extensionState.autoApprovalSettings]
   );
   // Handle clicks outside the menu to close it
   useClickAway(menuRef, () => {
@@ -381,7 +381,7 @@ const AutoApproveMenu = ({ style }) => {
                       ],
                     }),
                   },
-                  action.id,
+                  action.id
                 );
               }
               return _jsxs(
@@ -409,7 +409,7 @@ const AutoApproveMenu = ({ style }) => {
                     }),
                   ],
                 },
-                action.id,
+                action.id
               );
             }),
             _jsx("div", {
@@ -464,7 +464,7 @@ const AutoApproveMenu = ({ style }) => {
                       }
                     },
                     style: { flex: 1 },
-                  },
+                  }
                 ),
               ],
             }),

@@ -30,7 +30,7 @@ import {
   FaRegSave,
 } from "react-icons/fa";
 import CoolButton from "../CoolButton";
-import { getValkyraiHost } from "@/utils/valkyraiHost";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 const ObjectTreeView = ({
   data,
   editable = true,
@@ -50,7 +50,7 @@ const ObjectTreeView = ({
     const fetchOpenApiSpec = async () => {
       try {
         const response = await fetch(
-          `${getValkyraiHost().replace(/\/+$/, "")}/api-docs`,
+          `${getValkyraiHost().replace(/\/+$/, "")}/api-docs`
         );
         const spec = await response.json();
         setOpenApiSpec(spec);
@@ -149,7 +149,7 @@ const ObjectTreeView = ({
         children: [
           _jsx("option", { value: "", children: "Select..." }),
           modalDetails.enum.map((option) =>
-            _jsx("option", { value: option, children: option }, option),
+            _jsx("option", { value: option, children: option }, option)
           ),
         ],
       });
@@ -248,7 +248,7 @@ const ObjectTreeView = ({
     isCollapsed,
     inferredType,
     details,
-    tooltip,
+    tooltip
   ) => {
     const isDate =
       (inferredType === "string" && isDateField(details)) ||
@@ -329,7 +329,7 @@ const ObjectTreeView = ({
           }),
         ],
       },
-      fullKey,
+      fullKey
     );
   };
   const renderChildren = (node, parentKey) => {
@@ -355,7 +355,7 @@ const ObjectTreeView = ({
         isCollapsed,
         inferredType,
         details,
-        tooltip,
+        tooltip
       );
     });
   };
@@ -379,7 +379,7 @@ const ObjectTreeView = ({
           false,
           inferredType,
           details,
-          tooltip,
+          tooltip
         ),
       });
     }
@@ -407,7 +407,7 @@ const ObjectTreeView = ({
           isCollapsed,
           inferredType,
           details,
-          tooltip,
+          tooltip
         );
       }),
     });

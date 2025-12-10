@@ -1,11 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useClickAway, useWindowSize } from "react-use";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import { vscode } from "@/utils/vscode";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import { vscode } from "@thorapi/utils/vscode";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import RulesToggleList from "./RulesToggleList";
-import Tooltip from "@/components/common/Tooltip";
+import Tooltip from "@thorapi/components/common/Tooltip";
 import { FaGavel } from "react-icons/fa";
 
 const ValorIDERulesToggleModal: React.FC = () => {

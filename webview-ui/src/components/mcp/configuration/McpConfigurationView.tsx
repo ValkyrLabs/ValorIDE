@@ -1,16 +1,16 @@
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
 import AddRemoteServerForm from "./tabs/add-server/AddRemoteServerForm";
 import McpMarketplaceView from "./tabs/marketplace/McpMarketplaceView";
 import InstalledServersView from "./tabs/installed/InstalledServersView";
 import { McpViewTab } from "@shared/mcp";
-import StatusBadge from "@/components/common/StatusBadge";
-import OfflineBanner from "@/components/common/OfflineBanner";
-import SystemAlerts from "@/components/SystemAlerts";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
+import OfflineBanner from "@thorapi/components/common/OfflineBanner";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 
 type McpViewProps = {
   onDone: () => void;

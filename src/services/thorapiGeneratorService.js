@@ -19,253 +19,214 @@ import { execSync } from "child_process";
 import * as yaml from "js-yaml";
 export var GenerationStage;
 (function (GenerationStage) {
-  GenerationStage["VALIDATION"] = "validation";
-  GenerationStage["CODEGEN"] = "codegen";
-  GenerationStage["ASSEMBLY"] = "assembly";
-  GenerationStage["TESTING"] = "testing";
-  GenerationStage["STAGING"] = "staging";
-  GenerationStage["DOCUMENTATION"] = "documentation";
+    GenerationStage["VALIDATION"] = "validation";
+    GenerationStage["CODEGEN"] = "codegen";
+    GenerationStage["ASSEMBLY"] = "assembly";
+    GenerationStage["TESTING"] = "testing";
+    GenerationStage["STAGING"] = "staging";
+    GenerationStage["DOCUMENTATION"] = "documentation";
 })(GenerationStage || (GenerationStage = {}));
 export class ThorAPIGeneratorService {
-  jobs = new Map();
-  logger;
-  workspaceRoot;
-  constructor(workspaceRoot, logger) {
-    this.workspaceRoot = workspaceRoot;
-    this.logger = logger;
-  }
-  /**
-   * Submit generation job (async polling model)
-   */
-  submitGenerationJob(appName, appType, openApiSpec) {
-    const job = {
-      jobId: `gen-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      appName,
-      appType,
-      openApiSpec,
-      createdAt: Date.now(),
-      currentStage: GenerationStage.VALIDATION,
-      progress: 0,
-      status: "QUEUED",
-      metrics: [],
-    };
-    this.jobs.set(job.jobId, job);
-    this.logger.appendLine(
-      `[ThorAPIGeneratorService] ✅ Job submitted: ${job.jobId} (${appName}, ${appType})`,
-    );
-    // Start execution immediately (or delegate to background task queue)
-    setImmediate(() =>
-      this.executeJob(job.jobId).catch((err) => {
-        this.logger.appendLine(
-          `[ThorAPIGeneratorService] ❌ Job execution failed: ${err}`,
-        );
-      }),
-    );
-    return job;
-  }
-  /**
-   * Execute generation job through 6 stages
-   */
-  async executeJob(jobId) {
-    const job = this.jobs.get(jobId);
-    if (!job) {
-      throw new Error(`Job not found: ${jobId}`);
+    jobs = new Map();
+    logger;
+    workspaceRoot;
+    constructor(workspaceRoot, logger) {
+        this.workspaceRoot = workspaceRoot;
+        this.logger = logger;
     }
-    job.status = "IN_PROGRESS";
-    try {
-      // STAGE 1: Validation
-      await this.stage1Validation(job);
-      // STAGE 2: Code Generation
-      await this.stage2CodeGeneration(job);
-      // STAGE 3: App Assembly
-      await this.stage3AppAssembly(job);
-      // STAGE 4: Testing
-      await this.stage4Testing(job);
-      // STAGE 5: Staging
-      await this.stage5Staging(job);
-      // STAGE 6: Documentation
-      await this.stage6Documentation(job);
-      job.status = "COMPLETED";
-      job.completedAt = Date.now();
-      job.progress = 100;
-      this.logger.appendLine(
-        `[ThorAPIGeneratorService] ✅ Job completed: ${jobId}`,
-      );
-    } catch (error) {
-      job.status = "FAILED";
-      job.error = String(error);
-      job.completedAt = Date.now();
-      this.logger.appendLine(
-        `[ThorAPIGeneratorService] ❌ Job failed: ${jobId} — ${error}`,
-      );
+    /**
+     * Submit generation job (async polling model)
+     */
+    submitGenerationJob(appName, appType, openApiSpec) {
+        const job = {
+            jobId: `gen-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            appName,
+            appType,
+            openApiSpec,
+            createdAt: Date.now(),
+            currentStage: GenerationStage.VALIDATION,
+            progress: 0,
+            status: "QUEUED",
+            metrics: [],
+        };
+        this.jobs.set(job.jobId, job);
+        this.logger.appendLine(`[ThorAPIGeneratorService] ✅ Job submitted: ${job.jobId} (${appName}, ${appType})`);
+        // Start execution immediately (or delegate to background task queue)
+        setImmediate(() => this.executeJob(job.jobId).catch((err) => {
+            this.logger.appendLine(`[ThorAPIGeneratorService] ❌ Job execution failed: ${err}`);
+        }));
+        return job;
     }
-  }
-  /**
-   * STAGE 1: Validate OpenAPI spec + ThorAPI enhancement
-   */
-  async stage1Validation(job) {
-    const startTime = Date.now();
-    try {
-      job.currentStage = GenerationStage.VALIDATION;
-      job.progress = 10;
-      this.logger.appendLine(
-        `[ThorAPIGeneratorService] Stage 1: Validating spec...`,
-      );
-      // Parse OpenAPI spec (YAML or JSON)
-      let spec;
-      try {
-        spec = JSON.parse(job.openApiSpec);
-      } catch {
-        // Try YAML parsing
-        spec = yaml.load(job.openApiSpec);
-      }
-      // Validate required fields
-      if (!spec.openapi && !spec.swagger) {
-        throw new Error(
-          "Invalid OpenAPI spec: missing openapi/swagger version",
-        );
-      }
-      if (!spec.paths) {
-        throw new Error("Invalid OpenAPI spec: missing paths");
-      }
-      // Enhanced spec with ThorAPI metadata
-      spec["x-thorapi-enhanced"] = true;
-      spec["x-thorapi-version"] = "1.0";
-      spec["x-generation-timestamp"] = new Date().toISOString();
-      this.logger.appendLine(
-        `[ThorAPIGeneratorService]   ✅ Spec valid (${Object.keys(spec.paths).length} endpoints)`,
-      );
-      job.metrics.push({
-        stage: GenerationStage.VALIDATION,
-        startTime,
-        endTime: Date.now(),
-        duration: Date.now() - startTime,
-        success: true,
-      });
-    } catch (error) {
-      job.metrics.push({
-        stage: GenerationStage.VALIDATION,
-        startTime,
-        endTime: Date.now(),
-        duration: Date.now() - startTime,
-        success: false,
-        error: String(error),
-      });
-      throw error;
+    /**
+     * Execute generation job through 6 stages
+     */
+    async executeJob(jobId) {
+        const job = this.jobs.get(jobId);
+        if (!job) {
+            throw new Error(`Job not found: ${jobId}`);
+        }
+        job.status = "IN_PROGRESS";
+        try {
+            // STAGE 1: Validation
+            await this.stage1Validation(job);
+            // STAGE 2: Code Generation
+            await this.stage2CodeGeneration(job);
+            // STAGE 3: App Assembly
+            await this.stage3AppAssembly(job);
+            // STAGE 4: Testing
+            await this.stage4Testing(job);
+            // STAGE 5: Staging
+            await this.stage5Staging(job);
+            // STAGE 6: Documentation
+            await this.stage6Documentation(job);
+            job.status = "COMPLETED";
+            job.completedAt = Date.now();
+            job.progress = 100;
+            this.logger.appendLine(`[ThorAPIGeneratorService] ✅ Job completed: ${jobId}`);
+        }
+        catch (error) {
+            job.status = "FAILED";
+            job.error = String(error);
+            job.completedAt = Date.now();
+            this.logger.appendLine(`[ThorAPIGeneratorService] ❌ Job failed: ${jobId} — ${error}`);
+        }
     }
-  }
-  /**
-   * STAGE 2: Code generation (Maven + ThorAPI codegen)
-   */
-  async stage2CodeGeneration(job) {
-    const startTime = Date.now();
-    try {
-      job.currentStage = GenerationStage.CODEGEN;
-      job.progress = 30;
-      this.logger.appendLine(
-        `[ThorAPIGeneratorService] Stage 2: Generating code...`,
-      );
-      // Create temp project structure
-      const projectDir = path.join(
-        this.workspaceRoot,
-        ".valoride/generated",
-        job.appName,
-      );
-      fs.mkdirSync(projectDir, { recursive: true });
-      // Save spec to file
-      const specPath = path.join(projectDir, "api.yaml");
-      fs.writeFileSync(specPath, job.openApiSpec);
-      // Invoke Maven code generation (or local ThorAPI if available)
-      try {
-        const cmd = `cd ${projectDir} && mvn clean install -DskipTests -q`;
-        execSync(cmd, { stdio: "pipe" });
-        this.logger.appendLine(
-          `[ThorAPIGeneratorService]   ✅ Maven build completed`,
-        );
-      } catch (mvnError) {
-        this.logger.appendLine(
-          `[ThorAPIGeneratorService]   ⚠️ Maven skipped (not available): ${mvnError}`,
-        );
-      }
-      // Generate TS client + components
-      const generatedTs = path.join(projectDir, "generated/typescript");
-      fs.mkdirSync(generatedTs, { recursive: true });
-      // Create stub RTK Query service
-      const serviceName =
-        job.appName.charAt(0).toUpperCase() + job.appName.slice(1) + "Service";
-      const serviceContent = this.generateRTKQueryService(
-        serviceName,
-        job.appName,
-      );
-      fs.writeFileSync(
-        path.join(generatedTs, `${serviceName}.tsx`),
-        serviceContent,
-      );
-      this.logger.appendLine(
-        `[ThorAPIGeneratorService]   ✅ Generated TypeScript services`,
-      );
-      job.metrics.push({
-        stage: GenerationStage.CODEGEN,
-        startTime,
-        endTime: Date.now(),
-        duration: Date.now() - startTime,
-        success: true,
-      });
-    } catch (error) {
-      job.metrics.push({
-        stage: GenerationStage.CODEGEN,
-        startTime,
-        endTime: Date.now(),
-        duration: Date.now() - startTime,
-        success: false,
-        error: String(error),
-      });
-      throw error;
+    /**
+     * STAGE 1: Validate OpenAPI spec + ThorAPI enhancement
+     */
+    async stage1Validation(job) {
+        const startTime = Date.now();
+        try {
+            job.currentStage = GenerationStage.VALIDATION;
+            job.progress = 10;
+            this.logger.appendLine(`[ThorAPIGeneratorService] Stage 1: Validating spec...`);
+            // Parse OpenAPI spec (YAML or JSON)
+            let spec;
+            try {
+                spec = JSON.parse(job.openApiSpec);
+            }
+            catch {
+                // Try YAML parsing
+                spec = yaml.load(job.openApiSpec);
+            }
+            // Validate required fields
+            if (!spec.openapi && !spec.swagger) {
+                throw new Error("Invalid OpenAPI spec: missing openapi/swagger version");
+            }
+            if (!spec.paths) {
+                throw new Error("Invalid OpenAPI spec: missing paths");
+            }
+            // Enhanced spec with ThorAPI metadata
+            spec["x-thorapi-enhanced"] = true;
+            spec["x-thorapi-version"] = "1.0";
+            spec["x-generation-timestamp"] = new Date().toISOString();
+            this.logger.appendLine(`[ThorAPIGeneratorService]   ✅ Spec valid (${Object.keys(spec.paths).length} endpoints)`);
+            job.metrics.push({
+                stage: GenerationStage.VALIDATION,
+                startTime,
+                endTime: Date.now(),
+                duration: Date.now() - startTime,
+                success: true,
+            });
+        }
+        catch (error) {
+            job.metrics.push({
+                stage: GenerationStage.VALIDATION,
+                startTime,
+                endTime: Date.now(),
+                duration: Date.now() - startTime,
+                success: false,
+                error: String(error),
+            });
+            throw error;
+        }
     }
-  }
-  /**
-   * STAGE 3: App assembly (project structure, security, wiring)
-   */
-  async stage3AppAssembly(job) {
-    const startTime = Date.now();
-    try {
-      job.currentStage = GenerationStage.ASSEMBLY;
-      job.progress = 50;
-      this.logger.appendLine(
-        `[ThorAPIGeneratorService] Stage 3: Assembling app...`,
-      );
-      const projectDir = path.join(
-        this.workspaceRoot,
-        ".valoride/generated",
-        job.appName,
-      );
-      // Create React/Next.js scaffold
-      const appDir = path.join(projectDir, "app");
-      fs.mkdirSync(path.join(appDir, "src/components"), { recursive: true });
-      fs.mkdirSync(path.join(appDir, "src/pages"), { recursive: true });
-      // Create package.json
-      const packageJson = {
-        name: job.appName,
-        version: "1.0.0",
-        private: true,
-        scripts: {
-          dev: "next dev",
-          build: "next build",
-          start: "next start",
-          test: "jest",
-        },
-        dependencies: {
-          react: "^18.0.0",
-          "@reduxjs/toolkit": "^1.9.0",
-          "@tanstack/react-query": "^4.0.0",
-        },
-      };
-      fs.writeFileSync(
-        path.join(appDir, "package.json"),
-        JSON.stringify(packageJson, null, 2),
-      );
-      // Create Redux store
-      const storeContent = `
+    /**
+     * STAGE 2: Code generation (Maven + ThorAPI codegen)
+     */
+    async stage2CodeGeneration(job) {
+        const startTime = Date.now();
+        try {
+            job.currentStage = GenerationStage.CODEGEN;
+            job.progress = 30;
+            this.logger.appendLine(`[ThorAPIGeneratorService] Stage 2: Generating code...`);
+            // Create temp project structure
+            const projectDir = path.join(this.workspaceRoot, ".valoride/generated", job.appName);
+            fs.mkdirSync(projectDir, { recursive: true });
+            // Save spec to file
+            const specPath = path.join(projectDir, "api.yaml");
+            fs.writeFileSync(specPath, job.openApiSpec);
+            // Invoke Maven code generation (or local ThorAPI if available)
+            try {
+                const cmd = `cd ${projectDir} && mvn clean install -DskipTests -q`;
+                execSync(cmd, { stdio: "pipe" });
+                this.logger.appendLine(`[ThorAPIGeneratorService]   ✅ Maven build completed`);
+            }
+            catch (mvnError) {
+                this.logger.appendLine(`[ThorAPIGeneratorService]   ⚠️ Maven skipped (not available): ${mvnError}`);
+            }
+            // Generate TS client + components
+            const generatedTs = path.join(projectDir, "generated/typescript");
+            fs.mkdirSync(generatedTs, { recursive: true });
+            // Create stub RTK Query service
+            const serviceName = job.appName.charAt(0).toUpperCase() + job.appName.slice(1) + "Service";
+            const serviceContent = this.generateRTKQueryService(serviceName, job.appName);
+            fs.writeFileSync(path.join(generatedTs, `${serviceName}.tsx`), serviceContent);
+            this.logger.appendLine(`[ThorAPIGeneratorService]   ✅ Generated TypeScript services`);
+            job.metrics.push({
+                stage: GenerationStage.CODEGEN,
+                startTime,
+                endTime: Date.now(),
+                duration: Date.now() - startTime,
+                success: true,
+            });
+        }
+        catch (error) {
+            job.metrics.push({
+                stage: GenerationStage.CODEGEN,
+                startTime,
+                endTime: Date.now(),
+                duration: Date.now() - startTime,
+                success: false,
+                error: String(error),
+            });
+            throw error;
+        }
+    }
+    /**
+     * STAGE 3: App assembly (project structure, security, wiring)
+     */
+    async stage3AppAssembly(job) {
+        const startTime = Date.now();
+        try {
+            job.currentStage = GenerationStage.ASSEMBLY;
+            job.progress = 50;
+            this.logger.appendLine(`[ThorAPIGeneratorService] Stage 3: Assembling app...`);
+            const projectDir = path.join(this.workspaceRoot, ".valoride/generated", job.appName);
+            // Create React/Next.js scaffold
+            const appDir = path.join(projectDir, "app");
+            fs.mkdirSync(path.join(appDir, "src/components"), { recursive: true });
+            fs.mkdirSync(path.join(appDir, "src/pages"), { recursive: true });
+            // Create package.json
+            const packageJson = {
+                name: job.appName,
+                version: "1.0.0",
+                private: true,
+                scripts: {
+                    dev: "next dev",
+                    build: "next build",
+                    start: "next start",
+                    test: "jest",
+                },
+                dependencies: {
+                    react: "^18.0.0",
+                    "@reduxjs/toolkit": "^1.9.0",
+                    "@tanstack/react-query": "^4.0.0",
+                },
+            };
+            fs.writeFileSync(path.join(appDir, "package.json"), JSON.stringify(packageJson, null, 2));
+            // Create Redux store
+            const storeContent = `
 import { configureStore } from '@reduxjs/toolkit';
 export const store = configureStore({
   reducer: {
@@ -273,10 +234,10 @@ export const store = configureStore({
   },
 });
 `;
-      fs.mkdirSync(path.join(appDir, "src/redux"), { recursive: true });
-      fs.writeFileSync(path.join(appDir, "src/redux/store.ts"), storeContent);
-      // Create security config
-      const securityContent = `
+            fs.mkdirSync(path.join(appDir, "src/redux"), { recursive: true });
+            fs.writeFileSync(path.join(appDir, "src/redux/store.ts"), storeContent);
+            // Create security config
+            const securityContent = `
 export const SECURITY_CONFIG = {
   enableRBAC: true,
   enableJWT: true,
@@ -284,108 +245,91 @@ export const SECURITY_CONFIG = {
   corsOrigins: ['http://localhost:3000', 'http://localhost:5173'],
 };
 `;
-      fs.writeFileSync(
-        path.join(appDir, "src/config/security.ts"),
-        securityContent,
-      );
-      this.logger.appendLine(
-        `[ThorAPIGeneratorService]   ✅ App structure assembled`,
-      );
-      job.metrics.push({
-        stage: GenerationStage.ASSEMBLY,
-        startTime,
-        endTime: Date.now(),
-        duration: Date.now() - startTime,
-        success: true,
-      });
-    } catch (error) {
-      job.metrics.push({
-        stage: GenerationStage.ASSEMBLY,
-        startTime,
-        endTime: Date.now(),
-        duration: Date.now() - startTime,
-        success: false,
-        error: String(error),
-      });
-      throw error;
+            fs.writeFileSync(path.join(appDir, "src/config/security.ts"), securityContent);
+            this.logger.appendLine(`[ThorAPIGeneratorService]   ✅ App structure assembled`);
+            job.metrics.push({
+                stage: GenerationStage.ASSEMBLY,
+                startTime,
+                endTime: Date.now(),
+                duration: Date.now() - startTime,
+                success: true,
+            });
+        }
+        catch (error) {
+            job.metrics.push({
+                stage: GenerationStage.ASSEMBLY,
+                startTime,
+                endTime: Date.now(),
+                duration: Date.now() - startTime,
+                success: false,
+                error: String(error),
+            });
+            throw error;
+        }
     }
-  }
-  /**
-   * STAGE 4: Testing (unit, integration, E2E)
-   */
-  async stage4Testing(job) {
-    const startTime = Date.now();
-    try {
-      job.currentStage = GenerationStage.TESTING;
-      job.progress = 70;
-      this.logger.appendLine(
-        `[ThorAPIGeneratorService] Stage 4: Running tests...`,
-      );
-      const projectDir = path.join(
-        this.workspaceRoot,
-        ".valoride/generated",
-        job.appName,
-      );
-      // Create simple test file
-      const testContent = `
+    /**
+     * STAGE 4: Testing (unit, integration, E2E)
+     */
+    async stage4Testing(job) {
+        const startTime = Date.now();
+        try {
+            job.currentStage = GenerationStage.TESTING;
+            job.progress = 70;
+            this.logger.appendLine(`[ThorAPIGeneratorService] Stage 4: Running tests...`);
+            const projectDir = path.join(this.workspaceRoot, ".valoride/generated", job.appName);
+            // Create simple test file
+            const testContent = `
 describe('${job.appName}', () => {
   it('should initialize', () => {
     expect(true).toBe(true);
   });
 });
 `;
-      fs.mkdirSync(path.join(projectDir, "app/src/__tests__"), {
-        recursive: true,
-      });
-      fs.writeFileSync(
-        path.join(projectDir, "app/src/__tests__/app.test.ts"),
-        testContent,
-      );
-      // Try to run Jest
-      try {
-        const cmd = `cd ${path.join(projectDir, "app")} && yarn test --run 2>&1`;
-        const output = execSync(cmd, { stdio: "pipe" }).toString();
-        this.logger.appendLine(`[ThorAPIGeneratorService]   ✅ Tests passed`);
-      } catch (testError) {
-        this.logger.appendLine(
-          `[ThorAPIGeneratorService]   ⚠️ Tests skipped (yarn not configured)`,
-        );
-      }
-      job.metrics.push({
-        stage: GenerationStage.TESTING,
-        startTime,
-        endTime: Date.now(),
-        duration: Date.now() - startTime,
-        success: true,
-      });
-    } catch (error) {
-      job.metrics.push({
-        stage: GenerationStage.TESTING,
-        startTime,
-        endTime: Date.now(),
-        duration: Date.now() - startTime,
-        success: false,
-        error: String(error),
-      });
-      throw error;
+            fs.mkdirSync(path.join(projectDir, "app/src/__tests__"), {
+                recursive: true,
+            });
+            fs.writeFileSync(path.join(projectDir, "app/src/__tests__/app.test.ts"), testContent);
+            // Try to run Jest
+            try {
+                const cmd = `cd ${path.join(projectDir, "app")} && yarn test --run 2>&1`;
+                const output = execSync(cmd, { stdio: "pipe" }).toString();
+                this.logger.appendLine(`[ThorAPIGeneratorService]   ✅ Tests passed`);
+            }
+            catch (testError) {
+                this.logger.appendLine(`[ThorAPIGeneratorService]   ⚠️ Tests skipped (yarn not configured)`);
+            }
+            job.metrics.push({
+                stage: GenerationStage.TESTING,
+                startTime,
+                endTime: Date.now(),
+                duration: Date.now() - startTime,
+                success: true,
+            });
+        }
+        catch (error) {
+            job.metrics.push({
+                stage: GenerationStage.TESTING,
+                startTime,
+                endTime: Date.now(),
+                duration: Date.now() - startTime,
+                success: false,
+                error: String(error),
+            });
+            throw error;
+        }
     }
-  }
-  /**
-   * STAGE 5: Staging (Docker build, health check)
-   */
-  async stage5Staging(job) {
-    const startTime = Date.now();
-    try {
-      job.currentStage = GenerationStage.STAGING;
-      job.progress = 85;
-      this.logger.appendLine(`[ThorAPIGeneratorService] Stage 5: Staging...`);
-      const projectDir = path.join(
-        this.workspaceRoot,
-        ".valoride/generated",
-        job.appName,
-      );
-      // Create Dockerfile
-      const dockerfile = `
+    /**
+     * STAGE 5: Staging (Docker build, health check)
+     */
+    async stage5Staging(job) {
+        const startTime = Date.now();
+        try {
+            job.currentStage = GenerationStage.STAGING;
+            job.progress = 85;
+            this.logger.appendLine(`[ThorAPIGeneratorService] Stage 5: Staging...`);
+            const projectDir = path.join(this.workspaceRoot, ".valoride/generated", job.appName);
+            // Create Dockerfile
+            const dockerfile = `
 FROM node:18-alpine
 WORKDIR /app
 COPY . .
@@ -394,9 +338,9 @@ RUN yarn build
 EXPOSE 3000
 CMD ["yarn", "start"]
 `;
-      fs.writeFileSync(path.join(projectDir, "Dockerfile"), dockerfile);
-      // Create docker-compose.yml
-      const dockerCompose = `
+            fs.writeFileSync(path.join(projectDir, "Dockerfile"), dockerfile);
+            // Create docker-compose.yml
+            const dockerCompose = `
 version: '3.8'
 services:
   app:
@@ -406,50 +350,40 @@ services:
     environment:
       - NODE_ENV=staging
 `;
-      fs.writeFileSync(
-        path.join(projectDir, "docker-compose.yml"),
-        dockerCompose,
-      );
-      this.logger.appendLine(
-        `[ThorAPIGeneratorService]   ✅ Docker config created`,
-      );
-      job.metrics.push({
-        stage: GenerationStage.STAGING,
-        startTime,
-        endTime: Date.now(),
-        duration: Date.now() - startTime,
-        success: true,
-      });
-    } catch (error) {
-      job.metrics.push({
-        stage: GenerationStage.STAGING,
-        startTime,
-        endTime: Date.now(),
-        duration: Date.now() - startTime,
-        success: false,
-        error: String(error),
-      });
-      throw error;
+            fs.writeFileSync(path.join(projectDir, "docker-compose.yml"), dockerCompose);
+            this.logger.appendLine(`[ThorAPIGeneratorService]   ✅ Docker config created`);
+            job.metrics.push({
+                stage: GenerationStage.STAGING,
+                startTime,
+                endTime: Date.now(),
+                duration: Date.now() - startTime,
+                success: true,
+            });
+        }
+        catch (error) {
+            job.metrics.push({
+                stage: GenerationStage.STAGING,
+                startTime,
+                endTime: Date.now(),
+                duration: Date.now() - startTime,
+                success: false,
+                error: String(error),
+            });
+            throw error;
+        }
     }
-  }
-  /**
-   * STAGE 6: Documentation (README, CHANGELOG, CI/CD)
-   */
-  async stage6Documentation(job) {
-    const startTime = Date.now();
-    try {
-      job.currentStage = GenerationStage.DOCUMENTATION;
-      job.progress = 95;
-      this.logger.appendLine(
-        `[ThorAPIGeneratorService] Stage 6: Generating documentation...`,
-      );
-      const projectDir = path.join(
-        this.workspaceRoot,
-        ".valoride/generated",
-        job.appName,
-      );
-      // Create README
-      const readme = `# ${job.appName}
+    /**
+     * STAGE 6: Documentation (README, CHANGELOG, CI/CD)
+     */
+    async stage6Documentation(job) {
+        const startTime = Date.now();
+        try {
+            job.currentStage = GenerationStage.DOCUMENTATION;
+            job.progress = 95;
+            this.logger.appendLine(`[ThorAPIGeneratorService] Stage 6: Generating documentation...`);
+            const projectDir = path.join(this.workspaceRoot, ".valoride/generated", job.appName);
+            // Create README
+            const readme = `# ${job.appName}
 
 Generated from OpenAPI spec by VALOR IDE.
 
@@ -482,9 +416,9 @@ docker run -p 3000:3000 ${job.appName}
 ---
 Generated: ${new Date().toISOString()}
 `;
-      fs.writeFileSync(path.join(projectDir, "README.md"), readme);
-      // Create CHANGELOG
-      const changelog = `# Changelog
+            fs.writeFileSync(path.join(projectDir, "README.md"), readme);
+            // Create CHANGELOG
+            const changelog = `# Changelog
 
 ## [1.0.0] - ${new Date().toISOString().split("T")[0]}
 
@@ -496,9 +430,9 @@ Generated: ${new Date().toISOString()}
 
 ---
 `;
-      fs.writeFileSync(path.join(projectDir, "CHANGELOG.md"), changelog);
-      // Create GitHub Actions CI/CD
-      const ghAction = `
+            fs.writeFileSync(path.join(projectDir, "CHANGELOG.md"), changelog);
+            // Create GitHub Actions CI/CD
+            const ghAction = `
 name: CI/CD
 
 on:
@@ -518,15 +452,12 @@ jobs:
       - run: yarn build
       - run: docker build -t ${job.appName} .
 `;
-      fs.mkdirSync(path.join(projectDir, ".github/workflows"), {
-        recursive: true,
-      });
-      fs.writeFileSync(
-        path.join(projectDir, ".github/workflows/ci.yml"),
-        ghAction,
-      );
-      // Create deployment guide
-      const deployment = `# Deployment Guide
+            fs.mkdirSync(path.join(projectDir, ".github/workflows"), {
+                recursive: true,
+            });
+            fs.writeFileSync(path.join(projectDir, ".github/workflows/ci.yml"), ghAction);
+            // Create deployment guide
+            const deployment = `# Deployment Guide
 
 ## Prerequisites
 - Docker
@@ -549,34 +480,33 @@ kubectl apply -f k8s/deployment.yml
 
 ---
 `;
-      fs.writeFileSync(path.join(projectDir, "DEPLOYMENT.md"), deployment);
-      this.logger.appendLine(
-        `[ThorAPIGeneratorService]   ✅ Documentation generated`,
-      );
-      job.metrics.push({
-        stage: GenerationStage.DOCUMENTATION,
-        startTime,
-        endTime: Date.now(),
-        duration: Date.now() - startTime,
-        success: true,
-      });
-    } catch (error) {
-      job.metrics.push({
-        stage: GenerationStage.DOCUMENTATION,
-        startTime,
-        endTime: Date.now(),
-        duration: Date.now() - startTime,
-        success: false,
-        error: String(error),
-      });
-      throw error;
+            fs.writeFileSync(path.join(projectDir, "DEPLOYMENT.md"), deployment);
+            this.logger.appendLine(`[ThorAPIGeneratorService]   ✅ Documentation generated`);
+            job.metrics.push({
+                stage: GenerationStage.DOCUMENTATION,
+                startTime,
+                endTime: Date.now(),
+                duration: Date.now() - startTime,
+                success: true,
+            });
+        }
+        catch (error) {
+            job.metrics.push({
+                stage: GenerationStage.DOCUMENTATION,
+                startTime,
+                endTime: Date.now(),
+                duration: Date.now() - startTime,
+                success: false,
+                error: String(error),
+            });
+            throw error;
+        }
     }
-  }
-  /**
-   * Generate RTK Query service stub
-   */
-  generateRTKQueryService(serviceName, appName) {
-    return `
+    /**
+     * Generate RTK Query service stub
+     */
+    generateRTKQueryService(serviceName, appName) {
+        return `
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const ${serviceName} = createApi({
@@ -598,46 +528,46 @@ export const ${serviceName} = createApi({
 
 export const { useGetItemsQuery, useCreateItemMutation } = ${serviceName};
 `;
-  }
-  /**
-   * Get job status
-   */
-  getJobStatus(jobId) {
-    return this.jobs.get(jobId);
-  }
-  /**
-   * Get all jobs
-   */
-  getAllJobs() {
-    return Array.from(this.jobs.values());
-  }
-  /**
-   * Log summary
-   */
-  logSummary() {
-    const jobs = Array.from(this.jobs.values());
-    const completed = jobs.filter((j) => j.status === "COMPLETED").length;
-    const failed = jobs.filter((j) => j.status === "FAILED").length;
-    this.logger.appendLine("[ThorAPIGeneratorService] Summary:");
-    this.logger.appendLine(`  Total jobs: ${jobs.length}`);
-    this.logger.appendLine(`  Completed: ${completed}`);
-    this.logger.appendLine(`  Failed: ${failed}`);
-  }
+    }
+    /**
+     * Get job status
+     */
+    getJobStatus(jobId) {
+        return this.jobs.get(jobId);
+    }
+    /**
+     * Get all jobs
+     */
+    getAllJobs() {
+        return Array.from(this.jobs.values());
+    }
+    /**
+     * Log summary
+     */
+    logSummary() {
+        const jobs = Array.from(this.jobs.values());
+        const completed = jobs.filter((j) => j.status === "COMPLETED").length;
+        const failed = jobs.filter((j) => j.status === "FAILED").length;
+        this.logger.appendLine("[ThorAPIGeneratorService] Summary:");
+        this.logger.appendLine(`  Total jobs: ${jobs.length}`);
+        this.logger.appendLine(`  Completed: ${completed}`);
+        this.logger.appendLine(`  Failed: ${failed}`);
+    }
 }
 export let thorapiGeneratorService = null;
 /**
  * Initialize global ThorAPIGeneratorService
  */
 export function initializeThorAPIGeneratorService(workspaceRoot, logger) {
-  thorapiGeneratorService = new ThorAPIGeneratorService(workspaceRoot, logger);
+    thorapiGeneratorService = new ThorAPIGeneratorService(workspaceRoot, logger);
 }
 /**
  * Get global ThorAPIGeneratorService
  */
 export function getThorAPIGeneratorService() {
-  if (!thorapiGeneratorService) {
-    throw new Error("ThorAPIGeneratorService not initialized");
-  }
-  return thorapiGeneratorService;
+    if (!thorapiGeneratorService) {
+        throw new Error("ThorAPIGeneratorService not initialized");
+    }
+    return thorapiGeneratorService;
 }
 //# sourceMappingURL=thorapiGeneratorService.js.map

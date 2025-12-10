@@ -1,14 +1,6 @@
-import {
-  jsx as _jsx,
-  jsxs as _jsxs,
-  Fragment as _Fragment,
-} from "react/jsx-runtime";
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { memo, useCallback, useState } from "react";
-import {
-  anthropicModels,
-  geminiDefaultModelId,
-  geminiModels,
-} from "@shared/api";
+import { anthropicModels, geminiDefaultModelId, geminiModels, } from "@shared/api";
 import { VSCodeCheckbox } from "@vscode/webview-ui-toolkit/react";
 import styled from "styled-components";
 // Constants
@@ -16,29 +8,29 @@ const DEFAULT_MIN_VALID_TOKENS = 1024;
 const MAX_PERCENTAGE = 0.8;
 const THUMB_SIZE = 16;
 // Styled Components
-const Container = styled.div`
+const Container = styled.div `
   display: flex;
   flex-direction: column;
   gap: 10px;
 `;
-const LabelContainer = styled.div`
+const LabelContainer = styled.div `
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
 `;
-const Label = styled.label`
+const Label = styled.label `
   font-weight: 500;
   display: block;
   margin-right: auto;
 `;
-const Description = styled.p`
+const Description = styled.p `
   font-size: 12px;
   margin-top: 0px;
   margin-bottom: 0px;
   color: var(--vscode-descriptionForeground);
 `;
-const RangeInput = styled.input`
+const RangeInput = styled.input `
   width: 100%;
   height: 8px;
   appearance: none;
@@ -48,14 +40,13 @@ const RangeInput = styled.input`
   margin: 5px 0 0;
   padding: 0;
   background: ${(props) => {
-    const percentage =
-      ((props.$value - props.$min) / (props.$max - props.$min)) * 100;
+    const percentage = ((props.$value - props.$min) / (props.$max - props.$min)) * 100;
     return `linear-gradient(to right, 
 			var(--vscode-progressBar-background) 0%,
 			var(--vscode-progressBar-background) ${percentage}%,
 			var(--vscode-scrollbarSlider-background) ${percentage}%,
 			var(--vscode-scrollbarSlider-background) 100%)`;
-  }};
+}};
 
   &::-webkit-slider-thumb {
     appearance: none;
@@ -83,95 +74,40 @@ const RangeInput = styled.input`
     border-color: var(--vscode-progressBar-background);
   }
 `;
-const ThinkingBudgetSlider = ({
-  apiConfiguration,
-  setApiConfiguration,
-  maxBudget,
-}) => {
-  const maxTokens =
-    apiConfiguration?.apiProvider === "gemini"
-      ? geminiModels[geminiDefaultModelId].maxTokens
-      : anthropicModels["claude-3-7-sonnet-20250219"].maxTokens;
-  // use maxBudget prop if provided, otherwise apply the percentage cap to maxTokens
-  const maxSliderValue = (() => {
-    if (maxBudget !== undefined) {
-      return maxBudget;
-    }
-    return Math.floor(maxTokens * MAX_PERCENTAGE);
-  })();
-  const isEnabled = (apiConfiguration?.thinkingBudgetTokens || 0) > 0;
-  // Add local state for the slider value
-  const [localValue, setLocalValue] = useState(
-    apiConfiguration?.thinkingBudgetTokens || 0,
-  );
-  const handleSliderChange = useCallback((event) => {
-    const value = parseInt(event.target.value, 10);
-    setLocalValue(value);
-  }, []);
-  const handleSliderComplete = () => {
-    setApiConfiguration({
-      ...apiConfiguration,
-      thinkingBudgetTokens: localValue,
-    });
-  };
-  const handleToggleChange = (event) => {
-    const isChecked = event.target.checked;
-    const newValue = isChecked ? DEFAULT_MIN_VALID_TOKENS : 0;
-    setLocalValue(newValue);
-    setApiConfiguration({
-      ...apiConfiguration,
-      thinkingBudgetTokens: newValue,
-    });
-  };
-  return _jsxs(Container, {
-    children: [
-      _jsx(VSCodeCheckbox, {
-        checked: isEnabled,
-        onChange: handleToggleChange,
-        children: "Enable extended thinking",
-      }),
-      isEnabled &&
-        _jsxs(_Fragment, {
-          children: [
-            _jsx(LabelContainer, {
-              children: _jsxs(Label, {
-                htmlFor: "thinking-budget-slider",
-                children: [
-                  _jsx("strong", { children: "Budget:" }),
-                  " ",
-                  localValue.toLocaleString(),
-                  " tokens",
-                ],
-              }),
-            }),
-            _jsx(RangeInput, {
-              id: "thinking-budget-slider",
-              type: "range",
-              min: DEFAULT_MIN_VALID_TOKENS,
-              max: maxSliderValue,
-              step: 1,
-              value: localValue,
-              onChange: handleSliderChange,
-              onMouseUp: handleSliderComplete,
-              onTouchEnd: handleSliderComplete,
-              $value: localValue,
-              $min: DEFAULT_MIN_VALID_TOKENS,
-              $max: maxSliderValue,
-              "aria-label": `Thinking budget: ${localValue.toLocaleString()} tokens`,
-              "aria-valuemin": DEFAULT_MIN_VALID_TOKENS,
-              "aria-valuemax": maxSliderValue,
-              "aria-valuenow": localValue,
-              "aria-describedby": "thinking-budget-description",
-            }),
-            _jsx(Description, {
-              id: "thinking-budget-description",
-              children:
-                "Higher budgets may allow you to achieve more comprehensive and nuanced reasoning",
-            }),
-          ],
-        }),
-    ],
-  });
+const ThinkingBudgetSlider = ({ apiConfiguration, setApiConfiguration, maxBudget, }) => {
+    const maxTokens = apiConfiguration?.apiProvider === "gemini"
+        ? geminiModels[geminiDefaultModelId].maxTokens
+        : anthropicModels["claude-3-7-sonnet-20250219"].maxTokens;
+    // use maxBudget prop if provided, otherwise apply the percentage cap to maxTokens
+    const maxSliderValue = (() => {
+        if (maxBudget !== undefined) {
+            return maxBudget;
+        }
+        return Math.floor(maxTokens * MAX_PERCENTAGE);
+    })();
+    const isEnabled = (apiConfiguration?.thinkingBudgetTokens || 0) > 0;
+    // Add local state for the slider value
+    const [localValue, setLocalValue] = useState(apiConfiguration?.thinkingBudgetTokens || 0);
+    const handleSliderChange = useCallback((event) => {
+        const value = parseInt(event.target.value, 10);
+        setLocalValue(value);
+    }, []);
+    const handleSliderComplete = () => {
+        setApiConfiguration({
+            ...apiConfiguration,
+            thinkingBudgetTokens: localValue,
+        });
+    };
+    const handleToggleChange = (event) => {
+        const isChecked = event.target.checked;
+        const newValue = isChecked ? DEFAULT_MIN_VALID_TOKENS : 0;
+        setLocalValue(newValue);
+        setApiConfiguration({
+            ...apiConfiguration,
+            thinkingBudgetTokens: newValue,
+        });
+    };
+    return (_jsxs(Container, { children: [_jsx(VSCodeCheckbox, { checked: isEnabled, onChange: handleToggleChange, children: "Enable extended thinking" }), isEnabled && (_jsxs(_Fragment, { children: [_jsx(LabelContainer, { children: _jsxs(Label, { htmlFor: "thinking-budget-slider", children: [_jsx("strong", { children: "Budget:" }), " ", localValue.toLocaleString(), " tokens"] }) }), _jsx(RangeInput, { id: "thinking-budget-slider", type: "range", min: DEFAULT_MIN_VALID_TOKENS, max: maxSliderValue, step: 1, value: localValue, onChange: handleSliderChange, onMouseUp: handleSliderComplete, onTouchEnd: handleSliderComplete, "$value": localValue, "$min": DEFAULT_MIN_VALID_TOKENS, "$max": maxSliderValue, "aria-label": `Thinking budget: ${localValue.toLocaleString()} tokens`, "aria-valuemin": DEFAULT_MIN_VALID_TOKENS, "aria-valuemax": maxSliderValue, "aria-valuenow": localValue, "aria-describedby": "thinking-budget-description" }), _jsx(Description, { id: "thinking-budget-description", children: "Higher budgets may allow you to achieve more comprehensive and nuanced reasoning" })] }))] }));
 };
 export default memo(ThinkingBudgetSlider);
 //# sourceMappingURL=ThinkingBudgetSlider.js.map

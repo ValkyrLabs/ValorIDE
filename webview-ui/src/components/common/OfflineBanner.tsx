@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 
 const OfflineBanner: React.FC<{ style?: React.CSSProperties }> = ({
   style,

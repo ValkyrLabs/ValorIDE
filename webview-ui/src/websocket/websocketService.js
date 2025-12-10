@@ -1,13 +1,13 @@
 import { addMessage } from "../components/ServerConsole/websocketSlice";
 import store from "../redux/store"; // Adjust the import path as necessary
-import { WebsocketMessageTypeEnum } from "../thor/model";
+import { WebsocketMessageTypeEnum } from "@thorapi/model";
 import { getWebsocketUrl, isValidWsUrl } from "./websocket";
 let socket = null;
 export const connectWebSocket = () => {
   const socketUrl = getWebsocketUrl();
   if (!isValidWsUrl(socketUrl)) {
     console.warn(
-      "WebSocket disabled: REACT_APP_WS_BASE_PATH is missing or invalid.",
+      "WebSocket disabled: REACT_APP_WS_BASE_PATH is missing or invalid."
     );
     return;
   }
@@ -20,7 +20,7 @@ export const connectWebSocket = () => {
         type: WebsocketMessageTypeEnum.ERROR,
         payload: `WebSocket init error: ${err.message}`,
         createdDate: new Date(),
-      }),
+      })
     );
     return;
   }
@@ -35,7 +35,7 @@ export const connectWebSocket = () => {
           type: WebsocketMessageTypeEnum.USER,
           payload: message,
           createdDate: new Date(),
-        }),
+        })
       );
     } catch (e) {
       console.error("WebSocket message parse error:", e);
@@ -44,7 +44,7 @@ export const connectWebSocket = () => {
           type: WebsocketMessageTypeEnum.ERROR,
           payload: `Parse error: ${e.message}`,
           createdDate: new Date(),
-        }),
+        })
       );
     }
   };
@@ -55,7 +55,7 @@ export const connectWebSocket = () => {
         type: WebsocketMessageTypeEnum.ERROR,
         payload: error.message,
         createdDate: new Date(),
-      }),
+      })
     );
   };
   socket.onclose = () => {

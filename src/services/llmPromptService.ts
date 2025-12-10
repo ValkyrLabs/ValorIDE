@@ -135,10 +135,10 @@ export class LLMPromptService {
         }
       }
 
-      // Check for /generated, /thor, /thorapi (ThorAPI artifacts)
+      // Check for /generated, /, /thorapi (ThorAPI artifacts)
       if (
         fs.existsSync(path.join(this.workspaceRoot, "generated")) ||
-        fs.existsSync(path.join(this.workspaceRoot, "webview-ui/src/thor"))
+        fs.existsSync(path.join(this.workspaceRoot, "webview-ui/src/"))
       ) {
         stack.isThorAPI = true;
         stack.isGenerated = true;

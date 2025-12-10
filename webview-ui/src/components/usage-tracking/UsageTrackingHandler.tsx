@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import { useAddUsageTransactionMutation } from "../../thor/redux/services/UsageTransactionService";
-import { useGetBalanceResponsesQuery } from "../../thor/redux/services/BalanceResponseService";
-import { UsageTransaction } from "../../thor/model";
+import { useAddUsageTransactionMutation } from "../..//redux/services/UsageTransactionService";
+import { useGetBalanceResponsesQuery } from "../..//redux/services/BalanceResponseService";
+import { UsageTransaction } from "../..//model";
 
 interface UsageTrackingMessage {
   type: "usage_tracking";

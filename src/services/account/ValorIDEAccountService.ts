@@ -1,9 +1,9 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
-// Align account-related types with Thor models (RTK/ThorAPI)
+// Align account-related types with ThorAPI models (RTK/ThorAPI)
 // Note: We don't execute RTK Query here (extension host). The webview owns RTK.
 // These imports ensure consumers use the correct model shapes.
-import type { UsageTransaction, PaymentTransaction } from "@thor/model";
+import type { UsageTransaction, PaymentTransaction } from "@thorapi/model";
 
 export class ValorIDEAccountService {
   private postMessageToWebview: (message: ExtensionMessage) => Promise<void>;

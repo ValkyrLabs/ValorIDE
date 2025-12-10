@@ -7,7 +7,7 @@ import { FaHandPointUp } from "react-icons/fa";
 import { FiCalendar, FiHeart, FiLock, FiUserCheck } from "react-icons/fi";
 
 import { Link } from "react-router-dom";
-import { Principal } from "@thor/model";
+import { Principal } from "@thorapi/model";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import Form from "./form";
 import "./index.css";

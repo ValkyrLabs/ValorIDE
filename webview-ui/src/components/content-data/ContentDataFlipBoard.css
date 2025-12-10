@@ -1,0 +1,262 @@
+.flipboard-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 255, 136, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.flipboard-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.flipboard-loading,
+.flipboard-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+  border-radius: 12px;
+  color: #cbd5e1;
+  font-size: 18px;
+}
+
+.flipboard-controls {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  z-index: 100;
+  padding: 12px 24px;
+  background: rgba(10, 14, 39, 0.85);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 255, 136, 0.1);
+}
+
+.flipboard-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(0, 255, 136, 0.1);
+  color: #00ff88;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  padding: 0;
+  cursor: pointer;
+}
+
+.flipboard-nav-btn:hover:not(:disabled) {
+  background: rgba(0, 255, 136, 0.2);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+  transform: scale(1.1);
+  border-color: #00ff88;
+}
+
+.flipboard-nav-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.flipboard-nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.flipboard-indicators {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(0, 255, 136, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: 1px solid rgba(0, 255, 136, 0.5);
+}
+
+.indicator:hover {
+  background: rgba(0, 255, 136, 0.5);
+  transform: scale(1.3);
+}
+
+.indicator.active {
+  width: 24px;
+  background: #00ff88;
+  box-shadow: 0 0 12px rgba(0, 255, 136, 0.8);
+  border-color: #00ff88;
+}
+
+.flipboard-info {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  z-index: 50;
+  background: rgba(10, 14, 39, 0.9);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0, 255, 136, 0.1);
+}
+
+.flipboard-info h2 {
+  margin: 0 0 12px 0;
+  color: #00ff88;
+  font-size: 20px;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.flipboard-category {
+  margin: 0 0 10px 0;
+  color: #64748b;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.flipboard-description {
+  margin: 0 0 16px 0;
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.flipboard-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.flipboard-status {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(0, 255, 136, 0.15);
+  color: #00ff88;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.flipboard-count {
+  margin-left: auto;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .flipboard-container {
+    min-height: 500px;
+  }
+
+  .flipboard-info {
+    max-width: 90%;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    padding: 16px;
+  }
+
+  .flipboard-info h2 {
+    font-size: 18px;
+  }
+
+  .flipboard-controls {
+    bottom: 12px;
+    gap: 12px;
+    padding: 10px 16px;
+  }
+
+  .flipboard-nav-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .indicator {
+    width: 6px;
+    height: 6px;
+  }
+
+  .indicator.active {
+    width: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .flipboard-container {
+    min-height: 400px;
+  }
+
+  .flipboard-info {
+    display: none;
+  }
+
+  .flipboard-controls {
+    bottom: 10px;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .flipboard-nav-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+}
+
+/* Animation utilities */
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.flipboard-info {
+  animation: slideInUp 0.4s ease-out;
+}

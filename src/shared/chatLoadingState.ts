@@ -8,13 +8,20 @@ export interface ChatLoadingStateParams {
   enableButtons: boolean;
 }
 
-/** Derives whether the chat should show a loading indicator. */
-export function computeIsChatLoadingState({
+export interface DerivedChatLoadingState {
+  isChatLoading: boolean;
+  inlineSpinnerCount: number;
+  inlineSources: Array<"api" | "command">;
+}
+
+export function deriveChatLoadingState({
   messages,
   lastMessage,
   textAreaDisabled,
   enableButtons,
-}: ChatLoadingStateParams): boolean {
+}: ChatLoadingStateParams): DerivedChatLoadingState {
+  const inlineSources: Array<"api" | "command"> = [];
+
   const userAttentionAsks = new Set<ValorIDEMessage["ask"]>([
     "resume_task",
     "resume_completed_task",
@@ -23,7 +30,7 @@ export function computeIsChatLoadingState({
   ]);
 
   if (lastMessage?.ask && userAttentionAsks.has(lastMessage.ask)) {
-    return false;
+    return { isChatLoading: false, inlineSpinnerCount: 0, inlineSources };
   }
 
   const lastApiStatus = (() => {
@@ -60,6 +67,9 @@ export function computeIsChatLoadingState({
         return true;
       }
     })();
+  if (apiReqInFlight) {
+    inlineSources.push("api");
+  }
 
   const isCommandFlow =
     lastMessage?.ask === "command" ||
@@ -74,6 +84,9 @@ export function computeIsChatLoadingState({
     (lastMessage?.ask === "command_output" ||
       lastMessage?.partial ||
       !hasCommandOutput);
+  if (isCommandStillRunning) {
+    inlineSources.push("command");
+  }
 
   const isWaitingForResponse =
     apiReqInFlight ||
@@ -82,5 +95,24 @@ export function computeIsChatLoadingState({
     (lastMessage?.ask === "followup" && lastMessage?.partial) ||
     isCommandStillRunning;
 
-  return isWaitingForResponse;
+  return {
+    isChatLoading: isWaitingForResponse,
+    inlineSpinnerCount: inlineSources.length,
+    inlineSources,
+  };
+}
+
+/** Derives whether the chat should show a loading indicator. */
+export function computeIsChatLoadingState({
+  messages,
+  lastMessage,
+  textAreaDisabled,
+  enableButtons,
+}: ChatLoadingStateParams): boolean {
+  return deriveChatLoadingState({
+    messages,
+    lastMessage,
+    textAreaDisabled,
+    enableButtons,
+  }).isChatLoading;
 }

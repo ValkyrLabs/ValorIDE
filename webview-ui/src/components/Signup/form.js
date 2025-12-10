@@ -10,7 +10,10 @@ import { useAddPrincipalMutation } from "../../redux/services/PrincipalService";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import "./index.css";
 import ErrorModal from "../ErrorModal";
-import { storeJwtToken, writeStoredPrincipal } from "@/utils/accessControl";
+import {
+  storeJwtToken,
+  writeStoredPrincipal,
+} from "@thorapi/utils/accessControl";
 const validationSchema = Yup.object().shape({
   firstName: Yup.string()
     .min(2, "First Name must be minimum 2 characters")
@@ -33,7 +36,7 @@ const validationSchema = Yup.object().shape({
   password: Yup.string()
     .matches(
       /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/,
-      "Password must contain a lowercase character, an uppercase character, and a number",
+      "Password must contain a lowercase character, an uppercase character, and a number"
     )
     .required()
     .min(8, "Password must be at least 8 characters"),

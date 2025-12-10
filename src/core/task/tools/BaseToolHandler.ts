@@ -10,6 +10,7 @@ import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
 import { Anthropic } from "@anthropic-ai/sdk";
 import { AssistantMessageContent } from "@core/assistant-message";
 import { ToolDescriptionHelper } from "@core/task/ToolDescriptionHelper";
+import { ToolApprovalManager } from "@core/task/ToolApprovalManager";
 import { ValorIDEAskResponse } from "@shared/WebviewMessage";
 import {
   ValorIDEMessage,
@@ -142,25 +143,14 @@ export abstract class BaseToolHandler {
       partialMessage,
       false,
     );
-    const normalizedText = text?.trim().toLowerCase();
-    const approved =
-      response === "yesButtonClicked" ||
-      (response === "messageResponse" &&
-        (normalizedText === "yes" || normalizedText === "approve"));
+    const { approved, feedback } =
+      ToolApprovalManager.normalizeApprovalResponse(response, text, images);
 
-    if (!approved) {
-      // User pressed reject button or responded with a message
-      if (text || images?.length) {
-        await this.context.say("user_feedback", text, images);
-      }
-      return false;
-    } else {
-      // User hit the approve button, and may have provided feedback
-      if (text || images?.length) {
-        await this.context.say("user_feedback", text, images);
-      }
-      return true;
+    if (feedback?.text || feedback?.images?.length) {
+      await this.context.say("user_feedback", feedback.text, feedback.images);
     }
+
+    return approved;
   }
 
   protected getToolDescription(block: AssistantMessageContent): string {

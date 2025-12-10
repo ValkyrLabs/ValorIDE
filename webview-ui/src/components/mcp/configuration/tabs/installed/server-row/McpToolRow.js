@@ -1,7 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { VSCodeCheckbox } from "@vscode/webview-ui-toolkit/react";
-import { vscode } from "@/utils/vscode";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { VscSymbolMethod } from "react-icons/vsc";
 const McpToolRow = ({ tool, serverName }) => {
   const { autoApprovalSettings } = useExtensionState();
@@ -129,15 +129,15 @@ const McpToolRow = ({ tool, serverName }) => {
                         }),
                       ],
                     },
-                    paramName,
+                    paramName
                   );
-                },
+                }
               ),
             ],
           }),
       ],
     },
-    tool.name,
+    tool.name
   );
 };
 export default McpToolRow;

@@ -32,18 +32,18 @@ vi.mock("@valkyr/component-library/LoadingSpinner", () => ({
   default: () => <div data-testid="loading-spinner" />,
 }));
 
-vi.mock("@/services/creditsApi", () => ({
+vi.mock("@thorapi/services/creditsApi", () => ({
   useGetAccountBalanceQuery: (...args: any[]) =>
     mockUseGetAccountBalanceQuery(...args),
 }));
 
-vi.mock("@/thor/redux/services/UsageTransactionService", () => ({
+vi.mock("@thorapi//redux/services/UsageTransactionService", () => ({
   useAddUsageTransactionMutation: () => [vi.fn()],
   useGetUsageTransactionsQuery: (...args: any[]) =>
     mockUseGetUsageTransactionsQuery(...args),
 }));
 
-vi.mock("@/thor/redux/services/PaymentTransactionService", () => ({
+vi.mock("@thorapi//redux/services/PaymentTransactionService", () => ({
   useGetPaymentTransactionsQuery: (...args: any[]) =>
     mockUseGetPaymentTransactionsQuery(...args),
 }));
@@ -54,11 +54,11 @@ vi.mock("../../redux/services/AuthService", () => ({
   ],
 }));
 
-vi.mock("@/context/ExtensionStateContext", () => ({
+vi.mock("@thorapi/context/ExtensionStateContext", () => ({
   useExtensionState: () => mockExtensionState,
 }));
 
-vi.mock("@/context/CommunicationServiceContext", () => ({
+vi.mock("@thorapi/context/CommunicationServiceContext", () => ({
   useCommunicationService: () => ({
     ready: false,
     hubConnected: false,
@@ -68,13 +68,13 @@ vi.mock("@/context/CommunicationServiceContext", () => ({
   }),
 }));
 
-vi.mock("@/utils/vscode", () => ({ vscode: { postMessage: vi.fn() } }));
+vi.mock("@thorapi/utils/vscode", () => ({ vscode: { postMessage: vi.fn() } }));
 
 vi.mock("@shared/getApiMetrics", () => ({
   getApiMetrics: () => ({ totalCost: 0 }),
 }));
 
-vi.mock("@/components/BuyCredits", () => ({
+vi.mock("@thorapi/components/BuyCredits", () => ({
   __esModule: true,
   default: (props: any) => {
     mockBuyCredits(props);
@@ -111,7 +111,7 @@ vi.mock("./UserPreferences", () => ({
   default: () => <div data-testid="user-preferences" />,
 }));
 
-vi.mock("@/components/SystemAlerts", () => ({
+vi.mock("@thorapi/components/SystemAlerts", () => ({
   __esModule: true,
   default: () => <div data-testid="system-alerts" />,
 }));
@@ -121,7 +121,7 @@ vi.mock("../../assets/ValorIDELogoWhite", () => ({
   default: () => <div data-testid="valoride-logo" />,
 }));
 
-vi.mock("@/components/LoadingSpinner", () => ({
+vi.mock("@thorapi/components/LoadingSpinner", () => ({
   __esModule: true,
   default: () => <div data-testid="loading-spinner" />,
 }));
@@ -155,7 +155,7 @@ describe("AccountView - BuyCredits integration", () => {
   });
 
   it("renders the embedded BuyCredits component instead of an external link when authenticated", () => {
-    render(<AccountView onDone={() => {}} />);
+    render(<AccountView onDone={() => { }} />);
 
     expect(
       screen.queryByRole("link", { name: /buy credits/i }),
@@ -175,7 +175,7 @@ describe("AccountView - BuyCredits integration", () => {
       isLoggedIn: true,
     };
 
-    render(<AccountView onDone={() => {}} />);
+    render(<AccountView onDone={() => { }} />);
 
     expect(mockUseGetAccountBalanceQuery).toHaveBeenCalledWith(
       "user-123",

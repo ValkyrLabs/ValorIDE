@@ -4,9 +4,9 @@ import { useRemark } from "react-remark";
 import rehypeHighlight from "rehype-highlight";
 import styled from "styled-components";
 import { visit } from "unist-util-visit";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import MermaidBlock from "@/components/common/MermaidBlock";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import MermaidBlock from "@thorapi/components/common/MermaidBlock";
 /**
  * Custom remark plugin that converts plain URLs in text into clickable links
  *

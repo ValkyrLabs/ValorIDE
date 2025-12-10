@@ -19,7 +19,7 @@ import {
   PermissionType,
 } from "@valkyr/component-library/PermissionDialog/types";
 
-import { Principal } from "@thor/model";
+import { Principal } from "@thorapi/model";
 
 import { useAddPrincipalMutation } from "../../services/PrincipalService";
 
@@ -951,8 +951,8 @@ const PrincipalForm: React.FC = () => {
                       value={
                         values.createdDate
                           ? new Date(values.createdDate)
-                              .toISOString()
-                              .slice(0, 16)
+                            .toISOString()
+                            .slice(0, 16)
                           : ""
                       }
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1052,8 +1052,8 @@ const PrincipalForm: React.FC = () => {
                       value={
                         values.lastAccessedDate
                           ? new Date(values.lastAccessedDate)
-                              .toISOString()
-                              .slice(0, 16)
+                            .toISOString()
+                            .slice(0, 16)
                           : ""
                       }
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -1127,8 +1127,8 @@ const PrincipalForm: React.FC = () => {
                       value={
                         values.lastModifiedDate
                           ? new Date(values.lastModifiedDate)
-                              .toISOString()
-                              .slice(0, 16)
+                            .toISOString()
+                            .slice(0, 16)
                           : ""
                       }
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

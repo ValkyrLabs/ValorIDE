@@ -16,12 +16,12 @@ import * as Yup from "yup";
 // custom redux implementations go here...
 
 import { useLoginUserMutation } from "../../redux/services/LoginService";
-import { Login } from "@thor/model";
+import { Login } from "@thorapi/model";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import ErrorModal from "../ErrorModal";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { storeJwtToken, writeStoredPrincipal } from "../../utils/accessControl";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string()
@@ -259,7 +259,7 @@ const Form: React.FC<FormProps> = ({
                       }
                       // disabled={!(touched && isValid && (loginUserResult.status == 'uninitialized'))}
                       type="submit"
-                      onClick={() => {}}
+                      onClick={() => { }}
                     >
                       {isSubmitting && (
                         <Spinner

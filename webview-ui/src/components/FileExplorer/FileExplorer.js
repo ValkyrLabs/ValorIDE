@@ -8,11 +8,11 @@ import {
   VSCodeButton,
   VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import AddToProjectModal from "./AddToProjectModal";
 import StartServerModal from "./StartServerModal";
-import SystemAlerts from "@/components/SystemAlerts";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import "./FileExplorer.css";
 const FileExplorer = ({
   onFileSelect,
@@ -45,7 +45,7 @@ const FileExplorer = ({
       const requestId = `file-explorer-${Date.now()}`;
       console.log(
         "FileExplorer: Requesting thorapi folder contents with ID:",
-        requestId,
+        requestId
       );
       vscode.postMessage({
         type: "getThorapiFolderContents",
@@ -64,12 +64,12 @@ const FileExplorer = ({
       if (message.type === "workspaceFiles") {
         console.log(
           "FileExplorer: Processing workspaceFiles message with files:",
-          message.files,
+          message.files
         );
         if (message.error) {
           console.error(
             "FileExplorer: Error in workspaceFiles response:",
-            message.error,
+            message.error
           );
           setError(message.error);
           setLoading(false);
@@ -83,12 +83,12 @@ const FileExplorer = ({
         if (highlightNewFiles && previousPaths.size > 0) {
           const currentPathsArray = Array.from(currentPaths);
           const addedFiles = new Set(
-            currentPathsArray.filter((path) => !previousPaths.has(path)),
+            currentPathsArray.filter((path) => !previousPaths.has(path))
           );
           if (addedFiles.size > 0) {
             console.log(
               "FileExplorer: Found new files:",
-              Array.from(addedFiles),
+              Array.from(addedFiles)
             );
             setNewFiles((prev) => {
               const prevArray = Array.from(prev);
@@ -109,7 +109,7 @@ const FileExplorer = ({
         setLoading(false);
       }
     },
-    [files, highlightNewFiles],
+    [files, highlightNewFiles]
   );
   useEffect(() => {
     window.addEventListener("message", handleMessage);
@@ -124,7 +124,7 @@ const FileExplorer = ({
         message.streamToThorapiResult?.success
       ) {
         console.log(
-          "FileExplorer: Received streamToThorapiResult, refreshing files",
+          "FileExplorer: Received streamToThorapiResult, refreshing files"
         );
         // Refresh files after a brief delay to ensure file is written
         setTimeout(() => {
@@ -213,7 +213,7 @@ const FileExplorer = ({
       // If this directory looks like a generated ThorAPI project (has a src child),
       // show modal to ask user if they want to add it to their project
       const hasSrcChild = (item.children || []).some(
-        (c) => c.type === "directory" && c.name === "src",
+        (c) => c.type === "directory" && c.name === "src"
       );
       if (hasSrcChild) {
         setSelectedFolder({ path: item.path, name: item.name });
@@ -299,12 +299,12 @@ const FileExplorer = ({
             _jsx("div", {
               className: "file-item-children",
               children: item.children.map((child) =>
-                renderFileItem(child, depth + 1),
+                renderFileItem(child, depth + 1)
               ),
             }),
         ],
       },
-      item.path,
+      item.path
     );
   };
   if (loading && files.length === 0) {

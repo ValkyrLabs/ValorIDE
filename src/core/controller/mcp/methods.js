@@ -6,8 +6,8 @@ import { toggleMcpServer } from "./toggleMcpServer";
 import { updateMcpTimeout } from "./updateMcpTimeout";
 // Register all mcp service methods
 export function registerAllMethods() {
-  // Register each method with the registry
-  registerMethod("toggleMcpServer", toggleMcpServer);
-  registerMethod("updateMcpTimeout", updateMcpTimeout);
+    // Register each method with the registry
+    registerMethod("toggleMcpServer", toggleMcpServer);
+    registerMethod("updateMcpTimeout", updateMcpTimeout);
 }
 //# sourceMappingURL=methods.js.map

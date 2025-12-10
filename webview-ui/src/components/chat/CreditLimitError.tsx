@@ -1,7 +1,7 @@
 import React from "react";
-import VSCodeButtonLink from "@/components/common/VSCodeButtonLink";
+import VSCodeButtonLink from "@thorapi/components/common/VSCodeButtonLink";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import { Invoke } from "@shared/ExtensionMessage";
 import { FaCreditCard, FaRecycle } from "react-icons/fa";
 

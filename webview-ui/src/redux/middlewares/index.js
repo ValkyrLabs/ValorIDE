@@ -20,10 +20,10 @@ import { PrincipalService } from "../services/PrincipalService";
 import { ApplicationService } from "../services/ApplicationService";
 // use to populate external store
 export const middlewares = [
-  AuthService.middleware,
-  LogoutService.middleware,
-  PrincipalService.middleware,
-  ApplicationService.middleware,
+    AuthService.middleware,
+    LogoutService.middleware,
+    PrincipalService.middleware,
+    ApplicationService.middleware,
 ];
 export default middlewares;
 //# sourceMappingURL=index.js.map

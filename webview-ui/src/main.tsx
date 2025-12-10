@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import { MemoryRouter } from "react-router-dom";
 
 import App from "./App";
-// Initialize Thor/STOMP bridge so CommunicationService can relay to mothership
+// Initialize ThorAPI/STOMP bridge so CommunicationService can relay to mothership
 import "./P2P/thorBridge";
 
 // import reportWebVitals from "./reportWebVitals"

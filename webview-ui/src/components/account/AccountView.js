@@ -4,16 +4,16 @@ import {
   Fragment as _Fragment,
 } from "react/jsx-runtime";
 import { memo, useState, useCallback, useEffect, useMemo } from "react";
-import { useGetAccountBalanceQuery } from "@/services/creditsApi";
+import { useGetAccountBalanceQuery } from "@thorapi/services/creditsApi";
 import {
   useAddUsageTransactionMutation,
   useGetUsageTransactionsQuery,
-} from "@/thor/redux/services/UsageTransactionService";
-import { useGetPaymentTransactionsQuery } from "@/thor/redux/services/PaymentTransactionService";
+} from "@thorapi//redux/services/UsageTransactionService";
+import { useGetPaymentTransactionsQuery } from "@thorapi//redux/services/PaymentTransactionService";
 import VSCodeButtonLink from "../common/VSCodeButtonLink";
 import CountUp from "react-countup";
 import CreditsHistoryTable from "./CreditsHistoryTable";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { getApiMetrics } from "@shared/getApiMetrics";
 import ApplicationsList from "./ApplicationsList";
 import OpenAPIFilePicker from "./OpenAPIFilePicker";
@@ -24,7 +24,7 @@ import {
   VSCodeDivider,
   VSCodeLink,
 } from "@vscode/webview-ui-toolkit/react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import {
   FaAppStore,
   FaBackward,
@@ -34,17 +34,17 @@ import {
 } from "react-icons/fa";
 import { Card } from "react-bootstrap";
 import { useLoginUserMutation } from "../../redux/services/AuthService";
-import SystemAlerts from "@/components/SystemAlerts";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
+import LoadingSpinner from "@thorapi/components/LoadingSpinner";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 import UserPreferences from "./UserPreferences";
-import BuyCredits from "@/components/BuyCredits";
+import BuyCredits from "@thorapi/components/BuyCredits";
 import {
   storeJwtToken,
   useAccessControl,
   writeStoredPrincipal,
   readStoredPrincipal,
-} from "@/utils/accessControl";
+} from "@thorapi/utils/accessControl";
 const AccountView = ({ onDone }) => {
   const { userInfo, authenticatedUser, isLoggedIn, jwtToken } =
     useExtensionState();
@@ -53,11 +53,11 @@ const AccountView = ({ onDone }) => {
   // Compute API metrics from messages once using useMemo
   const apiMetrics = useMemo(
     () => getApiMetrics(valorideMessages || []),
-    [valorideMessages],
+    [valorideMessages]
   );
   // Determine authenticated status
   const isAuthenticated = Boolean(
-    isLoggedIn || authenticatedUser || userInfo || jwtToken,
+    isLoggedIn || authenticatedUser || userInfo || jwtToken
   );
   // Also consider presence of a stored JWT to avoid timing gaps
   const hasStoredJwt = useMemo(() => {
@@ -87,7 +87,7 @@ const AccountView = ({ onDone }) => {
     }
   }, [authed]);
   const { principal: resolvedPrincipal } = useAccessControl(
-    authenticatedUser || userInfo,
+    authenticatedUser || userInfo
   );
   const principalId = resolvedPrincipal?.id;
   const accountId =
@@ -163,7 +163,7 @@ const AccountView = ({ onDone }) => {
             timestamp: Date.now(),
           };
           window.dispatchEvent(
-            new CustomEvent("websocket-send", { detail: appMessage }),
+            new CustomEvent("websocket-send", { detail: appMessage })
           );
         };
         send("presence:join", { id: instanceId });
@@ -199,7 +199,7 @@ const AccountView = ({ onDone }) => {
           timestamp: Date.now(),
         };
         window.dispatchEvent(
-          new CustomEvent("websocket-send", { detail: appMessage }),
+          new CustomEvent("websocket-send", { detail: appMessage })
         );
       } catch {
         // ignore transport issues
@@ -288,8 +288,8 @@ const AccountView = ({ onDone }) => {
                     },
                     children: id,
                   },
-                  id,
-                ),
+                  id
+                )
               ),
             }),
           ],
@@ -487,7 +487,7 @@ const AccountView = ({ onDone }) => {
                                         const effectiveBalance = Math.max(
                                           0,
                                           rawBalance -
-                                            (apiMetrics.totalCost || 0),
+                                            (apiMetrics.totalCost || 0)
                                         );
                                         return _jsxs(_Fragment, {
                                           children: [

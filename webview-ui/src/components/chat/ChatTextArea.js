@@ -9,12 +9,12 @@ import {
   useRef,
   useState,
 } from "react";
-import GlowingTextArea from "@/components/chat/GlowingTextArea";
+import GlowingTextArea from "@thorapi/components/chat/GlowingTextArea";
 import { useClickAway, useEvent, useWindowSize } from "react-use";
 import styled from "styled-components";
 import { FaAngry, FaCamera, FaPaperPlane } from "react-icons/fa";
 import { mentionRegex, mentionRegexGlobal } from "@shared/context-mentions";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import {
   ContextMenuOptionType,
   getContextMenuOptions,
@@ -22,7 +22,7 @@ import {
   insertMentionDirectly,
   removeMention,
   shouldShowContextMenu,
-} from "@/utils/context-mentions";
+} from "@thorapi/utils/context-mentions";
 import {
   slashCommandDeleteRegex,
   shouldShowSlashCommandsMenu,
@@ -30,19 +30,22 @@ import {
   insertSlashCommand,
   removeSlashCommand,
   validateSlashCommand,
-} from "@/utils/slash-commands";
-import { useMetaKeyDetection, useShortcut } from "@/utils/hooks";
-import { validateApiConfiguration, validateModelId } from "@/utils/validate";
-import { vscode } from "@/utils/vscode";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import Thumbnails from "@/components/common/Thumbnails";
-import Tooltip from "@/components/common/Tooltip";
+} from "@thorapi/utils/slash-commands";
+import { useMetaKeyDetection, useShortcut } from "@thorapi/utils/hooks";
+import {
+  validateApiConfiguration,
+  validateModelId,
+} from "@thorapi/utils/validate";
+import { vscode } from "@thorapi/utils/vscode";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import Thumbnails from "@thorapi/components/common/Thumbnails";
+import Tooltip from "@thorapi/components/common/Tooltip";
 import ApiOptions, {
   normalizeApiConfiguration,
-} from "@/components/settings/ApiOptions";
-import { MAX_IMAGES_PER_MESSAGE } from "@/components/chat/ChatView";
-import ContextMenu from "@/components/chat/ContextMenu";
-import SlashCommandMenu from "@/components/chat/SlashCommandMenu";
+} from "@thorapi/components/settings/ApiOptions";
+import { MAX_IMAGES_PER_MESSAGE } from "@thorapi/components/chat/ChatView";
+import ContextMenu from "@thorapi/components/chat/ContextMenu";
+import SlashCommandMenu from "@thorapi/components/chat/SlashCommandMenu";
 import ServersToggleModal from "./ServersToggleModal";
 import ValorIDERulesToggleModal from "../valoride-rules/ValorIDERulesToggleModal";
 const PLAN_MODE_COLOR = "var(--vscode-inputValidation-warningBorder)";
@@ -222,7 +225,7 @@ const ChatTextArea = forwardRef(
       shouldDisableImages,
       onHeightChange,
     },
-    ref,
+    ref
   ) => {
     const {
       filePaths,
@@ -437,7 +440,7 @@ const ChatTextArea = forwardRef(
           const { newValue, mentionIndex } = insertMention(
             textAreaRef.current.value,
             cursorPosition,
-            insertValue,
+            insertValue
           );
           setInputValue(newValue);
           const newCursorPosition =
@@ -454,7 +457,7 @@ const ChatTextArea = forwardRef(
           }, 0);
         }
       },
-      [setInputValue, cursorPosition],
+      [setInputValue, cursorPosition]
     );
     const handleSlashCommandsSelect = useCallback(
       (command) => {
@@ -462,7 +465,7 @@ const ChatTextArea = forwardRef(
         if (textAreaRef.current) {
           const { newValue, commandIndex } = insertSlashCommand(
             textAreaRef.current.value,
-            command.name,
+            command.name
           );
           const newCursorPosition =
             newValue.indexOf(" ", commandIndex + 1 + command.name.length) + 1;
@@ -477,7 +480,7 @@ const ChatTextArea = forwardRef(
           }, 0);
         }
       },
-      [setInputValue],
+      [setInputValue]
     );
     const handleKeyDown = useCallback(
       (event) => {
@@ -527,7 +530,7 @@ const ChatTextArea = forwardRef(
                 searchQuery,
                 selectedType,
                 queryItems,
-                fileSearchResults,
+                fileSearchResults
               );
               const optionsLength = options.length;
               if (optionsLength === 0) return prevIndex;
@@ -535,12 +538,12 @@ const ChatTextArea = forwardRef(
               const selectableOptions = options.filter(
                 (option) =>
                   option.type !== ContextMenuOptionType.URL &&
-                  option.type !== ContextMenuOptionType.NoResults,
+                  option.type !== ContextMenuOptionType.NoResults
               );
               if (selectableOptions.length === 0) return -1; // No selectable options
               // Find the index of the next selectable option
               const currentSelectableIndex = selectableOptions.findIndex(
-                (option) => option === options[prevIndex],
+                (option) => option === options[prevIndex]
               );
               const newSelectableIndex =
                 (currentSelectableIndex +
@@ -549,7 +552,7 @@ const ChatTextArea = forwardRef(
                 selectableOptions.length;
               // Find the index of the selected option in the original options array
               return options.findIndex(
-                (option) => option === selectableOptions[newSelectableIndex],
+                (option) => option === selectableOptions[newSelectableIndex]
               );
             });
             return;
@@ -563,7 +566,7 @@ const ChatTextArea = forwardRef(
               searchQuery,
               selectedType,
               queryItems,
-              fileSearchResults,
+              fileSearchResults
             )[selectedMenuIndex];
             if (
               selectedOption &&
@@ -605,7 +608,7 @@ const ChatTextArea = forwardRef(
               event.preventDefault();
               textAreaRef.current?.setSelectionRange(
                 newCursorPosition,
-                newCursorPosition,
+                newCursorPosition
               );
               setCursorPosition(newCursorPosition);
             }
@@ -624,7 +627,7 @@ const ChatTextArea = forwardRef(
               event.preventDefault();
               textAreaRef.current?.setSelectionRange(
                 newCursorPosition,
-                newCursorPosition,
+                newCursorPosition
               );
               setCursorPosition(newCursorPosition);
             }
@@ -636,7 +639,7 @@ const ChatTextArea = forwardRef(
           else if (justDeletedSpaceAfterMention) {
             const { newText, newPosition } = removeMention(
               inputValue,
-              cursorPosition,
+              cursorPosition
             );
             if (newText !== inputValue) {
               event.preventDefault();
@@ -649,7 +652,7 @@ const ChatTextArea = forwardRef(
             // New slash command deletion
             const { newText, newPosition } = removeSlashCommand(
               inputValue,
-              cursorPosition,
+              cursorPosition
             );
             if (newText !== inputValue) {
               event.preventDefault();
@@ -683,14 +686,14 @@ const ChatTextArea = forwardRef(
         selectedSlashCommandsIndex,
         slashCommandsQuery,
         handleSlashCommandsSelect,
-      ],
+      ]
     );
     // Effect to set cursor position after state updates
     useLayoutEffect(() => {
       if (intendedCursorPosition !== null && textAreaRef.current) {
         textAreaRef.current.setSelectionRange(
           intendedCursorPosition,
-          intendedCursorPosition,
+          intendedCursorPosition
         );
         setIntendedCursorPosition(null); // Reset the state after applying
       }
@@ -710,7 +713,7 @@ const ChatTextArea = forwardRef(
       const { newValue, mentionIndex } = insertMentionDirectly(
         currentValue,
         currentCursorPos,
-        path,
+        path
       );
       setInputValue(newValue);
       const newCursorPosition = mentionIndex + path.length + 2;
@@ -728,7 +731,7 @@ const ChatTextArea = forwardRef(
         let showMenu = shouldShowContextMenu(newValue, newCursorPosition);
         const showSlashCommandsMenu = shouldShowSlashCommandsMenu(
           newValue,
-          newCursorPosition,
+          newCursorPosition
         );
         // we do not allow both menus to be shown at the same time
         // the slash commands menu has precedence bc its a narrower component
@@ -775,7 +778,7 @@ const ChatTextArea = forwardRef(
           setFileSearchResults([]);
         }
       },
-      [setInputValue, setFileSearchResults, selectedType],
+      [setInputValue, setFileSearchResults, selectedType]
     );
     useEffect(() => {
       if (!showContextMenu) {
@@ -852,7 +855,7 @@ const ChatTextArea = forwardRef(
           //.map((dataUrl) => dataUrl.split(",")[1]) // strip the mime type prefix, sharp doesn't need it
           if (dataUrls.length > 0) {
             setSelectedImages((prevImages) =>
-              [...prevImages, ...dataUrls].slice(0, MAX_IMAGES_PER_MESSAGE),
+              [...prevImages, ...dataUrls].slice(0, MAX_IMAGES_PER_MESSAGE)
             );
           } else {
             console.warn("No valid images were processed");
@@ -865,7 +868,7 @@ const ChatTextArea = forwardRef(
         cursorPosition,
         setInputValue,
         inputValue,
-      ],
+      ]
     );
     const handleThumbnailsHeightChange = useCallback((height) => {
       setThumbnailsHeight(height);
@@ -885,12 +888,12 @@ const ChatTextArea = forwardRef(
         .replace(/\n$/, "\n\n")
         .replace(
           /[<>&]/g,
-          (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" })[c] || c,
+          (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" })[c] || c
         )
         // highlight @mentions
         .replace(
           mentionRegexGlobal,
-          '<mark class="mention-context-textarea-highlight">$&</mark>',
+          '<mark class="mention-context-textarea-highlight">$&</mark>'
         );
       // check for highlighting /slash-commands
       if (/^\s*\//.test(processedText)) {
@@ -937,14 +940,14 @@ const ChatTextArea = forwardRef(
           updateCursorPosition();
         }
       },
-      [updateCursorPosition],
+      [updateCursorPosition]
     );
     // Separate the API config submission logic
     const submitApiConfig = useCallback(() => {
       const apiValidationResult = validateApiConfiguration(apiConfiguration);
       const modelIdValidationResult = validateModelId(
         apiConfiguration,
-        openRouterModels,
+        openRouterModels
       );
       if (!apiValidationResult && !modelIdValidationResult) {
         vscode.postMessage({ type: "apiConfiguration", apiConfiguration });
@@ -1113,7 +1116,7 @@ const ChatTextArea = forwardRef(
       let uris = [];
       const resourceUrlsData = e.dataTransfer.getData("resourceurls");
       const vscodeUriListData = e.dataTransfer.getData(
-        "application/vnd.code.uri-list",
+        "application/vnd.code.uri-list"
       );
       // 1a. Try 'resourceurls' first (used for multi-select)
       if (resourceUrlsData) {
@@ -1132,7 +1135,7 @@ const ChatTextArea = forwardRef(
       // 1c. Filter for valid schemes (file or vscode-file) and non-empty strings
       const validUris = uris.filter(
         (uri) =>
-          uri && (uri.startsWith("vscode-file:") || uri.startsWith("file:")),
+          uri && (uri.startsWith("vscode-file:") || uri.startsWith("file:"))
       );
       if (validUris.length > 0) {
         setPendingInsertions([]);
@@ -1167,7 +1170,7 @@ const ChatTextArea = forwardRef(
       const dataUrls = imageDataArray.filter((dataUrl) => dataUrl !== null);
       if (dataUrls.length > 0) {
         setSelectedImages((prevImages) =>
-          [...prevImages, ...dataUrls].slice(0, MAX_IMAGES_PER_MESSAGE),
+          [...prevImages, ...dataUrls].slice(0, MAX_IMAGES_PER_MESSAGE)
         );
       } else {
         console.warn("No valid images were processed");
@@ -1212,8 +1215,8 @@ const ChatTextArea = forwardRef(
                 }
               };
               reader.readAsDataURL(file);
-            }),
-        ),
+            })
+        )
       );
     };
     return _jsxs("div", {
@@ -1359,7 +1362,7 @@ const ChatTextArea = forwardRef(
                     normalizeApiConfiguration(apiConfiguration);
                   const hasThinkingConfig = !!selectedModelInfo?.thinkingConfig;
                   const idImpliesThinking = /:thinking/i.test(
-                    selectedModelId || "",
+                    selectedModelId || ""
                   );
                   const budget = apiConfiguration?.thinkingBudgetTokens || 0;
                   return (hasThinkingConfig || idImpliesThinking) && budget > 0;
@@ -1648,7 +1651,7 @@ const ChatTextArea = forwardRef(
         }),
       ],
     });
-  },
+  }
 );
 export default ChatTextArea;
 //# sourceMappingURL=ChatTextArea.js.map

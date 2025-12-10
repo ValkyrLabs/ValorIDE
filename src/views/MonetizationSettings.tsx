@@ -4,7 +4,7 @@ import {
   PricingModel,
   enableMonetization,
   updatePricing,
-} from "@/services/monetization/ServiceMonetizationService";
+} from "@thorapi/services/monetization/ServiceMonetizationService";
 import "./MonetizationSettings.css";
 
 interface MonetizationSettingsProps {

@@ -11,11 +11,11 @@ import { useRemark } from "react-remark";
 import { useMount } from "react-use";
 import styled from "styled-components";
 import { openRouterDefaultModelId } from "@shared/api";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
 import { highlight } from "../history/HistoryView";
 import { ModelInfoView, normalizeApiConfiguration } from "./ApiOptions";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
 import ThinkingBudgetSlider from "./ThinkingBudgetSlider";
 import FeaturedModelCard from "./FeaturedModelCard";
 // Star icon for favorites
@@ -60,7 +60,7 @@ const OpenRouterModelPicker = ({ isPopup }) => {
   const { apiConfiguration, setApiConfiguration, openRouterModels } =
     useExtensionState();
   const [searchTerm, setSearchTerm] = useState(
-    apiConfiguration?.openRouterModelId || openRouterDefaultModelId,
+    apiConfiguration?.openRouterModelId || openRouterDefaultModelId
   );
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -98,7 +98,7 @@ const OpenRouterModelPicker = ({ isPopup }) => {
   }, []);
   const modelIds = useMemo(() => {
     const unfilteredModelIds = Object.keys(openRouterModels).sort((a, b) =>
-      a.localeCompare(b),
+      a.localeCompare(b)
     );
     return apiConfiguration?.apiProvider === "valoride"
       ? unfilteredModelIds.filter((id) => !id.includes(":free"))
@@ -126,12 +126,12 @@ const OpenRouterModelPicker = ({ isPopup }) => {
     // IMPORTANT: highlightjs has a bug where if you use sort/localCompare - "// results.sort((a, b) => a.id.localeCompare(b.id)) ...sorting like this causes ids in objects to be reordered and mismatched"
     // First, get all favorited models
     const favoritedModels = searchableItems.filter((item) =>
-      favoritedModelIds.includes(item.id),
+      favoritedModelIds.includes(item.id)
     );
     // Then get search results for non-favorited models
     const searchResults = searchTerm
       ? highlight(fuse.search(searchTerm), "model-item-highlight").filter(
-          (item) => !favoritedModelIds.includes(item.id),
+          (item) => !favoritedModelIds.includes(item.id)
         )
       : searchableItems.filter((item) => !favoritedModelIds.includes(item.id));
     // Combine favorited models with search results
@@ -143,7 +143,7 @@ const OpenRouterModelPicker = ({ isPopup }) => {
       case "ArrowDown":
         event.preventDefault();
         setSelectedIndex((prev) =>
-          prev < modelSearchResults.length - 1 ? prev + 1 : prev,
+          prev < modelSearchResults.length - 1 ? prev + 1 : prev
         );
         break;
       case "ArrowUp":
@@ -166,7 +166,7 @@ const OpenRouterModelPicker = ({ isPopup }) => {
   const hasInfo = useMemo(() => {
     try {
       return modelIds.some(
-        (id) => id.toLowerCase() === searchTerm.toLowerCase(),
+        (id) => id.toLowerCase() === searchTerm.toLowerCase()
       );
     } catch {
       return false;
@@ -230,8 +230,8 @@ const OpenRouterModelPicker = ({ isPopup }) => {
                       setIsDropdownVisible(false);
                     },
                   },
-                  model.id,
-                ),
+                  model.id
+                )
               ),
             }),
           _jsxs(DropdownWrapper, {
@@ -313,7 +313,7 @@ const OpenRouterModelPicker = ({ isPopup }) => {
                           ],
                         }),
                       },
-                      item.id,
+                      item.id
                     );
                   }),
                 }),
@@ -531,8 +531,8 @@ export const ModelDescriptionMarkdown = memo(
           ],
         }),
       },
-      key,
+      key
     );
-  },
+  }
 );
 //# sourceMappingURL=OpenRouterModelPicker.js.map

@@ -7,10 +7,10 @@ import {
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { validateApiConfiguration, validateModelId } from "@/utils/validate";
-import { vscode } from "@/utils/vscode";
-import SettingsButton from "@/components/common/SettingsButton";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { validateApiConfiguration, validateModelId } from "@thorapi/utils/validate";
+import { vscode } from "@thorapi/utils/vscode";
+import SettingsButton from "@thorapi/components/common/SettingsButton";
 import ApiOptions from "./ApiOptions";
 import { TabButton } from "../mcp/configuration/McpConfigurationView";
 import { useEvent } from "react-use";
@@ -19,11 +19,11 @@ import BrowserSettingsSection from "./BrowserSettingsSection";
 import LLMDetailsSelector from "../LLMDetailsSelector";
 import { VscSettingsGear } from "react-icons/vsc";
 import { FaStar, FaShareAlt, FaCheck, FaTag } from "react-icons/fa";
-import StatusBadge from "@/components/common/StatusBadge";
-import OfflineBanner from "@/components/common/OfflineBanner";
-import SystemAlerts from "@/components/SystemAlerts";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
-import { DEFAULT_VALKYRAI_HOST } from "@/utils/valkyraiHost";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
+import OfflineBanner from "@thorapi/components/common/OfflineBanner";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
+import { DEFAULT_VALKYRAI_HOST } from "@thorapi/utils/valkyraiHost";
 
 const { IS_DEV } = process.env;
 

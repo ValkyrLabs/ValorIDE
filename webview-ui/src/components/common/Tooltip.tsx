@@ -6,7 +6,7 @@ import {
   VSC_SIDEBAR_BACKGROUND,
   VSC_INPUT_PLACEHOLDER_FOREGROUND,
   VSC_INPUT_BORDER,
-} from "@/utils/vscStyles";
+} from "@thorapi/utils/vscStyles";
 
 interface TooltipProps {
   visible?: boolean;

@@ -5,8 +5,8 @@ import Fuse from "fuse.js";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useMount } from "react-use";
 import styled from "styled-components";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
 import { highlight } from "../history/HistoryView";
 const DropdownWrapper = styled.div`
   position: relative;
@@ -97,7 +97,7 @@ const FeatureCard = styled.div`
 const LlmDetailsModelPicker = ({ isPopup }) => {
   const { apiConfiguration, setApiConfiguration } = useExtensionState();
   const [searchTerm, setSearchTerm] = useState(
-    apiConfiguration?.llmDetailsModelId || "",
+    apiConfiguration?.llmDetailsModelId || ""
   );
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -118,7 +118,7 @@ const LlmDetailsModelPicker = ({ isPopup }) => {
             message.llmDetails.reduce((acc, model) => {
               acc[model.id || model.name] = model;
               return acc;
-            }, {}),
+            }, {})
           );
         } else if (message.models) {
           setLlmModels(message.models);
@@ -183,7 +183,7 @@ const LlmDetailsModelPicker = ({ isPopup }) => {
       case "ArrowDown":
         event.preventDefault();
         setSelectedIndex((prev) =>
-          prev < modelSearchResults.length - 1 ? prev + 1 : prev,
+          prev < modelSearchResults.length - 1 ? prev + 1 : prev
         );
         break;
       case "ArrowUp":
@@ -253,8 +253,8 @@ const LlmDetailsModelPicker = ({ isPopup }) => {
                   children: modelIds
                     .filter((id) =>
                       featuredModels.some(
-                        (m) => llmModels[id].provider === m.id,
-                      ),
+                        (m) => llmModels[id].provider === m.id
+                      )
                     )
                     .slice(0, 4)
                     .map((id) =>
@@ -272,8 +272,8 @@ const LlmDetailsModelPicker = ({ isPopup }) => {
                             _jsx("div", { children: llmModels[id].provider }),
                           ],
                         },
-                        id,
-                      ),
+                        id
+                      )
                     ),
                 }),
               ],
@@ -339,8 +339,8 @@ const LlmDetailsModelPicker = ({ isPopup }) => {
                           },
                         }),
                       },
-                      result.id,
-                    ),
+                      result.id
+                    )
                   ),
                 }),
               isDropdownVisible &&

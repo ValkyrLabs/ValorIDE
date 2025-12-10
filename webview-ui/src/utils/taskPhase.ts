@@ -83,9 +83,7 @@ const parseExitCode = (text?: string): number | undefined => {
 
 const inferConfidence = (messages: ValorIDEMessage[]): TaskConfidence => {
   const retryCount = messages.filter((m) => m.say === "api_req_retried").length;
-  const hasApiFailure = messages.some(
-    (m) => m.ask === "api_req_failed" || m.say === "api_req_failed",
-  );
+  const hasApiFailure = messages.some((m) => m.ask === "api_req_failed");
   const hasResumePrompt = messages.some((m) => m.ask === "resume_task");
   const hasNonZeroExit = messages.some((m) => {
     const code = parseExitCode(m.text);

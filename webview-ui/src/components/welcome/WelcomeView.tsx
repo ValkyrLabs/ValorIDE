@@ -1,16 +1,16 @@
 import { VSCodeButton, VSCodeLink } from "@vscode/webview-ui-toolkit/react";
 import { useEffect, useState, memo } from "react";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { validateApiConfiguration } from "@/utils/validate";
-import { vscode } from "@/utils/vscode";
-import ApiOptions from "@/components/settings/ApiOptions";
-import SystemAlerts from "@/components/SystemAlerts";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { validateApiConfiguration } from "@thorapi/utils/validate";
+import { vscode } from "@thorapi/utils/vscode";
+import ApiOptions from "@thorapi/components/settings/ApiOptions";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
 import Image from "react-bootstrap/Image";
 import valorIdeHorizontal from "../../assets/valorIde-horizontal.png";
 import {
   readStoredPrincipal,
   hydrateStoredCredentials,
-} from "@/utils/accessControl";
+} from "@thorapi/utils/accessControl";
 
 const WelcomeView = memo(() => {
   const { apiConfiguration } = useExtensionState();

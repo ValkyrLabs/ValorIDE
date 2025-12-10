@@ -1,7 +1,7 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import styled from "styled-components";
-const StyledButton = styled(VSCodeButton)`
+const StyledButton = styled(VSCodeButton) `
   --settings-button-bg: var(--vscode-button-secondaryBackground);
   --settings-button-hover: var(--vscode-button-secondaryHoverBackground);
   --settings-button-active: var(--vscode-button-secondaryBackground);
@@ -21,7 +21,7 @@ const StyledButton = styled(VSCodeButton)`
   }
 `;
 const SettingsButton = (props) => {
-  return _jsx(StyledButton, { appearance: "secondary", ...props });
+    return _jsx(StyledButton, { appearance: "secondary", ...props });
 };
 export default SettingsButton;
 //# sourceMappingURL=SettingsButton.js.map

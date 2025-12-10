@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Form as BSForm, ListGroup, Spinner } from "react-bootstrap";
 import { debounce } from "lodash";
 import { v4 as uuidv4 } from "uuid";
-import { getValkyraiHost } from "@/utils/valkyraiHost";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 
 export type SmartFkPickerProps = {
   entity: string; // Simple entity name, e.g. "Organization"

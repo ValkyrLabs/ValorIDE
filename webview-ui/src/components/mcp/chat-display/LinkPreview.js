@@ -1,9 +1,9 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import React from "react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import DOMPurify from "dompurify";
 import { getSafeHostname, normalizeRelativeUrl } from "./utils/mcpRichUtil";
-import ChatErrorBoundary from "@/components/chat/ChatErrorBoundary";
+import ChatErrorBoundary from "@thorapi/components/chat/ChatErrorBoundary";
 // Use a class component to ensure complete isolation between instances
 class LinkPreview extends React.Component {
   messageListener = null;
@@ -366,7 +366,7 @@ class LinkPreview extends React.Component {
 // Create a wrapper component that memoizes the LinkPreview to prevent unnecessary re-renders
 const MemoizedLinkPreview = React.memo(
   (props) => _jsx(LinkPreview, { ...props }),
-  (prevProps, nextProps) => prevProps.url === nextProps.url,
+  (prevProps, nextProps) => prevProps.url === nextProps.url
 );
 // Wrap the LinkPreview component with an error boundary
 const LinkPreviewWithErrorBoundary = (props) => {

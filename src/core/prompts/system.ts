@@ -225,7 +225,7 @@ edit api.hbs.yaml (models) + api.yaml (CRUD list) → assembled.api.yaml.hbs
 \`\`\`
 
 **Process to add a new field/feature:**
-1. Edit OpenAPI spec edit api.hbs.yaml  (thor fields, constraints, RBAC)
+1. Edit OpenAPI spec edit api.hbs.yaml  ( fields, constraints, RBAC)
 2. Run: \`cd ${thorapi_project} && mvn clean install -DskipTests -q\`
 3. Verify generated artifacts in expected dirs
 4. Import generated types/services in app

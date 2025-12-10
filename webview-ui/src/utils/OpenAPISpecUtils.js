@@ -20,15 +20,15 @@
  * serialization/deserialization operations
  */
 export const OAS_IGNORED_FIELDS = Object.freeze([
-  "id",
-  "ownerId",
-  "createdDate",
-  "keyHash",
-  "lastAccessedById",
-  "lastAccessedDate",
-  "lastModifiedById",
-  "lastModifiedDate",
-  "trashed",
+    "id",
+    "ownerId",
+    "createdDate",
+    "keyHash",
+    "lastAccessedById",
+    "lastAccessedDate",
+    "lastModifiedById",
+    "lastModifiedDate",
+    "trashed",
 ]);
 /**
  * Remove system-generated audit fields from an OAS spec object or any nested object
@@ -43,30 +43,32 @@ export const OAS_IGNORED_FIELDS = Object.freeze([
  * // Result: { openapi: '3.0.3' }
  */
 export function filterIgnoredFields(obj, ignoredFields = OAS_IGNORED_FIELDS) {
-  if (obj == null) return null;
-  // Handle arrays recursively
-  if (Array.isArray(obj)) {
-    return obj.map((item) => filterIgnoredFields(item, ignoredFields));
-  }
-  // Handle objects
-  if (typeof obj === "object" && obj !== null) {
-    return Object.keys(obj).reduce((acc, key) => {
-      // Skip ignored fields
-      if (ignoredFields.includes(key)) {
-        return acc;
-      }
-      const value = obj[key];
-      // Recursively filter nested objects and arrays
-      if (typeof value === "object" && value !== null) {
-        acc[key] = filterIgnoredFields(value, ignoredFields);
-      } else {
-        acc[key] = value;
-      }
-      return acc;
-    }, {});
-  }
-  // Return primitives as-is
-  return obj;
+    if (obj == null)
+        return null;
+    // Handle arrays recursively
+    if (Array.isArray(obj)) {
+        return obj.map((item) => filterIgnoredFields(item, ignoredFields));
+    }
+    // Handle objects
+    if (typeof obj === "object" && obj !== null) {
+        return Object.keys(obj).reduce((acc, key) => {
+            // Skip ignored fields
+            if (ignoredFields.includes(key)) {
+                return acc;
+            }
+            const value = obj[key];
+            // Recursively filter nested objects and arrays
+            if (typeof value === "object" && value !== null) {
+                acc[key] = filterIgnoredFields(value, ignoredFields);
+            }
+            else {
+                acc[key] = value;
+            }
+            return acc;
+        }, {});
+    }
+    // Return primitives as-is
+    return obj;
 }
 /**
  * Check if an object contains any ignored fields with non-null values
@@ -81,8 +83,9 @@ export function filterIgnoredFields(obj, ignoredFields = OAS_IGNORED_FIELDS) {
  * }
  */
 export function hasIgnoredFields(obj, ignoredFields = OAS_IGNORED_FIELDS) {
-  if (!obj || typeof obj !== "object") return false;
-  return ignoredFields.some((field) => field in obj && obj[field] != null);
+    if (!obj || typeof obj !== "object")
+        return false;
+    return ignoredFields.some((field) => field in obj && obj[field] != null);
 }
 /**
  * Ensure clean round-trip serialization of OpenAPI specs
@@ -94,7 +97,7 @@ export function hasIgnoredFields(obj, ignoredFields = OAS_IGNORED_FIELDS) {
  * @returns Cleaned spec with no audit fields
  */
 export function cleanSpecForRoundTrip(spec) {
-  return filterIgnoredFields(spec, OAS_IGNORED_FIELDS);
+    return filterIgnoredFields(spec, OAS_IGNORED_FIELDS);
 }
 /**
  * Validate that a spec object only contains standard OpenAPI fields
@@ -109,7 +112,7 @@ export function cleanSpecForRoundTrip(spec) {
  * }
  */
 export function isCleanSpec(spec) {
-  return !hasIgnoredFields(spec);
+    return !hasIgnoredFields(spec);
 }
 /**
  * Get metadata about which ignored fields are present in an object
@@ -124,12 +127,10 @@ export function isCleanSpec(spec) {
  *   console.warn(`Found unexpected fields: ${presentFields.join(', ')}`);
  * }
  */
-export function getIgnoredFieldsPresent(
-  obj,
-  ignoredFields = OAS_IGNORED_FIELDS,
-) {
-  if (!obj || typeof obj !== "object") return [];
-  return ignoredFields.filter((field) => field in obj && obj[field] != null);
+export function getIgnoredFieldsPresent(obj, ignoredFields = OAS_IGNORED_FIELDS) {
+    if (!obj || typeof obj !== "object")
+        return [];
+    return ignoredFields.filter((field) => field in obj && obj[field] != null);
 }
 /**
  * Deep clone an object with ignored fields filtered out
@@ -137,11 +138,8 @@ export function getIgnoredFieldsPresent(
  * @param obj - Object to clone
  * @returns Deep clone with ignored fields removed
  */
-export function cloneWithoutIgnoredFields(
-  obj,
-  ignoredFields = OAS_IGNORED_FIELDS,
-) {
-  return JSON.parse(JSON.stringify(filterIgnoredFields(obj, ignoredFields)));
+export function cloneWithoutIgnoredFields(obj, ignoredFields = OAS_IGNORED_FIELDS) {
+    return JSON.parse(JSON.stringify(filterIgnoredFields(obj, ignoredFields)));
 } /**
  * Convert object to JSON string, excluding ignored fields
  *
@@ -149,13 +147,9 @@ export function cloneWithoutIgnoredFields(
  * @param space - Indentation for formatting (default: 2)
  * @returns JSON string without ignored fields
  */
-export function toCleanJSON(
-  obj,
-  space = 2,
-  ignoredFields = OAS_IGNORED_FIELDS,
-) {
-  const cleaned = filterIgnoredFields(obj, ignoredFields);
-  return JSON.stringify(cleaned, null, space);
+export function toCleanJSON(obj, space = 2, ignoredFields = OAS_IGNORED_FIELDS) {
+    const cleaned = filterIgnoredFields(obj, ignoredFields);
+    return JSON.stringify(cleaned, null, space);
 } /**
  * Merge two spec objects, ensuring no ignored fields are introduced
  *
@@ -164,8 +158,8 @@ export function toCleanJSON(
  * @returns Merged spec with ignored fields filtered
  */
 export function mergeSpecsClean(base, override) {
-  const merged = { ...base, ...override };
-  return filterIgnoredFields(merged);
+    const merged = { ...base, ...override };
+    return filterIgnoredFields(merged);
 }
 /**
  * Strip ignored fields from a plain JavaScript object (in-place mutation)
@@ -174,24 +168,22 @@ export function mergeSpecsClean(base, override) {
  *
  * @param obj - Object to strip fields from (will be modified)
  */
-export function stripIgnoredFieldsInPlace(
-  obj,
-  ignoredFields = OAS_IGNORED_FIELDS,
-) {
-  if (!obj || typeof obj !== "object") return;
-  if (Array.isArray(obj)) {
-    obj.forEach((item) => stripIgnoredFieldsInPlace(item, ignoredFields));
-    return;
-  }
-  // Delete ignored fields from object
-  ignoredFields.forEach((field) => {
-    delete obj[field];
-  });
-  // Recursively strip nested objects
-  Object.values(obj).forEach((value) => {
-    if (typeof value === "object" && value !== null) {
-      stripIgnoredFieldsInPlace(value, ignoredFields);
+export function stripIgnoredFieldsInPlace(obj, ignoredFields = OAS_IGNORED_FIELDS) {
+    if (!obj || typeof obj !== "object")
+        return;
+    if (Array.isArray(obj)) {
+        obj.forEach((item) => stripIgnoredFieldsInPlace(item, ignoredFields));
+        return;
     }
-  });
+    // Delete ignored fields from object
+    ignoredFields.forEach((field) => {
+        delete obj[field];
+    });
+    // Recursively strip nested objects
+    Object.values(obj).forEach((value) => {
+        if (typeof value === "object" && value !== null) {
+            stripIgnoredFieldsInPlace(value, ignoredFields);
+        }
+    });
 }
 //# sourceMappingURL=OpenAPISpecUtils.js.map

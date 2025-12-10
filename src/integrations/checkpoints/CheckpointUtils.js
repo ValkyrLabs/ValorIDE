@@ -18,13 +18,13 @@ import os from "os";
  * @throws Error if global storage path is invalid
  */
 export async function getShadowGitPath(globalStoragePath, taskId, cwdHash) {
-  if (!globalStoragePath) {
-    throw new Error("Global storage uri is invalid");
-  }
-  const checkpointsDir = path.join(globalStoragePath, "checkpoints", cwdHash);
-  await mkdir(checkpointsDir, { recursive: true });
-  const gitPath = path.join(checkpointsDir, ".git");
-  return gitPath;
+    if (!globalStoragePath) {
+        throw new Error("Global storage uri is invalid");
+    }
+    const checkpointsDir = path.join(globalStoragePath, "checkpoints", cwdHash);
+    await mkdir(checkpointsDir, { recursive: true });
+    const gitPath = path.join(checkpointsDir, ".git");
+    return gitPath;
 }
 /**
  * Gets the current working directory from the VS Code workspace.
@@ -43,38 +43,35 @@ export async function getShadowGitPath(globalStoragePath, taskId, cwdHash) {
  * @throws Error if no workspace is detected, if in a protected directory, or if no read access
  */
 export async function getWorkingDirectory() {
-  const cwd = vscode.workspace.workspaceFolders
-    ?.map((folder) => folder.uri.fsPath)
-    .at(0);
-  if (!cwd) {
-    throw new Error(
-      "No workspace detected. Please open ValorIDE in a workspace to use checkpoints.",
-    );
-  }
-  // Check if directory exists and we have read permissions
-  try {
-    await access(cwd, constants.R_OK);
-  } catch (error) {
-    throw new Error(
-      `Cannot access workspace directory. Please ensure VS Code has permission to access your workspace. Error: ${error instanceof Error ? error.message : String(error)}`,
-    );
-  }
-  const homedir = os.homedir();
-  const desktopPath = path.join(homedir, "Desktop");
-  const documentsPath = path.join(homedir, "Documents");
-  const downloadsPath = path.join(homedir, "Downloads");
-  switch (cwd) {
-    case homedir:
-      throw new Error("Cannot use checkpoints in home directory");
-    case desktopPath:
-      throw new Error("Cannot use checkpoints in Desktop directory");
-    case documentsPath:
-      throw new Error("Cannot use checkpoints in Documents directory");
-    case downloadsPath:
-      throw new Error("Cannot use checkpoints in Downloads directory");
-    default:
-      return cwd;
-  }
+    const cwd = vscode.workspace.workspaceFolders
+        ?.map((folder) => folder.uri.fsPath)
+        .at(0);
+    if (!cwd) {
+        throw new Error("No workspace detected. Please open ValorIDE in a workspace to use checkpoints.");
+    }
+    // Check if directory exists and we have read permissions
+    try {
+        await access(cwd, constants.R_OK);
+    }
+    catch (error) {
+        throw new Error(`Cannot access workspace directory. Please ensure VS Code has permission to access your workspace. Error: ${error instanceof Error ? error.message : String(error)}`);
+    }
+    const homedir = os.homedir();
+    const desktopPath = path.join(homedir, "Desktop");
+    const documentsPath = path.join(homedir, "Documents");
+    const downloadsPath = path.join(homedir, "Downloads");
+    switch (cwd) {
+        case homedir:
+            throw new Error("Cannot use checkpoints in home directory");
+        case desktopPath:
+            throw new Error("Cannot use checkpoints in Desktop directory");
+        case documentsPath:
+            throw new Error("Cannot use checkpoints in Documents directory");
+        case downloadsPath:
+            throw new Error("Cannot use checkpoints in Downloads directory");
+        default:
+            return cwd;
+    }
 }
 /**
  * Hashes the current working directory to a 13-character numeric hash.
@@ -83,15 +80,15 @@ export async function getWorkingDirectory() {
  * @throws {Error} If the working directory path is empty or invalid
  */
 export function hashWorkingDir(workingDir) {
-  if (!workingDir) {
-    throw new Error("Working directory path cannot be empty");
-  }
-  let hash = 0;
-  for (let i = 0; i < workingDir.length; i++) {
-    hash = (hash * 31 + workingDir.charCodeAt(i)) >>> 0;
-  }
-  const bigHash = BigInt(hash);
-  const numericHash = bigHash.toString().slice(0, 13);
-  return numericHash;
+    if (!workingDir) {
+        throw new Error("Working directory path cannot be empty");
+    }
+    let hash = 0;
+    for (let i = 0; i < workingDir.length; i++) {
+        hash = (hash * 31 + workingDir.charCodeAt(i)) >>> 0;
+    }
+    const bigHash = BigInt(hash);
+    const numericHash = bigHash.toString().slice(0, 13);
+    return numericHash;
 }
 //# sourceMappingURL=CheckpointUtils.js.map

@@ -6,8 +6,8 @@ import { checkpointDiff } from "./checkpointDiff";
 import { checkpointRestore } from "./checkpointRestore";
 // Register all checkpoints service methods
 export function registerAllMethods() {
-  // Register each method with the registry
-  registerMethod("checkpointDiff", checkpointDiff);
-  registerMethod("checkpointRestore", checkpointRestore);
+    // Register each method with the registry
+    registerMethod("checkpointDiff", checkpointDiff);
+    registerMethod("checkpointRestore", checkpointRestore);
 }
 //# sourceMappingURL=methods.js.map

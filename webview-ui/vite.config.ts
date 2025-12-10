@@ -66,8 +66,12 @@ export default defineConfig({
         replacement: resolve(__dirname, "../src/shared"),
       },
       {
-        find: "@thor",
-        replacement: resolve(__dirname, "./src/thor"),
+        find: "@thorapi",
+        replacement: resolve(__dirname, "./src"),
+      },
+      {
+        find: "@",
+        replacement: resolve(__dirname, "./src/"),
       },
       {
         find: "@valkyr/component-library",

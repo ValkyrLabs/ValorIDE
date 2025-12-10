@@ -1,7 +1,7 @@
 import { useCallback, useState, useRef, useMemo } from "react";
 import styled from "styled-components";
 import { McpMarketplaceItem, McpServer } from "@shared/mcp";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import { useEvent } from "react-use";
 import {
   FaGithub,
@@ -376,16 +376,16 @@ const StyledInstallButton = styled.button<{ $isInstalled?: boolean }>`
 
   &:hover:not(:disabled) {
     background: ${(props) =>
-      props.$isInstalled
-        ? "var(--vscode-button-secondaryHoverBackground)"
-        : "var(--vscode-button-hoverBackground)"};
+    props.$isInstalled
+      ? "var(--vscode-button-secondaryHoverBackground)"
+      : "var(--vscode-button-hoverBackground)"};
   }
 
   &:active:not(:disabled) {
     background: ${(props) =>
-      props.$isInstalled
-        ? "var(--vscode-button-secondaryBackground)"
-        : "var(--vscode-button-background)"};
+    props.$isInstalled
+      ? "var(--vscode-button-secondaryBackground)"
+      : "var(--vscode-button-background)"};
     opacity: 0.7;
   }
 

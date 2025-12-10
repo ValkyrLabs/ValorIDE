@@ -2,7 +2,7 @@ import {
   WebsocketMessage,
   WebsocketMessageTypeEnum,
   WebsocketMessageToJSON,
-} from "@thor/model";
+} from "@thorapi/model";
 import {
   MothershipService,
   RemoteCommand,
@@ -10,13 +10,13 @@ import {
 
 export interface ChatAction {
   type:
-    | "chat_message"
-    | "task_start"
-    | "task_complete"
-    | "tool_use"
-    | "file_edit"
-    | "command_execute"
-    | "api_data";
+  | "chat_message"
+  | "task_start"
+  | "task_complete"
+  | "tool_use"
+  | "file_edit"
+  | "command_execute"
+  | "api_data";
   taskId?: string;
   messageId?: string;
   toolName?: string;

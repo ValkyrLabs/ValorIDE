@@ -63,7 +63,7 @@ const StartServerModal = ({
             "Runs type checking and linting",
             "Generates client library for integration",
             "Creates distributable package",
-            "Updates tsconfig path aliases (@thor/* and @valkyr/component-library/*)",
+            "Updates tsconfig path aliases (@thorapi/* and @valkyr/component-library/*)",
           ],
         };
       default:
@@ -132,7 +132,7 @@ const StartServerModal = ({
                     }),
                     _jsx("ul", {
                       children: serverInfo.features.map((feature, index) =>
-                        _jsx("li", { children: feature }, index),
+                        _jsx("li", { children: feature }, index)
                       ),
                     }),
                   ],

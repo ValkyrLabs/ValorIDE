@@ -1,10 +1,10 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 import { render, screen, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { MockCommunicationService } from "@/mocks/MockCommunicationService"; // Assuming a mock service exists
+import { MockCommunicationService } from "@thorapi/mocks/MockCommunicationService"; // Assuming a mock service exists
 import OfflineBanner from "./OfflineBanner";
 // Mock the custom hook
-jest.mock("@/context/CommunicationServiceContext", () => ({
+jest.mock("@thorapi/context/CommunicationServiceContext", () => ({
   useCommunicationService: jest.fn(),
 }));
 describe("OfflineBanner", () => {
@@ -15,8 +15,8 @@ describe("OfflineBanner", () => {
     // Create a new mock service instance for each test
     mockSvc = new MockCommunicationService();
     // Mock the useCommunicationService hook to return our mock instance
-    require("@/context/CommunicationServiceContext").useCommunicationService.mockReturnValue(
-      mockSvc,
+    require("@thorapi/context/CommunicationServiceContext").useCommunicationService.mockReturnValue(
+      mockSvc
     );
     // Use fake timers for setTimeout
     jest.useFakeTimers();
@@ -35,7 +35,7 @@ describe("OfflineBanner", () => {
     render(_jsx(OfflineBanner, {}));
     expect(screen.getByRole("status")).toBeInTheDocument();
     expect(
-      screen.getByText("Communication service unreachable. Features limited."),
+      screen.getByText("Communication service unreachable. Features limited.")
     ).toBeVisible();
   });
   it("should hide after 5 seconds if communication service is noop", () => {

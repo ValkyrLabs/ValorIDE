@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useAddUsageTransactionMutation } from "../../thor/redux/services/UsageTransactionService";
+import { useAddUsageTransactionMutation } from "../..//redux/services/UsageTransactionService";
 
 /**
  * Fires a one-time $0.01 debit when the webview starts up

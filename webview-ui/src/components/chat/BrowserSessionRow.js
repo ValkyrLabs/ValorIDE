@@ -15,12 +15,17 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 import { BROWSER_VIEWPORT_PRESETS } from "@shared/BrowserSettings";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
-import { BrowserSettingsMenu } from "@/components/browser/BrowserSettingsMenu";
-import { CheckpointControls } from "@/components/common/CheckpointControls";
-import CodeBlock, { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import { ChatRowContent, ProgressIndicator } from "@/components/chat/ChatRow";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
+import { BrowserSettingsMenu } from "@thorapi/components/browser/BrowserSettingsMenu";
+import { CheckpointControls } from "@thorapi/components/common/CheckpointControls";
+import CodeBlock, {
+  CODE_BLOCK_BG_COLOR,
+} from "@thorapi/components/common/CodeBlock";
+import {
+  ChatRowContent,
+  ProgressIndicator,
+} from "@thorapi/components/chat/ChatRow";
 const browserSessionRowContainerInnerStyle = {
   display: "flex",
   alignItems: "center",
@@ -228,14 +233,14 @@ const BrowserSessionRow = memo((props) => {
   const initialUrl = useMemo(() => {
     const launchMessage = messages.find(
       (m) =>
-        m.ask === "browser_action_launch" || m.say === "browser_action_launch",
+        m.ask === "browser_action_launch" || m.say === "browser_action_launch"
     );
     return launchMessage?.text || "";
   }, [messages]);
   const isAutoApproved = useMemo(() => {
     const launchMessage = messages.find(
       (m) =>
-        m.ask === "browser_action_launch" || m.say === "browser_action_launch",
+        m.ask === "browser_action_launch" || m.say === "browser_action_launch"
     );
     return launchMessage?.say === "browser_action_launch";
   }, [messages]);
@@ -296,15 +301,15 @@ const BrowserSessionRow = memo((props) => {
               message: message,
               setMaxActionHeight: setMaxActionHeight,
             },
-            message.ts,
-          ),
+            message.ts
+          )
         ),
         !isBrowsing &&
           messages.some((m) => m.say === "browser_action_result") &&
           currentPageIndex === 0 &&
           _jsx(BrowserActionBox, { action: "launch", text: initialUrl }),
       ],
-    }),
+    })
   );
   useEffect(() => {
     if (actionHeight === 0 || actionHeight === Infinity) {
@@ -506,7 +511,7 @@ const BrowserSessionRow = memo((props) => {
             ],
           }),
       ],
-    }),
+    })
   );
   // Height change effect
   useEffect(() => {

@@ -19,7 +19,7 @@ import { useState, useRef, useEffect } from "react";
 import { Overlay, Popover } from "react-bootstrap";
 import { FaQuestionCircle, FaExternalLinkAlt, FaBook } from "react-icons/fa";
 import "./styles.css";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 const DOCS_BASE = "https://valkyrlabs.com";
 // ============================================================================
 // DOCUMENTATION REGISTRY - Real URLs from Docusaurus docs

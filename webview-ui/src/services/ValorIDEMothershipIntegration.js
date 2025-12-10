@@ -1,4 +1,4 @@
-import { WebsocketMessageTypeEnum } from "@thor/model";
+import { WebsocketMessageTypeEnum } from "@thorapi/model";
 /**
  * Integrates ValorIDE chat actions with the mothership WebSocket system
  * Sends every significant action to ValkyrAI for coordination and remote control
@@ -92,7 +92,7 @@ export class ValorIDEMothershipIntegration {
       console.log("🚀 sendMessage result:", result);
       console.log(
         "🚀 Successfully sent ValorIDE command to mothership:",
-        action.type,
+        action.type
       );
     } catch (error) {
       console.error("🚀 Failed to send chat action to mothership:", error);
@@ -310,7 +310,7 @@ export class ValorIDEMothershipIntegration {
     this.isProcessingQueue = true;
     console.log(
       "🚀 Processing action queue:",
-      `${this.actionQueue.length} queued actions`,
+      `${this.actionQueue.length} queued actions`
     );
     while (
       this.actionQueue.length > 0 &&

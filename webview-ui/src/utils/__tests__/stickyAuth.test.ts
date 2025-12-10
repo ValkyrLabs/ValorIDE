@@ -7,7 +7,7 @@ import {
   clearStoredPrincipal,
   clearStoredJwtToken,
 } from "../accessControl";
-import { Principal } from "@/thor/model";
+import { Principal } from "@thorapi//model";
 
 // Mock storage for Node.js environment
 const createMockStorage = () => {

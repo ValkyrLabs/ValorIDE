@@ -5,10 +5,13 @@ import { FaCheckCircle } from "react-icons/fa";
 import { FiUserCheck } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { useAddPrincipalMutation } from "@thor/redux/services/PrincipalService";
+import { useAddPrincipalMutation } from "@thorapi/redux/services/PrincipalService";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import "./index.css";
-import { storeJwtToken, writeStoredPrincipal } from "@/utils/accessControl";
+import {
+  storeJwtToken,
+  writeStoredPrincipal,
+} from "@thorapi/utils/accessControl";
 const validationSchema = Yup.object().shape({
   firstName: Yup.string()
     .min(2, "First Name must be minimum 2 characters")
@@ -31,7 +34,7 @@ const validationSchema = Yup.object().shape({
   password: Yup.string()
     .matches(
       /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/,
-      "Password must contain a lowercase character, an uppercase character, and a number",
+      "Password must contain a lowercase character, an uppercase character, and a number"
     )
     .required()
     .min(8, "Password must be at least 8 characters"),

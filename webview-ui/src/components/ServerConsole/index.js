@@ -20,16 +20,19 @@ import {
   WebsocketMessageFromJSON,
   WebsocketMessageToJSON,
   WebsocketMessageTypeEnum,
-} from "../../thor/model";
+} from "../..//model";
 import { getWebsocketUrl, isValidWsUrl } from "../../websocket/websocket";
 import { useMothership } from "../../context/MothershipContext";
 import { addMessage, setConnected } from "./websocketSlice";
-import SystemAlerts from "@/components/SystemAlerts";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
 import "./ServerConsole.css";
 import { FaPaperPlane } from "react-icons/fa";
 import CoolButton from "../CoolButton";
-import { deriveWsUrlFromHost, getValkyraiHost } from "@/utils/valkyraiHost";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import {
+  deriveWsUrlFromHost,
+  getValkyraiHost,
+} from "@thorapi/utils/valkyraiHost";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 const { Client } = StompJs;
 const fallbackWsBase = (host) =>
   deriveWsUrlFromHost(host || getValkyraiHost()) ?? "ws://localhost:8080";
@@ -75,7 +78,7 @@ const ServerConsole = () => {
       : fallbackWsBase(valkyraiHost);
     if (!isValidWsUrl(socketUrl)) {
       console.warn(
-        "ServerConsole: WebSocket disabled (missing or invalid VITE_wssBasePath/base path).",
+        "ServerConsole: WebSocket disabled (missing or invalid VITE_wssBasePath/base path)."
       );
       dispatch(setConnected(false));
       dispatch(
@@ -84,7 +87,7 @@ const ServerConsole = () => {
           payload:
             "WebSocket disabled: configure VITE_wssBasePath or ensure VITE_basePath is an http(s) URL.",
           createdDate: new Date(),
-        }),
+        })
       );
       return undefined;
     }
@@ -97,13 +100,13 @@ const ServerConsole = () => {
         dispatch(setConnected(true));
         stompClient.subscribe("/topic/statuses", (message) => {
           const parsedMessage = WebsocketMessageFromJSON(
-            JSON.parse(message.body),
+            JSON.parse(message.body)
           );
           dispatch(addMessage(parsedMessage));
         });
         stompClient.subscribe("/topic/messages", (message) => {
           const parsedMessage = WebsocketMessageFromJSON(
-            JSON.parse(message.body),
+            JSON.parse(message.body)
           );
           dispatch(addMessage(parsedMessage));
         });
@@ -276,7 +279,7 @@ const ServerConsole = () => {
                           }),
                         ],
                       },
-                      index,
+                      index
                     );
                   })
                 : _jsxs("div", {

@@ -1,7 +1,7 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 import styled from "styled-components";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import { vscode } from "@/utils/vscode";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import { vscode } from "@thorapi/utils/vscode";
 const OptionButton = styled.button`
   padding: 8px 12px;
   background: ${(props) =>
@@ -62,8 +62,8 @@ export const OptionsButtons = ({
           },
           children: option,
         },
-        index,
-      ),
+        index
+      )
     ),
   });
 };

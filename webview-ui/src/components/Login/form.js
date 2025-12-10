@@ -13,7 +13,7 @@ import CoolButton from "@valkyr/component-library/CoolButton";
 import ErrorModal from "../ErrorModal";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { storeJwtToken, writeStoredPrincipal } from "../../utils/accessControl";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 const validationSchema = Yup.object().shape({
   username: Yup.string()
     .min(4, "User Name must be minimum 4 characters")

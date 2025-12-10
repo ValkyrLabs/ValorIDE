@@ -19,7 +19,7 @@ import { useState, useRef, useCallback, useMemo } from "react";
 import { Image, Spinner } from "react-bootstrap";
 import { FaCamera, FaCheck, FaTimes } from "react-icons/fa";
 import axios from "axios";
-import { BASE_PATH } from "@thor/src";
+import { BASE_PATH } from "@thorapi/src";
 import "./UserAvatar.css";
 // Semantic color palette for initials background - beautiful pastels
 const AVATAR_COLORS = [
@@ -104,7 +104,7 @@ export const UserAvatar = ({
   const sizeConfig = SIZE_MAP[size];
   const initials = useMemo(
     () => getInitials(firstName, lastName, username),
-    [firstName, lastName, username],
+    [firstName, lastName, username]
   );
   const colorSeed = `${firstName || ""}${lastName || ""}${username || ""}`;
   const avatarColors = useMemo(() => getAvatarColor(colorSeed), [colorSeed]);
@@ -133,7 +133,7 @@ export const UserAvatar = ({
           formData,
           {
             headers,
-          },
+          }
         );
         const media = response.data;
         if (media.mediaUrl) {
@@ -151,7 +151,7 @@ export const UserAvatar = ({
         setIsUploading(false);
       }
     },
-    [onAvatarChange, onUploaded],
+    [onAvatarChange, onUploaded]
   );
   // Drag and drop handlers
   const handleDragOver = useCallback(
@@ -163,7 +163,7 @@ export const UserAvatar = ({
       }
       setIsDragOver(true);
     },
-    [editable],
+    [editable]
   );
   const handleDragLeave = useCallback((e) => {
     e.preventDefault();
@@ -183,7 +183,7 @@ export const UserAvatar = ({
         uploadFile(files[0]);
       }
     },
-    [editable, uploadFile],
+    [editable, uploadFile]
   );
   // Click to upload
   const handleClick = useCallback(() => {
@@ -202,7 +202,7 @@ export const UserAvatar = ({
       // Reset input so same file can be selected again
       e.target.value = "";
     },
-    [uploadFile],
+    [uploadFile]
   );
   const handleImageError = useCallback(() => {
     setImageError(true);
@@ -214,7 +214,7 @@ export const UserAvatar = ({
         handleClick();
       }
     },
-    [handleClick],
+    [handleClick]
   );
   // Should we show the image or fallback to initials?
   const showImage = avatarUrl && !imageError;

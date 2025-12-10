@@ -7,7 +7,7 @@ import {
   ContentDataContentTypeEnum,
   ContentDataCategoryEnum,
   ContentDataStatusEnum,
-} from "@thor/model";
+} from "@thorapi/model";
 
 export interface TaskCompletionData {
   taskId: string;
@@ -19,7 +19,7 @@ export interface TaskCompletionData {
 export class TaskCompletionSubmitter {
   private static instance: TaskCompletionSubmitter;
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): TaskCompletionSubmitter {
     if (!TaskCompletionSubmitter.instance) {

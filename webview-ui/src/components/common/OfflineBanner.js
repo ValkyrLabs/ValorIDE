@@ -1,6 +1,6 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 import { useState, useEffect } from "react";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 const OfflineBanner = ({ style }) => {
   const svc = useCommunicationService();
   const isNoop = !!svc?.isNoop;

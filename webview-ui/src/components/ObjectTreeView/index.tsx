@@ -25,7 +25,7 @@ import {
   FaRegSave,
 } from "react-icons/fa";
 import CoolButton from "../CoolButton";
-import { getValkyraiHost } from "@/utils/valkyraiHost";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 
 interface ObjectTreeViewProps {
   data: any;
@@ -478,44 +478,44 @@ const ObjectTreeView: React.FC<ObjectTreeViewProps> = ({
             modalDetails?.secure ||
             modalDetails?.enum ||
             modalDetails?.type) && (
-            <Form.Group className="mb-3">
-              {modalDetails?.description && (
-                <>
-                  <Form.Label className="text-light">
-                    <h5>Description</h5>
-                  </Form.Label>
-                  <Form.Text className="d-block text-light">
-                    {modalDetails.description}
-                  </Form.Text>
-                  <br />
-                </>
-              )}
-              {modalDetails?.type && (
-                <>
-                  <h5>Type:</h5> {modalDetails.type}
-                  <br />
-                </>
-              )}
-              {modalDetails?.pattern && (
-                <>
-                  <h5>Pattern:</h5> {modalDetails.pattern}
-                  <br />
-                </>
-              )}
-              {modalDetails?.secure && (
-                <>
-                  <h5>Secure Field</h5>
-                  <br />
-                </>
-              )}
-              {modalDetails?.enum && (
-                <>
-                  <h5>Enum:</h5> {modalDetails.enum.join(", ")}
-                  <br />
-                </>
-              )}
-            </Form.Group>
-          )}
+              <Form.Group className="mb-3">
+                {modalDetails?.description && (
+                  <>
+                    <Form.Label className="text-light">
+                      <h5>Description</h5>
+                    </Form.Label>
+                    <Form.Text className="d-block text-light">
+                      {modalDetails.description}
+                    </Form.Text>
+                    <br />
+                  </>
+                )}
+                {modalDetails?.type && (
+                  <>
+                    <h5>Type:</h5> {modalDetails.type}
+                    <br />
+                  </>
+                )}
+                {modalDetails?.pattern && (
+                  <>
+                    <h5>Pattern:</h5> {modalDetails.pattern}
+                    <br />
+                  </>
+                )}
+                {modalDetails?.secure && (
+                  <>
+                    <h5>Secure Field</h5>
+                    <br />
+                  </>
+                )}
+                {modalDetails?.enum && (
+                  <>
+                    <h5>Enum:</h5> {modalDetails.enum.join(", ")}
+                    <br />
+                  </>
+                )}
+              </Form.Group>
+            )}
           <Form.Group>
             <Form.Label className="text-light">Value</Form.Label>
             {renderEditableModalField(modalDetails?.type || "string")}

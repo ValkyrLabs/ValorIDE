@@ -4,10 +4,10 @@ import {
   Fragment as _Fragment,
 } from "react/jsx-runtime";
 import { VSCodeLink } from "@vscode/webview-ui-toolkit/react";
-import TelemetryBanner from "@/components/common/TelemetryBanner";
-import Announcement from "@/components/chat/Announcement";
-import HistoryPreview from "@/components/history/HistoryPreview";
-import AutoApproveMenu from "@/components/chat/AutoApproveMenu";
+import TelemetryBanner from "@thorapi/components/common/TelemetryBanner";
+import Announcement from "@thorapi/components/chat/Announcement";
+import HistoryPreview from "@thorapi/components/history/HistoryPreview";
+import AutoApproveMenu from "@thorapi/components/chat/AutoApproveMenu";
 const WelcomeScreen = ({
   version,
   telemetrySetting,

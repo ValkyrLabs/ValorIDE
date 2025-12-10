@@ -1,8 +1,8 @@
 import { useCallback } from "react";
-import { WebsocketMessage, WebsocketMessageTypeEnum } from "@thor/model";
+import { WebsocketMessage, WebsocketMessageTypeEnum } from "@thorapi/model";
 import { ValorIDEAsk } from "@shared/ExtensionMessage";
-import { vscode } from "@/utils/vscode";
-import { TaskServiceClient } from "@/services/grpc-client";
+import { vscode } from "@thorapi/utils/vscode";
+import { TaskServiceClient } from "@thorapi/services/grpc-client";
 
 interface UseMessageHandlingProps {
   messages: any[];

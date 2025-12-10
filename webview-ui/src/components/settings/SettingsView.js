@@ -12,10 +12,13 @@ import {
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { validateApiConfiguration, validateModelId } from "@/utils/validate";
-import { vscode } from "@/utils/vscode";
-import SettingsButton from "@/components/common/SettingsButton";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import {
+  validateApiConfiguration,
+  validateModelId,
+} from "@thorapi/utils/validate";
+import { vscode } from "@thorapi/utils/vscode";
+import SettingsButton from "@thorapi/components/common/SettingsButton";
 import ApiOptions from "./ApiOptions";
 import { TabButton } from "../mcp/configuration/McpConfigurationView";
 import { useEvent } from "react-use";
@@ -23,10 +26,10 @@ import BrowserSettingsSection from "./BrowserSettingsSection";
 import LLMDetailsSelector from "../LLMDetailsSelector";
 import { VscSettingsGear } from "react-icons/vsc";
 import { FaStar, FaShareAlt, FaCheck, FaTag } from "react-icons/fa";
-import StatusBadge from "@/components/common/StatusBadge";
-import SystemAlerts from "@/components/SystemAlerts";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
-import { DEFAULT_VALKYRAI_HOST } from "@/utils/valkyraiHost";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
+import { DEFAULT_VALKYRAI_HOST } from "@thorapi/utils/valkyraiHost";
 const { IS_DEV } = process.env;
 const SettingsView = ({ onDone }) => {
   const {
@@ -47,7 +50,7 @@ const SettingsView = ({ onDone }) => {
   const [modelIdErrorMessage, setModelIdErrorMessage] = useState(undefined);
   const [pendingTabChange, setPendingTabChange] = useState(null);
   const [valkyraiHostInput, setValkyraiHostInput] = useState(
-    apiConfiguration?.valkyraiHost || DEFAULT_VALKYRAI_HOST,
+    apiConfiguration?.valkyraiHost || DEFAULT_VALKYRAI_HOST
   );
   const [valkyraiHostStatus, setValkyraiHostStatus] = useState();
   const [valkyraiHostStatusKind, setValkyraiHostStatusKind] = useState("idle");
@@ -72,14 +75,14 @@ const SettingsView = ({ onDone }) => {
   }, [persistJwt]);
   useEffect(() => {
     setValkyraiHostInput(
-      apiConfiguration?.valkyraiHost || DEFAULT_VALKYRAI_HOST,
+      apiConfiguration?.valkyraiHost || DEFAULT_VALKYRAI_HOST
     );
   }, [apiConfiguration?.valkyraiHost]);
   const handleSubmit = (withoutDone = false) => {
     const apiValidationResult = validateApiConfiguration(apiConfiguration);
     const modelIdValidationResult = validateModelId(
       apiConfiguration,
-      openRouterModels,
+      openRouterModels
     );
     // setApiErrorMessage(apiValidationResult)
     // setModelIdErrorMessage(modelIdValidationResult)
@@ -168,7 +171,7 @@ const SettingsView = ({ onDone }) => {
             setValkyraiHostStatus("Unavailable");
             setValkyraiHostStatusKind("error");
             setValkyraiHostError(
-              message.error || "Unable to reach ValkyrAI host.",
+              message.error || "Unable to reach ValkyrAI host."
             );
           }
           pendingHostRef.current = undefined;
@@ -192,7 +195,7 @@ const SettingsView = ({ onDone }) => {
           break;
       }
     },
-    [pendingTabChange],
+    [pendingTabChange]
   );
   useEvent("message", handleMessage);
   const handleResetState = () => {
@@ -290,7 +293,7 @@ const SettingsView = ({ onDone }) => {
   const handleShare = async () => {
     try {
       await navigator.clipboard.writeText(
-        "https://marketplace.visualstudio.com/items?itemName=ValkyrLabsInc.valoride-dev",
+        "https://marketplace.visualstudio.com/items?itemName=ValkyrLabsInc.valoride-dev"
       );
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
@@ -394,8 +397,8 @@ const SettingsView = ({ onDone }) => {
                             },
                             children: id,
                           },
-                          id,
-                        ),
+                          id
+                        )
                       ),
                     }),
                   ],
@@ -430,7 +433,7 @@ const SettingsView = ({ onDone }) => {
                             apiErrorMessage: apiErrorMessage,
                             modelIdErrorMessage: modelIdErrorMessage,
                           },
-                          chatSettings.mode,
+                          chatSettings.mode
                         ),
                       }),
                     ],
@@ -442,7 +445,7 @@ const SettingsView = ({ onDone }) => {
                       apiErrorMessage: apiErrorMessage,
                       modelIdErrorMessage: modelIdErrorMessage,
                     },
-                    "single",
+                    "single"
                   ),
               _jsxs("div", {
                 className: "mb-[5px]",

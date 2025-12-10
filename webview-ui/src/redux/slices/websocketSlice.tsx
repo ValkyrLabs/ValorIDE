@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 // Import or define Principal
-import { WebsocketSession } from "@thor/model"; // WebsocketSession";
+import { WebsocketSession } from "@thorapi/model"; // WebsocketSession";
 
 const websocketSlice = createSlice({
   name: "websocket",

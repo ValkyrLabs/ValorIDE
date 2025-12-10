@@ -7,13 +7,13 @@ import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "react-use";
 import { mentionRegexGlobal } from "@shared/context-mentions";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { formatLargeNumber } from "@/utils/format";
-import { formatSize } from "@/utils/format";
-import { vscode } from "@/utils/vscode";
-import Thumbnails from "@/components/common/Thumbnails";
-import { normalizeApiConfiguration } from "@/components/settings/ApiOptions";
-import { validateSlashCommand } from "@/utils/slash-commands";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { formatLargeNumber } from "@thorapi/utils/format";
+import { formatSize } from "@thorapi/utils/format";
+import { vscode } from "@thorapi/utils/vscode";
+import Thumbnails from "@thorapi/components/common/Thumbnails";
+import { normalizeApiConfiguration } from "@thorapi/components/settings/ApiOptions";
+import { validateSlashCommand } from "@thorapi/utils/slash-commands";
 import {
   FaArrowUp,
   FaArrowDown,
@@ -30,7 +30,7 @@ import {
   FaClock,
 } from "react-icons/fa";
 import StatusBadge from "../common/StatusBadge";
-import TaskThermometer from "@/components/TaskThermometer";
+import TaskThermometer from "@thorapi/components/TaskThermometer";
 const TaskHeader = ({
   task,
   phase,
@@ -59,7 +59,7 @@ const TaskHeader = ({
   const textRef = useRef(null);
   const { selectedModelInfo } = useMemo(
     () => normalizeApiConfiguration(apiConfiguration),
-    [apiConfiguration],
+    [apiConfiguration]
   );
   const contextWindow = selectedModelInfo?.contextWindow;
   // Open task header when checkpoint tracker error message is set
@@ -651,10 +651,10 @@ const TaskHeader = ({
                           children: [
                             checkpointTrackerErrorMessage.replace(
                               /disabling checkpoints\.$/,
-                              "",
+                              ""
                             ),
                             checkpointTrackerErrorMessage.endsWith(
-                              "disabling checkpoints.",
+                              "disabling checkpoints."
                             ) &&
                               _jsx(_Fragment, {
                                 children: _jsx("a", {
@@ -673,7 +673,7 @@ const TaskHeader = ({
                                 }),
                               }),
                             checkpointTrackerErrorMessage.includes(
-                              "Git must be installed to use checkpoints.",
+                              "Git must be installed to use checkpoints."
                             ) &&
                               _jsxs(_Fragment, {
                                 children: [
@@ -726,7 +726,7 @@ const highlightSlashCommands = (text, withShadow = true) => {
           : "mention-context-highlight",
         children: ["/", commandName],
       },
-      "slashCommand",
+      "slashCommand"
     ),
     afterCommand,
   ];
@@ -753,7 +753,7 @@ export const highlightMentions = (text, withShadow = true) => {
             vscode.postMessage({ type: "openMention", text: part }),
           children: ["@", part],
         },
-        index,
+        index
       );
     }
   });

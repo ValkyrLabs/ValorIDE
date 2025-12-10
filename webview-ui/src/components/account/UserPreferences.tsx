@@ -6,20 +6,20 @@ import {
   SalesOrder,
   Customer,
   Invoice,
-} from "@thor/model";
+} from "@thorapi/model";
 import {
   useGetUserPreferencesQuery,
   useGetUserPreferencesPagedQuery,
   useAddUserPreferenceMutation,
   useUpdateUserPreferenceMutation,
   useDeleteUserPreferenceMutation,
-} from "@thor/redux/services/UserPreferenceService";
-import { useGetSalesOrdersQuery } from "@thor/redux/services/SalesOrderService";
-import { useGetCustomersQuery } from "@thor/redux/services/CustomerService";
-import { useGetInvoicesQuery } from "@thor/redux/services/InvoiceService";
-import { useGetPrincipalsQuery } from "@thor/redux/services/PrincipalService";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import LoadingSpinner from "@/components/LoadingSpinner";
+} from "@thorapi/redux/services/UserPreferenceService";
+import { useGetSalesOrdersQuery } from "@thorapi/redux/services/SalesOrderService";
+import { useGetCustomersQuery } from "@thorapi/redux/services/CustomerService";
+import { useGetInvoicesQuery } from "@thorapi/redux/services/InvoiceService";
+import { useGetPrincipalsQuery } from "@thorapi/redux/services/PrincipalService";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import LoadingSpinner from "@thorapi/components/LoadingSpinner";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import {
   VSCodeButton,
@@ -378,9 +378,9 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
                         Modified:{" "}
                         {pref.lastModifiedDate
                           ? format(
-                              new Date(pref.lastModifiedDate),
-                              "MMM dd, yyyy",
-                            )
+                            new Date(pref.lastModifiedDate),
+                            "MMM dd, yyyy",
+                          )
                           : "N/A"}
                       </small>
                     </Card.Body>
@@ -740,9 +740,9 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
                       <dd className="col-sm-7">
                         {selectedPreference.createdDate
                           ? format(
-                              new Date(selectedPreference.createdDate),
-                              "MMM dd, yyyy HH:mm",
-                            )
+                            new Date(selectedPreference.createdDate),
+                            "MMM dd, yyyy HH:mm",
+                          )
                           : "N/A"}
                       </dd>
 
@@ -750,9 +750,9 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
                       <dd className="col-sm-7">
                         {selectedPreference.lastModifiedDate
                           ? format(
-                              new Date(selectedPreference.lastModifiedDate),
-                              "MMM dd, yyyy HH:mm",
-                            )
+                            new Date(selectedPreference.lastModifiedDate),
+                            "MMM dd, yyyy HH:mm",
+                          )
                           : "N/A"}
                       </dd>
 
@@ -765,9 +765,9 @@ const UserPreferences: React.FC<UserPreferencesProps> = memo(
                       <dd className="col-sm-7">
                         {selectedPreference.lastAccessedDate
                           ? format(
-                              new Date(selectedPreference.lastAccessedDate),
-                              "MMM dd, yyyy HH:mm",
-                            )
+                            new Date(selectedPreference.lastAccessedDate),
+                            "MMM dd, yyyy HH:mm",
+                          )
                           : "N/A"}
                       </dd>
                     </dl>

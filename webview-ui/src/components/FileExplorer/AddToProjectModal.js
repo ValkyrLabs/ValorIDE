@@ -59,7 +59,7 @@ const AddToProjectModal = ({
                     _jsxs("li", {
                       children: [
                         "Add ",
-                        _jsx("code", { children: "@thor/*" }),
+                        _jsx("code", { children: "@thorapi/*" }),
                         " alias pointing to the generated TypeScript code",
                       ],
                     }),

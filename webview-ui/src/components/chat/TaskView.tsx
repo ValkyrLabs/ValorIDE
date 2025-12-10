@@ -21,12 +21,13 @@ import {
   combineCommandSequences,
 } from "@shared/combineCommandSequences";
 import { getApiMetrics } from "@shared/getApiMetrics";
-import { normalizeApiConfiguration } from "@/components/settings/ApiOptions";
-import { TaskPhase, deriveTaskProgress } from "@/utils/taskPhase";
-import TaskHeader from "@/components/chat/TaskHeader";
-import BrowserSessionRow from "@/components/chat/BrowserSessionRow";
-import ChatRow from "@/components/chat/ChatRow";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import { normalizeApiConfiguration } from "@thorapi/components/settings/ApiOptions";
+import { TaskPhase, deriveTaskProgress } from "@thorapi/utils/taskPhase";
+import { deriveChatLoadingState } from "@shared/chatLoadingState";
+import TaskHeader from "@thorapi/components/chat/TaskHeader";
+import BrowserSessionRow from "@thorapi/components/chat/BrowserSessionRow";
+import ChatRow from "@thorapi/components/chat/ChatRow";
+import LoadingSpinner from "@thorapi/components/LoadingSpinner";
 
 const ScrollToBottomButton = styled.div`
   background-color: color-mix(
@@ -79,6 +80,7 @@ interface TaskViewProps {
   setInputValue: (value: string) => void;
   sendMessageFromChatRow: (text: string, images?: string[]) => void;
   isChatLoading: boolean;
+  textAreaDisabled: boolean;
   lastApiReqTotalTokens?: number;
 
   // State
@@ -102,6 +104,7 @@ const TaskView: React.FC<TaskViewProps> = ({
   setInputValue,
   sendMessageFromChatRow,
   isChatLoading,
+  textAreaDisabled,
   lastApiReqTotalTokens,
   valorideAsk,
   enableButtons,
@@ -246,6 +249,13 @@ const TaskView: React.FC<TaskViewProps> = ({
     return result;
   }, [visibleMessages]);
 
+  const {
+    phase: taskPhase,
+    ratio: taskPhaseRatio,
+    confidence: taskPhaseConfidence,
+    anchors: taskPhaseAnchors,
+  } = useMemo(() => deriveTaskProgress(messages), [messages]);
+
   const scrollToPhase = useCallback(
     (phase: TaskPhase) => {
       const targetTs = taskPhaseAnchors[phase];
@@ -301,7 +311,7 @@ const TaskView: React.FC<TaskViewProps> = ({
             messages={messageOrGroup}
             isLast={index === groupedMessages.length - 1}
             lastModifiedMessage={modifiedMessages.at(-1)}
-            onHeightChange={() => {}}
+            onHeightChange={() => { }}
             isExpanded={(messageTs: number) => expandedRows[messageTs] ?? false}
             onToggleExpand={(messageTs: number) => {
               setExpandedRows((prev) => ({
@@ -325,7 +335,7 @@ const TaskView: React.FC<TaskViewProps> = ({
           }}
           lastModifiedMessage={modifiedMessages.at(-1)}
           isLast={index === groupedMessages.length - 1}
-          onHeightChange={() => {}}
+          onHeightChange={() => { }}
           inputValue={inputValue}
           setInputValue={setInputValue}
           sendMessageFromChatRow={sendMessageFromChatRow}
@@ -371,12 +381,16 @@ const TaskView: React.FC<TaskViewProps> = ({
     }
   }, [groupedMessages.length]);
 
-  const {
-    phase: taskPhase,
-    ratio: taskPhaseRatio,
-    confidence: taskPhaseConfidence,
-    anchors: taskPhaseAnchors,
-  } = useMemo(() => deriveTaskProgress(messages), [messages]);
+  const { inlineSpinnerCount } = useMemo(
+    () =>
+      deriveChatLoadingState({
+        messages,
+        lastMessage: messages.at(-1),
+        textAreaDisabled,
+        enableButtons,
+      }),
+    [messages, textAreaDisabled, enableButtons],
+  );
 
   return (
     <>
@@ -427,7 +441,7 @@ const TaskView: React.FC<TaskViewProps> = ({
           }}
           atBottomThreshold={10}
         />
-        {isChatLoading && (
+        {isChatLoading && inlineSpinnerCount === 0 && (
           <div
             style={{
               position: "absolute",

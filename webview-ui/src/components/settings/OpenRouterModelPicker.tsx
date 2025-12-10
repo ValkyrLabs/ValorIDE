@@ -13,11 +13,11 @@ import { useRemark } from "react-remark";
 import { useMount } from "react-use";
 import styled from "styled-components";
 import { openRouterDefaultModelId } from "@shared/api";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
 import { highlight } from "../history/HistoryView";
 import { ModelInfoView, normalizeApiConfiguration } from "./ApiOptions";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
 import ThinkingBudgetSlider from "./ThinkingBudgetSlider";
 import FeaturedModelCard from "./FeaturedModelCard";
 
@@ -167,8 +167,8 @@ const OpenRouterModelPicker: React.FC<OpenRouterModelPickerProps> = ({
     // Then get search results for non-favorited models
     const searchResults = searchTerm
       ? highlight(fuse.search(searchTerm), "model-item-highlight").filter(
-          (item) => !favoritedModelIds.includes(item.id),
-        )
+        (item) => !favoritedModelIds.includes(item.id),
+      )
       : searchableItems.filter((item) => !favoritedModelIds.includes(item.id));
 
     // Combine favorited models with search results

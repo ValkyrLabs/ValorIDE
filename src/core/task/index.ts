@@ -127,7 +127,7 @@ import {
 } from "@shared/AdvancedSettings";
 import { ToolRelayService } from "@services/communication/ToolRelayService";
 import { CommunicationService } from "@services/communication/CommunicationService";
-import { WebsocketMessageTypeEnum } from "@thor/model";
+import { WebsocketMessageTypeEnum } from "@thorapi/model";
 import { ToolManager, ToolContext } from "./tools";
 import { MessageHandler } from "./MessageHandler";
 import { StreamingHandler } from "./StreamingHandler";
@@ -433,11 +433,11 @@ export class Task {
       const taskMessage = this.valorideMessages[0]; // first message is always the task say
       const lastRelevantMessage =
         this.valorideMessages[
-          findLastIndex(
-            this.valorideMessages,
-            (m) =>
-              !(m.ask === "resume_task" || m.ask === "resume_completed_task"),
-          )
+        findLastIndex(
+          this.valorideMessages,
+          (m) =>
+            !(m.ask === "resume_task" || m.ask === "resume_completed_task"),
+        )
         ];
       const taskDir = await ensureTaskDirectoryExists(
         this.getContext(),
@@ -684,11 +684,11 @@ export class Task {
 
     let changedFiles:
       | {
-          relativePath: string;
-          absolutePath: string;
-          before: string;
-          after: string;
-        }[]
+        relativePath: string;
+        absolutePath: string;
+        before: string;
+        after: string;
+      }[]
       | undefined;
 
     try {
@@ -829,16 +829,16 @@ export class Task {
 
     let changedFiles:
       | {
-          relativePath: string;
-          absolutePath: string;
-          before: string;
-          after: string;
-          insertions: number;
-          deletions: number;
-          status: ValorIDEFileChangeStatus;
-          previousRelativePath?: string;
-          isBinary?: boolean;
-        }[]
+        relativePath: string;
+        absolutePath: string;
+        before: string;
+        after: string;
+        insertions: number;
+        deletions: number;
+        status: ValorIDEFileChangeStatus;
+        previousRelativePath?: string;
+        isBinary?: boolean;
+      }[]
       | undefined;
 
     try {
@@ -1051,8 +1051,8 @@ export class Task {
       : false;
     const shouldUpdateSummary = options
       ? ["summaryMarkdown", "summaryTitle", "summaryCompletedAt"].some((key) =>
-          Object.prototype.hasOwnProperty.call(options, key),
-        )
+        Object.prototype.hasOwnProperty.call(options, key),
+      )
       : false;
     let askTs: number;
     if (partial !== undefined) {
@@ -1338,8 +1338,7 @@ export class Task {
   ) {
     await this.say(
       "error",
-      `ValorIDE tried to use ${toolName}${
-        relPath ? ` for '${relPath.toPosix()}'` : ""
+      `ValorIDE tried to use ${toolName}${relPath ? ` for '${relPath.toPosix()}'` : ""
       } without value for required parameter '${paramName}'. Retrying...`,
     );
     return formatResponse.toolError(
@@ -1480,7 +1479,7 @@ export class Task {
     if (existingApiConversationHistory.length > 0) {
       const lastMessage =
         existingApiConversationHistory[
-          existingApiConversationHistory.length - 1
+        existingApiConversationHistory.length - 1
         ];
       if (lastMessage.role === "assistant") {
         modifiedApiConversationHistory = [...existingApiConversationHistory];
@@ -1767,8 +1766,7 @@ export class Task {
       // Format the result similar to terminal output
       return [
         false,
-        `Command executed${wasTerminated ? " (terminated after 30s)" : ""} with exit code ${
-          result.exitCode
+        `Command executed${wasTerminated ? " (terminated after 30s)" : ""} with exit code ${result.exitCode
         }.${filteredOutput.length > 0 ? `\nOutput:\n${filteredOutput}` : ""}`,
       ];
     } catch (error) {
@@ -1828,8 +1826,7 @@ export class Task {
     const streamLine = (line: string) => {
       this.say("command_output", line).catch((error) => {
         Logger.warn(
-          `Failed to stream command output line: ${
-            error instanceof Error ? error.message : String(error)
+          `Failed to stream command output line: ${error instanceof Error ? error.message : String(error)
           }`,
         );
       });
@@ -1890,8 +1887,7 @@ export class Task {
           }
         } catch (error) {
           Logger.warn(
-            `Failed to deliver command output chunk: ${
-              error instanceof Error ? error.message : String(error)
+            `Failed to deliver command output chunk: ${error instanceof Error ? error.message : String(error)
             }`,
           );
         } finally {
@@ -1905,8 +1901,7 @@ export class Task {
     const safeFlush = (force = false) =>
       void flushBufferedOutput(force).catch((error) => {
         Logger.warn(
-          `Command output flush failed: ${
-            error instanceof Error ? error.message : String(error)
+          `Command output flush failed: ${error instanceof Error ? error.message : String(error)
           }`,
         );
       });
@@ -1947,7 +1942,7 @@ export class Task {
         void this.say(
           "command_output",
           `[Still running for ${elapsed}s...]`,
-        ).catch(() => {});
+        ).catch(() => { });
       }
     });
 
@@ -1989,10 +1984,9 @@ export class Task {
       return [
         false,
         formatResponse.toolError(
-          `Command failed to execute.\nError: ${processError.message}${
-            filteredOutput.length > 0
-              ? `\n\nPartial output:\n${filteredOutput}`
-              : ""
+          `Command failed to execute.\nError: ${processError.message}${filteredOutput.length > 0
+            ? `\n\nPartial output:\n${filteredOutput}`
+            : ""
           }`,
         ),
       ];
@@ -2003,12 +1997,10 @@ export class Task {
       return [
         true,
         formatResponse.toolResult(
-          `Command is still running in the user's terminal.${
-            filteredOutput.length > 0
-              ? `\nHere's the output so far:\n${filteredOutput}`
-              : ""
-          }\n\nThe user provided the following feedback:\n<feedback>\n${
-            userFeedback.text ?? ""
+          `Command is still running in the user's terminal.${filteredOutput.length > 0
+            ? `\nHere's the output so far:\n${filteredOutput}`
+            : ""
+          }\n\nThe user provided the following feedback:\n<feedback>\n${userFeedback.text ?? ""
           }\n</feedback>`,
           userFeedback.images,
         ),
@@ -2018,18 +2010,16 @@ export class Task {
     if (completed) {
       return [
         false,
-        `Command executed.${
-          filteredOutput.length > 0 ? `\nOutput:\n${filteredOutput}` : ""
+        `Command executed.${filteredOutput.length > 0 ? `\nOutput:\n${filteredOutput}` : ""
         }`,
       ];
     }
 
     return [
       false,
-      `Command is still running in the user's terminal.${
-        filteredOutput.length > 0
-          ? `\nHere's the output so far:\n${filteredOutput}`
-          : ""
+      `Command is still running in the user's terminal.${filteredOutput.length > 0
+        ? `\nHere's the output so far:\n${filteredOutput}`
+        : ""
       }\n\nYou will be updated on the terminal status and new output in the future.`,
     ];
   }
@@ -2224,7 +2214,7 @@ export class Task {
         DEFAULT_CHAT_SETTINGS.apiFirstChunkTimeoutMs ?? 45_000;
       const configuredFirstChunkTimeout =
         typeof this.chatSettings?.apiFirstChunkTimeoutMs === "number" &&
-        this.chatSettings.apiFirstChunkTimeoutMs > 0
+          this.chatSettings.apiFirstChunkTimeoutMs > 0
           ? this.chatSettings.apiFirstChunkTimeoutMs
           : undefined;
       const firstChunkTimeoutMs =
@@ -2325,10 +2315,10 @@ export class Task {
         const normalizedError =
           rawError instanceof TimeoutError
             ? new Error(
-                `Timed out waiting ${Math.round(
-                  firstChunkTimeoutMs / 1000,
-                )}s for the model to respond.`,
-              )
+              `Timed out waiting ${Math.round(
+                firstChunkTimeoutMs / 1000,
+              )}s for the model to respond.`,
+            )
             : rawError instanceof Error
               ? rawError
               : new Error(String(rawError));
@@ -2678,7 +2668,7 @@ export class Task {
                   // Extract error type from error message if possible, or use a generic type
                   const errorType =
                     error instanceof Error &&
-                    error.message.includes("does not match anything")
+                      error.message.includes("does not match anything")
                       ? "search_not_found"
                       : "other_diff_error";
 
@@ -2691,10 +2681,10 @@ export class Task {
                   pushToolResult(
                     formatResponse.toolError(
                       `${(error as Error)?.message}\n\n` +
-                        formatResponse.diffError(
-                          relPath,
-                          this.diffViewProvider.originalContent,
-                        ),
+                      formatResponse.diffError(
+                        relPath,
+                        this.diffViewProvider.originalContent,
+                      ),
                     ),
                   );
                   await this.diffViewProvider.revertChanges();
@@ -2755,7 +2745,7 @@ export class Task {
                 } else {
                   this.removeLastPartialMessageIfExistsWithType("say", "tool");
                   await this.ask("tool", partialMessage, block.partial).catch(
-                    () => {},
+                    () => { },
                   );
                 }
                 // update editor
@@ -2812,7 +2802,7 @@ export class Task {
                 if (!this.diffViewProvider.isEditing) {
                   // show gui message before showing edit animation
                   const partialMessage = JSON.stringify(sharedMessageProps);
-                  await this.ask("tool", partialMessage, true).catch(() => {}); // sending true for partial even though it's not a partial, this shows the edit row before the content is streamed into the editor
+                  await this.ask("tool", partialMessage, true).catch(() => { }); // sending true for partial even though it's not a partial, this shows the edit row before the content is streamed into the editor
                   await this.diffViewProvider.open(relPath);
                 }
                 await this.diffViewProvider.update(newContent, true);
@@ -3007,7 +2997,7 @@ export class Task {
                 } else {
                   this.removeLastPartialMessageIfExistsWithType("say", "tool");
                   await this.ask("tool", partialMessage, block.partial).catch(
-                    () => {},
+                    () => { },
                   );
                 }
                 break;
@@ -3140,7 +3130,7 @@ export class Task {
                 } else {
                   this.removeLastPartialMessageIfExistsWithType("say", "tool");
                   await this.ask("tool", partialMessage, block.partial).catch(
-                    () => {},
+                    () => { },
                   );
                 }
                 break;
@@ -3264,7 +3254,7 @@ export class Task {
                 } else {
                   this.removeLastPartialMessageIfExistsWithType("say", "tool");
                   await this.ask("tool", partialMessage, block.partial).catch(
-                    () => {},
+                    () => { },
                   );
                 }
                 break;
@@ -3378,7 +3368,7 @@ export class Task {
                 } else {
                   this.removeLastPartialMessageIfExistsWithType("say", "tool");
                   await this.ask("tool", partialMessage, block.partial).catch(
-                    () => {},
+                    () => { },
                   );
                 }
                 break;
@@ -3515,7 +3505,7 @@ export class Task {
                       "browser_action_launch",
                       removeClosingTag("url", url),
                       block.partial,
-                    ).catch(() => {});
+                    ).catch(() => { });
                   }
                 } else {
                   await this.say(
@@ -3673,8 +3663,7 @@ export class Task {
                     );
                     pushToolResult(
                       formatResponse.toolResult(
-                        `The browser action has been executed. The console logs and screenshot have been captured for your analysis.\n\nConsole logs:\n${
-                          browserActionResult.logs || "(No new logs)"
+                        `The browser action has been executed. The console logs and screenshot have been captured for your analysis.\n\nConsole logs:\n${browserActionResult.logs || "(No new logs)"
                         }\n\n(REMEMBER: if you need to proceed to using non-\`browser_action\` tools or launch a new browser, you MUST first close this browser. For example, if after analyzing the logs and screenshot you need to edit a file, you must first close the browser before you can use the write_to_file tool.)`,
                         browserActionResult.screenshot
                           ? [browserActionResult.screenshot]
@@ -3725,7 +3714,7 @@ export class Task {
                     "command",
                     removeClosingTag("command", command),
                     block.partial,
-                  ).catch(() => {});
+                  ).catch(() => { });
                 }
                 break;
               } else {
@@ -3808,7 +3797,7 @@ export class Task {
                   const didApprove = await askApproval(
                     "command",
                     command +
-                      `${this.shouldAutoApproveTool(block.name) && requiresApprovalPerLLM ? COMMAND_REQ_APP_STRING : ""}`, // ugly hack until we refactor combineCommandSequences
+                    `${this.shouldAutoApproveTool(block.name) && requiresApprovalPerLLM ? COMMAND_REQ_APP_STRING : ""}`, // ugly hack until we refactor combineCommandSequences
                   );
                   if (!didApprove) {
                     break;
@@ -3887,7 +3876,7 @@ export class Task {
                     "use_mcp_server",
                     partialMessage,
                     block.partial,
-                  ).catch(() => {});
+                  ).catch(() => { });
                 }
 
                 break;
@@ -4006,19 +3995,19 @@ export class Task {
                     ) || [];
                 let toolResultText =
                   (toolResult?.isError ? "Error:\n" : "") +
-                    toolResult?.content
-                      .map((item) => {
-                        if (item.type === "text") {
-                          return item.text;
-                        }
-                        if (item.type === "resource") {
-                          const { blob, ...rest } = item.resource;
-                          return JSON.stringify(rest, null, 2);
-                        }
-                        return "";
-                      })
-                      .filter(Boolean)
-                      .join("\n\n") || "(No response)";
+                  toolResult?.content
+                    .map((item) => {
+                      if (item.type === "text") {
+                        return item.text;
+                      }
+                      if (item.type === "resource") {
+                        const { blob, ...rest } = item.resource;
+                        return JSON.stringify(rest, null, 2);
+                      }
+                      return "";
+                    })
+                    .filter(Boolean)
+                    .join("\n\n") || "(No response)";
                 // webview extracts images from the text response to display in the UI
                 const toolResultToDisplay =
                   toolResultText +
@@ -4081,7 +4070,7 @@ export class Task {
                     "use_mcp_server",
                     partialMessage,
                     block.partial,
-                  ).catch(() => {});
+                  ).catch(() => { });
                 }
 
                 break;
@@ -4186,7 +4175,7 @@ export class Task {
                   "followup",
                   JSON.stringify(sharedMessage),
                   block.partial,
-                ).catch(() => {});
+                ).catch(() => { });
                 break;
               } else {
                 if (!question) {
@@ -4275,7 +4264,7 @@ export class Task {
                   "new_task",
                   removeClosingTag("context", context),
                   block.partial,
-                ).catch(() => {});
+                ).catch(() => { });
                 break;
               } else {
                 if (!context) {
@@ -4338,7 +4327,7 @@ export class Task {
                   "condense",
                   removeClosingTag("context", context),
                   block.partial,
-                ).catch(() => {});
+                ).catch(() => { });
                 break;
               } else {
                 if (!context) {
@@ -4386,7 +4375,7 @@ export class Task {
 
                   const lastMessage =
                     this.apiConversationHistory[
-                      this.apiConversationHistory.length - 1
+                    this.apiConversationHistory.length - 1
                     ];
                   const summaryAlreadyAppended =
                     lastMessage && lastMessage.role === "assistant";
@@ -4432,7 +4421,7 @@ export class Task {
                   "plan_mode_respond",
                   JSON.stringify(sharedMessage),
                   block.partial,
-                ).catch(() => {});
+                ).catch(() => { });
                 break;
               } else {
                 if (!response) {
@@ -4511,9 +4500,9 @@ export class Task {
                   pushToolResult(
                     formatResponse.toolResult(
                       `[The user has switched to ACT MODE, so you may now proceed with the task.]` +
-                        (text
-                          ? `\n\nThe user also provided the following message when switching to ACT MODE:\n<user_message>\n${text}\n</user_message>`
-                          : ""),
+                      (text
+                        ? `\n\nThe user also provided the following message when switching to ACT MODE:\n<user_message>\n${text}\n</user_message>`
+                        : ""),
                       images,
                     ),
                   );
@@ -4622,7 +4611,7 @@ export class Task {
                   }
                   if (
                     lastCompletionResultMessage.changesSummary?.totalFiles !==
-                      summary.totalFiles ||
+                    summary.totalFiles ||
                     lastCompletionResultMessage.changesSummary
                       ?.totalInsertions !== summary.totalInsertions ||
                     lastCompletionResultMessage.changesSummary
@@ -4667,7 +4656,7 @@ export class Task {
                       "command",
                       removeClosingTag("command", command),
                       block.partial,
-                    ).catch(() => {});
+                    ).catch(() => { });
                   } else {
                     // last message is completion_result
                     // we have command string, which means we have the result as well, so finish it (doesn't have to exist yet)
@@ -4684,7 +4673,7 @@ export class Task {
                       "command",
                       removeClosingTag("command", command),
                       block.partial,
-                    ).catch(() => {});
+                    ).catch(() => { });
                   }
                 } else {
                   // no command, still outputting partial result
@@ -4918,7 +4907,7 @@ export class Task {
           this.api.getModel().id,
           this.chatSettings.mode,
         );
-      } catch {}
+      } catch { }
     }
 
     if (this.pendingUserMessages.length > 0) {
@@ -4967,7 +4956,7 @@ export class Task {
     if (
       this.autoApprovalSettings.enabled &&
       this.consecutiveAutoApprovedRequestsCount >=
-        this.autoApprovalSettings.maxRequests
+      this.autoApprovalSettings.maxRequests
     ) {
       if (this.autoApprovalSettings.enableNotifications) {
         showSystemNotification({
@@ -5164,10 +5153,9 @@ export class Task {
               type: "text",
               text:
                 assistantMessage +
-                `\n\n[${
-                  cancelReason === "streaming_failed"
-                    ? "Response interrupted by API Error"
-                    : "Response interrupted by user"
+                `\n\n[${cancelReason === "streaming_failed"
+                  ? "Response interrupted by API Error"
+                  : "Response interrupted by user"
                 }]`,
             },
           ],
@@ -5330,7 +5318,7 @@ export class Task {
             WebviewProvider.getVisibleInstance()
               ?.getUsageTrackingService()
               .requestBalance();
-          } catch {}
+          } catch { }
         });
       }
 
@@ -5377,7 +5365,7 @@ export class Task {
         WebviewProvider.getVisibleInstance()
           ?.getUsageTrackingService()
           .requestBalance();
-      } catch {}
+      } catch { }
 
       // now add to apiconversationhistory
       // need to save assistant responses to file before proceeding to tool use since user can exit at any moment and we wouldn't be able to save the assistant's response
@@ -5470,7 +5458,7 @@ export class Task {
   ) {
     return await Promise.all([
       // This is a temporary solution to dynamically load context mentions from tool results. It checks for the presence of tags that indicate that the tool was rejected and feedback was provided (see formatToolDeniedFeedback, attemptCompletion, executeCommand, and consecutiveMistakeCount >= 3) or "<answer>" (see askFollowupQuestion), we place all user generated content in these tags so they can effectively be used as markers for when we should parse mentions). However if we allow multiple tools responses in the future, we will need to parse mentions specifically within the user content tags.
-      // (Note: this caused the @/ import alias bug where file contents were being parsed as well, since v2 converted tool results to text blocks)
+      // (Note: this caused the @thorapi/ import alias bug where file contents were being parsed as well, since v2 converted tool results to text blocks)
       Promise.all(
         userContent.map(async (block) => {
           if (block.type === "text") {
@@ -5566,7 +5554,7 @@ export class Task {
           interval: 100,
           timeout: 15_000,
         },
-      ).catch(() => {});
+      ).catch(() => { });
     }
 
     // we want to get diagnostics AFTER terminal cools down for a few reasons: terminal could be scaffolding a project, dev servers (compilers like webpack) will first re-compile and then send diagnostics, etc

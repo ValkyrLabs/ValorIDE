@@ -8,22 +8,22 @@ import * as path from "path";
  * @returns A promise that resolves to an array of newly created directories.
  */
 export async function createDirectoriesForFile(filePath) {
-  const newDirectories = [];
-  const normalizedFilePath = path.normalize(filePath); // Normalize path for cross-platform compatibility
-  const directoryPath = path.dirname(normalizedFilePath);
-  let currentPath = directoryPath;
-  const dirsToCreate = [];
-  // Traverse up the directory tree and collect missing directories
-  while (!(await fileExistsAtPath(currentPath))) {
-    dirsToCreate.push(currentPath);
-    currentPath = path.dirname(currentPath);
-  }
-  // Create directories from the topmost missing one down to the target directory
-  for (let i = dirsToCreate.length - 1; i >= 0; i--) {
-    await fs.mkdir(dirsToCreate[i]);
-    newDirectories.push(dirsToCreate[i]);
-  }
-  return newDirectories;
+    const newDirectories = [];
+    const normalizedFilePath = path.normalize(filePath); // Normalize path for cross-platform compatibility
+    const directoryPath = path.dirname(normalizedFilePath);
+    let currentPath = directoryPath;
+    const dirsToCreate = [];
+    // Traverse up the directory tree and collect missing directories
+    while (!(await fileExistsAtPath(currentPath))) {
+        dirsToCreate.push(currentPath);
+        currentPath = path.dirname(currentPath);
+    }
+    // Create directories from the topmost missing one down to the target directory
+    for (let i = dirsToCreate.length - 1; i >= 0; i--) {
+        await fs.mkdir(dirsToCreate[i]);
+        newDirectories.push(dirsToCreate[i]);
+    }
+    return newDirectories;
 }
 /**
  * Helper function to check if a path exists.
@@ -32,12 +32,13 @@ export async function createDirectoriesForFile(filePath) {
  * @returns A promise that resolves to true if the path exists, false otherwise.
  */
 export async function fileExistsAtPath(filePath) {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
+    try {
+        await fs.access(filePath);
+        return true;
+    }
+    catch {
+        return false;
+    }
 }
 /**
  * Checks if the path is a directory
@@ -45,12 +46,13 @@ export async function fileExistsAtPath(filePath) {
  * @returns A promise that resolves to true if the path is a directory, false otherwise.
  */
 export async function isDirectory(filePath) {
-  try {
-    const stats = await fs.stat(filePath);
-    return stats.isDirectory();
-  } catch {
-    return false;
-  }
+    try {
+        const stats = await fs.stat(filePath);
+        return stats.isDirectory();
+    }
+    catch {
+        return false;
+    }
 }
 /**
  * Gets the size of a file in kilobytes
@@ -58,19 +60,20 @@ export async function isDirectory(filePath) {
  * @returns Promise<number> - Size of the file in KB, or 0 if file doesn't exist
  */
 export async function getFileSizeInKB(filePath) {
-  try {
-    const stats = await fs.stat(filePath);
-    const fileSizeInKB = stats.size / 1000; // Convert bytes to KB (decimal) - matches OS file size display
-    return fileSizeInKB;
-  } catch {
-    return 0;
-  }
+    try {
+        const stats = await fs.stat(filePath);
+        const fileSizeInKB = stats.size / 1000; // Convert bytes to KB (decimal) - matches OS file size display
+        return fileSizeInKB;
+    }
+    catch {
+        return 0;
+    }
 }
 // Common OS-generated files that would appear in an otherwise clean directory
 const OS_GENERATED_FILES = [
-  ".DS_Store", // macOS Finder
-  "Thumbs.db", // Windows Explorer thumbnails
-  "desktop.ini", // Windows folder settings
+    ".DS_Store", // macOS Finder
+    "Thumbs.db", // Windows Explorer thumbnails
+    "desktop.ini", // Windows folder settings
 ];
 /**
  * Recursively reads a directory and returns an array of absolute file paths.
@@ -80,19 +83,16 @@ const OS_GENERATED_FILES = [
  * @throws Error if the directory cannot be read.
  */
 export const readDirectory = async (directoryPath) => {
-  try {
-    const filePaths = await fs
-      .readdir(directoryPath, { withFileTypes: true, recursive: true })
-      .then((entries) =>
-        entries.filter((entry) => !OS_GENERATED_FILES.includes(entry.name)),
-      )
-      .then((entries) => entries.filter((entry) => entry.isFile()))
-      .then((files) =>
-        files.map((file) => path.resolve(file.parentPath, file.name)),
-      );
-    return filePaths;
-  } catch {
-    throw new Error(`Error reading directory at ${directoryPath}`);
-  }
+    try {
+        const filePaths = await fs
+            .readdir(directoryPath, { withFileTypes: true, recursive: true })
+            .then((entries) => entries.filter((entry) => !OS_GENERATED_FILES.includes(entry.name)))
+            .then((entries) => entries.filter((entry) => entry.isFile()))
+            .then((files) => files.map((file) => path.resolve(file.parentPath, file.name)));
+        return filePaths;
+    }
+    catch {
+        throw new Error(`Error reading directory at ${directoryPath}`);
+    }
 };
 //# sourceMappingURL=fs.js.map

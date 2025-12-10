@@ -4,8 +4,8 @@ import {
   ContextMenuQueryItem,
   getContextMenuOptions,
   SearchResult,
-} from "@/utils/context-mentions";
-import { cleanPathPrefix } from "@/components/common/CodeAccordian";
+} from "@thorapi/utils/context-mentions";
+import { cleanPathPrefix } from "@thorapi/components/common/CodeAccordian";
 import {
   FaSpinner,
   FaFile,
@@ -298,14 +298,14 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
                 option.type === ContextMenuOptionType.Folder ||
                 option.type === ContextMenuOptionType.Git) &&
                 option.value)) && (
-              <FaPlus
-                style={{
-                  fontSize: "14px",
-                  flexShrink: 0,
-                  marginLeft: 8,
-                }}
-              />
-            )}
+                <FaPlus
+                  style={{
+                    fontSize: "14px",
+                    flexShrink: 0,
+                    marginLeft: 8,
+                  }}
+                />
+              )}
           </div>
         ))}
       </div>

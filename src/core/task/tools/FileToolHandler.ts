@@ -301,7 +301,25 @@ export class FileToolHandler extends BaseToolHandler {
     let diff: string | undefined = block.params.diff; // for replace_in_file
 
     if (!relPath || (!content && !diff)) {
-      return { shouldContinue: false }; // wait for more data
+      // If we're still streaming, wait for more data; otherwise surface a clear error
+      if (partial) {
+        return { shouldContinue: false }; // wait for more data
+      }
+
+      this.context.consecutiveMistakeCount++;
+      const missingParam =
+        !relPath || relPath.trim() === ""
+          ? "path"
+          : block.name === "write_to_file"
+            ? "content"
+            : "diff";
+      return {
+        shouldContinue: true,
+        toolResponse: await this.context.sayAndCreateMissingParamError(
+          block.name,
+          missingParam,
+        ),
+      };
     }
 
     const pathAccess = this.getPathAccess();

@@ -28,16 +28,16 @@ import { vscode } from "../utils/vscode";
 import { DEFAULT_BROWSER_SETTINGS } from "@shared/BrowserSettings";
 import { DEFAULT_CHAT_SETTINGS } from "@shared/ChatSettings";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
-import { Principal } from "@/thor/model";
-import { Application } from "@/thor/model/Application";
+import { Principal } from "@thorapi//model";
+import { Application } from "@thorapi//model/Application";
 import {
   clearStoredJwtToken,
   clearStoredPrincipal,
   hydrateStoredCredentials,
   storeJwtToken,
   writeStoredPrincipal,
-} from "@/utils/accessControl";
-import { DEFAULT_VALKYRAI_HOST, setValkyraiHost } from "@/utils/valkyraiHost";
+} from "@thorapi/utils/accessControl";
+import { DEFAULT_VALKYRAI_HOST, setValkyraiHost } from "@thorapi/utils/valkyraiHost";
 
 interface ExtensionStateContextType extends ExtensionState {
   didHydrateState: boolean;
@@ -241,28 +241,28 @@ export const ExtensionStateContextProvider: React.FC<{
         const config = incoming.apiConfiguration;
         const hasKey = config
           ? [
-              config.apiKey,
-              config.openRouterApiKey,
-              config.awsRegion,
-              config.vertexProjectId,
-              config.openAiApiKey,
-              config.ollamaModelId,
-              config.lmStudioModelId,
-              config.liteLlmApiKey,
-              config.geminiApiKey,
-              config.openAiNativeApiKey,
-              config.deepSeekApiKey,
-              config.requestyApiKey,
-              config.togetherApiKey,
-              config.qwenApiKey,
-              config.doubaoApiKey,
-              config.mistralApiKey,
-              config.vsCodeLmModelSelector,
-              config.valorideApiKey,
-              config.asksageApiKey,
-              config.xaiApiKey,
-              config.sambanovaApiKey,
-            ].some((key) => key !== undefined)
+            config.apiKey,
+            config.openRouterApiKey,
+            config.awsRegion,
+            config.vertexProjectId,
+            config.openAiApiKey,
+            config.ollamaModelId,
+            config.lmStudioModelId,
+            config.liteLlmApiKey,
+            config.geminiApiKey,
+            config.openAiNativeApiKey,
+            config.deepSeekApiKey,
+            config.requestyApiKey,
+            config.togetherApiKey,
+            config.qwenApiKey,
+            config.doubaoApiKey,
+            config.mistralApiKey,
+            config.vsCodeLmModelSelector,
+            config.valorideApiKey,
+            config.asksageApiKey,
+            config.xaiApiKey,
+            config.sambanovaApiKey,
+          ].some((key) => key !== undefined)
           : false;
         // Show welcome only if NO API keys AND NOT authenticated (both backend + local storage)
         const isAuthed = incoming.isLoggedIn || incoming.authenticatedPrincipal;

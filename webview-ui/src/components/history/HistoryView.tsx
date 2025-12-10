@@ -4,16 +4,16 @@ import {
   VSCodeRadioGroup,
   VSCodeRadio,
 } from "@vscode/webview-ui-toolkit/react";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
 import { Virtuoso } from "react-virtuoso";
 import { memo, useMemo, useState, useEffect, useCallback } from "react";
 import Fuse, { FuseResult } from "fuse.js";
-import { formatLargeNumber } from "@/utils/format";
-import { formatSize } from "@/utils/format";
+import { formatLargeNumber } from "@thorapi/utils/format";
+import { formatSize } from "@thorapi/utils/format";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import { useEvent } from "react-use";
-import DangerButton from "@/components/common/DangerButton";
+import DangerButton from "@thorapi/components/common/DangerButton";
 import {
   FaSearch,
   FaTimes,
@@ -24,10 +24,10 @@ import {
   FaArrowRight,
   FaRobot,
 } from "react-icons/fa";
-import StatusBadge from "@/components/common/StatusBadge";
-import OfflineBanner from "@/components/common/OfflineBanner";
-import SystemAlerts from "@/components/SystemAlerts";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
+import OfflineBanner from "@thorapi/components/common/OfflineBanner";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 
 type HistoryViewProps = {
   onDone: () => void;

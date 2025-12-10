@@ -5,8 +5,8 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { useState, useCallback } from "react";
 import { TabButton } from "../mcp/configuration/McpConfigurationView";
-import { UsageTransaction, PaymentTransaction } from "@/thor/model";
-import { formatDollars, formatTimestamp } from "@/utils/format";
+import { UsageTransaction, PaymentTransaction } from "@thorapi//model";
+import { formatDollars, formatTimestamp } from "@thorapi/utils/format";
 
 interface CreditsHistoryTableProps {
   isLoading: boolean;

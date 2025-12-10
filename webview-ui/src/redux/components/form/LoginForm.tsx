@@ -12,7 +12,7 @@ import * as Yup from "yup";
 
 import CoolButton from "../../../components/CoolButton";
 
-import { Login } from "../../../thor/model";
+import { Login } from "../../..//model";
 import { useAddLoginMutation } from "../../services/AuthService";
 
 /**

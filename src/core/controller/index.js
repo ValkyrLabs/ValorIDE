@@ -16,7 +16,7 @@ import {
 } from "@integrations/misc/link-preview";
 import { openImage } from "@integrations/misc/open-file";
 import { handleFileServiceRequest } from "./file";
-import { buildOpenApiHeaders } from "./openApiImport";
+import { buildOpenApiImportConfig } from "./openApiImport";
 import { selectImages } from "@integrations/misc/process-images";
 import { getTheme } from "@integrations/theme/getTheme";
 import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
@@ -83,32 +83,32 @@ export class Controller {
     this.outputChannel.appendLine("ValorIDEProvider instantiated");
     this.postMessage = postMessage;
     this.workspaceTracker = new WorkspaceTracker((msg) =>
-      this.postMessageToWebview(msg),
+      this.postMessageToWebview(msg)
     );
     this.mcpHub = new McpHub(
       () => ensureMcpServersDirectoryExists(),
       () => ensureSettingsDirectoryExists(this.context),
       (msg) => this.postMessageToWebview(msg),
-      this.context.extension?.packageJSON?.version ?? "1.0.0",
+      this.context.extension?.packageJSON?.version ?? "1.0.0"
     );
     this.accountService = new ValorIDEAccountService(
       (msg) => this.postMessageToWebview(msg),
       async () => {
         const { apiConfiguration } = await this.getStateToPostToWebview();
         return apiConfiguration?.valorideApiKey;
-      },
+      }
     );
     this.disposables.push(
       vscode.workspace.onDidChangeConfiguration((event) => {
         if (event.affectsConfiguration("valoride.valkyrai.host")) {
           void this.handleValkyraiHostConfigChange();
         }
-      }),
+      })
     );
     // Clean up legacy checkpoints
     cleanupLegacyCheckpoints(
       this.context.globalStorageUri.fsPath,
-      this.outputChannel,
+      this.outputChannel
     ).catch((error) => {
       console.error("Failed to cleanup legacy checkpoints:", error);
     });
@@ -144,7 +144,7 @@ export class Controller {
       this.outputChannel.appendLine("Workspace tracker disposed successfully");
     } catch (error) {
       this.outputChannel.appendLine(
-        `Error disposing workspace tracker: ${error}`,
+        `Error disposing workspace tracker: ${error}`
       );
       console.error("Error disposing workspace tracker:", error);
     }
@@ -169,14 +169,14 @@ export class Controller {
       await updateGlobalState(
         this.context,
         "authenticatedPrincipal",
-        undefined,
+        undefined
       );
       await updateGlobalState(this.context, "isLoggedIn", false);
       // Reset API provider to default
       await updateGlobalState(this.context, "apiProvider", "openrouter");
       await this.postStateToWebview();
       vscode.window.showInformationMessage(
-        "Successfully logged out of ValorIDE",
+        "Successfully logged out of ValorIDE"
       );
     } catch (error) {
       vscode.window.showErrorMessage("Logout failed");
@@ -202,7 +202,7 @@ export class Controller {
       await updateGlobalState(
         this.context,
         "autoApprovalSettings",
-        updatedAutoApprovalSettings,
+        updatedAutoApprovalSettings
       );
     }
     this.task = new Task(
@@ -221,7 +221,7 @@ export class Controller {
       customInstructions,
       task,
       images,
-      historyItem,
+      historyItem
     );
   }
   async reinitExistingTaskFromId(taskId) {
@@ -254,7 +254,7 @@ export class Controller {
         try {
           await this.mcpHub?.addRemoteServer(
             message.serverName,
-            message.serverUrl,
+            message.serverUrl
           );
           await this.postMessageToWebview({
             type: "addRemoteServerResult",
@@ -283,7 +283,7 @@ export class Controller {
                 email: null, // Replace with actual email if available
                 avatarUrl: null, // Replace with actual avatar URL if available
               }
-            : undefined,
+            : undefined
         );
         await this.postStateToWebview();
         break;
@@ -294,7 +294,7 @@ export class Controller {
           this.postMessageToWebview({
             type: "theme",
             text: JSON.stringify(theme),
-          }),
+          })
         );
         // post last cached models in case the call to endpoint fails
         this.readOpenRouterModels().then((openRouterModels) => {
@@ -317,20 +317,20 @@ export class Controller {
                 mcpMarketplaceCatalog: mcpMarketplaceCatalog,
               });
             }
-          },
+          }
         );
         this.silentlyRefreshMcpMarketplace();
         this.refreshOpenRouterModels().then(async (openRouterModels) => {
           if (openRouterModels) {
             // update model info in state (this needs to be done here since we don't want to update state while settings is open, and we may refresh models there)
             const { apiConfiguration } = await getAllExtensionState(
-              this.context,
+              this.context
             );
             if (apiConfiguration.openRouterModelId) {
               await updateGlobalState(
                 this.context,
                 "openRouterModelInfo",
-                openRouterModels[apiConfiguration.openRouterModelId],
+                openRouterModels[apiConfiguration.openRouterModelId]
               );
               await this.postStateToWebview();
             }
@@ -400,7 +400,7 @@ export class Controller {
             await updateGlobalState(
               this.context,
               "autoApprovalSettings",
-              message.autoApprovalSettings,
+              message.autoApprovalSettings
             );
             if (this.task) {
               this.task.autoApprovalSettings = message.autoApprovalSettings;
@@ -420,7 +420,7 @@ export class Controller {
           await updateGlobalState(
             this.context,
             "browserSettings",
-            message.browserSettings,
+            message.browserSettings
           );
           if (this.task) {
             this.task.browserSettings = message.browserSettings;
@@ -433,7 +433,7 @@ export class Controller {
         if (message.chatSettings) {
           await this.togglePlanActModeWithChatSettings(
             message.chatSettings,
-            message.chatContent,
+            message.chatContent
           );
         }
         break;
@@ -448,7 +448,7 @@ export class Controller {
         const { browserSettings } = await getAllExtensionState(this.context);
         const browserSession = new BrowserSession(
           this.context,
-          browserSettings,
+          browserSettings
         );
         await browserSession.relaunchChromeDebugMode(this);
         break;
@@ -456,21 +456,21 @@ export class Controller {
         this.task?.handleWebviewAskResponse(
           message.askResponse,
           message.text,
-          message.images,
+          message.images
         );
         break;
       case "userMessage":
         this.task?.handleWebviewAskResponse(
           "messageResponse",
           message.text,
-          message.images,
+          message.images
         );
         break;
       case "didShowAnnouncement":
         await updateGlobalState(
           this.context,
           "lastShownAnnouncementId",
-          this.latestAnnouncementId,
+          this.latestAnnouncementId
         );
         await this.postStateToWebview();
         break;
@@ -553,13 +553,13 @@ export class Controller {
         await this.refreshLLMDetails();
         try {
           const startupAuthService = StartupAuthService.getInstance(
-            this.context,
+            this.context
           );
           await startupAuthService.restoreAuthentication();
         } catch (error) {
           console.warn(
             "Failed to restore authentication after host change:",
-            error,
+            error
           );
         }
         break;
@@ -568,7 +568,7 @@ export class Controller {
         const { apiConfiguration } = await getAllExtensionState(this.context);
         const openAiModels = await this.getOpenAiModels(
           apiConfiguration.openAiBaseUrl,
-          apiConfiguration.openAiApiKey,
+          apiConfiguration.openAiApiKey
         );
         this.postMessageToWebview({ type: "openAiModels", openAiModels });
         break;
@@ -611,11 +611,11 @@ export class Controller {
         const { filePath, fileExists } = await createRuleFile(
           message.isGlobal,
           message.filename,
-          cwd,
+          cwd
         );
         if (fileExists && filePath) {
           vscode.window.showWarningMessage(
-            `Rule file "${message.filename}" already exists.`,
+            `Rule file "${message.filename}" already exists.`
           );
           // Still open it for editing
           await handleFileServiceRequest(this, "openFile", { value: filePath });
@@ -625,7 +625,7 @@ export class Controller {
           await this.postStateToWebview();
           await handleFileServiceRequest(this, "openFile", { value: filePath });
           vscode.window.showInformationMessage(
-            `Created new ${message.isGlobal ? "global" : "workspace"} rule file: ${message.filename}`,
+            `Created new ${message.isGlobal ? "global" : "workspace"} rule file: ${message.filename}`
           );
         } else {
           // null filePath
@@ -646,7 +646,7 @@ export class Controller {
           await this.task?.presentFileDiff(
             message.number,
             message.relativePath,
-            message.seeNewChangesSinceLastTaskCompletion ?? true,
+            message.seeNewChangesSinceLastTaskCompletion ?? true
           );
         }
         break;
@@ -722,7 +722,7 @@ export class Controller {
         if (message.feedbackType && this.task?.taskId) {
           telemetryService.captureTaskFeedback(
             this.task.taskId,
-            message.feedbackType,
+            message.feedbackType
           );
         }
         break;
@@ -760,18 +760,18 @@ export class Controller {
           await this.mcpHub?.toggleToolAutoApprove(
             message.serverName,
             message.toolNames,
-            message.autoApprove,
+            message.autoApprove
           );
         } catch (error) {
           if (message.toolNames?.length === 1) {
             console.error(
               `Failed to toggle auto-approve for server ${message.serverName} with tool ${message.toolNames[0]}:`,
-              error,
+              error
             );
           } else {
             console.error(
               `Failed to toggle auto-approve tools for server ${message.serverName}:`,
-              error,
+              error
             );
           }
         }
@@ -788,25 +788,25 @@ export class Controller {
             const toggles =
               (await getGlobalState(
                 this.context,
-                "globalValorIDERulesToggles",
+                "globalValorIDERulesToggles"
               )) || {};
             toggles[rulePath] = enabled;
             await updateGlobalState(
               this.context,
               "globalValorIDERulesToggles",
-              toggles,
+              toggles
             );
           } else {
             const toggles =
               (await getWorkspaceState(
                 this.context,
-                "localValorIDERulesToggles",
+                "localValorIDERulesToggles"
               )) || {};
             toggles[rulePath] = enabled;
             await updateWorkspaceState(
               this.context,
               "localValorIDERulesToggles",
-              toggles,
+              toggles
             );
           }
           await this.postStateToWebview();
@@ -856,7 +856,7 @@ export class Controller {
         } catch (error) {
           console.error(
             `Failed to retry connection for ${message.text}:`,
-            error,
+            error
           );
         }
         break;
@@ -892,7 +892,7 @@ export class Controller {
         const settingsFilter = message.text || "";
         await vscode.commands.executeCommand(
           "workbench.action.openSettings",
-          `@ext:valkyrlabsinc.valoride-dev ${settingsFilter}`.trim(),
+          `@ext:valkyrlabsinc.valoride-dev ${settingsFilter}`.trim()
         );
         break;
       }
@@ -945,7 +945,7 @@ export class Controller {
         await updateGlobalState(
           this.context,
           "planActSeparateModelsSetting",
-          message.planActSeparateModelsSetting,
+          message.planActSeparateModelsSetting
         );
         // after settings are updated, post state to webview
         await this.postStateToWebview();
@@ -957,7 +957,7 @@ export class Controller {
           const selected = message.llmDetails;
           if (!selected?.id || !selected.initialPrompt) {
             void vscode.window.showErrorMessage(
-              "Unable to load prompt — missing initial prompt text.",
+              "Unable to load prompt — missing initial prompt text."
             );
             break;
           }
@@ -977,7 +977,7 @@ export class Controller {
           await updateGlobalState(
             this.context,
             "selectedLlmDetails",
-            normalizedSelection,
+            normalizedSelection
           );
           try {
             const promptService = getLLMPromptService();
@@ -1000,15 +1000,15 @@ export class Controller {
               supervisorId,
               intent,
               normalizedSelection.id,
-              normalizedSelection.tags || [],
+              normalizedSelection.tags || []
             );
             const targets =
               broadcaster.broadcastPromptSelection(broadcastMessage);
             targets.forEach((workerId) =>
               broadcaster.acknowledgePromptReload(
                 workerId,
-                normalizedSelection.id || "",
-              ),
+                normalizedSelection.id || ""
+              )
             );
             await this.postMessageToWebview({
               type: "swarm:broadcast",
@@ -1019,12 +1019,12 @@ export class Controller {
           }
           await this.postStateToWebview();
           void vscode.window.showInformationMessage(
-            `LLM prompt switched to ${normalizedSelection.name} (${normalizedSelection.mode})`,
+            `LLM prompt switched to ${normalizedSelection.name} (${normalizedSelection.mode})`
           );
         } catch (error) {
           console.error("Failed to update LLMDetails selection:", error);
           void vscode.window.showErrorMessage(
-            "Failed to update LLM prompt selection.",
+            "Failed to update LLM prompt selection."
           );
         }
         break;
@@ -1058,7 +1058,7 @@ export class Controller {
         await this.postStateToWebview();
         if (nextBudget != null) {
           vscode.window.showInformationMessage(
-            `Budget limit set to $${nextBudget.toFixed(2)}`,
+            `Budget limit set to $${nextBudget.toFixed(2)}`
           );
         } else {
           vscode.window.showInformationMessage("Budget limit cleared");
@@ -1095,7 +1095,7 @@ export class Controller {
         await this.postStateToWebview();
         if (nextDelay != null) {
           vscode.window.showInformationMessage(
-            `API throttle set to ${nextDelay} ms`,
+            `API throttle set to ${nextDelay} ms`
           );
         } else {
           vscode.window.showInformationMessage("API throttle cleared");
@@ -1114,7 +1114,7 @@ export class Controller {
           const { browserSettings } = await getAllExtensionState(this.context);
           const browserSession = new BrowserSession(
             this.context,
-            browserSettings,
+            browserSettings
           );
           const { path, isBundled } =
             await browserSession.getDetectedChromePath();
@@ -1136,11 +1136,11 @@ export class Controller {
                 const fileUri = vscode.Uri.parse(uriString, true);
                 const relativePath = vscode.workspace.asRelativePath(
                   fileUri,
-                  false,
+                  false
                 );
                 if (path.isAbsolute(relativePath)) {
                   console.warn(
-                    `Dropped file ${relativePath} is outside the workspace. Sending original path.`,
+                    `Dropped file ${relativePath} is outside the workspace. Sending original path.`
                   );
                   return fileUri.fsPath.replace(/\\/g, "/");
                 } else {
@@ -1153,7 +1153,7 @@ export class Controller {
                   } catch (statError) {
                     console.error(
                       `Error stating file ${fileUri.fsPath}:`,
-                      statError,
+                      statError
                     );
                   }
                   return finalPath;
@@ -1161,11 +1161,11 @@ export class Controller {
               } catch (error) {
                 console.error(
                   `Error calculating relative path for ${uriString}:`,
-                  error,
+                  error
                 );
                 return null;
               }
-            }),
+            })
           );
           await this.postMessageToWebview({
             type: "relativePathsResponse",
@@ -1191,7 +1191,7 @@ export class Controller {
           const results = await searchWorkspaceFiles(
             message.query || "",
             workspacePath,
-            20,
+            20
           );
           // debug logging to be removed
           //console.log(`controller/index.ts: Search results: ${results.length}`)
@@ -1225,13 +1225,13 @@ export class Controller {
           await updateGlobalState(
             this.context,
             "favoritedModelIds",
-            updatedFavorites,
+            updatedFavorites
           );
           // Capture telemetry for model favorite toggle
           const isFavorited = !favoritedModelIds.includes(message.modelId);
           telemetryService.captureModelFavoritesUsage(
             message.modelId,
-            isFavorited,
+            isFavorited
           );
           // Post state to webview without changing any other configuration
           await this.postStateToWebview();
@@ -1280,18 +1280,18 @@ export class Controller {
             `Add generated code at "${rel}" to your project?`,
             { modal: false },
             "Add",
-            "Skip",
+            "Skip"
           );
           if (choice !== "Add") break;
           // Reuse existing command to update tsconfig aliases and includes
           await vscode.commands.executeCommand(
             "valoride.addThorAliasesFromFolder",
-            vscode.Uri.file(abs),
+            vscode.Uri.file(abs)
           );
         } catch (err) {
           console.error("promptAddGeneratedToProject error", err);
           vscode.window.showWarningMessage(
-            `Failed to prepare alias update: ${err instanceof Error ? err.message : String(err)}`,
+            `Failed to prepare alias update: ${err instanceof Error ? err.message : String(err)}`
           );
         }
         break;
@@ -1308,16 +1308,16 @@ export class Controller {
           // Reuse existing command to update tsconfig aliases and includes
           await vscode.commands.executeCommand(
             "valoride.addThorAliasesFromFolder",
-            vscode.Uri.file(abs),
+            vscode.Uri.file(abs)
           );
           // Show success message
           vscode.window.showInformationMessage(
-            `Successfully added "${folderName}" to your project with TypeScript aliases.`,
+            `Successfully added "${folderName}" to your project with TypeScript aliases.`
           );
         } catch (err) {
           console.error("addGeneratedToProject error", err);
           vscode.window.showErrorMessage(
-            `Failed to add generated code to project: ${err instanceof Error ? err.message : String(err)}`,
+            `Failed to add generated code to project: ${err instanceof Error ? err.message : String(err)}`
           );
         }
         break;
@@ -1361,11 +1361,11 @@ export class Controller {
             try {
               await vscode.commands.executeCommand(
                 "valoride.addThorAliasesFromFolder",
-                vscode.Uri.file(abs),
+                vscode.Uri.file(abs)
               );
             } catch (e) {
               console.warn(
-                `Failed to update tsconfig aliases for ${folderName}: ${e instanceof Error ? e.message : String(e)}`,
+                `Failed to update tsconfig aliases for ${folderName}: ${e instanceof Error ? e.message : String(e)}`
               );
             }
           }
@@ -1379,7 +1379,7 @@ export class Controller {
           // Show success message
           const portMessage = port ? ` (localhost:${port})` : "";
           vscode.window.showInformationMessage(
-            `Starting ${serverDescription} for "${folderName}"${portMessage}. Check the terminal for output.`,
+            `Starting ${serverDescription} for "${folderName}"${portMessage}. Check the terminal for output.`
           );
           // If it's a web server, offer to open in browser after a delay
           if (port && serverType !== "typescript") {
@@ -1388,13 +1388,13 @@ export class Controller {
                 .showInformationMessage(
                   `Server should be running on localhost:${port}. Open in browser?`,
                   "Open Browser",
-                  "Later",
+                  "Later"
                 )
                 .then((choice) => {
                   if (choice === "Open Browser") {
                     void openUrlWithSimpleBrowser(
                       `http://localhost:${port}`,
-                      undefined,
+                      undefined
                     );
                   }
                 });
@@ -1403,7 +1403,7 @@ export class Controller {
         } catch (err) {
           console.error("startServer error", err);
           vscode.window.showErrorMessage(
-            `Failed to start server: ${err instanceof Error ? err.message : String(err)}`,
+            `Failed to start server: ${err instanceof Error ? err.message : String(err)}`
           );
         }
         break;
@@ -1423,7 +1423,7 @@ export class Controller {
           const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
           if (fileSize && fileSize > MAX_FILE_SIZE) {
             throw new Error(
-              `File size exceeds maximum limit of 10MB. Current size: ${(fileSize / 1024 / 1024).toFixed(2)}MB`,
+              `File size exceeds maximum limit of 10MB. Current size: ${(fileSize / 1024 / 1024).toFixed(2)}MB`
             );
           }
           // Validate content type and structure
@@ -1433,7 +1433,7 @@ export class Controller {
             filename.toLowerCase().endsWith(".yml");
           if (!isJson && !isYaml) {
             throw new Error(
-              "Invalid file type. Only JSON and YAML OpenAPI spec files are supported.",
+              "Invalid file type. Only JSON and YAML OpenAPI spec files are supported."
             );
           }
           // Parse and validate the OpenAPI spec
@@ -1454,7 +1454,7 @@ export class Controller {
                 !fileContent.includes('"swagger"')
               ) {
                 throw new Error(
-                  "File does not contain OpenAPI specification (missing 'openapi' or 'swagger' key).",
+                  "File does not contain OpenAPI specification (missing 'openapi' or 'swagger' key)."
                 );
               }
               spec = fileContent;
@@ -1468,31 +1468,31 @@ export class Controller {
           if (isJson) {
             if (!spec.openapi && !spec.swagger) {
               throw new Error(
-                "Invalid OpenAPI spec: missing required 'openapi' or 'swagger' version field.",
+                "Invalid OpenAPI spec: missing required 'openapi' or 'swagger' version field."
               );
             }
             if (!spec.info || !spec.info.title) {
               throw new Error(
-                "Invalid OpenAPI spec: missing required 'info.title' field.",
+                "Invalid OpenAPI spec: missing required 'info.title' field."
               );
             }
             if (!spec.paths && !spec.components?.schemas) {
               throw new Error(
-                "Invalid OpenAPI spec: missing required 'paths' or 'components.schemas' definitions.",
+                "Invalid OpenAPI spec: missing required 'paths' or 'components.schemas' definitions."
               );
             }
           }
           // Store the spec in a temporary location for processing
           const specsDir = path.join(
             this.context.globalStorageUri.fsPath,
-            "openapi-specs",
+            "openapi-specs"
           );
           await fs.mkdir(specsDir, { recursive: true });
           const timestamp = Date.now();
           const sanitizedFilename = filename.replace(/[^\\w.-]/g, "_");
           const specPath = path.join(
             specsDir,
-            `${timestamp}_${sanitizedFilename}`,
+            `${timestamp}_${sanitizedFilename}`
           );
           await fs.writeFile(specPath, fileContent);
           // Send success response back to webview
@@ -1506,7 +1506,7 @@ export class Controller {
           // Get JWT token for ThorAPI call
           const jwtToken =
             providedJwt || (await getSecret(this.context, "jwtToken"));
-          const headers = buildOpenApiHeaders(filename, jwtToken);
+          const axiosConfig = buildOpenApiImportConfig(filename, jwtToken);
           // Call ThorAPI /v1/thorapi/specs/import endpoint
           const apiBaseUrl = getValkyraiBasePath();
           const importUrl = `${apiBaseUrl}/thorapi/specs/import`;
@@ -1518,10 +1518,7 @@ export class Controller {
                 content: fileContent,
                 fileType: isJson ? "json" : "yaml",
               },
-              {
-                headers,
-                timeout: 30000,
-              },
+              axiosConfig
             );
             if (response.data?.success === true || response.status === 200) {
               await this.postMessageToWebview({
@@ -1531,11 +1528,11 @@ export class Controller {
                 message: `Successfully imported ${filename}. Ready to generate code.`,
               });
               console.log(
-                `[uploadOpenAPISpec] Imported to ThorAPI: ${filename}`,
+                `[uploadOpenAPISpec] Imported to ThorAPI: ${filename}`
               );
             } else {
               throw new Error(
-                response.data?.error || "ThorAPI returned unexpected response",
+                response.data?.error || "ThorAPI returned unexpected response"
               );
             }
           } catch (apiError) {
@@ -1563,7 +1560,7 @@ export class Controller {
             throw new Error(errorMsg);
           }
           console.log(
-            `[uploadOpenAPISpec] Successfully processed: ${filename} (${(fileSize / 1024).toFixed(2)}KB)`,
+            `[uploadOpenAPISpec] Successfully processed: ${filename} (${(fileSize / 1024).toFixed(2)}KB)`
           );
         } catch (error) {
           const errorMessage =
@@ -1622,7 +1619,7 @@ export class Controller {
           await fs.writeFile(filePath, binaryData);
           await sendProgress(
             "processing",
-            `Saved archive to ${getReadablePath(filePath)}`,
+            `Saved archive to ${getReadablePath(filePath)}`
           );
           let extractedPath;
           let readmePath;
@@ -1632,7 +1629,7 @@ export class Controller {
               extractedPath = await extractLocalZip(
                 filePath,
                 thorapiFolderPath,
-                applicationName || applicationId,
+                applicationName || applicationId
               );
             } catch (extractionError) {
               throw new Error(
@@ -1640,14 +1637,14 @@ export class Controller {
                   extractionError instanceof Error
                     ? extractionError.message
                     : String(extractionError)
-                }`,
+                }`
               );
             }
             if (extractedPath) {
               readmePath = await this.findReadmeFile(extractedPath);
               await sendProgress(
                 "finalizing",
-                `Extracted to ${getReadablePath(extractedPath)}`,
+                `Extracted to ${getReadablePath(extractedPath)}`
               );
             }
             await fs.unlink(filePath).catch((unlinkError) => {
@@ -1656,13 +1653,13 @@ export class Controller {
                   unlinkError instanceof Error
                     ? unlinkError.message
                     : String(unlinkError)
-                }`,
+                }`
               );
             });
           } else {
             await sendProgress(
               "finalizing",
-              `Saved file to ${getReadablePath(filePath)}`,
+              `Saved file to ${getReadablePath(filePath)}`
             );
           }
           await this.postMessageToWebview({
@@ -1711,7 +1708,7 @@ export class Controller {
     // Capture mode switch telemetry | Capture regardless of if we know the taskId
     telemetryService.captureModeSwitch(
       this.task?.taskId ?? "0",
-      chatSettings.mode,
+      chatSettings.mode
     );
     // Get previous model info that we will revert to after saving current mode api info
     const {
@@ -1730,17 +1727,17 @@ export class Controller {
       await updateGlobalState(
         this.context,
         "previousModeApiProvider",
-        apiConfiguration.apiProvider,
+        apiConfiguration.apiProvider
       );
       await updateGlobalState(
         this.context,
         "previousModeThinkingBudgetTokens",
-        apiConfiguration.thinkingBudgetTokens,
+        apiConfiguration.thinkingBudgetTokens
       );
       await updateGlobalState(
         this.context,
         "previousModeReasoningEffort",
-        apiConfiguration.reasoningEffort,
+        apiConfiguration.reasoningEffort
       );
       switch (apiConfiguration.apiProvider) {
         case "anthropic":
@@ -1755,7 +1752,7 @@ export class Controller {
           await updateGlobalState(
             this.context,
             "previousModeModelId",
-            apiConfiguration.apiModelId,
+            apiConfiguration.apiModelId
           );
           break;
         case "openrouter":
@@ -1763,12 +1760,12 @@ export class Controller {
           await updateGlobalState(
             this.context,
             "previousModeModelId",
-            apiConfiguration.openRouterModelId,
+            apiConfiguration.openRouterModelId
           );
           await updateGlobalState(
             this.context,
             "previousModeModelInfo",
-            apiConfiguration.openRouterModelInfo,
+            apiConfiguration.openRouterModelInfo
           );
           break;
         case "vscode-lm":
@@ -1776,52 +1773,52 @@ export class Controller {
           await updateGlobalState(
             this.context,
             "previousModeVsCodeLmModelSelector",
-            apiConfiguration.vsCodeLmModelSelector,
+            apiConfiguration.vsCodeLmModelSelector
           );
           break;
         case "openai":
           await updateGlobalState(
             this.context,
             "previousModeModelId",
-            apiConfiguration.openAiModelId,
+            apiConfiguration.openAiModelId
           );
           await updateGlobalState(
             this.context,
             "previousModeModelInfo",
-            apiConfiguration.openAiModelInfo,
+            apiConfiguration.openAiModelInfo
           );
           break;
         case "ollama":
           await updateGlobalState(
             this.context,
             "previousModeModelId",
-            apiConfiguration.ollamaModelId,
+            apiConfiguration.ollamaModelId
           );
           break;
         case "lmstudio":
           await updateGlobalState(
             this.context,
             "previousModeModelId",
-            apiConfiguration.lmStudioModelId,
+            apiConfiguration.lmStudioModelId
           );
           break;
         case "litellm":
           await updateGlobalState(
             this.context,
             "previousModeModelId",
-            apiConfiguration.liteLlmModelId,
+            apiConfiguration.liteLlmModelId
           );
           break;
         case "requesty":
           await updateGlobalState(
             this.context,
             "previousModeModelId",
-            apiConfiguration.requestyModelId,
+            apiConfiguration.requestyModelId
           );
           await updateGlobalState(
             this.context,
             "previousModeModelInfo",
-            apiConfiguration.requestyModelInfo,
+            apiConfiguration.requestyModelInfo
           );
           break;
       }
@@ -1837,12 +1834,12 @@ export class Controller {
         await updateGlobalState(
           this.context,
           "thinkingBudgetTokens",
-          newThinkingBudgetTokens,
+          newThinkingBudgetTokens
         );
         await updateGlobalState(
           this.context,
           "reasoningEffort",
-          newReasoningEffort,
+          newReasoningEffort
         );
         switch (newApiProvider) {
           case "anthropic":
@@ -1861,19 +1858,19 @@ export class Controller {
             await updateGlobalState(
               this.context,
               "openRouterModelId",
-              newModelId,
+              newModelId
             );
             await updateGlobalState(
               this.context,
               "openRouterModelInfo",
-              newModelInfo,
+              newModelInfo
             );
             break;
           case "vscode-lm":
             await updateGlobalState(
               this.context,
               "vsCodeLmModelSelector",
-              newVsCodeLmModelSelector,
+              newVsCodeLmModelSelector
             );
             break;
           case "openai":
@@ -1881,7 +1878,7 @@ export class Controller {
             await updateGlobalState(
               this.context,
               "openAiModelInfo",
-              newModelInfo,
+              newModelInfo
             );
             break;
           case "ollama":
@@ -1891,7 +1888,7 @@ export class Controller {
             await updateGlobalState(
               this.context,
               "lmStudioModelId",
-              newModelId,
+              newModelId
             );
             break;
           case "litellm":
@@ -1901,12 +1898,12 @@ export class Controller {
             await updateGlobalState(
               this.context,
               "requestyModelId",
-              newModelId,
+              newModelId
             );
             await updateGlobalState(
               this.context,
               "requestyModelInfo",
-              newModelInfo,
+              newModelInfo
             );
             break;
         }
@@ -1951,7 +1948,7 @@ export class Controller {
           this.task.isWaitingForFirstChunk, // if only first chunk is processed, then there's no need to wait for graceful abort (closes edits, browser, etc)
         {
           timeout: 3_000,
-        },
+        }
       ).catch(() => {
         console.error("Failed to abort task");
       });
@@ -1968,7 +1965,7 @@ export class Controller {
     await updateGlobalState(
       this.context,
       "customInstructions",
-      instructions || undefined,
+      instructions || undefined
     );
     if (this.task) {
       this.task.customInstructions = instructions || undefined;
@@ -2051,12 +2048,12 @@ export class Controller {
         await updateGlobalState(
           this.context,
           "userInfo",
-          authenticatedPrincipal,
+          authenticatedPrincipal
         );
         await updateGlobalState(
           this.context,
           "authenticatedPrincipal",
-          authenticatedPrincipal,
+          authenticatedPrincipal
         );
       }
       // Store authentication state flags
@@ -2151,7 +2148,7 @@ export class Controller {
       // Check if we have cached data
       const cachedCatalog = await getGlobalState(
         this.context,
-        "mcpMarketplaceCatalog",
+        "mcpMarketplaceCatalog"
       );
       if (!forceRefresh && cachedCatalog?.items) {
         await this.postMessageToWebview({
@@ -2203,7 +2200,7 @@ export class Controller {
         {
           headers,
           timeout: 10000,
-        },
+        }
       );
       if (!response.data) {
         throw new Error("Invalid response from MCP marketplace API");
@@ -2290,7 +2287,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
     try {
       const response = await axios.post(
         "https://openrouter.ai/api/v1/auth/keys",
-        { code },
+        { code }
       );
       if (response.data && response.data.key) {
         apiKey = response.data.key;
@@ -2321,7 +2318,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
   async readOpenRouterModels() {
     const openRouterModelsFilePath = path.join(
       await this.ensureCacheDirectoryExists(),
-      GlobalFileNames.openRouterModels,
+      GlobalFileNames.openRouterModels
     );
     const fileExists = await fileExistsAtPath(openRouterModelsFilePath);
     if (fileExists) {
@@ -2333,7 +2330,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
   async refreshOpenRouterModels() {
     const openRouterModelsFilePath = path.join(
       await this.ensureCacheDirectoryExists(),
-      GlobalFileNames.openRouterModels,
+      GlobalFileNames.openRouterModels
     );
     let models = {};
     try {
@@ -2620,10 +2617,10 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       ?.map((folder) => folder.uri.fsPath)
       .at(0);
     if (!cwd) {
-      return "@/" + filePath;
+      return "@thorapi/" + filePath;
     }
     const relativePath = path.relative(cwd, filePath);
-    return "@/" + relativePath;
+    return "@thorapi/" + relativePath;
   }
   // 'Add to ValorIDE' context menu in editor and code action
   async addSelectedCodeToChat(code, filePath, languageId, diagnostics) {
@@ -2669,7 +2666,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
     const fileMention = this.getFileMentionFromPath(filePath);
     const problemsString = this.convertDiagnosticsToProblemsString(diagnostics);
     await this.initTask(
-      `Fix the following code in ${fileMention}\n\`\`\`\n${code}\n\`\`\`\n\nProblems:\n${problemsString}`,
+      `Fix the following code in ${fileMention}\n\`\`\`\n${code}\n\`\`\`\n\nProblems:\n${problemsString}`
     );
     console.log(
       "fixWithValorIDE",
@@ -2677,7 +2674,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       filePath,
       languageId,
       diagnostics,
-      problemsString,
+      problemsString
     );
   }
   convertDiagnosticsToProblemsString(diagnostics) {
@@ -2715,28 +2712,28 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       const taskDirPath = path.join(
         this.context.globalStorageUri.fsPath,
         "tasks",
-        id,
+        id
       );
       const apiConversationHistoryFilePath = path.join(
         taskDirPath,
-        GlobalFileNames.apiConversationHistory,
+        GlobalFileNames.apiConversationHistory
       );
       const uiMessagesFilePath = path.join(
         taskDirPath,
-        GlobalFileNames.uiMessages,
+        GlobalFileNames.uiMessages
       );
       const contextHistoryFilePath = path.join(
         taskDirPath,
-        GlobalFileNames.contextHistory,
+        GlobalFileNames.contextHistory
       );
       const taskMetadataFilePath = path.join(
         taskDirPath,
-        GlobalFileNames.taskMetadata,
+        GlobalFileNames.taskMetadata
       );
       const fileExists = await fileExistsAtPath(apiConversationHistoryFilePath);
       if (fileExists) {
         const apiConversationHistory = JSON.parse(
-          await fs.readFile(apiConversationHistoryFilePath, "utf8"),
+          await fs.readFile(apiConversationHistoryFilePath, "utf8")
         );
         return {
           historyItem,
@@ -2777,7 +2774,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       // Remove all contents of tasks directory
       const taskDirPath = path.join(
         this.context.globalStorageUri.fsPath,
-        "tasks",
+        "tasks"
       );
       if (await fileExistsAtPath(taskDirPath)) {
         await fs.rm(taskDirPath, { recursive: true, force: true });
@@ -2785,14 +2782,14 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       // Remove checkpoints directory contents
       const checkpointsDirPath = path.join(
         this.context.globalStorageUri.fsPath,
-        "checkpoints",
+        "checkpoints"
       );
       if (await fileExistsAtPath(checkpointsDirPath)) {
         await fs.rm(checkpointsDirPath, { recursive: true, force: true });
       }
     } catch (error) {
       vscode.window.showErrorMessage(
-        `Encountered error while deleting task history, there may be some files left behind. Error: ${error instanceof Error ? error.message : String(error)}`,
+        `Encountered error while deleting task history, there may be some files left behind. Error: ${error instanceof Error ? error.message : String(error)}`
       );
     }
     // await this.postStateToWebview()
@@ -2825,7 +2822,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       } = await this.getTaskWithId(id);
       const legacyMessagesFilePath = path.join(
         taskDirPath,
-        "claude_messages.json",
+        "claude_messages.json"
       );
       const updatedTaskHistory = await this.deleteTaskFromState(id);
       // Delete the task files
@@ -3099,7 +3096,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         try {
           const subEntries = await fs.readdir(subdir, { withFileTypes: true });
           const readmeEntry = subEntries.find(
-            (subEntry) => subEntry.isFile() && readmeRegex.test(subEntry.name),
+            (subEntry) => subEntry.isFile() && readmeRegex.test(subEntry.name)
           );
           if (readmeEntry) {
             return path.join(subdir, readmeEntry.name);
@@ -3110,13 +3107,13 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
               subdirError instanceof Error
                 ? subdirError.message
                 : String(subdirError)
-            }`,
+            }`
           );
         }
       }
     } catch (error) {
       console.warn(
-        `findReadmeFile: unable to scan ${directory}: ${error instanceof Error ? error.message : String(error)}`,
+        `findReadmeFile: unable to scan ${directory}: ${error instanceof Error ? error.message : String(error)}`
       );
     }
     return undefined;

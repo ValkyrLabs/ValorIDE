@@ -7,7 +7,7 @@ async function updateTsconfigPaths(tsconfigUri, rootAliasTargets, options) {
     json = JSON.parse(Buffer.from(doc).toString("utf8"));
   } catch (e) {
     vscode.window.showWarningMessage(
-      `Skipping invalid JSON: ${tsconfigUri.fsPath}`,
+      `Skipping invalid JSON: ${tsconfigUri.fsPath}`
     );
     return;
   }
@@ -15,11 +15,11 @@ async function updateTsconfigPaths(tsconfigUri, rootAliasTargets, options) {
   json.compilerOptions.baseUrl = json.compilerOptions.baseUrl || ".";
   json.compilerOptions.paths = json.compilerOptions.paths || {};
   // Overwrite the managed aliases to point at the selected extracted folder
-  json.compilerOptions.paths["@thor/*"] = [rootAliasTargets.thorAll];
+  json.compilerOptions.paths["@thorapi/*"] = [rootAliasTargets.thorAll];
   json.compilerOptions.paths["@valkyr/component-library/*"] = [
     rootAliasTargets.componentLib,
   ];
-  json.compilerOptions.paths["@thor/redux/services/*"] = [
+  json.compilerOptions.paths["@thorapi/redux/services/*"] = [
     rootAliasTargets.reduxServices,
   ];
   if (options?.includeSrc) {
@@ -39,25 +39,25 @@ export function registerAliasCommands(context) {
   const disposable = vscode.commands.registerCommand(
     "valoride.addThorAliasesFromFolder",
     async (resourceUri) => {
-      // 1) Select one or more Thor project folders
+      // 1) Select one or more ThorAPI project folders
       const selectedFolders = resourceUri
         ? [resourceUri]
         : (await vscode.window.showOpenDialog({
             canSelectFiles: false,
             canSelectFolders: true,
             canSelectMany: true,
-            openLabel: "Select Thor project folder(s)",
+            openLabel: "Select ThorAPI project folder(s)",
           })) || [];
       // Check if user cancelled dialog
       if (!selectedFolders || selectedFolders.length === 0) return;
       // 2) Choose which tsconfig files to update
       const allTsconfigs = await vscode.workspace.findFiles(
         "**/tsconfig*.json",
-        "**/node_modules/**",
+        "**/node_modules/**"
       );
       if (allTsconfigs.length === 0) {
         vscode.window.showWarningMessage(
-          "No tsconfig files found in workspace to update.",
+          "No tsconfig files found in workspace to update."
         );
         return;
       }
@@ -67,13 +67,13 @@ export function registerAliasCommands(context) {
           description: u.fsPath,
           uri: u,
         })),
-        { canPickMany: true, title: "Select tsconfig files to update" },
+        { canPickMany: true, title: "Select tsconfig files to update" }
       );
       if (!picks || picks.length === 0) return;
       const optionPicks = await vscode.window.showQuickPick(
         [
           {
-            label: "Update paths for @thor and @valkyr/component-library",
+            label: "Update paths for @ and @valkyr/component-library",
             picked: true,
             key: "paths",
           },
@@ -88,7 +88,7 @@ export function registerAliasCommands(context) {
             key: "preview",
           },
         ],
-        { canPickMany: true, title: "What should be updated?" },
+        { canPickMany: true, title: "What should be updated?" }
       );
       const doPaths = optionPicks?.some((p) => p.key === "paths") !== false;
       const doInclude = optionPicks?.some((p) => p.key === "include") !== false;
@@ -110,16 +110,16 @@ export function registerAliasCommands(context) {
             .join(relToFolder, "src", "components", "*")
             .replace(/\\/g, "/");
           const reduxServices = path
-            .join(relToFolder, "src", "thor", "redux", "services", "*")
+            .join(relToFolder, "src", "", "redux", "services", "*")
             .replace(/\\/g, "/");
           const thorAll = path
-            .join(relToFolder, "src", "thor", "*")
+            .join(relToFolder, "src", "", "*")
             .replace(/\\/g, "/");
           // last one wins for alias patterns; user can run again for different variants
           combinedTargets = { componentLib, reduxServices, thorAll };
           if (doInclude)
             includePatterns.push(
-              path.join(relToFolder, "src").replace(/\\/g, "/"),
+              path.join(relToFolder, "src").replace(/\\/g, "/")
             );
         }
         if (doPreview) {
@@ -137,11 +137,13 @@ export function registerAliasCommands(context) {
             json.compilerOptions = json.compilerOptions || {};
             json.compilerOptions.baseUrl = json.compilerOptions.baseUrl || ".";
             json.compilerOptions.paths = json.compilerOptions.paths || {};
-            json.compilerOptions.paths["@thor/*"] = [combinedTargets.thorAll];
+            json.compilerOptions.paths["@thorapi/*"] = [
+              combinedTargets.thorAll,
+            ];
             json.compilerOptions.paths["@valkyr/component-library/*"] = [
               combinedTargets.componentLib,
             ];
-            json.compilerOptions.paths["@thor/redux/services/*"] = [
+            json.compilerOptions.paths["@thorapi/redux/services/*"] = [
               combinedTargets.reduxServices,
             ];
           }
@@ -165,7 +167,7 @@ export function registerAliasCommands(context) {
             "vscode.diff",
             left.uri,
             right.uri,
-            title,
+            title
           );
         } else {
           await updateTsconfigPaths(tsUri, combinedTargets, {
@@ -175,14 +177,14 @@ export function registerAliasCommands(context) {
       }
       if (!doPreview) {
         vscode.window.showInformationMessage(
-          "Aliases and includes updated in selected tsconfig files.",
+          "Aliases and includes updated in selected tsconfig files."
         );
       } else {
         vscode.window.showInformationMessage(
-          "Preview(s) opened. Save changes manually if desired.",
+          "Preview(s) opened. Save changes manually if desired."
         );
       }
-    },
+    }
   );
   context.subscriptions.push(disposable);
 }

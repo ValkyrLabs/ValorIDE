@@ -3,11 +3,11 @@ import { render, screen, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import MockedCommunicationService, {
   MockCommunicationService,
-} from "@/mocks/MockCommunicationService"; // Assuming a mock service exists
+} from "@thorapi/mocks/MockCommunicationService"; // Assuming a mock service exists
 import OfflineBanner from "./OfflineBanner";
 
 // Mock the custom hook
-jest.mock("@/context/CommunicationServiceContext", () => ({
+jest.mock("@thorapi/context/CommunicationServiceContext", () => ({
   useCommunicationService: jest.fn(),
 }));
 
@@ -23,7 +23,7 @@ describe("OfflineBanner", () => {
 
     // Mock the useCommunicationService hook to return our mock instance
     (
-      require("@/context/CommunicationServiceContext")
+      require("@thorapi/context/CommunicationServiceContext")
         .useCommunicationService as jest.Mock
     ).mockReturnValue(mockSvc);
 

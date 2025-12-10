@@ -2,8 +2,8 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
 import { BrowserServiceClient } from "../../services/grpc-client";
 import { FaCog, FaWifi, FaDesktop, FaInfoCircle } from "react-icons/fa";
 export const BrowserSettingsMenu = () => {

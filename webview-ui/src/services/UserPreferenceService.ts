@@ -1,4 +1,4 @@
-import { UserPreference, UserPreferencePreferenceTypeEnum } from "@thor/model"; // UserPreference";
+import { UserPreference, UserPreferencePreferenceTypeEnum } from "@thorapi/model"; // UserPreference";
 import store from "../redux/store";
 import {
   setThemeMode,
@@ -6,13 +6,13 @@ import {
   setBootswatchTheme,
   BootswatchTheme,
 } from "../redux/slices/themeSlice";
-import { UserPreferenceService as UserPreferenceApi } from "../thor/redux/services/UserPreferenceService";
+import { UserPreferenceService as UserPreferenceApi } from "..//redux/services/UserPreferenceService";
 
 export class UserPreferenceService {
   private static instance: UserPreferenceService;
   private preferences: Map<string, UserPreference> = new Map();
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): UserPreferenceService {
     if (!UserPreferenceService.instance) {
@@ -37,7 +37,7 @@ export class UserPreferenceService {
             // Update Redux store for theme preference
             if (
               pref.preferenceType ===
-                UserPreferencePreferenceTypeEnum.UXTHEME &&
+              UserPreferencePreferenceTypeEnum.UXTHEME &&
               pref.preference
             ) {
               store.dispatch(setThemeMode(pref.preference as ThemeMode));
@@ -256,7 +256,7 @@ export class UserPreferenceService {
         }
         return parsed;
       }
-    } catch {}
+    } catch { }
     // legacy: plain string stored previously
     return { layoutMode: pref, grids: {} };
   }

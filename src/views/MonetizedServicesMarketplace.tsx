@@ -3,7 +3,7 @@ import {
   ManagedMcpService,
   getMarketplaceServices,
   subscribeToService,
-} from "@/services/monetization/ServiceMonetizationService";
+} from "@thorapi/services/monetization/ServiceMonetizationService";
 import "./MonetizedServicesMarketplace.css";
 
 /**

@@ -1,8 +1,8 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { VSCodeButton, VSCodeLink } from "@vscode/webview-ui-toolkit/react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import styled from "styled-components";
-import { LINKS } from "@/constants";
+import { LINKS } from "@thorapi/constants";
 const AddLocalServerForm = ({ onServerAdded }) => {
   return _jsxs(FormContainer, {
     children: [

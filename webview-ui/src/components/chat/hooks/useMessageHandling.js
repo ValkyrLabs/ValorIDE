@@ -1,7 +1,7 @@
 import { useCallback } from "react";
-import { WebsocketMessageTypeEnum } from "@thor/model";
-import { vscode } from "@/utils/vscode";
-import { TaskServiceClient } from "@/services/grpc-client";
+import { WebsocketMessageTypeEnum } from "@thorapi/model";
+import { vscode } from "@thorapi/utils/vscode";
+import { TaskServiceClient } from "@thorapi/services/grpc-client";
 export const useMessageHandling = ({
   messages,
   valorideAsk,
@@ -14,7 +14,7 @@ export const useMessageHandling = ({
   // Helper: detect @valoride mention
   const containsValorIDEMention = useCallback(
     (text) => text?.toLowerCase?.().includes("@valoride") === true,
-    [],
+    []
   );
   const handleSendMessage = useCallback(
     async (text, images) => {
@@ -30,7 +30,7 @@ export const useMessageHandling = ({
               user: { id: ourSenderId },
             };
             window.dispatchEvent(
-              new CustomEvent("websocket-send", { detail: wsMessage }),
+              new CustomEvent("websocket-send", { detail: wsMessage })
             );
             vscode.postMessage({
               type: "displayVSCodeInfo",
@@ -96,7 +96,7 @@ export const useMessageHandling = ({
       setValorIDEAsk,
       setEnableButtons,
       ourSenderId,
-    ],
+    ]
   );
   return {
     containsValorIDEMention,

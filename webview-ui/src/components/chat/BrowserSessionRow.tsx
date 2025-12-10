@@ -23,12 +23,12 @@ import {
   ValorIDEMessage,
   ValorIDESayBrowserAction,
 } from "@shared/ExtensionMessage";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
-import { BrowserSettingsMenu } from "@/components/browser/BrowserSettingsMenu";
-import { CheckpointControls } from "@/components/common/CheckpointControls";
-import CodeBlock, { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import { ChatRowContent, ProgressIndicator } from "@/components/chat/ChatRow";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
+import { BrowserSettingsMenu } from "@thorapi/components/browser/BrowserSettingsMenu";
+import { CheckpointControls } from "@thorapi/components/common/CheckpointControls";
+import CodeBlock, { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import { ChatRowContent, ProgressIndicator } from "@thorapi/components/chat/ChatRow";
 
 interface BrowserSessionRowProps {
   messages: ValorIDEMessage[];
@@ -222,8 +222,8 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
           nextAction:
             nextActionMessages.length > 0
               ? {
-                  messages: [...nextActionMessages],
-                }
+                messages: [...nextActionMessages],
+              }
               : undefined,
         });
 
@@ -253,8 +253,8 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
         nextAction:
           nextActionMessages.length > 0
             ? {
-                messages: [...nextActionMessages],
-              }
+              messages: [...nextActionMessages],
+            }
             : undefined,
       });
     }
@@ -319,22 +319,22 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
   // Use latest state if we're on the last page and don't have a state yet
   const displayState = isLastPage
     ? {
-        url: currentPage?.currentState.url || latestState.url || initialUrl,
-        mousePosition:
-          currentPage?.currentState.mousePosition ||
-          latestState.mousePosition ||
-          defaultMousePosition,
-        consoleLogs: currentPage?.currentState.consoleLogs,
-        screenshot:
-          currentPage?.currentState.screenshot || latestState.screenshot,
-      }
+      url: currentPage?.currentState.url || latestState.url || initialUrl,
+      mousePosition:
+        currentPage?.currentState.mousePosition ||
+        latestState.mousePosition ||
+        defaultMousePosition,
+      consoleLogs: currentPage?.currentState.consoleLogs,
+      screenshot:
+        currentPage?.currentState.screenshot || latestState.screenshot,
+    }
     : {
-        url: currentPage?.currentState.url || initialUrl,
-        mousePosition:
-          currentPage?.currentState.mousePosition || defaultMousePosition,
-        consoleLogs: currentPage?.currentState.consoleLogs,
-        screenshot: currentPage?.currentState.screenshot,
-      };
+      url: currentPage?.currentState.url || initialUrl,
+      mousePosition:
+        currentPage?.currentState.mousePosition || defaultMousePosition,
+      consoleLogs: currentPage?.currentState.consoleLogs,
+      screenshot: currentPage?.currentState.screenshot,
+    };
 
   const [actionContent, { height: actionHeight }] = useSize(
     <div>
@@ -404,7 +404,7 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
   // Calculate maxWidth
   const maxWidth =
     browserSettings.viewport.width <
-    BROWSER_VIEWPORT_PRESETS["Small Desktop (900x600)"].width
+      BROWSER_VIEWPORT_PRESETS["Small Desktop (900x600)"].width
       ? 200
       : undefined;
 

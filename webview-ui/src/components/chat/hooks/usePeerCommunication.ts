@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
-import { vscode } from "@/utils/vscode";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
+import { vscode } from "@thorapi/utils/vscode";
 
 export const usePeerCommunication = () => {
   const communicationService = useCommunicationService();
@@ -121,7 +121,7 @@ export const usePeerCommunication = () => {
       const hubStatus = svc.hubConnected ? "Connected" : "Disconnected";
       vscode.postMessage({
         type: "displayVSCodeInfo",
-        text: `Peers: ${peerCount} | P2P: ${p2pOpen} | Thor: ${thorStatus} | Hub: ${hubStatus}`,
+        text: `Peers: ${peerCount} | P2P: ${p2pOpen} | ThorAPI: ${thorStatus} | Hub: ${hubStatus}`,
       });
     }, 900);
   }, [communicationService, peerCount, p2pOpen]);

@@ -7,8 +7,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ContextMenuOptionType,
   getContextMenuOptions,
-} from "@/utils/context-mentions";
-import { cleanPathPrefix } from "@/components/common/CodeAccordian";
+} from "@thorapi/utils/context-mentions";
+import { cleanPathPrefix } from "@thorapi/components/common/CodeAccordian";
 import {
   FaSpinner,
   FaFile,
@@ -41,7 +41,7 @@ const ContextMenu = ({
       searchQuery,
       selectedType,
       queryItems,
-      dynamicSearchResults,
+      dynamicSearchResults
     );
     return options;
   }, [searchQuery, selectedType, queryItems, dynamicSearchResults]);
@@ -282,8 +282,8 @@ const ContextMenu = ({
                   }),
               ],
             },
-            `${option.type}-${option.value || index}`,
-          ),
+            `${option.type}-${option.value || index}`
+          )
         ),
       ],
     }),

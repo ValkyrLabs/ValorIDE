@@ -3,7 +3,7 @@ import { VSCodeLink } from "@vscode/webview-ui-toolkit/react";
 import { memo, useEffect, useRef, useState } from "react";
 import { useRemark } from "react-remark";
 import styled from "styled-components";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
 const StyledMarkdown = styled.div`
   font-family:
     var(--vscode-font-family),
@@ -124,9 +124,9 @@ export const ModelDescriptionMarkdown = memo(
           ],
         }),
       },
-      key,
+      key
     );
-  },
+  }
 );
 export default ModelDescriptionMarkdown;
 //# sourceMappingURL=ModelDescriptionMarkdown.js.map

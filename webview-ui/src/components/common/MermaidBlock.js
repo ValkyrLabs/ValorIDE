@@ -1,9 +1,9 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useRef, useState } from "react";
 import mermaid from "mermaid";
-import { useDebounceEffect } from "@/utils/useDebounceEffect";
+import { useDebounceEffect } from "@thorapi/utils/useDebounceEffect";
 import styled from "styled-components";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { FaCopy } from "react-icons/fa";
 const MERMAID_THEME = {
@@ -102,7 +102,7 @@ export default function MermaidBlock({ code }) {
         });
     },
     500, // Delay 500ms
-    [code],
+    [code]
   );
   /**
    * Called when user clicks the rendered diagram.
@@ -172,7 +172,7 @@ async function svgToPng(svgEl) {
   const encoder = new TextEncoder();
   const bytes = encoder.encode(svgString);
   const base64 = btoa(
-    Array.from(bytes, (byte) => String.fromCharCode(byte)).join(""),
+    Array.from(bytes, (byte) => String.fromCharCode(byte)).join("")
   );
   const svgDataUrl = `data:image/svg+xml;base64,${base64}`;
   return new Promise((resolve, reject) => {

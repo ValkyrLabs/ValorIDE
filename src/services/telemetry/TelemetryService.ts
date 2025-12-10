@@ -301,6 +301,7 @@ class PostHogClient {
     tool: string,
     autoApproved: boolean,
     success: boolean,
+    extra?: Record<string, any>,
   ) {
     this.capture({
       event: PostHogClient.EVENTS.TASK.TOOL_USED,
@@ -309,7 +310,18 @@ class PostHogClient {
         tool,
         autoApproved,
         success,
+        ...extra,
       },
+    });
+  }
+
+  /**
+   * Records when a tool name is not recognized/handled by the ToolManager
+   */
+  public captureUnknownTool(taskId: string, tool: string, details?: any) {
+    this.captureToolUsage(taskId, tool, false, false, {
+      unknown_tool: true,
+      ...details,
     });
   }
 

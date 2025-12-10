@@ -6,8 +6,8 @@ import {
   ValorIDESayTool,
 } from "@shared/ExtensionMessage";
 import { computeIsChatLoadingState } from "@shared/chatLoadingState";
-import { vscode } from "@/utils/vscode";
-import { TaskServiceClient } from "@/services/grpc-client";
+import { vscode } from "@thorapi/utils/vscode";
+import { TaskServiceClient } from "@thorapi/services/grpc-client";
 
 interface UseChatStateProps {
   messages: ValorIDEMessage[];

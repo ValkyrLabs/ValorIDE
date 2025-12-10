@@ -4,7 +4,7 @@ import {
   getMonthlyEarnings,
   getTotalEarnings,
   getCreatorServices,
-} from "@/services/monetization/ServiceMonetizationService";
+} from "@thorapi/services/monetization/ServiceMonetizationService";
 import "./EarningsDashboard.css";
 /**
  * Creator earnings dashboard.
@@ -16,7 +16,7 @@ export const EarningsDashboard = () => {
   const [totalEarnings, setTotalEarnings] = useState(0);
   const [monthlyEarnings, setMonthlyEarnings] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(
-    new Date().toISOString().slice(0, 7),
+    new Date().toISOString().slice(0, 7)
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -270,7 +270,7 @@ export const EarningsDashboard = () => {
                               children: [
                                 "Created ",
                                 new Date(
-                                  service.createdAt,
+                                  service.createdAt
                                 ).toLocaleDateString(),
                               ],
                             }),
@@ -282,8 +282,8 @@ export const EarningsDashboard = () => {
                         }),
                       ],
                     },
-                    service.id,
-                  ),
+                    service.id
+                  )
                 ),
               })
             : _jsx("div", {

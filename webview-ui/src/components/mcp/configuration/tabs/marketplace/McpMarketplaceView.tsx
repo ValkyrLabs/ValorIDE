@@ -10,25 +10,25 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { FaSync, FaSearch, FaTimes } from "react-icons/fa";
 import { McpMarketplaceItem } from "@shared/mcp";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import McpMarketplaceCard from "./McpMarketplaceCard";
 import McpSubmitCard from "./McpSubmitCard";
-import { useGetMcpServersQuery } from "@/thor/redux/services/McpServerService";
-import { useGetMcpMarketplaceCatalogsQuery } from "@/thor/redux/services/McpMarketplaceCatalogService";
-import { useGetMcpMarketplaceItemsQuery } from "@/thor/redux/services/McpMarketplaceItemService";
+import { useGetMcpServersQuery } from "@thorapi//redux/services/McpServerService";
+import { useGetMcpMarketplaceCatalogsQuery } from "@thorapi//redux/services/McpMarketplaceCatalogService";
+import { useGetMcpMarketplaceItemsQuery } from "@thorapi//redux/services/McpMarketplaceItemService";
 import {
   convertThorMcpServersToShared,
   convertThorMcpMarketplaceCatalogsToShared,
   convertThorMcpMarketplaceItemsToShared,
-} from "@/utils/mcpTypeConversions";
+} from "@thorapi/utils/mcpTypeConversions";
 import {
   formatError,
   getErrorTitle,
   isRetryableError,
   safeConvert,
-} from "@/utils/errorHandling";
-import Tooltip from "@/components/common/Tooltip";
-import SystemAlerts from "@/components/SystemAlerts";
+} from "@thorapi/utils/errorHandling";
+import Tooltip from "@thorapi/components/common/Tooltip";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
 
 const McpMarketplaceView = () => {
   const {
@@ -55,7 +55,7 @@ const McpMarketplaceView = () => {
     "newest" | "stars" | "name" | "downloadCount"
   >("downloadCount");
 
-  // Convert Thor data to shared format with error handling
+  // Convert ThorAPI data to shared format with error handling
   const sharedMcpServers = React.useMemo(() => {
     return safeConvert(
       mcpServers,

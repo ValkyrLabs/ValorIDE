@@ -1,8 +1,8 @@
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
 import { memo } from "react";
-import { formatLargeNumber } from "@/utils/format";
+import { formatLargeNumber } from "@thorapi/utils/format";
 import { FaComments, FaDollarSign, FaHistory } from "react-icons/fa";
 
 type HistoryPreviewProps = {

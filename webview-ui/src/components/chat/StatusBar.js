@@ -1,7 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { FaSpinner, FaPlug, FaRobot } from "react-icons/fa";
-import StatusBadge from "@/components/common/StatusBadge";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
 const StatusBar = ({
   wsConnected,
   wsInstanceCount,

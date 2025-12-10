@@ -8,14 +8,14 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import { LlmDetailsSummary } from "@shared/llm";
 import {
   VSCodeButton,
   VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
 import { VscRefresh } from "react-icons/vsc";
-import StatusBadge from "@/components/common/StatusBadge";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
 
 interface LLMDetailsSelectorProps {
   onSelectionChange?: (details: LlmDetailsSummary) => void;

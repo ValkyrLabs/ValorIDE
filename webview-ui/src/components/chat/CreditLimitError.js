@@ -1,7 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import VSCodeButtonLink from "@/components/common/VSCodeButtonLink";
+import VSCodeButtonLink from "@thorapi/components/common/VSCodeButtonLink";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import { FaCreditCard, FaRecycle } from "react-icons/fa";
 const CreditLimitError = ({
   currentBalance,

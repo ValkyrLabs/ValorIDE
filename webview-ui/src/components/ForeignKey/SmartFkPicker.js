@@ -2,10 +2,10 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Form as BSForm, ListGroup, Spinner } from "react-bootstrap";
 import { debounce } from "lodash";
-import { getValkyraiHost } from "@/utils/valkyraiHost";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 function isUuidLike(s) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-    s.trim(),
+    s.trim()
   );
 }
 async function authFetch(input, init) {
@@ -87,7 +87,7 @@ export const SmartFkPicker = ({
           if (!q) {
             // Load first page of results for small lookup tables
             const res = await authFetch(
-              withValkyraiBase(`${entity}?page=1&limit=50`),
+              withValkyraiBase(`${entity}?page=1&limit=50`)
             );
             if (res.ok) {
               const arr = await res.json();
@@ -127,8 +127,8 @@ export const SmartFkPicker = ({
             try {
               const lu = await authFetch(
                 withValkyraiBase(
-                  `lookup/entity/${encodeURIComponent(entity)}?q=${encodeURIComponent(q)}&limit=20`,
-                ),
+                  `lookup/entity/${encodeURIComponent(entity)}?q=${encodeURIComponent(q)}&limit=20`
+                )
               );
               if (lu.ok) {
                 const arr = await lu.json();
@@ -157,7 +157,7 @@ export const SmartFkPicker = ({
               for (const exObj of queries) {
                 const ex = encodeURIComponent(JSON.stringify(exObj));
                 const res = await authFetch(
-                  withValkyraiBase(`${entity}?page=1&limit=20&example=${ex}`),
+                  withValkyraiBase(`${entity}?page=1&limit=20&example=${ex}`)
                 );
                 if (res.ok) {
                   const arr = await res.json();
@@ -181,7 +181,7 @@ export const SmartFkPicker = ({
           setLoading(false);
         }
       }, 250),
-    [entity],
+    [entity]
   );
   useEffect(() => {
     doSearch(query);
@@ -216,7 +216,7 @@ export const SmartFkPicker = ({
         },
         onPaste: (e) => {
           const text = (e.clipboardData || window.clipboardData).getData(
-            "text",
+            "text"
           );
           if (isUuidLike(text)) {
             e.preventDefault();
@@ -264,8 +264,8 @@ export const SmartFkPicker = ({
                           }),
                         ],
                       },
-                      opt.id,
-                    ),
+                      opt.id
+                    )
                   ),
                   options.length === 0 &&
                     _jsx(ListGroup.Item, {

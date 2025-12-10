@@ -1,5 +1,5 @@
 import * as StompJs from "@stomp/stompjs";
-import { WebsocketMessage, WebsocketMessageTypeEnum } from "@thor/model";
+import { WebsocketMessage, WebsocketMessageTypeEnum } from "@thorapi/model";
 import {
   getJwtToken,
   isAuthenticated as isAuthed,

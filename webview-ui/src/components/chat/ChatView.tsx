@@ -4,14 +4,14 @@ import { ValorIDEApiReqInfo, ExtensionMessage } from "@shared/ExtensionMessage";
 import { combineApiRequests } from "@shared/combineApiRequests";
 import { combineCommandSequences } from "@shared/combineCommandSequences";
 import { getApiMetrics } from "@shared/getApiMetrics";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
-import { useGetBalanceResponsesQuery } from "@/thor/redux/services/BalanceResponseService";
-import OfflineBanner from "@/components/common/OfflineBanner";
-import { vscode } from "@/utils/vscode";
-import { useChatInputPersistence } from "@/utils/useSessionStorage";
-import ChatTextArea from "@/components/chat/ChatTextArea";
-import SystemAlerts from "@/components/SystemAlerts";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
+import { useGetBalanceResponsesQuery } from "@thorapi//redux/services/BalanceResponseService";
+import OfflineBanner from "@thorapi/components/common/OfflineBanner";
+import { vscode } from "@thorapi/utils/vscode";
+import { useChatInputPersistence } from "@thorapi/utils/useSessionStorage";
+import ChatTextArea from "@thorapi/components/chat/ChatTextArea";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
 
 // Custom hooks
 import { useWebSocketConnection } from "./hooks/useWebSocketConnection";
@@ -240,6 +240,7 @@ const ChatView = ({
           enableButtons={enableButtons}
           primaryButtonText={primaryButtonText}
           secondaryButtonText={secondaryButtonText}
+          textAreaDisabled={textAreaDisabled}
           onTaskClose={handleTaskCloseButtonClick}
           onPrimaryButton={handlePrimaryButtonClick}
           onSecondaryButton={handleSecondaryButtonClick}

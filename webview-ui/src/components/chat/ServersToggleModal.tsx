@@ -1,21 +1,21 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useClickAway, useWindowSize } from "react-use";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import ServersToggleList from "@/components/mcp/configuration/tabs/installed/ServersToggleList";
-import { vscode } from "@/utils/vscode";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import ServersToggleList from "@thorapi/components/mcp/configuration/tabs/installed/ServersToggleList";
+import { vscode } from "@thorapi/utils/vscode";
 import {
   VSCodeButton,
   VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
-import Tooltip from "@/components/common/Tooltip";
-import { useGetMcpServersQuery } from "@/thor/redux/services/McpServerService";
-import { convertThorMcpServersToShared } from "@/utils/mcpTypeConversions";
+import Tooltip from "@thorapi/components/common/Tooltip";
+import { useGetMcpServersQuery } from "@thorapi//redux/services/McpServerService";
+import { convertThorMcpServersToShared } from "@thorapi/utils/mcpTypeConversions";
 import {
   formatError,
   getErrorTitle,
   isRetryableError,
   safeConvert,
-} from "@/utils/errorHandling";
+} from "@thorapi/utils/errorHandling";
 import { FaServer, FaSync, FaCog } from "react-icons/fa";
 
 const ServersToggleModal: React.FC = () => {
@@ -61,7 +61,7 @@ const ServersToggleModal: React.FC = () => {
     }
   }, [isVisible]);
 
-  // Convert Thor MCP servers to shared format with error handling
+  // Convert ThorAPI MCP servers to shared format with error handling
   const sharedMcpServers = React.useMemo(() => {
     return safeConvert(
       mcpServers,

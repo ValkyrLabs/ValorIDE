@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import customBaseQuery from "../../thor/redux/customBaseQuery";
+import customBaseQuery from "../..//redux/customBaseQuery";
 import { AclGrantRequest, Role } from "../types/AclTypes";
 
 /**

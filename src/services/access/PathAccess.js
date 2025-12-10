@@ -2,10 +2,10 @@
 import * as path from "path";
 import * as fs from "fs";
 const DEFAULT_DENY_PATTERNS = [
-  "**/.git/**",
-  "**/node_modules/**",
-  "**/.valoride/undo/**",
-  "**/.DS_Store",
+    "**/.git/**",
+    "**/node_modules/**",
+    "**/.valoride/undo/**",
+    "**/.DS_Store",
 ];
 /** Very small, dependency‑free path guard.
  *  - Confines edits to workspace by default
@@ -13,181 +13,172 @@ const DEFAULT_DENY_PATTERNS = [
  *  - Optionally honors a project ".valorignore" line‑by‑line (prefix '#' for comments)
  */
 export class PathAccess {
-  root;
-  denies;
-  allowOutside;
-  lastRejection;
-  constructor(opts) {
-    this.root = path.resolve(opts.workspaceRoot);
-    this.allowOutside = !!opts.allowOutsideWorkspace;
-    const hasLocalValorideRules = fs.existsSync(
-      path.join(this.root, ".valoriderules"),
-    );
-    const denyPatterns = [];
-    if (hasLocalValorideRules) {
-      denyPatterns.push(...DEFAULT_DENY_PATTERNS);
+    root;
+    denies;
+    allowOutside;
+    lastRejection;
+    constructor(opts) {
+        this.root = path.resolve(opts.workspaceRoot);
+        this.allowOutside = !!opts.allowOutsideWorkspace;
+        const hasLocalValorideRules = fs.existsSync(path.join(this.root, ".valoriderules"));
+        const denyPatterns = [];
+        if (hasLocalValorideRules) {
+            denyPatterns.push(...DEFAULT_DENY_PATTERNS);
+        }
+        if (opts.denyGlobs?.length) {
+            denyPatterns.push(...opts.denyGlobs);
+        }
+        if (opts.additionalDenyPaths?.length) {
+            denyPatterns.push(...opts.additionalDenyPaths);
+        }
+        denyPatterns.push(...loadIgnorePatterns(path.join(this.root, ".valorignore"), this.root));
+        denyPatterns.push(...loadIgnorePatterns(path.join(this.root, ".valorideignore"), this.root));
+        this.denies = Array.from(new Set(denyPatterns));
     }
-    if (opts.denyGlobs?.length) {
-      denyPatterns.push(...opts.denyGlobs);
+    /** Return absolute, normalized path inside workspace. */
+    resolve(relOrAbs) {
+        this.lastRejection = undefined;
+        const abs = path.isAbsolute(relOrAbs)
+            ? path.normalize(relOrAbs)
+            : path.resolve(this.root, relOrAbs);
+        return abs;
     }
-    if (opts.additionalDenyPaths?.length) {
-      denyPatterns.push(...opts.additionalDenyPaths);
+    /** Main check: in‑workspace (unless allowed), no traversal outside, not denied by patterns. */
+    validateAccess(relOrAbs) {
+        const abs = this.resolve(relOrAbs);
+        // Workspace confinement
+        if (!this.allowOutside) {
+            const inWorkspace = abs.startsWith(this.root + path.sep) || abs === this.root;
+            if (!inWorkspace) {
+                this.lastRejection = { reason: "outside-workspace", absolutePath: abs };
+                return false;
+            }
+        }
+        // Deny common temp/backup/system areas and custom patterns
+        const relFromRoot = path.relative(this.root, abs).split(path.sep).join("/");
+        for (const pat of this.denies) {
+            if (matchGlob(relFromRoot, pat)) {
+                this.lastRejection = {
+                    reason: "deny-pattern",
+                    pattern: pat,
+                    absolutePath: abs,
+                    relativePath: relFromRoot,
+                };
+                return false;
+            }
+        }
+        this.lastRejection = undefined;
+        return true;
     }
-    denyPatterns.push(
-      ...loadIgnorePatterns(path.join(this.root, ".valorignore"), this.root),
-    );
-    denyPatterns.push(
-      ...loadIgnorePatterns(path.join(this.root, ".valorideignore"), this.root),
-    );
-    this.denies = Array.from(new Set(denyPatterns));
-  }
-  /** Return absolute, normalized path inside workspace. */
-  resolve(relOrAbs) {
-    this.lastRejection = undefined;
-    const abs = path.isAbsolute(relOrAbs)
-      ? path.normalize(relOrAbs)
-      : path.resolve(this.root, relOrAbs);
-    return abs;
-  }
-  /** Main check: in‑workspace (unless allowed), no traversal outside, not denied by patterns. */
-  validateAccess(relOrAbs) {
-    const abs = this.resolve(relOrAbs);
-    // Workspace confinement
-    if (!this.allowOutside) {
-      const inWorkspace =
-        abs.startsWith(this.root + path.sep) || abs === this.root;
-      if (!inWorkspace) {
-        this.lastRejection = { reason: "outside-workspace", absolutePath: abs };
-        return false;
-      }
+    getLastRejection() {
+        return this.lastRejection;
     }
-    // Deny common temp/backup/system areas and custom patterns
-    const relFromRoot = path.relative(this.root, abs).split(path.sep).join("/");
-    for (const pat of this.denies) {
-      if (matchGlob(relFromRoot, pat)) {
-        this.lastRejection = {
-          reason: "deny-pattern",
-          pattern: pat,
-          absolutePath: abs,
-          relativePath: relFromRoot,
-        };
-        return false;
-      }
-    }
-    this.lastRejection = undefined;
-    return true;
-  }
-  getLastRejection() {
-    return this.lastRejection;
-  }
 }
 // Minimal glob support for **, *, and /** sequences used in deny lists
 function matchGlob(relPath, pattern) {
-  const escapeRegexChar = (ch) =>
-    /[\\^$+?.()|[\]{}]/.test(ch) ? `\\${ch}` : ch;
-  const toRegexSource = (glob) => {
-    let src = "";
-    for (let i = 0; i < glob.length; i++) {
-      const ch = glob[i];
-      if (ch === "*") {
-        const next = glob[i + 1];
-        if (next === "*") {
-          const after = glob[i + 2];
-          if (after === "/") {
-            src += "(?:.*/)?";
-            i += 2; // Skip the second *; loop increments past '/'
-            continue;
-          }
-          src += ".*";
-          i += 1; // Skip the second *
-          continue;
+    const escapeRegexChar = (ch) => /[\\^$+?.()|[\]{}]/.test(ch) ? `\\${ch}` : ch;
+    const toRegexSource = (glob) => {
+        let src = "";
+        for (let i = 0; i < glob.length; i++) {
+            const ch = glob[i];
+            if (ch === "*") {
+                const next = glob[i + 1];
+                if (next === "*") {
+                    const after = glob[i + 2];
+                    if (after === "/") {
+                        src += "(?:.*/)?";
+                        i += 2; // Skip the second *; loop increments past '/'
+                        continue;
+                    }
+                    src += ".*";
+                    i += 1; // Skip the second *
+                    continue;
+                }
+                src += "[^/]*";
+                continue;
+            }
+            src += escapeRegexChar(ch);
         }
-        src += "[^/]*";
-        continue;
-      }
-      src += escapeRegexChar(ch);
-    }
-    return src;
-  };
-  const normalizedPattern = pattern.replace(/\\/g, "/");
-  const normalizedPath = relPath.replace(/\\/g, "/");
-  const regex = new RegExp(`^${toRegexSource(normalizedPattern)}$`);
-  return regex.test(normalizedPath);
+        return src;
+    };
+    const normalizedPattern = pattern.replace(/\\/g, "/");
+    const normalizedPath = relPath.replace(/\\/g, "/");
+    const regex = new RegExp(`^${toRegexSource(normalizedPattern)}$`);
+    return regex.test(normalizedPath);
 }
-function loadIgnorePatterns(
-  ignoreFilePath,
-  workspaceRoot,
-  visited = new Set(),
-) {
-  if (!ignoreFilePath) return [];
-  try {
-    if (!fs.existsSync(ignoreFilePath)) {
-      return [];
+function loadIgnorePatterns(ignoreFilePath, workspaceRoot, visited = new Set()) {
+    if (!ignoreFilePath)
+        return [];
+    try {
+        if (!fs.existsSync(ignoreFilePath)) {
+            return [];
+        }
+        const stat = fs.statSync(ignoreFilePath);
+        if (!stat.isFile()) {
+            return [];
+        }
     }
-    const stat = fs.statSync(ignoreFilePath);
-    if (!stat.isFile()) {
-      return [];
+    catch {
+        return [];
     }
-  } catch {
-    return [];
-  }
-  if (visited.has(ignoreFilePath)) {
-    return [];
-  }
-  visited.add(ignoreFilePath);
-  let content;
-  try {
-    content = fs.readFileSync(ignoreFilePath, "utf8");
-  } catch {
-    return [];
-  }
-  const patterns = [];
-  const lines = content.split(/\r?\n/);
-  for (const rawLine of lines) {
-    const line = rawLine.trim();
-    if (!line || line.startsWith("#")) {
-      continue;
+    if (visited.has(ignoreFilePath)) {
+        return [];
     }
-    if (line.startsWith("!include ")) {
-      const includeTarget = line.substring("!include ".length).trim();
-      if (!includeTarget) {
-        continue;
-      }
-      const includePath = path.isAbsolute(includeTarget)
-        ? includeTarget
-        : path.resolve(workspaceRoot, includeTarget);
-      patterns.push(...loadIgnorePatterns(includePath, workspaceRoot, visited));
-      continue;
+    visited.add(ignoreFilePath);
+    let content;
+    try {
+        content = fs.readFileSync(ignoreFilePath, "utf8");
     }
-    if (line.startsWith("!")) {
-      // Respect negation directives by not adding them to the deny list
-      continue;
+    catch {
+        return [];
     }
-    const normalizedPatterns = normalizeIgnorePattern(line);
-    patterns.push(...normalizedPatterns);
-  }
-  return patterns;
+    const patterns = [];
+    const lines = content.split(/\r?\n/);
+    for (const rawLine of lines) {
+        const line = rawLine.trim();
+        if (!line || line.startsWith("#")) {
+            continue;
+        }
+        if (line.startsWith("!include ")) {
+            const includeTarget = line.substring("!include ".length).trim();
+            if (!includeTarget) {
+                continue;
+            }
+            const includePath = path.isAbsolute(includeTarget)
+                ? includeTarget
+                : path.resolve(workspaceRoot, includeTarget);
+            patterns.push(...loadIgnorePatterns(includePath, workspaceRoot, visited));
+            continue;
+        }
+        if (line.startsWith("!")) {
+            // Respect negation directives by not adding them to the deny list
+            continue;
+        }
+        const normalizedPatterns = normalizeIgnorePattern(line);
+        patterns.push(...normalizedPatterns);
+    }
+    return patterns;
 }
 function normalizeIgnorePattern(rawPattern) {
-  let pattern = rawPattern.replace(/\\/g, "/");
-  const results = [];
-  const isDirPattern = pattern.endsWith("/");
-  if (isDirPattern) {
-    pattern = pattern.replace(/\/+$/, "");
-  }
-  const anchoredToRoot = pattern.startsWith("/");
-  if (anchoredToRoot) {
-    pattern = pattern.replace(/^\/+/, "");
-  }
-  if (!pattern) {
+    let pattern = rawPattern.replace(/\\/g, "/");
+    const results = [];
+    const isDirPattern = pattern.endsWith("/");
+    if (isDirPattern) {
+        pattern = pattern.replace(/\/+$/, "");
+    }
+    const anchoredToRoot = pattern.startsWith("/");
+    if (anchoredToRoot) {
+        pattern = pattern.replace(/^\/+/, "");
+    }
+    if (!pattern) {
+        return results;
+    }
+    const hasSlash = pattern.includes("/");
+    const base = anchoredToRoot || hasSlash ? pattern : `**/${pattern}`;
+    results.push(base);
+    if (isDirPattern) {
+        results.push(`${base}/**`);
+    }
     return results;
-  }
-  const hasSlash = pattern.includes("/");
-  const base = anchoredToRoot || hasSlash ? pattern : `**/${pattern}`;
-  results.push(base);
-  if (isDirPattern) {
-    results.push(`${base}/**`);
-  }
-  return results;
 }
 //# sourceMappingURL=PathAccess.js.map

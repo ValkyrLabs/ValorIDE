@@ -4,7 +4,7 @@ import {
   WebsocketMessageFromJSON,
   WebsocketMessageToJSON,
   WebsocketMessageTypeEnum,
-} from "@thor/model";
+} from "@thorapi/model";
 
 export type CommunicationRole = "manager" | "worker";
 
@@ -53,7 +53,7 @@ export class CommunicationService extends EventEmitter {
     this.senderId = options.senderId ?? this.generateSenderId();
     // Prevent uncaught 'error' crashes
     if (this.listenerCount("error") === 0) {
-      this.on("error", () => {});
+      this.on("error", () => { });
     }
   }
 
@@ -79,13 +79,13 @@ export class CommunicationService extends EventEmitter {
     }
 
     try {
-      // Listen for Thor/STOMP bridge messages from webview (AppMessage shape)
+      // Listen for ThorAPI/STOMP bridge messages from webview (AppMessage shape)
       window.addEventListener("websocket-message", (evt: Event) => {
         const custom = evt as CustomEvent;
         const appMsg = custom.detail;
         if (!appMsg || typeof appMsg.type !== "string") return;
 
-        // Handle potential WebRTC signaling tunneled via Thor broker
+        // Handle potential WebRTC signaling tunneled via ThorAPI broker
         if (appMsg.type.startsWith("webrtc:")) {
           this.handleWebRTCSignal(appMsg as any);
           return;
@@ -248,8 +248,8 @@ export class CommunicationService extends EventEmitter {
   public disconnect() {
     if (!this.connected || !CommunicationService.isSupported()) return;
     try {
-      window.removeEventListener("websocket-message", () => {});
-      window.removeEventListener("message", () => {});
+      window.removeEventListener("websocket-message", () => { });
+      window.removeEventListener("message", () => { });
       this.connected = false;
       this.ready = false;
     } catch (err: any) {

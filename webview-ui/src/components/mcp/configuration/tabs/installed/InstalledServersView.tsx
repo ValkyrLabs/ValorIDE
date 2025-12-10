@@ -4,18 +4,18 @@ import {
   VSCodeLink,
   VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import ServersToggleList from "./ServersToggleList";
-import { useGetMcpServersQuery } from "@/thor/redux/services/McpServerService";
-import { convertThorMcpServersToShared } from "@/utils/mcpTypeConversions";
+import { useGetMcpServersQuery } from "@thorapi//redux/services/McpServerService";
+import { convertThorMcpServersToShared } from "@thorapi/utils/mcpTypeConversions";
 import {
   formatError,
   getErrorTitle,
   isRetryableError,
   safeConvert,
-} from "@/utils/errorHandling";
-import Tooltip from "@/components/common/Tooltip";
-import SystemAlerts from "@/components/SystemAlerts";
+} from "@thorapi/utils/errorHandling";
+import Tooltip from "@thorapi/components/common/Tooltip";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
 import { VscRefresh, VscServer } from "react-icons/vsc";
 
 const InstalledServersView = () => {
@@ -35,7 +35,7 @@ const InstalledServersView = () => {
     }
   }, [refetch]);
 
-  // Convert Thor MCP servers to shared format with error handling
+  // Convert ThorAPI MCP servers to shared format with error handling
   const sharedMcpServers = React.useMemo(() => {
     return safeConvert(
       mcpServers,

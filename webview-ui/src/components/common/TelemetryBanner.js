@@ -2,7 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { VSCodeButton, VSCodeLink } from "@vscode/webview-ui-toolkit/react";
 import { memo, useState } from "react";
 import styled from "styled-components";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 const BannerContainer = styled.div`
   background-color: var(--vscode-banner-background);
   padding: 12px 20px;

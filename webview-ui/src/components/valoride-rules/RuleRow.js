@@ -1,14 +1,14 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
-import { FileServiceClient } from "@/services/grpc-client";
+import { FileServiceClient } from "@thorapi/services/grpc-client";
 import { FaEdit, FaTrash } from "react-icons/fa";
 const RuleRow = ({ rulePath, enabled, isGlobal, toggleRule }) => {
   // Get the filename from the path for display
   const username = rulePath.split("/").pop() || rulePath;
   const handleEditClick = () => {
     FileServiceClient.openFile({ value: rulePath }).catch((err) =>
-      console.error("Failed to open file:", err),
+      console.error("Failed to open file:", err)
     );
   };
   const handleDeleteClick = () => {

@@ -4,8 +4,10 @@ import {
   Fragment as _Fragment,
 } from "react/jsx-runtime";
 import { memo, useMemo } from "react";
-import { getLanguageFromPath } from "@/utils/getLanguageFromPath";
-import CodeBlock, { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
+import { getLanguageFromPath } from "@thorapi/utils/getLanguageFromPath";
+import CodeBlock, {
+  CODE_BLOCK_BG_COLOR,
+} from "@thorapi/components/common/CodeBlock";
 import {
   VscFeedback,
   VscOutput,
@@ -34,7 +36,7 @@ const CodeAccordian = ({
 }) => {
   const inferredLanguage = useMemo(
     () => code && (language ?? (path ? getLanguageFromPath(path) : undefined)),
-    [path, language, code],
+    [path, language, code]
   );
   const numberOfEdits = useMemo(() => {
     if (code) {

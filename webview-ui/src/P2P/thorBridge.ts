@@ -1,11 +1,11 @@
 import { Client, IMessage } from "@stomp/stompjs";
-import { getWebsocketUrl, isValidWsUrl } from "@/websocket/websocket";
-import { WebsocketMessageTypeEnum } from "@/thor/model";
+import { getWebsocketUrl, isValidWsUrl } from "@thorapi/websocket/websocket";
+import { WebsocketMessageTypeEnum } from "@thorapi//model";
 import {
   deriveWsUrlFromHost,
   getValkyraiHost,
   subscribeToValkyraiHost,
-} from "@/utils/valkyraiHost";
+} from "@thorapi/utils/valkyraiHost";
 
 const getFallbackWsBase = () =>
   deriveWsUrlFromHost(getValkyraiHost()) ?? "ws://localhost:8080";
@@ -74,7 +74,7 @@ if (typeof window !== "undefined") {
                   },
                 }),
               );
-            } catch {}
+            } catch { }
           }
         }
       } catch {
@@ -92,7 +92,7 @@ if (typeof window !== "undefined") {
     };
 
     const toAppMessage = (raw: any): AppMessage | null => {
-      // Expect Thor WebsocketMessage payload to be either:
+      // Expect ThorAPI WebsocketMessage payload to be either:
       // - a JSON string body with shape { payload: string|object, ... }
       // - or already-parsed object
       // And the payload content to be a JSON string/object with shape:
@@ -151,7 +151,7 @@ if (typeof window !== "undefined") {
     };
 
     const toThorBody = (msg: AppMessage): string => {
-      const thor = {
+      const thorMessage = {
         type: WebsocketMessageTypeEnum.BROADCAST,
         payload: JSON.stringify({
           topic: msg.type,
@@ -161,7 +161,7 @@ if (typeof window !== "undefined") {
           timestamp: msg.timestamp,
         }),
       };
-      return JSON.stringify(thor);
+      return JSON.stringify(thorMessage);
     };
 
     const postStatus = (
@@ -172,7 +172,7 @@ if (typeof window !== "undefined") {
           detail: { thorConnected: phase === "connected", phase },
         });
         window.dispatchEvent(evt);
-      } catch {}
+      } catch { }
     };
 
     let stompClient: Client | null = null;
@@ -263,7 +263,7 @@ if (typeof window !== "undefined") {
             };
             announce("presence:join", { id: instanceId });
             announce("auth:ack", { id: instanceId });
-          } catch {}
+          } catch { }
         } catch (e) {
           console.error("thorBridge subscribe error", e);
         }

@@ -1,13 +1,13 @@
 import store from "../store";
-import * as ThorServices from "../../thor/redux/services";
-import { getValkyraiHost } from "@/utils/valkyraiHost";
+import * as ThorServices from "../..//redux/services";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 
 type AnyApiSlice = {
   reducerPath: string;
   util: { invalidateTags: (tags: Array<{ type: string; id?: string }>) => any };
 };
 
-// Build a registry of API slices from generated thor services
+// Build a registry of API slices from generated  services
 function getApiSlices(): AnyApiSlice[] {
   const slices: AnyApiSlice[] = [];
   for (const v of Object.values(ThorServices)) {
@@ -76,7 +76,7 @@ export async function globalUuidLookup(
           });
           if (res.ok)
             return { entity: api.reducerPath, data: await res.json() };
-        } catch {}
+        } catch { }
         return null;
       }),
     );

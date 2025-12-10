@@ -54,7 +54,7 @@ const AddToProjectModal: React.FC<AddToProjectModalProps> = ({
             <ul>
               <li>Locate existing tsconfig.json files in your project</li>
               <li>
-                Add <code>@thor/*</code> alias pointing to the generated
+                Add <code>@thorapi/*</code> alias pointing to the generated
                 TypeScript code
               </li>
               <li>

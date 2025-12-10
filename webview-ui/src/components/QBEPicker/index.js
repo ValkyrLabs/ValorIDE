@@ -2,7 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useState } from "react";
 import DraggableModal from "@valkyr/component-library/DraggableModal";
 import CoolButton from "@valkyr/component-library/CoolButton";
-import { BASE_PATH } from "@thor/src";
+import { BASE_PATH } from "@thorapi/src";
 import { FaPlus } from "react-icons/fa";
 export const QBEPicker = ({
   show,
@@ -87,8 +87,8 @@ export const QBEPicker = ({
                     }),
                   ],
                 },
-                r.id || r.keyHash || JSON.stringify(r),
-              ),
+                r.id || r.keyHash || JSON.stringify(r)
+              )
             ),
             !busy &&
               results.length === 0 &&

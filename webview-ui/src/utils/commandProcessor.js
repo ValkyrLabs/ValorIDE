@@ -1,5 +1,5 @@
 import { capturePageText, capturePageScreenshot } from "./websocketUtils";
-import { ChatMessageRoleEnum, ChatMessageSourceTypeEnum } from "@thor/model";
+import { ChatMessageRoleEnum, ChatMessageSourceTypeEnum } from "@thorapi/model";
 /**
  * Frontend Command Processor
  *
@@ -58,7 +58,7 @@ export class FrontendCommandProcessor {
         console.error("Error processing screen capture command:", error);
         processedContent = processedContent.replace(
           match[0],
-          `[Screen capture failed: ${error}]`,
+          `[Screen capture failed: ${error}]`
         );
       }
     }
@@ -92,7 +92,7 @@ export class FrontendCommandProcessor {
         console.error("Error processing WebSocket command:", error);
         processedContent = processedContent.replace(
           match[0],
-          `[WebSocket command failed: ${error}]`,
+          `[WebSocket command failed: ${error}]`
         );
       }
     }
@@ -116,13 +116,13 @@ export class FrontendCommandProcessor {
           match[0],
           result.success
             ? `[Navigated to ${url}]`
-            : `[Navigation failed: ${result.error}]`,
+            : `[Navigation failed: ${result.error}]`
         );
       } catch (error) {
         console.error("Error processing navigation command:", error);
         processedContent = processedContent.replace(
           match[0],
-          `[Navigation failed: ${error}]`,
+          `[Navigation failed: ${error}]`
         );
       }
     }
@@ -149,13 +149,13 @@ export class FrontendCommandProcessor {
           match[0],
           result.success
             ? `[${action} on ${target}]`
-            : `[UI action failed: ${result.error}]`,
+            : `[UI action failed: ${result.error}]`
         );
       } catch (error) {
         console.error("Error processing UI command:", error);
         processedContent = processedContent.replace(
           match[0],
-          `[UI action failed: ${error}]`,
+          `[UI action failed: ${error}]`
         );
       }
     }
@@ -185,7 +185,7 @@ export class FrontendCommandProcessor {
           } catch (error) {
             console.log(
               "Screenshot capture failed, continuing with text only:",
-              error,
+              error
             );
           }
         }

@@ -3,7 +3,7 @@
  *
  * CRITICAL FIX: Symbol Serialization Prevention
  * ============================================
- * Generated Thor model objects (Principal, Role, Authority) contain Symbol fields
+ * Generated ThorAPI model objects (Principal, Role, Authority) contain Symbol fields
  * that cannot be JSON serialized. When attempted, causes RTK Query to crash during
  * subscription cleanup with "Cannot convert a symbol to a string".
  *
@@ -19,7 +19,7 @@
  */
 
 import { useMemo, useSyncExternalStore } from "react";
-import { Principal, Role, Authority } from "@thor/model";
+import { Principal, Role, Authority } from "@thorapi/model";
 
 const STORAGE_KEY = "authenticatedPrincipal";
 const PRINCIPAL_STORAGE_EVENT = "principal-storage-changed";
@@ -239,35 +239,35 @@ const sanitizePrincipalForStorage = (
     // Convert roleList items to strings (they might be objects with Symbols)
     const roleList = Array.isArray(p.roleList)
       ? p.roleList.map((r: any) => {
-          if (typeof r === "string") return r;
-          if (r && typeof r === "object") {
-            // If it's an object, try to get the string representation
-            return (
-              r.roleName ||
-              r.role ||
-              r.name ||
-              r.authority ||
-              String(r).replace(/\[object Object\]/g, "")
-            );
-          }
-          return String(r);
-        })
+        if (typeof r === "string") return r;
+        if (r && typeof r === "object") {
+          // If it's an object, try to get the string representation
+          return (
+            r.roleName ||
+            r.role ||
+            r.name ||
+            r.authority ||
+            String(r).replace(/\[object Object\]/g, "")
+          );
+        }
+        return String(r);
+      })
       : undefined;
 
     // Convert authorityList items to strings (they might be objects with Symbols)
     const authorityList = Array.isArray(p.authorityList)
       ? p.authorityList.map((a: any) => {
-          if (typeof a === "string") return a;
-          if (a && typeof a === "object") {
-            return (
-              a.authority ||
-              a.name ||
-              a.id ||
-              String(a).replace(/\[object Object\]/g, "")
-            );
-          }
-          return String(a);
-        })
+        if (typeof a === "string") return a;
+        if (a && typeof a === "object") {
+          return (
+            a.authority ||
+            a.name ||
+            a.id ||
+            String(a).replace(/\[object Object\]/g, "")
+          );
+        }
+        return String(a);
+      })
       : undefined;
 
     // STANDARDIZE ON REAL MODEL: Use exact same field names as Principal.tsx
@@ -333,13 +333,13 @@ export const writeStoredPrincipal = (
     const normalizeRoles = (list?: any[]) =>
       Array.isArray(list)
         ? list
-            .map((r) => {
-              if (!r) return null;
-              if (typeof r === "string") return r;
-              return r.roleName || r.name || r.authority || r.role || null;
-            })
-            .filter(Boolean)
-            .join("|")
+          .map((r) => {
+            if (!r) return null;
+            if (typeof r === "string") return r;
+            return r.roleName || r.name || r.authority || r.role || null;
+          })
+          .filter(Boolean)
+          .join("|")
         : "";
     if (
       normalizeRoles((a as any).roleList) !==

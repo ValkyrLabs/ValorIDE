@@ -2,8 +2,8 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useCallback, useRef, useState, useEffect } from "react";
 import { useEvent } from "react-use";
 import styled from "styled-components";
-import { CheckpointsServiceClient } from "@/services/grpc-client";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
+import { CheckpointsServiceClient } from "@thorapi/services/grpc-client";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { createPortal } from "react-dom";
 import { useFloating, offset, flip, shift } from "@floating-ui/react";
@@ -229,7 +229,7 @@ export const CheckmarkControl = ({ messageTs, isCheckpointCheckedOut }) => {
                       }),
                     ],
                   }),
-                  document.body,
+                  document.body
                 ),
             ],
           }),

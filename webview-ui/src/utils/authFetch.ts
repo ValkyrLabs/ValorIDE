@@ -1,4 +1,4 @@
-import { BASE_PATH } from "../thor/src";
+import { BASE_PATH } from "..//src";
 
 type HeadersLike = HeadersInit | undefined;
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import { TaskFeedbackType } from "@shared/WebviewMessage";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";

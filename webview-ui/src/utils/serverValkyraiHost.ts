@@ -2,7 +2,7 @@ import {
   DEFAULT_VALKYRAI_HOST,
   deriveWsUrlFromHost,
   getValkyraiHost,
-} from "@/utils/valkyraiHost";
+} from "@thorapi/utils/valkyraiHost";
 
 export const getValkyraiBasePath = () => getValkyraiHost();
 

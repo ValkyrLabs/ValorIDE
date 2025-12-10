@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ValorIDEMessage } from "@shared/ExtensionMessage";
-import { deriveTaskProgress, TASK_PHASES, phaseToIndex } from "./taskPhase.ts";
+import { deriveTaskProgress, TASK_PHASES, phaseToIndex } from "./taskPhase";
 
 const makeMessages = () => {
   let ts = 1;

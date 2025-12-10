@@ -25,8 +25,8 @@ import React, {
 import { Image, Spinner } from "react-bootstrap";
 import { FaCamera, FaUser, FaCheck, FaTimes } from "react-icons/fa";
 import axios from "axios";
-import { BASE_PATH } from "@thor/src";
-import { ContentMediaLink } from "@thor/model/ContentMediaLink";
+import { BASE_PATH } from "@thorapi/src";
+import { ContentMediaLink } from "@thorapi/model/ContentMediaLink";
 import "./UserAvatar.css";
 
 export type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl" | "xxl";

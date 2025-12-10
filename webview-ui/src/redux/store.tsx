@@ -7,9 +7,9 @@ import { LogoutService } from "./services/LogoutService";
 import { ApplicationService } from "./services/ApplicationService";
 import { PrincipalService } from "./services/PrincipalService";
 import { ThorHostingService } from "./services/ThorHostingService";
-import { BalanceResponseService } from "../thor/redux/services/BalanceResponseService";
-import { UsageTransactionService } from "../thor/redux/services/UsageTransactionService";
-import { PaymentTransactionService } from "../thor/redux/services/PaymentTransactionService";
+import { BalanceResponseService } from "..//redux/services/BalanceResponseService";
+import { UsageTransactionService } from "..//redux/services/UsageTransactionService";
+import { PaymentTransactionService } from "..//redux/services/PaymentTransactionService";
 import { DigitalProductService } from "./services/DigitalProductService";
 import { creditsApi } from "../services/creditsApi";
 
@@ -19,8 +19,8 @@ import websocketReducer from "../components/ServerConsole/websocketSlice";
 
 // import the thorapi generated reducers and middleware
 import middlewares from "../redux/middlewares";
-import thorMiddlewares from "../thor/redux/middlewares";
-import { reducer as thorReducer } from "../thor/redux/store";
+import thorMiddlewares from "..//redux/middlewares";
+import { reducer as thorReducer } from "..//redux/store";
 
 // combine reducers
 const rootReducer = combineReducers({
@@ -45,7 +45,7 @@ const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(middlewares as any) // add the custom middlewares
-      .concat(thorMiddlewares as any) // add the thor generated middlewares
+      .concat(thorMiddlewares as any) // add the  generated middlewares
       .concat(BalanceResponseService.middleware)
       .concat(UsageTransactionService.middleware)
       .concat(PaymentTransactionService.middleware)

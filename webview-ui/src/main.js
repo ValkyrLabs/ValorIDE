@@ -2,7 +2,7 @@ import { jsx as _jsx } from "react/jsx-runtime";
 import ReactDOM from "react-dom/client";
 import { MemoryRouter } from "react-router-dom";
 import App from "./App";
-// Initialize Thor/STOMP bridge so CommunicationService can relay to mothership
+// Initialize ThorAPI/STOMP bridge so CommunicationService can relay to mothership
 import "./P2P/thorBridge";
 // import reportWebVitals from "./reportWebVitals"
 import { initThemes } from "./themes";
@@ -15,10 +15,5 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 const ReduxProvider = Provider;
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  _jsx(ReduxProvider, {
-    store: store,
-    children: _jsx(MemoryRouter, { children: _jsx(App, {}) }),
-  }),
-);
+root.render(_jsx(ReduxProvider, { store: store, children: _jsx(MemoryRouter, { children: _jsx(App, {}) }) }));
 //# sourceMappingURL=main.js.map

@@ -7,13 +7,13 @@ import {
   FaTimes,
   FaCreditCard,
 } from "react-icons/fa";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import {
   useGetAccountBalanceQuery,
   isInsufficientFunds,
-} from "@/services/creditsApi";
+} from "@thorapi/services/creditsApi";
 import { getApiMetrics } from "@shared/getApiMetrics";
-import BuyCredits from "@/components/BuyCredits";
+import BuyCredits from "@thorapi/components/BuyCredits";
 
 interface SystemAlert {
   id: string;

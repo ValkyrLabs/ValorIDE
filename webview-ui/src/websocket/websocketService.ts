@@ -1,6 +1,6 @@
 import { addMessage } from "../components/ServerConsole/websocketSlice";
 import store from "../redux/store"; // Adjust the import path as necessary
-import { WebsocketMessage, WebsocketMessageTypeEnum } from "../thor/model";
+import { WebsocketMessage, WebsocketMessageTypeEnum } from "@thorapi/model";
 import { getWebsocketUrl, isValidWsUrl } from "./websocket";
 
 let socket: WebSocket | null = null;

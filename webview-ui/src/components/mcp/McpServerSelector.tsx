@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { VSCodeDropdown, VSCodeOption } from "@vscode/webview-ui-toolkit/react";
-import StatusBadge from "@/components/common/StatusBadge";
-import McpServerDetailsModal from "@/components/mcp/McpServerDetailsModal";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
+import McpServerDetailsModal from "@thorapi/components/mcp/McpServerDetailsModal";
 import type { McpServer } from "@shared/mcp";
 
 export const McpServerSelector: React.FC<{

@@ -5,12 +5,12 @@ import {
 } from "react/jsx-runtime";
 import { useCallback, useState, useRef, useMemo } from "react";
 import styled from "styled-components";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import { useEvent } from "react-use";
 import { FaGithub, FaStar, FaCloudDownloadAlt, FaKey } from "react-icons/fa";
 const McpMarketplaceCard = ({ item, installedServers }) => {
   const isInstalled = installedServers.some(
-    (server) => server.name === item.mcpId,
+    (server) => server.name === item.mcpId
   );
   const [isDownloading, setIsDownloading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -314,8 +314,8 @@ const McpMarketplaceCard = ({ item, installedServers }) => {
                           index === item.tags.length - 1 ? "" : "",
                         ],
                       },
-                      tag,
-                    ),
+                      tag
+                    )
                   ),
                   _jsx("div", {
                     className: "tags-gradient",

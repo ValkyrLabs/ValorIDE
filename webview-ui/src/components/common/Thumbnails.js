@@ -1,7 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useState, useRef, useLayoutEffect, memo } from "react";
 import { useWindowSize } from "react-use";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import { FaTimes } from "react-icons/fa";
 const Thumbnails = ({ images, style, setImages, onHeightChange }) => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -81,8 +81,8 @@ const Thumbnails = ({ images, style, setImages, onHeightChange }) => {
               }),
           ],
         },
-        index,
-      ),
+        index
+      )
     ),
   });
 };

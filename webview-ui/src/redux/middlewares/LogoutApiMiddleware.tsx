@@ -4,7 +4,7 @@ import {
   getLogoutList,
   deleteLogout,
   updateLogout,
-} from "@thor/api";
+} from "@thorapi/api";
 
 import {
   ADD_LOGOUT_REQUEST,
@@ -42,60 +42,60 @@ Description: Logout
 
 export const LogoutMiddleware =
   ({ dispatch }) =>
-  (next) =>
-  async (action) => {
-    console.log("Logout MIDDLEWARE: " + JSON.stringify(action));
-    next(action);
+    (next) =>
+      async (action) => {
+        console.log("Logout MIDDLEWARE: " + JSON.stringify(action));
+        next(action);
 
-    switch (action.type) {
-      case ADD_LOGOUT_REQUEST:
-        try {
-          const response = postLogout(action.payload);
-          dispatch(addLogoutSuccess(response.body));
-        } catch (error) {
-          dispatch(addLogoutFailure(error.message));
+        switch (action.type) {
+          case ADD_LOGOUT_REQUEST:
+            try {
+              const response = postLogout(action.payload);
+              dispatch(addLogoutSuccess(response.body));
+            } catch (error) {
+              dispatch(addLogoutFailure(error.message));
+            }
+            break;
+
+          case LIST_LOGOUT_REQUEST:
+            try {
+              const response = getLogoutList({});
+              dispatch(listLogoutSuccess(response.body));
+            } catch (error) {
+              dispatch(listLogoutFailure(error.message));
+            }
+            break;
+
+          case FETCH_LOGOUT_REQUEST:
+            try {
+              const response = getLogout(action.id);
+              dispatch(fetchLogoutSuccess(response.body));
+            } catch (error) {
+              dispatch(fetchLogoutFailure(error.message));
+            }
+            break;
+
+          case UPDATE_LOGOUT_REQUEST:
+            try {
+              const { id, Logout } = action.payload;
+              const response = updateLogout(id);
+              dispatch(updateLogoutSuccess(response.body));
+            } catch (error) {
+              dispatch(updateLogoutFailure(error.message));
+            }
+            break;
+
+          case DELETE_LOGOUT_REQUEST:
+            try {
+              const { id, Logout } = action.payload;
+              const response = deleteLogout(id);
+              dispatch(deleteLogoutSuccess(response.body));
+            } catch (error) {
+              dispatch(deleteLogoutFailure(error.message));
+            }
+            break;
+
+          default:
+            break;
         }
-        break;
-
-      case LIST_LOGOUT_REQUEST:
-        try {
-          const response = getLogoutList({});
-          dispatch(listLogoutSuccess(response.body));
-        } catch (error) {
-          dispatch(listLogoutFailure(error.message));
-        }
-        break;
-
-      case FETCH_LOGOUT_REQUEST:
-        try {
-          const response = getLogout(action.id);
-          dispatch(fetchLogoutSuccess(response.body));
-        } catch (error) {
-          dispatch(fetchLogoutFailure(error.message));
-        }
-        break;
-
-      case UPDATE_LOGOUT_REQUEST:
-        try {
-          const { id, Logout } = action.payload;
-          const response = updateLogout(id);
-          dispatch(updateLogoutSuccess(response.body));
-        } catch (error) {
-          dispatch(updateLogoutFailure(error.message));
-        }
-        break;
-
-      case DELETE_LOGOUT_REQUEST:
-        try {
-          const { id, Logout } = action.payload;
-          const response = deleteLogout(id);
-          dispatch(deleteLogoutSuccess(response.body));
-        } catch (error) {
-          dispatch(deleteLogoutFailure(error.message));
-        }
-        break;
-
-      default:
-        break;
-    }
-  };
+      };

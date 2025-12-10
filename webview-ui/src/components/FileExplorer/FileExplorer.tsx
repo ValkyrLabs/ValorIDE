@@ -3,11 +3,11 @@ import {
   VSCodeButton,
   VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import AddToProjectModal from "./AddToProjectModal";
 import StartServerModal from "./StartServerModal";
-import SystemAlerts from "@/components/SystemAlerts";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import "./FileExplorer.css";
 
 interface FileItem {

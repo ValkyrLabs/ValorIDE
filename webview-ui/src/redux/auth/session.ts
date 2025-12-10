@@ -1,4 +1,4 @@
-import { Principal } from "@thor/model/Principal";
+import { Principal } from "@thorapi/model/Principal";
 
 export const getJwtToken = (): string | null => {
   try {

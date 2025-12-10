@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 
-import { Principal } from "@thor/model";
-import customBaseQuery from "../../thor/redux/customBaseQuery"; // Use Thor base query
+import { Principal } from "@thorapi/model";
+import customBaseQuery from "../..//redux/customBaseQuery"; // Use ThorAPI base query
 
 type PrincipalResponse = Principal[];
 
@@ -15,9 +15,9 @@ export const PrincipalService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Principal" as const, id })),
-              { type: "Principal", id: "LIST" },
-            ]
+            ...result.map(({ id }) => ({ type: "Principal" as const, id })),
+            { type: "Principal", id: "LIST" },
+          ]
           : [{ type: "Principal", id: "LIST" }],
     }),
     // the only thing we need to override. leave the rest for now

@@ -4,13 +4,13 @@ import { findLast } from "@shared/array";
 import { combineApiRequests } from "@shared/combineApiRequests";
 import { combineCommandSequences } from "@shared/combineCommandSequences";
 import { getApiMetrics } from "@shared/getApiMetrics";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
-import { useGetBalanceResponsesQuery } from "@/thor/redux/services/BalanceResponseService";
-import { vscode } from "@/utils/vscode";
-import { useChatInputPersistence } from "@/utils/useSessionStorage";
-import ChatTextArea from "@/components/chat/ChatTextArea";
-import SystemAlerts from "@/components/SystemAlerts";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
+import { useGetBalanceResponsesQuery } from "@thorapi//redux/services/BalanceResponseService";
+import { vscode } from "@thorapi/utils/vscode";
+import { useChatInputPersistence } from "@thorapi/utils/useSessionStorage";
+import ChatTextArea from "@thorapi/components/chat/ChatTextArea";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
 // Custom hooks
 import { useWebSocketConnection } from "./hooks/useWebSocketConnection";
 import { usePeerCommunication } from "./hooks/usePeerCommunication";
@@ -48,7 +48,7 @@ const ChatView = ({
       const message = e.data;
       if (message?.type === "selectedImages" && Array.isArray(message.images)) {
         setSelectedImages((prev) =>
-          [...prev, ...message.images].slice(0, MAX_IMAGES_PER_MESSAGE),
+          [...prev, ...message.images].slice(0, MAX_IMAGES_PER_MESSAGE)
         );
       }
     };
@@ -68,7 +68,7 @@ const ChatView = ({
     messages,
     containsValorIDEMention: useCallback(
       (text) => text?.toLowerCase?.().includes("@valoride") === true,
-      [],
+      []
     ),
     clearChatInput,
   });
@@ -109,11 +109,11 @@ const ChatView = ({
   const task = useMemo(() => messages.at(0), [messages]);
   const modifiedMessages = useMemo(
     () => combineApiRequests(combineCommandSequences(messages.slice(1))),
-    [messages],
+    [messages]
   );
   const apiMetrics = useMemo(
     () => getApiMetrics(modifiedMessages),
-    [modifiedMessages],
+    [modifiedMessages]
   );
   // Global balance fetch for status strip; skip until JWT is present
   const { data: balanceData } = useGetBalanceResponsesQuery(undefined, {
@@ -128,7 +128,7 @@ const ChatView = ({
     const getTotalTokensFromApiReqMessage = (msg) => {
       if (!msg.text) return 0;
       const { tokensIn, tokensOut, cacheWrites, cacheReads } = JSON.parse(
-        msg.text,
+        msg.text
       );
       return (
         (tokensIn || 0) +
@@ -190,6 +190,7 @@ const ChatView = ({
             enableButtons: enableButtons,
             primaryButtonText: primaryButtonText,
             secondaryButtonText: secondaryButtonText,
+            textAreaDisabled: textAreaDisabled,
             onTaskClose: handleTaskCloseButtonClick,
             onPrimaryButton: handlePrimaryButtonClick,
             onSecondaryButton: handleSecondaryButtonClick,

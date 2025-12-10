@@ -1,6 +1,6 @@
 // customBaseQuery.ts
 import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { getValkyraiHost } from "@/utils/valkyraiHost";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 const buildBaseQuery = () =>
   fetchBaseQuery({
     baseUrl: getValkyraiHost(),

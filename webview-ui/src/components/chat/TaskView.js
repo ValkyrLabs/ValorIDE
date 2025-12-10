@@ -16,12 +16,13 @@ import {
   combineCommandSequences,
 } from "@shared/combineCommandSequences";
 import { getApiMetrics } from "@shared/getApiMetrics";
-import { normalizeApiConfiguration } from "@/components/settings/ApiOptions";
-import { deriveTaskProgress } from "@/utils/taskPhase";
-import TaskHeader from "@/components/chat/TaskHeader";
-import BrowserSessionRow from "@/components/chat/BrowserSessionRow";
-import ChatRow from "@/components/chat/ChatRow";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import { normalizeApiConfiguration } from "@thorapi/components/settings/ApiOptions";
+import { deriveTaskProgress } from "@thorapi/utils/taskPhase";
+import { deriveChatLoadingState } from "@shared/chatLoadingState";
+import TaskHeader from "@thorapi/components/chat/TaskHeader";
+import BrowserSessionRow from "@thorapi/components/chat/BrowserSessionRow";
+import ChatRow from "@thorapi/components/chat/ChatRow";
+import LoadingSpinner from "@thorapi/components/LoadingSpinner";
 const ScrollToBottomButton = styled.div`
   background-color: color-mix(
     in srgb,
@@ -71,6 +72,7 @@ const TaskView = ({
   setInputValue,
   sendMessageFromChatRow,
   isChatLoading,
+  textAreaDisabled,
   lastApiReqTotalTokens,
   valorideAsk,
   enableButtons,
@@ -89,15 +91,15 @@ const TaskView = ({
   const disableAutoScrollRef = useRef(false);
   const modifiedMessages = useMemo(
     () => combineApiRequests(combineCommandSequences(messages.slice(1))),
-    [messages],
+    [messages]
   );
   const apiMetrics = useMemo(
     () => getApiMetrics(modifiedMessages),
-    [modifiedMessages],
+    [modifiedMessages]
   );
   const selectedModelInfo = useMemo(
     () => normalizeApiConfiguration(apiConfiguration).selectedModelInfo,
-    [apiConfiguration],
+    [apiConfiguration]
   );
   const visibleMessages = useMemo(() => {
     return modifiedMessages.filter((message) => {
@@ -203,6 +205,12 @@ const TaskView = ({
     }
     return result;
   }, [visibleMessages]);
+  const {
+    phase: taskPhase,
+    ratio: taskPhaseRatio,
+    confidence: taskPhaseConfidence,
+    anchors: taskPhaseAnchors,
+  } = useMemo(() => deriveTaskProgress(messages), [messages]);
   const scrollToPhase = useCallback(
     (phase) => {
       const targetTs = taskPhaseAnchors[phase];
@@ -222,7 +230,7 @@ const TaskView = ({
         });
       }
     },
-    [groupedMessages, taskPhaseAnchors],
+    [groupedMessages, taskPhaseAnchors]
   );
   useEffect(() => {
     const last = modifiedMessages.at(-1);
@@ -239,7 +247,7 @@ const TaskView = ({
         last.say === "command_output");
     if (isCommandLike && hasRenderableOutput) {
       setExpandedRows((prev) =>
-        prev[last.ts] ? prev : { ...prev, [last.ts]: true },
+        prev[last.ts] ? prev : { ...prev, [last.ts]: true }
       );
     }
   }, [modifiedMessages]);
@@ -278,7 +286,7 @@ const TaskView = ({
           setInputValue: setInputValue,
           sendMessageFromChatRow: sendMessageFromChatRow,
         },
-        messageOrGroup.ts,
+        messageOrGroup.ts
       );
     },
     [
@@ -288,7 +296,7 @@ const TaskView = ({
       inputValue,
       setInputValue,
       sendMessageFromChatRow,
-    ],
+    ]
   );
   const scrollToBottomSmooth = useMemo(
     () =>
@@ -300,9 +308,9 @@ const TaskView = ({
           });
         },
         10,
-        { immediate: true },
+        { immediate: true }
       ),
-    [],
+    []
   );
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -317,12 +325,16 @@ const TaskView = ({
       });
     }
   }, [groupedMessages.length]);
-  const {
-    phase: taskPhase,
-    ratio: taskPhaseRatio,
-    confidence: taskPhaseConfidence,
-    anchors: taskPhaseAnchors,
-  } = useMemo(() => deriveTaskProgress(messages), [messages]);
+  const { inlineSpinnerCount } = useMemo(
+    () =>
+      deriveChatLoadingState({
+        messages,
+        lastMessage: messages.at(-1),
+        textAreaDisabled,
+        enableButtons,
+      }),
+    [messages, textAreaDisabled, enableButtons]
+  );
   return _jsxs(_Fragment, {
     children: [
       _jsx(TaskHeader, {
@@ -369,14 +381,15 @@ const TaskView = ({
                   disableAutoScrollRef.current = false;
                 }
                 setShowScrollToBottom(
-                  disableAutoScrollRef.current && !isAtBottom,
+                  disableAutoScrollRef.current && !isAtBottom
                 );
               },
               atBottomThreshold: 10,
             },
-            task.ts,
+            task.ts
           ),
           isChatLoading &&
+            inlineSpinnerCount === 0 &&
             _jsx("div", {
               style: {
                 position: "absolute",

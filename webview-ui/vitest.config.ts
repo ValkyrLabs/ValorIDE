@@ -15,6 +15,7 @@ export default defineConfig({
       "@components": resolve(__dirname, "./src/components"),
       "@context": resolve(__dirname, "./src/context"),
       "@shared": resolve(__dirname, "../src/shared"),
+      "@thorapi": resolve(__dirname, "./src"),
       "@utils": resolve(__dirname, "./src/utils"),
     },
   },

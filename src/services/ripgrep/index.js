@@ -48,155 +48,152 @@ const isWindows = /^win/.test(process.platform);
 const binName = isWindows ? "rg.exe" : "rg";
 const MAX_RESULTS = 300;
 export async function getBinPath(vscodeAppRoot) {
-  const checkPath = async (pkgFolder) => {
-    const fullPath = path.join(vscodeAppRoot, pkgFolder, binName);
-    return (await fileExistsAtPath(fullPath)) ? fullPath : undefined;
-  };
-  return (
-    (await checkPath("node_modules/@vscode/ripgrep/bin/")) ||
-    (await checkPath("node_modules/vscode-ripgrep/bin")) ||
-    (await checkPath("node_modules.asar.unpacked/vscode-ripgrep/bin/")) ||
-    (await checkPath("node_modules.asar.unpacked/@vscode/ripgrep/bin/"))
-  );
+    const checkPath = async (pkgFolder) => {
+        const fullPath = path.join(vscodeAppRoot, pkgFolder, binName);
+        return (await fileExistsAtPath(fullPath)) ? fullPath : undefined;
+    };
+    return ((await checkPath("node_modules/@vscode/ripgrep/bin/")) ||
+        (await checkPath("node_modules/vscode-ripgrep/bin")) ||
+        (await checkPath("node_modules.asar.unpacked/vscode-ripgrep/bin/")) ||
+        (await checkPath("node_modules.asar.unpacked/@vscode/ripgrep/bin/")));
 }
 async function execRipgrep(bin, args) {
-  return new Promise((resolve, reject) => {
-    const rgProcess = childProcess.spawn(bin, args);
-    // cross-platform alternative to head, which is ripgrep author's recommendation for limiting output.
-    const rl = readline.createInterface({
-      input: rgProcess.stdout,
-      crlfDelay: Infinity, // treat \r\n as a single line break even if it's split across chunks. This ensures consistent behavior across different operating systems.
+    return new Promise((resolve, reject) => {
+        const rgProcess = childProcess.spawn(bin, args);
+        // cross-platform alternative to head, which is ripgrep author's recommendation for limiting output.
+        const rl = readline.createInterface({
+            input: rgProcess.stdout,
+            crlfDelay: Infinity, // treat \r\n as a single line break even if it's split across chunks. This ensures consistent behavior across different operating systems.
+        });
+        let output = "";
+        let lineCount = 0;
+        const maxLines = MAX_RESULTS * 5; // limiting ripgrep output with max lines since there's no other way to limit results. it's okay that we're outputting as json, since we're parsing it line by line and ignore anything that's not part of a match. This assumes each result is at most 5 lines.
+        rl.on("line", (line) => {
+            if (lineCount < maxLines) {
+                output += line + "\n";
+                lineCount++;
+            }
+            else {
+                rl.close();
+                rgProcess.kill();
+            }
+        });
+        let errorOutput = "";
+        rgProcess.stderr.on("data", (data) => {
+            errorOutput += data.toString();
+        });
+        rl.on("close", () => {
+            if (errorOutput) {
+                reject(new Error(`ripgrep process error: ${errorOutput}`));
+            }
+            else {
+                resolve(output);
+            }
+        });
+        rgProcess.on("error", (error) => {
+            reject(new Error(`ripgrep process error: ${error.message}`));
+        });
     });
-    let output = "";
-    let lineCount = 0;
-    const maxLines = MAX_RESULTS * 5; // limiting ripgrep output with max lines since there's no other way to limit results. it's okay that we're outputting as json, since we're parsing it line by line and ignore anything that's not part of a match. This assumes each result is at most 5 lines.
-    rl.on("line", (line) => {
-      if (lineCount < maxLines) {
-        output += line + "\n";
-        lineCount++;
-      } else {
-        rl.close();
-        rgProcess.kill();
-      }
-    });
-    let errorOutput = "";
-    rgProcess.stderr.on("data", (data) => {
-      errorOutput += data.toString();
-    });
-    rl.on("close", () => {
-      if (errorOutput) {
-        reject(new Error(`ripgrep process error: ${errorOutput}`));
-      } else {
-        resolve(output);
-      }
-    });
-    rgProcess.on("error", (error) => {
-      reject(new Error(`ripgrep process error: ${error.message}`));
-    });
-  });
 }
-export async function regexSearchFiles(
-  cwd,
-  directoryPath,
-  regex,
-  filePattern,
-  valorideIgnoreController,
-) {
-  const vscodeAppRoot = vscode.env.appRoot;
-  const rgPath = await getBinPath(vscodeAppRoot);
-  if (!rgPath) {
-    throw new Error("Could not find ripgrep binary");
-  }
-  const args = [
-    "--json",
-    "-e",
-    regex,
-    "--glob",
-    filePattern || "*",
-    "--context",
-    "1",
-    directoryPath,
-  ];
-  let output;
-  try {
-    output = await execRipgrep(rgPath, args);
-  } catch {
-    return "No results found";
-  }
-  const results = [];
-  let currentResult = null;
-  output.split("\n").forEach((line) => {
-    if (line) {
-      try {
-        const parsed = JSON.parse(line);
-        if (parsed.type === "match") {
-          if (currentResult) {
-            results.push(currentResult);
-          }
-          currentResult = {
-            filePath: parsed.data.path.text,
-            line: parsed.data.line_number,
-            column: parsed.data.submatches[0].start,
-            match: parsed.data.lines.text,
-            beforeContext: [],
-            afterContext: [],
-          };
-        } else if (parsed.type === "context" && currentResult) {
-          if (parsed.data.line_number < currentResult.line) {
-            currentResult.beforeContext.push(parsed.data.lines.text);
-          } else {
-            currentResult.afterContext.push(parsed.data.lines.text);
-          }
-        }
-      } catch (error) {
-        console.error("Error parsing ripgrep output:", error);
-      }
+export async function regexSearchFiles(cwd, directoryPath, regex, filePattern, valorideIgnoreController) {
+    const vscodeAppRoot = vscode.env.appRoot;
+    const rgPath = await getBinPath(vscodeAppRoot);
+    if (!rgPath) {
+        throw new Error("Could not find ripgrep binary");
     }
-  });
-  if (currentResult) {
-    results.push(currentResult);
-  }
-  // Filter results using ValorIDEIgnoreController if provided
-  const filteredResults = valorideIgnoreController
-    ? results.filter((result) =>
-        valorideIgnoreController.validateAccess(result.filePath),
-      )
-    : results;
-  return formatResults(filteredResults, cwd);
+    const args = [
+        "--json",
+        "-e",
+        regex,
+        "--glob",
+        filePattern || "*",
+        "--context",
+        "1",
+        directoryPath,
+    ];
+    let output;
+    try {
+        output = await execRipgrep(rgPath, args);
+    }
+    catch {
+        return "No results found";
+    }
+    const results = [];
+    let currentResult = null;
+    output.split("\n").forEach((line) => {
+        if (line) {
+            try {
+                const parsed = JSON.parse(line);
+                if (parsed.type === "match") {
+                    if (currentResult) {
+                        results.push(currentResult);
+                    }
+                    currentResult = {
+                        filePath: parsed.data.path.text,
+                        line: parsed.data.line_number,
+                        column: parsed.data.submatches[0].start,
+                        match: parsed.data.lines.text,
+                        beforeContext: [],
+                        afterContext: [],
+                    };
+                }
+                else if (parsed.type === "context" && currentResult) {
+                    if (parsed.data.line_number < currentResult.line) {
+                        currentResult.beforeContext.push(parsed.data.lines.text);
+                    }
+                    else {
+                        currentResult.afterContext.push(parsed.data.lines.text);
+                    }
+                }
+            }
+            catch (error) {
+                console.error("Error parsing ripgrep output:", error);
+            }
+        }
+    });
+    if (currentResult) {
+        results.push(currentResult);
+    }
+    // Filter results using ValorIDEIgnoreController if provided
+    const filteredResults = valorideIgnoreController
+        ? results.filter((result) => valorideIgnoreController.validateAccess(result.filePath))
+        : results;
+    return formatResults(filteredResults, cwd);
 }
 function formatResults(results, cwd) {
-  const groupedResults = {};
-  let output = "";
-  if (results.length >= MAX_RESULTS) {
-    output += `Showing first ${MAX_RESULTS} of ${MAX_RESULTS}+ results. Use a more specific search if necessary.\n\n`;
-  } else {
-    output += `Found ${results.length === 1 ? "1 result" : `${results.length.toLocaleString()} results`}.\n\n`;
-  }
-  // Group results by file name
-  results.slice(0, MAX_RESULTS).forEach((result) => {
-    const relativeFilePath = path.relative(cwd, result.filePath);
-    if (!groupedResults[relativeFilePath]) {
-      groupedResults[relativeFilePath] = [];
+    const groupedResults = {};
+    let output = "";
+    if (results.length >= MAX_RESULTS) {
+        output += `Showing first ${MAX_RESULTS} of ${MAX_RESULTS}+ results. Use a more specific search if necessary.\n\n`;
     }
-    groupedResults[relativeFilePath].push(result);
-  });
-  for (const [filePath, fileResults] of Object.entries(groupedResults)) {
-    output += `${filePath.toPosix()}\n│----\n`;
-    fileResults.forEach((result, index) => {
-      const allLines = [
-        ...result.beforeContext,
-        result.match,
-        ...result.afterContext,
-      ];
-      allLines.forEach((line) => {
-        output += `│${line?.trimEnd() ?? ""}\n`;
-      });
-      if (index < fileResults.length - 1) {
-        output += "│----\n";
-      }
+    else {
+        output += `Found ${results.length === 1 ? "1 result" : `${results.length.toLocaleString()} results`}.\n\n`;
+    }
+    // Group results by file name
+    results.slice(0, MAX_RESULTS).forEach((result) => {
+        const relativeFilePath = path.relative(cwd, result.filePath);
+        if (!groupedResults[relativeFilePath]) {
+            groupedResults[relativeFilePath] = [];
+        }
+        groupedResults[relativeFilePath].push(result);
     });
-    output += "│----\n\n";
-  }
-  return output.trim();
+    for (const [filePath, fileResults] of Object.entries(groupedResults)) {
+        output += `${filePath.toPosix()}\n│----\n`;
+        fileResults.forEach((result, index) => {
+            const allLines = [
+                ...result.beforeContext,
+                result.match,
+                ...result.afterContext,
+            ];
+            allLines.forEach((line) => {
+                output += `│${line?.trimEnd() ?? ""}\n`;
+            });
+            if (index < fileResults.length - 1) {
+                output += "│----\n";
+            }
+        });
+        output += "│----\n\n";
+    }
+    return output.trim();
 }
 //# sourceMappingURL=index.js.map

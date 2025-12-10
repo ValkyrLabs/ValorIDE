@@ -14,7 +14,7 @@ import {
   FaRegWindowClose,
   FaSave,
 } from "react-icons/fa";
-import { DataObject } from "../../thor/model";
+import { DataObject } from "../..//model";
 import CoolButton from "../CoolButton";
 
 import ModalPicker from "../ModalPicker";

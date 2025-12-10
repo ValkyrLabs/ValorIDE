@@ -21,54 +21,54 @@ import { XAIHandler } from "./providers/xai";
 import { SambanovaHandler } from "./providers/sambanova";
 import { ValkyraiHandler } from "./providers/valkyrai";
 export function buildApiHandler(configuration) {
-  const { apiProvider, ...options } = configuration;
-  switch (apiProvider) {
-    case "anthropic":
-      return new AnthropicHandler(options);
-    case "valkyrai":
-      return new ValkyraiHandler(options);
-    case "openrouter":
-      return new OpenRouterHandler(options);
-    case "bedrock":
-      return new AwsBedrockHandler(options);
-    case "vertex":
-      return new VertexHandler(options);
-    case "openai":
-      return new OpenAiHandler(options);
-    case "ollama":
-      return new OllamaHandler(options);
-    case "lmstudio":
-      return new LmStudioHandler(options);
-    case "gemini":
-      return new GeminiHandler(options);
-    case "openai-native":
-      return new OpenAiNativeHandler(options);
-    case "deepseek":
-      return new DeepSeekHandler(options);
-    case "requesty":
-      return new RequestyHandler(options);
-    case "together":
-      return new TogetherHandler(options);
-    case "qwen":
-      return new QwenHandler(options);
-    case "doubao":
-      return new DoubaoHandler(options);
-    case "mistral":
-      return new MistralHandler(options);
-    case "vscode-lm":
-      return new VsCodeLmHandler(options);
-    case "valoride":
-      return new ValorIDEHandler(options);
-    case "litellm":
-      return new LiteLlmHandler(options);
-    case "asksage":
-      return new AskSageHandler(options);
-    case "xai":
-      return new XAIHandler(options);
-    case "sambanova":
-      return new SambanovaHandler(options);
-    default:
-      return new AnthropicHandler(options);
-  }
+    const { apiProvider, ...options } = configuration;
+    switch (apiProvider) {
+        case "anthropic":
+            return new AnthropicHandler(options);
+        case "valkyrai":
+            return new ValkyraiHandler(options);
+        case "openrouter":
+            return new OpenRouterHandler(options);
+        case "bedrock":
+            return new AwsBedrockHandler(options);
+        case "vertex":
+            return new VertexHandler(options);
+        case "openai":
+            return new OpenAiHandler(options);
+        case "ollama":
+            return new OllamaHandler(options);
+        case "lmstudio":
+            return new LmStudioHandler(options);
+        case "gemini":
+            return new GeminiHandler(options);
+        case "openai-native":
+            return new OpenAiNativeHandler(options);
+        case "deepseek":
+            return new DeepSeekHandler(options);
+        case "requesty":
+            return new RequestyHandler(options);
+        case "together":
+            return new TogetherHandler(options);
+        case "qwen":
+            return new QwenHandler(options);
+        case "doubao":
+            return new DoubaoHandler(options);
+        case "mistral":
+            return new MistralHandler(options);
+        case "vscode-lm":
+            return new VsCodeLmHandler(options);
+        case "valoride":
+            return new ValorIDEHandler(options);
+        case "litellm":
+            return new LiteLlmHandler(options);
+        case "asksage":
+            return new AskSageHandler(options);
+        case "xai":
+            return new XAIHandler(options);
+        case "sambanova":
+            return new SambanovaHandler(options);
+        default:
+            return new AnthropicHandler(options);
+    }
 }
 //# sourceMappingURL=index.js.map

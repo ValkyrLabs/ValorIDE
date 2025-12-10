@@ -4,7 +4,7 @@ import {
   Fragment as _Fragment,
 } from "react/jsx-runtime";
 import { useState, useEffect } from "react";
-import { enableMonetization } from "@/services/monetization/ServiceMonetizationService";
+import { enableMonetization } from "@thorapi/services/monetization/ServiceMonetizationService";
 import "./MonetizationSettings.css";
 /**
  * Component to enable and configure monetization on MCP services.
@@ -29,7 +29,7 @@ export const MonetizationSettings = ({ applicationId, onSuccess, onError }) => {
       const result = await enableMonetization(
         applicationId,
         pricingModel,
-        costPerCall,
+        costPerCall
       );
       setIsMonetized(result.isMonetized ?? false);
       setSuccess(true);
@@ -122,8 +122,8 @@ export const MonetizationSettings = ({ applicationId, onSuccess, onError }) => {
                         }),
                       ],
                     },
-                    model,
-                  ),
+                    model
+                  )
                 ),
               }),
             ],

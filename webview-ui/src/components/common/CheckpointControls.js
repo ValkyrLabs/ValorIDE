@@ -3,8 +3,8 @@ import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { useCallback, useRef, useState } from "react";
 import { useClickAway, useEvent } from "react-use";
 import styled from "styled-components";
-import { CheckpointsServiceClient } from "@/services/grpc-client";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
+import { CheckpointsServiceClient } from "@thorapi/services/grpc-client";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
 import { FaCodeBranch, FaTrash } from "react-icons/fa";
 export const CheckpointOverlay = ({ messageTs }) => {
   const [compareDisabled, setCompareDisabled] = useState(false);

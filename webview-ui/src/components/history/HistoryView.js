@@ -9,15 +9,15 @@ import {
   VSCodeRadioGroup,
   VSCodeRadio,
 } from "@vscode/webview-ui-toolkit/react";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
 import { Virtuoso } from "react-virtuoso";
 import { memo, useMemo, useState, useEffect, useCallback } from "react";
 import Fuse from "fuse.js";
-import { formatLargeNumber } from "@/utils/format";
-import { formatSize } from "@/utils/format";
+import { formatLargeNumber } from "@thorapi/utils/format";
+import { formatSize } from "@thorapi/utils/format";
 import { useEvent } from "react-use";
-import DangerButton from "@/components/common/DangerButton";
+import DangerButton from "@thorapi/components/common/DangerButton";
 import {
   FaSearch,
   FaTimes,
@@ -27,9 +27,9 @@ import {
   FaDatabase,
   FaArrowRight,
 } from "react-icons/fa";
-import StatusBadge from "@/components/common/StatusBadge";
-import SystemAlerts from "@/components/SystemAlerts";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 const HistoryView = ({ onDone }) => {
   const { taskHistory, totalTasksSize } = useExtensionState();
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,7 +64,7 @@ const HistoryView = ({ onDone }) => {
       vscode.postMessage({ type: "showTaskWithId", text: id });
       onDone();
     },
-    [onDone],
+    [onDone]
   );
   const handleDeleteHistoryItem = useCallback((id) => {
     vscode.postMessage({ type: "deleteTaskWithId", text: id });
@@ -520,7 +520,7 @@ const HistoryView = ({ onDone }) => {
                       ],
                     }),
                   },
-                  item.id,
+                  item.id
                 ),
             }),
           }),
@@ -566,7 +566,7 @@ const ExportButton = ({ itemId }) =>
 // https://gist.github.com/evenfrost/1ba123656ded32fb7a0cd4651efd4db0
 export const highlight = (
   fuseSearchResult,
-  highlightClassName = "history-item-highlight",
+  highlightClassName = "history-item-highlight"
 ) => {
   const set = (obj, path, value) => {
     const pathValue = path.split(".");
@@ -628,7 +628,7 @@ export const highlight = (
           set(
             highlightedItem,
             match.key,
-            generateHighlightedText(match.value, mergedIndices),
+            generateHighlightedText(match.value, mergedIndices)
           );
         }
       });

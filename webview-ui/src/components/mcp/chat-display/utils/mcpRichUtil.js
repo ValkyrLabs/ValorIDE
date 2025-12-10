@@ -1,4 +1,4 @@
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 // Safely create a URL object with error handling and ensure HTTPS
 export const safeCreateUrl = (url) => {
   try {
