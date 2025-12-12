@@ -28,6 +28,7 @@ import TaskHeader from "@thorapi/components/chat/TaskHeader";
 import BrowserSessionRow from "@thorapi/components/chat/BrowserSessionRow";
 import ChatRow from "@thorapi/components/chat/ChatRow";
 import LoadingSpinner from "@thorapi/components/LoadingSpinner";
+import ErrorBoundary from "@thorapi/components/common/ErrorBoundary";
 
 const ScrollToBottomButton = styled.div`
   background-color: color-mix(
@@ -323,23 +324,25 @@ const TaskView: React.FC<TaskViewProps> = ({
         );
       }
       return (
-        <ChatRow
-          key={messageOrGroup.ts}
-          message={messageOrGroup}
-          isExpanded={expandedRows[messageOrGroup.ts] || false}
-          onToggleExpand={() => {
-            setExpandedRows((prev) => ({
-              ...prev,
-              [messageOrGroup.ts]: !prev[messageOrGroup.ts],
-            }));
-          }}
-          lastModifiedMessage={modifiedMessages.at(-1)}
-          isLast={index === groupedMessages.length - 1}
-          onHeightChange={() => { }}
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          sendMessageFromChatRow={sendMessageFromChatRow}
-        />
+        <ErrorBoundary>
+          <ChatRow
+            key={messageOrGroup.ts}
+            message={messageOrGroup}
+            isExpanded={expandedRows[messageOrGroup.ts] || false}
+            onToggleExpand={() => {
+              setExpandedRows((prev) => ({
+                ...prev,
+                [messageOrGroup.ts]: !prev[messageOrGroup.ts],
+              }));
+            }}
+            lastModifiedMessage={modifiedMessages.at(-1)}
+            isLast={index === groupedMessages.length - 1}
+            onHeightChange={() => { }}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            sendMessageFromChatRow={sendMessageFromChatRow}
+          />
+        </ErrorBoundary>
       );
     },
     [

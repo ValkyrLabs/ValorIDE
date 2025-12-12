@@ -142,6 +142,11 @@ Fallback to contextual (STRICT escaped regex):
 3. After 2 attempts → Use \`replace_in_file\`
 4. Last resort → Shell sed (with grep verification)
 
+**PSR Discipline:**
+- Keep edits tight: <= 50 edits per call; narrow, regex-escaped matches (<5k chars).
+- One-shot tasks → Skip long plans; go straight to PSR + test/log artifact.
+- Every step must yield an artifact (diff, test output, or log) — no meta chatter.
+
 **PSR self-verifies** — No need to read file after successful PSR.
 
 ================================================================================

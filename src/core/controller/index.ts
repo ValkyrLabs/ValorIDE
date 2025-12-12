@@ -22,6 +22,7 @@ import { buildOpenApiImportConfig } from "./openApiImport";
 import { selectImages } from "@integrations/misc/process-images";
 import { getTheme } from "@integrations/theme/getTheme";
 import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
+import { Logger } from "@services/logging/Logger";
 import { ValorIDEAccountService } from "@services/account/ValorIDEAccountService";
 import { BrowserSession } from "@services/browser/BrowserSession";
 import { McpHub } from "@services/mcp/McpHub";
@@ -302,6 +303,33 @@ export class Controller {
         }
         break;
       }
+      case "webviewError": {
+        try {
+          const text = (message as any).text;
+          const info = (message as any).payload;
+          // Log in output channel and the extension's console
+          this.outputChannel.appendLine(`Webview error: ${text}`);
+          console.error("Webview error:", text, info);
+        } catch (err) {
+          console.error("Failed to handle webviewError message:", err);
+        }
+        try {
+          const text = (message as any).text as string;
+          const info = (message as any).payload;
+          // Log in output channel and the extension's console
+          this.outputChannel.appendLine(`Webview encountered an error: ${text}`);
+          console.error("Webview error:", text, info);
+          // Optionally display an error message in VSCode
+          try {
+            vscode.window.showErrorMessage(`Webview error: ${text}`);
+          } catch (e) {
+            // ignore
+          }
+        } catch (err) {
+          console.error("Failed to process webviewError message:", err);
+        }
+        break;
+      }
       case "addRemoteServer": {
         try {
           await this.mcpHub?.addRemoteServer(
@@ -340,8 +368,12 @@ export class Controller {
         await this.postStateToWebview();
         break;
       case "webviewDidLaunch":
-        this.postStateToWebview();
-        this.workspaceTracker?.populateFilePaths(); // don't await
+        try {
+          await this.postStateToWebview();
+          this.workspaceTracker?.populateFilePaths(); // don't await
+        } catch (err) {
+          console.error("Error during webviewDidLaunch initialization:", err);
+        }
         getTheme().then((theme) =>
           this.postMessageToWebview({
             type: "theme",
@@ -710,6 +742,37 @@ export class Controller {
         }
         break;
       }
+      case "taskCompletionPreviewFile": {
+        if (message.number && message.relativePath) {
+          try {
+            const preview = await this.task?.getFilePreview(
+              message.number,
+              message.relativePath,
+              message.seeNewChangesSinceLastTaskCompletion ?? true,
+            );
+            await this.postMessageToWebview({
+              type: "taskCompletionFilePreview",
+              number: message.number,
+              relativePath: message.relativePath,
+              before: preview?.before,
+              after: preview?.after,
+              isBinary: preview?.isBinary,
+            });
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            await this.postMessageToWebview({
+              type: "taskCompletionFilePreview",
+              number: message.number,
+              relativePath: message.relativePath,
+              before: undefined,
+              after: undefined,
+              isBinary: false,
+            });
+            console.error("Failed to get file preview:", errorMessage);
+          }
+        }
+        break;
+      }
       case "getLatestState":
         await this.postStateToWebview();
         break;
@@ -963,6 +1026,15 @@ export class Controller {
           "workbench.action.openSettings",
           `@ext:valkyrlabsinc.valoride-dev ${settingsFilter}`.trim(), // trim whitespace if no settings filter
         );
+        break;
+      }
+      case "fixLayout": {
+        // Execute the extension command that has the user confirmation
+        try {
+          await vscode.commands.executeCommand("valoride.fixLayout");
+        } catch (err) {
+          Logger.log(`Error executing valoride.fixLayout from webview: ${err}`);
+        }
         break;
       }
       case "invoke": {
@@ -3135,8 +3207,16 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
   }
 
   async postStateToWebview() {
-    const state = await this.getStateToPostToWebview();
-    this.postMessageToWebview({ type: "state", state });
+    try {
+      const state = await this.getStateToPostToWebview();
+      await this.postMessageToWebview({ type: "state", state });
+    } catch (error) {
+      // Log and notify webview of failure to initialize state. Avoid throwing to keep extension running.
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error("postStateToWebview failed:", error);
+      await this.postMessageToWebview({ type: "state", state: { /* minimal fallback state */ } as any });
+      await this.postMessageToWebview({ type: "webviewError", text: `Failed to initialize UI: ${msg}` });
+    }
   }
 
   async getStateToPostToWebview(): Promise<ExtensionState> {

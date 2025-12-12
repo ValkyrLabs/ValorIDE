@@ -13,9 +13,9 @@ import { McpMarketplaceItem } from "@shared/mcp";
 import { vscode } from "@thorapi/utils/vscode";
 import McpMarketplaceCard from "./McpMarketplaceCard";
 import McpSubmitCard from "./McpSubmitCard";
-import { useGetMcpServersQuery } from "@thorapi//redux/services/McpServerService";
-import { useGetMcpMarketplaceCatalogsQuery } from "@thorapi//redux/services/McpMarketplaceCatalogService";
-import { useGetMcpMarketplaceItemsQuery } from "@thorapi//redux/services/McpMarketplaceItemService";
+import { useGetMcpServersQuery } from "@thorapi/redux/services/McpServerService";
+import { useGetMcpMarketplaceCatalogsQuery } from "@thorapi/redux/services/McpMarketplaceCatalogService";
+import { useGetMcpMarketplaceItemsQuery } from "@thorapi/redux/services/McpMarketplaceItemService";
 import {
   convertThorMcpServersToShared,
   convertThorMcpMarketplaceCatalogsToShared,

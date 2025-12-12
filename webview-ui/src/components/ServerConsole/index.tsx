@@ -26,7 +26,7 @@ import {
   WebsocketMessageFromJSON,
   WebsocketMessageToJSON,
   WebsocketMessageTypeEnum,
-} from "../..//model";
+} from "@thorapi/model";
 import { getWebsocketUrl, isValidWsUrl } from "../../websocket/websocket";
 import { useMothership } from "../../context/MothershipContext";
 import { addMessage, setConnected } from "./websocketSlice";

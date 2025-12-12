@@ -28,8 +28,8 @@ import { vscode } from "../utils/vscode";
 import { DEFAULT_BROWSER_SETTINGS } from "@shared/BrowserSettings";
 import { DEFAULT_CHAT_SETTINGS } from "@shared/ChatSettings";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
-import { Principal } from "@thorapi//model";
-import { Application } from "@thorapi//model/Application";
+import { Principal } from "@thorapi/model";
+import { Application } from "@thorapi/model/Application";
 import {
   clearStoredJwtToken,
   clearStoredPrincipal,

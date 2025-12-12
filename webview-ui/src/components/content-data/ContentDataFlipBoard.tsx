@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import * as THREE from "three";
-import { ContentData } from "../..//model";
-import { useGetContentDatasPagedQuery } from "../..//redux/services/ContentDataService";
+import { ContentData } from "@thorapi/model";
+import { useGetContentDatasPagedQuery } from "@thorapi/redux/services/ContentDataService";
 import LoadingSpinner from "../LoadingSpinner";
 import CoolButton from "../CoolButton";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import { useAddUsageTransactionMutation } from "../..//redux/services/UsageTransactionService";
-import { useGetBalanceResponsesQuery } from "../..//redux/services/BalanceResponseService";
-import { UsageTransaction } from "../..//model";
+import { useAddUsageTransactionMutation } from "@thorapi/redux/services/UsageTransactionService";
+import { useGetBalanceResponsesQuery } from "@thorapi/redux/services/BalanceResponseService";
+import { UsageTransaction } from "@thorapi/model";
 
 interface UsageTrackingMessage {
   type: "usage_tracking";

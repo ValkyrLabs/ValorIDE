@@ -60,7 +60,7 @@ const columnSchema: Record<string, ColumnSchema> = {
     'INSTANTIATION', 'USAGE_METERED', 'OVERAGE', 
   ], enumValueType: 'string' },
   'amount': { type: 'number' },
-  'billingPeriod': { type: 'date' },
+  'billingPeriod': { type: 'datetime' },
   'chargedDate': { type: 'datetime' },
   'status': { type: 'enum', enumValues: [
     'PENDING', 'APPLIED', 'DISPUTED', 'REFUNDED', 
@@ -1070,4 +1070,3 @@ const AgentBillingChargeTable: React.FC = () => {
 };
 
 export default AgentBillingChargeTable;
-

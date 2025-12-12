@@ -143,7 +143,11 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
         : this.getHtmlContent(webviewView.webview);
 
     // Initialize bridge services with the active webview
-    this.usageTrackingService.setWebview(webviewView);
+    try {
+      this.usageTrackingService.setWebview(webviewView);
+    } catch (err) {
+      console.error("Failed to set usage tracking webview:", err);
+    }
     try {
       const { ContentDataBridge } = await import(
         "../../services/content-data/ContentDataBridge"
@@ -157,10 +161,18 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
 
     // Sets up an event listener to listen for messages passed from the webview view context
     // and executes code based on the message that is received
-    this.setWebviewMessageListener(webviewView.webview);
+    try {
+      this.setWebviewMessageListener(webviewView.webview);
+    } catch (err) {
+      console.error("Failed to set webview message listener:", err);
+    }
 
     // Register this provider with the TelecomHub for local multi-instance comms
-    TelecomHub.getInstance().registerProvider(this);
+    try {
+      TelecomHub.getInstance().registerProvider(this);
+    } catch (err) {
+      console.error("Failed to register provider with TelecomHub:", err);
+    }
 
     // Logs show up in bottom panel > Debug Console
     //console.log("registering listener")
@@ -223,10 +235,18 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
           }
           if (e && e.affectsConfiguration("valoride.mcpMarketplace.enabled")) {
             // Update state when marketplace tab setting changes
-            await this.controller.postStateToWebview();
+            try {
+              await this.controller.postStateToWebview();
+            } catch (err) {
+              console.error("Failed to post state on mcpMarketplace config change:", err);
+            }
           }
           if (e && thorapiSettingChanged(e)) {
-            await this.controller.postStateToWebview();
+            try {
+              await this.controller.postStateToWebview();
+            } catch (err) {
+              console.error("Failed to post state on thorapi config change:", err);
+            }
           }
         },
         null,

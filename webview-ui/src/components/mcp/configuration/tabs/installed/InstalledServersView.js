@@ -11,7 +11,7 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { vscode } from "@thorapi/utils/vscode";
 import ServersToggleList from "./ServersToggleList";
-import { useGetMcpServersQuery } from "@thorapi//redux/services/McpServerService";
+import { useGetMcpServersQuery } from "@thorapi/redux/services/McpServerService";
 import { convertThorMcpServersToShared } from "@thorapi/utils/mcpTypeConversions";
 import {
   formatError,

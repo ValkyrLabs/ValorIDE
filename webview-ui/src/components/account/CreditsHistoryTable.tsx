@@ -5,7 +5,7 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { useState, useCallback } from "react";
 import { TabButton } from "../mcp/configuration/McpConfigurationView";
-import { UsageTransaction, PaymentTransaction } from "@thorapi//model";
+import { UsageTransaction, PaymentTransaction } from "@thorapi/model";
 import { formatDollars, formatTimestamp } from "@thorapi/utils/format";
 
 interface CreditsHistoryTableProps {
@@ -44,7 +44,7 @@ const CreditsHistoryTable = ({
   );
 
   return (
-    <div className="flex flex-col flex-grow h-full">
+    <div className="flex flex-col grow h-full">
       {/* Tabs container */}
       <div className="flex border-b border-[var(--vscode-panel-border)]">
         <TabButton
@@ -62,7 +62,7 @@ const CreditsHistoryTable = ({
       </div>
 
       {/* Content container */}
-      <div className="mt-[15px] mb-[0px] rounded-md overflow-auto flex-grow">
+      <div className="mt-[15px] mb-[0px] rounded-md overflow-auto grow">
         {isLoading ? (
           <div className="flex justify-center items-center p-4">
             <div className="text-[var(--vscode-descriptionForeground)]">

@@ -33,170 +33,180 @@ export interface RemoteCommand {
 // webview will hold state
 export interface ExtensionMessage {
   type:
-    | "action"
-    | "state"
-    | "selectedImages"
-    | "ollamaModels"
-    | "lmStudioModels"
-    | "theme"
-    | "workspaceUpdated"
-    | "invoke"
-    | "partialMessage"
-    | "openRouterModels"
-    | "openAiModels"
-    | "requestyModels"
-    | "llmDetailsUpdated"
-    | "mcpServers"
-    | "relinquishControl"
-    | "vsCodeLmModels"
-    | "requestVsCodeLmModels"
-    | "authCallback"
-    | "mcpMarketplaceCatalog"
-    | "mcpDownloadDetails"
-    | "commitSearchResults"
-    | "openGraphData"
-    | "isImageUrlResult"
-    | "didUpdateSettings"
-    | "addRemoteServerResult"
-    | "userCreditsBalance"
-    | "userCreditsUsage"
-    | "userCreditsPayments"
-    | "totalTasksSize"
-    | "addToInput"
-    | "browserConnectionResult"
-    | "detectedChromePath"
-    | "scrollToSettings"
-    | "browserRelaunchResult"
-    | "relativePathsResponse" // Handles single and multiple path responses
-    | "fileSearchResults"
-    | "grpc_response" // New type for gRPC responses
-    | "loginSuccess"
-    | "streamToThorapiResult"
-    | "openFileExplorerResult"
-    | "workspaceFiles"
-    | "contentData"
-    | "LIST_APPLICATION_SUCCESS"
-    | "remoteCommand"
-    | "uploadOpenAPISpecResult"
-    | "swarm:task-assignment"
-    | "swarm:task-cancelled"
-    | "swarm:remote-command"
-    | "swarm:broadcast"
-    | "valkyraiHostTestResult"
-    | "swarm:private-message";
-  text?: string;
-  path?: string; // Used for openFileExplorerResult
-  paths?: (string | null)[]; // Used for relativePathsResponse
-  action?:
-    | "chatButtonClicked"
-    | "mcpButtonClicked"
-    | "settingsButtonClicked"
-    | "historyButtonClicked"
-    | "didBecomeVisible"
-    | "accountLoginClicked"
-    | "accountLogoutClicked"
-    | "accountButtonClicked"
-    | "focusChatInput"
-    | "generatedFilesButtonClicked"
-    | "serverConsoleButtonClicked";
+  | "action"
+  | "state"
+  | "selectedImages"
+  | "ollamaModels"
+  | "lmStudioModels"
+  | "theme"
+  | "workspaceUpdated"
+  | "invoke"
+  | "partialMessage"
+  | "openRouterModels"
+  | "openAiModels"
+  | "requestyModels"
+  | "llmDetailsUpdated"
+  | "mcpServers"
+  | "relinquishControl"
+  | "vsCodeLmModels"
+  | "requestVsCodeLmModels"
+  | "authCallback"
+  | "mcpMarketplaceCatalog"
+  | "mcpDownloadDetails"
+  | "commitSearchResults"
+  | "openGraphData"
+  | "isImageUrlResult"
+  | "didUpdateSettings"
+  | "addRemoteServerResult"
+  | "userCreditsBalance"
+  | "userCreditsUsage"
+  | "userCreditsPayments"
+  | "totalTasksSize"
+  | "addToInput"
+  | "browserConnectionResult"
+  | "detectedChromePath"
+  | "scrollToSettings"
+  | "browserRelaunchResult"
+  | "relativePathsResponse" // Handles single and multiple path responses
+  | "fileSearchResults"
+  | "grpc_response" // New type for gRPC responses
+  | "loginSuccess"
+  | "streamToThorapiResult"
+  | "openFileExplorerResult"
+  | "workspaceFiles"
+  | "contentData"
+  | "LIST_APPLICATION_SUCCESS"
+  | "remoteCommand"
+  | "uploadOpenAPISpecResult"
+  | "swarm:task-assignment"
+  | "swarm:task-cancelled"
+  | "swarm:remote-command"
+  | "swarm:broadcast"
+  | "valkyraiHostTestResult"
+  | "swarm:private-message"
+  | "taskCompletionFilePreview"
+  | "webviewError"
+  | "serverConsoleNewMessage";
+  text ?: string;
+  path ?: string; // Used for openFileExplorerResult
+  paths ?: (string | null)[]; // Used for relativePathsResponse
+  number ?: number; // task completion file index
+  seeNewChangesSinceLastTaskCompletion ?: boolean;
+  action ?:
+  | "chatButtonClicked"
+  | "mcpButtonClicked"
+  | "settingsButtonClicked"
+  | "historyButtonClicked"
+  | "didBecomeVisible"
+  | "accountLoginClicked"
+  | "accountLogoutClicked"
+  | "accountButtonClicked"
+  | "focusChatInput"
+  | "generatedFilesButtonClicked"
+  | "serverConsoleButtonClicked";
 
-  invoke?: Invoke;
-  state?: ExtensionState;
-  images?: string[];
-  ollamaModels?: string[];
-  lmStudioModels?: string[];
-  vsCodeLmModels?: {
-    vendor?: string;
-    family?: string;
-    version?: string;
-    id?: string;
-  }[];
-  filePaths?: string[];
-  partialMessage?: ValorIDEMessage;
-  openRouterModels?: Record<string, ModelInfo>;
-  openAiModels?: string[];
-  requestyModels?: Record<string, ModelInfo>;
-  models?: Record<string, any>; // For legacy llmDetailsUpdated payloads
-  llmDetails?: LlmDetailsSummary[]; // Preferred llmDetails payload
-  payload?: any;
-  mcpServers?: McpServer[];
-  customToken?: string;
-  token?: string; // JWT token for authentication
-  authenticatedPrincipal?: string; // JSON string of authenticated principal
-  mcpMarketplaceCatalog?: McpMarketplaceCatalog;
-  error?: string;
-  mcpDownloadDetails?: McpDownloadResponse;
-  commits?: GitCommit[];
-  openGraphData?: {
-    title?: string;
-    description?: string;
-    image?: string;
-    url?: string;
-    siteName?: string;
-    type?: string;
-  };
+invoke ?: Invoke;
+state ?: ExtensionState;
+images ?: string[];
+ollamaModels ?: string[];
+lmStudioModels ?: string[];
+vsCodeLmModels ?: {
+  vendor?: string;
+  family?: string;
+  version?: string;
+  id?: string;
+}[];
+filePaths ?: string[];
+partialMessage ?: ValorIDEMessage;
+openRouterModels ?: Record<string, ModelInfo>;
+openAiModels ?: string[];
+requestyModels ?: Record<string, ModelInfo>;
+models ?: Record<string, any>; // For legacy llmDetailsUpdated payloads
+llmDetails ?: LlmDetailsSummary[]; // Preferred llmDetails payload
+payload ?: any;
+mcpServers ?: McpServer[];
+customToken ?: string;
+token ?: string; // JWT token for authentication
+authenticatedPrincipal ?: string; // JSON string of authenticated principal
+mcpMarketplaceCatalog ?: McpMarketplaceCatalog;
+error ?: string;
+mcpDownloadDetails ?: McpDownloadResponse;
+commits ?: GitCommit[];
+openGraphData ?: {
+  title?: string;
+  description?: string;
+  image?: string;
   url?: string;
-  isImage?: boolean;
-  userCreditsBalance?: BalanceResponse;
-  userCreditsUsage?: UsageTransaction[];
-  userCreditsPayments?: PaymentTransaction[];
-  totalTasksSize?: number | null;
-  success?: boolean;
-  endpoint?: string;
-  isBundled?: boolean;
-  isConnected?: boolean;
-  isRemote?: boolean;
-  host?: string;
-  mentionsRequestId?: string;
-  results?: Array<{
-    path: string;
-    type: "file" | "folder";
-    label?: string;
-  }>;
-  addRemoteServerResult?: {
-    success: boolean;
-    serverName: string;
-    error?: string;
-  };
-  tab?: McpViewTab;
-  grpc_response?: {
-    message?: any; // JSON serialized protobuf message
-    request_id: string; // Same ID as the request
-    error?: string; // Optional error message
-  };
-  streamToThorapiResult?: {
-    success: boolean;
-    applicationId?: string;
-    error?: string;
-    filePath?: string;
-    filename?: string;
-    extractedPath?: string;
-    readmePath?: string;
-    step?: string;
-    message?: string;
-  };
-  files?: Array<{
+  siteName?: string;
+  type?: string;
+};
+// For task completion file preview
+before ?: string;
+after ?: string;
+isBinary ?: boolean;
+relativePath ?: string;
+url ?: string;
+isImage ?: boolean;
+userCreditsBalance ?: BalanceResponse;
+userCreditsUsage ?: UsageTransaction[];
+userCreditsPayments ?: PaymentTransaction[];
+totalTasksSize ?: number | null;
+success ?: boolean;
+endpoint ?: string;
+isBundled ?: boolean;
+isConnected ?: boolean;
+isRemote ?: boolean;
+host ?: string;
+mentionsRequestId ?: string;
+results ?: Array<{
+  path: string;
+  type: "file" | "folder";
+  label?: string;
+}>;
+addRemoteServerResult ?: {
+  success: boolean;
+  serverName: string;
+  error?: string;
+};
+tab ?: McpViewTab;
+grpc_response ?: {
+  message?: any; // JSON serialized protobuf message
+  request_id: string; // Same ID as the request
+  error?: string; // Optional error message
+};
+streamToThorapiResult ?: {
+  success: boolean;
+  applicationId?: string;
+  error?: string;
+  filePath?: string;
+  filename?: string;
+  extractedPath?: string;
+  readmePath?: string;
+  step?: string;
+  message?: string;
+};
+files ?: Array<{
+  name: string;
+  path: string;
+  type: "file" | "directory";
+  children?: Array<{
     name: string;
     path: string;
     type: "file" | "directory";
-    children?: Array<{
-      name: string;
-      path: string;
-      type: "file" | "directory";
-    }>;
   }>;
-  contentData?: any; // Data from the ContentData endpoint
-  command?: RemoteCommand; // Remote command from mothership
-  uploadOpenAPISpecResult?: {
-    success: boolean;
-    filename?: string;
-    specPath?: string;
-    message?: string;
-    error?: string;
-  };
+}>;
+contentData ?: any; // Data from the ContentData endpoint
+command ?: RemoteCommand; // Remote command from mothership
+uploadOpenAPISpecResult ?: {
+  success: boolean;
   filename?: string;
   specPath?: string;
   message?: string;
+  error?: string;
+};
+filename ?: string;
+specPath ?: string;
+message ?: string;
 }
 
 export type Invoke =
@@ -347,14 +357,14 @@ export type ValorIDESay =
 
 export interface ValorIDESayTool {
   tool:
-    | "editedExistingFile"
-    | "newFileCreated"
-    | "readFile"
-    | "listFilesTopLevel"
-    | "listFilesRecursive"
-    | "listCodeDefinitionNames"
-    | "searchFiles"
-    | "precisionSearchAndReplace";
+  | "editedExistingFile"
+  | "newFileCreated"
+  | "readFile"
+  | "listFilesTopLevel"
+  | "listFilesRecursive"
+  | "listCodeDefinitionNames"
+  | "searchFiles"
+  | "precisionSearchAndReplace";
   path?: string;
   diff?: string;
   content?: string;

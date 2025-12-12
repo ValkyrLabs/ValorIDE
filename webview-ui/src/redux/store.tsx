@@ -1,15 +1,15 @@
 // CUSTOM REDUX INTEGRATION
 
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore, Middleware } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { AuthService } from "./services/AuthService";
 import { LogoutService } from "./services/LogoutService";
 import { ApplicationService } from "./services/ApplicationService";
 import { PrincipalService } from "./services/PrincipalService";
 import { ThorHostingService } from "./services/ThorHostingService";
-import { BalanceResponseService } from "..//redux/services/BalanceResponseService";
-import { UsageTransactionService } from "..//redux/services/UsageTransactionService";
-import { PaymentTransactionService } from "..//redux/services/PaymentTransactionService";
+import { BalanceResponseService } from "@thorapi/redux/services/BalanceResponseService";
+import { UsageTransactionService } from "@thorapi/redux/services/UsageTransactionService";
+import { PaymentTransactionService } from "@thorapi/redux/services/PaymentTransactionService";
 import { DigitalProductService } from "./services/DigitalProductService";
 import { creditsApi } from "../services/creditsApi";
 
@@ -19,8 +19,8 @@ import websocketReducer from "../components/ServerConsole/websocketSlice";
 
 // import the thorapi generated reducers and middleware
 import middlewares from "../redux/middlewares";
-import thorMiddlewares from "..//redux/middlewares";
-import { reducer as thorReducer } from "..//redux/store";
+import thorApiMiddlewares from "@thorapi/redux/middlewares";
+import { reducer as thorReducer } from "@thorapi/redux/store";
 
 // combine reducers
 const rootReducer = combineReducers({
@@ -44,14 +44,8 @@ const store = configureStore({
   reducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
-      .concat(middlewares as any) // add the custom middlewares
-      .concat(thorMiddlewares as any) // add the  generated middlewares
-      .concat(BalanceResponseService.middleware)
-      .concat(UsageTransactionService.middleware)
-      .concat(PaymentTransactionService.middleware)
-      .concat(AuthService.middleware)
-      .concat(ApplicationService.middleware)
-      .concat(PrincipalService.middleware)
+      .concat(thorApiMiddlewares as Middleware[]) // add the generated thorapi middlewares
+      .concat(middlewares as Middleware[]) // add the custom middlewares
       .concat(ThorHostingService.middleware)
       .concat(DigitalProductService.middleware)
       .concat(creditsApi.middleware)

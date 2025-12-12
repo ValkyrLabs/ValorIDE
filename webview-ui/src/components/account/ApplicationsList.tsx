@@ -3,7 +3,7 @@ import {
   VSCodeButton,
   VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
-import { Application } from "../..//model";
+import { Application } from "@thorapi/model";
 import {
   useGetApplicationsQuery,
   useGenerateApplicationMutation,

@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { Application } from "../..//model";
+import { Application } from "@thorapi/model";
 import customBaseQuery from "../..//redux/customBaseQuery"; // Import the custom base query
 
 type ApplicationResponse = Application[];

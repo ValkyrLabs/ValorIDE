@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { useAddUsageTransactionMutation } from "../..//redux/services/UsageTransactionService";
-import { useGetBalanceResponsesQuery } from "../..//redux/services/BalanceResponseService";
+import { useAddUsageTransactionMutation } from "@thorapi/redux/services/UsageTransactionService";
+import { useGetBalanceResponsesQuery } from "@thorapi/redux/services/BalanceResponseService";
 /**
  * Component that handles usage tracking messages from the extension
  * and submits them via the RTQ system

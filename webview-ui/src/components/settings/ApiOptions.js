@@ -77,7 +77,7 @@ import OpenRouterModelPicker, {
 import { ValorIDEAccountInfoCard } from "./ValorIDEAccountInfoCard";
 import RequestyModelPicker from "./RequestyModelPicker";
 import LlmDetailsModelPicker from "./LlmDetailsModelPicker";
-import { useGetLlmDetailssQuery } from "@thorapi//redux/services/LlmDetailsService";
+import { useGetLlmDetailssQuery } from "@thorapi/redux/services/LlmDetailsService";
 // This is necessary to ensure dropdown opens downward, important for when this is used in popup
 const DROPDOWN_Z_INDEX = OPENROUTER_MODEL_PICKER_Z_INDEX + 2; // Higher than the OpenRouterModelPicker's and ModelSelectorTooltip's z-index
 export const DropdownContainer = styled.div`

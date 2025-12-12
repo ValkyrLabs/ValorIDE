@@ -1,0 +1,22 @@
+/* Simple pulsing badge for needs attention */
+.nav-link.needs-attention {
+  position: relative;
+  animation: pulse 1.6s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(99, 102, 241, 0.06);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.15);
+  }
+}
+
+/* Slightly change the background color for a subtle badge */
+.nav-link.needs-attention svg {
+  filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.65));
+}

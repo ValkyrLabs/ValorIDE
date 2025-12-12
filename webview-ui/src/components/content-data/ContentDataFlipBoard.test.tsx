@@ -2,10 +2,10 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import React from "react";
 import ContentDataFlipBoard from "./ContentDataFlipBoard";
-import * as contentDataService from "../..//redux/services/ContentDataService";
+import * as contentDataService from "@thorapi/redux/services/ContentDataService";
 
 // Mock the service
-vi.mock("../..//redux/services/ContentDataService", () => ({
+vi.mock("@thorapi/redux/services/ContentDataService", () => ({
   useGetContentDatasPagedQuery: vi.fn(),
 }));
 

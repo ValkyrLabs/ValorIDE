@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
-import { useAddContentDataMutation } from "../..//redux/services/ContentDataService";
-import { ContentData } from "../..//model";
+import { useAddContentDataMutation } from "@thorapi/redux/services/ContentDataService";
+import { ContentData } from "@thorapi/model";
 
 interface ContentDataMessage {
   type: "content_data";

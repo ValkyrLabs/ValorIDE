@@ -6,7 +6,7 @@ import { combineCommandSequences } from "@shared/combineCommandSequences";
 import { getApiMetrics } from "@shared/getApiMetrics";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
-import { useGetBalanceResponsesQuery } from "@thorapi//redux/services/BalanceResponseService";
+import { useGetBalanceResponsesQuery } from "@thorapi/redux/services/BalanceResponseService";
 import OfflineBanner from "@thorapi/components/common/OfflineBanner";
 import { vscode } from "@thorapi/utils/vscode";
 import { useChatInputPersistence } from "@thorapi/utils/useSessionStorage";

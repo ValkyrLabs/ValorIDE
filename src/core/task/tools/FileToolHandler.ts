@@ -68,6 +68,21 @@ export class FileToolHandler extends BaseToolHandler {
     const relPath = block.params.path?.trim();
     const editsRaw = block.params?.edits;
     const optionsRaw = block.params?.options;
+    const MAX_EDITS = 50;
+
+    const fail = async (message: string) => {
+      telemetryService.captureToolUsage(
+        this.context.taskId,
+        "precision_search_and_replace",
+        true,
+        false,
+        { reason: "validation_failed" },
+      );
+      return {
+        shouldContinue: true,
+        toolResponse: formatResponse.toolError(message),
+      };
+    };
 
     if (
       !relPath ||
@@ -112,6 +127,62 @@ export class FileToolHandler extends BaseToolHandler {
           "edits",
         ),
       };
+    }
+
+    if (edits.length > MAX_EDITS) {
+      return fail(
+        `PSR rejected: received ${edits.length} edits (max ${MAX_EDITS}). Send a smaller batch.`,
+      );
+    }
+
+    const validateEdit = (edit: PSREdit, idx: number): string | undefined => {
+      if (!edit || typeof edit !== "object") {
+        return `edit ${idx} is not an object`;
+      }
+      switch (edit.kind) {
+        case "contextual": {
+          if (!edit.find || !edit.replace) {
+            return `edit ${idx}: contextual edits require non-empty 'find' and 'replace'`;
+          }
+          if (typeof edit.find !== "string" || typeof edit.replace !== "string") {
+            return `edit ${idx}: 'find' and 'replace' must be strings`;
+          }
+          if (edit.find.length > 5000 || edit.replace.length > 5000) {
+            return `edit ${idx}: 'find'/'replace' too large (>5000 chars)`;
+          }
+          return undefined;
+        }
+        case "byte": {
+          const hex = /^[0-9a-fA-F]+$/;
+          if (!edit.findHex || !edit.replaceHex) {
+            return `edit ${idx}: byte edits require 'findHex' and 'replaceHex'`;
+          }
+          if (
+            !hex.test(edit.findHex) ||
+            !hex.test(edit.replaceHex) ||
+            edit.findHex.length % 2 !== 0 ||
+            edit.replaceHex.length % 2 !== 0
+          ) {
+            return `edit ${idx}: 'findHex'/'replaceHex' must be even-length hex strings`;
+          }
+          return undefined;
+        }
+        case "ts-ast": {
+          if (!edit.intent) {
+            return `edit ${idx}: ts-ast edits require an 'intent'`;
+          }
+          return undefined;
+        }
+        default:
+          return `edit ${idx}: unknown kind '${(edit as any).kind}'`;
+      }
+    };
+
+    const validationError = edits
+      .map((e, idx) => validateEdit(e, idx))
+      .find((err) => !!err);
+    if (validationError) {
+      return fail(`PSR validation failed: ${validationError}`);
     }
 
     let options: PSROptions | undefined;

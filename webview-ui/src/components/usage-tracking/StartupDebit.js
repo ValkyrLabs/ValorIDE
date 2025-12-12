@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useAddUsageTransactionMutation } from "../..//redux/services/UsageTransactionService";
+import { useAddUsageTransactionMutation } from "@thorapi/redux/services/UsageTransactionService";
 /**
  * Fires a one-time $0.01 debit when the webview starts up
  * and a JWT is already present (auto-login sessions).

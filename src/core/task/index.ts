@@ -940,6 +940,113 @@ export class Task {
     relinquishButton();
   }
 
+  async getFilePreview(
+    messageTs: number,
+    relativePath: string,
+    seeNewChangesSinceLastTaskCompletion: boolean,
+  ): Promise<{
+    before?: string;
+    after?: string;
+    isBinary?: boolean;
+    relativePath?: string;
+  } | undefined> {
+    const messageIndex = this.valorideMessages.findIndex((m) => m.ts === messageTs);
+    const message = this.valorideMessages[messageIndex];
+    if (!message) {
+      console.error("Message not found");
+      return undefined;
+    }
+    const hash = message.lastCheckpointHash;
+    if (!hash) {
+      console.error("No checkpoint hash found");
+      return undefined;
+    }
+
+    if (!this.checkpointTracker && !this.checkpointTrackerErrorMessage) {
+      try {
+        this.checkpointTracker = await CheckpointTracker.create(
+          this.taskId,
+          this.context.globalStorageUri.fsPath,
+        );
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        console.error("Failed to initialize checkpoint tracker:", errorMessage);
+        this.checkpointTrackerErrorMessage = errorMessage;
+        return undefined;
+      }
+    }
+
+    if (!this.checkpointTracker) {
+      return undefined;
+    }
+
+    let changedFiles:
+      | {
+        relativePath: string;
+        absolutePath: string;
+        before: string;
+        after: string;
+        insertions: number;
+        deletions: number;
+        status: ValorIDEFileChangeStatus;
+        previousRelativePath?: string;
+        isBinary?: boolean;
+      }[]
+      | undefined;
+
+    try {
+      if (seeNewChangesSinceLastTaskCompletion) {
+        const lastTaskCompletedMessageCheckpointHash = findLast(
+          this.valorideMessages.slice(0, messageIndex),
+          (m) => m.say === "completion_result",
+        )?.lastCheckpointHash;
+
+        const firstCheckpointMessageCheckpointHash = this.valorideMessages.find((m) => m.say === "checkpoint_created")?.lastCheckpointHash;
+
+        const previousCheckpointHash = lastTaskCompletedMessageCheckpointHash || firstCheckpointMessageCheckpointHash;
+
+        if (!previousCheckpointHash) {
+          console.error("Unexpected error: No checkpoint hash found");
+          return undefined;
+        }
+
+        changedFiles = await this.checkpointTracker.getDiffSet(previousCheckpointHash, hash);
+      } else {
+        changedFiles = await this.checkpointTracker.getDiffSet(hash);
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      console.error("Failed to retrieve diff set: " + errorMessage);
+      return undefined;
+    }
+
+    if (!changedFiles?.length) {
+      console.error("No changes found");
+      return undefined;
+    }
+
+    const normalize = (value: string) => value.replace(/\\/g, "/");
+    const targetFile = changedFiles.find((file) => {
+      const target = normalize(relativePath);
+      return (
+        normalize(file.relativePath) === target ||
+        (file.previousRelativePath && normalize(file.previousRelativePath) === target)
+      );
+    });
+
+    if (!targetFile) {
+      console.error(`No diff available for ${relativePath}`);
+      return undefined;
+    }
+
+    return {
+      before: targetFile.before,
+      after: targetFile.after,
+      isBinary: !!targetFile.isBinary,
+      relativePath: targetFile.relativePath,
+    };
+  }
+
   private async getLatestTaskCompletionChangesSummary(): Promise<
     ValorIDEChangesSummary | undefined
   > {
@@ -4567,10 +4674,28 @@ export class Task {
             let lastCompletionChangesSummary:
               | ValorIDEChangesSummary
               | undefined;
-            const summaryTitle =
+            const rawSummaryTitle =
               this.valorideMessages.find((m) => m.say === "task")?.text ||
               this.valorideMessages[0]?.text ||
               "Task";
+            const initialTitleLine =
+              (rawSummaryTitle || "").split(/\r?\n/)[0]?.trim() || "Task";
+            const resultTitleLine =
+              (result || "")
+                .split(/\r?\n/)
+                .map((line) => line.trim())
+                .find((line) => line.length > 0) || undefined;
+            const summaryTitle = (() => {
+              const candidate =
+                resultTitleLine &&
+                resultTitleLine.toLowerCase() !==
+                  initialTitleLine.toLowerCase()
+                  ? resultTitleLine
+                  : initialTitleLine;
+              return candidate.length > 120
+                ? `${candidate.slice(0, 120)}...`
+                : candidate;
+            })();
             const summaryCompletedAt = new Date().toISOString();
             const buildSummaryMarkdown = (
               changesSummary?: ValorIDEChangesSummary,

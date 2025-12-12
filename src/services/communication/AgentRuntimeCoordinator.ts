@@ -421,6 +421,16 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
         type: "swarm:broadcast",
         payload,
       });
+      // Trigger a lightweight server-console notification so UI can highlight the Server Console tab
+      instance.controller.postMessageToWebview({
+        type: "serverConsoleNewMessage",
+        payload: {
+          preview:
+            typeof payload === "string"
+              ? payload
+              : payload?.message || payload?.text || payload,
+        },
+      });
     });
   }
 
@@ -429,6 +439,16 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       instance.controller.postMessageToWebview({
         type: "swarm:private-message",
         payload,
+      });
+      // Also notify webview to flash the server console tab for attention
+      instance.controller.postMessageToWebview({
+        type: "serverConsoleNewMessage",
+        payload: {
+          preview:
+            typeof payload === "string"
+              ? payload
+              : payload?.message || payload?.text || payload,
+        },
       });
     });
   }

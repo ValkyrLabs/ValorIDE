@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import customBaseQuery from "../..//redux/customBaseQuery";
-import { Product } from "../..//model/Product";
+import { Product } from "@thorapi/model/Product";
 
 export interface FileRecordSummary {
   id: string;

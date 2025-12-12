@@ -8,8 +8,8 @@ import { useGetAccountBalanceQuery } from "@thorapi/services/creditsApi";
 import {
   useAddUsageTransactionMutation,
   useGetUsageTransactionsQuery,
-} from "@thorapi//redux/services/UsageTransactionService";
-import { useGetPaymentTransactionsQuery } from "@thorapi//redux/services/PaymentTransactionService";
+} from "@thorapi/redux/services/UsageTransactionService";
+import { useGetPaymentTransactionsQuery } from "@thorapi/redux/services/PaymentTransactionService";
 import VSCodeButtonLink from "../common/VSCodeButtonLink";
 import CountUp from "react-countup";
 import CreditsHistoryTable from "./CreditsHistoryTable";

@@ -1,12 +1,12 @@
 import { memo, useState, useCallback, useEffect, useMemo } from "react";
 
-import { UsageTransaction, PaymentTransaction } from "@thorapi//model";
+import { UsageTransaction, PaymentTransaction } from "@thorapi/model";
 import { useGetAccountBalanceQuery } from "@thorapi/services/creditsApi";
 import {
   useAddUsageTransactionMutation,
   useGetUsageTransactionsQuery,
-} from "@thorapi//redux/services/UsageTransactionService";
-import { useGetPaymentTransactionsQuery } from "@thorapi//redux/services/PaymentTransactionService";
+} from "@thorapi/redux/services/UsageTransactionService";
+import { useGetPaymentTransactionsQuery } from "@thorapi/redux/services/PaymentTransactionService";
 import VSCodeButtonLink from "../common/VSCodeButtonLink";
 import ValorIDELogoWhite from "../../assets/ValorIDELogoWhite";
 import CountUp from "react-countup";
@@ -30,7 +30,10 @@ import {
   FaFileArchive,
   FaRecycle,
   FaUserEdit,
+  FaServer,
 } from "react-icons/fa";
+import ServerConsole from "../ServerConsole";
+import "./AccountView.css";
 import CoolButton from "../CoolButton";
 import { Card } from "react-bootstrap";
 import { Login } from "@thorapi/model";
@@ -52,9 +55,25 @@ import {
 
 type AccountViewProps = {
   onDone: () => void;
+  serverConsoleNeedsAttention?: boolean;
+  onClearServerConsoleNeedsAttention?: () => void;
+  initialActiveTab?:
+  | "login"
+  | "account"
+  | "applications"
+  | "generatedFiles"
+  | "userPreferences"
+  | "serverConsole";
+  onConsumeInitialActiveTab?: () => void;
 };
 
-const AccountView = ({ onDone }: AccountViewProps) => {
+const AccountView = ({
+  onDone,
+  serverConsoleNeedsAttention = false,
+  onClearServerConsoleNeedsAttention,
+  initialActiveTab,
+  onConsumeInitialActiveTab,
+}: AccountViewProps) => {
   const { userInfo, authenticatedUser, isLoggedIn, jwtToken } =
     useExtensionState();
   // Read live messages once at top-level to respect Hooks rules
@@ -91,7 +110,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
 
   // Default to login tab when unauthenticated, otherwise account
   const [activeTab, setActiveTab] = useState<
-    "login" | "account" | "applications" | "generatedFiles" | "userPreferences"
+    "login" | "account" | "applications" | "generatedFiles" | "userPreferences" | "serverConsole"
   >(authed ? "account" : "login");
 
   // Keep active tab in sync with authentication state
@@ -102,6 +121,19 @@ const AccountView = ({ onDone }: AccountViewProps) => {
       setActiveTab("login");
     }
   }, [authed]);
+
+  useEffect(() => {
+    if (initialActiveTab) {
+      setActiveTab(initialActiveTab);
+      onConsumeInitialActiveTab?.();
+    }
+  }, [initialActiveTab, onConsumeInitialActiveTab]);
+
+  useEffect(() => {
+    if (activeTab === "serverConsole" && serverConsoleNeedsAttention) {
+      onClearServerConsoleNeedsAttention?.();
+    }
+  }, [activeTab, serverConsoleNeedsAttention, onClearServerConsoleNeedsAttention]);
 
   const { principal: resolvedPrincipal } = useAccessControl(
     authenticatedUser || userInfo,
@@ -302,7 +334,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
       <SystemAlerts />
 
       {peers.length > 0 && (
-        <div className="border border-solid border-[var(--vscode-panel-border)] rounded-md p-[10px] mb-3 bg-[var(--vscode-panel-background)] text-[var(--vscode-foreground)]">
+        <div className="border border-solid border-(--vscode-panel-border) rounded-md p-[10px] mb-3 bg-[var(--vscode-panel-background)] text-[var(--vscode-foreground)]">
           <div className="mb-2 font-semibold">Active instances</div>
           <div className="flex flex-wrap gap-2">
             {peers.map((id) => (
@@ -349,6 +381,17 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                 style={{ cursor: "pointer" }}
               >
                 <FaFileArchive />
+              </div>
+              <div
+                className={`nav-link ${activeTab === "serverConsole" ? "active" : ""} ${serverConsoleNeedsAttention && activeTab !== "serverConsole"
+                  ? "needs-attention"
+                  : ""
+                  }`}
+                onClick={() => setActiveTab("serverConsole")}
+                style={{ cursor: "pointer" }}
+                title="Server Console"
+              >
+                <FaServer />
               </div>
               <div
                 className={`nav-link ${activeTab === "userPreferences" ? "active" : ""}`}
@@ -423,7 +466,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
         </div>
       ) : activeTab === "generatedFiles" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
-          <div className="flex-grow flex flex-col min-h-0">
+          <div className="grow flex flex-col min-h-0">
             <h3 style={{ marginBottom: "16px" }}>Generated Files</h3>
             <FileExplorer
               onFileSelect={handleFileSelect}
@@ -435,10 +478,14 @@ const AccountView = ({ onDone }: AccountViewProps) => {
         </div>
       ) : activeTab === "userPreferences" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
-          <div className="flex-grow flex flex-col min-h-0">
+          <div className="grow flex flex-col min-h-0">
             <h3 style={{ marginBottom: "16px" }}>User Preferences</h3>
             <UserPreferences />
           </div>
+        </div>
+      ) : activeTab === "serverConsole" ? (
+        <div className="h-full flex flex-col pr-3 overflow-y-auto">
+          <ServerConsole />
         </div>
       ) : activeTab === "account" ? (
         <>
@@ -463,11 +510,11 @@ const AccountView = ({ onDone }: AccountViewProps) => {
             </div>
 
             <div className="w-full flex flex-col items-center">
-              <div className="text-sm text-[var(--vscode-descriptionForeground)] mb-3">
+              <div className="text-sm text-(--vscode-descriptionForeground) mb-3">
                 CURRENT BALANCE
               </div>
 
-              <div className="text-4xl font-bold text-[var(--vscode-foreground)] mb-6 flex items-center gap-2">
+              <div className="text-4xl font-bold text-(--vscode-foreground) mb-6 flex items-center gap-2">
                 {loading ? (
                   <LoadingSpinner label="Loading balance..." size={28} />
                 ) : (
@@ -524,7 +571,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
 
             <VSCodeDivider className="mt-6 mb-3 w-full" />
 
-            <div className="flex-grow flex flex-col min-h-0 pb-[0px]">
+            <div className="grow flex flex-col min-h-0 pb-0">
               <CreditsHistoryTable
                 isLoading={loading}
                 usageData={usageData || []}

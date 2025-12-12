@@ -9,7 +9,7 @@ import {
   VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
 import Tooltip from "@thorapi/components/common/Tooltip";
-import { useGetMcpServersQuery } from "@thorapi//redux/services/McpServerService";
+import { useGetMcpServersQuery } from "@thorapi/redux/services/McpServerService";
 import { convertThorMcpServersToShared } from "@thorapi/utils/mcpTypeConversions";
 import { formatError, safeConvert } from "@thorapi/utils/errorHandling";
 import { FaServer, FaSync, FaCog } from "react-icons/fa";

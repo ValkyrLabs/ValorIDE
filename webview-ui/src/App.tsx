@@ -68,8 +68,13 @@ const AppContent = () => {
   const [showAccount, setShowAccount] = useState(false);
   const [showGeneratedFiles, setShowGeneratedFiles] = useState(false);
   const [showServerConsole, setShowServerConsole] = useState(false);
+  // Server Console is now rendered as a tab in the Account view
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [mcpTab, setMcpTab] = useState<McpViewTab | undefined>(undefined);
+  const [serverConsoleNeedsAttention, setServerConsoleNeedsAttention] = useState(false);
+  const [accountInitialActiveTab, setAccountInitialActiveTab] = useState<
+    "login" | "account" | "applications" | "generatedFiles" | "userPreferences" | "serverConsole" | undefined
+  >(undefined);
   // Always show file explorer by default
   const [showFileExplorer, setShowFileExplorer] = useState(true);
   const [showApplicationProgress, setShowApplicationProgress] = useState(false);
@@ -159,6 +164,20 @@ const AppContent = () => {
               setShowGeneratedFiles(false);
               setShowServerConsole(false);
               setShowApplicationProgress(false);
+              // Opening Account should clear server console attention since tab is visible now
+              setServerConsoleNeedsAttention(false);
+              break;
+            case "serverConsoleButtonClicked":
+              // Legacy support: open Account view and select Server Console tab
+              setShowSettings(false);
+              setShowHistory(false);
+              setShowMcp(false);
+              setShowAccount(true);
+              setShowGeneratedFiles(false);
+              setShowServerConsole(false);
+              setShowApplicationProgress(false);
+              setServerConsoleNeedsAttention(false);
+              setAccountInitialActiveTab("serverConsole");
               break;
             case "chatButtonClicked":
               setShowSettings(false);
@@ -178,15 +197,7 @@ const AppContent = () => {
               setShowServerConsole(false);
               setShowApplicationProgress(false);
               break;
-            case "serverConsoleButtonClicked":
-              setShowSettings(false);
-              setShowHistory(false);
-              setShowMcp(false);
-              setShowAccount(false);
-              setShowGeneratedFiles(false);
-              setShowServerConsole(true);
-              setShowApplicationProgress(false);
-              break;
+            // serverConsoleButtonClicked moved to account tabs; keep legacy handling minimal
           }
           break;
 
@@ -230,6 +241,11 @@ const AppContent = () => {
               timestamp: Date.now(),
             },
           });
+          break;
+
+        case "serverConsoleNewMessage":
+          // New server console-related message arrived; mark server console tab for attention.
+          setServerConsoleNeedsAttention(true);
           break;
 
         default:
@@ -293,7 +309,7 @@ const AppContent = () => {
     showMcp ||
     showAccount ||
     showGeneratedFiles ||
-    showServerConsole;
+    false;
 
   return (
     <>
@@ -306,9 +322,17 @@ const AppContent = () => {
           {showMcp && (
             <McpView initialTab={mcpTab} onDone={() => setShowMcp(false)} />
           )}
-          {showAccount && <AccountView onDone={() => setShowAccount(false)} />}
+          {showAccount && (
+            <AccountView
+              onDone={() => setShowAccount(false)}
+              serverConsoleNeedsAttention={serverConsoleNeedsAttention}
+              onClearServerConsoleNeedsAttention={() => setServerConsoleNeedsAttention(false)}
+              initialActiveTab={accountInitialActiveTab}
+              onConsumeInitialActiveTab={() => setAccountInitialActiveTab(undefined)}
+            />
+          )}
           {showGeneratedFiles && <GeneratedFilesView />}
-          {showServerConsole && <ServerConsole />}
+          {/* Server Console is now available in the Account view tabs */}
 
           {/* Application Progress Overlay - shows over the split pane */}
           {showApplicationProgress && (

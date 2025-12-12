@@ -8,7 +8,11 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
-    "lib": ["es2022", "esnext.disposable", "DOM"],
+    "lib": [
+      "es2022",
+      "esnext.disposable",
+      "DOM"
+    ],
     "module": "esnext",
     "moduleResolution": "Bundler",
     "noFallthroughCasesInSwitch": true,
@@ -25,18 +29,75 @@
     "useUnknownInCatchVariables": false,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*", "webview-ui/src/*"],
-      "@api/*": ["src/api/*"],
-      "@thor/*": ["webview-ui/src/thor/*"],
-      "@websocket/*": ["webview-ui/src/websocket/*"],
-      "@core/*": ["src/core/*"],
-      "@integrations/*": ["src/integrations/*"],
-      "@services/*": ["src/services/*"],
-      "@valkyr/component-library/*": ["webview-ui/src/components/*"],
-      "@shared/*": ["src/shared/*"],
-      "@utils/*": ["src/utils/*"]
+      "@api/*": [
+        "src/api/*"
+      ],
+      "@thorapi/model": [
+        "webview-ui/src/thorapi/model/index.ts",
+        "src/thorapi/model/index.ts"
+      ],
+      "@thorapi/model/*": [
+        "webview-ui/src/thorapi/model/*",
+        "src/thorapi/model/*"
+      ],
+      "@thorapi/src": [
+        "webview-ui/src/thorapi/src/index.ts",
+        "src/thorapi/src/index.ts"
+      ],
+      "@thorapi/redux/*": [
+        "webview-ui/src/thorapi/redux/*",
+        "src/thorapi/redux/*"
+      ],
+      "@thorapi/redux/services/*": [
+        "webview-ui/src/thorapi/redux/services/*",
+        "src/thorapi/redux/services/*"
+      ],
+      "@thorapi/api/*": [
+        "webview-ui/src/api/*",
+        "src/api/*",
+        "webview-ui/src/thorapi/api/*",
+        "src/thorapi/api/*"
+      ],
+      "@thorapi/api": [
+        "webview-ui/src/thorapi/api/index.ts",
+        "src/thorapi/api/index.ts",
+        "webview-ui/src/api/index.ts",
+        "src/api/index.ts"
+      ],
+      "@thorapi/*": [
+        "webview-ui/src/*",
+        "src/*"
+      ],
+      "@websocket/*": [
+        "webview-ui/src/websocket/*"
+      ],
+      "@core/*": [
+        "src/core/*"
+      ],
+      "@integrations/*": [
+        "src/integrations/*"
+      ],
+      "@services/*": [
+        "src/services/*"
+      ],
+      "@valkyr/component-library/*": [
+        "webview-ui/src/components/*"
+      ],
+      "@shared/*": [
+        "src/shared/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ]
     }
   },
-  "include": ["src/**/*", "scripts/**/*", "webview-ui/src/**/*"],
-  "exclude": ["node_modules", ".vscode-test"]
+  "include": [
+    "src/**/*",
+    "scripts/**/*",
+    "webview-ui/src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    ".vscode-test"
+  ]
 }

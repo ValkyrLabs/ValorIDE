@@ -15,7 +15,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "webview-ui/src"),
       "@shared": path.resolve(__dirname, "src/shared"),
-      "@thor": path.resolve(__dirname, "webview-ui/src/thor"),
+      "@": path.resolve(__dirname, "webview-ui/src/"),
       "@utils": path.resolve(__dirname, "src/utils"),
     },
   },

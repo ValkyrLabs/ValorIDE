@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.585",
+  "version": "3.20.668",
   "icon": "assets/icons/icon.png",
   "pricing": "Free",
   "galleryBanner": {
@@ -89,7 +89,7 @@
       {
         "command": "valoride.accountButtonClicked",
         "title": "Account Settings",
-        "icon": "$(zap)"
+        "icon": "$(shield)"
       },
       {
         "command": "valoride.serverConsoleButtonClicked",
@@ -139,7 +139,7 @@
       },
       {
         "command": "valoride.addThorAliasesFromFolder",
-        "title": "Add @thor Aliases From Folder",
+        "title": "Add @ Aliases From Folder",
         "category": "ValorIDE"
       },
       {
@@ -226,16 +226,6 @@
         {
           "command": "valoride.accountButtonClicked",
           "group": "navigation@6",
-          "when": "view == valoride-dev.SidebarProvider"
-        },
-        {
-          "command": "valoride.serverConsoleButtonClicked",
-          "group": "navigation@7",
-          "when": "view == valoride-dev.SidebarProvider"
-        },
-        {
-          "command": "valoride.fixLayout",
-          "group": "navigation@8",
           "when": "view == valoride-dev.SidebarProvider"
         },
         {

@@ -78,7 +78,7 @@ import OpenRouterModelPicker, {
 import { ValorIDEAccountInfoCard } from "./ValorIDEAccountInfoCard";
 import RequestyModelPicker from "./RequestyModelPicker";
 import LlmDetailsModelPicker from "./LlmDetailsModelPicker";
-import { useGetLlmDetailssQuery } from "@thorapi//redux/services/LlmDetailsService";
+import { useGetLlmDetailssQuery } from "@thorapi/redux/services/LlmDetailsService";
 
 interface ApiOptionsProps {
   showModelOptions: boolean;

@@ -1,6 +1,7 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { fireEvent } from "@testing-library/react";
 
 const mockUseGetAccountBalanceQuery = vi.fn();
 const mockUseGetUsageTransactionsQuery = vi.fn();
@@ -37,13 +38,13 @@ vi.mock("@thorapi/services/creditsApi", () => ({
     mockUseGetAccountBalanceQuery(...args),
 }));
 
-vi.mock("@thorapi//redux/services/UsageTransactionService", () => ({
+vi.mock("@thorapi/redux/services/UsageTransactionService", () => ({
   useAddUsageTransactionMutation: () => [vi.fn()],
   useGetUsageTransactionsQuery: (...args: any[]) =>
     mockUseGetUsageTransactionsQuery(...args),
 }));
 
-vi.mock("@thorapi//redux/services/PaymentTransactionService", () => ({
+vi.mock("@thorapi/redux/services/PaymentTransactionService", () => ({
   useGetPaymentTransactionsQuery: (...args: any[]) =>
     mockUseGetPaymentTransactionsQuery(...args),
 }));
@@ -155,7 +156,13 @@ describe("AccountView - BuyCredits integration", () => {
   });
 
   it("renders the embedded BuyCredits component instead of an external link when authenticated", () => {
-    render(<AccountView onDone={() => { }} />);
+    render(
+      <AccountView
+        onDone={() => { }}
+        serverConsoleNeedsAttention={false}
+        onClearServerConsoleNeedsAttention={() => { }}
+      />,
+    );
 
     expect(
       screen.queryByRole("link", { name: /buy credits/i }),
@@ -168,6 +175,37 @@ describe("AccountView - BuyCredits integration", () => {
     );
   });
 
+  it("adds a 'needs-attention' class on the Server Console tab when flagged and clears it on click", () => {
+    const onClear = vi.fn();
+    render(
+      <AccountView
+        onDone={() => { }}
+        serverConsoleNeedsAttention={true}
+        onClearServerConsoleNeedsAttention={onClear}
+      />,
+    );
+
+    const serverTab = screen.getByTitle(/server console/i);
+    expect(serverTab.className).toMatch(/needs-attention/);
+
+    fireEvent.click(serverTab);
+    expect(onClear).toHaveBeenCalled();
+  });
+
+  it("activates the Server Console tab when initialActiveTab prop is provided", () => {
+    render(
+      <AccountView
+        onDone={() => { }}
+        serverConsoleNeedsAttention={false}
+        onClearServerConsoleNeedsAttention={() => { }}
+        initialActiveTab="serverConsole"
+      />,
+    );
+    // The server console should now be the active tab
+    const serverTab = screen.getByTitle(/server console/i);
+    expect(serverTab.className).toMatch(/active/);
+  });
+
   it("fetches balance using userInfo when authenticatedUser is missing", () => {
     mockExtensionState = {
       ...baseExtensionState,
@@ -175,7 +213,13 @@ describe("AccountView - BuyCredits integration", () => {
       isLoggedIn: true,
     };
 
-    render(<AccountView onDone={() => { }} />);
+    render(
+      <AccountView
+        onDone={() => { }}
+        serverConsoleNeedsAttention={false}
+        onClearServerConsoleNeedsAttention={() => { }}
+      />,
+    );
 
     expect(mockUseGetAccountBalanceQuery).toHaveBeenCalledWith(
       "user-123",

@@ -47,7 +47,23 @@ export default defineConfig({
       },
       {
         find: "@utils",
-        replacement: resolve(__dirname, "../src/utils"),
+        replacement: resolve(__dirname, "./src/utils"),
+      },
+      {
+        find: "@thorapi/model",
+        replacement: resolve(__dirname, "./src/thorapi/model"),
+      },
+      {
+        find: "@thorapi/src",
+        replacement: resolve(__dirname, "./src/thorapi/src"),
+      },
+      {
+        find: "@thorapi/redux",
+        replacement: resolve(__dirname, "./src/thorapi/redux"),
+      },
+      {
+        find: "@thorapi/api",
+        replacement: resolve(__dirname, "./src/thorapi/api"),
       },
       {
         find: "@",
@@ -68,10 +84,6 @@ export default defineConfig({
       {
         find: "@thorapi",
         replacement: resolve(__dirname, "./src"),
-      },
-      {
-        find: "@",
-        replacement: resolve(__dirname, "./src/"),
       },
       {
         find: "@valkyr/component-library",

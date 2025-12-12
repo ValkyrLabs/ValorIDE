@@ -1,5 +1,5 @@
 import fetch from "node-fetch";
-import { Application } from "../../webview-ui/src//model/Application";
+import { Application } from "@thorapi/model/Application";
 import { resolveThorapiFolderPath } from "@utils/thorapi";
 
 const BASE_URL = "https://api-0.valkyrlabs.com";

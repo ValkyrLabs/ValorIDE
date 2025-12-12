@@ -1,7 +1,7 @@
 import { UserPreferencePreferenceTypeEnum } from "@thorapi/model"; // UserPreference";
 import store from "../redux/store";
 import { setThemeMode, setBootswatchTheme } from "../redux/slices/themeSlice";
-import { UserPreferenceService as UserPreferenceApi } from "..//redux/services/UserPreferenceService";
+import { UserPreferenceService as UserPreferenceApi } from "@thorapi/redux/services/UserPreferenceService";
 export class UserPreferenceService {
   static instance;
   preferences = new Map();

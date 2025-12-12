@@ -6,7 +6,7 @@ import {
   setBootswatchTheme,
   BootswatchTheme,
 } from "../redux/slices/themeSlice";
-import { UserPreferenceService as UserPreferenceApi } from "..//redux/services/UserPreferenceService";
+import { UserPreferenceService as UserPreferenceApi } from "@thorapi/redux/services/UserPreferenceService";
 
 export class UserPreferenceService {
   private static instance: UserPreferenceService;

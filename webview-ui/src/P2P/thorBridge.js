@@ -1,6 +1,6 @@
 import { Client } from "@stomp/stompjs";
 import { getWebsocketUrl, isValidWsUrl } from "@thorapi/websocket/websocket";
-import { WebsocketMessageTypeEnum } from "@thorapi//model";
+import { WebsocketMessageTypeEnum } from "@thorapi/model";
 import {
   deriveWsUrlFromHost,
   getValkyraiHost,

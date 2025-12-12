@@ -1,4 +1,4 @@
-import { BASE_PATH } from "..//src";
+import { BASE_PATH } from "@thorapi/src";
 
 type HeadersLike = HeadersInit | undefined;
 

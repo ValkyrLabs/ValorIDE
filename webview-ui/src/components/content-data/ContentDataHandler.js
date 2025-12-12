@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useAddContentDataMutation } from "../..//redux/services/ContentDataService";
+import { useAddContentDataMutation } from "@thorapi/redux/services/ContentDataService";
 /**
  * Component that handles content data messages from the extension
  * and submits them via the RTK Query system

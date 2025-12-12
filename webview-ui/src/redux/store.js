@@ -6,9 +6,9 @@ import { LogoutService } from "./services/LogoutService";
 import { ApplicationService } from "./services/ApplicationService";
 import { PrincipalService } from "./services/PrincipalService";
 import { ThorHostingService } from "./services/ThorHostingService";
-import { BalanceResponseService } from "..//redux/services/BalanceResponseService";
-import { UsageTransactionService } from "..//redux/services/UsageTransactionService";
-import { PaymentTransactionService } from "..//redux/services/PaymentTransactionService";
+import { BalanceResponseService } from "@thorapi/redux/services/BalanceResponseService";
+import { UsageTransactionService } from "@thorapi/redux/services/UsageTransactionService";
+import { PaymentTransactionService } from "@thorapi/redux/services/PaymentTransactionService";
 import { DigitalProductService } from "./services/DigitalProductService";
 import { creditsApi } from "../services/creditsApi";
 // cool!
@@ -17,7 +17,7 @@ import websocketReducer from "../components/ServerConsole/websocketSlice";
 // import the thorapi generated reducers and middleware
 import middlewares from "../redux/middlewares";
 import thorMiddlewares from "..//redux/middlewares";
-import { reducer as thorReducer } from "..//redux/store";
+import { reducer as thorReducer } from "@thorapi/redux/store";
 // combine reducers
 const rootReducer = combineReducers({
     ...thorReducer,

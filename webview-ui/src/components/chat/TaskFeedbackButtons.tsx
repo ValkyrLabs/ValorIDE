@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { vscode } from "@thorapi/utils/vscode";
-import { TaskFeedbackType } from "@shared/WebviewMessage";
-import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
-import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
+import RatingComponent from "../RatingComponent";
+import { RatingTargetTypeEnum } from "@thorapi/model/Rating";
 
 interface TaskFeedbackButtonsProps {
   messageTs: number;
@@ -11,20 +9,11 @@ interface TaskFeedbackButtonsProps {
   style?: React.CSSProperties;
 }
 
-const IconWrapper = styled.span`
-  color: var(--vscode-descriptionForeground);
-`;
-
-const ButtonWrapper = styled.div`
-  transform: scale(0.85);
-`;
-
 const TaskFeedbackButtons: React.FC<TaskFeedbackButtonsProps> = ({
   messageTs,
   isFromHistory = false,
   style,
 }) => {
-  const [feedback, setFeedback] = useState<TaskFeedbackType | null>(null);
   const [shouldShow, setShouldShow] = useState<boolean>(true);
 
   // Check localStorage on mount to see if feedback was already given for this message
@@ -47,73 +36,30 @@ const TaskFeedbackButtons: React.FC<TaskFeedbackButtonsProps> = ({
     return null;
   }
 
-  const handleFeedback = (type: TaskFeedbackType) => {
-    if (feedback !== null) return; // Already provided feedback
-
-    setFeedback(type);
-
-    // Send feedback to extension
-    vscode.postMessage({
-      type: "taskFeedback",
-      feedbackType: type,
-    });
-
-    // Store in localStorage that feedback was provided for this message
+  const handleRatingSubmitted = () => {
     try {
-      const feedbackHistory =
-        localStorage.getItem("taskFeedbackHistory") || "{}";
+      const feedbackHistory = localStorage.getItem("taskFeedbackHistory") || "{}";
       const history = JSON.parse(feedbackHistory);
-      history[messageTs] = true;
+      // Use the messageTs as a unique key for feedback history
+      history[String(messageTs)] = true;
       localStorage.setItem("taskFeedbackHistory", JSON.stringify(history));
     } catch (e) {
-      console.error("Error updating feedback history:", e);
+      // ignore
     }
+    setShouldShow(false);
   };
 
   return (
     <Container style={style}>
       <ButtonsContainer>
-        <ButtonWrapper>
-          <VSCodeButton
-            appearance="icon"
-            onClick={() => handleFeedback("thumbs_up")}
-            disabled={feedback !== null}
-            title="This was helpful"
-            aria-label="This was helpful"
-          >
-            <IconWrapper>
-              {feedback === "thumbs_up" ? (
-                <FaThumbsUp />
-              ) : (
-                <FaThumbsUp style={{ opacity: 0.6 }} />
-              )}
-            </IconWrapper>
-          </VSCodeButton>
-        </ButtonWrapper>
-        <ButtonWrapper>
-          <VSCodeButton
-            appearance="icon"
-            onClick={() => handleFeedback("thumbs_down")}
-            disabled={feedback !== null}
-            title="This wasn't helpful"
-            aria-label="This wasn't helpful"
-          >
-            <IconWrapper>
-              {feedback === "thumbs_down" ? (
-                <FaThumbsDown />
-              ) : (
-                <FaThumbsDown style={{ opacity: 0.6 }} />
-              )}
-            </IconWrapper>
-          </VSCodeButton>
-        </ButtonWrapper>
-        {/* <VSCodeButtonLink
-				href="https://github.com/valkyrlabs/valoride/issues/new?template=bug_report.yml"
-				appearance="icon"
-				title="Report a bug"
-				aria-label="Report a bug">
-				
-			</VSCodeButtonLink> */}
+        <RatingComponent
+          targetType={RatingTargetTypeEnum.HELPFULNESS}
+          contentId={String(messageTs)}
+          showSlider={false}
+          size="sm"
+          onRatingSubmitted={handleRatingSubmitted}
+          disabled={false}
+        />
       </ButtonsContainer>
     </Container>
   );

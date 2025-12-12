@@ -1,6 +1,7 @@
 import {
   VSCodeBadge,
   VSCodeProgressRing,
+  VSCodeButton,
 } from "@vscode/webview-ui-toolkit/react";
 import deepEqual from "fast-deep-equal";
 import React, {
@@ -70,6 +71,7 @@ import {
   findMatchingResourceOrTemplate,
   getMcpServerDisplayName,
 } from "@thorapi/utils/mcp";
+import { getLanguageFromPath } from "@thorapi/utils/getLanguageFromPath";
 import { vscode } from "@thorapi/utils/vscode";
 import { FileServiceClient } from "@thorapi/services/grpc-client";
 import { CheckmarkControl } from "@thorapi/components/common/CheckmarkControl";
@@ -275,6 +277,7 @@ interface CompletionChangesSummaryProps {
   disabled: boolean;
   onOpenAllChanges: () => void;
   onOpenFileDiff: (relativePath: string) => void;
+  messageTs?: number;
 }
 
 const CompletionChangesSummary: React.FC<CompletionChangesSummaryProps> = ({
@@ -282,6 +285,7 @@ const CompletionChangesSummary: React.FC<CompletionChangesSummaryProps> = ({
   disabled,
   onOpenAllChanges,
   onOpenFileDiff,
+  messageTs,
 }) => {
   if (!summary || summary.totalFiles === 0) {
     return null;
@@ -289,6 +293,48 @@ const CompletionChangesSummary: React.FC<CompletionChangesSummaryProps> = ({
 
   const totalFilesLabel =
     summary.totalFiles === 1 ? "1 file" : `${summary.totalFiles} files`;
+
+  const [expandedFiles, setExpandedFiles] = useState<Record<string, boolean>>({});
+  const [previews, setPreviews] = useState<Record<string, { loading?: boolean; before?: string; after?: string; isBinary?: boolean; error?: string }>>({});
+
+  useEffect(() => {
+    const handler = (event: MessageEvent) => {
+      try {
+        const data: any = event.data;
+        if (data?.type === "taskCompletionFilePreview" && data.relativePath) {
+          setPreviews((prev) => ({
+            ...prev,
+            [data.relativePath]: {
+              loading: false,
+              before: data.before,
+              after: data.after,
+              isBinary: data.isBinary,
+            },
+          }));
+        }
+      } catch (e) {
+        // ignore
+      }
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler as any);
+  }, []);
+
+  const toggleFilePreview = (relativePath: string, isBinary?: boolean) => {
+    const isExpanded = expandedFiles[relativePath];
+    setExpandedFiles((prev) => ({ ...prev, [relativePath]: !isExpanded }));
+    if (!isExpanded && !previews[relativePath]) {
+      setPreviews((prev) => ({ ...prev, [relativePath]: { loading: true } }));
+      if (messageTs) {
+        vscode.postMessage({
+          type: "taskCompletionPreviewFile",
+          number: messageTs,
+          relativePath,
+          seeNewChangesSinceLastTaskCompletion: true,
+        });
+      }
+    }
+  };
 
   return (
     <ChangesSummaryContainer>
@@ -330,44 +376,90 @@ const CompletionChangesSummary: React.FC<CompletionChangesSummaryProps> = ({
             file.status?.slice(0, 1).toUpperCase();
 
           return (
-            <ChangesSummaryRow
-              key={`${file.relativePath}-${index}`}
-              type="button"
-              disabled={isDisabled}
-              onClick={() => {
-                if (!isDisabled) {
-                  onOpenFileDiff(file.relativePath);
+            <>
+              <ChangesSummaryRow
+                key={`${file.relativePath}-${index}`}
+                type="button"
+                disabled={isDisabled}
+                onClick={() => {
+                  if (!isDisabled) {
+                    toggleFilePreview(file.relativePath, file.isBinary);
+                  }
+                }}
+                title={
+                  file.isBinary
+                    ? "Binary files cannot be previewed in the diff viewer"
+                    : undefined
                 }
-              }}
-              title={
-                file.isBinary
-                  ? "Binary files cannot be previewed in the diff viewer"
-                  : undefined
-              }
-            >
-              <RowLeft>
-                <StatusBadge status={file.status}>{statusLabel}</StatusBadge>
-                <RowTextWrapper>
-                  <FileName>{file.relativePath}</FileName>
-                  {secondaryText && (
-                    <RowSecondaryText>{secondaryText}</RowSecondaryText>
+              >
+                <RowLeft>
+                  <StatusBadge status={file.status}>{statusLabel}</StatusBadge>
+                  <RowTextWrapper>
+                    <FileName>{file.relativePath}</FileName>
+                    {secondaryText && (
+                      <RowSecondaryText>{secondaryText}</RowSecondaryText>
+                    )}
+                  </RowTextWrapper>
+                </RowLeft>
+                <RowRight>
+                  {!file.isBinary && (
+                    <>
+                      <SummaryMetric variant="added">
+                        +{file.insertions}
+                      </SummaryMetric>
+                      <SummaryMetric variant="removed">
+                        -{file.deletions}
+                      </SummaryMetric>
+                    </>
                   )}
-                </RowTextWrapper>
-              </RowLeft>
-              <RowRight>
-                {!file.isBinary && (
-                  <>
-                    <SummaryMetric variant="added">
-                      +{file.insertions}
-                    </SummaryMetric>
-                    <SummaryMetric variant="removed">
-                      -{file.deletions}
-                    </SummaryMetric>
-                  </>
-                )}
-                <FaChevronRight size={12} />
-              </RowRight>
-            </ChangesSummaryRow>
+                  <FaChevronRight
+                    size={12}
+                    style={{ transform: expandedFiles[file.relativePath] ? "rotate(90deg)" : "rotate(0deg)", transition: "transform 120ms" }}
+                    onClick={(e) => {
+                      // stop propagation to avoid toggling twice
+                      e.stopPropagation();
+                      toggleFilePreview(file.relativePath, file.isBinary);
+                    }}
+                  />
+                </RowRight>
+              </ChangesSummaryRow>
+              {
+                expandedFiles[file.relativePath] && (
+                  <div style={{ padding: 12, paddingLeft: 44, paddingRight: 24, background: 'var(--vscode-editorWidget-background)', borderRadius: 6, marginTop: 6 }}>
+                    {previews[file.relativePath]?.loading ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ transform: 'scale(0.55)', transformOrigin: 'center' }}>
+                          <VSCodeProgressRing />
+                        </div>
+                        Loading preview...
+                      </div>
+                    ) : previews[file.relativePath]?.isBinary ? (
+                      <div>Binary file diff cannot be previewed here. Click Open in Diff to view.</div>
+                    ) : (
+                      <div>
+                        {previews[file.relativePath]?.after && (
+                          <div style={{ marginBottom: 8 }}>
+                            <div style={{ fontSize: 11, color: 'var(--vscode-descriptionForeground)', marginBottom: 6 }}>New</div>
+                            <CodeBlock source={`\`\`\`${getLanguageFromPath(file.relativePath) || ''}\n${previews[file.relativePath]?.after || ''}\n\`\`\``} />
+                          </div>
+                        )}
+                        {previews[file.relativePath]?.before && (
+                          <div>
+                            <div style={{ fontSize: 11, color: 'var(--vscode-descriptionForeground)', marginBottom: 6 }}>Old</div>
+                            <CodeBlock source={`\`\`\`${getLanguageFromPath(file.relativePath) || ''}\n${previews[file.relativePath]?.before || ''}\n\`\`\``} />
+                          </div>
+                        )}
+                        <div style={{ marginTop: 6, display: 'flex', gap: 8 }}>
+                          <VSCodeButton appearance="secondary" disabled={disabled} onClick={() => onOpenFileDiff(file.relativePath)}>
+                            <FaExternalLinkAlt size={12} /> Open in Diff
+                          </VSCodeButton>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )
+              }
+            </>
           );
         })}
       </ChangesSummaryList>
@@ -400,7 +492,9 @@ interface ChatRowProps {
   sendMessageFromChatRow?: (text: string, images: string[]) => void;
 }
 
-interface ChatRowContentProps extends Omit<ChatRowProps, "onHeightChange"> { }
+type ChatRowContentProps = Omit<ChatRowProps, "onHeightChange"> & {
+  onHeightChange?: (isTaller: boolean) => void;
+};
 
 export const ProgressIndicator = () => (
   <div
@@ -570,7 +664,7 @@ export const ChatRowContent = ({
   setInputValue,
   sendMessageFromChatRow,
 }: ChatRowContentProps) => {
-  const { mcpServers, mcpMarketplaceCatalog } = useExtensionState();
+  const { mcpServers, mcpMarketplaceCatalog, valorideMessages } = useExtensionState();
   const [seeNewChangesDisabled, setSeeNewChangesDisabled] = useState(false);
 
   const [cost, apiReqCancelReason, apiReqStreamingFailedMessage] =
@@ -1941,6 +2035,20 @@ export const ChatRowContent = ({
           const text = hasChanges
             ? message.text?.slice(0, -COMPLETION_RESULT_CHANGES_FLAG.length)
             : message.text;
+          // Hide the message text if a generated summary exists and the text is
+          // just the initial task prompt or the summary's title. This prevents
+          // duplicate rendering of the task prompt (which can happen when
+          // the original prompt is used as a temporary message.text) next to
+          // the built summary card.
+          const initialPromptText = valorideMessages?.[0]?.text;
+          const shouldHideText = Boolean(
+            (
+              message.summaryMarkdown &&
+              message.summaryTitle &&
+              text &&
+              text.trim() === message.summaryTitle.trim()
+            ) || (initialPromptText && text.trim() === initialPromptText.trim()),
+          );
           return (
             <>
               <div
@@ -1969,7 +2077,7 @@ export const ChatRowContent = ({
                   paddingTop: 10,
                 }}
               >
-                <Markdown markdown={text} />
+                {text && !shouldHideText && <Markdown markdown={text} />}
                 <CompletionSummaryCard
                   markdown={message.summaryMarkdown}
                   title={message.summaryTitle}
@@ -1983,6 +2091,7 @@ export const ChatRowContent = ({
                       disabled={seeNewChangesDisabled}
                       onOpenAllChanges={handleOpenAllChanges}
                       onOpenFileDiff={handleOpenFileDiff}
+                      messageTs={message.ts}
                     />
                   ) : (
                     <div style={{ marginTop: 17 }}>
@@ -2109,6 +2218,15 @@ export const ChatRowContent = ({
             ? message.text?.slice(0, -COMPLETION_RESULT_CHANGES_FLAG.length)
             : message.text;
           const hasSummary = !!message.summaryMarkdown;
+          const initialPromptText = valorideMessages?.[0]?.text;
+          const shouldHideText = Boolean(
+            message.summaryMarkdown &&
+            message.summaryTitle &&
+            text &&
+            (text.trim() === message.summaryTitle.trim() ||
+              (initialPromptText && text.trim() === initialPromptText.trim()) ||
+              text.trim().startsWith(message.summaryTitle.trim())),
+          );
           if (!text && !hasSummary && !hasChanges) {
             return null; // nothing to show
           }
@@ -2140,7 +2258,7 @@ export const ChatRowContent = ({
                   paddingTop: 10,
                 }}
               >
-                {text && <Markdown markdown={text} />}
+                {text && !shouldHideText && <Markdown markdown={text} />}
                 <CompletionSummaryCard
                   markdown={message.summaryMarkdown}
                   title={message.summaryTitle}
@@ -2154,6 +2272,7 @@ export const ChatRowContent = ({
                       disabled={seeNewChangesDisabled}
                       onOpenAllChanges={handleOpenAllChanges}
                       onOpenFileDiff={handleOpenFileDiff}
+                      messageTs={message.ts}
                     />
                   ) : (
                     <div style={{ marginTop: 15 }}>

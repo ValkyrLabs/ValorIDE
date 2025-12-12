@@ -31,12 +31,12 @@ vi.mock("@thorapi/services/creditsApi", () => ({
   useGetAccountBalanceQuery: (...args) =>
     mockUseGetAccountBalanceQuery(...args),
 }));
-vi.mock("@thorapi//redux/services/UsageTransactionService", () => ({
+vi.mock("@thorapi/redux/services/UsageTransactionService", () => ({
   useAddUsageTransactionMutation: () => [vi.fn()],
   useGetUsageTransactionsQuery: (...args) =>
     mockUseGetUsageTransactionsQuery(...args),
 }));
-vi.mock("@thorapi//redux/services/PaymentTransactionService", () => ({
+vi.mock("@thorapi/redux/services/PaymentTransactionService", () => ({
   useGetPaymentTransactionsQuery: (...args) =>
     mockUseGetPaymentTransactionsQuery(...args),
 }));

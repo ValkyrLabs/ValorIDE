@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { Login, Principal } from "../..//model";
+import { Login, Principal } from "@thorapi/model";
 import customBaseQuery from "../..//redux/customBaseQuery";
 import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 

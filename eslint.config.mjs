@@ -5,7 +5,7 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 const baseConfig = tseslint.config(
-  { ignores: ["build", "src/shared/proto/**/*.js"] },
+  { ignores: ["build", "src/shared/proto/**/*.js", "src/thorapi/**"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],

@@ -18,7 +18,7 @@ import { ExtensionMessage } from "@shared/ExtensionMessage";
 import BrowserSettingsSection from "./BrowserSettingsSection";
 import LLMDetailsSelector from "../LLMDetailsSelector";
 import { VscSettingsGear } from "react-icons/vsc";
-import { FaStar, FaShareAlt, FaCheck, FaTag } from "react-icons/fa";
+import { FaStar, FaShareAlt, FaCheck, FaTag, FaShieldAlt } from "react-icons/fa";
 import StatusBadge from "@thorapi/components/common/StatusBadge";
 import OfflineBanner from "@thorapi/components/common/OfflineBanner";
 import SystemAlerts from "@thorapi/components/SystemAlerts";
@@ -378,6 +378,21 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
                 Remember login
               </VSCodeCheckbox>
             </div>
+            <SettingsButton
+              onClick={() => {
+                try {
+                  vscode.postMessage({ type: "fixLayout" });
+                } catch (err) {
+                  console.warn("Reset layout message failed: ", err);
+                }
+              }}
+              title="Reset layout (resets VS Code view locations to defaults)"
+              className="mr-2"
+            >
+              <span className="flex items-center gap-2">
+                <FaShieldAlt /> Reset Layout
+              </span>
+            </SettingsButton>
             <VSCodeButton onClick={() => handleSubmit(false)}>
               Save
             </VSCodeButton>

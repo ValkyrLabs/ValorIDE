@@ -1,5 +1,5 @@
 import store from "../store";
-import * as ThorServices from "../..//redux/services";
+import * as ThorServices from "@thorapi/redux/services";
 import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 
 type AnyApiSlice = {
