@@ -3,7 +3,6 @@ import * as THREE from "three";
 import { ContentData } from "@thorapi/model";
 import { useGetContentDatasPagedQuery } from "@thorapi/redux/services/ContentDataService";
 import LoadingSpinner from "../LoadingSpinner";
-import CoolButton from "../CoolButton";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import "./ContentDataFlipBoard.css";
 
@@ -336,14 +335,14 @@ const ContentDataFlipBoard: React.FC<ContentDataFlipBoardProps> = ({
 
       {/* Navigation Controls */}
       <div className="flipboard-controls">
-        <CoolButton
-          variant="dark"
+        <button
+          type="button"
           onClick={handlePrevious}
           className="flipboard-nav-btn flipboard-prev"
           aria-label="Previous"
         >
           <FaChevronLeft size={20} />
-        </CoolButton>
+        </button>
 
         <div className="flipboard-indicators">
           {cards.map((_, idx) => (
@@ -355,14 +354,14 @@ const ContentDataFlipBoard: React.FC<ContentDataFlipBoardProps> = ({
           ))}
         </div>
 
-        <CoolButton
-          variant="dark"
+        <button
+          type="button"
           onClick={handleNext}
           className="flipboard-nav-btn flipboard-next"
           aria-label="Next"
         >
           <FaChevronRight size={20} />
-        </CoolButton>
+        </button>
       </div>
 
       {/* Card Info Panel */}

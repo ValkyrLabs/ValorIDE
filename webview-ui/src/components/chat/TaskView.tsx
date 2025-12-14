@@ -341,6 +341,7 @@ const TaskView: React.FC<TaskViewProps> = ({
             inputValue={inputValue}
             setInputValue={setInputValue}
             sendMessageFromChatRow={sendMessageFromChatRow}
+            taskConfidence={taskPhaseConfidence}
           />
         </ErrorBoundary>
       );

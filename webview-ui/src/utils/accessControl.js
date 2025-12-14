@@ -1,3 +1,4 @@
+"use strict";
 /**
  * ACCESS CONTROL UTILITIES
  *
@@ -17,7 +18,9 @@
  * Result: sessionStorage contains only safe, serializable data.
  * All code reading Principal from storage gets properly reconstructed objects.
  */
-import { useMemo, useSyncExternalStore } from "react";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.accessControl = exports.useAccessControl = exports.principalOwns = exports.principalIsAdmin = exports.principalHasRole = exports.getPrincipalRoles = exports.useStoredPrincipal = exports.hydrateStoredCredentials = exports.clearStoredJwtToken = exports.storeJwtToken = exports.clearStoredPrincipal = exports.writeStoredPrincipal = exports.readStoredPrincipal = exports.resolvePrincipal = void 0;
+const react_1 = require("react");
 const STORAGE_KEY = "authenticatedPrincipal";
 const PRINCIPAL_STORAGE_EVENT = "principal-storage-changed";
 const ROLE_PREFIX = "ROLE_";
@@ -137,7 +140,7 @@ const coercePrincipalFromString = (raw) => {
         return null;
     }
 };
-export const resolvePrincipal = (candidate) => {
+const resolvePrincipal = (candidate) => {
     if (candidate === null || candidate === undefined) {
         return null;
     }
@@ -146,6 +149,7 @@ export const resolvePrincipal = (candidate) => {
     }
     return normalizePrincipalShape(candidate ?? null);
 };
+exports.resolvePrincipal = resolvePrincipal;
 let cachedPrincipalRaw;
 let cachedPrincipalValue = null;
 const syncPrincipalCache = (raw) => {
@@ -156,7 +160,7 @@ const syncPrincipalCache = (raw) => {
     cachedPrincipalValue = coercePrincipalFromString(raw);
     return cachedPrincipalValue;
 };
-export const readStoredPrincipal = () => {
+const readStoredPrincipal = () => {
     if (typeof window === "undefined") {
         return null;
     }
@@ -189,6 +193,7 @@ export const readStoredPrincipal = () => {
         return null;
     }
 };
+exports.readStoredPrincipal = readStoredPrincipal;
 const dispatchPrincipalChange = () => {
     if (typeof window === "undefined") {
         return;
@@ -263,7 +268,7 @@ const sanitizePrincipalForStorage = (principal) => {
         return null;
     }
 };
-export const writeStoredPrincipal = (value) => {
+const writeStoredPrincipal = (value) => {
     if (typeof window === "undefined") {
         return;
     }
@@ -339,7 +344,7 @@ export const writeStoredPrincipal = (value) => {
                 serialized = JSON.stringify(sanitized ?? {});
             }
             const existing = sessionStorage.getItem(STORAGE_KEY);
-            const resolvedExisting = resolvePrincipal(existing || null);
+            const resolvedExisting = (0, exports.resolvePrincipal)(existing || null);
             // Short-circuit if nothing meaningful changed to avoid storage events/re-renders
             if (existing === serialized ||
                 shallowEqualPrincipal(resolvedExisting, normalizedValue)) {
@@ -357,7 +362,7 @@ export const writeStoredPrincipal = (value) => {
                 /* ignore localStorage issues */
             }
             cachedPrincipalRaw = serialized;
-            const resolved = resolvePrincipal(serialized);
+            const resolved = (0, exports.resolvePrincipal)(serialized);
             cachedPrincipalValue = resolved ?? syncPrincipalCache(serialized);
         }
     }
@@ -370,13 +375,15 @@ export const writeStoredPrincipal = (value) => {
         dispatchPrincipalChange();
     }
 };
-export const clearStoredPrincipal = (_reason) => writeStoredPrincipal(null);
-export const storeJwtToken = (token, source) => {
+exports.writeStoredPrincipal = writeStoredPrincipal;
+const clearStoredPrincipal = (_reason) => (0, exports.writeStoredPrincipal)(null);
+exports.clearStoredPrincipal = clearStoredPrincipal;
+const storeJwtToken = (token, source) => {
     if (typeof window === "undefined") {
         return;
     }
     if (token === null || token === undefined) {
-        clearStoredJwtToken(source);
+        (0, exports.clearStoredJwtToken)(source);
         return;
     }
     try {
@@ -400,7 +407,8 @@ export const storeJwtToken = (token, source) => {
         console.warn("Unable to persist JWT token", error);
     }
 };
-export const clearStoredJwtToken = (source) => {
+exports.storeJwtToken = storeJwtToken;
+const clearStoredJwtToken = (source) => {
     if (typeof window === "undefined") {
         return;
     }
@@ -416,7 +424,8 @@ export const clearStoredJwtToken = (source) => {
         console.warn("Unable to clear JWT token", error);
     }
 };
-export const hydrateStoredCredentials = (source) => {
+exports.clearStoredJwtToken = clearStoredJwtToken;
+const hydrateStoredCredentials = (source) => {
     let token;
     let principal = null;
     if (typeof window === "undefined") {
@@ -432,8 +441,8 @@ export const hydrateStoredCredentials = (source) => {
         const persistedPrincipalRaw = window.localStorage?.getItem(STORAGE_KEY) ||
             window.localStorage?.getItem(AUTH_USER_STORAGE_KEY);
         if (persistedPrincipalRaw) {
-            principal = resolvePrincipal(persistedPrincipalRaw);
-            writeStoredPrincipal(principal ?? null);
+            principal = (0, exports.resolvePrincipal)(persistedPrincipalRaw);
+            (0, exports.writeStoredPrincipal)(principal ?? null);
         }
         if (token || principal) {
             window.dispatchEvent?.(new CustomEvent("credentialsHydrated", {
@@ -446,6 +455,7 @@ export const hydrateStoredCredentials = (source) => {
     }
     return { token, principal };
 };
+exports.hydrateStoredCredentials = hydrateStoredCredentials;
 const subscribeToPrincipalStore = (listener) => {
     if (typeof window === "undefined") {
         return () => undefined;
@@ -464,8 +474,9 @@ const subscribeToPrincipalStore = (listener) => {
         window.removeEventListener("storage", handleStorageEvent);
     };
 };
-const getStoredPrincipalSnapshot = () => readStoredPrincipal();
-export const useStoredPrincipal = () => useSyncExternalStore(subscribeToPrincipalStore, getStoredPrincipalSnapshot, getStoredPrincipalSnapshot);
+const getStoredPrincipalSnapshot = () => (0, exports.readStoredPrincipal)();
+const useStoredPrincipal = () => (0, react_1.useSyncExternalStore)(subscribeToPrincipalStore, getStoredPrincipalSnapshot, getStoredPrincipalSnapshot);
+exports.useStoredPrincipal = useStoredPrincipal;
 const extractRolesFromRoleList = (roleList) => {
     if (!roleList || !Array.isArray(roleList)) {
         return [];
@@ -503,7 +514,7 @@ const extractRolesFromAuthorities = (authorityList) => {
     })
         .filter((roleName) => Boolean(roleName));
 };
-export const getPrincipalRoles = (principal) => {
+const getPrincipalRoles = (principal) => {
     if (!principal) {
         return [];
     }
@@ -522,7 +533,8 @@ export const getPrincipalRoles = (principal) => {
         return [];
     }
 };
-export const principalHasRole = (principal, role) => {
+exports.getPrincipalRoles = getPrincipalRoles;
+const principalHasRole = (principal, role) => {
     if (!principal || !role) {
         return false;
     }
@@ -530,10 +542,12 @@ export const principalHasRole = (principal, role) => {
     if (!target) {
         return false;
     }
-    return getPrincipalRoles(principal).some((current) => current === target);
+    return (0, exports.getPrincipalRoles)(principal).some((current) => current === target);
 };
-export const principalIsAdmin = (principal) => principalHasRole(principal, "ADMIN");
-export const principalOwns = (principal, ...ownerIds) => {
+exports.principalHasRole = principalHasRole;
+const principalIsAdmin = (principal) => (0, exports.principalHasRole)(principal, "ADMIN");
+exports.principalIsAdmin = principalIsAdmin;
+const principalOwns = (principal, ...ownerIds) => {
     if (!principal?.id) {
         return false;
     }
@@ -555,16 +569,17 @@ export const principalOwns = (principal, ...ownerIds) => {
         .filter((candidate) => Boolean(candidate))
         .some((candidate) => candidate === principalId);
 };
-export const useAccessControl = (principalSource) => {
-    const storedPrincipal = useStoredPrincipal();
-    return useMemo(() => {
+exports.principalOwns = principalOwns;
+const useAccessControl = (principalSource) => {
+    const storedPrincipal = (0, exports.useStoredPrincipal)();
+    return (0, react_1.useMemo)(() => {
         const principal = principalSource === undefined
             ? storedPrincipal
-            : resolvePrincipal(principalSource);
-        const roles = getPrincipalRoles(principal);
-        const hasRole = (role) => principalHasRole(principal, role);
-        const isAdmin = principalIsAdmin(principal);
-        const isOwner = (...ownerIds) => principalOwns(principal, ...ownerIds);
+            : (0, exports.resolvePrincipal)(principalSource);
+        const roles = (0, exports.getPrincipalRoles)(principal);
+        const hasRole = (role) => (0, exports.principalHasRole)(principal, role);
+        const isAdmin = (0, exports.principalIsAdmin)(principal);
+        const isOwner = (...ownerIds) => (0, exports.principalOwns)(principal, ...ownerIds);
         return {
             principal,
             roles,
@@ -574,17 +589,18 @@ export const useAccessControl = (principalSource) => {
         };
     }, [principalSource, storedPrincipal]);
 };
-export const accessControl = {
-    readStoredPrincipal,
-    writeStoredPrincipal,
-    clearStoredPrincipal,
-    storeJwtToken,
-    clearStoredJwtToken,
-    hydrateStoredCredentials,
-    resolvePrincipal,
-    getPrincipalRoles,
-    principalHasRole,
-    principalIsAdmin,
-    principalOwns,
+exports.useAccessControl = useAccessControl;
+exports.accessControl = {
+    readStoredPrincipal: exports.readStoredPrincipal,
+    writeStoredPrincipal: exports.writeStoredPrincipal,
+    clearStoredPrincipal: exports.clearStoredPrincipal,
+    storeJwtToken: exports.storeJwtToken,
+    clearStoredJwtToken: exports.clearStoredJwtToken,
+    hydrateStoredCredentials: exports.hydrateStoredCredentials,
+    resolvePrincipal: exports.resolvePrincipal,
+    getPrincipalRoles: exports.getPrincipalRoles,
+    principalHasRole: exports.principalHasRole,
+    principalIsAdmin: exports.principalIsAdmin,
+    principalOwns: exports.principalOwns,
 };
 //# sourceMappingURL=accessControl.js.map

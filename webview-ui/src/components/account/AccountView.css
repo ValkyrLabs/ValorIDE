@@ -20,3 +20,71 @@
 .nav-link.needs-attention svg {
   filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.65));
 }
+
+/* Centered header with aurora glow */
+.account-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 16px;
+}
+.account-logo svg {
+  width: 320px;
+  height: auto;
+  filter: drop-shadow(0 8px 30px rgba(0, 255, 136, 0.12));
+  opacity: 0.95;
+}
+
+/* Aurora themed history cards */
+.history-preview-item {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 10, 16, 0.6),
+    rgba(9, 12, 22, 0.4)
+  );
+  border-radius: 10px;
+  border: 1px solid rgba(0, 255, 136, 0.08);
+  box-shadow: 0 6px 24px rgba(0, 255, 136, 0.04);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    opacity 0.18s ease;
+}
+.history-preview-item:hover {
+  transform: translateY(-6px) scale(1.006);
+  box-shadow:
+    0 10px 40px rgba(0, 255, 136, 0.09),
+    0 0 20px rgba(0, 255, 136, 0.06) inset;
+  opacity: 1;
+}
+
+.history-preview-item .timestamp {
+  color: #a3ffcc;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+}
+.history-preview-item .task-text {
+  color: var(--vscode-descriptionForeground);
+  font-size: 0.95em;
+}
+
+/* Root aurora overlay */
+.account-view-root {
+  position: relative;
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0.5), rgba(0, 0, 0, 0.7));
+  backdrop-filter: blur(6px) saturate(120%);
+}
+.account-view-root::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(closest-side, rgba(0, 255, 136, 0.04), transparent 30%),
+    radial-gradient(closest-side, rgba(0, 102, 255, 0.02), transparent 60%);
+  pointer-events: none;
+}
+
+.flipboard-info h2,
+.contentflip-title {
+  color: var(--vscode-foreground);
+}

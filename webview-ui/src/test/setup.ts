@@ -15,3 +15,44 @@ Object.defineProperty(window, "matchMedia", {
     dispatchEvent: vi.fn(),
   })),
 });
+
+// Provide virtual mocks for components/services that may not exist in test runs
+vi.mock(
+  "@valkyr/component-library/CoolButton",
+  () => ({
+    default: () => null,
+  }),
+);
+
+vi.mock(
+  "@thorapi/redux/services/UsageTransactionService",
+  () => ({
+    useAddUsageTransactionMutation: () => [vi.fn()],
+    useRecordPaymentTransactionMutation: () => [vi.fn()],
+    useGetUsageTransactionsQuery: () => ({ data: [], isLoading: false }),
+  }),
+);
+
+vi.mock(
+  "@thorapi/redux/services/ContentDataService",
+  () => ({
+    ContentDataService: {
+      reducerPath: "ContentDataService",
+      reducer: () => ({}),
+      middleware: () => (next: any) => (action: any) => next(action),
+    },
+    useGetContentDataQuery: () => ({ data: [], isLoading: false }),
+    useGetContentDatasPagedQuery: () => ({
+      data: [],
+      isLoading: false,
+      isFetching: false,
+    }),
+  }),
+);
+
+vi.mock(
+  "@thorapi/redux/services/LlmDetailsService",
+  () => ({
+    useGetLlmDetailssQuery: () => ({ data: [], isLoading: false }),
+  }),
+);

@@ -93,6 +93,7 @@ import TaskFeedbackButtons from "@thorapi/components/chat/TaskFeedbackButtons";
 import NewTaskPreview from "./NewTaskPreview";
 import McpResourceRow from "@thorapi/components/mcp/configuration/tabs/installed/server-row/McpResourceRow";
 import UserMessage from "./UserMessage";
+import { type TaskConfidence } from "@thorapi/utils/taskPhase";
 
 const statusColorMap: Record<ValorIDEFileChangeStatus, string> = {
   added: "var(--vscode-charts-green)",
@@ -439,21 +440,40 @@ const CompletionChangesSummary: React.FC<CompletionChangesSummaryProps> = ({
                       <div>
                         {previews[file.relativePath]?.after && (
                           <div style={{ marginBottom: 8 }}>
-                            <div style={{ fontSize: 11, color: 'var(--vscode-descriptionForeground)', marginBottom: 6 }}>New</div>
-                            <CodeBlock source={`\`\`\`${getLanguageFromPath(file.relativePath) || ''}\n${previews[file.relativePath]?.after || ''}\n\`\`\``} />
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 11, color: 'var(--vscode-descriptionForeground)', marginBottom: 6 }}>
+                              <span>New</span>
+                              <VSCodeButton
+                                appearance="icon"
+                                disabled={disabled}
+                                aria-label="Open in Diff"
+                                title="Open in Diff"
+                                onClick={() => onOpenFileDiff(file.relativePath)}
+                                style={{ padding: 4 }}
+                              >
+                                <FaExternalLinkAlt size={12} />
+                              </VSCodeButton>
+                            </div>
+                            <CodeBlock source={`\`\`\`${getLanguageFromPath(file.relativePath) || ''}\n${(previews[file.relativePath]?.after || '').trim() || '// no preview available'}\n\`\`\``} />
                           </div>
                         )}
                         {previews[file.relativePath]?.before && (
                           <div>
-                            <div style={{ fontSize: 11, color: 'var(--vscode-descriptionForeground)', marginBottom: 6 }}>Old</div>
-                            <CodeBlock source={`\`\`\`${getLanguageFromPath(file.relativePath) || ''}\n${previews[file.relativePath]?.before || ''}\n\`\`\``} />
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, fontSize: 11, color: 'var(--vscode-descriptionForeground)', marginBottom: 6 }}>
+                              <span>Old</span>
+                              <VSCodeButton
+                                appearance="icon"
+                                disabled={disabled}
+                                aria-label="Open in Diff"
+                                title="Open in Diff"
+                                onClick={() => onOpenFileDiff(file.relativePath)}
+                                style={{ padding: 4 }}
+                              >
+                                <FaExternalLinkAlt size={12} />
+                              </VSCodeButton>
+                            </div>
+                            <CodeBlock source={`\`\`\`${getLanguageFromPath(file.relativePath) || ''}\n${(previews[file.relativePath]?.before || '').trim() || '// no preview available'}\n\`\`\``} />
                           </div>
                         )}
-                        <div style={{ marginTop: 6, display: 'flex', gap: 8 }}>
-                          <VSCodeButton appearance="secondary" disabled={disabled} onClick={() => onOpenFileDiff(file.relativePath)}>
-                            <FaExternalLinkAlt size={12} /> Open in Diff
-                          </VSCodeButton>
-                        </div>
                       </div>
                     )}
                   </div>
@@ -490,13 +510,39 @@ interface ChatRowProps {
   inputValue?: string;
   setInputValue?: (value: string) => void;
   sendMessageFromChatRow?: (text: string, images: string[]) => void;
+  taskConfidence?: TaskConfidence;
 }
 
 type ChatRowContentProps = Omit<ChatRowProps, "onHeightChange"> & {
   onHeightChange?: (isTaller: boolean) => void;
 };
 
-export const ProgressIndicator = () => (
+export const API_REQUEST_TIMEOUT_MS = 60000;
+const severityColors: Record<"info" | "warning" | "error", string> = {
+  info:
+    "var(--vscode-notificationsInfoIcon-foreground, var(--vscode-charts-blue))",
+  warning:
+    "var(--vscode-notificationsWarningIcon-foreground, var(--vscode-charts-yellow))",
+  error:
+    "var(--vscode-notificationsErrorIcon-foreground, var(--vscode-errorForeground))",
+};
+
+const severityRank: Record<"info" | "warning" | "error", number> = {
+  info: 0,
+  warning: 1,
+  error: 2,
+};
+
+const mergeSeverity = (
+  ...levels: Array<"info" | "warning" | "error" | undefined>
+): "info" | "warning" | "error" => {
+  return levels.reduce<"info" | "warning" | "error">((acc, level) => {
+    if (!level) return acc;
+    return severityRank[level] > severityRank[acc] ? level : acc;
+  }, "info");
+};
+
+export const ProgressIndicator = ({ color }: { color?: string }) => (
   <div
     style={{
       width: "16px",
@@ -504,10 +550,18 @@ export const ProgressIndicator = () => (
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
+      color: color ?? "var(--vscode-foreground)",
     }}
+    aria-label="progress-indicator"
   >
-    <div style={{ transform: "scale(0.55)", transformOrigin: "center" }}>
-      <VSCodeProgressRing />
+    <div
+      style={{
+        transform: "scale(0.55)",
+        transformOrigin: "center",
+        color: color ?? "var(--vscode-foreground)",
+      }}
+    >
+      <VSCodeProgressRing style={{ color }} />
     </div>
   </div>
 );
@@ -532,14 +586,13 @@ export const CompletionSummaryCard = memo(
     markdown,
     title,
     completedAt,
+    fallbackMarkdown,
   }: {
     markdown?: string;
     title?: string;
     completedAt?: string;
+    fallbackMarkdown?: string;
   }) => {
-    if (!markdown) {
-      return null;
-    }
     let completedLabel: string | undefined;
     if (completedAt) {
       const date = new Date(completedAt);
@@ -558,6 +611,22 @@ export const CompletionSummaryCard = memo(
     };
 
     const bodyMarkdown = stripTaskTitleHeading(markdown);
+    const fallbackBody = stripTaskTitleHeading(fallbackMarkdown);
+    const summarySection = bodyMarkdown?.trim() || fallbackBody?.trim() || "";
+    const nextStepsSection = [
+      "### Next Steps",
+      "- Review the code changes in the diff viewer.",
+      "- Run relevant tests/linters before merging.",
+      "- Confirm any external configuration or deployment steps are updated.",
+    ].join("\n");
+    const narrativeMarkdown = [summarySection, nextStepsSection]
+      .filter(Boolean)
+      .join("\n\n")
+      .trim();
+
+    if (!narrativeMarkdown) {
+      return null;
+    }
 
     return (
       <div
@@ -600,7 +669,7 @@ export const CompletionSummaryCard = memo(
           </div>
         </div>
         <div style={{ marginTop: 4 }}>
-          <Markdown markdown={bodyMarkdown} />
+          <Markdown markdown={narrativeMarkdown} />
         </div>
       </div>
     );
@@ -663,18 +732,54 @@ export const ChatRowContent = ({
   inputValue,
   setInputValue,
   sendMessageFromChatRow,
+  taskConfidence,
 }: ChatRowContentProps) => {
   const { mcpServers, mcpMarketplaceCatalog, valorideMessages } = useExtensionState();
   const [seeNewChangesDisabled, setSeeNewChangesDisabled] = useState(false);
+  const [apiRequestTimedOut, setApiRequestTimedOut] = useState(false);
+
+  const parsedApiReqInfo = useMemo(() => {
+    if (message.text != null && message.say === "api_req_started") {
+      const info = safeParseJSON<ValorIDEApiReqInfo>(message.text);
+      if (!info) return undefined;
+      const toNumber = (value: unknown) => {
+        const num = Number(value);
+        return Number.isFinite(num) ? num : undefined;
+      };
+      return {
+        ...info,
+        tokensIn: toNumber(info.tokensIn),
+        tokensOut: toNumber(info.tokensOut),
+        cacheWrites: toNumber(info.cacheWrites),
+        cacheReads: toNumber(info.cacheReads),
+        cost: toNumber(info.cost),
+      };
+    }
+    return undefined;
+  }, [message.say, message.text]);
 
   const [cost, apiReqCancelReason, apiReqStreamingFailedMessage] =
-    useMemo(() => {
-      if (message.text != null && message.say === "api_req_started") {
-        const info = safeParseJSON<ValorIDEApiReqInfo>(message.text);
-        return [info?.cost, info?.cancelReason, info?.streamingFailedMessage];
-      }
-      return [undefined, undefined, undefined];
-    }, [message.text, message.say]);
+    useMemo(
+      () => [
+        parsedApiReqInfo?.cost,
+        parsedApiReqInfo?.cancelReason,
+        parsedApiReqInfo?.streamingFailedMessage,
+      ],
+      [parsedApiReqInfo],
+    );
+
+  const apiRequestUsageAvailable = useMemo(() => {
+    if (message.say !== "api_req_started" || !parsedApiReqInfo) {
+      return false;
+    }
+    return (
+      typeof parsedApiReqInfo.cost === "number" ||
+      typeof parsedApiReqInfo.tokensIn === "number" ||
+      typeof parsedApiReqInfo.tokensOut === "number" ||
+      typeof parsedApiReqInfo.cacheWrites === "number" ||
+      typeof parsedApiReqInfo.cacheReads === "number"
+    );
+  }, [message.say, parsedApiReqInfo]);
 
   // when resuming task last won't be api_req_failed but a resume_task message so api_req_started will show loading spinner. that's why we just remove the last api_req_started that failed without streaming anything
   const apiRequestFailedMessage =
@@ -698,11 +803,57 @@ export const ChatRowContent = ({
     isLast && lastModifiedMessage?.say === "mcp_server_request_started";
 
   const type = message.type === "ask" ? message.ask : message.say;
+  const apiRequestTimeoutMessage = apiRequestTimedOut
+    ? "API request timed out waiting for usage details."
+    : undefined;
+  const confidenceSeverity = useMemo<"info" | "warning">(
+    () => (taskConfidence === "warning" ? "warning" : "info"),
+    [taskConfidence],
+  );
+  const apiRequestSeverity = useMemo<"info" | "warning" | "error">(() => {
+    let base: "info" | "warning" | "error" = "info";
+    if (
+      apiReqStreamingFailedMessage ||
+      apiRequestFailedMessage ||
+      apiRequestTimedOut
+    ) {
+      base = "error";
+    } else if (apiReqCancelReason) {
+      base = "warning";
+    }
+    return mergeSeverity(base, confidenceSeverity);
+  }, [
+    apiReqCancelReason,
+    apiReqStreamingFailedMessage,
+    apiRequestFailedMessage,
+    apiRequestTimedOut,
+    confidenceSeverity,
+  ]);
 
   const normalColor = "var(--vscode-foreground)";
   const errorColor = "var(--vscode-errorForeground)";
   const successColor = "var(--vscode-charts-green)";
   const cancelledColor = "var(--vscode-descriptionForeground)";
+  const reasoningSeverity = useMemo<"info" | "warning" | "error">(() => {
+    let base: "info" | "warning" | "error" = "info";
+    if (
+      apiReqStreamingFailedMessage ||
+      apiRequestFailedMessage ||
+      apiRequestTimedOut
+    ) {
+      base = "error";
+    } else if (apiReqCancelReason != null || message.partial) {
+      base = "warning";
+    }
+    return mergeSeverity(base, confidenceSeverity);
+  }, [
+    apiReqCancelReason,
+    apiReqStreamingFailedMessage,
+    apiRequestFailedMessage,
+    apiRequestTimedOut,
+    message.partial,
+    confidenceSeverity,
+  ]);
 
   const handleMessage = useCallback((event: MessageEvent) => {
     const message: ExtensionMessage = event.data;
@@ -716,12 +867,48 @@ export const ChatRowContent = ({
 
   useEvent("message", handleMessage);
 
+  useEffect(() => {
+    if (message.say !== "api_req_started") {
+      setApiRequestTimedOut(false);
+      return null;
+    }
+
+    setApiRequestTimedOut(false);
+
+    if (
+      !isLast ||
+      apiRequestUsageAvailable ||
+      apiReqCancelReason != null ||
+      apiRequestFailedMessage != null ||
+      apiReqStreamingFailedMessage != null
+    ) {
+      return null;
+    }
+
+    const timeoutId = window.setTimeout(
+      () => setApiRequestTimedOut(true),
+      API_REQUEST_TIMEOUT_MS,
+    );
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [
+    apiReqCancelReason,
+    apiReqStreamingFailedMessage,
+    apiRequestFailedMessage,
+    apiRequestUsageAvailable,
+    isLast,
+    message.say,
+    message.text,
+  ]);
+
   const seeNewChangesSinceLastCompletion =
     message.ask === "completion_result" || message.say === "completion_result";
 
   const handleOpenAllChanges = useCallback(() => {
     if (seeNewChangesDisabled) {
-      return;
+      return null;
     }
 
     setSeeNewChangesDisabled(true);
@@ -735,7 +922,7 @@ export const ChatRowContent = ({
   const handleOpenFileDiff = useCallback(
     (relativePath: string) => {
       if (seeNewChangesDisabled || !relativePath) {
-        return;
+        return null;
       }
 
       setSeeNewChangesDisabled(true);
@@ -789,7 +976,7 @@ export const ChatRowContent = ({
       case "command_output":
         return [
           isCommandExecuting ? (
-            <ProgressIndicator />
+            <ProgressIndicator color={severityColors.info} />
           ) : (
             <FaTerminal
               style={{
@@ -808,7 +995,7 @@ export const ChatRowContent = ({
           ({} as ValorIDEAskUseMcpServer);
         return [
           isMcpServerResponding ? (
-            <ProgressIndicator />
+            <ProgressIndicator color={severityColors.info} />
           ) : (
             <FaServer
               style={{
@@ -873,14 +1060,19 @@ export const ChatRowContent = ({
             />
           </div>
         );
-        const apiReqInfo = safeParseJSON<ValorIDEApiReqInfo>(message.text);
-        const hasRequest = Boolean(apiReqInfo?.request);
-        const apiRequestCompleted =
+        const apiReqInfo = parsedApiReqInfo;
+        const apiRequestFinished =
           !isLast ||
-          cost != null ||
+          apiRequestUsageAvailable ||
           apiReqCancelReason != null ||
           apiRequestFailedMessage != null ||
-          apiReqStreamingFailedMessage != null;
+          apiReqStreamingFailedMessage != null ||
+          apiRequestTimedOut;
+        const apiRequestErrored =
+          apiReqCancelReason != null ||
+          apiRequestFailedMessage != null ||
+          apiReqStreamingFailedMessage != null ||
+          apiRequestTimedOut;
         return [
           apiReqCancelReason != null ? (
             apiReqCancelReason === "user_cancelled" ? (
@@ -888,12 +1080,12 @@ export const ChatRowContent = ({
             ) : (
               getIconSpan(VscError, errorColor)
             )
-          ) : apiRequestFailedMessage ? (
+          ) : apiRequestErrored ? (
             getIconSpan(VscError, errorColor)
-          ) : apiRequestCompleted ? (
+          ) : apiRequestFinished ? (
             getIconSpan(VscCheck, successColor)
           ) : (
-            <ProgressIndicator />
+            <ProgressIndicator color={severityColors[apiRequestSeverity]} />
           ),
           (() => {
             if (apiReqCancelReason != null) {
@@ -908,18 +1100,22 @@ export const ChatRowContent = ({
               );
             }
 
-            if (cost != null) {
+            if (
+              apiReqStreamingFailedMessage ||
+              apiRequestFailedMessage ||
+              apiRequestTimedOut
+            ) {
               return (
-                <span style={{ color: normalColor, fontWeight: "bold" }}>
-                  API Request
+                <span style={{ color: errorColor, fontWeight: "bold" }}>
+                  API Request Failed
                 </span>
               );
             }
 
-            if (apiRequestFailedMessage) {
+            if (apiRequestUsageAvailable || cost != null) {
               return (
-                <span style={{ color: errorColor, fontWeight: "bold" }}>
-                  API Request Failed
+                <span style={{ color: normalColor, fontWeight: "bold" }}>
+                  API Request
                 </span>
               );
             }
@@ -952,7 +1148,10 @@ export const ChatRowContent = ({
     apiRequestFailedMessage,
     isCommandExecuting,
     apiReqCancelReason,
+    apiReqStreamingFailedMessage,
     isMcpServerResponding,
+    apiRequestUsageAvailable,
+    apiRequestTimedOut,
     message.text,
   ]);
 
@@ -1622,17 +1821,21 @@ export const ChatRowContent = ({
       switch (message.say) {
         case "api_req_started":
           // Parse API request info for rendering details (safeParseJSON returns undefined on bad data)
-          const apiReqInfo = safeParseJSON<ValorIDEApiReqInfo>(message.text);
+          const apiReqInfo = parsedApiReqInfo;
+          const errorTextToShow =
+            apiRequestFailedMessage ||
+            apiReqStreamingFailedMessage ||
+            apiRequestTimeoutMessage;
+          const shouldShowApiError =
+            (cost == null &&
+              (apiRequestFailedMessage || apiRequestTimeoutMessage)) ||
+            apiReqStreamingFailedMessage;
           return (
             <>
               <div
                 style={{
                   ...headerStyle,
-                  marginBottom:
-                    (cost == null && apiRequestFailedMessage) ||
-                      apiReqStreamingFailedMessage
-                      ? 10
-                      : 0,
+                  marginBottom: shouldShowApiError ? 10 : 0,
                   justifyContent: "space-between",
                   cursor: "pointer",
                   userSelect: "none",
@@ -1662,66 +1865,67 @@ export const ChatRowContent = ({
                 </div>
                 {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
               </div>
-              {((cost == null && apiRequestFailedMessage) ||
-                apiReqStreamingFailedMessage) && (
-                  <>
-                    {(() => {
-                      // Try to parse the error message as JSON for credit limit error
-                      const errorData = parseErrorText(apiRequestFailedMessage);
-                      if (errorData) {
-                        if (
-                          errorData.code === "insufficient_credits" &&
-                          typeof errorData.current_balance === "number" &&
-                          typeof errorData.total_spent === "number" &&
-                          typeof errorData.total_promotions === "number" &&
-                          typeof errorData.message === "string"
-                        ) {
-                          return (
-                            <CreditLimitError
-                              currentBalance={errorData.current_balance}
-                              totalSpent={errorData.total_spent}
-                              totalPromotions={errorData.total_promotions}
-                              message={errorData.message}
-                            />
-                          );
-                        }
+              {shouldShowApiError && (
+                <>
+                  {(() => {
+                    // Try to parse the error message as JSON for credit limit error
+                    const errorData =
+                      apiRequestTimeoutMessage == null
+                        ? parseErrorText(apiRequestFailedMessage)
+                        : null;
+                    if (errorData) {
+                      if (
+                        errorData.code === "insufficient_credits" &&
+                        typeof errorData.current_balance === "number" &&
+                        typeof errorData.total_spent === "number" &&
+                        typeof errorData.total_promotions === "number" &&
+                        typeof errorData.message === "string"
+                      ) {
+                        return (
+                          <CreditLimitError
+                            currentBalance={errorData.current_balance}
+                            totalSpent={errorData.total_spent}
+                            totalPromotions={errorData.total_promotions}
+                            message={errorData.message}
+                          />
+                        );
                       }
+                    }
 
-                      // Default error display
-                      return (
-                        <p
-                          style={{
-                            ...pStyle,
-                            color: "var(--vscode-errorForeground)",
-                          }}
-                        >
-                          {apiRequestFailedMessage ||
-                            apiReqStreamingFailedMessage}
-                          {apiRequestFailedMessage
-                            ?.toLowerCase()
-                            .includes("powershell") && (
-                              <>
-                                <br />
-                                <br />
-                                It seems like you're having Windows PowerShell
-                                issues, please see this{" "}
-                                <a
-                                  href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
-                                  style={{
-                                    color: "inherit",
-                                    textDecoration: "underline",
-                                  }}
-                                >
-                                  troubleshooting guide
-                                </a>
-                                .
-                              </>
-                            )}
-                        </p>
-                      );
-                    })()}
-                  </>
-                )}
+                    // Default error display
+                    return (
+                      <p
+                        style={{
+                          ...pStyle,
+                          color: "var(--vscode-errorForeground)",
+                        }}
+                      >
+                        {errorTextToShow}
+                        {apiRequestFailedMessage
+                          ?.toLowerCase()
+                          .includes("powershell") && (
+                            <>
+                              <br />
+                              <br />
+                              It seems like you're having Windows PowerShell
+                              issues, please see this{" "}
+                              <a
+                                href="https://github.com/valkyrlabs/valoride/wiki/TroubleShooting-%E2%80%90-%22PowerShell-is-not-recognized-as-an-internal-or-external-command%22"
+                                style={{
+                                  color: "inherit",
+                                  textDecoration: "underline",
+                                }}
+                              >
+                                troubleshooting guide
+                              </a>
+                              .
+                            </>
+                          )}
+                      </p>
+                    );
+                  })()}
+                </>
+              )}
 
               {isExpanded && (
                 <div style={{ marginTop: "10px", display: "flex", gap: 10 }}>
@@ -1795,7 +1999,10 @@ export const ChatRowContent = ({
                   color: "var(--vscode-foreground)",
                 }}
               >
-                <FaBrain color="var(--vscode-charts-yellow)" />
+                <FaBrain
+                  data-testid="reasoning-icon"
+                  color={reasoningSeverity ? severityColors[reasoningSeverity] : undefined}
+                />
                 <span style={{ fontWeight: 700, fontSize: 12 }}>
                   {message.partial ? "Thinking..." : "Thoughts"}
                 </span>
@@ -2036,18 +2243,12 @@ export const ChatRowContent = ({
             ? message.text?.slice(0, -COMPLETION_RESULT_CHANGES_FLAG.length)
             : message.text;
           // Hide the message text if a generated summary exists and the text is
-          // just the initial task prompt or the summary's title. This prevents
-          // duplicate rendering of the task prompt (which can happen when
-          // the original prompt is used as a temporary message.text) next to
-          // the built summary card.
+          // just the initial task prompt. This prevents duplicate rendering of
+          // the prompt next to the built summary card while still showing rich
+          // completion details when provided.
           const initialPromptText = valorideMessages?.[0]?.text;
           const shouldHideText = Boolean(
-            (
-              message.summaryMarkdown &&
-              message.summaryTitle &&
-              text &&
-              text.trim() === message.summaryTitle.trim()
-            ) || (initialPromptText && text.trim() === initialPromptText.trim()),
+            initialPromptText && text?.trim() === initialPromptText.trim(),
           );
           return (
             <>
@@ -2082,6 +2283,34 @@ export const ChatRowContent = ({
                   markdown={message.summaryMarkdown}
                   title={message.summaryTitle}
                   completedAt={message.summaryCompletedAt}
+                  fallbackMarkdown={(() => {
+                    const sections: string[] = [];
+                    if (text && !shouldHideText) {
+                      sections.push(text.trim());
+                    }
+                    if (message.changesSummary) {
+                      const { totalInsertions, totalDeletions, files = [] } =
+                        message.changesSummary;
+                      const keyFiles = files
+                        .slice(0, 3)
+                        .map(
+                          (f) =>
+                            `- ${f.relativePath} (${f.status.toUpperCase()})`,
+                        )
+                        .join("\n");
+                      sections.push(
+                        [
+                          "### Changes",
+                          `- Files touched: ${files.length}`,
+                          `- Insertions/Deletions: +${totalInsertions} / -${totalDeletions}`,
+                          keyFiles ? `Key files:\n${keyFiles}` : undefined,
+                        ]
+                          .filter(Boolean)
+                          .join("\n"),
+                      );
+                    }
+                    return sections.filter(Boolean).join("\n\n");
+                  })()}
                 />
                 {message.partial !== true &&
                   hasChanges &&
@@ -2220,12 +2449,9 @@ export const ChatRowContent = ({
           const hasSummary = !!message.summaryMarkdown;
           const initialPromptText = valorideMessages?.[0]?.text;
           const shouldHideText = Boolean(
-            message.summaryMarkdown &&
-            message.summaryTitle &&
             text &&
-            (text.trim() === message.summaryTitle.trim() ||
-              (initialPromptText && text.trim() === initialPromptText.trim()) ||
-              text.trim().startsWith(message.summaryTitle.trim())),
+            initialPromptText &&
+            text.trim() === initialPromptText.trim(),
           );
           if (!text && !hasSummary && !hasChanges) {
             return null; // nothing to show
@@ -2263,6 +2489,34 @@ export const ChatRowContent = ({
                   markdown={message.summaryMarkdown}
                   title={message.summaryTitle}
                   completedAt={message.summaryCompletedAt}
+                  fallbackMarkdown={(() => {
+                    const sections: string[] = [];
+                    if (text && !shouldHideText) {
+                      sections.push(text.trim());
+                    }
+                    if (message.changesSummary) {
+                      const { totalInsertions, totalDeletions, files = [] } =
+                        message.changesSummary;
+                      const keyFiles = files
+                        .slice(0, 3)
+                        .map(
+                          (f) =>
+                            `- ${f.relativePath} (${f.status.toUpperCase()})`,
+                        )
+                        .join("\n");
+                      sections.push(
+                        [
+                          "### Changes",
+                          `- Files touched: ${files.length}`,
+                          `- Insertions/Deletions: +${totalInsertions} / -${totalDeletions}`,
+                          keyFiles ? `Key files:\n${keyFiles}` : undefined,
+                        ]
+                          .filter(Boolean)
+                          .join("\n"),
+                      );
+                    }
+                    return sections.filter(Boolean).join("\n\n");
+                  })()}
                 />
                 {message.partial !== true &&
                   hasChanges &&

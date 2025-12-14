@@ -54,24 +54,7 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
 
   return (
     <div style={{ flexShrink: 0 }}>
-      <style>
-        {`
-					.history-preview-item {
-						background-color: color-mix(in srgb, var(--vscode-toolbar-hoverBackground) 65%, transparent);
-						border-radius: 4px;
-						position: relative;
-						overflow: hidden;
-						opacity: 0.8;
-						cursor: pointer;
-						margin-bottom: 12px;
-					}
-					.history-preview-item:hover {
-						background-color: color-mix(in srgb, var(--vscode-toolbar-hoverBackground) 100%, transparent);
-						opacity: 1;
-						pointer-events: auto;
-					}
-				`}
-      </style>
+      {/* Using global aurora .history-preview-item styles */}
 
       <div
         style={{
@@ -127,15 +110,17 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
                   <span
                     style={{
                       color: "var(--vscode-foreground)",
-                      fontWeight: 500,
+                      fontWeight: 700,
                       fontSize: "0.85em",
                       textTransform: "uppercase",
+                      letterSpacing: '0.6px',
                     }}
+                    className="timestamp"
                   >
                     {formatDate(item.ts)}
                   </span>
                   {" • "}
-                  {item.task}
+                  <span className="task-text">{item.task}</span>
                 </div>
                 <div
                   style={{

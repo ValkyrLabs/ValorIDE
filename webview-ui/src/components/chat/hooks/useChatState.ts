@@ -35,6 +35,10 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
   // Handle message state changes to update UI
   useDeepCompareEffect(() => {
     if (lastMessage) {
+      const hasShellIntegrationWarning =
+        lastMessage?.say === "shell_integration_warning" ||
+        secondLastMessage?.say === "shell_integration_warning";
+
       switch (lastMessage.type) {
         case "ask":
           const isPartial = lastMessage.partial === true;
@@ -106,8 +110,19 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
             case "command_output":
               setTextAreaDisabled(false);
               setValorIDEAsk("command_output");
-              setEnableButtons(true);
-              setPrimaryButtonText("Proceed While Running");
+              {
+                const awaitingChunkResponse = !isPartial;
+                const shouldShowButton =
+                  awaitingChunkResponse || hasShellIntegrationWarning;
+                setEnableButtons(shouldShowButton);
+                setPrimaryButtonText(
+                  shouldShowButton
+                    ? hasShellIntegrationWarning
+                      ? "Proceed (Output Unavailable)"
+                      : "Proceed While Running"
+                    : undefined,
+                );
+              }
               setSecondaryButtonText(undefined);
               break;
             case "use_mcp_server":
@@ -216,16 +231,32 @@ export const useChatState = ({ messages, chatSettings }: UseChatStateProps) => {
                 setEnableButtons(false);
               }
               break;
+            case "command_output":
+              if (valorideAsk === "command_output") {
+                setEnableButtons(false);
+              }
+              break;
+            case "shell_integration_warning":
+              if (valorideAsk === "command_output") {
+                setEnableButtons(true);
+                setPrimaryButtonText("Proceed (Output Unavailable)");
+                setSecondaryButtonText(undefined);
+              }
+              break;
             default:
               if (!lastMessage.partial && lastMessage.say !== "reasoning") {
                 setTextAreaDisabled(false);
+                if (valorideAsk === "command_output") {
+                  setValorIDEAsk(undefined);
+                  setEnableButtons(false);
+                }
               }
               break;
           }
           break;
       }
     }
-  }, [lastMessage, secondLastMessage, chatSettings]);
+  }, [lastMessage, secondLastMessage, chatSettings, valorideAsk]);
 
   // Detect chat loading state - when we're waiting for API responses
   useEffect(() => {

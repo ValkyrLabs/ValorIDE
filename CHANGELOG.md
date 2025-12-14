@@ -330,7 +330,7 @@
 
 ## [3.1.5]
 
-- Fix bug where ValorIDE couldn't read "@/" import path aliases from tool results
+- Fix bug where ValorIDE couldn't read "@thorapi/" import path aliases from tool results
 
 ## [3.1.4]
 

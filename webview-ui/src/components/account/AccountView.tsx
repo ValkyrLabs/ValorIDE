@@ -9,6 +9,8 @@ import {
 import { useGetPaymentTransactionsQuery } from "@thorapi/redux/services/PaymentTransactionService";
 import VSCodeButtonLink from "../common/VSCodeButtonLink";
 import ValorIDELogoWhite from "../../assets/ValorIDELogoWhite";
+import ContentFlipCard from "../content-data/ContentFlipCard";
+import "./AccountView.css";
 import CountUp from "react-countup";
 import CreditsHistoryTable from "./CreditsHistoryTable";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
@@ -322,6 +324,7 @@ const AccountView = ({
 
   return (
     <div
+      className="account-view-root"
       style={{
         height: "100%",
         display: "flex",
@@ -329,8 +332,15 @@ const AccountView = ({
         margin: "1em",
         padding: ".5em",
         position: "relative",
+        background: "transparent",
       }}
     >
+      {/* Centered logo banner */}
+      <div className="account-header">
+        <div className="account-logo" aria-hidden>
+          <h1>Connect to ValkyrAI</h1>
+        </div>
+      </div>
       <SystemAlerts />
 
       {peers.length > 0 && (
@@ -355,234 +365,242 @@ const AccountView = ({
         </div>
       )}
 
-      {/* Tab navigation */}
-      <div className="scroll-tabs-container">
-        <div className="nav-tabs scroll-tabs">
-          {/* Removed Login tab button as requested */}
-          {authed && (
-            <>
-              <div
-                className={`nav-link ${activeTab === "account" ? "active" : ""}`}
-                onClick={() => setActiveTab("account")}
-                style={{ cursor: "pointer" }}
-              >
-                <FaUserEdit />
-              </div>
-              <div
-                className={`nav-link ${activeTab === "applications" ? "active" : ""}`}
-                onClick={() => setActiveTab("applications")}
-                style={{ cursor: "pointer" }}
-              >
-                <FaAppStore />
-              </div>
-              <div
-                className={`nav-link ${activeTab === "generatedFiles" ? "active" : ""}`}
-                onClick={() => setActiveTab("generatedFiles")}
-                style={{ cursor: "pointer" }}
-              >
-                <FaFileArchive />
-              </div>
-              <div
-                className={`nav-link ${activeTab === "serverConsole" ? "active" : ""} ${serverConsoleNeedsAttention && activeTab !== "serverConsole"
-                  ? "needs-attention"
-                  : ""
-                  }`}
-                onClick={() => setActiveTab("serverConsole")}
-                style={{ cursor: "pointer" }}
-                title="Server Console"
-              >
-                <FaServer />
-              </div>
-              <div
-                className={`nav-link ${activeTab === "userPreferences" ? "active" : ""}`}
-                onClick={() => setActiveTab("userPreferences")}
-                style={{ cursor: "pointer" }}
-              >
-                <FaUserEdit />
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Tab content */}
-      {activeTab === "login" ? (
-        <div className="flex justify-center">
-          {!authed && (
-            <Card>
-              {/* Removed "Login to Access Your Account" header as requested */}
-              <Card.Body>
-                <Form onSubmit={handleLogin} isLoggedIn={false} />
-              </Card.Body>
-              <Card.Footer>
+      {/* Tab navigation + content. This wrapper enables responsive layout: on wide screens the tabs become a vertical sidebar */}
+      <div className="account-body">
+        <div className="scroll-tabs-container">
+          <div className="nav-tabs scroll-tabs" role="tablist">
+            {/* Removed Login tab button as requested */}
+            {authed && (
+              <>
                 <div
-                  style={{
-                    fontSize: "0.85em",
-                    color: "var(--vscode-descriptionForeground)",
-                  }}
+                  className={`nav-link ${activeTab === "account" ? "active" : ""}`}
+                  onClick={() => setActiveTab("account")}
+                  style={{ cursor: "pointer" }}
                 >
-                  Don't have an account?{" "}
-                  <VSCodeLink
-                    href="https://valkyrlabs.com/sign-up"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Signup Now
-                  </VSCodeLink>
-                  <br />
-                  Forgot your username?{" "}
-                  <VSCodeLink
-                    href="https://valkyrlabs.com/forgot-password"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Forgot Password
-                  </VSCodeLink>
+                  <FaUserEdit />
                 </div>
-              </Card.Footer>
-            </Card>
-          )}
-          {/* When authenticated, login view is hidden and tab list updates */}
-        </div>
-      ) : activeTab === "applications" ? (
-        <div className="h-full flex flex-col pr-3 overflow-y-auto">
-          {loading && (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                minHeight: "200px",
-              }}
-            >
-              <LoadingSpinner label="Loading applications..." size={32} />
-            </div>
-          )}
-          {/* Applications List */}
-          <div style={{ marginBottom: "1em" }}>
-            <OpenAPIFilePicker onFileSelected={handleOpenAPIFileSelected} />
-            <ApplicationsList showTitle={true} title="Available Applications" />
-          </div>
-        </div>
-      ) : activeTab === "generatedFiles" ? (
-        <div className="h-full flex flex-col pr-3 overflow-y-auto">
-          <div className="grow flex flex-col min-h-0">
-            <h3 style={{ marginBottom: "16px" }}>Generated Files</h3>
-            <FileExplorer
-              onFileSelect={handleFileSelect}
-              highlightNewFiles={true}
-              autoRefresh={true}
-              refreshInterval={5000}
-            />
-          </div>
-        </div>
-      ) : activeTab === "userPreferences" ? (
-        <div className="h-full flex flex-col pr-3 overflow-y-auto">
-          <div className="grow flex flex-col min-h-0">
-            <h3 style={{ marginBottom: "16px" }}>User Preferences</h3>
-            <UserPreferences />
-          </div>
-        </div>
-      ) : activeTab === "serverConsole" ? (
-        <div className="h-full flex flex-col pr-3 overflow-y-auto">
-          <ServerConsole />
-        </div>
-      ) : activeTab === "account" ? (
-        <>
-          <div className="h-full flex flex-col pr-3 overflow-y-auto">
-            <div className="w-full flex gap-2 flex-col min-[225px]:flex-row mt-4">
-              <div className="w-full min-[225px]:w-1/2">
-                <VSCodeButtonLink
-                  href="https://valkyrlabs.com/dashboard"
-                  appearance="primary"
-                  className="w-full"
+                <div
+                  className={`nav-link ${activeTab === "applications" ? "active" : ""}`}
+                  onClick={() => setActiveTab("applications")}
+                  style={{ cursor: "pointer" }}
                 >
-                  Dashboard
-                </VSCodeButtonLink>
-              </div>
-              <VSCodeButton
-                appearance="secondary"
-                onClick={handleLogout}
-                className="w-full min-[225px]:w-1/2"
-              >
-                <FaBackward />
-              </VSCodeButton>
-            </div>
+                  <FaAppStore />
+                </div>
+                <div
+                  className={`nav-link ${activeTab === "generatedFiles" ? "active" : ""}`}
+                  onClick={() => setActiveTab("generatedFiles")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <FaFileArchive />
+                </div>
+                <div
+                  className={`nav-link ${activeTab === "serverConsole" ? "active" : ""} ${serverConsoleNeedsAttention && activeTab !== "serverConsole"
+                    ? "needs-attention"
+                    : ""
+                    }`}
+                  onClick={() => setActiveTab("serverConsole")}
+                  style={{ cursor: "pointer" }}
+                  title="Server Console"
+                >
+                  <FaServer />
+                </div>
+                <div
+                  className={`nav-link ${activeTab === "userPreferences" ? "active" : ""}`}
+                  onClick={() => setActiveTab("userPreferences")}
+                  style={{ cursor: "pointer" }}
+                >
+                  <FaUserEdit />
+                </div>
+              </>
+            )}
+          </div>
+        </div>
 
-            <div className="w-full flex flex-col items-center">
-              <div className="text-sm text-(--vscode-descriptionForeground) mb-3">
-                CURRENT BALANCE
-              </div>
-
-              <div className="text-4xl font-bold text-(--vscode-foreground) mb-6 flex items-center gap-2">
-                {loading ? (
-                  <LoadingSpinner label="Loading balance..." size={28} />
-                ) : (
-                  <>
-                    {(() => {
-                      const rawBalance = balanceData?.currentBalance ?? 0;
-                      const effectiveBalance = Math.max(
-                        0,
-                        rawBalance - (apiMetrics.totalCost || 0),
-                      );
-                      return (
-                        <>
-                          <span>$</span>
-                          <CountUp
-                            end={effectiveBalance}
-                            duration={0.66}
-                            decimals={2}
-                          />
-                        </>
-                      );
-                    })()}
-                    <VSCodeButton
-                      appearance="icon"
-                      className="mt-1"
-                      disabled={!accountId}
-                      onClick={async () => {
-                        await refetchBalance();
-                        if (authed) {
-                          refetchUsage();
-                          refetchPayments();
-                        }
+        {/* Tab content */}
+        <div className="account-content">
+          {activeTab === "login" ? (
+            <div className="flex justify-center">
+              {!authed && (
+                <Card>
+                  {/* Removed "Login to Access Your Account" header as requested */}
+                  <Card.Body>
+                    <Form onSubmit={handleLogin} isLoggedIn={false} />
+                  </Card.Body>
+                  <Card.Footer>
+                    <div
+                      style={{
+                        fontSize: "0.85em",
+                        color: "var(--vscode-descriptionForeground)",
                       }}
                     >
-                      <FaRecycle />
-                    </VSCodeButton>
-                  </>
-                )}
-              </div>
-
-              <div className="w-full">
-                <BuyCredits
-                  authenticatedPrincipal={
-                    resolvedPrincipal || authenticatedUser || userInfo
-                  }
-                  onPurchaseSuccess={async () => {
-                    await refetchBalance();
-                    refetchUsage();
-                    refetchPayments();
+                      Don't have an account?{" "}
+                      <VSCodeLink
+                        href="https://valkyrlabs.com/sign-up"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Signup Now
+                      </VSCodeLink>
+                      <br />
+                      Forgot your username?{" "}
+                      <VSCodeLink
+                        href="https://valkyrlabs.com/forgot-password"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Forgot Password
+                      </VSCodeLink>
+                    </div>
+                  </Card.Footer>
+                </Card>
+              )}
+              {/* When authenticated, login view is hidden and tab list updates */}
+            </div>
+          ) : activeTab === "applications" ? (
+            <div className="h-full flex flex-col pr-3 overflow-y-auto">
+              {loading && (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    minHeight: "200px",
                   }}
-                  className="w-full"
+                >
+                  <LoadingSpinner label="Loading applications..." size={32} />
+                </div>
+              )}
+              {/* Applications List */}
+              <div style={{ marginBottom: "1em" }}>
+                <OpenAPIFilePicker onFileSelected={handleOpenAPIFileSelected} />
+                <ApplicationsList showTitle={true} title="Available Applications" />
+              </div>
+            </div>
+          ) : activeTab === "generatedFiles" ? (
+            <div className="h-full flex flex-col pr-3 overflow-y-auto">
+              <div className="grow flex flex-col min-h-0">
+                <h3 style={{ marginBottom: "16px" }}>Generated Files</h3>
+                <FileExplorer
+                  onFileSelect={handleFileSelect}
+                  highlightNewFiles={true}
+                  autoRefresh={true}
+                  refreshInterval={5000}
                 />
               </div>
             </div>
-
-            <VSCodeDivider className="mt-6 mb-3 w-full" />
-
-            <div className="grow flex flex-col min-h-0 pb-0">
-              <CreditsHistoryTable
-                isLoading={loading}
-                usageData={usageData || []}
-                paymentsData={paymentsData || []}
-              />
+          ) : activeTab === "userPreferences" ? (
+            <div className="h-full flex flex-col pr-3 overflow-y-auto">
+              <div className="grow flex flex-col min-h-0">
+                <h3 style={{ marginBottom: "16px" }}>User Preferences</h3>
+                <UserPreferences />
+              </div>
             </div>
-          </div>
-        </>
-      ) : (
-        <>nothing selected</>
-      )}
+          ) : activeTab === "serverConsole" ? (
+            <div className="h-full flex flex-col pr-3 overflow-y-auto">
+              <ServerConsole />
+            </div>
+          ) : activeTab === "account" ? (
+            <>
+              <div className="account-main h-full flex flex-col pr-3 overflow-y-auto">
+                <div className="w-full flex gap-2 flex-col min-[225px]:flex-row mt-4">
+                  <div className="w-full min-[225px]:w-1/2">
+                    <VSCodeButtonLink
+                      href="https://valkyrlabs.com/dashboard"
+                      appearance="primary"
+                      className="w-full"
+                    >
+                      Dashboard
+                    </VSCodeButtonLink>
+                  </div>
+                  <VSCodeButton
+                    appearance="secondary"
+                    onClick={handleLogout}
+                    className="w-full min-[225px]:w-1/2"
+                  >
+                    <FaBackward />
+                  </VSCodeButton>
+                </div>
+                {/* Content flip card spotlight */}
+                <div style={{ width: "100%", marginTop: 16 }}>
+                  <ContentFlipCard />
+                </div>
+
+                <div className="w-full flex flex-col items-center">
+                  <div className="text-sm text-(--vscode-descriptionForeground) mb-3">
+                    CURRENT BALANCE
+                  </div>
+
+                  <div className="text-4xl font-bold text-(--vscode-foreground) mb-6 flex items-center gap-2">
+                    {loading ? (
+                      <LoadingSpinner label="Loading balance..." size={28} />
+                    ) : (
+                      <>
+                        {(() => {
+                          const rawBalance = balanceData?.currentBalance ?? 0;
+                          const effectiveBalance = Math.max(
+                            0,
+                            rawBalance - (apiMetrics.totalCost || 0),
+                          );
+                          return (
+                            <>
+                              <span>$</span>
+                              <CountUp
+                                end={effectiveBalance}
+                                duration={0.66}
+                                decimals={2}
+                              />
+                            </>
+                          );
+                        })()}
+                        <VSCodeButton
+                          appearance="icon"
+                          className="mt-1"
+                          disabled={!accountId}
+                          onClick={async () => {
+                            await refetchBalance();
+                            if (authed) {
+                              refetchUsage();
+                              refetchPayments();
+                            }
+                          }}
+                        >
+                          <FaRecycle />
+                        </VSCodeButton>
+                      </>
+                    )}
+                  </div>
+
+                  <div className="w-full">
+                    <BuyCredits
+                      authenticatedPrincipal={
+                        resolvedPrincipal || authenticatedUser || userInfo
+                      }
+                      onPurchaseSuccess={async () => {
+                        await refetchBalance();
+                        refetchUsage();
+                        refetchPayments();
+                      }}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+
+                <VSCodeDivider className="mt-6 mb-3 w-full" />
+
+                <div className="grow flex flex-col min-h-0 pb-0">
+                  <CreditsHistoryTable
+                    isLoading={loading}
+                    usageData={usageData || []}
+                    paymentsData={paymentsData || []}
+                  />
+                </div>
+              </div>
+            </>
+          ) : (
+            <>nothing selected</>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

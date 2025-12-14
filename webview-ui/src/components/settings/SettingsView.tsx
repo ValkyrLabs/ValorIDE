@@ -340,6 +340,11 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
       <SystemAlerts />
       <div className="fixed top-0 left-0 right-0 bottom-0 pt-[10px] pr-0 pb-0 pl-5 flex flex-col overflow-hidden">
         <div className="flex justify-between items-center mb-[13px] pr-[17px]">
+          <div className="flex items-center gap-2">
+            <VSCodeButton onClick={() => handleSubmit(false)}>
+              Save
+            </VSCodeButton>
+          </div>
           <h3 className="text-[var(--vscode-foreground)] m-0">Settings</h3>
           <div className="flex items-center gap-2">
             <VSCodeButton
@@ -361,23 +366,6 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
                 {copied ? <FaCheck size={18} /> : <FaTag />}
               </span>
             </VSCodeButton>
-            <StatusBadge
-              label="P2P"
-              value={value}
-              kind={kind as any}
-              title={hasError ? String(communicationService.error) : undefined}
-            />
-            <div
-              className="flex items-center gap-2"
-              title="Store and load the JWT in local storage to avoid logging in every time"
-            >
-              <VSCodeCheckbox
-                checked={persistJwt}
-                onChange={(e: any) => setPersistJwt(!!e?.target?.checked)}
-              >
-                Remember login
-              </VSCodeCheckbox>
-            </div>
             <SettingsButton
               onClick={() => {
                 try {
@@ -393,9 +381,6 @@ const SettingsView = ({ onDone }: SettingsViewProps) => {
                 <FaShieldAlt /> Reset Layout
               </span>
             </SettingsButton>
-            <VSCodeButton onClick={() => handleSubmit(false)}>
-              Save
-            </VSCodeButton>
           </div>
         </div>
         <div className="grow overflow-y-scroll pr-2 flex flex-col">

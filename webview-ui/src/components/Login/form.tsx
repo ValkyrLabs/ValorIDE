@@ -237,9 +237,6 @@ const Form: React.FC<FormProps> = ({
                         name="password"
                         component="div"
                       />
-                      <div style={{ marginTop: 6 }}>
-                        <Link to="/forgot-password">Forgot your password?</Link>
-                      </div>
                     </label>
                   </Col>
                 </Row>

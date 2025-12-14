@@ -57,7 +57,7 @@ export function filterIgnoredFields<T = any>(
 
   // Handle objects
   if (typeof obj === "object" && obj !== null) {
-    return Object.keys(obj).reduce((acc, key) => {
+    const filtered = Object.keys(obj).reduce((acc, key) => {
       // Skip ignored fields
       if (ignoredFields.includes(key)) {
         return acc;
@@ -67,13 +67,21 @@ export function filterIgnoredFields<T = any>(
 
       // Recursively filter nested objects and arrays
       if (typeof value === "object" && value !== null) {
-        acc[key as keyof T] = filterIgnoredFields(value, ignoredFields) as any;
+        const cleaned = filterIgnoredFields(value, ignoredFields) as any;
+        if (
+          cleaned != null &&
+          (Array.isArray(cleaned) || Object.keys(cleaned).length > 0)
+        ) {
+          acc[key as keyof T] = cleaned;
+        }
       } else {
         acc[key as keyof T] = value;
       }
 
       return acc;
     }, {} as Partial<T>);
+
+    return filtered;
   }
 
   // Return primitives as-is

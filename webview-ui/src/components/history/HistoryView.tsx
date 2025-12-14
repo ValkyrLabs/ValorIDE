@@ -366,6 +366,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
                       whiteSpace: "pre-wrap",
                       wordBreak: "break-word",
                       overflowWrap: "anywhere",
+                      lineHeight: "1.25em",
                     }}
                     dangerouslySetInnerHTML={{
                       __html: item.task,
@@ -537,6 +538,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
           style={{
             padding: "10px 10px",
             borderTop: "1px solid var(--vscode-panel-border)",
+            marginTop: "200px",
           }}
         >
           <DangerButton

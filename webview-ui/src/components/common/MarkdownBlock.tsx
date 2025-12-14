@@ -283,6 +283,41 @@ const rehypeFlattenInvalidBlocks = () => {
   };
 };
 
+// Sanitize code elements before running highlighting to avoid runtime errors
+// in downstream highlight plugins (they sometimes call string methods like
+// .replace() on properties that may be undefined or non-strings).
+const rehypeSanitizeCode = () => {
+  return (tree: any) => {
+    visit(tree, (node: any) => {
+      try {
+        if (node.type === "element" && node.tagName === "code") {
+          // Ensure children exist and are string values
+          if (Array.isArray(node.children)) {
+            for (const child of node.children) {
+              if (child && child.type === "text") {
+                child.value = String(child.value ?? "");
+              }
+            }
+          }
+
+          // Normalize className to a string
+          if (!node.properties) node.properties = {};
+          const cls = node.properties.className;
+          if (Array.isArray(cls)) {
+            node.properties.className = cls.join(" ");
+          } else {
+            node.properties.className = String(cls ?? "");
+          }
+        }
+      } catch (e) {
+        // Be defensive: don't let sanitizer throw and break rendering
+        // eslint-disable-next-line no-console
+        console.warn("rehypeSanitizeCode encountered an unexpected node", e);
+      }
+    });
+  };
+};
+
 const MarkdownBlock = memo(({ markdown }: MarkdownBlockProps) => {
   const { theme } = useExtensionState();
   const [reactContent, setMarkdown] = useRemark({
@@ -301,8 +336,22 @@ const MarkdownBlock = memo(({ markdown }: MarkdownBlockProps) => {
         };
       },
     ],
+    // Wrap the highlight plugin in a safe wrapper so that if the underlying
+    // highlighter throws (e.g., due to unexpected node shapes), we don't
+    // crash the entire markdown rendering.
     rehypePlugins: [
-      rehypeHighlight as any,
+      rehypeSanitizeCode,
+      ((options?: Options) => {
+        const plugin = rehypeHighlight as any;
+        return (tree: any, file: any) => {
+          try {
+            return plugin(options)(tree, file);
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.warn("rehype-highlight failed, skipping highlighting", e);
+          }
+        };
+      }) as any,
       rehypeFlattenInvalidBlocks,
       {
         // languages: {},

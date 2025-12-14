@@ -133,6 +133,22 @@ export class ValorIDEMothershipIntegration {
         messagePreview: message.payload?.substring(0, 200) + "...",
       });
 
+      // Defensive: ensure user arrays exist before serializing to JSON
+      try {
+        const userAny: any = (message as any).user;
+        if (userAny && typeof userAny === "object") {
+          if (!Array.isArray(userAny.roleList)) userAny.roleList = [];
+          if (!Array.isArray(userAny.authorityList)) userAny.authorityList = [];
+          if (!Array.isArray(userAny.addresses)) userAny.addresses = [];
+          if (!Array.isArray(userAny.userPreferences)) userAny.userPreferences = [];
+          if (!Array.isArray(userAny.phoneVerifications)) userAny.phoneVerifications = [];
+          if (!Array.isArray(userAny.loginAudits)) userAny.loginAudits = [];
+        }
+      } catch (e) {
+        // Non-fatal; proceed to send
+        console.warn("ValorIDE: Failed to sanitize user object before sendMessage:", e);
+      }
+
       // Actually send the message
       const result = this.mothershipService.sendMessage(message);
       console.log("🚀 sendMessage result:", result);

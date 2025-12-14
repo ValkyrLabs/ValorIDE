@@ -1,29 +1,29 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 import { render, screen, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { vi } from "vitest";
 import { MockCommunicationService } from "@thorapi/mocks/MockCommunicationService"; // Assuming a mock service exists
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 import OfflineBanner from "./OfflineBanner";
 // Mock the custom hook
-jest.mock("@thorapi/context/CommunicationServiceContext", () => ({
-  useCommunicationService: jest.fn(),
+vi.mock("@thorapi/context/CommunicationServiceContext", () => ({
+  useCommunicationService: vi.fn(),
 }));
 describe("OfflineBanner", () => {
   let mockSvc;
   beforeEach(() => {
     // Reset mocks before each test
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     // Create a new mock service instance for each test
     mockSvc = new MockCommunicationService();
     // Mock the useCommunicationService hook to return our mock instance
-    require("@thorapi/context/CommunicationServiceContext").useCommunicationService.mockReturnValue(
-      mockSvc
-    );
+    useCommunicationService.mockReturnValue(mockSvc);
     // Use fake timers for setTimeout
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
   afterEach(() => {
     // Restore real timers after each test
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
   it("should not render if communication service is not noop", () => {
     mockSvc.isNoop = false; // Simulate service being available
@@ -45,7 +45,7 @@ describe("OfflineBanner", () => {
     expect(screen.getByRole("status")).toBeVisible();
     // Advance timers by 5 seconds
     act(() => {
-      jest.advanceTimersByTime(5000);
+      vi.advanceTimersByTime(5000);
     });
     // Banner should be hidden (not in the document)
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
@@ -71,7 +71,7 @@ describe("OfflineBanner", () => {
     });
     // Advance timers by less than 5 seconds
     act(() => {
-      jest.advanceTimersByTime(4000);
+      vi.advanceTimersByTime(4000);
     });
     // Banner should still be visible
     expect(screen.getByRole("status")).toBeVisible();

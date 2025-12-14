@@ -57,13 +57,13 @@ export interface UpdateWebsocketMessageApiRequest {
  */
 function deleteWebsocketMessageRaw<T>(requestParameters: DeleteWebsocketMessageApiRequest, requestConfig: runtime.TypedQueryConfig<T, void> = {}): QueryConfig<T> {
     if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling deleteWebsocketMessage.');
+        throw new runtime.RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling deleteWebsocketMessage.');
     }
 
     let queryParameters = null;
 
 
-    const headerParameters : runtime.HttpHeaders = {};
+    const headerParameters: runtime.HttpHeaders = {};
 
 
     const { meta = {} } = requestConfig;
@@ -104,13 +104,13 @@ export function deleteWebsocketMessage<T>(requestParameters: DeleteWebsocketMess
  */
 function getWebsocketMessageRaw<T>(requestParameters: GetWebsocketMessageApiRequest, requestConfig: runtime.TypedQueryConfig<T, WebsocketMessage> = {}): QueryConfig<T> {
     if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling getWebsocketMessage.');
+        throw new runtime.RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling getWebsocketMessage.');
     }
 
     let queryParameters = null;
 
 
-    const headerParameters : runtime.HttpHeaders = {};
+    const headerParameters: runtime.HttpHeaders = {};
 
 
     const { meta = {} } = requestConfig;
@@ -170,7 +170,7 @@ function getWebsocketMessageListRaw<T>(requestParameters: GetWebsocketMessageLis
         queryParameters['sort'] = requestParameters.sort;
     }
 
-    const headerParameters : runtime.HttpHeaders = {};
+    const headerParameters: runtime.HttpHeaders = {};
 
 
     const { meta = {} } = requestConfig;
@@ -212,18 +212,33 @@ export function getWebsocketMessageList<T>(requestParameters: GetWebsocketMessag
  */
 function postWebsocketMessageRaw<T>(requestParameters: PostWebsocketMessageApiRequest, requestConfig: runtime.TypedQueryConfig<T, WebsocketMessage> = {}): QueryConfig<T> {
     if (requestParameters.websocketMessage === null || requestParameters.websocketMessage === undefined) {
-        throw new runtime.RequiredError('websocketMessage','Required parameter requestParameters.websocketMessage was null or undefined when calling postWebsocketMessage.');
+        throw new runtime.RequiredError('websocketMessage', 'Required parameter requestParameters.websocketMessage was null or undefined when calling postWebsocketMessage.');
     }
 
     let queryParameters = null;
 
 
-    const headerParameters : runtime.HttpHeaders = {};
+    const headerParameters: runtime.HttpHeaders = {};
 
     headerParameters['Content-Type'] = 'application/json';
 
 
     const { meta = {} } = requestConfig;
+
+    // Ensure user nested arrays exist before converting to JSON
+    try {
+        const userAny: any = (requestParameters.websocketMessage as any)?.user;
+        if (userAny && typeof userAny === 'object') {
+            if (!Array.isArray(userAny.roleList)) userAny.roleList = [];
+            if (!Array.isArray(userAny.authorityList)) userAny.authorityList = [];
+            if (!Array.isArray(userAny.addresses)) userAny.addresses = [];
+            if (!Array.isArray(userAny.userPreferences)) userAny.userPreferences = [];
+            if (!Array.isArray(userAny.phoneVerifications)) userAny.phoneVerifications = [];
+            if (!Array.isArray(userAny.loginAudits)) userAny.loginAudits = [];
+        }
+    } catch (e) {
+        // non-fatal
+    }
 
     const config: QueryConfig<T> = {
         url: `${runtime.Configuration.basePath}/WebsocketMessage`,
@@ -262,22 +277,37 @@ export function postWebsocketMessage<T>(requestParameters: PostWebsocketMessageA
  */
 function updateWebsocketMessageRaw<T>(requestParameters: UpdateWebsocketMessageApiRequest, requestConfig: runtime.TypedQueryConfig<T, WebsocketMessage> = {}): QueryConfig<T> {
     if (requestParameters.id === null || requestParameters.id === undefined) {
-        throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling updateWebsocketMessage.');
+        throw new runtime.RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling updateWebsocketMessage.');
     }
 
     if (requestParameters.websocketMessage === null || requestParameters.websocketMessage === undefined) {
-        throw new runtime.RequiredError('websocketMessage','Required parameter requestParameters.websocketMessage was null or undefined when calling updateWebsocketMessage.');
+        throw new runtime.RequiredError('websocketMessage', 'Required parameter requestParameters.websocketMessage was null or undefined when calling updateWebsocketMessage.');
     }
 
     let queryParameters = null;
 
 
-    const headerParameters : runtime.HttpHeaders = {};
+    const headerParameters: runtime.HttpHeaders = {};
 
     headerParameters['Content-Type'] = 'application/json';
 
 
     const { meta = {} } = requestConfig;
+
+    // Ensure user nested arrays exist before converting to JSON
+    try {
+        const userAny: any = (requestParameters.websocketMessage as any)?.user;
+        if (userAny && typeof userAny === 'object') {
+            if (!Array.isArray(userAny.roleList)) userAny.roleList = [];
+            if (!Array.isArray(userAny.authorityList)) userAny.authorityList = [];
+            if (!Array.isArray(userAny.addresses)) userAny.addresses = [];
+            if (!Array.isArray(userAny.userPreferences)) userAny.userPreferences = [];
+            if (!Array.isArray(userAny.phoneVerifications)) userAny.phoneVerifications = [];
+            if (!Array.isArray(userAny.loginAudits)) userAny.loginAudits = [];
+        }
+    } catch (e) {
+        // non-fatal
+    }
 
     const config: QueryConfig<T> = {
         url: `${runtime.Configuration.basePath}/WebsocketMessage/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),

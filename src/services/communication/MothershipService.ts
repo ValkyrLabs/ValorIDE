@@ -333,6 +333,25 @@ export class MothershipService extends EventEmitter {
         ...message,
       };
 
+      // Defensive: ensure nested Principal arrays are present so the generated
+      // PrincipalToJSON function does not try to call .map on undefined.
+      // Some codepaths may construct a user object with missing arrays, which
+      // would throw when PrincipalToJSON attempts to map these fields.
+      try {
+        const userAny: any = (fullMessage as any).user;
+        if (userAny && typeof userAny === "object") {
+          if (!Array.isArray(userAny.roleList)) userAny.roleList = [];
+          if (!Array.isArray(userAny.authorityList)) userAny.authorityList = [];
+          if (!Array.isArray(userAny.addresses)) userAny.addresses = [];
+          if (!Array.isArray(userAny.userPreferences)) userAny.userPreferences = [];
+          if (!Array.isArray(userAny.phoneVerifications)) userAny.phoneVerifications = [];
+          if (!Array.isArray(userAny.loginAudits)) userAny.loginAudits = [];
+        }
+      } catch (e) {
+        // Non-fatal; we'll still try to stringify and send the message.
+        console.warn("Failed to sanitize user object for WebsocketMessageToJSON:", e);
+      }
+
       const jsonMessage = WebsocketMessageToJSON(fullMessage);
       this.websocket.send(JSON.stringify(jsonMessage));
     } catch (error) {

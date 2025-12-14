@@ -169,6 +169,21 @@ const ServerConsole = () => {
       payload: chatText.trim(),
     };
 
+    // Defensive: ensure user arrays exist if present to avoid serialization errors
+    try {
+      const userAny: any = (message as any).user;
+      if (userAny && typeof userAny === "object") {
+        if (!Array.isArray(userAny.roleList)) userAny.roleList = [];
+        if (!Array.isArray(userAny.authorityList)) userAny.authorityList = [];
+        if (!Array.isArray(userAny.addresses)) userAny.addresses = [];
+        if (!Array.isArray(userAny.userPreferences)) userAny.userPreferences = [];
+        if (!Array.isArray(userAny.phoneVerifications)) userAny.phoneVerifications = [];
+        if (!Array.isArray(userAny.loginAudits)) userAny.loginAudits = [];
+      }
+    } catch (e) {
+      console.warn("ServerConsole: Failed to sanitize user object for send message:", e);
+    }
+
     stompClient.publish({
       destination: "/app/chat",
       body: JSON.stringify(WebsocketMessageToJSON(message)),

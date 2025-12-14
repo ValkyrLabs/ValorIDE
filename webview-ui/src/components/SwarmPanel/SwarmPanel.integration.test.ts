@@ -7,9 +7,15 @@
 
 import fetch from "node-fetch";
 
-const API_BASE = "http://localhost:8080/v1/swarm";
+const API_BASE =
+  process.env.SWARM_API_BASE ||
+  process.env.API_BASE ||
+  "http://localhost:8080/v1/swarm";
 const TEST_ORG = "org-test-" + Date.now();
 const TEST_AGENT_ID = "agent-" + Math.random().toString(36).substring(7);
+const shouldRunSwarm =
+  process.env.RUN_SWARM_TESTS === "true" || process.env.SWARM_API_BASE;
+const describeSwarm = shouldRunSwarm ? describe : describe.skip;
 
 // Test data
 const testData = {
@@ -19,7 +25,7 @@ const testData = {
   senderId: "sender-" + Date.now(),
 };
 
-describe("SWARM v2 Integration Tests", () => {
+describeSwarm("SWARM v2 Integration Tests", () => {
   // ========== Discovery API Tests ==========
 
   describe("GET /agents/discovery", () => {

@@ -92,6 +92,11 @@ declare module "vscode" {
       thisArgs?: any,
       disposables?: vscode.Disposable[],
     ) => vscode.Disposable;
+    onDidEndTerminalShellExecution?: (
+      listener: (e: any) => any,
+      thisArgs?: any,
+      disposables?: vscode.Disposable[],
+    ) => vscode.Disposable;
   }
 }
 
@@ -99,6 +104,8 @@ export class TerminalManager {
   private terminalIds: Set<number> = new Set();
   private processes: Map<number, TerminalProcess> = new Map();
   private disposables: vscode.Disposable[] = [];
+  private terminalInstanceToInfo: WeakMap<vscode.Terminal, TerminalInfo> =
+    new WeakMap();
 
   constructor() {
     let disposable: vscode.Disposable | undefined;
@@ -115,6 +122,44 @@ export class TerminalManager {
     if (disposable) {
       this.disposables.push(disposable);
     }
+
+    try {
+      disposable = (
+        vscode.window as vscode.Window
+      ).onDidEndTerminalShellExecution?.((e) => {
+        const terminalInfo = this.getTerminalInfoFromInstance(e?.terminal);
+        if (!terminalInfo) {
+          return;
+        }
+        const process = this.processes.get(terminalInfo.id);
+        process?.handleShellExecutionEnd(e?.exitCode);
+      });
+    } catch (error) {
+      // console.error("Error setting up onDidEndTerminalShellExecution", error)
+    }
+    if (disposable) {
+      this.disposables.push(disposable);
+    }
+
+    try {
+      disposable = vscode.window.onDidCloseTerminal?.((terminal) => {
+        const terminalInfo = this.getTerminalInfoFromInstance(terminal);
+        if (!terminalInfo) {
+          return;
+        }
+        const process = this.processes.get(terminalInfo.id);
+        process?.handleTerminalClosed();
+        TerminalRegistry.removeTerminal(terminalInfo.id);
+        this.terminalIds.delete(terminalInfo.id);
+        this.processes.delete(terminalInfo.id);
+        this.terminalInstanceToInfo.delete(terminalInfo.terminal);
+      });
+    } catch (error) {
+      // console.error("Error setting up onDidCloseTerminal", error)
+    }
+    if (disposable) {
+      this.disposables.push(disposable);
+    }
   }
 
   runCommand(
@@ -125,6 +170,7 @@ export class TerminalManager {
     terminalInfo.lastCommand = command;
     const process = new TerminalProcess();
     this.processes.set(terminalInfo.id, process);
+    this.terminalInstanceToInfo.set(terminalInfo.terminal, terminalInfo);
 
     process.once("completed", () => {
       terminalInfo.busy = false;
@@ -139,6 +185,7 @@ export class TerminalManager {
       TerminalRegistry.removeTerminal(terminalInfo.id);
       this.terminalIds.delete(terminalInfo.id);
       this.processes.delete(terminalInfo.id);
+      this.terminalInstanceToInfo.delete(terminalInfo.terminal);
     });
 
     const promise = new Promise<void>((resolve, reject) => {
@@ -225,12 +272,25 @@ export class TerminalManager {
     return process ? process.isHot : false;
   }
 
+  private getTerminalInfoFromInstance(
+    terminal: vscode.Terminal,
+  ): TerminalInfo | undefined {
+    const trackedInfo = this.terminalInstanceToInfo.get(terminal);
+    if (trackedInfo) {
+      return trackedInfo;
+    }
+    return TerminalRegistry.getAllTerminals().find(
+      (t) => t.terminal === terminal,
+    );
+  }
+
   disposeAll() {
     // for (const info of this.terminals) {
     // 	//info.terminal.dispose() // dont want to dispose terminals when task is aborted
     // }
     this.terminalIds.clear();
     this.processes.clear();
+    this.terminalInstanceToInfo = new WeakMap();
     this.disposables.forEach((disposable) => disposable.dispose());
     this.disposables = [];
   }

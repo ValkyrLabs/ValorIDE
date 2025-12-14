@@ -59,7 +59,11 @@ export function filterIgnoredFields(obj, ignoredFields = OAS_IGNORED_FIELDS) {
             const value = obj[key];
             // Recursively filter nested objects and arrays
             if (typeof value === "object" && value !== null) {
-                acc[key] = filterIgnoredFields(value, ignoredFields);
+                const cleaned = filterIgnoredFields(value, ignoredFields);
+                if (cleaned != null &&
+                    (Array.isArray(cleaned) || Object.keys(cleaned).length > 0)) {
+                    acc[key] = cleaned;
+                }
             }
             else {
                 acc[key] = value;
