@@ -14,11 +14,12 @@ import {
 } from "@thorapi/services/creditsApi";
 import { getApiMetrics } from "@shared/getApiMetrics";
 import BuyCredits from "@thorapi/components/BuyCredits";
-
+import { vscode } from "@thorapi/utils/vscode";
+import CoolButton from "../CoolButton";
 interface SystemAlert {
   id: string;
   type: "budget" | "blocker";
-  severity: "warning" | "danger";
+  severity: "warning" | "danger" | "info";
   title: string;
   message: string;
   timestamp: number;
@@ -98,13 +99,13 @@ const SystemAlerts: React.FC = () => {
       },
       {
         threshold: budgetAlerts.lowThreshold,
-        severity: "warning" as const,
-        title: "Low Budget Warning",
+        severity: "info" as const,
+        title: "Low Balance",
       },
       {
         threshold: budgetAlerts.alertThreshold,
-        severity: "warning" as const,
-        title: "Budget Alert",
+        severity: "info" as const,
+        title: "Heads up",
       },
     ].sort((a, b) => a.threshold - b.threshold);
 
@@ -120,7 +121,7 @@ const SystemAlerts: React.FC = () => {
             message:
               effectiveBalance <= 0
                 ? "Your account balance has been depleted. Buy credits to continue using ValorIDE services."
-                : `Your account balance is low ($${effectiveBalance.toFixed(2)}). Consider adding credits to avoid service interruption.`,
+                : `Your balance is getting low ($${effectiveBalance.toFixed(2)}). Add credits soon for uninterrupted access.`,
             timestamp: Date.now(),
           };
 
@@ -256,16 +257,15 @@ const SystemAlerts: React.FC = () => {
     typeof balanceData?.currentBalance === "number" &&
     balanceData.currentBalance <= budgetAlerts.criticalThreshold;
 
-  if (activeAlerts.length === 0 && !shouldShowBuyCreditsModal) return null;
+  // Only show if user is logged in
+  const isLoggedIn = Boolean(jwtToken && (authenticatedUser || userInfo));
+  if (!isLoggedIn || (activeAlerts.length === 0 && !shouldShowBuyCreditsModal)) return null;
 
   return (
     <>
       <div
         style={{
-          backgroundColor: "white",
-          /*position: 'fixed',
-        top: '10px',
-        right: '10px',*/
+          // No explicit background, use default
           zIndex: 9999,
           maxWidth: "350px",
           display: "flex",
@@ -276,14 +276,29 @@ const SystemAlerts: React.FC = () => {
         {activeAlerts.map((alert) => (
           <Alert
             key={alert.id}
-            variant={alert.severity === "danger" ? "danger" : "warning"}
-            /* hate the style, try bare*/
+            variant={
+              alert.severity === "danger"
+                ? "danger"
+                : alert.severity === "info"
+                  ? "info"
+                  : "warning"
+            }
             style={{
               margin: 0,
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-              border: `1px solid var(--vscode-${alert.severity === "danger" ? "errorForeground" : "warningForeground"})`,
-              backgroundColor: "white",
-              color: `var(--vscode-${alert.severity === "danger" ? "errorForeground" : "warningForeground"})`,
+              boxShadow: "0 4px 12px rgba(0,0,0,0.10)",
+              border:
+                alert.severity === "danger"
+                  ? `1px solid var(--vscode-errorForeground)`
+                  : alert.severity === "info"
+                    ? `1px solid var(--vscode-notificationsInfoIcon-foreground, #3794ff)`
+                    : `1px solid var(--vscode-warningForeground)`,
+              backgroundColor: "inherit",
+              color:
+                alert.severity === "danger"
+                  ? `var(--vscode-errorForeground)`
+                  : alert.severity === "info"
+                    ? `var(--vscode-notificationsInfoIcon-foreground, #3794ff)`
+                    : `var(--vscode-warningForeground)`,
               fontSize: "14px",
               borderRadius: "6px",
             }}
@@ -292,11 +307,11 @@ const SystemAlerts: React.FC = () => {
               style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}
             >
               <div style={{ marginTop: "2px" }}>
-                {alert.type === "budget" ? (
-                  <FaDollarSign size={16} />
-                ) : (
-                  <FaSadTear size={16} />
-                )}
+                {alert.type === "budget"
+                  ? alert.severity === "info"
+                    ? <FaExclamationTriangle size={16} />
+                    : <FaDollarSign size={16} />
+                  : <FaSadTear size={16} />}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 600, marginBottom: "4px" }}>
@@ -306,8 +321,19 @@ const SystemAlerts: React.FC = () => {
                   {alert.message}
                 </div>
                 {alert.type === "budget" && (
-                  <button
-                    onClick={() => setShowBuyCreditsModal(true)}
+                  <CoolButton
+                    onClick={() => {
+                      // Use VSCode wrapper; fall back to opening a new tab in browser
+                      vscode.postMessage({
+                        type: "openInBrowser",
+                        url: "https://valkyrlabs.com/buy-credits",
+                      });
+
+                      // If there's no VS Code webview API (dev server / browser), open in a new tab
+                      if (typeof (window as any)?.acquireVsCodeApi !== "function") {
+                        window.open("https://valkyrlabs.com/buy-credits", "_blank");
+                      }
+                    }}
                     style={{
                       marginTop: "8px",
                       padding: "6px 14px",
@@ -337,10 +363,10 @@ const SystemAlerts: React.FC = () => {
                   >
                     <FaCreditCard size={12} />
                     Buy Credits
-                  </button>
+                  </CoolButton>
                 )}
               </div>
-              <button
+              <CoolButton
                 onClick={() => handleDismiss(alert.id)}
                 style={{
                   background: "none",
@@ -364,7 +390,7 @@ const SystemAlerts: React.FC = () => {
                 }}
               >
                 <FaTimes size={18} />
-              </button>
+              </CoolButton>
             </div>
           </Alert>
         ))}

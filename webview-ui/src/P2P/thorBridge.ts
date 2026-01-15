@@ -24,6 +24,7 @@ if (typeof window !== "undefined") {
     let isConnecting = false;
     let lastConnectRequestedAt = 0;
     let currentSendListener: ((ev: Event) => void) | null = null;
+    let hasLoggedMissingJwt = false;
     // Simple local flag: default to true to persist JWT in localStorage
     const shouldPersistJwt = (): boolean => {
       try {
@@ -48,7 +49,9 @@ if (typeof window !== "undefined") {
     };
 
     // Get JWT token from storage for authentication
-    const getAuthenticatedBrokerURL = (): string | null => {
+    const getAuthenticatedBrokerURL = (
+      options?: { suppressWarn?: boolean },
+    ): string | null => {
       const resolvedUrl = getWebsocketUrl();
       const baseURL = isValidWsUrl(resolvedUrl)
         ? resolvedUrl
@@ -82,9 +85,14 @@ if (typeof window !== "undefined") {
       }
 
       if (!jwtToken) {
-        console.warn("thorBridge: No JWT token found in storage");
+        if (!options?.suppressWarn && !hasLoggedMissingJwt) {
+          console.warn("thorBridge: No JWT token found in storage");
+          hasLoggedMissingJwt = true;
+        }
         return null;
       }
+
+      hasLoggedMissingJwt = false;
 
       // Append token as query parameter for authentication
       const separator = baseURL.includes("?") ? "&" : "?";
@@ -196,7 +204,9 @@ if (typeof window !== "undefined") {
         // Retry every 2 seconds until token is available
         if (!connectionRetryInterval) {
           connectionRetryInterval = setInterval(() => {
-            const retryURL = getAuthenticatedBrokerURL();
+            const retryURL = getAuthenticatedBrokerURL({
+              suppressWarn: true,
+            });
             if (retryURL) {
               clearInterval(connectionRetryInterval!);
               connectionRetryInterval = null;

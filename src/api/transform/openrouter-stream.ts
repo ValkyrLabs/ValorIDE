@@ -44,6 +44,11 @@ export async function createOpenRouterStream(
   // prompt caching: https://openrouter.ai/docs/prompt-caching
   // this is specifically for valoride models (some models may 'support prompt caching' automatically without this)
   switch (model.id) {
+    case "anthropic/claude-sonnet-4.5":
+    case "anthropic/claude-opus-4":
+    case "anthropic/claude-opus-4.1":
+    case "anthropic/claude-opus-4.5":
+    case "anthropic/claude-haiku-4.5":
     case "anthropic/claude-3.7-sonnet":
     case "anthropic/claude-3.7-sonnet:beta":
     case "anthropic/claude-3.7-sonnet:thinking":
@@ -104,6 +109,11 @@ export async function createOpenRouterStream(
   // (models usually default to max tokens allowed)
   let maxTokens: number | undefined;
   switch (model.id) {
+    case "anthropic/claude-sonnet-4.5":
+    case "anthropic/claude-opus-4":
+    case "anthropic/claude-opus-4.1":
+    case "anthropic/claude-opus-4.5":
+    case "anthropic/claude-haiku-4.5":
     case "anthropic/claude-3.7-sonnet":
     case "anthropic/claude-3.7-sonnet:beta":
     case "anthropic/claude-3.7-sonnet:thinking":

@@ -39,173 +39,190 @@ const ChatView = ({
   hideAnnouncement,
   showHistoryView,
 }: ChatViewProps) => {
-  const {
-    version,
-    valorideMessages: messages,
-    taskHistory,
-    apiConfiguration,
-    telemetrySetting,
-    chatSettings,
-    jwtToken,
-  } = useExtensionState();
-
-  const communicationService = useCommunicationService();
-  const {
-    inputValue,
-    setInputValue,
-    selectedImages,
-    setSelectedImages,
-    clearChatInput,
-  } = useChatInputPersistence();
-
-  // Handle images selected from the VS Code file picker
-  useEffect(() => {
-    const handleMessage = (e: MessageEvent) => {
-      const message: ExtensionMessage = e.data as any;
-      if (message?.type === "selectedImages" && Array.isArray(message.images)) {
-        setSelectedImages((prev) =>
-          [...prev, ...message.images!].slice(0, MAX_IMAGES_PER_MESSAGE),
-        );
+  try {
+    // Test hook: force a render error when ?forceChatError=1 is present in the URL
+    try {
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("forceChatError") === "1") {
+          throw new Error("forced chat render error");
+        }
       }
-    };
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, [setSelectedImages]);
-
-  // Initialize hooks
-  const {
-    wsConnected,
-    wsInstanceCount,
-    isConnectingMothership,
-    ourSenderId,
-    pendingRemoteReplyRef,
-    broadcastLLMResponse,
-    connectToMothership,
-  } = useWebSocketConnection({
-    messages,
-    containsValorIDEMention: useCallback(
-      (text: string) => text?.toLowerCase?.().includes("@valoride") === true,
-      [],
-    ),
-    clearChatInput,
-  });
-
-  const {
-    peerCount,
-    p2pOpen,
-    isConnectingPeers,
-    multipleInstances,
-    handleRobotIconClick,
-    connectToPeers,
-  } = usePeerCommunication();
-
-  const {
-    valorideAsk,
-    enableButtons,
-    primaryButtonText,
-    secondaryButtonText,
-    textAreaDisabled,
-    isChatLoading,
-    lastMessage,
-    handlePrimaryButtonClick,
-    handleSecondaryButtonClick,
-    handleCancelClick,
-    handleTaskCloseButtonClick,
-    setTextAreaDisabled,
-    setValorIDEAsk,
-    setEnableButtons,
-  } = useChatState({ messages, chatSettings });
-
-  const { handleSendMessage } = useMessageHandling({
-    messages,
-    valorideAsk,
-    clearChatInput,
-    setTextAreaDisabled,
-    setValorIDEAsk,
-    setEnableButtons,
-    ourSenderId,
-  });
-
-  // Computed values
-  const task = useMemo(() => messages.at(0), [messages]);
-  const modifiedMessages = useMemo(
-    () => combineApiRequests(combineCommandSequences(messages.slice(1))),
-    [messages],
-  );
-  const apiMetrics = useMemo(
-    () => getApiMetrics(modifiedMessages),
-    [modifiedMessages],
-  );
-
-  // Global balance fetch for status strip; skip until JWT is present
-  const { data: balanceData } = useGetBalanceResponsesQuery(undefined as any, {
-    skip: !jwtToken,
-  });
-  const netBalance = useMemo(() => {
-    const raw = balanceData?.[0]?.currentBalance || 0;
-    const net = Math.max(0, raw - (apiMetrics.totalCost || 0));
-    return net;
-  }, [balanceData, apiMetrics.totalCost]);
-
-  const lastApiReqTotalTokens = useMemo(() => {
-    const getTotalTokensFromApiReqMessage = (msg: any) => {
-      if (!msg.text) return 0;
-      const {
-        tokensIn,
-        tokensOut,
-        cacheWrites,
-        cacheReads,
-      }: ValorIDEApiReqInfo = JSON.parse(msg.text);
-      return (
-        (tokensIn || 0) +
-        (tokensOut || 0) +
-        (cacheWrites || 0) +
-        (cacheReads || 0)
-      );
-    };
-    const lastApiReqMessage = findLast(modifiedMessages, (msg) => {
-      if (msg.say !== "api_req_started") return false;
-      return getTotalTokensFromApiReqMessage(msg) > 0;
-    });
-    if (!lastApiReqMessage) return undefined;
-    return getTotalTokensFromApiReqMessage(lastApiReqMessage);
-  }, [modifiedMessages]);
-
-  // If a peer-triggered prompt was injected, broadcast the very next assistant reply to @valorone
-  useEffect(() => {
-    if (!pendingRemoteReplyRef.current) return;
-    const lm = lastMessage;
-    if (!lm || lm.type !== "say" || lm.partial) return;
-    const kind = lm.say;
-    if (kind === "text" || kind === "completion_result") {
-      const content = (lm.text || "").trim();
-      if (content) {
-        broadcastLLMResponse(content);
-        pendingRemoteReplyRef.current = false;
-      }
+    } catch (e) {
+      /* swallow URL parsing errors */
     }
-  }, [lastMessage, broadcastLLMResponse]);
+    const {
+      version,
+      valorideMessages: messages,
+      taskHistory,
+      apiConfiguration,
+      telemetrySetting,
+      chatSettings,
+      jwtToken,
+    } = useExtensionState();
 
-  // Handle image selection via file picker
-  const handleSelectImages = useCallback(() => {
-    vscode.postMessage({ type: "selectImages" });
-  }, []);
+    const communicationService = useCommunicationService();
+    const {
+      inputValue,
+      setInputValue,
+      selectedImages,
+      setSelectedImages,
+      clearChatInput,
+    } = useChatInputPersistence();
 
-  return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        display: isHidden ? "none" : "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-      }}
-    >
-      <SystemAlerts />
-      {/**TODO: get P2P working
+    // Handle images selected from the VS Code file picker
+    useEffect(() => {
+      const handleMessage = (e: MessageEvent) => {
+        const message: ExtensionMessage = e.data as any;
+        if (message?.type === "selectedImages" && Array.isArray(message.images)) {
+          setSelectedImages((prev) =>
+            [...prev, ...message.images!].slice(0, MAX_IMAGES_PER_MESSAGE),
+          );
+        }
+      };
+      window.addEventListener("message", handleMessage);
+      return () => window.removeEventListener("message", handleMessage);
+    }, [setSelectedImages]);
+
+    // Initialize hooks
+    const {
+      wsConnected,
+      wsInstanceCount,
+      isConnectingMothership,
+      ourSenderId,
+      pendingRemoteReplyRef,
+      broadcastLLMResponse,
+      connectToMothership,
+    } = useWebSocketConnection({
+      messages,
+      containsValorIDEMention: useCallback(
+        (text: string) => text?.toLowerCase?.().includes("@valoride") === true,
+        [],
+      ),
+      clearChatInput,
+    });
+
+    const {
+      peerCount,
+      p2pOpen,
+      isConnectingPeers,
+      multipleInstances,
+      handleRobotIconClick,
+      connectToPeers,
+    } = usePeerCommunication();
+
+    const {
+      valorideAsk,
+      enableButtons,
+      primaryButtonText,
+      secondaryButtonText,
+      textAreaDisabled,
+      isChatLoading,
+      lastMessage,
+      handlePrimaryButtonClick,
+      handleSecondaryButtonClick,
+      handleCancelClick,
+      handleTaskCloseButtonClick,
+      setTextAreaDisabled,
+      setValorIDEAsk,
+      setEnableButtons,
+    } = useChatState({ messages, chatSettings });
+
+    const { handleSendMessage } = useMessageHandling({
+      messages,
+      valorideAsk,
+      clearChatInput,
+      setTextAreaDisabled,
+      setValorIDEAsk,
+      setEnableButtons,
+      ourSenderId,
+    });
+
+    // Computed values
+    const task = useMemo(() => messages?.at(0), [messages]);
+    const modifiedMessages = useMemo(() => {
+      const slice = Array.isArray(messages) ? messages.slice(1) : [];
+      return combineApiRequests(combineCommandSequences(slice));
+    }, [messages]);
+    const apiMetrics = useMemo(
+      () => getApiMetrics(modifiedMessages),
+      [modifiedMessages],
+    );
+
+    // Global balance fetch for status strip; skip until JWT is present
+    const { data: balanceData } = useGetBalanceResponsesQuery(undefined as any, {
+      skip: !jwtToken,
+    });
+    const netBalance = useMemo(() => {
+      const raw = balanceData?.[0]?.currentBalance || 0;
+      const net = Math.max(0, raw - (apiMetrics.totalCost || 0));
+      return net;
+    }, [balanceData, apiMetrics.totalCost]);
+
+    const lastApiReqTotalTokens = useMemo(() => {
+      const getTotalTokensFromApiReqMessage = (msg: any) => {
+        if (!msg?.text) return 0;
+        try {
+          const {
+            tokensIn,
+            tokensOut,
+            cacheWrites,
+            cacheReads,
+          }: ValorIDEApiReqInfo = JSON.parse(msg.text);
+          return (
+            (tokensIn || 0) +
+            (tokensOut || 0) +
+            (cacheWrites || 0) +
+            (cacheReads || 0)
+          );
+        } catch (e) {
+          // Malformed or unexpected payload
+          return 0;
+        }
+      };
+      const lastApiReqMessage = findLast(modifiedMessages, (msg) => {
+        if (msg.say !== "api_req_started") return false;
+        return getTotalTokensFromApiReqMessage(msg) > 0;
+      });
+      if (!lastApiReqMessage) return undefined;
+      return getTotalTokensFromApiReqMessage(lastApiReqMessage);
+    }, [modifiedMessages]);
+
+    // If a peer-triggered prompt was injected, broadcast the very next assistant reply to @valorone
+    useEffect(() => {
+      if (!pendingRemoteReplyRef.current) return;
+      const lm = lastMessage;
+      if (!lm || lm.type !== "say" || lm.partial) return;
+      const kind = lm.say;
+      if (kind === "text" || kind === "completion_result") {
+        const content = (lm.text || "").trim();
+        if (content) {
+          broadcastLLMResponse(content);
+          pendingRemoteReplyRef.current = false;
+        }
+      }
+    }, [lastMessage, broadcastLLMResponse]);
+
+    // Handle image selection via file picker
+    const handleSelectImages = useCallback(() => {
+      vscode.postMessage({ type: "selectImages" });
+    }, []);
+
+    return (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display: isHidden ? "none" : "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        }}
+      >
+        <SystemAlerts />
+        {/**TODO: get P2P working
 			<StatusBar
 				wsConnected={wsConnected}
 				wsInstanceCount={wsInstanceCount}
@@ -224,55 +241,99 @@ const ChatView = ({
 			
 			
  			*/}
-      {task ? (
-        <TaskView
-          task={task}
-          messages={messages}
-          apiConfiguration={apiConfiguration}
+        {task ? (
+          <TaskView
+            task={task}
+            messages={messages}
+            apiConfiguration={apiConfiguration}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            sendMessageFromChatRow={(text, images) =>
+              handleSendMessage(text, images ?? [])
+            }
+            isChatLoading={isChatLoading}
+            lastApiReqTotalTokens={lastApiReqTotalTokens}
+            valorideAsk={valorideAsk}
+            enableButtons={enableButtons}
+            primaryButtonText={primaryButtonText}
+            secondaryButtonText={secondaryButtonText}
+            textAreaDisabled={textAreaDisabled}
+            onTaskClose={handleTaskCloseButtonClick}
+            onPrimaryButton={handlePrimaryButtonClick}
+            onSecondaryButton={handleSecondaryButtonClick}
+            onCancel={handleCancelClick}
+          />
+        ) : (
+          <WelcomeScreen
+            version={version}
+            telemetrySetting={telemetrySetting}
+            showAnnouncement={showAnnouncement}
+            hideAnnouncement={hideAnnouncement}
+            taskHistory={taskHistory}
+            showHistoryView={showHistoryView}
+          />
+        )}
+
+        {/* Always render ChatTextArea so users can start new conversations */}
+        <ChatTextArea
           inputValue={inputValue}
           setInputValue={setInputValue}
-          sendMessageFromChatRow={(text, images) =>
-            handleSendMessage(text, images ?? [])
-          }
-          isChatLoading={isChatLoading}
-          lastApiReqTotalTokens={lastApiReqTotalTokens}
-          valorideAsk={valorideAsk}
-          enableButtons={enableButtons}
-          primaryButtonText={primaryButtonText}
-          secondaryButtonText={secondaryButtonText}
+          selectedImages={selectedImages}
+          setSelectedImages={setSelectedImages}
+          onSend={handleSendMessage}
           textAreaDisabled={textAreaDisabled}
-          onTaskClose={handleTaskCloseButtonClick}
-          onPrimaryButton={handlePrimaryButtonClick}
-          onSecondaryButton={handleSecondaryButtonClick}
-          onCancel={handleCancelClick}
+          placeholderText={
+            task ? "Type a message..." : "Start a new conversation..."
+          }
+          onSelectImages={handleSelectImages}
+          shouldDisableImages={false}
         />
-      ) : (
-        <WelcomeScreen
-          version={version}
-          telemetrySetting={telemetrySetting}
-          showAnnouncement={showAnnouncement}
-          hideAnnouncement={hideAnnouncement}
-          taskHistory={taskHistory}
-          showHistoryView={showHistoryView}
-        />
-      )}
+      </div>
+    );
+  } catch (err) {
+    try {
+      console.error("ChatView render error:", err);
+      const payload = {
+        type: "webviewError",
+        text: String((err && (err as any).message) || err),
+        stack: (err && (err as any).stack) || null,
+      };
 
-      {/* Always render ChatTextArea so users can start new conversations */}
-      <ChatTextArea
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        selectedImages={selectedImages}
-        setSelectedImages={setSelectedImages}
-        onSend={handleSendMessage}
-        textAreaDisabled={textAreaDisabled}
-        placeholderText={
-          task ? "Type a message..." : "Start a new conversation..."
-        }
-        onSelectImages={handleSelectImages}
-        shouldDisableImages={false}
-      />
-    </div>
-  );
+      const sendPayload = (p: any) => {
+        try {
+          if (typeof fetch === "function") {
+            fetch("http://localhost:3001/webview-error", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(p),
+            }).catch(() => {});
+            return;
+          }
+        } catch (e) {}
+        try {
+          if (typeof navigator !== "undefined" && typeof (navigator as any).sendBeacon === "function") {
+            const blob = new Blob([JSON.stringify(p)], { type: "application/json" });
+            (navigator as any).sendBeacon("http://localhost:3001/webview-error", blob);
+            return;
+          }
+        } catch (e) {}
+        try {
+          const img = new Image();
+          img.src = "http://localhost:3001/webview-error?payload=" + encodeURIComponent(JSON.stringify(p));
+        } catch (e) {}
+      };
+
+      sendPayload(payload);
+    } catch (e) {
+      // ignore
+    }
+    return (
+      <div style={{ padding: 20 }}>
+        <h3>Chat failed to render</h3>
+        <div>Please check the developer console for details.</div>
+      </div>
+    );
+  }
 };
 
 export default ChatView;

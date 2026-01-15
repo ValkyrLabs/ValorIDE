@@ -246,6 +246,7 @@ const AppContent = () => {
         case "serverConsoleNewMessage":
           // New server console-related message arrived; mark server console tab for attention.
           setServerConsoleNeedsAttention(true);
+
           break;
 
         default:
@@ -362,6 +363,20 @@ const AppContent = () => {
               errorTitle="Chat failed to render"
               errorBody="Please reload the view or check connection settings."
               height="100%"
+              context={{
+                view: "ChatView",
+                hasStoredAuth,
+                showAnnouncement,
+                showSettings,
+                showHistory,
+                showMcp,
+                showAccount,
+                showGeneratedFiles,
+                showServerConsole,
+                showApplicationProgress,
+                currentApplicationId,
+                vscMachineId,
+              }}
             >
               <ChatView
                 showHistoryView={() => {

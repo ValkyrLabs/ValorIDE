@@ -456,14 +456,14 @@ export class BrowserSession {
       if (this.isConnectedToRemote && this.browser) {
         // Close the page/tab first if it exists
         if (this.page) {
-          await this.page.close().catch(() => {});
+          await this.page.close().catch(() => { });
           console.info("closed remote browser tab...");
         }
-        await this.browser.disconnect().catch(() => {});
+        await this.browser.disconnect().catch(() => { });
         console.info("disconnected from remote browser...");
         // do not close the browser
       } else if (this.isConnectedToRemote === false) {
-        await this.browser?.close().catch(() => {});
+        await this.browser?.close().catch(() => { });
         console.info("closed local browser...");
       }
 
@@ -536,7 +536,7 @@ export class BrowserSession {
     await pWaitFor(() => Date.now() - lastLogTs >= 500, {
       timeout: 3_000,
       interval: 100,
-    }).catch(() => {});
+    }).catch(() => { });
 
     const options: ScreenshotOptions = {
       encoding: "base64",
@@ -665,7 +665,7 @@ export class BrowserSession {
             waitUntil: ["domcontentloaded", "networkidle2"],
             timeout: 7000,
           })
-          .catch(() => {});
+          .catch(() => { });
         await this.waitTillHTMLStable(page);
       }
 

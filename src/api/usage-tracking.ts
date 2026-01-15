@@ -80,6 +80,10 @@ export function getModelPricing(
     Record<string, { inputCost: number; outputCost: number }>
   > = {
     openai: {
+      "gpt-5.2": { inputCost: 0.00000175, outputCost: 0.000014 },
+      "gpt-5.2-chat-latest": { inputCost: 0.00000175, outputCost: 0.000014 },
+      "gpt-5.1": { inputCost: 0.00000125, outputCost: 0.00001 },
+      "gpt-5.1-chat-latest": { inputCost: 0.00000125, outputCost: 0.00001 },
       "gpt-4o": { inputCost: 0.0000025, outputCost: 0.00001 },
       "gpt-4o-mini": { inputCost: 0.00000015, outputCost: 0.0000006 },
       "gpt-4-turbo": { inputCost: 0.00001, outputCost: 0.00003 },
@@ -101,6 +105,14 @@ export function getModelPricing(
         inputCost: 0.000003,
         outputCost: 0.000015,
       },
+      "claude-opus-4-1-20250805": {
+        inputCost: 0.000015,
+        outputCost: 0.000075,
+      },
+      "claude-opus-4-5-20251101": {
+        inputCost: 0.000005,
+        outputCost: 0.000025,
+      },
       "claude-3-5-haiku-20241022": {
         inputCost: 0.000001,
         outputCost: 0.000005,
@@ -113,6 +125,7 @@ export function getModelPricing(
       },
     },
     gemini: {
+      "gemini-3-pro-preview": { inputCost: 0.000002, outputCost: 0.000018 },
       "gemini-1.5-pro": { inputCost: 0.00000125, outputCost: 0.000005 },
       "gemini-1.5-flash": { inputCost: 0.000000075, outputCost: 0.0000003 },
     },

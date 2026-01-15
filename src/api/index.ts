@@ -23,6 +23,7 @@ import { AskSageHandler } from "./providers/asksage";
 import { XAIHandler } from "./providers/xai";
 import { SambanovaHandler } from "./providers/sambanova";
 import { ValkyraiHandler } from "./providers/valkyrai";
+import { MoonshotHandler } from "./providers/moonshot";
 
 export interface ApiHandler {
   createMessage(
@@ -46,6 +47,8 @@ export function buildApiHandler(configuration: ApiConfiguration): ApiHandler {
       return new ValkyraiHandler(options);
     case "openrouter":
       return new OpenRouterHandler(options);
+    case "moonshot":
+      return new MoonshotHandler(options);
     case "bedrock":
       return new AwsBedrockHandler(options);
     case "vertex":

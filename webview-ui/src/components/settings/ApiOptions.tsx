@@ -39,6 +39,8 @@ import {
   deepSeekModels,
   geminiDefaultModelId,
   geminiModels,
+  moonshotDefaultModelId,
+  moonshotModels,
   mistralDefaultModelId,
   mistralModels,
   ModelInfo,
@@ -314,6 +316,7 @@ const ApiOptions = ({
           <VSCodeOption value="valkyrai">Valkyrai (LLM Details)</VSCodeOption>
           <VSCodeOption value="valoride">ValorIDE</VSCodeOption>
           <VSCodeOption value="openrouter">OpenRouter</VSCodeOption>
+          <VSCodeOption value="moonshot">Moonshot (Kimi2)</VSCodeOption>
           <VSCodeOption value="anthropic">Anthropic</VSCodeOption>
           <VSCodeOption value="bedrock">Amazon Bedrock</VSCodeOption>
           <VSCodeOption value="openai">OpenAI Compatible</VSCodeOption>
@@ -507,6 +510,67 @@ const ApiOptions = ({
                 }}
               >
                 You can get a DeepSeek API key by signing up here.
+              </VSCodeLink>
+            )}
+          </p>
+        </div>
+      )}
+
+      {selectedProvider === "moonshot" && (
+        <div>
+          <DropdownContainer
+            className="dropdown-container"
+            style={{ position: "inherit" }}
+          >
+            <label htmlFor="moonshot-entrypoint">
+              <span style={{ fontWeight: 500, marginTop: 5 }}>
+                Moonshot Entrypoint
+              </span>
+            </label>
+            <VSCodeDropdown
+              id="moonshot-entrypoint"
+              value={apiConfiguration?.moonshotApiLine || "international"}
+              onChange={handleInputChange("moonshotApiLine")}
+              style={{
+                minWidth: 130,
+                position: "relative",
+              }}
+            >
+              <VSCodeOption value="international">api.moonshot.ai</VSCodeOption>
+              <VSCodeOption value="china">api.moonshot.cn</VSCodeOption>
+            </VSCodeDropdown>
+          </DropdownContainer>
+          <VSCodeTextField
+            value={apiConfiguration?.moonshotApiKey || ""}
+            style={{ width: "100%" }}
+            type="password"
+            onInput={handleInputChange("moonshotApiKey")}
+            placeholder="Enter API Key..."
+          >
+            <span style={{ fontWeight: 500 }}>Moonshot API Key</span>
+          </VSCodeTextField>
+          <p
+            style={{
+              fontSize: "12px",
+              marginTop: 3,
+              color: "var(--vscode-descriptionForeground)",
+            }}
+          >
+            This key is stored locally and only used to make API requests from
+            this extension.
+            {!apiConfiguration?.moonshotApiKey && (
+              <VSCodeLink
+                href={
+                  apiConfiguration?.moonshotApiLine === "china"
+                    ? "https://platform.moonshot.cn/console/api-keys"
+                    : "https://platform.moonshot.ai/console/api-keys"
+                }
+                style={{
+                  display: "inline",
+                  fontSize: "inherit",
+                }}
+              >
+                You can get a Moonshot API key by signing up here.
               </VSCodeLink>
             )}
           </p>
@@ -1959,6 +2023,8 @@ const ApiOptions = ({
                 createDropdown(openAiNativeModels)}
               {selectedProvider === "deepseek" &&
                 createDropdown(deepSeekModels)}
+              {selectedProvider === "moonshot" &&
+                createDropdown(moonshotModels)}
               {selectedProvider === "qwen" &&
                 createDropdown(
                   apiConfiguration?.qwenApiLine === "china"
@@ -2364,6 +2430,8 @@ export function normalizeApiConfiguration(
       return getProviderData(openAiNativeModels, openAiNativeDefaultModelId);
     case "deepseek":
       return getProviderData(deepSeekModels, deepSeekDefaultModelId);
+    case "moonshot":
+      return getProviderData(moonshotModels, moonshotDefaultModelId);
     case "qwen":
       const qwenModels =
         apiConfiguration?.qwenApiLine === "china"

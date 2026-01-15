@@ -304,27 +304,91 @@ const TaskView: React.FC<TaskViewProps> = ({
     }
   }, [modifiedMessages]);
 
+  const buildMessageContext = useCallback(
+    (messageOrGroup: ValorIDEMessage | ValorIDEMessage[]) => {
+      const lastModified = modifiedMessages.at(-1);
+      if (Array.isArray(messageOrGroup)) {
+        return {
+          component: "BrowserSessionRow",
+          messageCount: messageOrGroup.length,
+          lastModifiedMessage: lastModified
+            ? {
+              ts: lastModified.ts,
+              type: lastModified.type,
+              say: lastModified.say,
+              ask: lastModified.ask,
+            }
+            : undefined,
+          sampleMessages: messageOrGroup.slice(0, 3).map((m) => ({
+            ts: m.ts,
+            type: m.type,
+            say: m.say,
+            ask: m.ask,
+            partial: m.partial,
+          })),
+        };
+      }
+      return {
+        component: "ChatRow",
+        ts: messageOrGroup.ts,
+        type: messageOrGroup.type,
+        say: messageOrGroup.say,
+        ask: messageOrGroup.ask,
+        partial: messageOrGroup.partial,
+        textPreview:
+          typeof messageOrGroup.text === "string"
+            ? messageOrGroup.text.slice(0, 500)
+            : undefined,
+        imagesCount: Array.isArray(messageOrGroup.images)
+          ? messageOrGroup.images.length
+          : undefined,
+        isExpanded: expandedRows[messageOrGroup.ts] ?? false,
+        lastModifiedMessage: lastModified
+          ? {
+            ts: lastModified.ts,
+            type: lastModified.type,
+            say: lastModified.say,
+            ask: lastModified.ask,
+          }
+          : undefined,
+      };
+    },
+    [expandedRows, modifiedMessages],
+  );
+
   const itemContent = useCallback(
     (index: number, messageOrGroup: ValorIDEMessage | ValorIDEMessage[]) => {
       if (Array.isArray(messageOrGroup)) {
+        const boundaryContext = buildMessageContext(messageOrGroup);
         return (
-          <BrowserSessionRow
-            messages={messageOrGroup}
-            isLast={index === groupedMessages.length - 1}
-            lastModifiedMessage={modifiedMessages.at(-1)}
-            onHeightChange={() => { }}
-            isExpanded={(messageTs: number) => expandedRows[messageTs] ?? false}
-            onToggleExpand={(messageTs: number) => {
-              setExpandedRows((prev) => ({
-                ...prev,
-                [messageTs]: !prev[messageTs],
-              }));
-            }}
-          />
+          <ErrorBoundary
+            title="Browser session failed to render"
+            context={boundaryContext}
+          >
+            <BrowserSessionRow
+              messages={messageOrGroup}
+              isLast={index === groupedMessages.length - 1}
+              lastModifiedMessage={modifiedMessages.at(-1)}
+              onHeightChange={() => { }}
+              isExpanded={(messageTs: number) =>
+                expandedRows[messageTs] ?? false
+              }
+              onToggleExpand={(messageTs: number) => {
+                setExpandedRows((prev) => ({
+                  ...prev,
+                  [messageTs]: !prev[messageTs],
+                }));
+              }}
+            />
+          </ErrorBoundary>
         );
       }
+      const boundaryContext = buildMessageContext(messageOrGroup);
       return (
-        <ErrorBoundary>
+        <ErrorBoundary
+          title="Chat row failed to render"
+          context={boundaryContext}
+        >
           <ChatRow
             key={messageOrGroup.ts}
             message={messageOrGroup}
@@ -353,6 +417,7 @@ const TaskView: React.FC<TaskViewProps> = ({
       inputValue,
       setInputValue,
       sendMessageFromChatRow,
+      buildMessageContext,
     ],
   );
 
@@ -445,7 +510,7 @@ const TaskView: React.FC<TaskViewProps> = ({
           }}
           atBottomThreshold={10}
         />
-        {isChatLoading && inlineSpinnerCount === 0 && (
+        {isChatLoading && taskPhase !== "DONE" && (
           <div
             style={{
               position: "absolute",

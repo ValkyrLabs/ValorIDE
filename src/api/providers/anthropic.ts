@@ -69,6 +69,8 @@ export class AnthropicHandler implements ApiHandler {
       case "claude-haiku-4-5-20251001":
       case "claude-3-5-haiku-20241022":
       case "claude-opus-4-20250514":
+      case "claude-opus-4-1-20250805":
+      case "claude-opus-4-5-20251101":
       case "claude-3-opus-20240229":
       case "claude-3-haiku-20240307": {
         /*
@@ -144,6 +146,8 @@ export class AnthropicHandler implements ApiHandler {
               case "claude-sonnet-4-5-20250929":
               case "claude-sonnet-4-20250514":
               case "claude-opus-4-20250514":
+              case "claude-opus-4-1-20250805":
+              case "claude-opus-4-5-20251101":
               case "claude-3-7-sonnet-20250219":
               case "claude-3-5-sonnet-20241022":
               case "claude-haiku-4-5-20251001":

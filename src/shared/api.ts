@@ -3,6 +3,7 @@ import type { LanguageModelChatSelector } from "../api/providers/types";
 export type ApiProvider =
   | "anthropic"
   | "openrouter"
+  | "moonshot"
   | "bedrock"
   | "vertex"
   | "openai"
@@ -39,6 +40,8 @@ export interface ApiHandlerOptions {
   openRouterModelId?: string;
   openRouterModelInfo?: ModelInfo;
   openRouterProviderSorting?: string;
+  moonshotApiKey?: string;
+  moonshotApiLine?: string; // "international" | "china"
   awsAccessKey?: string;
   awsSecretKey?: string;
   awsSessionToken?: string;
@@ -130,10 +133,10 @@ export interface OpenAiCompatibleModelInfo extends ModelInfo {
 // https://docs.anthropic.com/en/docs/about-valoride/models // prices updated 2025-01-02
 export type AnthropicModelId = keyof typeof anthropicModels;
 export const anthropicDefaultModelId: AnthropicModelId =
-  "claude-3-7-sonnet-20250219";
+  "claude-sonnet-4-5-20250929";
 export const anthropicModels = {
   "claude-sonnet-4-5-20250929": {
-    maxTokens: 64_000,
+    maxTokens: 8_192,
     contextWindow: 200_000,
     supportsImages: true,
 
@@ -175,6 +178,26 @@ export const anthropicModels = {
     outputPrice: 75.0,
     cacheWritesPrice: 18.75,
     cacheReadsPrice: 1.5,
+  },
+  "claude-opus-4-1-20250805": {
+    maxTokens: 8_192,
+    contextWindow: 200_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 15.0,
+    outputPrice: 75.0,
+    cacheWritesPrice: 18.75,
+    cacheReadsPrice: 1.5,
+  },
+  "claude-opus-4-5-20251101": {
+    maxTokens: 8_192,
+    contextWindow: 200_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 5.0,
+    outputPrice: 25.0,
+    cacheWritesPrice: 6.25,
+    cacheReadsPrice: 0.5,
   },
   "claude-3-7-sonnet-20250219": {
     maxTokens: 8192,
@@ -244,7 +267,7 @@ export const anthropicModels = {
 // https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html
 export type BedrockModelId = keyof typeof bedrockModels;
 export const bedrockDefaultModelId: BedrockModelId =
-  "anthropic.claude-3-7-sonnet-20250219-v1:0";
+  "anthropic.claude-sonnet-4-5-20250929-v1:0";
 export const bedrockModels = {
   "amazon.nova-pro-v1:0": {
     maxTokens: 5000,
@@ -360,9 +383,9 @@ export const bedrockModels = {
 
 // OpenRouter
 // https://openrouter.ai/models?order=newest&supported_parameters=tools
-export const openRouterDefaultModelId = "anthropic/claude-3.7-sonnet"; // will always exist in openRouterModels
+export const openRouterDefaultModelId = "anthropic/claude-sonnet-4.5"; // will always exist in openRouterModels
 export const openRouterDefaultModelInfo: ModelInfo = {
-  maxTokens: 8192,
+  maxTokens: 8_192,
   contextWindow: 200_000,
   supportsImages: true,
 
@@ -372,13 +395,101 @@ export const openRouterDefaultModelInfo: ModelInfo = {
   cacheWritesPrice: 3.75,
   cacheReadsPrice: 0.3,
   description:
-    "Claude 3.7 Sonnet is an advanced large language model with improved reasoning, coding, and problem-solving capabilities. It introduces a hybrid reasoning approach, allowing users to choose between rapid responses and extended, step-by-step processing for complex tasks. The model demonstrates notable improvements in coding, particularly in front-end development and full-stack updates, and excels in agentic workflows, where it can autonomously navigate multi-step processes. \n\nClaude 3.7 Sonnet maintains performance parity with its predecessor in standard mode while offering an extended reasoning mode for enhanced accuracy in math, coding, and instruction-following tasks.\n\nRead more at the [blog post here](https://www.anthropic.com/news/claude-3-7-sonnet)",
+    "Claude 4.5 Sonnet delivers stronger reasoning and coding with built-in prompt caching and tool use, making it a reliable default for OpenRouter users.\n\nRead more at the Claude 4.5 overview: https://docs.claude.com/en/docs/about-claude/models/overview",
 };
+
+// Kimi (Moonshot) models available via OpenRouter and partner routers
+export const kimiOpenRouterModelIds = [
+  "moonshotai/kimi-k2",
+  "moonshotai/kimi-k2:exacto",
+  "moonshotai/kimi-k2-instruct",
+  "moonshotai/kimi-k2-instruct-0905",
+  "accounts/fireworks/models/kimi-k2-instruct",
+  "accounts/fireworks/models/kimi-k2-instruct-0905",
+  "kimi-k2-0905-preview",
+  "kimi-k2-0711-preview",
+  "kimi-k2-turbo-preview",
+  "kimi-k2-thinking",
+  "kimi-k2-thinking-turbo",
+] as const;
+
+// Moonshot AI Studio
+// https://platform.moonshot.ai/docs/pricing/chat
+export const moonshotModels = {
+  "kimi-k2-0711-preview": {
+    maxTokens: 32_000,
+    contextWindow: 131_072,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 0.6,
+    outputPrice: 2.5,
+    cacheWritesPrice: 0,
+    cacheReadsPrice: 0.15,
+    temperature: 0.6,
+    description:
+      "Kimi K2 preview with 131K context window and prompt caching support.",
+  },
+  "kimi-k2-0905-preview": {
+    maxTokens: 16_384,
+    contextWindow: 262_144,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 0.6,
+    outputPrice: 2.5,
+    cacheWritesPrice: 0,
+    cacheReadsPrice: 0.15,
+    temperature: 0.6,
+    description:
+      "Kimi K2 preview with 262K context window and updated agentic coding performance.",
+  },
+  "kimi-k2-turbo-preview": {
+    maxTokens: 32_000,
+    contextWindow: 262_144,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 2.4,
+    outputPrice: 10,
+    cacheWritesPrice: 0,
+    cacheReadsPrice: 0.6,
+    temperature: 0.6,
+    description:
+      "Kimi K2 turbo preview optimized for high throughput with prompt caching.",
+  },
+  "kimi-k2-thinking": {
+    maxTokens: 16_000,
+    contextWindow: 262_144,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 0.6,
+    outputPrice: 2.5,
+    cacheWritesPrice: 0,
+    cacheReadsPrice: 0.15,
+    temperature: 1.0,
+    description:
+      "Kimi K2 thinking model tuned for deeper reasoning and multi-step tool use.",
+  },
+  "kimi-k2-thinking-turbo": {
+    maxTokens: 32_000,
+    contextWindow: 262_144,
+    supportsImages: false,
+    supportsPromptCache: true,
+    inputPrice: 2.4,
+    outputPrice: 10,
+    cacheWritesPrice: 0,
+    cacheReadsPrice: 0.6,
+    temperature: 1.0,
+    description:
+      "Kimi K2 thinking turbo model optimized for faster reasoning throughput.",
+  },
+} as const satisfies Record<string, OpenAiCompatibleModelInfo>;
+export type MoonshotModelId = keyof typeof moonshotModels;
+export const moonshotDefaultModelId =
+  "kimi-k2-0905-preview" satisfies MoonshotModelId;
 // Vertex AI
 // https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-valoride
 // https://cloud.google.com/vertex-ai/generative-ai/pricing#partner-models
 export type VertexModelId = keyof typeof vertexModels;
-export const vertexDefaultModelId: VertexModelId = "claude-3-7-sonnet@20250219";
+export const vertexDefaultModelId: VertexModelId = "claude-sonnet-4-5@20250929";
 export const vertexModels = {
   "claude-sonnet-4-5@20250929": {
     maxTokens: 64000, // maxOutput
@@ -742,8 +853,80 @@ export const geminiModels = {
 // https://openai.com/api/pricing/
 export type OpenAiNativeModelId = keyof typeof openAiNativeModels;
 export const openAiNativeDefaultModelId: OpenAiNativeModelId =
-  "gpt-5-2025-08-07";
+  "gpt-5.2";
 export const openAiNativeModels = {
+  "gpt-5.2": {
+    maxTokens: 8_192,
+    contextWindow: 272000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 1.75,
+    outputPrice: 14.0,
+    cacheReadsPrice: 0.175,
+  },
+  "gpt-5.2-chat-latest": {
+    maxTokens: 16_384,
+    contextWindow: 128_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 1.75,
+    outputPrice: 14.0,
+    cacheReadsPrice: 0.175,
+  },
+  "gpt-5.1-2025-11-13": {
+    maxTokens: 8_192,
+    contextWindow: 272000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 1.25,
+    outputPrice: 10.0,
+    cacheReadsPrice: 0.125,
+  },
+  "gpt-5.1": {
+    maxTokens: 8_192,
+    contextWindow: 272000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 1.25,
+    outputPrice: 10.0,
+    cacheReadsPrice: 0.125,
+  },
+  "gpt-5-codex": {
+    maxTokens: 8_192,
+    contextWindow: 400_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 1.25,
+    outputPrice: 10.0,
+    cacheReadsPrice: 0.125,
+  },
+  "gpt-5.1-codex-max": {
+    maxTokens: 128000,
+    contextWindow: 400_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 1.25,
+    outputPrice: 10.0,
+    cacheReadsPrice: 0.125,
+  },
+  "gpt-5.1-codex": {
+    maxTokens: 64000,
+    contextWindow: 200_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 1.25,
+    outputPrice: 10.0,
+    cacheReadsPrice: 0.125,
+  },
+  "gpt-5.1-chat-latest": {
+    maxTokens: 8_192,
+    contextWindow: 400_000,
+    supportsImages: true,
+    supportsPromptCache: true,
+    inputPrice: 1.25,
+    outputPrice: 10,
+    cacheReadsPrice: 0.125,
+  },
   "gpt-5-2025-08-07": {
     maxTokens: 8_192, // 128000 breaks context window truncation
     contextWindow: 272000,

@@ -1,5 +1,6 @@
 import { memo, useCallback, useState } from "react";
 import {
+  anthropicDefaultModelId,
   anthropicModels,
   ApiConfiguration,
   geminiDefaultModelId,
@@ -100,7 +101,7 @@ const ThinkingBudgetSlider = ({
   const maxTokens =
     apiConfiguration?.apiProvider === "gemini"
       ? geminiModels[geminiDefaultModelId].maxTokens
-      : anthropicModels["claude-3-7-sonnet-20250219"].maxTokens;
+      : anthropicModels[anthropicDefaultModelId].maxTokens;
 
   // use maxBudget prop if provided, otherwise apply the percentage cap to maxTokens
   const maxSliderValue = (() => {

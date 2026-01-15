@@ -12,7 +12,7 @@ import React, {
 import { useRemark } from "react-remark";
 import { useMount } from "react-use";
 import styled from "styled-components";
-import { openRouterDefaultModelId } from "@shared/api";
+import { kimiOpenRouterModelIds, openRouterDefaultModelId } from "@shared/api";
 import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { vscode } from "@thorapi/utils/vscode";
 import { highlight } from "../history/HistoryView";
@@ -56,21 +56,27 @@ export interface OpenRouterModelPickerProps {
 }
 
 // Featured models for ValorIDE provider
+const kimiFeaturedId = kimiOpenRouterModelIds[0] || "moonshotai/kimi-k2";
 const featuredModels = [
   {
-    id: "anthropic/claude-3.7-sonnet",
+    id: "anthropic/claude-sonnet-4.5",
     description: "Leading model for agentic coding",
     label: "Best",
   },
   {
-    id: "google/gemini-2.5-pro-preview-03-25",
-    description: "Large 1M context window, great value",
+    id: "openai/gpt-5.2",
+    description: "Latest ChatGPT 5.2 with strong coding and reasoning",
+    label: "Flagship",
+  },
+  {
+    id: "google/gemini-3-pro-preview",
+    description: "Gemini 3 Pro preview with 1M context",
     label: "Trending",
   },
   {
-    id: "openai/gpt-4.1",
-    description: "1M context window, blazing fast",
-    label: "New",
+    id: kimiFeaturedId,
+    description: "Kimi K2 reasoning model (Moonshot)",
+    label: "Kimi 2",
   },
 ];
 

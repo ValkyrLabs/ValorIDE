@@ -3,6 +3,12 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import ApiOptions from "../ApiOptions";
 import { ExtensionStateContextProvider } from "@thorapi/context/ExtensionStateContext";
 
+declare global {
+  interface GlobalThis {
+    vscode?: { postMessage: (...args: any[]) => void };
+  }
+}
+
 vi.mock("../../../context/ExtensionStateContext", async (importOriginal) => {
   const actual = await importOriginal();
   return {
@@ -30,7 +36,7 @@ describe.skip("ApiOptions Component", () => {
   const mockPostMessage = vi.fn();
 
   beforeEach(() => {
-    global.vscode = { postMessage: mockPostMessage };
+    (globalThis as any).vscode = { postMessage: mockPostMessage };
   });
 
   it("renders Requesty API Key input", () => {
@@ -76,7 +82,7 @@ describe.skip("ApiOptions Component", () => {
   const mockPostMessage = vi.fn();
 
   beforeEach(() => {
-    global.vscode = { postMessage: mockPostMessage };
+    (globalThis as any).vscode = { postMessage: mockPostMessage };
   });
 
   it("renders Together API Key input", () => {
@@ -122,7 +128,7 @@ describe.skip("OpenApiInfoOptions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    global.vscode = { postMessage: mockPostMessage };
+    (globalThis as any).vscode = { postMessage: mockPostMessage };
   });
 
   it("renders OpenAI Supports Images input", () => {

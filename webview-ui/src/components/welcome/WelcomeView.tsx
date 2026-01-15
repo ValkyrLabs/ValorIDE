@@ -71,7 +71,7 @@ const WelcomeView = memo(() => {
               </a>
             </div>
             <p>
-              <h2>Agentic Coder, Powered by ThorAPI</h2>
+              <h2>Agentic Coder, Powered by ValkyrAI</h2>
               <VSCodeLink
                 href="https://valkyrlabs.com/v1/docs/Products/ValorIDE"
                 style={{ display: "inline" }}
@@ -79,26 +79,34 @@ const WelcomeView = memo(() => {
                 English Documentation
               </VSCodeLink>
               <VSCodeLink
-                href="https://valkyrlabs.com/thorapi"
+                href="https://valkyrlabs.com/valkyrai"
                 style={{ display: "inline" }}
               >
-                ThorAPI Full-Stack CodeGen
+                ValkyrAI Full-Stack CodeGen & AI Agents
               </VSCodeLink>
             </p>
           </div>
           <p>
-            I can do all kinds of tasks thanks to breakthroughs in{" "}
-            <VSCodeLink
-              href="https://valkyrlabs.com/v1/Products/ValorIDE/getting-started"
-              className="inline"
-            >
-              Help Getting Started
-            </VSCodeLink>
-            agentic coding capabilities and access to tools that let me create &
-            edit files, explore complex projects, use a browser, and execute
-            terminal commands <i>(with your permission, of course)</i>. I can
-            even use MCP to create new tools and extend my own capabilities.
+
+            ValorIDE is an agentic coding environment which uses any AI model that you choose to:
+            <br />create & edit files
+            <br />explore complex projects
+            <br />write documentation
+            <br />create tests and fix bugs
+            <br />add new features to projects
+            <br />use a browser to test apps
+            <br />execute terminal commands with permissions
+            <br />use MCP to create new tools and extend my own capabilities
+            <br />and much more...
           </p>
+
+          <VSCodeLink
+            href="https://valkyrlabs.com/v1/Products/ValorIDE/getting-started"
+            className="inline"
+          >
+            Getting Started
+          </VSCodeLink>
+
 
           <p className="text-[var(--vscode-descriptionForeground)]">
             Sign up for an account to get started for free
@@ -137,7 +145,7 @@ const WelcomeView = memo(() => {
             )}
           </div>
         </div>
-      </div>
+      </div >
     </>
   );
 });

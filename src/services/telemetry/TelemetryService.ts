@@ -5,12 +5,23 @@ import { version as extensionVersion } from "../../../package.json";
 import type { TaskFeedbackType } from "@shared/WebviewMessage";
 import type { BrowserSettings } from "@shared/BrowserSettings";
 
+type PostHogClientApi = Pick<PostHog, "capture" | "optIn" | "optOut" | "shutdown">;
+
+const NOOP_POSTHOG_CLIENT: PostHogClientApi = {
+  capture: () => {},
+  optIn: async () => {},
+  optOut: async () => {},
+  shutdown: async () => {},
+};
+
 /**
  * PostHogClient handles telemetry event tracking for the ValorIDE extension
  * Uses PostHog analytics to track user interactions and system events
  * Respects user privacy settings and VSCode's global telemetry configuration
  */
 class PostHogClient {
+  private static readonly POSTHOG_ENABLED = false;
+
   // Event constants for tracking user interactions and system events
   private static readonly EVENTS = {
     // Task-related events for tracking conversation and execution flow
@@ -80,7 +91,7 @@ class PostHogClient {
   /** Singleton instance of the PostHogClient */
   private static instance: PostHogClient;
   /** PostHog client instance for sending analytics events */
-  private client: PostHog;
+  private client: PostHogClientApi;
   /** Unique identifier for the current VSCode instance */
   private distinctId: string = vscode.env.machineId;
   /** Whether telemetry is currently enabled based on user and VSCode settings */
@@ -93,13 +104,12 @@ class PostHogClient {
    * Initializes PostHog client with configuration
    */
   private constructor() {
-    this.client = new PostHog(
-      "phc_qfOAGxZw2TL5O8p9KYd9ak3bPBFzfjC8fy5L6jNWY7K",
-      {
+    this.client = PostHogClient.POSTHOG_ENABLED
+      ? new PostHog("phc_qfOAGxZw2TL5O8p9KYd9ak3bPBFzfjC8fy5L6jNWY7K", {
         host: "https://us.i.posthog.com",
         enableExceptionAutocapture: false,
-      },
-    );
+      })
+      : NOOP_POSTHOG_CLIENT;
   }
 
   /**
@@ -122,10 +132,12 @@ class PostHogClient {
     }
 
     // Update PostHog client state based on telemetry preference
-    if (this.telemetryEnabled) {
-      this.client.optIn();
-    } else {
-      this.client.optOut();
+    if (PostHogClient.POSTHOG_ENABLED) {
+      if (this.telemetryEnabled) {
+        this.client.optIn();
+      } else {
+        this.client.optOut();
+      }
     }
   }
 
@@ -146,7 +158,7 @@ class PostHogClient {
    */
   public capture(event: { event: string; properties?: any }): void {
     // Only send events if telemetry is enabled
-    if (this.telemetryEnabled) {
+    if (this.telemetryEnabled && PostHogClient.POSTHOG_ENABLED) {
       // Include extension version in all event properties
       const propertiesWithVersion = {
         ...event.properties,
@@ -209,9 +221,7 @@ class PostHogClient {
   ) {
     // Ensure required parameters are provided
     if (!taskId || !provider || !model || !source) {
-      console.warn(
-        "TelemetryService: Missing required parameters for message capture",
-      );
+
       return;
     }
 
@@ -657,7 +667,9 @@ class PostHogClient {
   }
 
   public async shutdown(): Promise<void> {
-    await this.client.shutdown();
+    if (PostHogClient.POSTHOG_ENABLED) {
+      await this.client.shutdown();
+    }
   }
 }
 

@@ -9,5 +9,5 @@ export interface ChatSettings {
 
 export const DEFAULT_CHAT_SETTINGS: ChatSettings = {
   mode: "act",
-  apiFirstChunkTimeoutMs: 45_000,
+  apiFirstChunkTimeoutMs: 15_000,
 };

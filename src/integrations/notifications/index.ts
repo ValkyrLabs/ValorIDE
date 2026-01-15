@@ -85,6 +85,7 @@ export async function showSystemNotification(
       title: title.replace(/"/g, '\\"'),
       message: message.replace(/"/g, '\\"'),
       subtitle: options.subtitle?.replace(/"/g, '\\"') || "",
+      appName: "ValorIDE",
     };
 
     switch (platform()) {

@@ -208,6 +208,90 @@ describe("ChatRow Content - completion_result summary handling", () => {
     });
 });
 
+describe("ChatRow Content - precision search & replace summary", () => {
+    it("shows the PSR file and edit details when expanded", () => {
+        const psrTool = {
+            tool: "precisionSearchAndReplace",
+            path: "src/components/Foo.tsx",
+            content: JSON.stringify({
+                edits: [
+                    {
+                        kind: "contextual",
+                        find: "console.log(old)",
+                        replace: "console.log(next)",
+                    },
+                    {
+                        kind: "ts-ast",
+                        intent: "renameProperty",
+                        from: "oldProp",
+                        to: "newProp",
+                    },
+                ],
+                options: { dryRun: true },
+            }),
+        };
+        const message = {
+            type: "say",
+            say: "tool",
+            ts: Date.now(),
+            text: JSON.stringify(psrTool),
+        } as any;
+
+        render(
+            <ProviderAny>
+                <ChatRowContent
+                    message={message}
+                    isExpanded={true}
+                    onToggleExpand={() => { }}
+                    lastModifiedMessage={message}
+                    isLast={true}
+                    onHeightChange={() => { }}
+                />
+            </ProviderAny>,
+        );
+
+        expect(screen.getByText("File: src/components/Foo.tsx")).toBeTruthy();
+        expect(
+            screen.getByText(
+                'contextual: "console.log(old)" -> "console.log(next)"',
+            ),
+        ).toBeTruthy();
+        expect(
+            screen.getByText(
+                'ts-ast renameProperty: "oldProp" -> "newProp"',
+            ),
+        ).toBeTruthy();
+    });
+});
+
+describe("ChatRow Content - command header", () => {
+    it("renders the command inline with the executing label", () => {
+        const message = {
+            type: "say",
+            say: "command",
+            ts: Date.now(),
+            text: "ls -la",
+        } as any;
+
+        render(
+            <ProviderAny>
+                <ChatRowContent
+                    message={message}
+                    isExpanded={true}
+                    onToggleExpand={() => { }}
+                    lastModifiedMessage={message}
+                    isLast={true}
+                    onHeightChange={() => { }}
+                />
+            </ProviderAny>,
+        );
+
+        expect(
+            screen.getByText("ValorIDE executing command: ls -la"),
+        ).toBeTruthy();
+    });
+});
+
 describe("ChatRow Content - api request spinner handling", () => {
     afterEach(() => {
         vi.useRealTimers();
@@ -270,6 +354,41 @@ describe("ChatRow Content - api request spinner handling", () => {
 
         expect(screen.getByText("API Request")).toBeTruthy();
         expect(screen.queryByText("API Request...")).toBeNull();
+    });
+
+    it("clears the spinner once task completion is shown even without usage details", () => {
+        const apiRequestMessage = {
+            type: "say",
+            say: "api_req_started",
+            ts: Date.now(),
+            text: JSON.stringify({
+                request: "POST /v1/chat",
+            }),
+        } as any;
+
+        const completionMessage = {
+            type: "ask",
+            ask: "completion_result",
+            ts: Date.now() + 1,
+            text: "",
+        } as any;
+
+        render(
+            <ProviderAny>
+                <ChatRowContent
+                    message={apiRequestMessage}
+                    isExpanded={false}
+                    onToggleExpand={() => { }}
+                    lastModifiedMessage={completionMessage}
+                    isLast={true}
+                    onHeightChange={() => { }}
+                />
+            </ProviderAny>,
+        );
+
+        expect(screen.getByText("API Request")).toBeTruthy();
+        expect(screen.queryByText("API Request...")).toBeNull();
+        expect(screen.queryByLabelText("progress-indicator")).toBeNull();
     });
 
     it("times out a lingering API request spinner and shows a failure state", () => {

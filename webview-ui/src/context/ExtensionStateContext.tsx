@@ -24,6 +24,7 @@ import {
 import { findLastIndex } from "@shared/array";
 import { McpMarketplaceCatalog, McpServer } from "../../../src/shared/mcp";
 import { convertTextMateToHljs } from "../utils/textMateToHljs";
+import { setTheme as setValkyrTheme } from "../themes";
 import { vscode } from "../utils/vscode";
 import { DEFAULT_BROWSER_SETTINGS } from "@shared/BrowserSettings";
 import { DEFAULT_CHAT_SETTINGS } from "@shared/ChatSettings";
@@ -122,7 +123,7 @@ export const ExtensionStateContextProvider: React.FC<{
     return typeof maybeVsCodeWindow.acquireVsCodeApi !== "function";
   });
   const [showWelcome, setShowWelcome] = useState(false);
-  const [theme, setTheme] = useState<Record<string, string>>();
+  const [theme, setThemeState] = useState<Record<string, string>>();
   const [filePaths, setFilePaths] = useState<string[]>([]);
   const [openRouterModels, setOpenRouterModels] = useState<
     Record<string, ModelInfo>
@@ -252,6 +253,7 @@ export const ExtensionStateContextProvider: React.FC<{
             config.geminiApiKey,
             config.openAiNativeApiKey,
             config.deepSeekApiKey,
+            config.moonshotApiKey,
             config.requestyApiKey,
             config.togetherApiKey,
             config.qwenApiKey,
@@ -275,7 +277,17 @@ export const ExtensionStateContextProvider: React.FC<{
       }
       case "theme": {
         if (message.text) {
-          setTheme(convertTextMateToHljs(JSON.parse(message.text)));
+          setThemeState(convertTextMateToHljs(JSON.parse(message.text)));
+          // Also set Valkyr theme for UI
+          try {
+            const themeObj = JSON.parse(message.text);
+            let themeName = "valkyr";
+            if (themeObj && (themeObj.name || themeObj.type)) {
+              const n = String(themeObj.name || themeObj.type || "").toLowerCase();
+              if (n.includes("dark")) themeName = "dark";
+            }
+            setValkyrTheme(themeName, { persist: false });
+          } catch { }
         }
         break;
       }
@@ -437,10 +449,7 @@ export const ExtensionStateContextProvider: React.FC<{
   }, []);
 
   useEffect(() => {
-    if (didHydrateState) {
-      return null;
-    }
-    if (typeof window === "undefined") {
+    if (didHydrateState || typeof window === "undefined") {
       return null;
     }
     const timeoutId = window.setTimeout(() => {

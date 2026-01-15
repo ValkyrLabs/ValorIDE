@@ -1,3 +1,4 @@
+import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import React from "react";
 
 // import "./index.css";
@@ -45,7 +46,7 @@ const CoolButton: React.FC<CoolButtonProps> = ({
     classx += " " + className;
   }
   return (
-    <button
+    <VSCodeButton
       style={customStyle}
       type={type}
       disabled={disabled}
@@ -54,7 +55,7 @@ const CoolButton: React.FC<CoolButtonProps> = ({
       {...rest}
     >
       {children}
-    </button>
+    </VSCodeButton>
   );
 };
 

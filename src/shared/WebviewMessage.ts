@@ -14,6 +14,7 @@ export interface WebviewMessage {
   | "addRemoteServer"
   | "apiConfiguration"
   | "webviewDidLaunch"
+  | "requestTheme"
   | "newTask"
   | "condense"
   | "askResponse"

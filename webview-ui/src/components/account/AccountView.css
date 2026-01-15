@@ -37,6 +37,9 @@
 
 /* Aurora themed history cards */
 .history-preview-item {
+  margin: 12px 0;
+  padding: 16px 20px;
+  opacity: 0.95;
   background: linear-gradient(
     180deg,
     rgba(6, 10, 16, 0.6),
@@ -59,13 +62,13 @@
 }
 
 .history-preview-item .timestamp {
-  color: #a3ffcc;
-  font-weight: 700;
+  font-weight: 500;
+  font-size: 0.875em;
   letter-spacing: 0.6px;
 }
 .history-preview-item .task-text {
   color: var(--vscode-descriptionForeground);
-  font-size: 0.95em;
+  font-size: 1em;
 }
 
 /* Root aurora overlay */
@@ -87,4 +90,62 @@
 .flipboard-info h2,
 .contentflip-title {
   color: var(--vscode-foreground);
+}
+
+/* Account body and content scrolling */
+.account-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 16px;
+}
+
+.scroll-tabs-container {
+  flex-shrink: 0;
+}
+
+.nav-tabs.scroll-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.account-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 12px;
+}
+
+.account-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.account-content::-webkit-scrollbar-track {
+  background: rgba(0, 255, 136, 0.05);
+  border-radius: 4px;
+}
+
+.account-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 136, 0.2);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.account-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 136, 0.4);
+}
+
+/* Ensure UserPreferences and ServerConsole content areas are fully scrollable */
+.account-content > div {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.account-content .grow {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }

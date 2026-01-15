@@ -8,7 +8,7 @@ import { FiCalendar, FiHeart, FiLock, FiUserCheck } from "react-icons/fi";
 
 import { Link } from "react-router-dom";
 import { Principal } from "@thorapi/model";
-import CoolButton from "@valkyr/component-library/CoolButton";
+// Use aurora button styles for consistency with design system
 import Form from "./form";
 import "./index.css";
 
@@ -36,9 +36,9 @@ const Signup = (props) => {
           <br />
           <Nav.Link>
             <Link to="/login">
-              <CoolButton variant="dark">
-                <FiUserCheck size={30} /> Login Now
-              </CoolButton>
+              <button className="aurora-button" style={{ width: "100%" }}>
+                <FiUserCheck size={18} style={{ marginRight: 8 }} /> Sign in
+              </button>
             </Link>
           </Nav.Link>
           <br />

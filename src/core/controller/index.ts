@@ -5,6 +5,7 @@ import crypto from "crypto";
 import fs from "fs/promises";
 import { setTimeout as setTimeoutPromise } from "node:timers/promises";
 import pWaitFor from "p-wait-for";
+import { originalPositionFor, TraceMap } from "@jridgewell/trace-mapping";
 import * as path from "path";
 import * as vscode from "vscode";
 import { handleGrpcRequest } from "./grpc-handler";
@@ -27,7 +28,7 @@ import { ValorIDEAccountService } from "@services/account/ValorIDEAccountService
 import { BrowserSession } from "@services/browser/BrowserSession";
 import { McpHub } from "@services/mcp/McpHub";
 import { searchWorkspaceFiles } from "@services/search/file-search";
-import { telemetryService } from "@services/telemetry/TelemetryService";
+
 import { getLLMPromptService } from "@services/llmPromptService";
 import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
 import { StartupAuthService } from "@services/auth/StartupAuthService";
@@ -104,6 +105,7 @@ export class Controller {
   mcpHub: McpHub;
   accountService: ValorIDEAccountService;
   private latestAnnouncementId = "april-18-2025_21:15::00"; // update to some unique identifier when we add a new announcement
+  private webviewIndexSourceMapPromise: Promise<any | null> | null = null;
 
   constructor(
     readonly context: vscode.ExtensionContext,
@@ -287,6 +289,134 @@ export class Controller {
     await this.postMessage(message);
   }
 
+  private normalizeWebviewSourcePath(source: string): string {
+    if (source.startsWith("../../src/")) {
+      return `webview-ui/src/${source.slice("../../src/".length)}`;
+    }
+    if (source.startsWith("../../node_modules/")) {
+      return source.slice("../../".length);
+    }
+    return source;
+  }
+
+  private async getWebviewIndexSourceMap(): Promise<any | null> {
+    if (this.webviewIndexSourceMapPromise) {
+      return this.webviewIndexSourceMapPromise;
+    }
+
+    const mapPath = path.join(
+      this.context.extensionUri.fsPath,
+      "dist",
+      "webview",
+      "assets",
+      "index.js.map",
+    );
+
+    this.webviewIndexSourceMapPromise = fs
+      .readFile(mapPath, "utf8")
+      .then((raw) => {
+        // Use the statically imported TraceMap instead of require()
+        return new TraceMap(JSON.parse(raw));
+      })
+      .catch((err) => {
+        this.outputChannel.appendLine(
+          `Webview source map not available: ${mapPath} (${String(err)})`,
+        );
+        return null;
+      });
+
+    return this.webviewIndexSourceMapPromise;
+  }
+
+  private async symbolicateWebviewPosition(
+    generatedLine: number,
+    generatedColumn: number,
+  ): Promise<string | null> {
+    const traceMap = await this.getWebviewIndexSourceMap();
+    if (!traceMap) return null;
+
+
+    for (const column of [
+      generatedColumn,
+      Math.max(0, generatedColumn - 1),
+    ]) {
+      const original = originalPositionFor(traceMap, {
+        line: generatedLine,
+        column,
+      });
+      if (!original?.source || !original?.line) continue;
+
+      const source = this.normalizeWebviewSourcePath(String(original.source));
+      const line = Number(original.line);
+      const col =
+        typeof original.column === "number" ? Number(original.column) : 0;
+      return `${source}:${line}:${col}`;
+    }
+
+    return null;
+  }
+
+  private async symbolicateWebviewStack(stack: string): Promise<string | null> {
+    if (!stack) return null;
+
+    const traceMap = await this.getWebviewIndexSourceMap();
+    if (!traceMap) return null;
+
+
+
+    const mappedLines = stack.split("\n").map((rawLine) => {
+      const line = rawLine ?? "";
+      const trimmed = line.trim();
+      if (!trimmed) return line;
+
+      const inParensMatch = trimmed.match(/\(([^)]+)\)$/);
+      const token = inParensMatch
+        ? inParensMatch[1]
+        : trimmed.split(/\s+/).pop();
+      if (!token) return line;
+
+      const locMatch = token.match(/:(\d+):(\d+)$/);
+      if (!locMatch) return line;
+
+      const generatedLine = Number(locMatch[1]);
+      const generatedColumn = Number(locMatch[2]);
+
+      // Heuristic: only rewrite frames from our webview bundle.
+      const filePart = token.slice(0, token.length - locMatch[0].length);
+      if (
+        !filePart.endsWith("/dist/webview/assets/index.js") &&
+        !filePart.endsWith("dist/webview/assets/index.js") &&
+        !filePart.endsWith("/assets/index.js") &&
+        !filePart.endsWith("assets/index.js") &&
+        !filePart.endsWith("/index.js") &&
+        !filePart.endsWith("index.js")
+      ) {
+        return line;
+      }
+
+      for (const column of [
+        generatedColumn,
+        Math.max(0, generatedColumn - 1),
+      ]) {
+        const original = originalPositionFor(traceMap, {
+          line: generatedLine,
+          column,
+        });
+        if (!original?.source || !original?.line) continue;
+
+        const source = this.normalizeWebviewSourcePath(String(original.source));
+        const origLine = Number(original.line);
+        const origCol =
+          typeof original.column === "number" ? Number(original.column) : 0;
+        return `${line} -> ${source}:${origLine}:${origCol}`;
+      }
+
+      return line;
+    });
+
+    return mappedLines.join("\n");
+  }
+
   /**
    * Sets up an event listener to listen for messages passed from the webview context and
    * executes code based on the message that is received.
@@ -295,6 +425,15 @@ export class Controller {
    */
   async handleWebviewMessage(message: WebviewMessage) {
     switch (message.type) {
+      case "requestTheme": {
+        // Send current theme to webview
+        const theme = await getTheme();
+        await this.postMessageToWebview({
+          type: "theme",
+          text: JSON.stringify(theme),
+        });
+        break;
+      }
       case "openFile": {
         const relPath = (message as any).text;
         if (relPath) {
@@ -304,29 +443,61 @@ export class Controller {
         break;
       }
       case "webviewError": {
-        try {
-          const text = (message as any).text;
-          const info = (message as any).payload;
-          // Log in output channel and the extension's console
-          this.outputChannel.appendLine(`Webview error: ${text}`);
-          console.error("Webview error:", text, info);
-        } catch (err) {
-          console.error("Failed to handle webviewError message:", err);
+        const textRaw = (message as any).text;
+        const text =
+          typeof textRaw === "string" ? textRaw : String(textRaw ?? "");
+
+        const info = (message as any).info ?? (message as any).payload ?? null;
+        const stack =
+          typeof (message as any).stack === "string" ? (message as any).stack : null;
+        const filename = (message as any).filename ?? null;
+        const lineno =
+          typeof (message as any).lineno === "number" ? (message as any).lineno : null;
+        const colno =
+          typeof (message as any).colno === "number" ? (message as any).colno : null;
+
+        this.outputChannel.appendLine(`Webview encountered an error: ${text}`);
+        if (filename || lineno != null || colno != null) {
+          this.outputChannel.appendLine(
+            `Location: ${String(filename ?? "unknown")}:${String(lineno ?? "?")}:${String(colno ?? "?")}`,
+          );
         }
-        try {
-          const text = (message as any).text as string;
-          const info = (message as any).payload;
-          // Log in output channel and the extension's console
-          this.outputChannel.appendLine(`Webview encountered an error: ${text}`);
-          console.error("Webview error:", text, info);
-          // Optionally display an error message in VSCode
-          try {
-            vscode.window.showErrorMessage(`Webview error: ${text}`);
-          } catch (e) {
-            // ignore
+
+        if (lineno != null && colno != null) {
+          const mapped = await this.symbolicateWebviewPosition(lineno, colno);
+          if (mapped) {
+            this.outputChannel.appendLine(`Mapped location: ${mapped}`);
           }
-        } catch (err) {
-          console.error("Failed to process webviewError message:", err);
+        }
+
+        if (info) {
+          const infoText =
+            typeof info === "string" ? info : JSON.stringify(info, null, 2);
+          this.outputChannel.appendLine(`Info: ${infoText}`);
+        }
+
+        if (stack) {
+          this.outputChannel.appendLine(`Stack:\n${stack}`);
+
+          const mappedStack = await this.symbolicateWebviewStack(stack);
+          if (mappedStack && mappedStack !== stack) {
+            this.outputChannel.appendLine(`Mapped stack:\n${mappedStack}`);
+          }
+        }
+
+        console.error("Webview error:", {
+          text,
+          filename,
+          lineno,
+          colno,
+          info,
+          stack,
+        });
+
+        try {
+          vscode.window.showErrorMessage(`Webview error: ${text}`);
+        } catch {
+          // ignore
         }
         break;
       }
@@ -423,12 +594,7 @@ export class Controller {
           }
         });
 
-        // If user already opted in to telemetry, enable telemetry service
-        this.getStateToPostToWebview().then((state) => {
-          const { telemetrySetting } = state;
-          const isOptedIn = telemetrySetting === "enabled";
-          telemetryService.updateTelemetryState(isOptedIn);
-        });
+
         break;
       case "showChatView": {
         this.postMessageToWebview({
@@ -845,12 +1011,7 @@ export class Controller {
         break;
       }
       case "taskFeedback":
-        if (message.feedbackType && this.task?.taskId) {
-          telemetryService.captureTaskFeedback(
-            this.task.taskId,
-            message.feedbackType,
-          );
-        }
+
         break;
       // case "openMcpMarketplaceServerDetails": {
       // 	if (message.text) {
@@ -1388,10 +1549,7 @@ export class Controller {
 
           // Capture telemetry for model favorite toggle
           const isFavorited = !favoritedModelIds.includes(message.modelId);
-          telemetryService.captureModelFavoritesUsage(
-            message.modelId,
-            isFavorited,
-          );
+
 
           // Post state to webview without changing any other configuration
           await this.postStateToWebview();
@@ -1900,7 +2058,7 @@ export class Controller {
   async updateTelemetrySetting(telemetrySetting: TelemetrySetting) {
     await updateGlobalState(this.context, "telemetrySetting", telemetrySetting);
     const isOptedIn = telemetrySetting === "enabled";
-    telemetryService.updateTelemetryState(isOptedIn);
+
   }
 
   async togglePlanActModeWithChatSettings(
@@ -1909,11 +2067,6 @@ export class Controller {
   ) {
     const didSwitchToActMode = chatSettings.mode === "act";
 
-    // Capture mode switch telemetry | Capture regardless of if we know the taskId
-    telemetryService.captureModeSwitch(
-      this.task?.taskId ?? "0",
-      chatSettings.mode,
-    );
 
     // Get previous model info that we will revert to after saving current mode api info
     const {
@@ -1955,6 +2108,7 @@ export class Controller {
         case "openai-native":
         case "qwen":
         case "deepseek":
+        case "moonshot":
         case "xai":
           await updateGlobalState(
             this.context,
@@ -2055,12 +2209,13 @@ export class Controller {
           case "vertex":
           case "gemini":
           case "asksage":
-          case "openai-native":
-          case "qwen":
-          case "deepseek":
-          case "xai":
-            await updateGlobalState(this.context, "apiModelId", newModelId);
-            break;
+        case "openai-native":
+        case "qwen":
+        case "deepseek":
+        case "moonshot":
+        case "xai":
+          await updateGlobalState(this.context, "apiModelId", newModelId);
+          break;
           case "openrouter":
           case "valoride":
             await updateGlobalState(
@@ -2793,7 +2948,7 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
 
       // Fetch LLM details from ValkyrAI
       const valkyraiUrl = apiConfiguration.valkyraiHost.replace(/\/$/, ""); // Remove trailing slash
-      const endpoint = `${valkyraiUrl}/v1/llm-details`;
+      const endpoint = `${valkyraiUrl}/LlmDetails`;
 
       const headers: Record<string, string> = {
         "Content-Type": "application/json",

@@ -257,8 +257,8 @@ export class FileToolHandler extends BaseToolHandler {
       const didChange = result.baseHash !== result.postHash;
       const skippedSummary = result.skipped.length
         ? result.skipped
-            .map((entry) => `edit ${entry.index}: ${entry.reason}`)
-            .join("; ")
+          .map((entry) => `edit ${entry.index}: ${entry.reason}`)
+          .join("; ")
         : "No edits matched the requested patterns.";
 
       const handleNoop = () => {
@@ -443,7 +443,7 @@ export class FileToolHandler extends BaseToolHandler {
           // Extract error type from error message if possible, or use a generic type
           const errorType =
             error instanceof Error &&
-            error.message.includes("does not match anything")
+              error.message.includes("does not match anything")
               ? "search_not_found"
               : "other_diff_error";
 
@@ -455,10 +455,10 @@ export class FileToolHandler extends BaseToolHandler {
 
           const toolResponse = formatResponse.toolError(
             `${(error as Error)?.message}\n\n` +
-              formatResponse.diffError(
-                relPath,
-                this.context.diffViewProvider.originalContent,
-              ),
+            formatResponse.diffError(
+              relPath,
+              this.context.diffViewProvider.originalContent,
+            ),
           );
 
           await this.context.diffViewProvider.revertChanges();
@@ -507,7 +507,7 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
           await this.context
             .ask("tool", partialMessage, partial)
-            .catch(() => {});
+            .catch(() => { });
         }
         // update editor
         if (!this.context.diffViewProvider.isEditing) {
@@ -553,7 +553,7 @@ export class FileToolHandler extends BaseToolHandler {
         // Handle the complete file operation
         if (!this.context.diffViewProvider.isEditing) {
           const partialMessage = JSON.stringify(sharedMessageProps);
-          await this.context.ask("tool", partialMessage, true).catch(() => {}); // sending true for partial even though it's not
+          await this.context.ask("tool", partialMessage, true).catch(() => { }); // sending true for partial even though it's not
           await this.context.diffViewProvider.open(relPath);
         }
         await this.context.diffViewProvider.update(newContent, true);
@@ -745,7 +745,7 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
           await this.context
             .ask("tool", partialMessage, partial)
-            .catch(() => {});
+            .catch(() => { });
         }
         return { shouldContinue: false };
       } else {
@@ -892,7 +892,7 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
           await this.context
             .ask("tool", partialMessage, partial)
-            .catch(() => {});
+            .catch(() => { });
         }
         return { shouldContinue: false };
       } else {
@@ -1049,7 +1049,7 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
           await this.context
             .ask("tool", partialMessage, partial)
-            .catch(() => {});
+            .catch(() => { });
         }
         return { shouldContinue: false };
       } else {
@@ -1196,7 +1196,7 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
           await this.context
             .ask("tool", partialMessage, partial)
-            .catch(() => {});
+            .catch(() => { });
         }
         return { shouldContinue: false };
       } else {

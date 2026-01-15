@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Badge, Spinner, Modal } from "react-bootstrap";
+import { Badge, Spinner, Card } from "react-bootstrap";
 import { FaCreditCard, FaDollarSign } from "react-icons/fa";
 import { useGetAccountBalanceQuery } from "../../services/creditsApi";
 import LoadingSpinner from "../LoadingSpinner";
@@ -104,34 +104,31 @@ const CurrentBalance: React.FC<CurrentBalanceProps> = ({
         <HelpTooltip topic="credits" size="sm" />
       </div>
 
-      {/* Buy Credits Modal */}
-      <Modal
-        show={showBuyCredits}
-        onHide={() => setShowBuyCredits(false)}
-        centered
-        size="lg"
-        contentClassName="bg-dark border border-info"
-      >
-        <Modal.Header
-          closeButton
-          closeVariant="white"
-          style={{
-            background: "linear-gradient(135deg, #06ffa515, #06ffa505)",
-            borderBottom: "1px solid #06ffa530",
-          }}
+      {showBuyCredits && (
+        <Card
+          className="bg-dark border border-info"
         >
-          <Modal.Title style={{ color: "#06ffa5" }}>
-            <FaCreditCard className="me-2" />
-            Buy Credits
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body style={{ background: "rgba(8, 10, 14, 0.95)" }}>
-          <BuyCredits
-            authenticatedPrincipal={resolvedPrincipal}
-            onPurchaseSuccess={() => setShowBuyCredits(false)}
-          />
-        </Modal.Body>
-      </Modal>
+          <Card.Header
+
+
+            style={{
+              background: "linear-gradient(135deg, #06ffa515, #06ffa505)",
+              borderBottom: "1px solid #06ffa530",
+            }}
+          >
+            <Card.Title >
+              <FaCreditCard />
+              Buy Credits
+            </Card.Title>
+          </Card.Header>
+          <Card.Body style={{ background: "rgba(8, 10, 14, 0.95)" }}>
+            <BuyCredits
+              authenticatedPrincipal={resolvedPrincipal}
+              onPurchaseSuccess={() => setShowBuyCredits(false)}
+            />
+          </Card.Body>
+        </Card>
+      )}
     </>
   );
 };

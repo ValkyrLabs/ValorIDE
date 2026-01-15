@@ -8,7 +8,7 @@ import { createValorIDEAPI } from "./exports";
 import "./utils/path"; // necessary to have access to String.prototype.toPosix
 import { DIFF_VIEW_URI_SCHEME } from "./integrations/editor/DiffViewProvider";
 import assert from "node:assert";
-import { telemetryService } from "./services/telemetry/TelemetryService";
+
 import { WebviewProvider } from "./core/webview";
 import { ErrorService } from "./services/error/ErrorService";
 import { initializeTestMode, cleanupTestMode } from "./services/test/TestMode";
@@ -84,15 +84,15 @@ export function activate(context: vscode.ExtensionContext) {
       const { selectedLlmDetails } = await getAllExtensionState(context);
       const manualSelection: SelectedPrompt | undefined = selectedLlmDetails
         ? {
-            llmDetailsId: selectedLlmDetails.id,
-            name: selectedLlmDetails.name,
-            prompt: selectedLlmDetails.prompt,
-            mode: selectedLlmDetails.mode,
-            tags: selectedLlmDetails.tags,
-            source:
-              selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
-            stackSpecific: true,
-          }
+          llmDetailsId: selectedLlmDetails.id,
+          name: selectedLlmDetails.name,
+          prompt: selectedLlmDetails.prompt,
+          mode: selectedLlmDetails.mode,
+          tags: selectedLlmDetails.tags,
+          source:
+            selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
+          stackSpecific: true,
+        }
         : undefined;
 
       await initializeLLMPromptService(
@@ -509,15 +509,14 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   /*
-	We use the text document content provider API to show the left side for diff view by creating a virtual document for the original content. This makes it readonly so users know to edit the right side if they want to keep their changes.
+  We use the text document content provider API to show the left side for diff view by creating a virtual document for the original content. This makes it readonly so users know to edit the right side if they want to keep their changes.
 
-	- This API allows you to create readonly documents in VSCode from arbitrary sources, and works by claiming an uri-scheme for which your provider then returns text contents. The scheme must be provided when registering a provider and cannot change afterwards.
-	- Note how the provider doesn't create uris for virtual documents - its role is to provide contents given such an uri. In return, content providers are wired into the open document logic so that providers are always considered.
-	https://code.visualstudio.com/api/extension-guides/virtual-documents
-	*/
+  - This API allows you to create readonly documents in VSCode from arbitrary sources, and works by claiming an uri-scheme for which your provider then returns text contents. The scheme must be provided when registering a provider and cannot change afterwards.
+  - Note how the provider doesn't create uris for virtual documents - its role is to provide contents given such an uri. In return, content providers are wired into the open document logic so that providers are always considered.
+  https://code.visualstudio.com/api/extension-guides/virtual-documents
+  */
   const diffContentProvider = new (class
-    implements vscode.TextDocumentContentProvider
-  {
+    implements vscode.TextDocumentContentProvider {
     provideTextDocumentContent(uri: vscode.Uri): string {
       return Buffer.from(uri.query, "base64").toString("utf-8");
     }
@@ -686,16 +685,16 @@ export function activate(context: vscode.ExtensionContext) {
           // [Optional] Any additional logic to process multi-line content can remain here
           // For example:
           /*
-				const lines = terminalContents.split("\n")
-				const lastLine = lines.pop()?.trim()
-				if (lastLine) {
-					let i = lines.length - 1
-					while (i >= 0 && !lines[i].trim().startsWith(lastLine)) {
-						i--
-					}
-					terminalContents = lines.slice(Math.max(i, 0)).join("\n")
-				}
-				*/
+        const lines = terminalContents.split("\n")
+        const lastLine = lines.pop()?.trim()
+        if (lastLine) {
+          let i = lines.length - 1
+          while (i >= 0 && !lines[i].trim().startsWith(lastLine)) {
+            i--
+          }
+          terminalContents = lines.slice(Math.max(i, 0)).join("\n")
+        }
+        */
 
           // Send to sidebar provider
           const visibleWebview = WebviewProvider.getVisibleInstance();
@@ -910,14 +909,6 @@ export function deactivate() {
       console.error("Error cleaning up test mode:", error);
     }
 
-    try {
-      // Shutdown telemetry
-      telemetryService.shutdown();
-      Logger.log("Telemetry service shut down successfully");
-    } catch (error) {
-      Logger.log(`Error shutting down telemetry: ${error}`);
-      console.error("Error shutting down telemetry:", error);
-    }
 
     Logger.log("ValorIDE extension deactivated successfully");
     resolve();

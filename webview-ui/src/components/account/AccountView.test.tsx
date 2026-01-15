@@ -6,7 +6,6 @@ import { fireEvent } from "@testing-library/react";
 const mockUseGetAccountBalanceQuery = vi.fn();
 const mockUseGetUsageTransactionsQuery = vi.fn();
 const mockUseGetPaymentTransactionsQuery = vi.fn();
-const mockBuyCredits = vi.fn();
 const baseExtensionState = {
   userInfo: { id: "user-123" },
   authenticatedUser: { id: "user-123" },
@@ -33,9 +32,60 @@ vi.mock("@valkyr/component-library/LoadingSpinner", () => ({
   default: () => <div data-testid="loading-spinner" />,
 }));
 
+vi.mock("react-bootstrap", () => {
+  const Card = ({ children, ...props }: any) => (
+    <div {...props}>{children}</div>
+  );
+  Card.Header = ({ children, ...props }: any) => (
+    <div {...props}>{children}</div>
+  );
+  Card.Body = ({ children, ...props }: any) => <div {...props}>{children}</div>;
+
+  const Form = ({ children, ...props }: any) => (
+    <form {...props}>{children}</form>
+  );
+  Form.Group = ({ children, ...props }: any) => (
+    <div {...props}>{children}</div>
+  );
+  Form.Label = ({ children, ...props }: any) => (
+    <label {...props}>{children}</label>
+  );
+  Form.Text = ({ children, ...props }: any) => (
+    <small {...props}>{children}</small>
+  );
+  Form.Control = (props: any) => <input {...props} />;
+
+  const InputGroup = ({ children, ...props }: any) => (
+    <div {...props}>{children}</div>
+  );
+  InputGroup.Text = ({ children, ...props }: any) => (
+    <span {...props}>{children}</span>
+  );
+
+  const Button = ({ children, ...props }: any) => (
+    <button {...props}>{children}</button>
+  );
+
+  const Alert = ({ children, ...props }: any) => (
+    <div {...props}>{children}</div>
+  );
+
+  return {
+    __esModule: true,
+    Card,
+    Form,
+    InputGroup,
+    Button,
+    Alert,
+  };
+});
+
 vi.mock("@thorapi/services/creditsApi", () => ({
   useGetAccountBalanceQuery: (...args: any[]) =>
     mockUseGetAccountBalanceQuery(...args),
+  useRecordPaymentTransactionMutation: () => [
+    vi.fn(() => ({ unwrap: vi.fn().mockResolvedValue({}) })),
+  ],
 }));
 
 vi.mock("@thorapi/redux/services/UsageTransactionService", () => ({
@@ -73,18 +123,6 @@ vi.mock("@thorapi/utils/vscode", () => ({ vscode: { postMessage: vi.fn() } }));
 
 vi.mock("@shared/getApiMetrics", () => ({
   getApiMetrics: () => ({ totalCost: 0 }),
-}));
-
-vi.mock("@thorapi/components/BuyCredits", () => ({
-  __esModule: true,
-  default: (props: any) => {
-    mockBuyCredits(props);
-    return (
-      <div data-testid="buy-credits-component">
-        buy-credits for {props.authenticatedPrincipal?.id || "no-user"}
-      </div>
-    );
-  },
 }));
 
 vi.mock("./CreditsHistoryTable", () => ({
@@ -157,15 +195,16 @@ describe.skip("AccountView - BuyCredits integration", () => {
       refetch: vi.fn(),
     });
 
-    mockBuyCredits.mockClear();
   });
 
   it("renders the embedded BuyCredits component instead of an external link when authenticated", () => {
     render(
       <AccountView
-        onDone={() => { }}
-        serverConsoleNeedsAttention={false}
-        onClearServerConsoleNeedsAttention={() => { }}
+        {...({
+          onDone: () => { },
+          serverConsoleNeedsAttention: false,
+          onClearServerConsoleNeedsAttention: () => { },
+        } as any)}
       />,
     );
 
@@ -173,20 +212,18 @@ describe.skip("AccountView - BuyCredits integration", () => {
       screen.queryByRole("link", { name: /buy credits/i }),
     ).not.toBeInTheDocument();
 
-    expect(mockBuyCredits).toHaveBeenCalledWith(
-      expect.objectContaining({
-        authenticatedPrincipal: expect.objectContaining({ id: "user-123" }),
-      }),
-    );
+    expect(screen.getByText(/buy credits/i)).toBeInTheDocument();
   });
 
   it("adds a 'needs-attention' class on the Server Console tab when flagged and clears it on click", () => {
     const onClear = vi.fn();
     render(
       <AccountView
-        onDone={() => { }}
-        serverConsoleNeedsAttention={true}
-        onClearServerConsoleNeedsAttention={onClear}
+        {...({
+          onDone: () => { },
+          serverConsoleNeedsAttention: true,
+          onClearServerConsoleNeedsAttention: onClear,
+        } as any)}
       />,
     );
 
@@ -200,10 +237,12 @@ describe.skip("AccountView - BuyCredits integration", () => {
   it("activates the Server Console tab when initialActiveTab prop is provided", () => {
     render(
       <AccountView
-        onDone={() => { }}
-        serverConsoleNeedsAttention={false}
-        onClearServerConsoleNeedsAttention={() => { }}
-        initialActiveTab="serverConsole"
+        {...({
+          onDone: () => { },
+          serverConsoleNeedsAttention: false,
+          onClearServerConsoleNeedsAttention: () => { },
+          initialActiveTab: "serverConsole",
+        } as any)}
       />,
     );
     // The server console should now be the active tab
@@ -230,10 +269,76 @@ describe.skip("AccountView - BuyCredits integration", () => {
       "user-123",
       expect.objectContaining({ skip: false }),
     );
-    expect(mockBuyCredits).toHaveBeenCalledWith(
-      expect.objectContaining({
-        authenticatedPrincipal: expect.objectContaining({ id: "user-123" }),
-      }),
+    expect(screen.getByText(/buy credits/i)).toBeInTheDocument();
+  });
+});
+
+describe("AccountView - BuyCredits visibility", () => {
+  beforeEach(async () => {
+    ({ default: AccountView } = await import("./AccountView"));
+    mockExtensionState = {
+      ...baseExtensionState,
+      advancedSettings: {
+        budgetAlerts: {
+          depletedThreshold: 0,
+          criticalThreshold: 1,
+          lowThreshold: 5,
+          alertThreshold: 10,
+        },
+      },
+    };
+    mockUseGetAccountBalanceQuery.mockClear();
+    mockUseGetUsageTransactionsQuery.mockReturnValue({
+      data: [],
+      isLoading: false,
+      isFetching: false,
+      refetch: vi.fn(),
+    });
+
+    mockUseGetPaymentTransactionsQuery.mockReturnValue({
+      data: [],
+      isLoading: false,
+      isFetching: false,
+      refetch: vi.fn(),
+    });
+
+  });
+
+  it("hides BuyCredits when balance is above the critical threshold", () => {
+    mockUseGetAccountBalanceQuery.mockReturnValue({
+      data: { currentBalance: 25 },
+      isLoading: false,
+      isFetching: false,
+      refetch: vi.fn(),
+    });
+
+    render(
+      <AccountView
+        onDone={() => { }}
+        serverConsoleNeedsAttention={false}
+        onClearServerConsoleNeedsAttention={() => { }}
+      />,
     );
+
+    expect(screen.queryByText(/buy credits/i)).not.toBeInTheDocument();
+  });
+
+  it("shows BuyCredits when balance is at or below the critical threshold", () => {
+    mockUseGetAccountBalanceQuery.mockReturnValue({
+      data: { currentBalance: 0.5 },
+      isLoading: false,
+      isFetching: false,
+      refetch: vi.fn(),
+    });
+
+    render(
+      <AccountView
+        onDone={() => { }}
+        serverConsoleNeedsAttention={false}
+        onClearServerConsoleNeedsAttention={() => { }}
+      />,
+    );
+
+    expect(screen.getByText(/buy credits/i)).toBeInTheDocument();
   });
 });

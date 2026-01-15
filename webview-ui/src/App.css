@@ -704,6 +704,59 @@ footer a:hover {
   min-width: 100%;
 }
 
+/* Aurora themed form inputs and buttons */
+.aurora-input {
+  background: rgba(10, 15, 20, 0.5);
+  border: 1px solid #2d3b4a;
+  color: #f3f6ff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 100%;
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+.aurora-input:focus {
+  outline: none;
+  border-color: #1ee5ff;
+  background: rgba(30, 229, 255, 0.05);
+  box-shadow: 0 0 15px rgba(30, 229, 255, 0.18);
+}
+
+.aurora-button {
+  background: #ff9900;
+  border: 1px solid #ff9900;
+  color: #05060b;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 200ms ease,
+    box-shadow 200ms ease,
+    transform 120ms ease;
+  box-shadow: 0 0 15px rgba(30, 229, 255, 0.18);
+}
+.aurora-button:hover:not(:disabled) {
+  background: #ffb347;
+  box-shadow: 0 0 18px rgba(255, 153, 0, 0.26);
+  transform: translateY(-1px);
+}
+.aurora-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Modal tweaks for Aurora style */
+.aurora-modal .modal-content {
+  background: #141a22; /* Aurora surface */
+  border: 2px solid #2d3b4a;
+  border-radius: 12px;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.45);
+}
+
 .errorMessage {
   margin: 0.25em;
   padding: 0.5em;

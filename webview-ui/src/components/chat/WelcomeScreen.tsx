@@ -41,13 +41,13 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({
         <div style={{ padding: "0 20px", flexShrink: 0 }}>
           <div
             style={{
-              backgroundColor: "#222222",
-              padding: "0 20px",
+              padding: "1em",
               flexShrink: 0,
             }}
           >
             <a href="https://valkyrlabs.com/valoride">
               <img
+                style={{ marginTop: "2em", marginBottom: "1em" }}
                 alt="Valkyr Labs"
                 src="https://valkyrlabs.com/assets/valorIde-horizontal-DyPXHpke.png"
               />

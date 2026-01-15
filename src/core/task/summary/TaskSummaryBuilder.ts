@@ -23,6 +23,17 @@ const formatTodo = (todo: TaskSummaryTodo): string => {
   return `- [${mark}] ${todo.text}`;
 };
 
+const isGeneratedFile = (relativePath: string): boolean => {
+  // Skip files in generated directories
+  // Matches: */generated/*, */*/*, */thorapi/*
+  const generatedPatterns = [
+    /\/generated\//,
+    /\/thorapi\//,
+    /\/[^/]+\/[^/]+\//,  // Matches */*/
+  ];
+  return generatedPatterns.some((pattern) => pattern.test(relativePath));
+};
+
 const formatChangesTable = (
   changesSummary?: ValorIDEChangesSummary,
 ): string[] => {
@@ -30,15 +41,24 @@ const formatChangesTable = (
     return ["_No file changes detected._"];
   }
 
+  // Filter out generated files
+  const nonGeneratedFiles = changesSummary.files.filter(
+    (file) => !isGeneratedFile(file.relativePath),
+  );
+
+  if (nonGeneratedFiles.length === 0) {
+    return ["_No file changes detected (generated files excluded)._"];
+  }
+
   const header = "| File | Status | + | - |\n| --- | --- | --- | --- |";
-  const rows = [...changesSummary.files]
+  const rows = [...nonGeneratedFiles]
     .sort((a, b) => a.relativePath.localeCompare(b.relativePath))
     .map((file: ValorIDEFileChangeSummary) => {
       const status = file.status ?? "modified";
       return `| \`${file.relativePath}\` | ${status} | ${file.insertions ?? 0} | ${file.deletions ?? 0} |`;
     });
 
-  const summaryLine = `- Files: ${changesSummary.totalFiles} (+${changesSummary.totalInsertions} / -${changesSummary.totalDeletions})`;
+  const summaryLine = `- Files: ${nonGeneratedFiles.length} (+${nonGeneratedFiles.reduce((sum, f) => sum + (f.insertions ?? 0), 0)} / -${nonGeneratedFiles.reduce((sum, f) => sum + (f.deletions ?? 0), 0)})`;
   return [summaryLine, "", header, ...rows];
 };
 

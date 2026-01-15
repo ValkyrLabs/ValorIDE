@@ -73,12 +73,7 @@ const McpConfigurationView = ({ onDone, initialTab }: McpViewProps) => {
             MCP Servers
           </h3>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <StatusBadge
-              label="P2P"
-              value={value}
-              kind={kind as any}
-              title={hasError ? String(communicationService.error) : undefined}
-            />
+
             <VSCodeButton onClick={onDone}>Done</VSCodeButton>
           </div>
         </div>

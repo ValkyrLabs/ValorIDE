@@ -4,6 +4,8 @@ import { vscode } from "@thorapi/utils/vscode";
 import { memo } from "react";
 import { formatLargeNumber } from "@thorapi/utils/format";
 import { FaComments, FaDollarSign, FaHistory } from "react-icons/fa";
+import CoolButton from "../CoolButton";
+import { Card } from "react-bootstrap";
 
 type HistoryPreviewProps = {
   showHistoryView: () => void;
@@ -53,129 +55,83 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
   };
 
   return (
-    <div style={{ flexShrink: 0 }}>
+    <div style={{ padding: "1em", flexShrink: 0 }}>
       {/* Using global aurora .history-preview-item styles */}
 
-      <div
-        style={{
-          color: "var(--vscode-descriptionForeground)",
-          margin: "10px 20px 10px 20px",
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        <FaComments
-          style={{
-            marginRight: "4px",
-            transform: "scale(0.9)",
-          }}
-        />
-        <span
-          style={{
-            fontWeight: 500,
-            fontSize: "0.85em",
-            textTransform: "uppercase",
-          }}
-        >
-          Recent Tasks
-        </span>
-      </div>
+      <h4>
+        <FaComments />{" "} Recent Tasks
+      </h4>
 
-      <div style={{ borderRadius: "10px", padding: "0px 20px 0 20px" }}>
+      <div style={{ padding: "1em" }}>
         {taskHistory
           .filter((item) => item.ts && item.task)
           .slice(0, 3)
           .map((item) => (
-            <div
-              style={{ maxHeight: "50px" }}
+            <Card
+              style={{ cursor: "pointer", maxHeight: "8em", margin: "1em" }}
               key={item.id}
-              className="history-preview-item"
+              /*className="history-preview-item"*/
               onClick={() => handleHistorySelect(item.id)}
             >
-              <div style={{ padding: "12px" }}>
-                <div
-                  style={{
-                    fontSize: "var(--vscode-font-size)",
-                    color: "var(--vscode-descriptionForeground)",
-                    marginBottom: "8px",
-                    display: "-webkit-box",
-                    WebkitLineClamp: 3,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                    whiteSpace: "pre-wrap",
-                    wordBreak: "break-word",
-                    overflowWrap: "anywhere",
-                  }}
+
+              <Card.Header style={{ cursor: "pointer", maxHeight: ".5em", overflow: "hidden", textOverflow: "ellipsis" }}>
+                <span
+                  className="timestamp"
                 >
-                  <span
-                    style={{
-                      color: "var(--vscode-foreground)",
-                      fontWeight: 700,
-                      fontSize: "0.85em",
-                      textTransform: "uppercase",
-                      letterSpacing: '0.6px',
-                    }}
-                    className="timestamp"
-                  >
-                    {formatDate(item.ts)}
-                  </span>
-                  {" • "}
-                  <span className="task-text">{item.task}</span>
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.85em",
-                    color: "var(--vscode-descriptionForeground)",
-                  }}
-                >
-                  <span>
-                    Tokens: ↑{formatLargeNumber(item.tokensIn || 0)} ↓
-                    {formatLargeNumber(item.tokensOut || 0)}
-                  </span>
-                  {!!item.cacheWrites && (
-                    <>
-                      {" • "}
-                      <span>
-                        Cache: +{formatLargeNumber(item.cacheWrites || 0)} →{" "}
-                        {formatLargeNumber(item.cacheReads || 0)}
-                      </span>
-                    </>
-                  )}
-                  {!!item.totalCost && (
-                    <>
-                      {" • "}
-                      <span>
-                        <FaDollarSign />
-                        API Cost: ${item.totalCost?.toFixed(4)}
-                      </span>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
+                  {formatDate(item.ts)}
+                </span>
+
+              </Card.Header>
+
+              <Card.Body
+                style={{ cursor: "pointer", fontSize: "0.8em", padding: "1em" }}
+              >
+                <span className="task-text">{item.task}</span>
+                <span>
+                  Tokens: ↑{formatLargeNumber(item.tokensIn || 0)} ↓
+                  {formatLargeNumber(item.tokensOut || 0)}
+                </span>
+                {!!item.cacheWrites && (
+                  <>
+                    {" • "}
+                    <span>
+                      Cache: +{formatLargeNumber(item.cacheWrites || 0)} →{" "}
+                      {formatLargeNumber(item.cacheReads || 0)}
+                    </span>
+                  </>
+                )}
+                {!!item.totalCost && (
+                  <b>
+                    {" • "}
+                    <span>
+                      <FaDollarSign />
+                      API Cost: ${item.totalCost?.toFixed(4)}
+                    </span>
+                  </b>
+                )}
+              </Card.Body>
+
+            </Card>
           ))}
         <div
           style={{
+            marginTop: "5em",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <VSCodeButton
+          <CoolButton
             onClick={() => showHistoryView()}
-            style={{
-              opacity: 0.9,
+            customStyle={{
+              width: "100%",
+              fontSize: "1em",
+              fontWeight: "bold",
+              color: "black"
             }}
           >
-            <div
-              style={{
-                fontSize: "var(--vscode-font-size)",
-                color: "var(--vscode-descriptionForeground)",
-              }}
-            >
-              <FaHistory /> View all history
-            </div>
-          </VSCodeButton>
+            <FaHistory /> View all history
+          </CoolButton>
         </div>
       </div>
     </div>

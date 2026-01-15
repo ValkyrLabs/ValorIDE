@@ -96,6 +96,7 @@ import { addUserInstructions, SYSTEM_PROMPT } from "@core/prompts/system";
 import { getContextWindowInfo } from "@core/context/context-management/context-window-utils";
 import { FileContextTracker } from "@core/context/context-tracking/FileContextTracker";
 import { ModelContextTracker } from "@core/context/context-tracking/ModelContextTracker";
+import { validateMcpToolCall } from "@core/task/mcpToolValidation";
 import {
   checkIsAnthropicContextWindowError,
   checkIsOpenRouterContextWindowError,
@@ -1693,7 +1694,7 @@ export class Task {
         nextUserContent = [
           {
             type: "text",
-            text: formatResponse.noToolsUsed(),
+            text: formatResponse.noToolsUsed(this.chatSettings?.mode ?? "act"),
           },
         ];
         this.consecutiveMistakeCount++;
@@ -2241,6 +2242,7 @@ export class Task {
         this.mcpHub,
         this.thorapi_project,
         this.browserSettings,
+        this.chatSettings ?? DEFAULT_CHAT_SETTINGS,
       );
 
       const settingsCustomInstructions = this.customInstructions?.trim();
@@ -4038,6 +4040,28 @@ export class Task {
                     break;
                   }
                 }
+                const connectedServers = this.mcpHub
+                  .getServers()
+                  .filter(
+                    (server) =>
+                      server.status === "connected" && !server.disabled,
+                  );
+                const validation = validateMcpToolCall(
+                  connectedServers,
+                  server_name,
+                  tool_name,
+                  parsedArguments,
+                );
+                if ("error" in validation) {
+                  this.consecutiveMistakeCount++;
+                  await this.say(
+                    "error",
+                    `Invalid MCP tool call. ${validation.error} Retrying...`,
+                  );
+                  pushToolResult(formatResponse.toolError(validation.error));
+                  break;
+                }
+
                 this.consecutiveMistakeCount = 0;
                 const completeMessage = JSON.stringify({
                   type: "use_mcp_tool",
@@ -4046,11 +4070,7 @@ export class Task {
                   arguments: mcp_arguments,
                 } satisfies ValorIDEAskUseMcpServer);
 
-                const isToolAutoApproved = this.mcpHub.connections
-                  ?.find((conn) => conn.server.name === server_name)
-                  ?.server.tools?.find(
-                    (tool) => tool.name === tool_name,
-                  )?.autoApprove;
+                const isToolAutoApproved = validation.tool.autoApprove;
 
                 if (
                   this.shouldAutoApproveTool(block.name) &&
@@ -4688,7 +4708,7 @@ export class Task {
             const summaryTitle = (() => {
               const candidate =
                 resultTitleLine &&
-                resultTitleLine.toLowerCase() !==
+                  resultTitleLine.toLowerCase() !==
                   initialTitleLine.toLowerCase()
                   ? resultTitleLine
                   : initialTitleLine;
@@ -5544,7 +5564,7 @@ export class Task {
           // normal request where tool use is required
           this.userMessageContent.push({
             type: "text",
-            text: formatResponse.noToolsUsed(),
+            text: formatResponse.noToolsUsed(this.chatSettings?.mode ?? "act"),
           });
           this.consecutiveMistakeCount++;
         }

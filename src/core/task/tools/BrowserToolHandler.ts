@@ -9,7 +9,6 @@ import {
   BrowserAction,
   ValorIDESayBrowserAction,
 } from "@shared/ExtensionMessage";
-import { telemetryService } from "@services/telemetry/TelemetryService";
 
 export class BrowserToolHandler extends BaseToolHandler {
   async execute(
@@ -37,7 +36,7 @@ export class BrowserToolHandler extends BaseToolHandler {
         };
         await this.context
           .ask("tool", JSON.stringify(browserActionParams), partial)
-          .catch(() => {});
+          .catch(() => { });
       }
       return { shouldContinue: false };
     }
@@ -109,22 +108,12 @@ export class BrowserToolHandler extends BaseToolHandler {
       );
       const didApprove = await this.askApproval("tool", message);
       if (!didApprove) {
-        telemetryService.captureToolUsage(
-          this.context.taskId,
-          block.name,
-          false,
-          false,
-        );
+
         return { shouldContinue: true, userRejected: true };
       }
     }
 
-    telemetryService.captureToolUsage(
-      this.context.taskId,
-      block.name,
-      true, // assuming auto-approve or user approved
-      true,
-    );
+
 
     try {
       let result: any;

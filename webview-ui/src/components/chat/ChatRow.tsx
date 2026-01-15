@@ -517,7 +517,7 @@ type ChatRowContentProps = Omit<ChatRowProps, "onHeightChange"> & {
   onHeightChange?: (isTaller: boolean) => void;
 };
 
-export const API_REQUEST_TIMEOUT_MS = 60000;
+export const API_REQUEST_TIMEOUT_MS = 10000;
 const severityColors: Record<"info" | "warning" | "error", string> = {
   info:
     "var(--vscode-notificationsInfoIcon-foreground, var(--vscode-charts-blue))",
@@ -531,6 +531,37 @@ const severityRank: Record<"info" | "warning" | "error", number> = {
   info: 0,
   warning: 1,
   error: 2,
+};
+
+const parseCommandMessage = (text: string) => {
+  const outputIndex = text.indexOf(COMMAND_OUTPUT_STRING);
+  if (outputIndex === -1) {
+    return { rawCommand: text.trim(), output: "", hadDelimiter: false };
+  }
+  const output = text
+    .slice(outputIndex + COMMAND_OUTPUT_STRING.length)
+    .trim()
+    .split("")
+    .map((char) => {
+      switch (char) {
+        case "\t":
+          return "→   ";
+        case "\b":
+          return "⌫";
+        case "\f":
+          return "⏏";
+        case "\v":
+          return "⇳";
+        default:
+          return char;
+      }
+    })
+    .join("");
+  return {
+    rawCommand: text.slice(0, outputIndex).trim(),
+    output,
+    hadDelimiter: true,
+  };
 };
 
 const mergeSeverity = (
@@ -619,7 +650,7 @@ export const CompletionSummaryCard = memo(
       "- Run relevant tests/linters before merging.",
       "- Confirm any external configuration or deployment steps are updated.",
     ].join("\n");
-    const narrativeMarkdown = [summarySection, nextStepsSection]
+    const narrativeMarkdown = [summarySection, nextStepsSection, bodyMarkdown]
       .filter(Boolean)
       .join("\n\n")
       .trim();
@@ -651,7 +682,7 @@ export const CompletionSummaryCard = memo(
             color: "var(--vscode-foreground)",
           }}
         >
-          <FaCheckCircle color="var(--vscode-charts-green)" />
+          <FaCheckCircle size={28} color="var(--vscode-charts-green)" />
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontWeight: 700, fontSize: 13 }}>
               {title ? `Task Summary — ${title}` : "Task Summary"}
@@ -787,6 +818,11 @@ export const ChatRowContent = ({
       ? lastModifiedMessage?.text
       : undefined;
 
+  const isTaskCompletionMessage =
+    (lastModifiedMessage?.ask === "completion_result" ||
+      lastModifiedMessage?.say === "completion_result") &&
+    !lastModifiedMessage?.partial;
+
   const isCommandMessage =
     lastModifiedMessage?.ask === "command" ||
     lastModifiedMessage?.say === "command" ||
@@ -803,6 +839,29 @@ export const ChatRowContent = ({
     isLast && lastModifiedMessage?.say === "mcp_server_request_started";
 
   const type = message.type === "ask" ? message.ask : message.say;
+  const commandDetails = useMemo(() => {
+    if (
+      message.ask === "command" ||
+      message.say === "command" ||
+      message.ask === "command_output" ||
+      message.say === "command_output"
+    ) {
+      return parseCommandMessage(message.text || "");
+    }
+    return undefined;
+  }, [message.ask, message.say, message.text]);
+  const rawCommand = commandDetails?.rawCommand ?? "";
+  const hadCommandDelimiter = commandDetails?.hadDelimiter ?? false;
+  const commandOutput = commandDetails?.output ?? "";
+  const isCommandOutputMessage =
+    message.ask === "command_output" || message.say === "command_output";
+  const isOutputOnly = isCommandOutputMessage && !hadCommandDelimiter;
+  const requestsApproval = rawCommand.endsWith(COMMAND_REQ_APP_STRING);
+  const command = requestsApproval
+    ? rawCommand.slice(0, -COMMAND_REQ_APP_STRING.length)
+    : rawCommand;
+  const commandHeaderSuffix =
+    !isOutputOnly && command ? ` ${command}` : "";
   const apiRequestTimeoutMessage = apiRequestTimedOut
     ? "API request timed out waiting for usage details."
     : undefined;
@@ -868,36 +927,36 @@ export const ChatRowContent = ({
   useEvent("message", handleMessage);
 
   useEffect(() => {
-    if (message.say !== "api_req_started") {
-      setApiRequestTimedOut(false);
-      return null;
-    }
-
     setApiRequestTimedOut(false);
 
-    if (
-      !isLast ||
-      apiRequestUsageAvailable ||
-      apiReqCancelReason != null ||
-      apiRequestFailedMessage != null ||
-      apiReqStreamingFailedMessage != null
-    ) {
-      return null;
+    let timeoutId: number | undefined;
+    const shouldTimeout =
+      message.say === "api_req_started" &&
+      isLast &&
+      !isTaskCompletionMessage &&
+      !apiRequestUsageAvailable &&
+      apiReqCancelReason == null &&
+      apiRequestFailedMessage == null &&
+      apiReqStreamingFailedMessage == null;
+
+    if (shouldTimeout) {
+      timeoutId = window.setTimeout(
+        () => setApiRequestTimedOut(true),
+        API_REQUEST_TIMEOUT_MS,
+      );
     }
 
-    const timeoutId = window.setTimeout(
-      () => setApiRequestTimedOut(true),
-      API_REQUEST_TIMEOUT_MS,
-    );
-
     return () => {
-      window.clearTimeout(timeoutId);
+      if (timeoutId != null) {
+        window.clearTimeout(timeoutId);
+      }
     };
   }, [
     apiReqCancelReason,
     apiReqStreamingFailedMessage,
     apiRequestFailedMessage,
     apiRequestUsageAvailable,
+    isTaskCompletionMessage,
     isLast,
     message.say,
     message.text,
@@ -985,9 +1044,12 @@ export const ChatRowContent = ({
               }}
             />
           ),
-          <span style={{ color: normalColor, fontWeight: "bold" }}>
-            ValorIDE executing command:
-          </span>,
+          <>
+            <span style={{ color: normalColor, fontWeight: "bold" }}>
+              ValorIDE executing command:
+            </span>
+            <p>{commandHeaderSuffix}</p>
+          </>,
         ];
       case "use_mcp_server":
         const mcpServerUse =
@@ -1062,6 +1124,7 @@ export const ChatRowContent = ({
         );
         const apiReqInfo = parsedApiReqInfo;
         const apiRequestFinished =
+          isTaskCompletionMessage ||
           !isLast ||
           apiRequestUsageAvailable ||
           apiReqCancelReason != null ||
@@ -1112,7 +1175,7 @@ export const ChatRowContent = ({
               );
             }
 
-            if (apiRequestUsageAvailable || cost != null) {
+            if (apiRequestUsageAvailable || cost != null || isTaskCompletionMessage) {
               return (
                 <span style={{ color: normalColor, fontWeight: "bold" }}>
                   API Request
@@ -1152,6 +1215,7 @@ export const ChatRowContent = ({
     isMcpServerResponding,
     apiRequestUsageAvailable,
     apiRequestTimedOut,
+    isTaskCompletionMessage,
     message.text,
   ]);
 
@@ -1265,7 +1329,71 @@ export const ChatRowContent = ({
           // If parsing fails, fall back to raw content
         }
 
+        const formatSnippet = (value: unknown, maxLength = 64) => {
+          if (typeof value !== "string") {
+            return "";
+          }
+          const normalized = value.replace(/\s+/g, " ").trim();
+          if (!normalized) {
+            return "";
+          }
+          if (normalized.length <= maxLength) {
+            return normalized;
+          }
+          return `${normalized.slice(0, maxLength - 3)}...`;
+        };
+
+        const formatPair = (fromValue: unknown, toValue: unknown) => {
+          const from = formatSnippet(fromValue);
+          const to = formatSnippet(toValue);
+          if (from && to) {
+            return `"${from}" -> "${to}"`;
+          }
+          if (from) {
+            return `"${from}"`;
+          }
+          if (to) {
+            return `"${to}"`;
+          }
+          return "";
+        };
+
+        const formatEditDetail = (edit: Record<string, any>) => {
+          const kind =
+            typeof edit?.kind === "string" ? edit.kind : "contextual";
+          if (kind === "contextual") {
+            const occurrence =
+              edit.occurrence !== undefined
+                ? ` (occurrence: ${edit.occurrence})`
+                : "";
+            const pair = formatPair(edit.find, edit.replace);
+            return pair ? `contextual${occurrence}: ${pair}` : `contextual${occurrence}`;
+          }
+          if (kind === "ts-ast") {
+            const intent =
+              typeof edit.intent === "string" ? edit.intent : "edit";
+            if (intent === "insertOptionalChaining") {
+              const target = formatSnippet(edit.target);
+              return target
+                ? `ts-ast ${intent}: "${target}"`
+                : `ts-ast ${intent}`;
+            }
+            const pair = formatPair(edit.from, edit.to);
+            const fallback = formatSnippet(edit.fallback);
+            const fallbackLabel = fallback ? ` (fallback: "${fallback}")` : "";
+            return pair
+              ? `ts-ast ${intent}: ${pair}${fallbackLabel}`
+              : `ts-ast ${intent}`;
+          }
+          if (kind === "byte") {
+            const pair = formatPair(edit.findHex, edit.replaceHex);
+            return pair ? `byte: ${pair}` : "byte";
+          }
+          return typeof kind === "string" ? kind : "edit";
+        };
+
         let editSummary: string | undefined;
+        let editDetails: string[] = [];
         if (
           Array.isArray(parsedContent?.edits) &&
           parsedContent.edits.length > 0
@@ -1282,9 +1410,15 @@ export const ChatRowContent = ({
           editSummary = Object.entries(counts)
             .map(([kind, count]) => `${kind}×${count}`)
             .join(", ");
+          editDetails = parsedContent.edits
+            .map((edit: Record<string, any>) => formatEditDetail(edit))
+            .filter((detail: string) => detail.length > 0);
         }
 
         const summaryParts: string[] = [];
+        if (tool.path) {
+          summaryParts.push(`File: ${tool.path}`);
+        }
         if (editSummary) {
           summaryParts.push(`Edits: ${editSummary}`);
         }
@@ -1296,6 +1430,10 @@ export const ChatRowContent = ({
         }
 
         const summary = summaryParts.join(" • ");
+        const summaryItems =
+          summaryParts.length > 0
+            ? summaryParts
+            : ["Precision search & replace details"];
         const statusLabel =
           (parsedContent?.result?.status as string | undefined) ??
           (parsedContent?.result?.outcome as string | undefined) ??
@@ -1365,7 +1503,12 @@ export const ChatRowContent = ({
                   </span>
                 )}
                 <span style={{ flex: 1 }}>
-                  {summary || "Precision search & replace details"}
+                  {summaryItems.map((part, index) => (
+                    <React.Fragment key={`${part}-${index}`}>
+                      {index > 0 && " • "}
+                      <span>{part}</span>
+                    </React.Fragment>
+                  ))}
                   <span
                     style={{
                       marginLeft: 8,
@@ -1375,6 +1518,28 @@ export const ChatRowContent = ({
                   >
                     {isExpanded ? "Tap to collapse" : "Tap to open"}
                   </span>
+                  {isExpanded && editDetails.length > 0 && (
+                    <span
+                      style={{
+                        display: "block",
+                        marginTop: 6,
+                        fontSize: "11px",
+                        color: "var(--vscode-descriptionForeground)",
+                      }}
+                    >
+                      {editDetails.map((detail, index) => (
+                        <span
+                          key={`${detail}-${index}`}
+                          style={{
+                            display: "block",
+                            marginTop: index === 0 ? 0 : 4,
+                          }}
+                        >
+                          {detail}
+                        </span>
+                      ))}
+                    </span>
+                  )}
                 </span>
                 {isExpanded ? (
                   <FaChevronDown size={12} />
@@ -1577,53 +1742,8 @@ export const ChatRowContent = ({
     message.ask === "command_output" ||
     message.say === "command_output"
   ) {
-    const splitMessage = (text: string) => {
-      const outputIndex = text.indexOf(COMMAND_OUTPUT_STRING);
-      if (outputIndex === -1) {
-        return { command: text.trim(), output: "", hadDelimiter: false };
-      }
-      return {
-        command: text.slice(0, outputIndex).trim(),
-        output: text
-          .slice(outputIndex + COMMAND_OUTPUT_STRING.length)
-          .trim()
-          .split("")
-          .map((char) => {
-            switch (char) {
-              case "\t":
-                return "→   ";
-              case "\b":
-                return "⌫";
-              case "\f":
-                return "⏏";
-              case "\v":
-                return "⇳";
-              default:
-                return char;
-            }
-          })
-          .join(""),
-        hadDelimiter: true,
-      };
-    };
-
-    const {
-      command: rawCommand,
-      output,
-      hadDelimiter,
-    } = splitMessage(message.text || "");
-
-    const isOutputOnly =
-      (message.ask === "command_output" || message.say === "command_output") &&
-      !hadDelimiter;
-
-    const requestsApproval = rawCommand.endsWith(COMMAND_REQ_APP_STRING);
-    const command = requestsApproval
-      ? rawCommand.slice(0, -COMMAND_REQ_APP_STRING.length)
-      : rawCommand;
-
     const resolvedOutput =
-      isOutputOnly && command.length > 0 ? command : output;
+      isOutputOnly && command.length > 0 ? command : commandOutput;
     const normalizedOutput = resolvedOutput || "";
     const hasOutputContent = normalizedOutput.trim().length > 0;
     const outputPreview = (() => {
@@ -1644,7 +1764,7 @@ export const ChatRowContent = ({
     const shouldRenderOutputSection =
       message.ask === "command" ||
       message.say === "command" ||
-      hadDelimiter ||
+      hadCommandDelimiter ||
       isOutputOnly ||
       hasOutputContent;
 
@@ -2174,42 +2294,42 @@ export const ChatRowContent = ({
           );
         case "workspace_access_error":
           return (
-            <>
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                backgroundColor: "rgba(255, 191, 0, 0.1)",
+                padding: 8,
+                borderRadius: 3,
+                fontSize: 12,
+              }}
+            >
               <div
                 style={{
                   display: "flex",
-                  flexDirection: "column",
-                  backgroundColor: "rgba(255, 191, 0, 0.1)",
-                  padding: 8,
-                  borderRadius: 3,
-                  fontSize: 12,
+                  alignItems: "center",
+                  marginBottom: 4,
                 }}
               >
-                <div
+                <FaCarCrash />
+                <span
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: 4,
+                    fontWeight: 500,
+                    color: "#FFA500",
                   }}
                 >
-                  <FaCarCrash />
-                  <span
-                    style={{
-                      fontWeight: 500,
-                      color: "#FFA500",
-                    }}
-                  >
-                    Outside Workspace
-                  </span>
-                </div>
-                <div>
-                  ValorIDE can only operate inside the opened workspace. The
-                  file <code>{message.text}</code> lives elsewhere. Open the
-                  folder that contains it or share the contents manually if it
-                  should be accessible.
-                </div>
+                  Outside Workspace
+                </span>
               </div>
-            </>
+              <div>
+                ValorIDE can only operate inside the opened workspace. The
+                file <code>{message.text}</code> lives elsewhere. Open the
+                folder that contains it or share the contents manually if it
+                should be accessible.
+              </div>
+            </div>
+
           );
         case "checkpoint_created":
           return (
@@ -2342,52 +2462,52 @@ export const ChatRowContent = ({
           );
         case "shell_integration_warning":
           return (
-            <>
+
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                backgroundColor: "rgba(255, 191, 0, 0.1)",
+                padding: 8,
+                borderRadius: 3,
+                fontSize: 12,
+              }}
+            >
               <div
                 style={{
                   display: "flex",
-                  flexDirection: "column",
-                  backgroundColor: "rgba(255, 191, 0, 0.1)",
-                  padding: 8,
-                  borderRadius: 3,
-                  fontSize: 12,
+                  alignItems: "center",
+                  marginBottom: 4,
                 }}
               >
-                <div
+                <FaWarning />
+                <span
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: 4,
+                    fontWeight: 500,
+                    color: "#FFA500",
                   }}
                 >
-                  <FaWarning />
-                  <span
-                    style={{
-                      fontWeight: 500,
-                      color: "#FFA500",
-                    }}
-                  >
-                    Shell Integration Unavailable
-                  </span>
-                </div>
-                <div>
-                  ValorIDE won't be able to view the command's output. Please
-                  update VSCode (<code>CMD/CTRL + Shift + P</code> → "Update")
-                  and make sure you're using a supported shell: zsh, bash, fish,
-                  or PowerShell (<code>CMD/CTRL + Shift + P</code> → "Terminal:
-                  Select Default Profile").{" "}
-                  <a
-                    href="https://valkyrlabs.com/v1/Products/ValorIDE/tools/cline-tools-guide"
-                    style={{
-                      color: "inherit",
-                      textDecoration: "underline",
-                    }}
-                  >
-                    Still having trouble?
-                  </a>
-                </div>
+                  Shell Integration Unavailable
+                </span>
               </div>
-            </>
+              <div>
+                ValorIDE won't be able to view the command's output. Please
+                update VSCode (<code>CMD/CTRL + Shift + P</code> → "Update")
+                and make sure you're using a supported shell: zsh, bash, fish,
+                or PowerShell (<code>CMD/CTRL + Shift + P</code> → "Terminal:
+                Select Default Profile").{" "}
+                <a
+                  href="https://valkyrlabs.com/v1/Products/ValorIDE/tools/cline-tools-guide"
+                  style={{
+                    color: "inherit",
+                    textDecoration: "underline",
+                  }}
+                >
+                  Still having trouble?
+                </a>
+              </div>
+            </div>
+
           );
         default:
           return (
@@ -2441,108 +2561,110 @@ export const ChatRowContent = ({
             </>
           );
         case "completion_result": {
-          const hasChanges =
-            message.text?.endsWith(COMPLETION_RESULT_CHANGES_FLAG) ?? false;
-          const text = hasChanges
-            ? message.text?.slice(0, -COMPLETION_RESULT_CHANGES_FLAG.length)
-            : message.text;
-          const hasSummary = !!message.summaryMarkdown;
-          const initialPromptText = valorideMessages?.[0]?.text;
-          const shouldHideText = Boolean(
-            text &&
-            initialPromptText &&
-            text.trim() === initialPromptText.trim(),
-          );
-          if (!text && !hasSummary && !hasChanges) {
-            return null; // nothing to show
-          }
-          return (
-            <div>
-              <div
-                style={{
-                  ...headerStyle,
-                  marginBottom: "10px",
-                }}
-              >
-                {icon}
-                {title}
-                <TaskFeedbackButtons
-                  messageTs={message.ts}
-                  isFromHistory={
-                    !isLast ||
-                    lastModifiedMessage?.ask === "resume_completed_task" ||
-                    lastModifiedMessage?.ask === "resume_task"
-                  }
+          {
+            const hasChanges =
+              message.text?.endsWith(COMPLETION_RESULT_CHANGES_FLAG) ?? false;
+            const text = hasChanges
+              ? message.text?.slice(0, -COMPLETION_RESULT_CHANGES_FLAG.length)
+              : message.text;
+            const hasSummary = !!message.summaryMarkdown;
+            const initialPromptText = valorideMessages?.[0]?.text;
+            const shouldHideText = Boolean(
+              text &&
+              initialPromptText &&
+              text.trim() === initialPromptText.trim(),
+            );
+            if (!text && !hasSummary && !hasChanges) {
+              return null; // nothing to show
+            }
+            return (
+              <div>
+                <div
                   style={{
-                    marginLeft: "auto",
+                    ...headerStyle,
+                    marginBottom: "10px",
                   }}
-                />
-              </div>
-              <div
-                style={{
-                  color: "var(--vscode-charts-green)",
-                  paddingTop: 10,
-                }}
-              >
-                {text && !shouldHideText && <Markdown markdown={text} />}
-                <CompletionSummaryCard
-                  markdown={message.summaryMarkdown}
-                  title={message.summaryTitle}
-                  completedAt={message.summaryCompletedAt}
-                  fallbackMarkdown={(() => {
-                    const sections: string[] = [];
-                    if (text && !shouldHideText) {
-                      sections.push(text.trim());
+                >
+                  {icon}
+                  {title}
+                  <TaskFeedbackButtons
+                    messageTs={message.ts}
+                    isFromHistory={
+                      !isLast ||
+                      lastModifiedMessage?.ask === "resume_completed_task" ||
+                      lastModifiedMessage?.ask === "resume_task"
                     }
-                    if (message.changesSummary) {
-                      const { totalInsertions, totalDeletions, files = [] } =
-                        message.changesSummary;
-                      const keyFiles = files
-                        .slice(0, 3)
-                        .map(
-                          (f) =>
-                            `- ${f.relativePath} (${f.status.toUpperCase()})`,
-                        )
-                        .join("\n");
-                      sections.push(
-                        [
-                          "### Changes",
-                          `- Files touched: ${files.length}`,
-                          `- Insertions/Deletions: +${totalInsertions} / -${totalDeletions}`,
-                          keyFiles ? `Key files:\n${keyFiles}` : undefined,
-                        ]
-                          .filter(Boolean)
-                          .join("\n"),
-                      );
-                    }
-                    return sections.filter(Boolean).join("\n\n");
-                  })()}
-                />
-                {message.partial !== true &&
-                  hasChanges &&
-                  (message.changesSummary ? (
-                    <CompletionChangesSummary
-                      summary={message.changesSummary}
-                      disabled={seeNewChangesDisabled}
-                      onOpenAllChanges={handleOpenAllChanges}
-                      onOpenFileDiff={handleOpenFileDiff}
-                      messageTs={message.ts}
-                    />
-                  ) : (
-                    <div style={{ marginTop: 15 }}>
-                      <SuccessButton
-                        appearance="secondary"
+                    style={{
+                      marginLeft: "auto",
+                    }}
+                  />
+                </div>
+                <div
+                  style={{
+                    color: "var(--vscode-charts-green)",
+                    paddingTop: 10,
+                  }}
+                >
+                  {text && !shouldHideText && <Markdown markdown={text} />}
+                  <CompletionSummaryCard
+                    markdown={message.summaryMarkdown}
+                    title={message.summaryTitle}
+                    completedAt={message.summaryCompletedAt}
+                    fallbackMarkdown={(() => {
+                      const sections: string[] = [];
+                      if (text && !shouldHideText) {
+                        sections.push(text.trim());
+                      }
+                      if (message.changesSummary) {
+                        const { totalInsertions, totalDeletions, files = [] } =
+                          message.changesSummary;
+                        const keyFiles = files
+                          .slice(0, 3)
+                          .map(
+                            (f) =>
+                              `- ${f.relativePath} (${f.status.toUpperCase()})`,
+                          )
+                          .join("\n");
+                        sections.push(
+                          [
+                            "### Changes",
+                            `- Files touched: ${files.length}`,
+                            `- Insertions/Deletions: +${totalInsertions} / -${totalDeletions}`,
+                            keyFiles ? `Key files:\n${keyFiles}` : undefined,
+                          ]
+                            .filter(Boolean)
+                            .join("\n"),
+                        );
+                      }
+                      return sections.filter(Boolean).join("\n\n");
+                    })()}
+                  />
+                  {message.partial !== true &&
+                    hasChanges &&
+                    (message.changesSummary ? (
+                      <CompletionChangesSummary
+                        summary={message.changesSummary}
                         disabled={seeNewChangesDisabled}
-                        onClick={handleOpenAllChanges}
-                      >
-                        <FaFile />
-                        See new changes
-                      </SuccessButton>
-                    </div>
-                  ))}
+                        onOpenAllChanges={handleOpenAllChanges}
+                        onOpenFileDiff={handleOpenFileDiff}
+                        messageTs={message.ts}
+                      />
+                    ) : (
+                      <div style={{ marginTop: 15 }}>
+                        <SuccessButton
+                          appearance="secondary"
+                          disabled={seeNewChangesDisabled}
+                          onClick={handleOpenAllChanges}
+                        >
+                          <FaFile />
+                          See new changes
+                        </SuccessButton>
+                      </div>
+                    ))}
+                </div>
               </div>
-            </div>
-          );
+            );
+          }
         }
         case "followup":
           let question: string | undefined;

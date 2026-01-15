@@ -272,20 +272,22 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
           </div>
         </div>
         <div style={{ flexGrow: 1, overflowY: "auto", margin: 0 }}>
-          {/* {presentableTasks.length === 0 && (
-						<div
-							style={{
-								
-								alignItems: "center",
-								fontStyle: "italic",
-								color: "var(--vscode-descriptionForeground)",
-								textAlign: "center",
-								padding: "0px 10px",
-							}}>
-								<FaRobot style={{ fontSize: "60px", marginBottom: "10px" }} />
-							<div>Start a task to see it here</div>
-						</div>
-					)} */}
+          {/* 
+          {presentableTasks.length === 0 && (
+            <div
+              style={{
+
+                alignItems: "center",
+                fontStyle: "italic",
+                color: "var(--vscode-descriptionForeground)",
+                textAlign: "center",
+                padding: "0px 10px",
+              }}>
+              <FaRobot style={{ fontSize: "60px", marginBottom: "10px" }} />
+              <div>Start a task to see it here</div>
+            </div>
+          )}
+            */}
           <Virtuoso
             style={{
               flexGrow: 1,

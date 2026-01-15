@@ -17,7 +17,8 @@ import * as Yup from "yup";
 
 import { useLoginUserMutation } from "../../redux/services/LoginService";
 import { Login } from "@thorapi/model";
-import CoolButton from "@valkyr/component-library/CoolButton";
+// Use Aurora design system styles for login fields and buttons
+import { AuroraInput } from "../../utils/auroraDesignSystem";
 import ErrorModal from "../ErrorModal";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
 import { storeJwtToken, writeStoredPrincipal } from "../../utils/accessControl";
@@ -199,8 +200,8 @@ const Form: React.FC<FormProps> = ({
                         type="text"
                         className={
                           errors.username
-                            ? "form-control field-error"
-                            : " form-control"
+                            ? "form-control field-error aurora-input"
+                            : "form-control aurora-input"
                         }
                       />
                       <ErrorMessage
@@ -228,8 +229,8 @@ const Form: React.FC<FormProps> = ({
                         type="password"
                         className={
                           errors.password
-                            ? "form-control field-error"
-                            : " form-control"
+                            ? "form-control field-error aurora-input"
+                            : "form-control aurora-input"
                         }
                       />
                       <ErrorMessage
@@ -245,18 +246,11 @@ const Form: React.FC<FormProps> = ({
                 <br />
                 <Row>
                   <Col>
-                    <CoolButton
-                      customStyle={{ width: "100%", color: "black" }}
-                      variant={
-                        touched && isValid
-                          ? isSubmitting
-                            ? "disabled"
-                            : "warning"
-                          : "dark"
-                      }
-                      // disabled={!(touched && isValid && (loginUserResult.status == 'uninitialized'))}
+                    <button
                       type="submit"
-                      onClick={() => { }}
+                      className="aurora-button"
+                      disabled={isSubmitting || !(touched && isValid)}
+                      style={{ width: "100%" }}
                     >
                       {isSubmitting && (
                         <Spinner
@@ -267,8 +261,9 @@ const Form: React.FC<FormProps> = ({
                           aria-hidden="true"
                         />
                       )}
-                      <FiUserCheck size={30} /> Login Now
-                    </CoolButton>
+                      <FiUserCheck size={20} style={{ verticalAlign: "middle", marginRight: 8 }} />
+                      Sign in
+                    </button>
                   </Col>
                 </Row>
 

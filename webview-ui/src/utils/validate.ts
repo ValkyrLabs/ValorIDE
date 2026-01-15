@@ -47,6 +47,11 @@ export function validateApiConfiguration(
           return "You must provide a valid API key or choose a different provider.";
         }
         break;
+      case "moonshot":
+        if (!apiConfiguration.moonshotApiKey) {
+          return "You must provide a valid API key or choose a different provider.";
+        }
+        break;
       case "xai":
         if (!apiConfiguration.xaiApiKey) {
           return "You must provide a valid API key or choose a different provider.";

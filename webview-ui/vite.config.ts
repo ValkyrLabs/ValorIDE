@@ -8,6 +8,8 @@ export default defineConfig({
 
   build: {
     outDir: "build",
+    // Emit source maps so we can debug minified stack traces in production builds
+    sourcemap: true,
     rollupOptions: {
       output: {
         inlineDynamicImports: true,

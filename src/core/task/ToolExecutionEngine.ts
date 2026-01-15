@@ -15,7 +15,7 @@ import {
   ValorIDESayTool,
 } from "@shared/ExtensionMessage";
 import { formatResponse } from "@core/prompts/responses";
-import { telemetryService } from "@services/telemetry/TelemetryService";
+
 import { extractTextFromFile } from "@integrations/misc/extract-text";
 import { listFiles } from "@services/glob/list-files";
 import { parseSourceCodeForDefinitionsTopLevel } from "@services/tree-sitter";

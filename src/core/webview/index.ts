@@ -331,6 +331,7 @@ export class WebviewProvider implements vscode.WebviewViewProvider {
     const { httpOrigin: valkyraiOrigin, wsOrigin: valkyraiWsOrigin } =
       deriveValkyraiOrigins(valkyraiBasePath);
     const connectSrcEntries = new Set<string>([
+      webview.cspSource,
       valkyraiOrigin || "http://localhost:8080",
       "https://*.valkyrlabs.com",
       "wss://*.valkyrlabs.com",
