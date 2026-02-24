@@ -615,7 +615,7 @@
     "react-draggable": "^4.4.6",
     "react-icons": "^5.5.0",
     "react-remark": "^2.1.0",
-    "react-router-dom": "^7.3.0",
+    "react-router-dom": "^7.13.1",
     "react-scripts": "^5.0.1",
     "react-textarea-autosize": "^8.5.8",
     "react-use": "^17.6.0",
@@ -644,6 +644,7 @@
   "resolutions": {
     "fast-xml-parser": "5.3.6",
     "qs": "6.14.1",
-    "axios": "1.13.5"
+    "axios": "1.13.5",
+    "minimatch": "10.2.1"
   }
 }
