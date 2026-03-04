@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.668",
+  "version": "3.20.792",
   "icon": "assets/icons/icon.png",
   "pricing": "Free",
   "galleryBanner": {
@@ -19,7 +19,7 @@
   "publisher": "ValkyrLabsInc",
   "repository": {
     "type": "git",
-    "url": "https://github.com/valkyrlabs/valor-ide"
+    "url": "https://github.com/valkyrlabs/valoride"
   },
   "homepage": "https://valkyrlabs.com",
   "categories": [
@@ -367,7 +367,7 @@
         },
         "valoride.advanced.debugging.showPsrResultsReport": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "markdownDescription": "When enabled, ValorIDE prints the full precision_search_and_replace result report after each edit."
         },
         "valoride.valkyrai.host": {
@@ -475,6 +475,9 @@
     }
   },
   "scripts": {
+    "webview-errors": "node ./scripts/webview_error_server.js",
+    "map-source": "node ./scripts/map_source.js",
+    "capture-console": "node ./scripts/capture_console.js",
     "build": "yarn format:fix && yarn install && tsc && v",
     "build-staging": "build --mode staging",
     "build-prod": "build --mode prod",

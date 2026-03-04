@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, useLayoutEffect } from "react";
 import { useEvent } from "react-use";
+import { useDispatch, useSelector } from "react-redux";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import ChatView from "./components/chat/ChatView";
 import { ChatErrorBoundary } from "./components/chat/ChatErrorBoundary";
@@ -34,6 +35,7 @@ import {
 } from "./utils/accessControl";
 import McpView from "./components/mcp/configuration/McpConfigurationView";
 import { McpViewTab } from "@shared/mcp";
+import { clearAccountBalancePrompt } from "./redux/slices/apiErrorsSlice";
 
 const AppContent = () => {
   const {
@@ -43,6 +45,10 @@ const AppContent = () => {
     telemetrySetting,
     vscMachineId,
   } = useExtensionState();
+  const dispatch = useDispatch();
+  const showAccountBalance = useSelector(
+    (state: any) => state?.apiErrors?.showAccountBalance,
+  );
   const [hasStoredAuth, setHasStoredAuth] = useState(false);
 
   // Check for stored credentials BEFORE rendering to prevent welcome flicker
@@ -272,6 +278,22 @@ const AppContent = () => {
       vscode.postMessage({ type: "didShowAnnouncement" });
     }
   }, [shouldShowAnnouncement]);
+
+  useEffect(() => {
+    if (!showAccountBalance) return;
+
+    setShowSettings(false);
+    setShowHistory(false);
+    setShowMcp(false);
+    setShowAccount(true);
+    setShowGeneratedFiles(false);
+    setShowServerConsole(false);
+    setShowApplicationProgress(false);
+    setShowFileExplorer(true);
+    setAccountInitialActiveTab("account");
+
+    dispatch(clearAccountBalancePrompt());
+  }, [dispatch, showAccountBalance]);
 
   const handleFileSelect = useCallback((filePath: string) => {
     // Use openMention to open the selected file

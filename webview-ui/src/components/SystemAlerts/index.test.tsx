@@ -8,6 +8,12 @@ const mockUseGetAccountBalanceQuery = vi.fn();
 const mockIsInsufficientFunds = vi.fn();
 const mockUseExtensionState = vi.fn();
 const mockGetApiMetrics = vi.fn();
+const mockReduxState: any = {
+  apiErrors: {
+    lastError: null,
+    showAccountBalance: false,
+  },
+};
 
 vi.mock("@thorapi/context/ExtensionStateContext", () => ({
   useExtensionState: () => mockUseExtensionState(),
@@ -21,6 +27,10 @@ vi.mock("@thorapi/services/creditsApi", () => ({
 
 vi.mock("@shared/getApiMetrics", () => ({
   getApiMetrics: (...args: any[]) => mockGetApiMetrics(...args),
+}));
+
+vi.mock("react-redux", () => ({
+  useSelector: (selector: any) => selector(mockReduxState),
 }));
 
 vi.mock("@thorapi/components/BuyCredits", () => ({
@@ -63,6 +73,7 @@ const baseExtensionState = {
   userInfo: { id: "user-123" },
 };
 
+
 describe("SystemAlerts - Buy Credits modal visibility", () => {
   beforeEach(async () => {
     mockUseExtensionState.mockReturnValue(baseExtensionState);
@@ -72,6 +83,10 @@ describe("SystemAlerts - Buy Credits modal visibility", () => {
     });
     mockIsInsufficientFunds.mockReturnValue(true);
     mockGetApiMetrics.mockReturnValue({ totalCost: 0 });
+    mockReduxState.apiErrors = {
+      lastError: null,
+      showAccountBalance: false,
+    };
 
     vi.resetModules();
     ({ default: SystemAlerts } = await import("./index"));
@@ -130,6 +145,55 @@ describe("SystemAlerts - Buy Credits modal visibility", () => {
 
     await waitFor(() =>
       expect(screen.getByTestId("buy-credits-modal")).toBeInTheDocument(),
+    );
+  });
+
+  it("shows api error alert when apiErrors has lastError", async () => {
+    mockUseExtensionState.mockReturnValue(baseExtensionState);
+    mockUseGetAccountBalanceQuery.mockReturnValue({
+      data: { currentBalance: 100 },
+      isLoading: false,
+    });
+
+    mockReduxState.apiErrors = {
+      lastError: {
+        id: "err-1",
+        status: 500,
+        endpointName: "getApplications",
+        message: "Server exploded",
+      },
+      showAccountBalance: false,
+    };
+
+    render(<SystemAlerts />);
+
+    await waitFor(() =>
+      expect(screen.getByText(/Server exploded/i)).toBeInTheDocument(),
+    );
+  });
+
+  it("shows api error alert even when logged out", async () => {
+    mockUseExtensionState.mockReturnValue({
+      ...baseExtensionState,
+      jwtToken: undefined,
+      authenticatedUser: undefined,
+      userInfo: undefined,
+    });
+
+    mockReduxState.apiErrors = {
+      lastError: {
+        id: "err-2",
+        status: 500,
+        endpointName: "getApplications",
+        message: "Logged out error",
+      },
+      showAccountBalance: false,
+    };
+
+    render(<SystemAlerts />);
+
+    await waitFor(() =>
+      expect(screen.getByText(/Logged out error/i)).toBeInTheDocument(),
     );
   });
 });

@@ -1,0 +1,176 @@
+name: Generated App CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # STAGE 2: Code Quality
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: "17"
+          distribution: "temurin"
+          cache: maven
+
+      - name: Run Backend Tests
+        run: |
+          cd backend
+          mvn clean test -DskipITs
+
+      - name: Run Frontend Tests
+        run: |
+          cd frontend
+          npm install
+          npm run test:unit -- --run
+
+      - name: Run Linting
+        run: |
+          cd frontend
+          npm run lint
+
+  # STAGE 3: Security Scan
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run Secret Scan
+        uses: gitleaks/gitleaks-action@v2
+
+      - name: Run OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: "Generated App"
+          path: "."
+          format: "JSON"
+
+  # STAGE 4: Build & Package
+  build:
+    needs: [quality, security]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build Docker Image
+        run: docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest .
+
+      - name: Log in to Container Registry
+        if: github.event_name == 'push'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Image
+        if: github.event_name == 'push'
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+
+  # STAGE 5: E2E Tests
+  e2e:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Start Services (Docker Compose)
+        run: docker-compose -f docker-compose.test.yml up -d
+
+      - name: Wait for Services
+        run: |
+          npm install
+          npm run wait:services
+
+      - name: Run E2E Tests
+        run: npm run test:e2e
+
+      - name: Upload E2E Screenshots
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: e2e-screenshots
+          path: test-results/screenshots/
+
+  # STAGE 6: Deploy to Staging
+  staging:
+    needs: e2e
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy to Staging
+        env:
+          STAGING_DEPLOY_TOKEN: ${{ secrets.STAGING_DEPLOY_TOKEN }}
+        run: |
+          ./scripts/deploy.sh staging
+
+      - name: Health Check
+        run: |
+          curl -f http://staging.example.com/health || exit 1
+
+      - name: Smoke Test
+        run: |
+          npm install
+          npm run test:smoke -- --base-url http://staging.example.com
+
+  # STAGE 7: Deploy to Production
+  production:
+    needs: staging
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy to Production
+        env:
+          PROD_DEPLOY_TOKEN: ${{ secrets.PROD_DEPLOY_TOKEN }}
+        run: |
+          ./scripts/deploy.sh production
+
+      - name: Production Health Check
+        run: |
+          curl -f https://api.example.com/health || exit 1
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+          body: |
+            Generated application deployment
+            Commit: ${{ github.sha }}
+            Build: ${{ github.run_id }}

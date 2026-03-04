@@ -20,32 +20,32 @@ You can place mentions anywhere in your user messages, and ValorIDE will automat
 
 ### 1. File References
 
-To reference file contents, use `@/` followed by the relative path within your project:
+To reference file contents, use `@thorapi/` followed by the relative path within your project:
 
 ```
-@/path/to/file.js
+@thorapi/path/to/file.js
 ```
 
 **Example:**
 
 ```
-Please analyze the implementation in @/src/components/Button.tsx
+Please analyze the implementation in @thorapi/src/components/Button.tsx
 ```
 
 In this example, ValorIDE automatically retrieves the contents of Button.tsx and uses it to perform the analysis.
 
 ### 2. Directory References
 
-To reference directory contents, use `@/` followed by the relative path of the directory, ending with a trailing `/`:
+To reference directory contents, use `@thorapi/` followed by the relative path of the directory, ending with a trailing `/`:
 
 ```
-@/path/to/directory/
+@thorapi/path/to/directory/
 ```
 
 **Example:**
 
 ```
-What components are available in the @/src/components/ directory?
+What components are available in the @thorapi/src/components/ directory?
 ```
 
 In this example, ValorIDE retrieves a listing of the components directory and its contents.
@@ -135,7 +135,7 @@ In this example, ValorIDE retrieves information about the specified commit hash 
 ### Code Review
 
 ```
-Check @/src/components/Form.jsx and suggest improvements from a performance perspective. Also, if there are any @problems, please suggest how to fix them.
+Check @thorapi/src/components/Form.jsx and suggest improvements from a performance perspective. Also, if there are any @problems, please suggest how to fix them.
 ```
 
 ### Debugging Assistance
@@ -147,13 +147,13 @@ My npm install failed. Please examine the @terminal output and suggest a solutio
 ### Project Analysis
 
 ```
-Analyze the code in the @/src/models/ directory and explain the relationships between the data models. Also, tell me how the utility functions in @/src/utils/ are used with these models.
+Analyze the code in the @thorapi/src/models/ directory and explain the relationships between the data models. Also, tell me how the utility functions in @thorapi/src/utils/ are used with these models.
 ```
 
 ### Code Generation
 
 ```
-Create a new Input.tsx component using the same design language as @/src/components/Button.tsx
+Create a new Input.tsx component using the same design language as @thorapi/src/components/Button.tsx
 ```
 
 ### Version Control Integration
@@ -167,7 +167,7 @@ Review the @git-changes and suggest a commit message for the feature I'm working
 You can combine multiple mentions to provide more complex context:
 
 ```
-There seems to be a bug in @/src/api/users.js. Please check @problems and @terminal to identify and fix the issue.
+There seems to be a bug in @thorapi/src/api/users.js. Please check @problems and @terminal to identify and fix the issue.
 ```
 
 ## Limitations and Considerations

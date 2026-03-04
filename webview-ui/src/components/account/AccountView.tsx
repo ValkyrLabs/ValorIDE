@@ -115,6 +115,16 @@ const AccountView = ({ onDone, serverConsoleNeedsAttention, onClearServerConsole
     }
   }, [authed]);
 
+  useEffect(() => {
+    if (!initialActiveTab) return;
+    if (!authed && initialActiveTab !== "login") {
+      setActiveTab("login");
+    } else {
+      setActiveTab(initialActiveTab);
+    }
+    onConsumeInitialActiveTab?.();
+  }, [authed, initialActiveTab, onConsumeInitialActiveTab]);
+
   const { principal: resolvedPrincipal } = useAccessControl(
     authenticatedUser || userInfo,
   );

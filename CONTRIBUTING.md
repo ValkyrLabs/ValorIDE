@@ -21,20 +21,17 @@ If you're planning to work on a bigger feature, please create a [feature request
 ## Development Setup
 
 1. **VS Code Extensions**
-
    - When opening the project, VS Code will prompt you to install recommended extensions
    - These extensions are required for development - please accept all installation prompts
    - If you dismissed the prompts, you can install them manually from the Extensions panel
 
 2. **Local Development**
-
    - Run `npm run install:all` to install dependencies
    - Run `npm run test` to run tests locally
    - Before submitting PR, run `npm run format:fix` to format your code
 
 3. **Linux-specific Setup**
    VS Code extension tests on Linux require the following system libraries:
-
    - `libatk1.0-0`
    - `libatk-bridge2.0-0`
    - `libxkbfile1`
@@ -68,13 +65,11 @@ If you're planning to work on a bigger feature, please create a [feature request
 Anyone can contribute code to ValorIDE, but we ask that you follow these guidelines to ensure your contributions can be smoothly integrated:
 
 1. **Keep Pull Requests Focused**
-
    - Limit PRs to a single feature or bug fix
    - Split larger changes into smaller, related PRs
    - Break changes into logical commits that can be reviewed independently
 
 2. **Code Quality**
-
    - Run `npm run lint` to check code style
    - Run `npm run format` to automatically format code
    - All PRs must pass CI checks which include both linting and formatting
@@ -82,14 +77,12 @@ Anyone can contribute code to ValorIDE, but we ask that you follow these guideli
    - Follow TypeScript best practices and maintain type safety
 
 3. **Testing**
-
    - Add tests for new features
    - Run `npm test` to ensure all tests pass
    - Update existing tests if your changes affect them
    - Include both unit tests and integration tests where appropriate
 
 4. **Version Management with Changesets**
-
    - Create a changeset for any user-facing changes using `npm run changeset`
    - Choose the appropriate version bump:
      - `major` for breaking changes (1.0.0 → 2.0.0)
@@ -99,13 +92,11 @@ Anyone can contribute code to ValorIDE, but we ask that you follow these guideli
    - Documentation-only changes don't require changesets
 
 5. **Commit Guidelines**
-
    - Write clear, descriptive commit messages
    - Use conventional commit format (e.g., "feat:", "fix:", "docs:")
    - Reference relevant issues in commits using #issue-number
 
 6. **Before Submitting**
-
    - Rebase your branch on the latest main
    - Ensure your branch builds successfully
    - Double-check all tests are passing

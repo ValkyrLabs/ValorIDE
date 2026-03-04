@@ -19,7 +19,7 @@ ValorIDE is your AI assistant that can:
 
 2. **Provide Context**
    - Use @ mentions to add files, folders, URLs, diagnostics, terminal output, and more
-   - Example: "@/src/components/App.tsx"
+   - Example: "@thorapi/src/components/App.tsx"
    - See the [Mentions Feature Guide](./mentions-guide.md) for details
 
 3. **Review Changes**

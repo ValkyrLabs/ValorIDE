@@ -154,8 +154,8 @@ mvn clean install -DskipTests
 This auto-generates:
 
 - Java Spring Boot: `generated/src/main/java/com/valkyr/rating/` and `generated/src/main/java/com/valkyr/llmdetails/`
-- TypeScript RTK Query: `webview-ui/src/thor/redux/services/RatingService.tsx` and `LLMDetailsService.tsx`
-- React Components: `webview-ui/src/thor/redux/components/` (if templates configured)
+- TypeScript RTK Query: `webview-ui/src//redux/services/RatingService.tsx` and `LLMDetailsService.tsx`
+- React Components: `webview-ui/src//redux/components/` (if templates configured)
 
 ### Step 3: DO NOT EDIT Generated Files
 
@@ -163,8 +163,8 @@ This auto-generates:
 
 ```typescript
 // ✅ CORRECT: Production code
-import { useCreateRatingMutation } from "@thor/redux/services/RatingService";
-import { useGetLlmDetailsQuery } from "@thor/redux/services/LLMDetailsService";
+import { useCreateRatingMutation } from "@thorapi/redux/services/RatingService";
+import { useGetLlmDetailsQuery } from "@thorapi/redux/services/LLMDetailsService";
 
 export function TaskCompletionHandler() {
   const [createRating] = useCreateRatingMutation();
@@ -186,7 +186,7 @@ export function TaskCompletionHandler() {
 
 ```typescript
 // ❌ WRONG: Do NOT edit this
-// webview-ui/src/thor/redux/services/RatingService.tsx ← GENERATED, READ-ONLY
+// webview-ui/src//redux/services/RatingService.tsx ← GENERATED, READ-ONLY
 ```
 
 ---
@@ -210,8 +210,8 @@ src/services/swarm/
 ### SupervisorAgent.ts (Pseudocode)
 
 ```typescript
-import { useGetLlmDetailsQuery } from "@thor/redux/services/LLMDetailsService";
-import { useCreateRatingMutation } from "@thor/redux/services/RatingService";
+import { useGetLlmDetailsQuery } from "@thorapi/redux/services/LLMDetailsService";
+import { useCreateRatingMutation } from "@thorapi/redux/services/RatingService";
 
 class SupervisorAgent {
   async routeTask(task: Task) {
@@ -305,7 +305,7 @@ export async function generateApp(openApiSpec: string) {
 
       // 3. Download artifact
       const artifact = await thorapiGeneratorService.downloadArtifact(
-        job.jobId,
+        job.jobId
       );
 
       // 4. Extract to /thorapi

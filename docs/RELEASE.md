@@ -130,7 +130,7 @@ Try AST (TypeScript AST transformer)
 **Auto-Discovery:**
 
 ```
-Scan /generated, /thor, /thorapi
+Scan /generated, /, /thorapi
   ↓
 Extract models, fields, constraints, RBAC
   ↓

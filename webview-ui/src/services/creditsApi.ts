@@ -174,6 +174,7 @@ export const getErrorMessage = (error: any): string => {
 export const isInsufficientFunds = (error: any): boolean => {
   if (isErrorResponse(error)) {
     return (
+      error.data.error === "INSUFFICIENT_CREDITS" ||
       error.data.error === "INSUFFICIENT_FUNDS" ||
       error.data.insufficientFunds === true ||
       (error.data.message?.toLowerCase().includes("insufficient") ?? false)
