@@ -4,7 +4,7 @@ import {
   getPrincipalList,
   deletePrincipal,
   updatePrincipal,
-} from "@thor/api";
+} from "@thorapi/api";
 
 import {
   ADD_PRINCIPAL_REQUEST,

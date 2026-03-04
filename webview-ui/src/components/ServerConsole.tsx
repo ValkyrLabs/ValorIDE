@@ -37,7 +37,9 @@ const ServerConsole: React.FC = () => {
     const handleTelecomStatus = (event: CustomEvent) => {
       const { thorConnected, phase } = event.detail;
       setConnectionStatus({ thorConnected, phase });
-      addLog(`Connection status changed: ${phase} (connected: ${thorConnected})`);
+      addLog(
+        `Connection status changed: ${phase} (connected: ${thorConnected})`,
+      );
     };
 
     const handleWebsocketMessage = (event: CustomEvent<AppMessage>) => {
@@ -47,22 +49,33 @@ const ServerConsole: React.FC = () => {
     };
 
     window.addEventListener("P2P-status", handleTelecomStatus as EventListener);
-    window.addEventListener("websocket-message", handleWebsocketMessage as EventListener);
+    window.addEventListener(
+      "websocket-message",
+      handleWebsocketMessage as EventListener,
+    );
 
     // Check current JWT token status
     const jwtToken = sessionStorage.getItem("jwtToken");
     if (jwtToken) {
       addLog("JWT token found in sessionStorage");
     } else {
-      addLog("WARNING: No JWT token found in sessionStorage - connection will fail");
+      addLog(
+        "WARNING: No JWT token found in sessionStorage - connection will fail",
+      );
     }
 
     // Add initial log
     addLog("ServerConsole initialized");
 
     return () => {
-      window.removeEventListener("P2P-status", handleTelecomStatus as EventListener);
-      window.removeEventListener("websocket-message", handleWebsocketMessage as EventListener);
+      window.removeEventListener(
+        "P2P-status",
+        handleTelecomStatus as EventListener,
+      );
+      window.removeEventListener(
+        "websocket-message",
+        handleWebsocketMessage as EventListener,
+      );
     };
   }, []);
 
@@ -85,7 +98,7 @@ const ServerConsole: React.FC = () => {
         key: "jwtToken",
         newValue: jwtToken,
         storageArea: sessionStorage,
-      })
+      }),
     );
   };
 
@@ -96,7 +109,7 @@ const ServerConsole: React.FC = () => {
     }
 
     if (!connectionStatus.thorConnected) {
-      addLog("ERROR: Cannot send message - not connected to Thor");
+      addLog("ERROR: Cannot send message - not connected to ThorAPI");
       return;
     }
 
@@ -142,9 +155,23 @@ const ServerConsole: React.FC = () => {
         color: "var(--vscode-editor-foreground)",
       }}
     >
-      <div style={{ borderBottom: "1px solid var(--vscode-panel-border)", paddingBottom: "10px" }}>
-        <h2 style={{ margin: "0 0 10px 0" }}>Server Console & WebSocket Testing</h2>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+      <div
+        style={{
+          borderBottom: "1px solid var(--vscode-panel-border)",
+          paddingBottom: "10px",
+        }}
+      >
+        <h2 style={{ margin: "0 0 10px 0" }}>
+          Server Console & WebSocket Testing
+        </h2>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            marginBottom: "10px",
+          }}
+        >
           <div
             style={{
               width: "12px",
@@ -155,7 +182,7 @@ const ServerConsole: React.FC = () => {
           />
           <span>Status: {connectionStatus.phase}</span>
           <span style={{ opacity: 0.7 }}>
-            (Thor Connected: {connectionStatus.thorConnected ? "Yes" : "No"})
+            (ThorAPI Connected: {connectionStatus.thorConnected ? "Yes" : "No"})
           </span>
         </div>
         <VSCodeButton onClick={handleConnect}>
@@ -165,7 +192,14 @@ const ServerConsole: React.FC = () => {
 
       <div style={{ flex: "1", display: "flex", gap: "20px", minHeight: 0 }}>
         {/* Connection Logs */}
-        <div style={{ flex: "1", display: "flex", flexDirection: "column", minHeight: 0 }}>
+        <div
+          style={{
+            flex: "1",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: 0,
+          }}
+        >
           <h3 style={{ margin: "0 0 10px 0" }}>Connection Logs</h3>
           <div
             style={{
@@ -181,7 +215,10 @@ const ServerConsole: React.FC = () => {
             }}
           >
             {logs.map((log, index) => (
-              <div key={index} style={{ marginBottom: "4px", whiteSpace: "pre-wrap" }}>
+              <div
+                key={index}
+                style={{ marginBottom: "4px", whiteSpace: "pre-wrap" }}
+              >
                 {log}
               </div>
             ))}
@@ -190,8 +227,17 @@ const ServerConsole: React.FC = () => {
         </div>
 
         {/* WebSocket Messages */}
-        <div style={{ flex: "1", display: "flex", flexDirection: "column", minHeight: 0 }}>
-          <h3 style={{ margin: "0 0 10px 0" }}>WebSocket Messages ({messages.length})</h3>
+        <div
+          style={{
+            flex: "1",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: 0,
+          }}
+        >
+          <h3 style={{ margin: "0 0 10px 0" }}>
+            WebSocket Messages ({messages.length})
+          </h3>
           <div
             style={{
               flex: "1",
@@ -220,10 +266,12 @@ const ServerConsole: React.FC = () => {
                   Type: {message.type} | From: {message.senderId}
                 </div>
                 <div style={{ color: "#608b4e", fontSize: "11px" }}>
-                  ID: {message.messageId} | Time: {new Date(message.timestamp).toLocaleTimeString()}
+                  ID: {message.messageId} | Time:{" "}
+                  {new Date(message.timestamp).toLocaleTimeString()}
                 </div>
                 <div style={{ marginTop: "4px", wordBreak: "break-word" }}>
-                  <strong>Payload:</strong> {JSON.stringify(message.payload, null, 2)}
+                  <strong>Payload:</strong>{" "}
+                  {JSON.stringify(message.payload, null, 2)}
                 </div>
               </div>
             ))}
@@ -233,7 +281,12 @@ const ServerConsole: React.FC = () => {
       </div>
 
       {/* Test Message Sender */}
-      <div style={{ borderTop: "1px solid var(--vscode-panel-border)", paddingTop: "10px" }}>
+      <div
+        style={{
+          borderTop: "1px solid var(--vscode-panel-border)",
+          paddingTop: "10px",
+        }}
+      >
         <h3 style={{ margin: "0 0 10px 0" }}>Send Test Message</h3>
         <div style={{ display: "flex", gap: "10px", alignItems: "flex-end" }}>
           <div style={{ flex: "1" }}>

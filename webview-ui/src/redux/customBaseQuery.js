@@ -1,0 +1,20 @@
+// customBaseQuery.ts
+import { fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
+const buildBaseQuery = () =>
+  fetchBaseQuery({
+    baseUrl: getValkyraiHost(),
+    prepareHeaders: (headers) => {
+      const token = sessionStorage.getItem("jwtToken");
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  });
+const customBaseQuery = (args, api, extraOptions) => {
+  const baseQuery = buildBaseQuery();
+  return baseQuery(args, api, extraOptions);
+};
+export default customBaseQuery;
+//# sourceMappingURL=customBaseQuery.js.map

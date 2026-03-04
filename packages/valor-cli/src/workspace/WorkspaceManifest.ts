@@ -2,10 +2,10 @@
  * WorkspaceManifest - Multi-repo workspace definition and parser
  */
 
-import { promises as fs } from 'fs';
-import { parse as parseYaml } from 'yaml';
-import { WorkspaceManifest } from '../types';
-import { join } from 'path';
+import { promises as fs } from "fs";
+import { parse as parseYaml } from "yaml";
+import { WorkspaceManifest } from "../types";
+import { join } from "path";
 
 export class WorkspaceManifestParser {
   /**
@@ -14,8 +14,8 @@ export class WorkspaceManifestParser {
   static async load(workspaceRoot: string): Promise<WorkspaceManifest | null> {
     // Try .valoride/workspace.yml first
     try {
-      const ymlPath = join(workspaceRoot, '.valoride', 'workspace.yml');
-      const content = await fs.readFile(ymlPath, 'utf-8');
+      const ymlPath = join(workspaceRoot, ".valoride", "workspace.yml");
+      const content = await fs.readFile(ymlPath, "utf-8");
       return parseYaml(content) as WorkspaceManifest;
     } catch {
       // Fall through
@@ -25,11 +25,11 @@ export class WorkspaceManifestParser {
     try {
       const cwsFiles = await this.findCodeWorkspaceFiles(workspaceRoot);
       if (cwsFiles.length > 0) {
-        const content = await fs.readFile(cwsFiles[0], 'utf-8');
+        const content = await fs.readFile(cwsFiles[0], "utf-8");
         const cws = JSON.parse(content) as any;
         if (cws.folders) {
           return {
-            version: '1.0',
+            version: "1.0",
             repos: cws.folders.map((f: any) => ({
               name: f.name,
               path: f.path,
@@ -51,7 +51,7 @@ export class WorkspaceManifestParser {
     try {
       const files = await fs.readdir(dir);
       return files
-        .filter((f) => f.endsWith('.code-workspace'))
+        .filter((f) => f.endsWith(".code-workspace"))
         .map((f) => join(dir, f));
     } catch {
       return [];
@@ -61,9 +61,16 @@ export class WorkspaceManifestParser {
   /**
    * Create a new manifest
    */
-  static create(repos: Array<{ name: string; path: string; remote?: string; branch?: string }>): WorkspaceManifest {
+  static create(
+    repos: Array<{
+      name: string;
+      path: string;
+      remote?: string;
+      branch?: string;
+    }>,
+  ): WorkspaceManifest {
     return {
-      version: '1.0',
+      version: "1.0",
       repos,
     };
   }
@@ -72,6 +79,10 @@ export class WorkspaceManifestParser {
    * Validate manifest
    */
   static validate(manifest: WorkspaceManifest): boolean {
-    return manifest.version === '1.0' && Array.isArray(manifest.repos) && manifest.repos.length > 0;
+    return (
+      manifest.version === "1.0" &&
+      Array.isArray(manifest.repos) &&
+      manifest.repos.length > 0
+    );
   }
 }

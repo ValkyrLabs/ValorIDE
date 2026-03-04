@@ -36,7 +36,10 @@ export async function applyContextualPatches(ctx, edits) {
                 }
             }
             if (!usedFallback) {
-                ctx.skipped.push({ index, reason: regexValid ? "no_match" : "invalid_regex" });
+                ctx.skipped.push({
+                    index,
+                    reason: regexValid ? "no_match" : "invalid_regex",
+                });
                 continue;
             }
         }
@@ -78,7 +81,10 @@ export async function applyContextualPatches(ctx, edits) {
             }
         }
         if (!mutated) {
-            ctx.skipped.push({ index, reason: identicalCount ? "already_applied" : "no_effect" });
+            ctx.skipped.push({
+                index,
+                reason: identicalCount ? "already_applied" : "no_effect",
+            });
             continue;
         }
         if (tagMutations.length) {
@@ -203,14 +209,19 @@ function detectTagMutation(original, replacement, start) {
     if (mustacheOld && mustacheNew) {
         const orientationOld = mustacheOld[1] === "/" ? "close" : "open";
         const orientationNew = mustacheNew[1] === "/" ? "close" : "open";
-        if (orientationOld === orientationNew && mustacheOld[2] !== mustacheNew[2]) {
+        if (orientationOld === orientationNew &&
+            mustacheOld[2] !== mustacheNew[2]) {
             return {
                 kind: "mustache",
                 orientation: orientationOld,
                 start,
                 oldName: mustacheOld[2],
                 newName: mustacheNew[2],
-                openSigil: orientationOld === "open" ? (mustacheOld[1] === "#" ? "#" : "^") : undefined,
+                openSigil: orientationOld === "open"
+                    ? mustacheOld[1] === "#"
+                        ? "#"
+                        : "^"
+                    : undefined,
             };
         }
     }
@@ -220,7 +231,9 @@ function applyTagMutations(text, mutations) {
     if (!mutations.length) {
         return { text, warnings: [] };
     }
-    const ordered = mutations.map((mutation) => ({ ...mutation })).sort((a, b) => a.start - b.start);
+    const ordered = mutations
+        .map((mutation) => ({ ...mutation }))
+        .sort((a, b) => a.start - b.start);
     const warnings = [];
     for (let i = 0; i < ordered.length; i++) {
         const mutation = ordered[i];

@@ -1,7 +1,7 @@
 import React from "react";
-import VSCodeButtonLink from "@/components/common/VSCodeButtonLink";
+import VSCodeButtonLink from "@thorapi/components/common/VSCodeButtonLink";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import { Invoke } from "@shared/ExtensionMessage";
 import { FaCreditCard, FaRecycle } from "react-icons/fa";
 
@@ -48,7 +48,7 @@ const CreditLimitError: React.FC<CreditLimitErrorProps> = ({
       </div>
 
       <VSCodeButtonLink
-        href="https://app.valkyrlabs.com/v1/credits/#buy"
+        href="https://valkyrlabs.com/buy-credits"
         style={{
           width: "100%",
           marginBottom: "8px",

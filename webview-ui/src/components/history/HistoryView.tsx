@@ -4,21 +4,30 @@ import {
   VSCodeRadioGroup,
   VSCodeRadio,
 } from "@vscode/webview-ui-toolkit/react";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
 import { Virtuoso } from "react-virtuoso";
 import { memo, useMemo, useState, useEffect, useCallback } from "react";
 import Fuse, { FuseResult } from "fuse.js";
-import { formatLargeNumber } from "@/utils/format";
-import { formatSize } from "@/utils/format";
+import { formatLargeNumber } from "@thorapi/utils/format";
+import { formatSize } from "@thorapi/utils/format";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import { useEvent } from "react-use";
-import DangerButton from "@/components/common/DangerButton";
-import { FaSearch, FaTimes, FaTrash, FaArrowUp, FaArrowDown, FaDatabase, FaArrowRight, FaRobot } from "react-icons/fa";
-import StatusBadge from "@/components/common/StatusBadge";
-import OfflineBanner from "@/components/common/OfflineBanner";
-import SystemAlerts from "@/components/SystemAlerts";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
+import DangerButton from "@thorapi/components/common/DangerButton";
+import {
+  FaSearch,
+  FaTimes,
+  FaTrash,
+  FaArrowUp,
+  FaArrowDown,
+  FaDatabase,
+  FaArrowRight,
+  FaRobot,
+} from "react-icons/fa";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
+import OfflineBanner from "@thorapi/components/common/OfflineBanner";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 
 type HistoryViewProps = {
   onDone: () => void;
@@ -65,10 +74,13 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
     }
   }, [searchQuery, sortOption, lastNonRelevantSort]);
 
-  const handleHistorySelect = useCallback((id: string) => {
-    vscode.postMessage({ type: "showTaskWithId", text: id });
-    onDone();
-  }, [onDone]);
+  const handleHistorySelect = useCallback(
+    (id: string) => {
+      vscode.postMessage({ type: "showTaskWithId", text: id });
+      onDone();
+    },
+    [onDone],
+  );
 
   const handleDeleteHistoryItem = useCallback((id: string) => {
     vscode.postMessage({ type: "deleteTaskWithId", text: id });
@@ -178,11 +190,16 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
             History
           </h3>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <StatusBadge label="P2P" value={value} kind={kind as any} title={hasError ? String(communicationService.error) : undefined} />
+            <StatusBadge
+              label="P2P"
+              value={value}
+              kind={kind as any}
+              title={hasError ? String(communicationService.error) : undefined}
+            />
             <VSCodeButton onClick={onDone}>Done</VSCodeButton>
           </div>
         </div>
-        <OfflineBanner style={{ marginTop: 0, marginLeft: 20, marginRight: 17 }} />
+
         <div style={{ padding: "5px 17px 6px 17px" }}>
           <div
             style={{
@@ -255,20 +272,22 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
           </div>
         </div>
         <div style={{ flexGrow: 1, overflowY: "auto", margin: 0 }}>
-          {/* {presentableTasks.length === 0 && (
-						<div
-							style={{
-								
-								alignItems: "center",
-								fontStyle: "italic",
-								color: "var(--vscode-descriptionForeground)",
-								textAlign: "center",
-								padding: "0px 10px",
-							}}>
-								<FaRobot style={{ fontSize: "60px", marginBottom: "10px" }} />
-							<div>Start a task to see it here</div>
-						</div>
-					)} */}
+          {/* 
+          {presentableTasks.length === 0 && (
+            <div
+              style={{
+
+                alignItems: "center",
+                fontStyle: "italic",
+                color: "var(--vscode-descriptionForeground)",
+                textAlign: "center",
+                padding: "0px 10px",
+              }}>
+              <FaRobot style={{ fontSize: "60px", marginBottom: "10px" }} />
+              <div>Start a task to see it here</div>
+            </div>
+          )}
+            */}
           <Virtuoso
             style={{
               flexGrow: 1,
@@ -349,6 +368,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
                       whiteSpace: "pre-wrap",
                       wordBreak: "break-word",
                       overflowWrap: "anywhere",
+                      lineHeight: "1.25em",
                     }}
                     dangerouslySetInnerHTML={{
                       __html: item.task,
@@ -520,6 +540,7 @@ const HistoryView = ({ onDone }: HistoryViewProps) => {
           style={{
             padding: "10px 10px",
             borderTop: "1px solid var(--vscode-panel-border)",
+            marginTop: "200px",
           }}
         >
           <DangerButton

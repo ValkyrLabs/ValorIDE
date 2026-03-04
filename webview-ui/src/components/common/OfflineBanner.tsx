@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 
-const OfflineBanner: React.FC<{ style?: React.CSSProperties }> = ({ style }) => {
+const OfflineBanner: React.FC<{ style?: React.CSSProperties }> = ({
+  style,
+}) => {
   const svc: any = useCommunicationService();
   const isNoop = !!svc?.isNoop;
   const [isVisible, setIsVisible] = useState(isNoop); // Banner is visible only if communication is not working

@@ -4,7 +4,7 @@ import * as fs from "fs";
 const DEFAULT_DENY_PATTERNS = [
     "**/.git/**",
     "**/node_modules/**",
-    "**/.valor/undo/**",
+    "**/.valoride/undo/**",
     "**/.DS_Store",
 ];
 /** Very small, dependency‑free path guard.
@@ -16,6 +16,7 @@ export class PathAccess {
     root;
     denies;
     allowOutside;
+    lastRejection;
     constructor(opts) {
         this.root = path.resolve(opts.workspaceRoot);
         this.allowOutside = !!opts.allowOutsideWorkspace;
@@ -36,6 +37,7 @@ export class PathAccess {
     }
     /** Return absolute, normalized path inside workspace. */
     resolve(relOrAbs) {
+        this.lastRejection = undefined;
         const abs = path.isAbsolute(relOrAbs)
             ? path.normalize(relOrAbs)
             : path.resolve(this.root, relOrAbs);
@@ -47,21 +49,34 @@ export class PathAccess {
         // Workspace confinement
         if (!this.allowOutside) {
             const inWorkspace = abs.startsWith(this.root + path.sep) || abs === this.root;
-            if (!inWorkspace)
+            if (!inWorkspace) {
+                this.lastRejection = { reason: "outside-workspace", absolutePath: abs };
                 return false;
+            }
         }
         // Deny common temp/backup/system areas and custom patterns
         const relFromRoot = path.relative(this.root, abs).split(path.sep).join("/");
         for (const pat of this.denies) {
-            if (matchGlob(relFromRoot, pat))
+            if (matchGlob(relFromRoot, pat)) {
+                this.lastRejection = {
+                    reason: "deny-pattern",
+                    pattern: pat,
+                    absolutePath: abs,
+                    relativePath: relFromRoot,
+                };
                 return false;
+            }
         }
+        this.lastRejection = undefined;
         return true;
+    }
+    getLastRejection() {
+        return this.lastRejection;
     }
 }
 // Minimal glob support for **, *, and /** sequences used in deny lists
 function matchGlob(relPath, pattern) {
-    const escapeRegexChar = (ch) => (/[\\^$+?.()|[\]{}]/.test(ch) ? `\\${ch}` : ch);
+    const escapeRegexChar = (ch) => /[\\^$+?.()|[\]{}]/.test(ch) ? `\\${ch}` : ch;
     const toRegexSource = (glob) => {
         let src = "";
         for (let i = 0; i < glob.length; i++) {

@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { Logout } from "@thor/model";
-import customBaseQuery from "../../thor/redux/customBaseQuery";
+import { Logout } from "@thorapi/model";
+import customBaseQuery from "../..//redux/customBaseQuery";
 
 type LogoutResponse = Logout[];
 
@@ -14,9 +14,9 @@ export const LogoutService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Logout" as const, id })),
-              { type: "Logout", id: "LIST" },
-            ]
+            ...result.map(({ id }) => ({ type: "Logout" as const, id })),
+            { type: "Logout", id: "LIST" },
+          ]
           : [{ type: "Logout", id: "LIST" }],
     }),
     addLogout: build.mutation<Logout, Partial<Logout>>({

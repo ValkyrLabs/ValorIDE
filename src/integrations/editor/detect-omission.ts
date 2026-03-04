@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { openUrlWithSimpleBrowser } from "@utils/openUrl";
 
 /**
  * Detects potential AI-generated code omissions in the given file content.
@@ -61,10 +62,8 @@ export function showOmissionWarning(
       )
       .then((selection) => {
         if (selection === "Follow this guide to fix the issue") {
-          vscode.env.openExternal(
-            vscode.Uri.parse(
-              "https://github.com/valkyrlabs/valoride/wiki/Troubleshooting-%E2%80%90-ValorIDE-Deleting-Code-with-%22Rest-of-Code-Here%22-Comments",
-            ),
+          void openUrlWithSimpleBrowser(
+            "https://github.com/valkyrlabs/valoride/wiki/Troubleshooting-%E2%80%90-ValorIDE-Deleting-Code-with-%22Rest-of-Code-Here%22-Comments",
           );
         }
       });

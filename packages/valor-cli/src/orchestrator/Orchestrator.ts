@@ -2,9 +2,9 @@
  * Orchestrator - Coordinates multi-agent execution with baton-passing
  */
 
-import { Agent } from './Agent';
-import { AgentLedger } from './AgentLedger';
-import { getNextRole, getRoleExecutionOrder } from './RoleDefinitions';
+import { Agent } from "./Agent";
+import { AgentLedger } from "./AgentLedger";
+import { getNextRole, getRoleExecutionOrder } from "./RoleDefinitions";
 
 export interface OrchestrationContext {
   taskId: string;
@@ -14,7 +14,7 @@ export interface OrchestrationContext {
 }
 
 export interface ExecutionResult {
-  status: 'success' | 'failed' | 'incomplete';
+  status: "success" | "failed" | "incomplete";
   turn: number;
   agent: string;
   output: any;
@@ -71,7 +71,8 @@ export class Orchestrator {
 
         let parsedResult: any;
         try {
-          parsedResult = typeof result === 'string' ? JSON.parse(result) : result;
+          parsedResult =
+            typeof result === "string" ? JSON.parse(result) : result;
         } catch {
           parsedResult = { error: result, nextAgent: null };
         }
@@ -80,11 +81,14 @@ export class Orchestrator {
           `Execute ${currentRole}`,
           JSON.stringify(parsedResult).substring(0, 500),
           0,
-          0
+          0,
         );
         await this.ledger.append(entry);
 
-        const nextAgent = parsedResult.nextAgent !== undefined ? parsedResult.nextAgent : getNextRole(currentRole);
+        const nextAgent =
+          parsedResult.nextAgent !== undefined
+            ? parsedResult.nextAgent
+            : getNextRole(currentRole);
         if (!nextAgent) {
           console.log(`[Complete] All agents finished`);
           break;
@@ -96,7 +100,7 @@ export class Orchestrator {
 
       const entries = await this.ledger.readAll();
       return {
-        status: this.turn <= this.maxTurns ? 'success' : 'incomplete',
+        status: this.turn <= this.maxTurns ? "success" : "incomplete",
         turn: this.turn,
         agent: currentRole,
         output: lastOutput,

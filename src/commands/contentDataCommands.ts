@@ -6,13 +6,14 @@
 import * as vscode from "vscode";
 import { ValorIDEAccountService } from "../services/account/ValorIDEAccountService";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 
 /**
  * Command to fetch ContentData and display it in VSCode
  * This command can be called from the command palette or programmatically
  */
 export async function fetchContentDataCommand(
-  accountService: ValorIDEAccountService
+  accountService: ValorIDEAccountService,
 ): Promise<void> {
   try {
     // Show progress indicator
@@ -23,7 +24,8 @@ export async function fetchContentDataCommand(
         cancellable: false,
       },
       async (progress) => {
-        progress.report({ message: `Connecting to ${process.env.VITE_basePath?.replace('/v1', '') || "http://localhost:8080"}/ContentData...` });
+        const host = getValkyraiBasePath().replace(/\/v1$/, "");
+        progress.report({ message: `Connecting to ${host}/ContentData...` });
 
         const contentData = await accountService.fetchContentData();
 
@@ -32,7 +34,7 @@ export async function fetchContentDataCommand(
           const action = await vscode.window.showInformationMessage(
             "ContentData fetched successfully!",
             "View Data",
-            "Copy to Clipboard"
+            "Copy to Clipboard",
           );
 
           const dataString = JSON.stringify(contentData, null, 2);
@@ -47,17 +49,20 @@ export async function fetchContentDataCommand(
           } else if (action === "Copy to Clipboard") {
             // Copy data to clipboard
             await vscode.env.clipboard.writeText(dataString);
-            vscode.window.showInformationMessage("ContentData copied to clipboard!");
+            vscode.window.showInformationMessage(
+              "ContentData copied to clipboard!",
+            );
           }
         } else {
           vscode.window.showErrorMessage(
-            "Failed to fetch ContentData. Check your JWT token and ensure the backend is running."
+            "Failed to fetch ContentData. Check your JWT token and ensure the backend is running.",
           );
         }
-      }
+      },
     );
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     vscode.window.showErrorMessage(`ContentData fetch failed: ${errorMessage}`);
   }
 }
@@ -66,7 +71,7 @@ export async function fetchContentDataCommand(
  * Command to test the ContentData endpoint connection
  */
 export async function testContentDataConnectionCommand(
-  accountService: ValorIDEAccountService
+  accountService: ValorIDEAccountService,
 ): Promise<void> {
   try {
     await vscode.window.withProgress(
@@ -85,17 +90,18 @@ export async function testContentDataConnectionCommand(
 
         if (contentData) {
           vscode.window.showInformationMessage(
-            `✅ ContentData connection successful! Response time: ${responseTime}ms`
+            `✅ ContentData connection successful! Response time: ${responseTime}ms`,
           );
         } else {
           vscode.window.showWarningMessage(
-            `⚠️ ContentData connection failed. Response time: ${responseTime}ms`
+            `⚠️ ContentData connection failed. Response time: ${responseTime}ms`,
           );
         }
-      }
+      },
     );
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     vscode.window.showErrorMessage(`Connection test failed: ${errorMessage}`);
   }
 }
@@ -106,18 +112,18 @@ export async function testContentDataConnectionCommand(
  */
 export function registerContentDataCommands(
   context: vscode.ExtensionContext,
-  accountService: ValorIDEAccountService
+  accountService: ValorIDEAccountService,
 ): void {
   // Register the fetch ContentData command
   const fetchCommand = vscode.commands.registerCommand(
     "valoride.fetchContentData",
-    () => fetchContentDataCommand(accountService)
+    () => fetchContentDataCommand(accountService),
   );
 
   // Register the test connection command
   const testCommand = vscode.commands.registerCommand(
     "valoride.testContentDataConnection",
-    () => testContentDataConnectionCommand(accountService)
+    () => testContentDataConnectionCommand(accountService),
   );
 
   // Add commands to subscriptions for proper cleanup
@@ -132,11 +138,17 @@ export function registerContentDataCommands(
  */
 export function createAccountServiceForCommands(
   context: vscode.ExtensionContext,
-  postMessageToWebview?: (message: ExtensionMessage) => Promise<void>
+  postMessageToWebview?: (message: ExtensionMessage) => Promise<void>,
 ): ValorIDEAccountService {
   // Default message handler if none provided
-  const defaultPostMessage = async (message: ExtensionMessage): Promise<void> => {
-    console.log("ContentData message:", message.type, message.contentData ? "with data" : "no data");
+  const defaultPostMessage = async (
+    message: ExtensionMessage,
+  ): Promise<void> => {
+    console.log(
+      "ContentData message:",
+      message.type,
+      message.contentData ? "with data" : "no data",
+    );
   };
 
   // JWT token retrieval function
@@ -152,6 +164,6 @@ export function createAccountServiceForCommands(
 
   return new ValorIDEAccountService(
     postMessageToWebview || defaultPostMessage,
-    getValorIDEApiKey
+    getValorIDEApiKey,
   );
 }

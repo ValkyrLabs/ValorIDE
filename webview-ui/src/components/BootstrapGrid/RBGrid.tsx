@@ -1,6 +1,6 @@
-import React from 'react';
-import { Table, Form } from 'react-bootstrap';
-import { ColumnSchema } from './index';
+import React from "react";
+import { Table, Form } from "react-bootstrap";
+import { ColumnSchema } from "./index";
 
 export interface RBGridProps {
   data: any[];
@@ -24,7 +24,7 @@ export interface RBGridProps {
     colIndex: number,
     itemId: string,
     columnKey: string,
-    cellValue: any
+    cellValue: any,
   ) => void;
   expandedObjects?: Record<string, boolean>;
   onToggleExpandObject?: (id: string, key: string) => void;
@@ -32,8 +32,12 @@ export interface RBGridProps {
   showAllFields?: boolean;
   onToggleShowAllFields?: () => void;
   storageKey?: string;
-  onReferencePick?: (rowId: string, columnKey: string, refType?: string) => Promise<any | null>;
-  onRequestMoreRows?: (dir: 'up' | 'down') => void;
+  onReferencePick?: (
+    rowId: string,
+    columnKey: string,
+    refType?: string,
+  ) => Promise<any | null>;
+  onRequestMoreRows?: (dir: "up" | "down") => void;
 }
 
 /**
@@ -74,10 +78,17 @@ const RBGrid: React.FC<RBGridProps> = ({
     onToggleRow?.(id);
   };
 
-  const renderCell = (rowId: string, columnKey: string, value: any, rowIndex: number, colIndex: number) => {
+  const renderCell = (
+    rowId: string,
+    columnKey: string,
+    value: any,
+    rowIndex: number,
+    colIndex: number,
+  ) => {
     const editKey = `${rowId}~${columnKey}`;
     const isEditing = editCellId === editKey;
-    const isActive = activeCell?.rowIndex === rowIndex && activeCell?.colIndex === colIndex;
+    const isActive =
+      activeCell?.rowIndex === rowIndex && activeCell?.colIndex === colIndex;
 
     const schema = columnSchema?.[columnKey];
 
@@ -85,12 +96,12 @@ const RBGrid: React.FC<RBGridProps> = ({
       return (
         <input
           type="text"
-          value={formData?.[columnKey] ?? ''}
+          value={formData?.[columnKey] ?? ""}
           onChange={(e) => onInputChange(columnKey, e.target.value)}
           onKeyDown={(e) => onKeyDownEdit(e, editKey)}
           onBlur={onBlurEdit}
           autoFocus
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
         />
       );
     }
@@ -104,20 +115,20 @@ const RBGrid: React.FC<RBGridProps> = ({
             onReferencePick(rowId, columnKey, schema.refType);
           }}
         >
-          {value ? String(value).substring(0, 30) : '(empty)'}
+          {value ? String(value).substring(0, 30) : "(empty)"}
         </a>
       );
     }
 
-    if (typeof value === 'object' && value !== null) {
+    if (typeof value === "object" && value !== null) {
       const objKey = `${rowId}~${columnKey}`;
       const isExpanded = expandedObjects?.[objKey] || false;
       return (
         <button
           onClick={() => onToggleExpandObject?.(rowId, columnKey)}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: "pointer" }}
         >
-          {isExpanded ? '▼' : '▶'} {columnKey}
+          {isExpanded ? "▼" : "▶"} {columnKey}
         </button>
       );
     }
@@ -126,25 +137,27 @@ const RBGrid: React.FC<RBGridProps> = ({
       <td
         onDoubleClick={() => onCellDoubleClick?.(rowId, columnKey, value)}
         onFocus={() => onCellFocus?.(rowIndex, colIndex)}
-        onKeyDown={(e) => onCellKeyDownNav?.(e, rowIndex, colIndex, rowId, columnKey, value)}
+        onKeyDown={(e) =>
+          onCellKeyDownNav?.(e, rowIndex, colIndex, rowId, columnKey, value)
+        }
         tabIndex={isActive ? 0 : -1}
         style={{
-          cursor: 'pointer',
-          backgroundColor: isActive ? '#e7f3ff' : undefined,
-          outline: isActive ? '2px solid #0066cc' : 'none',
+          cursor: "pointer",
+          backgroundColor: isActive ? "#e7f3ff" : undefined,
+          outline: isActive ? "2px solid #0066cc" : "none",
         }}
       >
-        {value == null ? '' : String(value).substring(0, 100)}
+        {value == null ? "" : String(value).substring(0, 100)}
       </td>
     );
   };
 
   return (
-    <div style={{ overflowX: 'auto', marginTop: '1em' }}>
+    <div style={{ overflowX: "auto", marginTop: "1em" }}>
       <Table striped bordered hover size="sm">
         <thead>
           <tr>
-            <th style={{ width: '40px' }}>
+            <th style={{ width: "40px" }}>
               <Form.Check
                 type="checkbox"
                 checked={selectedRows.size === data.length && data.length > 0}
@@ -154,7 +167,7 @@ const RBGrid: React.FC<RBGridProps> = ({
             {columns.map((col) => (
               <th key={col}>{col}</th>
             ))}
-            <th style={{ width: '60px' }}>Actions</th>
+            <th style={{ width: "60px" }}>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -162,7 +175,10 @@ const RBGrid: React.FC<RBGridProps> = ({
             const rowId = row.id ?? String(rowIndex);
             const isSelected = selectedRows.has(rowId);
             return (
-              <tr key={rowId} style={{ backgroundColor: isSelected ? '#f0f0f0' : undefined }}>
+              <tr
+                key={rowId}
+                style={{ backgroundColor: isSelected ? "#f0f0f0" : undefined }}
+              >
                 <td>
                   <Form.Check
                     type="checkbox"
@@ -173,27 +189,48 @@ const RBGrid: React.FC<RBGridProps> = ({
                 {columns.map((col, colIndex) => (
                   <td
                     key={`${rowId}~${col}`}
-                    onDoubleClick={() => onCellDoubleClick?.(rowId, col, row[col])}
+                    onDoubleClick={() =>
+                      onCellDoubleClick?.(rowId, col, row[col])
+                    }
                     onFocus={() => onCellFocus?.(rowIndex, colIndex)}
-                    onKeyDown={(e) => onCellKeyDownNav?.(e, rowIndex, colIndex, rowId, col, row[col])}
-                    tabIndex={activeCell?.rowIndex === rowIndex && activeCell?.colIndex === colIndex ? 0 : -1}
+                    onKeyDown={(e) =>
+                      onCellKeyDownNav?.(
+                        e,
+                        rowIndex,
+                        colIndex,
+                        rowId,
+                        col,
+                        row[col],
+                      )
+                    }
+                    tabIndex={
+                      activeCell?.rowIndex === rowIndex &&
+                      activeCell?.colIndex === colIndex
+                        ? 0
+                        : -1
+                    }
                     style={{
-                      cursor: 'pointer',
+                      cursor: "pointer",
                       backgroundColor:
-                        activeCell?.rowIndex === rowIndex && activeCell?.colIndex === colIndex
-                          ? '#e7f3ff'
+                        activeCell?.rowIndex === rowIndex &&
+                        activeCell?.colIndex === colIndex
+                          ? "#e7f3ff"
                           : undefined,
                       outline:
-                        activeCell?.rowIndex === rowIndex && activeCell?.colIndex === colIndex
-                          ? '2px solid #0066cc'
-                          : 'none',
+                        activeCell?.rowIndex === rowIndex &&
+                        activeCell?.colIndex === colIndex
+                          ? "2px solid #0066cc"
+                          : "none",
                     }}
                   >
                     {renderCell(rowId, col, row[col], rowIndex, colIndex)}
                   </td>
                 ))}
                 <td>
-                  <button onClick={() => onRowPermissions?.(rowId)} title="Manage permissions">
+                  <button
+                    onClick={() => onRowPermissions?.(rowId)}
+                    title="Manage permissions"
+                  >
                     🔒
                   </button>
                 </td>

@@ -1,7 +1,7 @@
 import { McpServer } from "@shared/mcp";
 import { DEFAULT_MCP_TIMEOUT_SECONDS } from "@shared/mcp";
 import { useState, useCallback, useEffect } from "react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import {
   VSCodeButton,
   VSCodeCheckbox,
@@ -12,12 +12,12 @@ import {
   VSCodePanelView,
 } from "@vscode/webview-ui-toolkit/react";
 import { FaChevronDown, FaChevronRight, FaSync, FaTrash } from "react-icons/fa";
-import { getMcpServerDisplayName } from "@/utils/mcp";
-import DangerButton from "@/components/common/DangerButton";
+import { getMcpServerDisplayName } from "@thorapi/utils/mcp";
+import DangerButton from "@thorapi/components/common/DangerButton";
 import McpToolRow from "./McpToolRow";
 import McpResourceRow from "./McpResourceRow";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { McpServiceClient } from "@/services/grpc-client";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { McpServiceClient } from "@thorapi/services/grpc-client";
 import { convertProtoMcpServersToMcpServers } from "@shared/proto-conversions/mcp/mcp-server-conversion";
 import { McpServers, UpdateMcpTimeoutRequest } from "@shared/proto/mcp";
 // constant JSX.Elements
@@ -159,11 +159,13 @@ const ServerRow = ({
         }}
         onClick={handleRowClick}
       >
-        {!server.error && isExpandable && (
-          isExpanded
-            ? <FaChevronDown style={{ marginRight: "8px" }} />
-            : <FaChevronRight style={{ marginRight: "8px" }} />
-        )}
+        {!server.error &&
+          isExpandable &&
+          (isExpanded ? (
+            <FaChevronDown style={{ marginRight: "8px" }} />
+          ) : (
+            <FaChevronRight style={{ marginRight: "8px" }} />
+          ))}
         <span
           style={{
             flex: 1,
@@ -382,8 +384,8 @@ const ServerRow = ({
 
               <VSCodePanelView id="resources-view">
                 {(server.resources && server.resources.length > 0) ||
-                (server.resourceTemplates &&
-                  server.resourceTemplates.length > 0) ? (
+                  (server.resourceTemplates &&
+                    server.resourceTemplates.length > 0) ? (
                   <div
                     style={{
                       display: "flex",

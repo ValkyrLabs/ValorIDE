@@ -41,7 +41,9 @@ Caused by: java.lang.IllegalArgumentException: Invalid path
         });
         it("should truncate output if too long", () => {
             const longOutput = "A".repeat(10000);
-            const result = OutputFilterService.filterMavenOutput(longOutput, { maxOutputLength: 100 });
+            const result = OutputFilterService.filterMavenOutput(longOutput, {
+                maxOutputLength: 100,
+            });
             result.length.should.be.lessThan(200);
             result.should.containEql("[Output truncated");
         });

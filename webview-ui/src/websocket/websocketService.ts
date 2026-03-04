@@ -1,12 +1,13 @@
 import { addMessage } from "../components/ServerConsole/websocketSlice";
 import store from "../redux/store"; // Adjust the import path as necessary
-import { WebsocketMessage, WebsocketMessageTypeEnum } from "../thor/model";
-import { WEBSOCKET_URL, isValidWsUrl } from "./websocket";
+import { WebsocketMessage, WebsocketMessageTypeEnum } from "@thorapi/model";
+import { getWebsocketUrl, isValidWsUrl } from "./websocket";
 
 let socket: WebSocket | null = null;
 
 export const connectWebSocket = () => {
-  if (!isValidWsUrl(WEBSOCKET_URL)) {
+  const socketUrl = getWebsocketUrl();
+  if (!isValidWsUrl(socketUrl)) {
     console.warn(
       "WebSocket disabled: REACT_APP_WS_BASE_PATH is missing or invalid.",
     );
@@ -14,7 +15,7 @@ export const connectWebSocket = () => {
   }
 
   try {
-    socket = new WebSocket(WEBSOCKET_URL);
+    socket = new WebSocket(socketUrl);
   } catch (err) {
     console.error("Failed to create WebSocket:", err);
     store.dispatch(

@@ -11,10 +11,8 @@ To give you more control over which files are accessible to ValorIDE, we've impl
 1.  **Create a `.valorideignore` file:** In the root directory of your workspace (the same level as your `.vscode` folder, or the top level folder you opened in VS Code), create a new file named `.valorideignore`.
 
 2.  **Define ignore patterns:** Open the `.valorideignore` file and specify the patterns for files and directories you want ValorIDE to ignore. The syntax is the same as `.gitignore`:
-
     - Each line in the file represents a pattern.
     - **Standard glob patterns are supported:**
-
       - `*` matches zero or more characters
       - `?` matches one character
       - `[]` matches a character range
@@ -44,7 +42,6 @@ To give you more control over which files are accessible to ValorIDE, we've impl
     ```
 
 3.  **ValorIDE respects your `.valorideignore`:** Once you save the `.valorideignore` file, ValorIDE will automatically recognize and apply these rules.
-
     - **File Access Control:** ValorIDE will not be able to read the content of ignored files using tools like `read_file`. If you attempt to use a tool on an ignored file, ValorIDE will inform you that access is blocked due to `.valorideignore` settings.
     - **File Listing:** When you ask ValorIDE to list files in a directory (e.g., using `list_files`), ignored files and directories will still be listed, but they will be marked with a **🔒** symbol next to their name to indicate that they are ignored. This helps you understand which files ValorIDE can and cannot interact with.
 

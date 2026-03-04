@@ -29,12 +29,16 @@ function deriveVersionedFolderName(opts) {
             // ignore
         }
     }
-    let name = raw ? basenameNoExt(raw) : opts.fallbackName || `project-${Date.now()}`;
+    let name = raw
+        ? basenameNoExt(raw)
+        : opts.fallbackName || `project-${Date.now()}`;
     name = sanitizeFolderName(name);
     // Ensure a version prefix exists (e.g., v1., v2-beta.)
     // If name already starts with something like v<alnum/.->.
     if (!/^v[0-9][\w.-]*\./i.test(name)) {
-        const fallback = opts.fallbackName ? sanitizeFolderName(opts.fallbackName) : "project";
+        const fallback = opts.fallbackName
+            ? sanitizeFolderName(opts.fallbackName)
+            : "project";
         // If filename had no version, construct one with v1.<fallback>
         name = `v1.${fallback}`;
     }

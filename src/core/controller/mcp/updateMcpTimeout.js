@@ -1,4 +1,4 @@
-import { convertMcpServersToProtoMcpServers } from "@/shared/proto-conversions/mcp/mcp-server-conversion";
+import { convertMcpServersToProtoMcpServers } from "@thorapi/shared/proto-conversions/mcp/mcp-server-conversion";
 /**
  * Updates the timeout configuration for an MCP server.
  * @param controller - The Controller instance

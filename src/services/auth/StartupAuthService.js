@@ -56,7 +56,7 @@ export class StartupAuthService {
                         return {
                             success: true,
                             tokens: refreshedTokens,
-                            user: storedAuth.user
+                            user: storedAuth.user,
                         };
                     }
                 }
@@ -70,7 +70,7 @@ export class StartupAuthService {
             return {
                 success: true,
                 tokens: storedAuth.tokens,
-                user: validation.user || storedAuth.user
+                user: validation.user || storedAuth.user,
             };
         }
         catch (error) {

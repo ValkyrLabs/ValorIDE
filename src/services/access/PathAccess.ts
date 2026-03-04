@@ -1,4 +1,3 @@
-
 // src/services/access/PathAccess.ts
 import * as path from "path";
 import * as fs from "fs";
@@ -7,8 +6,17 @@ export interface PathAccessOptions {
   workspaceRoot: string;
   denyGlobs?: string[]; // naive glob subset ("**/node_modules/**", "**/.git/**", etc.)
   allowOutsideWorkspace?: boolean; // default false
-  additionalDenyPaths?: string[];  // absolute or relative to workspace
+  additionalDenyPaths?: string[]; // absolute or relative to workspace
 }
+
+export type PathAccessRejection =
+  | { reason: "outside-workspace"; absolutePath: string }
+  | {
+      reason: "deny-pattern";
+      pattern: string;
+      absolutePath: string;
+      relativePath: string;
+    };
 
 const DEFAULT_DENY_PATTERNS = [
   "**/.git/**",
@@ -26,6 +34,7 @@ export class PathAccess {
   private root: string;
   private denies: string[];
   private allowOutside: boolean;
+  private lastRejection?: PathAccessRejection;
 
   constructor(opts: PathAccessOptions) {
     this.root = path.resolve(opts.workspaceRoot);
@@ -61,6 +70,8 @@ export class PathAccess {
 
   /** Return absolute, normalized path inside workspace. */
   resolve(relOrAbs: string): string {
+    this.lastRejection = undefined;
+
     const abs = path.isAbsolute(relOrAbs)
       ? path.normalize(relOrAbs)
       : path.resolve(this.root, relOrAbs);
@@ -73,23 +84,41 @@ export class PathAccess {
 
     // Workspace confinement
     if (!this.allowOutside) {
-      const inWorkspace = abs.startsWith(this.root + path.sep) || abs === this.root;
-      if (!inWorkspace) return false;
+      const inWorkspace =
+        abs.startsWith(this.root + path.sep) || abs === this.root;
+      if (!inWorkspace) {
+        this.lastRejection = { reason: "outside-workspace", absolutePath: abs };
+        return false;
+      }
     }
 
     // Deny common temp/backup/system areas and custom patterns
     const relFromRoot = path.relative(this.root, abs).split(path.sep).join("/");
     for (const pat of this.denies) {
-      if (matchGlob(relFromRoot, pat)) return false;
+      if (matchGlob(relFromRoot, pat)) {
+        this.lastRejection = {
+          reason: "deny-pattern",
+          pattern: pat,
+          absolutePath: abs,
+          relativePath: relFromRoot,
+        };
+        return false;
+      }
     }
 
+    this.lastRejection = undefined;
     return true;
+  }
+
+  getLastRejection(): PathAccessRejection | undefined {
+    return this.lastRejection;
   }
 }
 
 // Minimal glob support for **, *, and /** sequences used in deny lists
 function matchGlob(relPath: string, pattern: string): boolean {
-  const escapeRegexChar = (ch: string) => (/[\\^$+?.()|[\]{}]/.test(ch) ? `\\${ch}` : ch);
+  const escapeRegexChar = (ch: string) =>
+    /[\\^$+?.()|[\]{}]/.test(ch) ? `\\${ch}` : ch;
   const toRegexSource = (glob: string) => {
     let src = "";
     for (let i = 0; i < glob.length; i++) {
@@ -170,9 +199,7 @@ function loadIgnorePatterns(
       const includePath = path.isAbsolute(includeTarget)
         ? includeTarget
         : path.resolve(workspaceRoot, includeTarget);
-      patterns.push(
-        ...loadIgnorePatterns(includePath, workspaceRoot, visited),
-      );
+      patterns.push(...loadIgnorePatterns(includePath, workspaceRoot, visited));
       continue;
     }
 
@@ -207,8 +234,7 @@ function normalizeIgnorePattern(rawPattern: string): string[] {
   }
 
   const hasSlash = pattern.includes("/");
-  const base =
-    anchoredToRoot || hasSlash ? pattern : `**/${pattern}`;
+  const base = anchoredToRoot || hasSlash ? pattern : `**/${pattern}`;
 
   results.push(base);
 

@@ -19,7 +19,6 @@ const StyledButton = styled(VSCodeButton)`
     background-color: var(--settings-button-active) !important;
     border-color: var(--settings-button-active) !important;
   }
-
 `;
 
 interface SettingsButtonProps

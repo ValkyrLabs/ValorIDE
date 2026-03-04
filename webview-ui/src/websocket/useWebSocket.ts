@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { useDispatch } from "react-redux";
 import { addMessage } from "../components/ServerConsole/websocketSlice";
-import { WebsocketMessage, WebsocketMessageTypeEnum } from "../thor/model";
+import { WebsocketMessage, WebsocketMessageTypeEnum } from "@thorapi/model";
 
 const useWebSocket = (url: string) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);

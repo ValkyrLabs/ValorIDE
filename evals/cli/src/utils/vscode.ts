@@ -137,8 +137,7 @@ export async function spawnVSCode(
     // Show the activity bar and sidebar
     "workbench.activityBar.visible": true,
     "workbench.sideBar.visible": true,
-    "workbench.view.extension.valkyrlabsinc.valoride-dev-ActivityBar.visible":
-      true,
+    "workbench.view.extension.valkyrlabsinc.valoride-dev-ActivityBar.visible": true,
     "workbench.view.alwaysShowHeaderActions": true,
     "workbench.editor.openSideBySideDirection": "right",
 

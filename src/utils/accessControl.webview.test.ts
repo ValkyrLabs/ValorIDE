@@ -1,4 +1,5 @@
-type AccessControlModule = typeof import("../../webview-ui/src/utils/accessControl");
+type AccessControlModule =
+  typeof import("../../webview-ui/src/utils/accessControl");
 
 describe("webview accessControl persistence helpers", () => {
   let storeJwtToken: AccessControlModule["storeJwtToken"];
@@ -20,7 +21,7 @@ describe("webview accessControl persistence helpers", () => {
     };
   };
 
-  const setupBrowserGlobals = () => {
+  const setupBrowserGlobals = async () => {
     jest.resetModules();
 
     const sessionStorage = createStorage();
@@ -48,8 +49,9 @@ describe("webview accessControl persistence helpers", () => {
       CustomEvent: MockCustomEvent,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const module = require("../../webview-ui/src/utils/accessControl") as AccessControlModule;
+    const module = (await import(
+      "../../webview-ui/src/utils/accessControl"
+    )) as AccessControlModule;
     storeJwtToken = module.storeJwtToken;
     hydrateStoredCredentials = module.hydrateStoredCredentials;
     writeStoredPrincipal = module.writeStoredPrincipal;
@@ -65,8 +67,8 @@ describe("webview accessControl persistence helpers", () => {
     delete (globalThis as any).CustomEvent;
   });
 
-  it("stores JWT tokens in session and local storage when persistence is enabled", () => {
-    const { dispatchEvent } = setupBrowserGlobals();
+  it("stores JWT tokens in session and local storage when persistence is enabled", async () => {
+    const { dispatchEvent } = await setupBrowserGlobals();
 
     storeJwtToken("token-123", "test-case");
 
@@ -76,8 +78,8 @@ describe("webview accessControl persistence helpers", () => {
     expect(dispatchEvent).toHaveBeenCalled();
   });
 
-  it("respects persistence flag and avoids keeping tokens in localStorage when disabled", () => {
-    setupBrowserGlobals();
+  it("respects persistence flag and avoids keeping tokens in localStorage when disabled", async () => {
+    await setupBrowserGlobals();
     window.localStorage.setItem("valoride.persistJwt", "false");
 
     storeJwtToken("token-456", "test-case");
@@ -87,8 +89,8 @@ describe("webview accessControl persistence helpers", () => {
     expect(window.localStorage.getItem("authToken")).toBeNull();
   });
 
-  it("hydrates stored credentials from localStorage into sessionStorage", () => {
-    const { dispatchEvent } = setupBrowserGlobals();
+  it("hydrates stored credentials from localStorage into sessionStorage", async () => {
+    const { dispatchEvent } = await setupBrowserGlobals();
     const principal = { id: "user-1", username: "persisted" };
     window.localStorage.setItem("jwtToken", "persisted-token");
     window.localStorage.setItem(
@@ -101,16 +103,16 @@ describe("webview accessControl persistence helpers", () => {
     expect(result.token).toBe("persisted-token");
     expect(result.principal).toMatchObject(principal);
     expect(window.sessionStorage.getItem("jwtToken")).toBe("persisted-token");
-    expect(
-      window.sessionStorage.getItem("authenticatedPrincipal"),
-    ).toBe(JSON.stringify(principal));
+    expect(window.sessionStorage.getItem("authenticatedPrincipal")).toBe(
+      JSON.stringify(principal),
+    );
     expect(dispatchEvent).toHaveBeenCalled();
 
     clearStoredJwtToken("test-cleanup");
   });
 
-  it("writes principals to both storage targets to keep sessions sticky", () => {
-    setupBrowserGlobals();
+  it("writes principals to both storage targets to keep sessions sticky", async () => {
+    await setupBrowserGlobals();
     const principal = { id: "user-2", username: "sticky" };
 
     writeStoredPrincipal(principal);
@@ -118,13 +120,11 @@ describe("webview accessControl persistence helpers", () => {
     const storedSession = window.sessionStorage.getItem(
       "authenticatedPrincipal",
     );
-    const storedLocal = window.localStorage.getItem(
-      "authenticatedPrincipal",
-    );
+    const storedLocal = window.localStorage.getItem("authenticatedPrincipal");
     expect(storedSession).toBe(JSON.stringify(principal));
     expect(storedLocal).toBe(JSON.stringify(principal));
-    expect(
-      window.sessionStorage.getItem("authenticatedUser"),
-    ).toBe(JSON.stringify(principal));
+    expect(window.sessionStorage.getItem("authenticatedUser")).toBe(
+      JSON.stringify(principal),
+    );
   });
 });

@@ -1,5 +1,9 @@
 import * as vscode from "vscode";
-import { BaseToolHandler, ToolExecutionResult, ToolResponse } from "./BaseToolHandler";
+import {
+  BaseToolHandler,
+  ToolExecutionResult,
+  ToolResponse,
+} from "./BaseToolHandler";
 import { AssistantMessageContent } from "@core/assistant-message";
 import { constructNewFileContent } from "@core/assistant-message/diff";
 import { extractTextFromFile } from "@integrations/misc/extract-text";
@@ -21,7 +25,6 @@ import * as path from "path";
 import { precisionSearchAndReplace, PSREdit, PSROptions } from "@services/psr";
 
 export class FileToolHandler extends BaseToolHandler {
-
   private pathAccess?: PathAccess;
   private getPathAccess() {
     if (!this.pathAccess) {
@@ -29,7 +32,10 @@ export class FileToolHandler extends BaseToolHandler {
     }
     return this.pathAccess;
   }
-  async execute(block: AssistantMessageContent, partial: boolean): Promise<ToolExecutionResult> {
+  async execute(
+    block: AssistantMessageContent,
+    partial: boolean,
+  ): Promise<ToolExecutionResult> {
     if (block.type !== "tool_use") {
       return { shouldContinue: false };
     }
@@ -53,14 +59,36 @@ export class FileToolHandler extends BaseToolHandler {
     }
   }
 
-  private async handlePrecisionSearchAndReplace(block: AssistantMessageContent, partial: boolean) {
+  private async handlePrecisionSearchAndReplace(
+    block: AssistantMessageContent,
+    partial: boolean,
+  ) {
     if (partial) return { shouldContinue: false };
 
     const relPath = block.params.path?.trim();
     const editsRaw = block.params?.edits;
     const optionsRaw = block.params?.options;
+    const MAX_EDITS = 50;
 
-    if (!relPath || !editsRaw || (typeof editsRaw === "string" && editsRaw.trim().length === 0)) {
+    const fail = async (message: string) => {
+      telemetryService.captureToolUsage(
+        this.context.taskId,
+        "precision_search_and_replace",
+        true,
+        false,
+        { reason: "validation_failed" },
+      );
+      return {
+        shouldContinue: true,
+        toolResponse: formatResponse.toolError(message),
+      };
+    };
+
+    if (
+      !relPath ||
+      !editsRaw ||
+      (typeof editsRaw === "string" && editsRaw.trim().length === 0)
+    ) {
       this.context.consecutiveMistakeCount++;
       return {
         shouldContinue: true,
@@ -73,7 +101,8 @@ export class FileToolHandler extends BaseToolHandler {
 
     let edits: PSREdit[];
     try {
-      const parsed = typeof editsRaw === "string" ? JSON.parse(editsRaw) : editsRaw;
+      const parsed =
+        typeof editsRaw === "string" ? JSON.parse(editsRaw) : editsRaw;
       if (!Array.isArray(parsed)) {
         throw new Error("Expected an array of edits");
       }
@@ -83,7 +112,9 @@ export class FileToolHandler extends BaseToolHandler {
       const message = error instanceof Error ? error.message : String(error);
       return {
         shouldContinue: true,
-        toolResponse: formatResponse.toolError(`Invalid JSON for 'edits' parameter: ${message}`),
+        toolResponse: formatResponse.toolError(
+          `Invalid JSON for 'edits' parameter: ${message}`,
+        ),
       };
     }
 
@@ -98,8 +129,67 @@ export class FileToolHandler extends BaseToolHandler {
       };
     }
 
+    if (edits.length > MAX_EDITS) {
+      return fail(
+        `PSR rejected: received ${edits.length} edits (max ${MAX_EDITS}). Send a smaller batch.`,
+      );
+    }
+
+    const validateEdit = (edit: PSREdit, idx: number): string | undefined => {
+      if (!edit || typeof edit !== "object") {
+        return `edit ${idx} is not an object`;
+      }
+      switch (edit.kind) {
+        case "contextual": {
+          if (!edit.find || !edit.replace) {
+            return `edit ${idx}: contextual edits require non-empty 'find' and 'replace'`;
+          }
+          if (typeof edit.find !== "string" || typeof edit.replace !== "string") {
+            return `edit ${idx}: 'find' and 'replace' must be strings`;
+          }
+          if (edit.find.length > 5000 || edit.replace.length > 5000) {
+            return `edit ${idx}: 'find'/'replace' too large (>5000 chars)`;
+          }
+          return undefined;
+        }
+        case "byte": {
+          const hex = /^[0-9a-fA-F]+$/;
+          if (!edit.findHex || !edit.replaceHex) {
+            return `edit ${idx}: byte edits require 'findHex' and 'replaceHex'`;
+          }
+          if (
+            !hex.test(edit.findHex) ||
+            !hex.test(edit.replaceHex) ||
+            edit.findHex.length % 2 !== 0 ||
+            edit.replaceHex.length % 2 !== 0
+          ) {
+            return `edit ${idx}: 'findHex'/'replaceHex' must be even-length hex strings`;
+          }
+          return undefined;
+        }
+        case "ts-ast": {
+          if (!edit.intent) {
+            return `edit ${idx}: ts-ast edits require an 'intent'`;
+          }
+          return undefined;
+        }
+        default:
+          return `edit ${idx}: unknown kind '${(edit as any).kind}'`;
+      }
+    };
+
+    const validationError = edits
+      .map((e, idx) => validateEdit(e, idx))
+      .find((err) => !!err);
+    if (validationError) {
+      return fail(`PSR validation failed: ${validationError}`);
+    }
+
     let options: PSROptions | undefined;
-    if (optionsRaw && (!(typeof optionsRaw === "string" && optionsRaw.trim().length === 0))) {
+    if (
+      optionsRaw &&
+      !(typeof optionsRaw === "string" && optionsRaw.trim().length === 0)
+    ) {
       try {
         options =
           typeof optionsRaw === "string"
@@ -109,19 +199,22 @@ export class FileToolHandler extends BaseToolHandler {
         const message = error instanceof Error ? error.message : String(error);
         return {
           shouldContinue: true,
-          toolResponse: formatResponse.toolError(`Invalid JSON for 'options' parameter: ${message}`),
+          toolResponse: formatResponse.toolError(
+            `Invalid JSON for 'options' parameter: ${message}`,
+          ),
         };
       }
     }
 
     const pathAccess = this.getPathAccess();
     if (!pathAccess.validateAccess(relPath)) {
-      await this.context.say("valorideignore_error", relPath);
+      const errorText = await this.describePathAccessFailure(
+        relPath,
+        pathAccess,
+      );
       return {
         shouldContinue: true,
-        toolResponse: formatResponse.toolError(
-          formatResponse.valorideIgnoreError(relPath),
-        ),
+        toolResponse: formatResponse.toolError(errorText),
       };
     }
 
@@ -199,7 +292,9 @@ export class FileToolHandler extends BaseToolHandler {
 
         const dryRunMessage = [
           `PSR dry-run: ${result.editsApplied}/${result.editsRequested} hunks would apply. Δbytes=${result.bytesDelta}.`,
-          result.warnings.length ? `Warnings: ${result.warnings.join("; ")}` : undefined,
+          result.warnings.length
+            ? `Warnings: ${result.warnings.join("; ")}`
+            : undefined,
           result.skipped.length ? `Skipped: ${skippedSummary}` : undefined,
           "No file was modified.",
         ]
@@ -212,8 +307,20 @@ export class FileToolHandler extends BaseToolHandler {
         };
       }
 
+      // Zero edits isn't a failure, it just means no patterns matched
       if (result.editsApplied === 0 && result.bytesDelta === 0) {
-        return handleNoop();
+        const noMatchMessage =
+          "PSR: No edits matched the requested patterns. The file was not modified.";
+        telemetryService.captureToolUsage(
+          this.context.taskId,
+          "precision_search_and_replace",
+          autoApproved,
+          true, // Mark as success since it ran correctly
+        );
+        return {
+          shouldContinue: true,
+          toolResponse: formatResponse.toolResult(withReport(noMatchMessage)),
+        };
       }
 
       if (!didChange) {
@@ -236,7 +343,9 @@ export class FileToolHandler extends BaseToolHandler {
       return {
         shouldContinue: true,
         toolResponse: formatResponse.toolResult(
-          withReport(`PSR applied: ${result.editsApplied}/${result.editsRequested} hunks. Δbytes=${result.bytesDelta}. Warnings: ${result.warnings.join("; ") || "none"}`)
+          withReport(
+            `PSR applied: ${result.editsApplied}/${result.editsRequested} hunks. Δbytes=${result.bytesDelta}. Warnings: ${result.warnings.join("; ") || "none"}`,
+          ),
         ),
       };
     } catch (err) {
@@ -250,7 +359,10 @@ export class FileToolHandler extends BaseToolHandler {
     }
   }
 
-  private async handleFileWrite(block: AssistantMessageContent, partial: boolean): Promise<ToolExecutionResult> {
+  private async handleFileWrite(
+    block: AssistantMessageContent,
+    partial: boolean,
+  ): Promise<ToolExecutionResult> {
     if (block.type !== "tool_use") {
       return { shouldContinue: false };
     }
@@ -260,15 +372,37 @@ export class FileToolHandler extends BaseToolHandler {
     let diff: string | undefined = block.params.diff; // for replace_in_file
 
     if (!relPath || (!content && !diff)) {
-      return { shouldContinue: false }; // wait for more data
-    }
+      // If we're still streaming, wait for more data; otherwise surface a clear error
+      if (partial) {
+        return { shouldContinue: false }; // wait for more data
+      }
 
-    const accessAllowed = this.getPathAccess().validateAccess(relPath);
-    if (!accessAllowed) {
-      await this.context.say("valorideignore_error", relPath);
+      this.context.consecutiveMistakeCount++;
+      const missingParam =
+        !relPath || relPath.trim() === ""
+          ? "path"
+          : block.name === "write_to_file"
+            ? "content"
+            : "diff";
       return {
         shouldContinue: true,
-        toolResponse: formatResponse.toolError(formatResponse.valorideIgnoreError(relPath))
+        toolResponse: await this.context.sayAndCreateMissingParamError(
+          block.name,
+          missingParam,
+        ),
+      };
+    }
+
+    const pathAccess = this.getPathAccess();
+    const accessAllowed = pathAccess.validateAccess(relPath);
+    if (!accessAllowed) {
+      const errorText = await this.describePathAccessFailure(
+        relPath,
+        pathAccess,
+      );
+      return {
+        shouldContinue: true,
+        toolResponse: formatResponse.toolError(errorText),
       };
     }
 
@@ -308,16 +442,23 @@ export class FileToolHandler extends BaseToolHandler {
 
           // Extract error type from error message if possible, or use a generic type
           const errorType =
-            error instanceof Error && error.message.includes("does not match anything")
+            error instanceof Error &&
+              error.message.includes("does not match anything")
               ? "search_not_found"
               : "other_diff_error";
 
           // Add telemetry for diff edit failure
-          telemetryService.captureDiffEditFailure(this.context.taskId, errorType);
+          telemetryService.captureDiffEditFailure(
+            this.context.taskId,
+            errorType,
+          );
 
           const toolResponse = formatResponse.toolError(
             `${(error as Error)?.message}\n\n` +
-            formatResponse.diffError(relPath, this.context.diffViewProvider.originalContent)
+            formatResponse.diffError(
+              relPath,
+              this.context.diffViewProvider.originalContent,
+            ),
           );
 
           await this.context.diffViewProvider.revertChanges();
@@ -347,7 +488,10 @@ export class FileToolHandler extends BaseToolHandler {
 
       const sharedMessageProps: ValorIDESayTool = {
         tool: fileExists ? "editedExistingFile" : "newFileCreated",
-        path: getReadablePath(this.context.cwd, this.removeClosingTag("path", relPath, partial)),
+        path: getReadablePath(
+          this.context.cwd,
+          this.removeClosingTag("path", relPath, partial),
+        ),
         content: diff || content,
         operationIsLocatedInWorkspace: isLocatedInWorkspace(relPath),
       };
@@ -361,7 +505,9 @@ export class FileToolHandler extends BaseToolHandler {
           await this.context.say("tool", partialMessage, undefined, partial);
         } else {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-          await this.context.ask("tool", partialMessage, partial).catch(() => { });
+          await this.context
+            .ask("tool", partialMessage, partial)
+            .catch(() => { });
         }
         // update editor
         if (!this.context.diffViewProvider.isEditing) {
@@ -375,21 +521,30 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
-            toolResponse: await this.context.sayAndCreateMissingParamError(block.name, "path")
+            toolResponse: await this.context.sayAndCreateMissingParamError(
+              block.name,
+              "path",
+            ),
           };
         }
         if (block.name === "replace_in_file" && !diff) {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
-            toolResponse: await this.context.sayAndCreateMissingParamError("replace_in_file", "diff")
+            toolResponse: await this.context.sayAndCreateMissingParamError(
+              "replace_in_file",
+              "diff",
+            ),
           };
         }
         if (block.name === "write_to_file" && !content) {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
-            toolResponse: await this.context.sayAndCreateMissingParamError("write_to_file", "content")
+            toolResponse: await this.context.sayAndCreateMissingParamError(
+              "write_to_file",
+              "content",
+            ),
           };
         }
 
@@ -415,21 +570,33 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.removeLastPartialMessageIfExistsWithType("ask", "tool");
           await this.context.say("tool", completeMessage, undefined, false);
           this.context.consecutiveAutoApprovedRequestsCount++;
-          telemetryService.captureToolUsage(this.context.taskId, block.name, true, true);
+          telemetryService.captureToolUsage(
+            this.context.taskId,
+            block.name,
+            true,
+            true,
+          );
 
           // artificial delay to let the diagnostics catch up to the changes
           await setTimeoutPromise(3_500);
         } else {
           // If auto-approval is enabled but this tool wasn't auto-approved, send notification
-          if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
+          if (
+            this.context.autoApprovalSettings.enabled &&
+            this.context.autoApprovalSettings.enableNotifications
+          ) {
             showSystemNotification({
               subtitle: "Approval Required",
-              message: `${fileExists ? "Editing" : "Creating"}: ${path.basename(relPath)}`
+              message: `${fileExists ? "Editing" : "Creating"}: ${path.basename(relPath)}`,
             });
           }
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
 
-          const { response, text, images } = await this.context.ask("tool", completeMessage, false);
+          const { response, text, images } = await this.context.ask(
+            "tool",
+            completeMessage,
+            false,
+          );
           if (response !== "yesButtonClicked") {
             // User either sent a message or pressed reject button
             const fileDeniedNote = fileExists
@@ -440,36 +607,56 @@ export class FileToolHandler extends BaseToolHandler {
               await this.context.say("user_feedback", text, images);
             }
 
-            telemetryService.captureToolUsage(this.context.taskId, block.name, false, false);
+            telemetryService.captureToolUsage(
+              this.context.taskId,
+              block.name,
+              false,
+              false,
+            );
             await this.context.diffViewProvider.revertChanges();
             return {
               shouldContinue: true,
               toolResponse: `The user denied this operation. ${fileDeniedNote}`,
-              userRejected: true
+              userRejected: true,
             };
           } else {
             // User hit the approve button, and may have provided feedback
             if (text || images?.length) {
               await this.context.say("user_feedback", text, images);
             }
-            telemetryService.captureToolUsage(this.context.taskId, block.name, false, true);
+            telemetryService.captureToolUsage(
+              this.context.taskId,
+              block.name,
+              false,
+              true,
+            );
           }
         }
 
         // Mark the file as edited by ValorIDE to prevent false "recently modified" warnings
         this.context.fileContextTracker.markFileAsEditedByValorIDE(relPath);
 
-        const { newProblemsMessage, userEdits, autoFormattingEdits, finalContent } =
-          await this.context.diffViewProvider.saveChanges();
+        const {
+          newProblemsMessage,
+          userEdits,
+          autoFormattingEdits,
+          finalContent,
+        } = await this.context.diffViewProvider.saveChanges();
         this.context.didEditFile = true; // used to determine if we should wait for busy terminal to update
 
         // Track file edit operation
-        await this.context.fileContextTracker.trackFileContext(relPath, "valoride_edited");
+        await this.context.fileContextTracker.trackFileContext(
+          relPath,
+          "valoride_edited",
+        );
 
         let toolResponse: ToolResponse;
         if (userEdits) {
           // Track file edit operation
-          await this.context.fileContextTracker.trackFileContext(relPath, "user_edited");
+          await this.context.fileContextTracker.trackFileContext(
+            relPath,
+            "user_edited",
+          );
 
           await this.context.say(
             "user_feedback_diff",
@@ -477,21 +664,21 @@ export class FileToolHandler extends BaseToolHandler {
               tool: fileExists ? "editedExistingFile" : "newFileCreated",
               path: getReadablePath(this.context.cwd, relPath),
               diff: userEdits,
-            } satisfies ValorIDESayTool)
+            } satisfies ValorIDESayTool),
           );
           toolResponse = formatResponse.fileEditWithUserChanges(
             relPath,
             userEdits,
             autoFormattingEdits,
             finalContent,
-            newProblemsMessage
+            newProblemsMessage,
           );
         } else {
           toolResponse = formatResponse.fileEditWithoutUserChanges(
             relPath,
             autoFormattingEdits,
             finalContent,
-            newProblemsMessage
+            newProblemsMessage,
           );
         }
 
@@ -509,12 +696,15 @@ export class FileToolHandler extends BaseToolHandler {
       await this.context.diffViewProvider.reset();
       return {
         shouldContinue: true,
-        toolResponse: await this.handleError("writing file", error as Error)
+        toolResponse: await this.handleError("writing file", error as Error),
       };
     }
   }
 
-  private async handleFileRead(block: AssistantMessageContent, partial: boolean): Promise<ToolExecutionResult> {
+  private async handleFileRead(
+    block: AssistantMessageContent,
+    partial: boolean,
+  ): Promise<ToolExecutionResult> {
     if (block.type !== "tool_use") {
       return { shouldContinue: false };
     }
@@ -522,7 +712,10 @@ export class FileToolHandler extends BaseToolHandler {
     const relPath: string | undefined = block.params.path;
     const sharedMessageProps: ValorIDESayTool = {
       tool: "readFile",
-      path: getReadablePath(this.context.cwd, this.removeClosingTag("path", relPath, partial)),
+      path: getReadablePath(
+        this.context.cwd,
+        this.removeClosingTag("path", relPath, partial),
+      ),
     };
 
     try {
@@ -533,12 +726,26 @@ export class FileToolHandler extends BaseToolHandler {
           operationIsLocatedInWorkspace: isLocatedInWorkspace(relPath),
         } satisfies ValorIDESayTool);
 
-        if (this.context.shouldAutoApproveToolWithPath(block.name, block.params.path)) {
-          this.context.removeLastPartialMessageIfExistsWithType("ask", "tool");
+        if (
+          this.context.shouldAutoApproveToolWithPath(
+            block.name,
+            block.params.path,
+          )
+        ) {
+          await this.context.removeLastPartialMessageIfExistsWithType(
+            "say",
+            "tool",
+          );
+          await this.context.removeLastPartialMessageIfExistsWithType(
+            "ask",
+            "tool",
+          );
           await this.context.say("tool", partialMessage, undefined, partial);
         } else {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-          await this.context.ask("tool", partialMessage, partial).catch(() => { });
+          await this.context
+            .ask("tool", partialMessage, partial)
+            .catch(() => { });
         }
         return { shouldContinue: false };
       } else {
@@ -546,16 +753,23 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
-            toolResponse: await this.context.sayAndCreateMissingParamError("read_file", "path")
+            toolResponse: await this.context.sayAndCreateMissingParamError(
+              "read_file",
+              "path",
+            ),
           };
         }
 
-        const accessAllowed = this.getPathAccess().validateAccess(relPath);
+        const pathAccess = this.getPathAccess();
+        const accessAllowed = pathAccess.validateAccess(relPath);
         if (!accessAllowed) {
-          await this.context.say("valorideignore_error", relPath);
+          const errorText = await this.describePathAccessFailure(
+            relPath,
+            pathAccess,
+          );
           return {
             shouldContinue: true,
-            toolResponse: formatResponse.toolError(formatResponse.valorideIgnoreError(relPath))
+            toolResponse: formatResponse.toolError(errorText),
           };
         }
 
@@ -567,44 +781,73 @@ export class FileToolHandler extends BaseToolHandler {
           operationIsLocatedInWorkspace: isLocatedInWorkspace(relPath),
         } satisfies ValorIDESayTool);
 
-        if (this.context.shouldAutoApproveToolWithPath(block.name, block.params.path)) {
+        if (
+          this.context.shouldAutoApproveToolWithPath(
+            block.name,
+            block.params.path,
+          )
+        ) {
           this.context.removeLastPartialMessageIfExistsWithType("ask", "tool");
           await this.context.say("tool", completeMessage, undefined, false);
           this.context.consecutiveAutoApprovedRequestsCount++;
-          telemetryService.captureToolUsage(this.context.taskId, block.name, true, true);
+          telemetryService.captureToolUsage(
+            this.context.taskId,
+            block.name,
+            true,
+            true,
+          );
         } else {
-          if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
+          if (
+            this.context.autoApprovalSettings.enabled &&
+            this.context.autoApprovalSettings.enableNotifications
+          ) {
             showSystemNotification({
               subtitle: "Approval Required",
-              message: `Reading: ${path.basename(absolutePath)}`
+              message: `Reading: ${path.basename(absolutePath)}`,
             });
           }
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
           const didApprove = await this.askApproval("tool", completeMessage);
           if (!didApprove) {
-            telemetryService.captureToolUsage(this.context.taskId, block.name, false, false);
+            telemetryService.captureToolUsage(
+              this.context.taskId,
+              block.name,
+              false,
+              false,
+            );
             return { shouldContinue: true, userRejected: true };
           }
-          telemetryService.captureToolUsage(this.context.taskId, block.name, false, true);
+          telemetryService.captureToolUsage(
+            this.context.taskId,
+            block.name,
+            false,
+            true,
+          );
         }
 
         // now execute the tool like normal
         const content = await extractTextFromFile(absolutePath);
 
         // Track file read operation
-        await this.context.fileContextTracker.trackFileContext(relPath, "read_tool");
+        await this.context.fileContextTracker.trackFileContext(
+          relPath,
+          "read_tool",
+        );
 
         return { shouldContinue: true, toolResponse: content };
       }
     } catch (error) {
       return {
         shouldContinue: true,
-        toolResponse: await this.handleError("reading file", error as Error)
+        toolResponse: await this.handleError("reading file", error as Error),
       };
     }
   }
 
-  private async handleListFiles(block: AssistantMessageContent, partial: boolean): Promise<ToolExecutionResult> {
+  private async handleListFiles(
+    block: AssistantMessageContent,
+    partial: boolean,
+  ): Promise<ToolExecutionResult> {
     if (block.type !== "tool_use") {
       return { shouldContinue: false };
     }
@@ -614,7 +857,10 @@ export class FileToolHandler extends BaseToolHandler {
     const recursive = recursiveRaw?.toLowerCase() === "true";
     const sharedMessageProps: ValorIDESayTool = {
       tool: !recursive ? "listFilesTopLevel" : "listFilesRecursive",
-      path: getReadablePath(this.context.cwd, this.removeClosingTag("path", relDirPath, partial)),
+      path: getReadablePath(
+        this.context.cwd,
+        this.removeClosingTag("path", relDirPath, partial),
+      ),
     };
 
     try {
@@ -622,15 +868,31 @@ export class FileToolHandler extends BaseToolHandler {
         const partialMessage = JSON.stringify({
           ...sharedMessageProps,
           content: "",
-          operationIsLocatedInWorkspace: isLocatedInWorkspace(block.params.path),
+          operationIsLocatedInWorkspace: isLocatedInWorkspace(
+            block.params.path,
+          ),
         } satisfies ValorIDESayTool);
 
-        if (this.context.shouldAutoApproveToolWithPath(block.name, block.params.path)) {
-          this.context.removeLastPartialMessageIfExistsWithType("ask", "tool");
+        if (
+          this.context.shouldAutoApproveToolWithPath(
+            block.name,
+            block.params.path,
+          )
+        ) {
+          await this.context.removeLastPartialMessageIfExistsWithType(
+            "say",
+            "tool",
+          );
+          await this.context.removeLastPartialMessageIfExistsWithType(
+            "ask",
+            "tool",
+          );
           await this.context.say("tool", partialMessage, undefined, partial);
         } else {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-          await this.context.ask("tool", partialMessage, partial).catch(() => { });
+          await this.context
+            .ask("tool", partialMessage, partial)
+            .catch(() => { });
         }
         return { shouldContinue: false };
       } else {
@@ -638,7 +900,10 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
-            toolResponse: await this.context.sayAndCreateMissingParamError("list_files", "path")
+            toolResponse: await this.context.sayAndCreateMissingParamError(
+              "list_files",
+              "path",
+            ),
           };
         }
         this.context.consecutiveMistakeCount = 0;
@@ -646,51 +911,93 @@ export class FileToolHandler extends BaseToolHandler {
         const pathAccess = this.getPathAccess();
         const normalizedRelDirPath = relDirPath.trim();
         if (!pathAccess.validateAccess(normalizedRelDirPath)) {
-          await this.context.say("valorideignore_error", relDirPath);
+          const errorText = await this.describePathAccessFailure(
+            relDirPath,
+            pathAccess,
+          );
           return {
             shouldContinue: true,
-            toolResponse: formatResponse.toolError(
-              formatResponse.valorideIgnoreError(relDirPath),
-            ),
+            toolResponse: formatResponse.toolError(errorText),
           };
         }
 
-        const absolutePath = path.resolve(this.context.cwd, normalizedRelDirPath);
-        const [files, didHitLimit] = await listFiles(absolutePath, recursive, 200);
-        const accessibleFiles = files.filter((file) => pathAccess.validateAccess(file));
+        const absolutePath = path.resolve(
+          this.context.cwd,
+          normalizedRelDirPath,
+        );
+        const [files, didHitLimit] = await listFiles(
+          absolutePath,
+          recursive,
+          200,
+        );
+        const accessibleFiles = files.filter((file) =>
+          pathAccess.validateAccess(file),
+        );
 
         const result = formatResponse.formatFilesList(
           absolutePath,
           accessibleFiles,
           didHitLimit,
-          this.context.valorideIgnoreController
+          this.context.valorideIgnoreController,
         );
 
         const completeMessage = JSON.stringify({
           ...sharedMessageProps,
           content: result,
-          operationIsLocatedInWorkspace: isLocatedInWorkspace(block.params.path),
+          operationIsLocatedInWorkspace: isLocatedInWorkspace(
+            block.params.path,
+          ),
         } satisfies ValorIDESayTool);
 
-        if (this.context.shouldAutoApproveToolWithPath(block.name, block.params.path)) {
-          this.context.removeLastPartialMessageIfExistsWithType("ask", "tool");
+        if (
+          this.context.shouldAutoApproveToolWithPath(
+            block.name,
+            block.params.path,
+          )
+        ) {
+          await this.context.removeLastPartialMessageIfExistsWithType(
+            "say",
+            "tool",
+          );
+          await this.context.removeLastPartialMessageIfExistsWithType(
+            "ask",
+            "tool",
+          );
           await this.context.say("tool", completeMessage, undefined, false);
           this.context.consecutiveAutoApprovedRequestsCount++;
-          telemetryService.captureToolUsage(this.context.taskId, block.name, true, true);
+          telemetryService.captureToolUsage(
+            this.context.taskId,
+            block.name,
+            true,
+            true,
+          );
         } else {
-          if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
+          if (
+            this.context.autoApprovalSettings.enabled &&
+            this.context.autoApprovalSettings.enableNotifications
+          ) {
             showSystemNotification({
               subtitle: "Approval Required",
-              message: `Browsing: ${path.basename(absolutePath)}/`
+              message: `Browsing: ${path.basename(absolutePath)}/`,
             });
           }
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
           const didApprove = await this.askApproval("tool", completeMessage);
           if (!didApprove) {
-            telemetryService.captureToolUsage(this.context.taskId, block.name, false, false);
+            telemetryService.captureToolUsage(
+              this.context.taskId,
+              block.name,
+              false,
+              false,
+            );
             return { shouldContinue: true, userRejected: true };
           }
-          telemetryService.captureToolUsage(this.context.taskId, block.name, false, true);
+          telemetryService.captureToolUsage(
+            this.context.taskId,
+            block.name,
+            false,
+            true,
+          );
         }
 
         return { shouldContinue: true, toolResponse: result };
@@ -698,12 +1005,15 @@ export class FileToolHandler extends BaseToolHandler {
     } catch (error) {
       return {
         shouldContinue: true,
-        toolResponse: await this.handleError("listing files", error as Error)
+        toolResponse: await this.handleError("listing files", error as Error),
       };
     }
   }
 
-  private async handleListCodeDefinitions(block: AssistantMessageContent, partial: boolean): Promise<ToolExecutionResult> {
+  private async handleListCodeDefinitions(
+    block: AssistantMessageContent,
+    partial: boolean,
+  ): Promise<ToolExecutionResult> {
     if (block.type !== "tool_use") {
       return { shouldContinue: false };
     }
@@ -711,7 +1021,10 @@ export class FileToolHandler extends BaseToolHandler {
     const relDirPath: string | undefined = block.params.path;
     const sharedMessageProps: ValorIDESayTool = {
       tool: "listCodeDefinitionNames",
-      path: getReadablePath(this.context.cwd, this.removeClosingTag("path", relDirPath, partial)),
+      path: getReadablePath(
+        this.context.cwd,
+        this.removeClosingTag("path", relDirPath, partial),
+      ),
     };
 
     try {
@@ -719,15 +1032,24 @@ export class FileToolHandler extends BaseToolHandler {
         const partialMessage = JSON.stringify({
           ...sharedMessageProps,
           content: "",
-          operationIsLocatedInWorkspace: isLocatedInWorkspace(block.params.path),
+          operationIsLocatedInWorkspace: isLocatedInWorkspace(
+            block.params.path,
+          ),
         } satisfies ValorIDESayTool);
 
-        if (this.context.shouldAutoApproveToolWithPath(block.name, block.params.path)) {
+        if (
+          this.context.shouldAutoApproveToolWithPath(
+            block.name,
+            block.params.path,
+          )
+        ) {
           this.context.removeLastPartialMessageIfExistsWithType("ask", "tool");
           await this.context.say("tool", partialMessage, undefined, partial);
         } else {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-          await this.context.ask("tool", partialMessage, partial).catch(() => { });
+          await this.context
+            .ask("tool", partialMessage, partial)
+            .catch(() => { });
         }
         return { shouldContinue: false };
       } else {
@@ -735,7 +1057,10 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
-            toolResponse: await this.context.sayAndCreateMissingParamError("list_code_definition_names", "path")
+            toolResponse: await this.context.sayAndCreateMissingParamError(
+              "list_code_definition_names",
+              "path",
+            ),
           };
         }
 
@@ -744,16 +1069,20 @@ export class FileToolHandler extends BaseToolHandler {
         const pathAccess = this.getPathAccess();
         const normalizedRelDirPath = relDirPath.trim();
         if (!pathAccess.validateAccess(normalizedRelDirPath)) {
-          await this.context.say("valorideignore_error", relDirPath);
+          const errorText = await this.describePathAccessFailure(
+            relDirPath,
+            pathAccess,
+          );
           return {
             shouldContinue: true,
-            toolResponse: formatResponse.toolError(
-              formatResponse.valorideIgnoreError(relDirPath),
-            ),
+            toolResponse: formatResponse.toolError(errorText),
           };
         }
 
-        const absolutePath = path.resolve(this.context.cwd, normalizedRelDirPath);
+        const absolutePath = path.resolve(
+          this.context.cwd,
+          normalizedRelDirPath,
+        );
         const result = await parseSourceCodeForDefinitionsTopLevel(
           absolutePath,
           this.context.valorideIgnoreController,
@@ -762,28 +1091,53 @@ export class FileToolHandler extends BaseToolHandler {
         const completeMessage = JSON.stringify({
           ...sharedMessageProps,
           content: result,
-          operationIsLocatedInWorkspace: isLocatedInWorkspace(block.params.path),
+          operationIsLocatedInWorkspace: isLocatedInWorkspace(
+            block.params.path,
+          ),
         } satisfies ValorIDESayTool);
 
-        if (this.context.shouldAutoApproveToolWithPath(block.name, block.params.path)) {
+        if (
+          this.context.shouldAutoApproveToolWithPath(
+            block.name,
+            block.params.path,
+          )
+        ) {
           this.context.removeLastPartialMessageIfExistsWithType("ask", "tool");
           await this.context.say("tool", completeMessage, undefined, false);
           this.context.consecutiveAutoApprovedRequestsCount++;
-          telemetryService.captureToolUsage(this.context.taskId, block.name, true, true);
+          telemetryService.captureToolUsage(
+            this.context.taskId,
+            block.name,
+            true,
+            true,
+          );
         } else {
-          if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
+          if (
+            this.context.autoApprovalSettings.enabled &&
+            this.context.autoApprovalSettings.enableNotifications
+          ) {
             showSystemNotification({
               subtitle: "Approval Required",
-              message: `Analyzing: ${path.basename(absolutePath)}/`
+              message: `Analyzing: ${path.basename(absolutePath)}/`,
             });
           }
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
           const didApprove = await this.askApproval("tool", completeMessage);
           if (!didApprove) {
-            telemetryService.captureToolUsage(this.context.taskId, block.name, false, false);
+            telemetryService.captureToolUsage(
+              this.context.taskId,
+              block.name,
+              false,
+              false,
+            );
             return { shouldContinue: true, userRejected: true };
           }
-          telemetryService.captureToolUsage(this.context.taskId, block.name, false, true);
+          telemetryService.captureToolUsage(
+            this.context.taskId,
+            block.name,
+            false,
+            true,
+          );
         }
 
         return { shouldContinue: true, toolResponse: result };
@@ -791,12 +1145,18 @@ export class FileToolHandler extends BaseToolHandler {
     } catch (error) {
       return {
         shouldContinue: true,
-        toolResponse: await this.handleError("parsing source code definitions", error as Error)
+        toolResponse: await this.handleError(
+          "parsing source code definitions",
+          error as Error,
+        ),
       };
     }
   }
 
-  private async handleSearchFiles(block: AssistantMessageContent, partial: boolean): Promise<ToolExecutionResult> {
+  private async handleSearchFiles(
+    block: AssistantMessageContent,
+    partial: boolean,
+  ): Promise<ToolExecutionResult> {
     if (block.type !== "tool_use") {
       return { shouldContinue: false };
     }
@@ -806,7 +1166,10 @@ export class FileToolHandler extends BaseToolHandler {
     const filePattern: string | undefined = block.params.file_pattern;
     const sharedMessageProps: ValorIDESayTool = {
       tool: "searchFiles",
-      path: getReadablePath(this.context.cwd, this.removeClosingTag("path", relDirPath, partial)),
+      path: getReadablePath(
+        this.context.cwd,
+        this.removeClosingTag("path", relDirPath, partial),
+      ),
       regex: this.removeClosingTag("regex", regex, partial),
       filePattern: this.removeClosingTag("file_pattern", filePattern, partial),
     };
@@ -816,15 +1179,24 @@ export class FileToolHandler extends BaseToolHandler {
         const partialMessage = JSON.stringify({
           ...sharedMessageProps,
           content: "",
-          operationIsLocatedInWorkspace: isLocatedInWorkspace(block.params.path),
+          operationIsLocatedInWorkspace: isLocatedInWorkspace(
+            block.params.path,
+          ),
         } satisfies ValorIDESayTool);
 
-        if (this.context.shouldAutoApproveToolWithPath(block.name, block.params.path)) {
+        if (
+          this.context.shouldAutoApproveToolWithPath(
+            block.name,
+            block.params.path,
+          )
+        ) {
           this.context.removeLastPartialMessageIfExistsWithType("ask", "tool");
           await this.context.say("tool", partialMessage, undefined, partial);
         } else {
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
-          await this.context.ask("tool", partialMessage, partial).catch(() => { });
+          await this.context
+            .ask("tool", partialMessage, partial)
+            .catch(() => { });
         }
         return { shouldContinue: false };
       } else {
@@ -832,14 +1204,20 @@ export class FileToolHandler extends BaseToolHandler {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
-            toolResponse: await this.context.sayAndCreateMissingParamError("search_files", "path")
+            toolResponse: await this.context.sayAndCreateMissingParamError(
+              "search_files",
+              "path",
+            ),
           };
         }
         if (!regex) {
           this.context.consecutiveMistakeCount++;
           return {
             shouldContinue: true,
-            toolResponse: await this.context.sayAndCreateMissingParamError("search_files", "regex")
+            toolResponse: await this.context.sayAndCreateMissingParamError(
+              "search_files",
+              "regex",
+            ),
           };
         }
         this.context.consecutiveMistakeCount = 0;
@@ -847,16 +1225,20 @@ export class FileToolHandler extends BaseToolHandler {
         const pathAccess = this.getPathAccess();
         const normalizedRelDirPath = relDirPath.trim();
         if (!pathAccess.validateAccess(normalizedRelDirPath)) {
-          await this.context.say("valorideignore_error", relDirPath);
+          const errorText = await this.describePathAccessFailure(
+            relDirPath,
+            pathAccess,
+          );
           return {
             shouldContinue: true,
-            toolResponse: formatResponse.toolError(
-              formatResponse.valorideIgnoreError(relDirPath),
-            ),
+            toolResponse: formatResponse.toolError(errorText),
           };
         }
 
-        const absolutePath = path.resolve(this.context.cwd, normalizedRelDirPath);
+        const absolutePath = path.resolve(
+          this.context.cwd,
+          normalizedRelDirPath,
+        );
         const results = await regexSearchFiles(
           this.context.cwd,
           absolutePath,
@@ -868,28 +1250,53 @@ export class FileToolHandler extends BaseToolHandler {
         const completeMessage = JSON.stringify({
           ...sharedMessageProps,
           content: results,
-          operationIsLocatedInWorkspace: isLocatedInWorkspace(block.params.path),
+          operationIsLocatedInWorkspace: isLocatedInWorkspace(
+            block.params.path,
+          ),
         } satisfies ValorIDESayTool);
 
-        if (this.context.shouldAutoApproveToolWithPath(block.name, block.params.path)) {
+        if (
+          this.context.shouldAutoApproveToolWithPath(
+            block.name,
+            block.params.path,
+          )
+        ) {
           this.context.removeLastPartialMessageIfExistsWithType("ask", "tool");
           await this.context.say("tool", completeMessage, undefined, false);
           this.context.consecutiveAutoApprovedRequestsCount++;
-          telemetryService.captureToolUsage(this.context.taskId, block.name, true, true);
+          telemetryService.captureToolUsage(
+            this.context.taskId,
+            block.name,
+            true,
+            true,
+          );
         } else {
-          if (this.context.autoApprovalSettings.enabled && this.context.autoApprovalSettings.enableNotifications) {
+          if (
+            this.context.autoApprovalSettings.enabled &&
+            this.context.autoApprovalSettings.enableNotifications
+          ) {
             showSystemNotification({
               subtitle: "Approval Required",
-              message: `Searching: ${path.basename(absolutePath)}/`
+              message: `Searching: ${path.basename(absolutePath)}/`,
             });
           }
           this.context.removeLastPartialMessageIfExistsWithType("say", "tool");
           const didApprove = await this.askApproval("tool", completeMessage);
           if (!didApprove) {
-            telemetryService.captureToolUsage(this.context.taskId, block.name, false, false);
+            telemetryService.captureToolUsage(
+              this.context.taskId,
+              block.name,
+              false,
+              false,
+            );
             return { shouldContinue: true, userRejected: true };
           }
-          telemetryService.captureToolUsage(this.context.taskId, block.name, false, true);
+          telemetryService.captureToolUsage(
+            this.context.taskId,
+            block.name,
+            false,
+            true,
+          );
         }
 
         return { shouldContinue: true, toolResponse: results };
@@ -897,8 +1304,20 @@ export class FileToolHandler extends BaseToolHandler {
     } catch (error) {
       return {
         shouldContinue: true,
-        toolResponse: await this.handleError("searching files", error as Error)
+        toolResponse: await this.handleError("searching files", error as Error),
       };
     }
+  }
+  private async describePathAccessFailure(
+    relPath: string,
+    pathAccess: PathAccess,
+  ): Promise<string> {
+    const rejection = pathAccess.getLastRejection();
+    if (rejection?.reason === "outside-workspace") {
+      await this.context.say("workspace_access_error", relPath);
+      return formatResponse.workspaceAccessError(relPath, this.context.cwd);
+    }
+    await this.context.say("valorideignore_error", relPath);
+    return formatResponse.valorideIgnoreError(relPath);
   }
 }

@@ -4,11 +4,11 @@
  */
 
 export interface ColumnSchema {
-  type?: 'string' | 'number' | 'boolean' | 'datetime' | 'enum' | 'object';
+  type?: "string" | "number" | "boolean" | "datetime" | "enum" | "object";
   enumValues?: string[] | number[];
-  enumValueType?: 'string' | 'number';
+  enumValueType?: "string" | "number";
   refType?: string;
 }
 
-export { default as RBGrid } from './RBGrid';
-export type { RBGridProps } from './RBGrid';
+export { default as RBGrid } from "./RBGrid";
+export type { RBGridProps } from "./RBGrid";

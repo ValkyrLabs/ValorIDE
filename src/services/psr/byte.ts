@@ -17,7 +17,12 @@ export async function applyBytePatches(
   edits: AnnotatedByteEdit[],
 ): Promise<ByteResult> {
   if (!edits.length) {
-    return { buffer: Buffer.from(buffer), warnings: [], skipped: [], applied: [] };
+    return {
+      buffer: Buffer.from(buffer),
+      warnings: [],
+      skipped: [],
+      applied: [],
+    };
   }
 
   const warnings: string[] = [];
@@ -46,7 +51,7 @@ export async function applyBytePatches(
     }
 
     const positions: number[] = [];
-    for (let pos = 0; pos <= b.length - needle.length;) {
+    for (let pos = 0; pos <= b.length - needle.length; ) {
       const found = b.indexOf(needle, pos);
       if (found === -1) break;
       positions.push(found);
@@ -88,17 +93,26 @@ export async function applyBytePatches(
     }
   });
 
-  return { buffer: b, warnings, skipped, applied: Array.from(applied).sort((a, b) => a - b) };
+  return {
+    buffer: b,
+    warnings,
+    skipped,
+    applied: Array.from(applied).sort((a, b) => a - b),
+  };
 }
 
 function hexToBuf(hex: string) {
   const cleaned = hex.replace(/\s+/g, "");
   if (!cleaned.length) throw new Error("hex string is empty");
-  if (cleaned.length % 2 !== 0) throw new Error("hex string must contain an even number of characters");
+  if (cleaned.length % 2 !== 0)
+    throw new Error("hex string must contain an even number of characters");
   return Buffer.from(cleaned, "hex");
 }
 
-function selectBytePositions(positions: number[], occurrence: ByteEdit["occurrence"]) {
+function selectBytePositions(
+  positions: number[],
+  occurrence: ByteEdit["occurrence"],
+) {
   if (occurrence === "first") return positions.slice(0, 1);
   if (typeof occurrence === "number") {
     const pos = positions[occurrence];

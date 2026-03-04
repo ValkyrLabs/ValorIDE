@@ -49,7 +49,7 @@ export class ToolRelayService {
             parameters,
             commandId,
             timestamp: Date.now(),
-            senderId: this.getSenderId()
+            senderId: this.getSenderId(),
         };
         // Send command over websocket
         this.communicationService.sendMessage("valoride:tool_command", command);
@@ -58,7 +58,7 @@ export class ToolRelayService {
             this.pendingCommands.set(commandId, {
                 resolve,
                 reject,
-                timestamp: Date.now()
+                timestamp: Date.now(),
             });
             // Set up timeout
             setTimeout(() => {
@@ -141,7 +141,7 @@ export class ToolRelayService {
             result,
             error,
             timestamp: Date.now(),
-            senderId: this.getSenderId()
+            senderId: this.getSenderId(),
         };
         this.communicationService.sendMessage("valoride:tool_result", toolResult);
     }
@@ -195,12 +195,16 @@ export class ToolRelayService {
     async executeListCodeDefinitionNames(params) {
         // This would integrate with existing code definition listing functionality
         // For now, return a placeholder
-        return { message: "Code definitions listing not yet implemented in remote execution" };
+        return {
+            message: "Code definitions listing not yet implemented in remote execution",
+        };
     }
     async executeBrowserAction(params) {
         // This would integrate with existing browser automation
         // For now, return a placeholder
-        return { message: "Browser actions not yet implemented in remote execution" };
+        return {
+            message: "Browser actions not yet implemented in remote execution",
+        };
     }
     // Helper methods
     getSenderId() {
@@ -215,18 +219,18 @@ export class ToolRelayService {
     applyDiff(content, diff) {
         // This is a simplified diff application - you'd want to use the existing
         // replace_in_file logic from the main codebase
-        const lines = content.split('\n');
+        const lines = content.split("\n");
         const blocks = this.parseDiffBlocks(diff);
         for (const block of blocks) {
-            const searchLines = block.search.split('\n');
-            const replaceLines = block.replace.split('\n');
+            const searchLines = block.search.split("\n");
+            const replaceLines = block.replace.split("\n");
             // Find and replace (simplified - real implementation would be more robust)
-            const searchStart = lines.findIndex(line => line.includes(searchLines[0]));
+            const searchStart = lines.findIndex((line) => line.includes(searchLines[0]));
             if (searchStart !== -1) {
                 lines.splice(searchStart, searchLines.length, ...replaceLines);
             }
         }
-        return lines.join('\n');
+        return lines.join("\n");
     }
     parseDiffBlocks(diff) {
         // Parse SEARCH/REPLACE blocks - simplified implementation
@@ -236,7 +240,7 @@ export class ToolRelayService {
         while ((match = regex.exec(diff)) !== null) {
             blocks.push({
                 search: match[1],
-                replace: match[2]
+                replace: match[2],
             });
         }
         return blocks;
@@ -248,7 +252,7 @@ export class ToolRelayService {
             const fullPath = path.join(dirPath, entry.name);
             if (entry.isDirectory()) {
                 const subFiles = await this.listFilesRecursive(fullPath);
-                files.push(...subFiles.map(f => path.join(entry.name, f)));
+                files.push(...subFiles.map((f) => path.join(entry.name, f)));
             }
             else {
                 files.push(entry.name);

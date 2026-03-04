@@ -15,6 +15,19 @@ import { initializeTestMode, cleanupTestMode } from "./services/test/TestMode";
 import { registerUrlCommands } from "./commands/urlCommands";
 import { registerAliasCommands } from "./commands/aliasCommands";
 import { StartupAuthService } from "./services/auth/StartupAuthService";
+import { initializePromptService } from "./services/promptService";
+import { initializeMemoryBankLoader } from "./services/memoryBankLoader";
+import { initializeLLMContextInjector } from "./services/llmContextInjector";
+import { initializeSwarmOrchestrator } from "./services/swarmOrchestrator";
+import { initializeThorAPIGeneratorService } from "./services/thorapiGeneratorService";
+import { initializeToolRankingEngine } from "./services/toolRankingEngine";
+import { initializeBrowserErrorCapture } from "./services/browser/errorCapture";
+import { initializeSwarmPromptBroadcaster } from "./services/swarmPromptBroadcaster";
+import { initializeThorAPIModelRegistry } from "./services/thorapiModelRegistry";
+import { initializeRatingService } from "./services/ratingService";
+import { initializeStatusBarService } from "./services/StatusBarService";
+import { initializeLLMPromptService, } from "./services/llmPromptService";
+import { getAllExtensionState } from "./core/storage/state";
 /*
 Built using https://github.com/microsoft/vscode-webview-ui-toolkit
 
@@ -35,6 +48,77 @@ export function activate(context) {
     context.subscriptions.push(outputChannel);
     ErrorService.initialize();
     Logger.initialize(outputChannel);
+    // Initialize PromptService (load system.json, thorapi-catalog.json, swarm-rules.json)
+    const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || process.cwd();
+    void initializePromptService(workspaceRoot, outputChannel)
+        .then(() => {
+        Logger.log("PromptService initialized successfully");
+    })
+        .catch((error) => {
+        Logger.log(`PromptService initialization failed: ${error}`);
+    });
+    // Initialize MemoryBankLoader (load .valoride/memorybank/)
+    void initializeMemoryBankLoader(workspaceRoot, outputChannel)
+        .then(() => {
+        Logger.log("MemoryBankLoader initialized successfully");
+    })
+        .catch((error) => {
+        Logger.log(`MemoryBankLoader initialization failed: ${error}`);
+    });
+    // Initialize LLMPromptService (load base prompt + manual overrides)
+    void (async () => {
+        try {
+            const { selectedLlmDetails } = await getAllExtensionState(context);
+            const manualSelection = selectedLlmDetails
+                ? {
+                    llmDetailsId: selectedLlmDetails.id,
+                    name: selectedLlmDetails.name,
+                    prompt: selectedLlmDetails.prompt,
+                    mode: selectedLlmDetails.mode,
+                    tags: selectedLlmDetails.tags,
+                    source: selectedLlmDetails.source === "fallback" ? "fallback" : "thorapi",
+                    stackSpecific: true,
+                }
+                : undefined;
+            await initializeLLMPromptService(workspaceRoot, outputChannel, undefined, manualSelection);
+            Logger.log("LLMPromptService initialized successfully");
+        }
+        catch (error) {
+            Logger.log(`LLMPromptService initialization failed: ${error}`);
+        }
+    })();
+    // Initialize LLMContextInjector (synthesize all prompt layers)
+    void initializeLLMContextInjector(outputChannel)
+        .then(() => {
+        Logger.log("LLMContextInjector initialized successfully");
+    })
+        .catch((error) => {
+        Logger.log(`LLMContextInjector initialization failed: ${error}`);
+    });
+    // Initialize SwarmOrchestrator (Supervisor agent for task routing)
+    initializeSwarmOrchestrator(outputChannel);
+    Logger.log("SwarmOrchestrator initialized successfully");
+    // Initialize ThorAPIGeneratorService (6-stage app generation)
+    initializeThorAPIGeneratorService(workspaceRoot, outputChannel);
+    Logger.log("ThorAPIGeneratorService initialized successfully");
+    // Initialize ToolRankingEngine (Auto-rank tools by relevance)
+    initializeToolRankingEngine(outputChannel);
+    Logger.log("ToolRankingEngine initialized successfully");
+    // Initialize BrowserErrorCapture (Console error + auto-fix)
+    initializeBrowserErrorCapture(workspaceRoot, outputChannel);
+    Logger.log("BrowserErrorCapture initialized successfully");
+    // Initialize SwarmPromptBroadcaster (Real-time prompt broadcast)
+    initializeSwarmPromptBroadcaster(outputChannel);
+    Logger.log("SwarmPromptBroadcaster initialized successfully");
+    // Initialize ThorAPIModelRegistry (Auto-discover models/services)
+    initializeThorAPIModelRegistry(workspaceRoot, outputChannel);
+    Logger.log("ThorAPIModelRegistry initialized successfully");
+    // Initialize RatingService (Prompt self-improvement)
+    initializeRatingService(outputChannel);
+    Logger.log("RatingService initialized successfully");
+    // Initialize StatusBarService (Token tracking & status display)
+    initializeStatusBarService(context);
+    Logger.log("StatusBarService initialized successfully");
     // Register the webview view provider FIRST
     const sidebarWebview = new WebviewProvider(context, outputChannel);
     context.subscriptions.push(vscode.window.registerWebviewViewProvider(WebviewProvider.sideBarId, sidebarWebview, {
@@ -52,7 +136,9 @@ export function activate(context) {
                 sidebarWebview.controller.postMessageToWebview({
                     type: "loginSuccess",
                     token: authResult.tokens?.jwtToken,
-                    authenticatedPrincipal: authResult.user ? JSON.stringify(authResult.user) : undefined,
+                    authenticatedPrincipal: authResult.user
+                        ? JSON.stringify(authResult.user)
+                        : undefined,
                 });
             }
             else {
@@ -323,7 +409,9 @@ export function activate(context) {
                 if (token && apiKey) {
                     let parsedUser;
                     try {
-                        parsedUser = authenticatedPrincipal ? JSON.parse(decodeURIComponent(authenticatedPrincipal)) : undefined;
+                        parsedUser = authenticatedPrincipal
+                            ? JSON.parse(decodeURIComponent(authenticatedPrincipal))
+                            : undefined;
                     }
                     catch (error) {
                         console.warn("Failed to parse authenticatedPrincipal:", error);
@@ -494,7 +582,9 @@ export function activate(context) {
         };
         const diagnosticsText = JSON.stringify(diagnostics, null, 2);
         Logger.log(`ValorIDE Diagnostics:\n${diagnosticsText}`);
-        vscode.window.showInformationMessage(`ValorIDE Diagnostics logged to output channel. Active instances: ${diagnostics.activeInstances}`, "Show Output").then((selection) => {
+        vscode.window
+            .showInformationMessage(`ValorIDE Diagnostics logged to output channel. Active instances: ${diagnostics.activeInstances}`, "Show Output")
+            .then((selection) => {
             if (selection === "Show Output") {
                 outputChannel.show();
             }

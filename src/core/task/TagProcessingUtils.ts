@@ -7,7 +7,11 @@ export class TagProcessingUtils {
   /**
    * If block is partial, remove partial closing tag so it's not presented to user
    */
-  static removeClosingTag(tag: ToolParamName, text?: string, isPartial?: boolean): string {
+  static removeClosingTag(
+    tag: ToolParamName,
+    text?: string,
+    isPartial?: boolean,
+  ): string {
     if (!isPartial) {
       return text || "";
     }

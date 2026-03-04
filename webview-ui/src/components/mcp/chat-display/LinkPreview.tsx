@@ -1,8 +1,8 @@
 import React from "react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import DOMPurify from "dompurify";
 import { getSafeHostname, normalizeRelativeUrl } from "./utils/mcpRichUtil";
-import ChatErrorBoundary from "@/components/chat/ChatErrorBoundary";
+import ChatErrorBoundary from "@thorapi/components/chat/ChatErrorBoundary";
 
 interface OpenGraphData {
   title?: string;

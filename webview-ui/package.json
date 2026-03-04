@@ -37,6 +37,7 @@
     "react-virtuoso": "^4.12.3",
     "rehype-highlight": "^7.0.1",
     "styled-components": "^6.1.15",
+    "three": "^0.181.2",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

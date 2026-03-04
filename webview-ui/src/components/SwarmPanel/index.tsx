@@ -1,1 +1,1 @@
-export { default } from './SwarmPanel';
+export { default } from "./SwarmPanel";

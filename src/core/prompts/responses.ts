@@ -24,17 +24,30 @@ export const formatResponse = {
   valorideIgnoreError: (path: string) =>
     `Access to ${path} is blocked by the .valorideignore file settings. You must try to continue in the task without using this file, or ask the user to update the .valorideignore file.`,
 
-  noToolsUsed: () =>
-    `[ERROR] You did not use a tool in your previous response! Please retry with a tool use.
+  workspaceAccessError: (path: string, workspaceRoot: string) =>
+    `Access to ${path} is blocked because it is outside of the current workspace root (${workspaceRoot}). Re-run the task from the correct workspace, or ask the user to open the folder that contains this file if it should be accessible.`,
 
-${toolUseInstructionsReminder}
+  noToolsUsed: (mode: "plan" | "act" = "act") => {
+    const nextSteps =
+      mode === "plan"
+        ? `# Next Steps (PLAN MODE)
 
-# Next Steps
+Use the plan_mode_respond tool to reply with your plan, questions, or options for the user.
+Do NOT use execute_command or file-edit tools in PLAN MODE. If you need those, ask the user to "toggle to Act mode".
+(This is an automated message, so do not respond to it conversationally.)`
+        : `# Next Steps
 
 If you have completed the user's task, use the attempt_completion tool. 
 If you require additional information from the user, use the ask_followup_question tool. 
 Otherwise, if you have not completed the task and do not need additional information, then proceed with the next step of the task. 
-(This is an automated message, so do not respond to it conversationally.)`,
+(This is an automated message, so do not respond to it conversationally.)`;
+
+    return `[ERROR] You did not use a tool in your previous response! Please retry with a tool use.
+
+${toolUseInstructionsReminder}
+
+${nextSteps}`;
+  },
 
   tooManyMistakes: (feedback?: string) =>
     `You seem to be having trouble proceeding. The user has provided the following feedback to help guide you:\n<feedback>\n${feedback}\n</feedback>`,
@@ -274,5 +287,10 @@ For example:
 I have completed the task...
 </result>
 </attempt_completion>
+
+IMPORTANT:
+- Use EXACTLY ONE tool call per assistant message.
+- The tool call MUST be the final content in your message (no trailing text after the closing tool tag).
+- Do NOT wrap tool calls in Markdown code fences.
 
 Always adhere to this format for all tool uses to ensure proper parsing and execution.`;

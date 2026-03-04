@@ -3,6 +3,7 @@
  * This demonstrates how to use the ValorIDEAccountService to fetch data from the ContentData endpoint
  */
 import { ValorIDEAccountService } from "./ValorIDEAccountService";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 /**
  * Example function showing how to use the fetchContentData method
  * @param accountService - Instance of ValorIDEAccountService
@@ -10,7 +11,8 @@ import { ValorIDEAccountService } from "./ValorIDEAccountService";
  */
 export async function exampleFetchContentData(accountService) {
     try {
-        console.log(`Fetching content data from ${process.env.VITE_basePath?.replace('/v1', '') || "http://localhost:8080"}/ContentData...`);
+        const host = getValkyraiBasePath().replace(/\/v1$/, "");
+        console.log(`Fetching content data from ${host}/ContentData...`);
         // Call the fetchContentData method
         const contentData = await accountService.fetchContentData();
         if (contentData) {

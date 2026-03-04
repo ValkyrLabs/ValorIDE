@@ -1,7 +1,5 @@
 import React from "react";
-import {
-  VSCodeButton,
-} from "@vscode/webview-ui-toolkit/react";
+import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import "./StartServerModal.css";
 
 interface StartServerModalProps {
@@ -44,19 +42,20 @@ const StartServerModal: React.FC<StartServerModalProps> = ({
       case "spring-boot":
         return {
           title: "Start Spring Boot Server",
-          description: "Start the Java Spring Boot development server for testing",
+          description:
+            "Start the Java Spring Boot development server for testing",
           command: "mvn spring-boot:run",
           port: "8080",
           features: [
             "Starts the Spring Boot application on localhost:8080",
             "Enables auto-reload on code changes",
             "Opens Swagger UI documentation",
-            "Configures development database connections"
-          ]
+            "Configures development database connections",
+          ],
         };
       case "nestjs":
         return {
-          title: "Start Nest.js Server", 
+          title: "Start Nest.js Server",
           description: "Start the Nest.js development server for testing",
           command: "npm run start:dev",
           port: "3000",
@@ -64,8 +63,8 @@ const StartServerModal: React.FC<StartServerModalProps> = ({
             "Starts the Nest.js application on localhost:3000",
             "Enables hot module reload",
             "Opens API documentation",
-            "Configures development environment"
-          ]
+            "Configures development environment",
+          ],
         };
       case "typescript":
         return {
@@ -78,8 +77,8 @@ const StartServerModal: React.FC<StartServerModalProps> = ({
             "Runs type checking and linting",
             "Generates client library for integration",
             "Creates distributable package",
-            "Updates tsconfig path aliases (@thor/* and @valkyr/component-library/*)"
-          ]
+            "Updates tsconfig path aliases (@thorapi/* and @valkyr/component-library/*)",
+          ],
         };
       default:
         return {
@@ -87,7 +86,7 @@ const StartServerModal: React.FC<StartServerModalProps> = ({
           description: "Start the development server for testing",
           command: "npm start",
           port: "3000",
-          features: []
+          features: [],
         };
     }
   };
@@ -114,11 +113,14 @@ const StartServerModal: React.FC<StartServerModalProps> = ({
             </div>
             {serverInfo.port && (
               <div className="start-server-modal-port">
-                <strong>Port:</strong> <code>http://localhost:{serverInfo.port}</code>
+                <strong>Port:</strong>{" "}
+                <code>http://localhost:{serverInfo.port}</code>
               </div>
             )}
             <div className="start-server-modal-features">
-              <p><strong>This will:</strong></p>
+              <p>
+                <strong>This will:</strong>
+              </p>
               <ul>
                 {serverInfo.features.map((feature, index) => (
                   <li key={index}>{feature}</li>

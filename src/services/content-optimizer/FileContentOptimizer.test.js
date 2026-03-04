@@ -11,7 +11,7 @@ describe("FileContentOptimizer", () => {
         it("should truncate large content intelligently", async () => {
             const longContent = "A".repeat(15000);
             const result = await FileContentOptimizer.optimizeFileContent("test.txt", longContent, {
-                maxContentLength: 1000
+                maxContentLength: 1000,
             });
             result.length.should.be.lessThan(1100);
             result.should.containEql("[Content truncated...]");
@@ -32,7 +32,7 @@ export { Component1, Component2 };
       `.repeat(100); // Make it large
             const result = await FileContentOptimizer.optimizeFileContent("test.tsx", largeSourceContent, {
                 maxFileSize: 1000,
-                extractOnlyRelevant: true
+                extractOnlyRelevant: true,
             });
             result.should.containEql("[File is large - showing relevant portions only]");
         });
@@ -131,7 +131,9 @@ Line 1
 ERROR: Test error
 Line 3
       `;
-            const result = FileContentOptimizer.extractByPatterns(content, { includeLineNumbers: true });
+            const result = FileContentOptimizer.extractByPatterns(content, {
+                includeLineNumbers: true,
+            });
             result.should.match(/\d+: ERROR: Test error/);
         });
     });
@@ -170,15 +172,15 @@ Line 3
     describe("isSourceCodeFile", () => {
         it("should identify source code files correctly", () => {
             const isSourceCode = FileContentOptimizer.isSourceCodeFile;
-            isSourceCode('.js').should.be.true();
-            isSourceCode('.ts').should.be.true();
-            isSourceCode('.tsx').should.be.true();
-            isSourceCode('.py').should.be.true();
-            isSourceCode('.java').should.be.true();
-            isSourceCode('.cpp').should.be.true();
-            isSourceCode('.txt').should.be.false();
-            isSourceCode('.md').should.be.false();
-            isSourceCode('.json').should.be.false();
+            isSourceCode(".js").should.be.true();
+            isSourceCode(".ts").should.be.true();
+            isSourceCode(".tsx").should.be.true();
+            isSourceCode(".py").should.be.true();
+            isSourceCode(".java").should.be.true();
+            isSourceCode(".cpp").should.be.true();
+            isSourceCode(".txt").should.be.false();
+            isSourceCode(".md").should.be.false();
+            isSourceCode(".json").should.be.false();
         });
     });
 });

@@ -2,7 +2,7 @@
   "name": "valoride-dev",
   "displayName": "ValorIDE",
   "description": "Agentic coding right in your IDE, capable of creating/editing files, running commands, using the browser, and more with your permission every step of the way.",
-  "version": "3.20.544",
+  "version": "3.20.668",
   "icon": "assets/icons/icon.png",
   "pricing": "Free",
   "galleryBanner": {
@@ -89,7 +89,7 @@
       {
         "command": "valoride.accountButtonClicked",
         "title": "Account Settings",
-        "icon": "$(zap)"
+        "icon": "$(shield)"
       },
       {
         "command": "valoride.serverConsoleButtonClicked",
@@ -139,7 +139,7 @@
       },
       {
         "command": "valoride.addThorAliasesFromFolder",
-        "title": "Add @thor Aliases From Folder",
+        "title": "Add @ Aliases From Folder",
         "category": "ValorIDE"
       },
       {
@@ -226,16 +226,6 @@
         {
           "command": "valoride.accountButtonClicked",
           "group": "navigation@6",
-          "when": "view == valoride-dev.SidebarProvider"
-        },
-        {
-          "command": "valoride.serverConsoleButtonClicked",
-          "group": "navigation@7",
-          "when": "view == valoride-dev.SidebarProvider"
-        },
-        {
-          "command": "valoride.fixLayout",
-          "group": "navigation@8",
           "when": "view == valoride-dev.SidebarProvider"
         },
         {
@@ -380,6 +370,12 @@
           "default": false,
           "markdownDescription": "When enabled, ValorIDE prints the full precision_search_and_replace result report after each edit."
         },
+        "valoride.valkyrai.host": {
+          "type": "string",
+          "default": "https://api-0.valkyrlabs.com",
+          "markdownDescription": "Base URL used for ValkyrAI API calls (synced across machines).",
+          "scope": "application"
+        },
         "valoride.P2P.turnServers": {
           "type": "array",
           "markdownDescription": "List of ICE/TURN servers for P2P (RTCConfiguration. Each entry may be a string URL or an object with { urls, username, credential }).",
@@ -479,6 +475,9 @@
     }
   },
   "scripts": {
+    "build": "yarn format:fix && yarn install && tsc && v",
+    "build-staging": "build --mode staging",
+    "build-prod": "build --mode prod",
     "package:staging": "yarn run build:webview:staging && yarn run check-types && yarn run lint && node esbuild.js --production",
     "package:prod": "yarn run build:webview:prod && yarn run check-types && yarn run lint && node esbuild.js --production",
     "v": "node increment-version.js && vsce package",
@@ -498,7 +497,8 @@
     "test": "vscode-test",
     "install:all": "yarn install && cd webview-ui && yarn install",
     "start:webview": "cd webview-ui && yarn run start",
-    "build:webview": "cd webview-ui && yarn run build",
+    "build:webview": "cd webview-ui && yarn run build && node ../scripts/sync-webview-build.js",
+    "copy:webview": "node scripts/sync-webview-build.js",
     "test:webview": "cd webview-ui && yarn run test",
     "publish:marketplace": "vsce publish && ovsx publish",
     "publish:marketplace:prerelease": "vsce publish --pre-release && ovsx publish --pre-release",
@@ -571,6 +571,8 @@
     "@vscode/webview-ui-toolkit": "^1.4.0",
     "JSX": "^1.1.0",
     "adm-zip": "^0.5.16",
+    "ant-design": "^1.0.0",
+    "antd": "^5.28.1",
     "anthropic-ai": "^0.0.10",
     "axios": "^1.8.3",
     "cheerio": "^1.0.0",

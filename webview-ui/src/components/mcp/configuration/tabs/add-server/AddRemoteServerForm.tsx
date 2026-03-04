@@ -1,12 +1,12 @@
 import { useCallback, useRef, useState } from "react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import {
   VSCodeButton,
   VSCodeLink,
   VSCodeTextField,
 } from "@vscode/webview-ui-toolkit/react";
 import { useEvent } from "react-use";
-import { LINKS } from "@/constants";
+import { LINKS } from "@thorapi/constants";
 const AddRemoteServerForm = ({
   onServerAdded,
 }: {
@@ -30,7 +30,7 @@ const AddRemoteServerForm = ({
         isSubmitting &&
         submittedValues.current &&
         message.addRemoteServerResult?.serverName ===
-          submittedValues.current.name
+        submittedValues.current.name
       ) {
         if (message.addRemoteServerResult.success) {
           // Handle success

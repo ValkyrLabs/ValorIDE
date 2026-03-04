@@ -22,21 +22,22 @@
     "allowImportingTsExtensions": true, // Add this line
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "src/*"
+      "@thorapi/model": ["src/thorapi/model/index.ts"],
+      "@thorapi/model/*": ["src/thorapi/model/*"],
+      "@thorapi/src": ["src/thorapi/src/index.ts"],
+      "@thorapi/redux/*": ["src/thorapi/redux/*"],
+      "@thorapi/redux/services": ["src/thorapi/redux/services/index.ts"],
+      "@thorapi/redux/services/*": [
+        "src/thorapi/redux/services/*",
+        "src/redux/services/*"
       ],
-      "@shared/*": [
-        "../src/shared/*"
-      ],
-      "@thor/*": [
-        "src/thor/*"
-      ],
-      "@valkyr/component-library/*": [
-        "src/components/*"
-      ],
-      "@thor/redux/services/*": [
-        "src/thor/redux/services/*"
-      ]
+      "@thorapi/api": ["src/thorapi/api/index.ts"],
+      "@thorapi/api/*": ["src/thorapi/api/*"],
+      "@thorapi/*": ["src/*"],
+      "@shared/*": ["../src/shared/*"],
+      "@valkyr/component-library/*": ["src/components/*"],
+      "@utils/*": ["src/utils/*", "../src/utils/*"],
+      "@utils/serverValkyraiHost": ["src/utils/serverValkyraiHost.ts"],
     }
   },
   "include": [

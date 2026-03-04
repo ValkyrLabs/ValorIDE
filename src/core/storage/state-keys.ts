@@ -9,6 +9,7 @@ export type SecretKey =
   | "geminiApiKey"
   | "openAiNativeApiKey"
   | "deepSeekApiKey"
+  | "moonshotApiKey"
   | "requestyApiKey"
   | "togetherApiKey"
   | "qwenApiKey"
@@ -53,6 +54,7 @@ export type GlobalStateKey =
   | "openRouterModelId"
   | "openRouterModelInfo"
   | "openRouterProviderSorting"
+  | "moonshotApiLine"
   | "autoApprovalSettings"
   | "globalValorIDERulesToggles"
   | "browserSettings"
@@ -81,6 +83,7 @@ export type GlobalStateKey =
   | "reasoningEffort"
   | "planActSeparateModelsSetting"
   | "favoritedModelIds"
-  | "valorideSwarmInstanceId";
+  | "valorideSwarmInstanceId"
+  | "selectedLlmDetails";
 
 export type LocalStateKey = "localValorIDERulesToggles";

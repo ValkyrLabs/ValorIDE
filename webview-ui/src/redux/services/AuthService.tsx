@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { Login, Principal } from "../../thor/model";
-import customBaseQuery from "../../thor/redux/customBaseQuery";
+import { Login, Principal } from "@thorapi/model";
+import customBaseQuery from "../..//redux/customBaseQuery";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 
 type NormalizedLoginResponse = { token: string; user?: Principal };
 
@@ -8,7 +9,7 @@ type LoginListResponse = Login[];
 
 // This API slice is dedicated to auth to avoid name/reducerPath collisions
 export const AuthService = createApi({
-  reducerPath: "Auth", // unique reducer path (previously collided with thor Login)
+  reducerPath: "Auth", // unique reducer path (previously collided with  Login)
   baseQuery: customBaseQuery,
   tagTypes: ["Auth"],
   endpoints: (build) => ({
@@ -17,9 +18,9 @@ export const AuthService = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: "Auth" as const, id })),
-              { type: "Auth", id: "LIST" },
-            ]
+            ...result.map(({ id }) => ({ type: "Auth" as const, id })),
+            { type: "Auth", id: "LIST" },
+          ]
           : [{ type: "Auth", id: "LIST" }],
     }),
 
@@ -36,7 +37,7 @@ export const AuthService = createApi({
     // Login call to backend. Normalizes response into { token, user }
     loginUser: build.mutation<NormalizedLoginResponse, Partial<Login>>({
       query: (body) => ({
-        url: `${import.meta.env.VITE_basePath || "http://localhost:8080/v1"}/auth/login`,
+        url: `${getValkyraiHost().replace(/\/+$/, "")}/auth/login`,
         method: "POST",
         body,
       }),

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import mermaid from "mermaid";
-import { useDebounceEffect } from "@/utils/useDebounceEffect";
+import { useDebounceEffect } from "@thorapi/utils/useDebounceEffect";
 import styled from "styled-components";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { FaCopy } from "react-icons/fa";
 
@@ -284,7 +284,6 @@ const StyledVSCodeButton = styled(VSCodeButton)`
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-
 
   &:hover {
     background-color: var(--vscode-button-secondaryHoverBackground);

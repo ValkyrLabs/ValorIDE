@@ -4,6 +4,7 @@
  */
 import * as vscode from "vscode";
 import { ValorIDEAccountService } from "../services/account/ValorIDEAccountService";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 /**
  * Command to fetch ContentData and display it in VSCode
  * This command can be called from the command palette or programmatically
@@ -16,7 +17,8 @@ export async function fetchContentDataCommand(accountService) {
             title: "Fetching ContentData",
             cancellable: false,
         }, async (progress) => {
-            progress.report({ message: `Connecting to ${process.env.VITE_basePath?.replace('/v1', '') || "http://localhost:8080"}/ContentData...` });
+            const host = getValkyraiBasePath().replace(/\/v1$/, "");
+            progress.report({ message: `Connecting to ${host}/ContentData...` });
             const contentData = await accountService.fetchContentData();
             if (contentData) {
                 // Show success message

@@ -10,7 +10,12 @@ import React, {
 } from "react";
 import { useSize } from "react-use";
 import styled from "styled-components";
-import { FaSearch, FaGlobe, FaChevronDown, FaChevronRight } from "react-icons/fa";
+import {
+  FaSearch,
+  FaGlobe,
+  FaChevronDown,
+  FaChevronRight,
+} from "react-icons/fa";
 import { BROWSER_VIEWPORT_PRESETS } from "@shared/BrowserSettings";
 import {
   BrowserAction,
@@ -18,12 +23,12 @@ import {
   ValorIDEMessage,
   ValorIDESayBrowserAction,
 } from "@shared/ExtensionMessage";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
-import { BrowserSettingsMenu } from "@/components/browser/BrowserSettingsMenu";
-import { CheckpointControls } from "@/components/common/CheckpointControls";
-import CodeBlock, { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import { ChatRowContent, ProgressIndicator } from "@/components/chat/ChatRow";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
+import { BrowserSettingsMenu } from "@thorapi/components/browser/BrowserSettingsMenu";
+import { CheckpointControls } from "@thorapi/components/common/CheckpointControls";
+import CodeBlock, { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import { ChatRowContent, ProgressIndicator } from "@thorapi/components/chat/ChatRow";
 
 interface BrowserSessionRowProps {
   messages: ValorIDEMessage[];
@@ -411,9 +416,7 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
         {isBrowsing && !isLastMessageResume ? (
           <ProgressIndicator />
         ) : (
-          <FaSearch
-            style={browserIconStyle}
-          />
+          <FaSearch style={browserIconStyle} />
         )}
         <span style={approveTextStyle}>
           <>
@@ -478,9 +481,7 @@ const BrowserSessionRow = memo((props: BrowserSessionRowProps) => {
             />
           ) : (
             <div style={noScreenshotContainerStyle}>
-              <FaGlobe
-                style={noScreenshotIconStyle}
-              />
+              <FaGlobe style={noScreenshotIconStyle} />
             </div>
           )}
           {displayState.mousePosition && (

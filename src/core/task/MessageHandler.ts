@@ -1,4 +1,9 @@
-import { ValorIDEMessage, ValorIDEAsk, ValorIDESay, ExtensionMessage } from "@shared/ExtensionMessage";
+import {
+  ValorIDEMessage,
+  ValorIDEAsk,
+  ValorIDESay,
+  ExtensionMessage,
+} from "@shared/ExtensionMessage";
 import { ValorIDEAskResponse } from "@shared/WebviewMessage";
 import pWaitFor from "p-wait-for";
 
@@ -16,7 +21,7 @@ export class MessageHandler {
   constructor(
     private saveValorIDEMessagesAndUpdateHistory: () => Promise<void>,
     private postStateToWebview: () => Promise<void>,
-    private postMessageToWebview: (message: ExtensionMessage) => Promise<void>
+    private postMessageToWebview: (message: ExtensionMessage) => Promise<void>,
   ) {}
 
   setValorIDEMessages(messages: ValorIDEMessage[]): void {
@@ -44,7 +49,9 @@ export class MessageHandler {
     await this.saveValorIDEMessagesAndUpdateHistory();
   }
 
-  async overwriteValorIDEMessages(newMessages: ValorIDEMessage[]): Promise<void> {
+  async overwriteValorIDEMessages(
+    newMessages: ValorIDEMessage[],
+  ): Promise<void> {
     this.valorideMessages = newMessages;
     await this.saveValorIDEMessagesAndUpdateHistory();
   }
@@ -52,7 +59,7 @@ export class MessageHandler {
   async handleWebviewAskResponse(
     askResponse: ValorIDEAskResponse,
     text?: string,
-    images?: string[]
+    images?: string[],
   ): Promise<void> {
     this.askResponse = askResponse;
     this.askResponseText = text;

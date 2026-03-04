@@ -9,6 +9,7 @@ import { AutoApprovalSettings } from "@shared/AutoApprovalSettings";
 import { BrowserSettings } from "@shared/BrowserSettings";
 import { ChatSettings } from "@shared/ChatSettings";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
+import { SelectedLlmDetails } from "@shared/llm";
 
 import { ValorIDERulesToggles } from "@shared/valoride-rules";
 /*
@@ -105,6 +106,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     geminiBaseUrl,
     openAiNativeApiKey,
     deepSeekApiKey,
+    moonshotApiKey,
     requestyApiKey,
     requestyModelId,
     requestyModelInfo,
@@ -135,6 +137,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     previousModeThinkingBudgetTokens,
     previousModeReasoningEffort,
     qwenApiLine,
+    moonshotApiLine,
     liteLlmApiKey,
     telemetrySetting,
     asksageApiKey,
@@ -152,6 +155,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     globalValorIDERulesToggles,
     authenticatedPrincipal,
     isLoggedIn,
+    selectedLlmDetails,
   ] = await Promise.all([
     getGlobalState(context, "apiProvider") as Promise<ApiProvider | undefined>,
     getGlobalState(context, "apiModelId") as Promise<string | undefined>,
@@ -196,6 +200,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     getGlobalState(context, "geminiBaseUrl") as Promise<string | undefined>,
     getSecret(context, "openAiNativeApiKey") as Promise<string | undefined>,
     getSecret(context, "deepSeekApiKey") as Promise<string | undefined>,
+    getSecret(context, "moonshotApiKey") as Promise<string | undefined>,
     getSecret(context, "requestyApiKey") as Promise<string | undefined>,
     getGlobalState(context, "requestyModelId") as Promise<string | undefined>,
     getGlobalState(context, "requestyModelInfo") as Promise<
@@ -260,6 +265,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
       string | undefined
     >,
     getGlobalState(context, "qwenApiLine") as Promise<string | undefined>,
+    getGlobalState(context, "moonshotApiLine") as Promise<string | undefined>,
     getSecret(context, "liteLlmApiKey") as Promise<string | undefined>,
     getGlobalState(context, "telemetrySetting") as Promise<
       TelemetrySetting | undefined
@@ -289,6 +295,9 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
       any | undefined
     >,
     getGlobalState(context, "isLoggedIn") as Promise<boolean | undefined>,
+    getGlobalState(context, "selectedLlmDetails") as Promise<
+      SelectedLlmDetails | undefined
+    >,
   ]);
 
   // Advanced settings are computed in controller when posting state to webview
@@ -297,9 +306,9 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
   if (storedApiProvider) {
     apiProvider = storedApiProvider;
   } else {
-  // Either new user or legacy user that doesn't have the apiProvider stored in state
+    // Either new user or legacy user that doesn't have the apiProvider stored in state
     // (If they're using OpenRouter or Bedrock, then apiProvider state will exist)
-  if (apiKey) {
+    if (apiKey) {
       apiProvider = "anthropic";
     } else {
       // New users should default to openrouter, since they've opted to use an API key instead of signing in
@@ -319,6 +328,10 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
   const mcpMarketplaceEnabled = vscode.workspace
     .getConfiguration("valoride")
     .get<boolean>("mcpMarketplace.enabled", true);
+
+  const configuredValkyraiHost = vscode.workspace
+    .getConfiguration("valoride.valkyrai")
+    .get<string>("host");
 
   // Plan/Act separate models setting is a boolean indicating whether the user wants to use different models for plan and act. Existing users expect this to be enabled, while we want new users to opt in to this being disabled by default.
   // On win11 state sometimes initializes as empty string instead of undefined
@@ -344,6 +357,9 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
       planActSeparateModelsSetting,
     );
   }
+
+  const normalizedValkyraiHost =
+    configuredValkyraiHost?.trim() || valkyraiHost || undefined;
 
   return {
     apiConfiguration: {
@@ -378,12 +394,14 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
       geminiBaseUrl,
       openAiNativeApiKey,
       deepSeekApiKey,
+      moonshotApiKey,
       requestyApiKey,
       requestyModelId,
       requestyModelInfo,
       togetherApiKey,
       togetherModelId,
       qwenApiKey,
+      moonshotApiLine,
       qwenApiLine,
       doubaoApiKey,
       mistralApiKey,
@@ -404,7 +422,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
       xaiApiKey,
       sambanovaApiKey,
       // Valkyrai pass-through
-      valkyraiHost,
+      valkyraiHost: normalizedValkyraiHost,
       valkyraiServiceId,
       valkyraiJwt,
       favoritedModelIds,
@@ -430,6 +448,7 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
     planActSeparateModelsSetting,
     authenticatedPrincipal,
     isLoggedIn: isLoggedIn || false,
+    selectedLlmDetails,
   };
 }
 
@@ -468,12 +487,14 @@ export async function updateApiConfiguration(
     geminiBaseUrl,
     openAiNativeApiKey,
     deepSeekApiKey,
+    moonshotApiKey,
     requestyApiKey,
     requestyModelId,
     requestyModelInfo,
     togetherApiKey,
     togetherModelId,
     qwenApiKey,
+    moonshotApiLine,
     doubaoApiKey,
     mistralApiKey,
     azureApiVersion,
@@ -541,6 +562,7 @@ export async function updateApiConfiguration(
   await updateGlobalState(context, "geminiBaseUrl", geminiBaseUrl);
   await storeSecret(context, "openAiNativeApiKey", openAiNativeApiKey);
   await storeSecret(context, "deepSeekApiKey", deepSeekApiKey);
+  await storeSecret(context, "moonshotApiKey", moonshotApiKey);
   await storeSecret(context, "requestyApiKey", requestyApiKey);
   await storeSecret(context, "togetherApiKey", togetherApiKey);
   await storeSecret(context, "qwenApiKey", qwenApiKey);
@@ -569,6 +591,7 @@ export async function updateApiConfiguration(
     liteLlmUsePromptCache,
   );
   await updateGlobalState(context, "qwenApiLine", qwenApiLine);
+  await updateGlobalState(context, "moonshotApiLine", moonshotApiLine);
   await updateGlobalState(context, "requestyModelId", requestyModelId);
   await updateGlobalState(context, "requestyModelInfo", requestyModelInfo);
   await updateGlobalState(context, "togetherModelId", togetherModelId);
@@ -603,6 +626,7 @@ export async function resetExtensionState(context: vscode.ExtensionContext) {
     "geminiApiKey",
     "openAiNativeApiKey",
     "deepSeekApiKey",
+    "moonshotApiKey",
     "requestyApiKey",
     "togetherApiKey",
     "qwenApiKey",

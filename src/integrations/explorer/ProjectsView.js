@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as path from "path";
-import { resolveThorapiFolderPath, thorapiSettingChanged } from "@utils/thorapi";
+import { resolveThorapiFolderPath, thorapiSettingChanged, } from "@utils/thorapi";
 export class ProjectsTreeDataProvider {
     output;
     _onDidChangeTreeData = new vscode.EventEmitter();
@@ -13,7 +13,9 @@ export class ProjectsTreeDataProvider {
     }
     getTreeItem(element) {
         const item = new vscode.TreeItem(element.name, vscode.TreeItemCollapsibleState.None);
-        item.tooltip = `${element.name}` + (element.mtime ? ` — ${new Date(element.mtime).toLocaleString()}` : "");
+        item.tooltip =
+            `${element.name}` +
+                (element.mtime ? ` — ${new Date(element.mtime).toLocaleString()}` : "");
         item.resourceUri = element.uri;
         item.contextValue = "thorProject";
         item.iconPath = new vscode.ThemeIcon("folder-library");
@@ -43,7 +45,10 @@ export class ProjectsTreeDataProvider {
                     let mtime;
                     try {
                         const stat = await vscode.workspace.fs.stat(uri);
-                        mtime = typeof stat.mtime === "number" ? stat.mtime : undefined;
+                        mtime =
+                            typeof stat.mtime === "number"
+                                ? stat.mtime
+                                : undefined;
                     }
                     catch (err) {
                         // Debug: unable to stat project folder; leave mtime undefined
@@ -101,7 +106,10 @@ export function registerProjectsView(context, output) {
     }), vscode.commands.registerCommand("valoride.projects.openTerminal", async (uri) => {
         const u = getUriArg(uri);
         if (u) {
-            const term = vscode.window.createTerminal({ cwd: u.fsPath, name: path.basename(u.fsPath) });
+            const term = vscode.window.createTerminal({
+                cwd: u.fsPath,
+                name: path.basename(u.fsPath),
+            });
             term.show();
         }
     }), vscode.commands.registerCommand("valoride.projects.reveal", async (uri) => {
@@ -112,12 +120,7 @@ export function registerProjectsView(context, output) {
         const u = getUriArg(uri);
         if (!u)
             return;
-        const candidates = [
-            "README.md",
-            "readme.md",
-            "README",
-            "README.txt",
-        ];
+        const candidates = ["README.md", "readme.md", "README", "README.txt"];
         for (const filename of candidates) {
             const file = vscode.Uri.joinPath(u, filename);
             try {
@@ -180,7 +183,10 @@ async function runProjectTask(uri, task) {
         return;
     }
     const termName = `${path.basename(uri.fsPath)}: ${task}`;
-    const term = vscode.window.createTerminal({ cwd: uri.fsPath, name: termName });
+    const term = vscode.window.createTerminal({
+        cwd: uri.fsPath,
+        name: termName,
+    });
     term.show();
     const run = (cmd) => term.sendText(cmd, true);
     if (tool === "maven") {

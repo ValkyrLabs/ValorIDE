@@ -1,15 +1,24 @@
-import { BaseToolHandler, ToolContext, ToolExecutionResult, ToolResponse } from "./BaseToolHandler";
+import {
+  BaseToolHandler,
+  ToolContext,
+  ToolExecutionResult,
+  ToolResponse,
+} from "./BaseToolHandler";
 import { FileToolHandler } from "./FileToolHandler";
 import { CommandToolHandler } from "./CommandToolHandler";
+import { BrowserToolHandler } from "./BrowserToolHandler";
 import { AssistantMessageContent } from "@core/assistant-message";
-import { formatResponse } from "@core/prompts/responses";
+import { telemetryService } from "@services/telemetry/TelemetryService";
+import { Logger } from "@services/logging/Logger";
 
 export class ToolManager {
   private handlers: Map<string, BaseToolHandler>;
+  private context: ToolContext;
 
   constructor(context: ToolContext) {
+    this.context = context;
     this.handlers = new Map();
-    
+
     // Register file operation handlers
     const fileHandler = new FileToolHandler(context);
     this.handlers.set("write_to_file", fileHandler);
@@ -19,17 +28,21 @@ export class ToolManager {
     this.handlers.set("list_files", fileHandler);
     this.handlers.set("list_code_definition_names", fileHandler);
     this.handlers.set("search_files", fileHandler);
-    
+
     // Register command handler
     const commandHandler = new CommandToolHandler(context);
     this.handlers.set("execute_command", commandHandler);
+
+    // Register browser handler
+    const browserHandler = new BrowserToolHandler(context);
+    this.handlers.set("browser_action", browserHandler);
   }
 
   async executeTool(
     block: AssistantMessageContent,
     partial: boolean,
     didRejectTool: boolean,
-    didAlreadyUseTool: boolean
+    didAlreadyUseTool: boolean,
   ): Promise<{
     shouldContinue: boolean;
     toolResponse?: ToolResponse;
@@ -57,7 +70,7 @@ export class ToolManager {
 
     if (didAlreadyUseTool) {
       // ignore any content after a tool has already been used
-      const toolResponse = formatResponse.toolAlreadyUsed(block.name);
+      const toolResponse = `Tool [${block.name}] was already used for this message.`;
       return { shouldContinue: true, toolResponse };
     }
 
@@ -71,12 +84,17 @@ export class ToolManager {
         userRejected: result.userRejected,
         didRejectTool: result.userRejected,
         didAlreadyUseTool:
-          result.didAlreadyUseTool ?? (result.shouldContinue && !result.userRejected),
+          result.didAlreadyUseTool ??
+          (result.shouldContinue && !result.userRejected),
         feedback: result.feedback,
       };
     }
 
     // If no handler found, return false to indicate the tool should be handled elsewhere
+    telemetryService.captureUnknownTool(this.context.taskId, block.name, {
+      partial,
+    });
+    Logger.warn(`Unknown tool requested: ${block.name}`);
     return { shouldContinue: false };
   }
 }

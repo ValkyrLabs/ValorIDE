@@ -295,7 +295,7 @@ export class McpHub {
         } else {
           console.error(`No stderr stream for ${name}`);
         }
-        transport.start = async () => {}; // No-op now, .connect() won't fail
+        transport.start = async () => { }; // No-op now, .connect() won't fail
       }
 
       // Connect
@@ -623,6 +623,13 @@ export class McpHub {
           return indexA - indexB;
         })
         .map((connection) => connection.server),
+    });
+    // Also post a simple server console notification to draw attention to MCP server changes
+    await this.postMessageToWebview({
+      type: "serverConsoleNewMessage",
+      payload: {
+        preview: "MCP servers updated",
+      },
     });
   }
 

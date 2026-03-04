@@ -29,24 +29,7 @@ export class ToolApprovalManager {
      */
     async askApproval(type, partialMessage) {
         const { response, text, images } = await this.ask(type, partialMessage, false);
-        const normalizedText = text?.trim().toLowerCase();
-        const approved = response === "yesButtonClicked" ||
-            (response === "messageResponse" &&
-                (normalizedText === "yes" || normalizedText === "approve"));
-        if (!approved) {
-            // User pressed reject button or responded with a message, which we treat as a rejection
-            return {
-                approved: false,
-                feedback: text || images?.length ? { text, images } : undefined
-            };
-        }
-        else {
-            // User hit the approve button, and may have provided feedback
-            return {
-                approved: true,
-                feedback: text || images?.length ? { text, images } : undefined
-            };
-        }
+        return ToolApprovalManager.normalizeApprovalResponse(response, text, images);
     }
     /**
      * Push tool result to user message content
@@ -103,6 +86,25 @@ export class ToolApprovalManager {
             this.pushAdditionalToolFeedback(userMessageContent, feedback.text, feedback.images);
             await this.say("user_feedback", feedback.text, feedback.images);
         }
+    }
+    /**
+     * Shared approval normalization for all approval flows
+     */
+    static normalizeApprovalResponse(response, text, images) {
+        const normalizedText = text?.trim().toLowerCase();
+        const approved = response === "yesButtonClicked" ||
+            (response === "messageResponse" &&
+                (normalizedText === "yes" || normalizedText === "approve"));
+        if (!approved) {
+            return {
+                approved: false,
+                feedback: text || images?.length ? { text, images } : undefined,
+            };
+        }
+        return {
+            approved: true,
+            feedback: text || images?.length ? { text, images } : undefined,
+        };
     }
 }
 //# sourceMappingURL=ToolApprovalManager.js.map

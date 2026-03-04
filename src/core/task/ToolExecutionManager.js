@@ -196,7 +196,9 @@ export class ToolExecutionManager {
             await this.say("user_feedback", userFeedback.text, userFeedback.images);
             return [
                 true,
-                formatResponse.toolResult(`Command is still running in the user's terminal.${filteredOutput.length > 0 ? `\nHere's the output so far:\n${filteredOutput}` : ""}\n\nThe user provided the following feedback:\n<feedback>\n${userFeedback.text}\n</feedback>`, userFeedback.images),
+                formatResponse.toolResult(`Command is still running in the user's terminal.${filteredOutput.length > 0
+                    ? `\nHere's the output so far:\n${filteredOutput}`
+                    : ""}\n\nThe user provided the following feedback:\n<feedback>\n${userFeedback.text}\n</feedback>`, userFeedback.images),
             ];
         }
         if (completed) {
@@ -208,7 +210,9 @@ export class ToolExecutionManager {
         else {
             return [
                 false,
-                `Command is still running in the user's terminal.${filteredOutput.length > 0 ? `\nHere's the output so far:\n${filteredOutput}` : ""}\n\nYou will be updated on the terminal status and new output in the future.`,
+                `Command is still running in the user's terminal.${filteredOutput.length > 0
+                    ? `\nHere's the output so far:\n${filteredOutput}`
+                    : ""}\n\nYou will be updated on the terminal status and new output in the future.`,
             ];
         }
     }

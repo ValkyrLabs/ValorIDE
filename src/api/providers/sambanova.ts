@@ -9,7 +9,7 @@ import {
   sambanovaModels,
 } from "@shared/api";
 import { ApiHandler } from "../index";
-import { convertToOpenAiMessages } from "@/api/transform/openai-format";
+import { convertToOpenAiMessages } from "@thorapi/api/transform/openai-format";
 import { ApiStream } from "@api/transform/stream";
 import { convertToR1Format } from "@api/transform/r1-format";
 

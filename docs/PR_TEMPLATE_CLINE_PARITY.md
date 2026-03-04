@@ -1,6 +1,7 @@
 # PR: ValorIDE Cline Parity Integration — Phase 1 + 2
 
 ## Title
+
 **feat: ValorIDE CLI Cline Parity - Phase 1-2 (CLI Foundation + Multi-Agent Orchestrator)**
 
 ## Description
@@ -8,12 +9,14 @@
 Complete implementation of ValorIDE CLI agent framework with Cline feature parity.
 
 ### Phase 1: CLI Foundation ✅
+
 - SessionManager with UUID-based persistence
 - Commander.js CLI entry point
 - 4 command groups (task, instance, config, checkpoint)
 - Tests: 5/5 passing
 
 ### Phase 2: Multi-Agent Orchestrator ✅
+
 - 5 specialized agents (planner, coder, tester, docs, integrator)
 - Baton-passing protocol for role dispatch
 - JSONL append-only audit trail
@@ -21,17 +24,20 @@ Complete implementation of ValorIDE CLI agent framework with Cline feature parit
 - Tests: 6/6 passing
 
 ### Phase 3: Multi-Project Checkpoints ✅
+
 - Workspace manifest parser (.valoride/workspace.yml, .code-workspace)
 - CheckpointDriver (git tags + bundles)
 - Cross-repo restore scaffolding
 
 ### Phase 4: Plan/Act UX ✅
+
 - Plan mode (dry-run planner only)
 - Act mode (full orchestration)
 - Spinner-based progress
 - Cost meter integration
 
 ### Phase 5: Documentation ✅
+
 - docs/cline-parity.md (feature analysis)
 - docs/CLINE_INTEGRATION_ROADMAP.md (5-phase plan)
 - docs/PHASE_COMPLETION_SUMMARY.md (overview)

@@ -37,19 +37,27 @@ export async function applyContextualPatches(
     if (!regexValid || !matches.length) {
       // Only fallback if the pattern is a valid literal (no regex metachars)
       if (/^[\w\s.,:;\-_'"()[\]{}<>!?@#$%^&*+=/\\|~`]+$/.test(edit.find)) {
-        const fallbackResult = applyLiteralFallback(text, edit.find, edit.replace, edit.occurrence);
+        const fallbackResult = applyLiteralFallback(
+          text,
+          edit.find,
+          edit.replace,
+          edit.occurrence,
+        );
         if (fallbackResult.replaced) {
           text = fallbackResult.text;
           ctx.applied.add(index);
           ctx.warnings.push(
-            `contextual edit ${index}: regex ${regexValid ? "no match" : "invalid"}, used literal fallback (${fallbackResult.count} replacement${fallbackResult.count !== 1 ? "s" : ""})`
+            `contextual edit ${index}: regex ${regexValid ? "no match" : "invalid"}, used literal fallback (${fallbackResult.count} replacement${fallbackResult.count !== 1 ? "s" : ""})`,
           );
           usedFallback = true;
           continue;
         }
       }
       if (!usedFallback) {
-        ctx.skipped.push({ index, reason: regexValid ? "no_match" : "invalid_regex" });
+        ctx.skipped.push({
+          index,
+          reason: regexValid ? "no_match" : "invalid_regex",
+        });
         continue;
       }
     }
@@ -97,12 +105,18 @@ export async function applyContextualPatches(
     }
 
     if (!mutated) {
-      ctx.skipped.push({ index, reason: identicalCount ? "already_applied" : "no_effect" });
+      ctx.skipped.push({
+        index,
+        reason: identicalCount ? "already_applied" : "no_effect",
+      });
       continue;
     }
 
     if (tagMutations.length) {
-      const { text: adjustedText, warnings: tagWarnings } = applyTagMutations(text, tagMutations);
+      const { text: adjustedText, warnings: tagWarnings } = applyTagMutations(
+        text,
+        tagMutations,
+      );
       text = adjustedText;
       for (const warning of tagWarnings) {
         ctx.warnings.push(`contextual edit ${index}: ${warning}`);
@@ -124,7 +138,7 @@ function applyLiteralFallback(
   text: string,
   find: string,
   replace: string,
-  occurrence: "first" | "all" | number | undefined
+  occurrence: "first" | "all" | number | undefined,
 ): { text: string; replaced: boolean; count: number } {
   let replaced = false;
   let count = 0;
@@ -183,7 +197,11 @@ function selectMatches(matches: RegExpMatchArray[], occurrence: Occurrence) {
   return matches;
 }
 
-function buildReplacement(template: string, match: RegExpMatchArray, input: string) {
+function buildReplacement(
+  template: string,
+  match: RegExpMatchArray,
+  input: string,
+) {
   const fullMatch = match[0];
   const start = match.index ?? 0;
   const end = start + fullMatch.length;
@@ -239,7 +257,11 @@ type TagMutationOutcome = {
   adjustments: TextAdjustment[];
 };
 
-function detectTagMutation(original: string, replacement: string, start: number): TagMutation | undefined {
+function detectTagMutation(
+  original: string,
+  replacement: string,
+  start: number,
+): TagMutation | undefined {
   const htmlOld = original.match(/^<\s*(\/?)\s*([A-Za-z0-9_.$:-]+)/);
   const htmlNew = replacement.match(/^<\s*(\/?)\s*([A-Za-z0-9_.$:-]+)/);
 
@@ -253,7 +275,8 @@ function detectTagMutation(original: string, replacement: string, start: number)
         start,
         oldName: htmlOld[2],
         newName: htmlNew[2],
-        selfClosing: orientationOld === "open" ? isSelfClosingSnippet(original) : false,
+        selfClosing:
+          orientationOld === "open" ? isSelfClosingSnippet(original) : false,
       };
     }
   }
@@ -264,14 +287,22 @@ function detectTagMutation(original: string, replacement: string, start: number)
   if (mustacheOld && mustacheNew) {
     const orientationOld = mustacheOld[1] === "/" ? "close" : "open";
     const orientationNew = mustacheNew[1] === "/" ? "close" : "open";
-    if (orientationOld === orientationNew && mustacheOld[2] !== mustacheNew[2]) {
+    if (
+      orientationOld === orientationNew &&
+      mustacheOld[2] !== mustacheNew[2]
+    ) {
       return {
         kind: "mustache",
         orientation: orientationOld,
         start,
         oldName: mustacheOld[2],
         newName: mustacheNew[2],
-        openSigil: orientationOld === "open" ? (mustacheOld[1] === "#" ? "#" : "^") : undefined,
+        openSigil:
+          orientationOld === "open"
+            ? mustacheOld[1] === "#"
+              ? "#"
+              : "^"
+            : undefined,
       };
     }
   }
@@ -279,12 +310,17 @@ function detectTagMutation(original: string, replacement: string, start: number)
   return undefined;
 }
 
-function applyTagMutations(text: string, mutations: TagMutation[]): { text: string; warnings: string[] } {
+function applyTagMutations(
+  text: string,
+  mutations: TagMutation[],
+): { text: string; warnings: string[] } {
   if (!mutations.length) {
     return { text, warnings: [] };
   }
 
-  const ordered = mutations.map((mutation) => ({ ...mutation })).sort((a, b) => a.start - b.start);
+  const ordered = mutations
+    .map((mutation) => ({ ...mutation }))
+    .sort((a, b) => a.start - b.start);
   const warnings: string[] = [];
 
   for (let i = 0; i < ordered.length; i++) {
@@ -316,14 +352,20 @@ function applyTagMutations(text: string, mutations: TagMutation[]): { text: stri
   return { text, warnings };
 }
 
-function applySingleTagMutation(text: string, mutation: TagMutation): TagMutationOutcome {
+function applySingleTagMutation(
+  text: string,
+  mutation: TagMutation,
+): TagMutationOutcome {
   if (mutation.kind === "html") {
     return applyHtmlTagMutation(text, mutation);
   }
   return applyMustacheTagMutation(text, mutation);
 }
 
-function applyHtmlTagMutation(text: string, mutation: Extract<TagMutation, { kind: "html" }>): TagMutationOutcome {
+function applyHtmlTagMutation(
+  text: string,
+  mutation: Extract<TagMutation, { kind: "html" }>,
+): TagMutationOutcome {
   const warnings: string[] = [];
   const adjustments: TextAdjustment[] = [];
   let out = text;
@@ -341,7 +383,11 @@ function applyHtmlTagMutation(text: string, mutation: Extract<TagMutation, { kin
       return { text: out, warnings, adjustments };
     }
 
-    const closing = findMatchingHtmlClosing(out, tagEnd + 1, new Set([mutation.oldName, mutation.newName]));
+    const closing = findMatchingHtmlClosing(
+      out,
+      tagEnd + 1,
+      new Set([mutation.oldName, mutation.newName]),
+    );
     if (!closing) {
       warnings.push(
         `tag_balance_failed: no closing tag found for <${mutation.oldName}> when renaming to <${mutation.newName}>`,
@@ -353,7 +399,12 @@ function applyHtmlTagMutation(text: string, mutation: Extract<TagMutation, { kin
       return { text: out, warnings, adjustments };
     }
 
-    out = replaceRange(out, closing.nameStart, closing.nameEnd, mutation.newName);
+    out = replaceRange(
+      out,
+      closing.nameStart,
+      closing.nameEnd,
+      mutation.newName,
+    );
     adjustments.push({
       position: closing.nameStart,
       delta: mutation.newName.length - (closing.nameEnd - closing.nameStart),
@@ -361,7 +412,11 @@ function applyHtmlTagMutation(text: string, mutation: Extract<TagMutation, { kin
     return { text: out, warnings, adjustments };
   }
 
-  const open = findMatchingHtmlOpen(out, mutation.start, new Set([mutation.oldName, mutation.newName]));
+  const open = findMatchingHtmlOpen(
+    out,
+    mutation.start,
+    new Set([mutation.oldName, mutation.newName]),
+  );
   if (!open) {
     warnings.push(
       `tag_balance_failed: no opening tag found for </${mutation.newName}> while renaming from </${mutation.oldName}>`,
@@ -399,7 +454,11 @@ function applyMustacheTagMutation(
       return { text: out, warnings, adjustments };
     }
 
-    const closing = findMatchingMustacheClosing(out, tagEnd, new Set([mutation.oldName, mutation.newName]));
+    const closing = findMatchingMustacheClosing(
+      out,
+      tagEnd,
+      new Set([mutation.oldName, mutation.newName]),
+    );
     if (!closing) {
       warnings.push(
         `tag_balance_failed: no closing mustache tag found for ${mutation.oldName} when renaming to ${mutation.newName}`,
@@ -411,7 +470,12 @@ function applyMustacheTagMutation(
       return { text: out, warnings, adjustments };
     }
 
-    out = replaceRange(out, closing.nameStart, closing.nameEnd, mutation.newName);
+    out = replaceRange(
+      out,
+      closing.nameStart,
+      closing.nameEnd,
+      mutation.newName,
+    );
     adjustments.push({
       position: closing.nameStart,
       delta: mutation.newName.length - (closing.nameEnd - closing.nameStart),
@@ -419,7 +483,11 @@ function applyMustacheTagMutation(
     return { text: out, warnings, adjustments };
   }
 
-  const opening = findMatchingMustacheOpen(out, mutation.start, new Set([mutation.oldName, mutation.newName]));
+  const opening = findMatchingMustacheOpen(
+    out,
+    mutation.start,
+    new Set([mutation.oldName, mutation.newName]),
+  );
   if (!opening) {
     warnings.push(
       `tag_balance_failed: no opening mustache tag found for ${mutation.oldName} when renaming to ${mutation.newName}`,
@@ -440,7 +508,12 @@ function applyMustacheTagMutation(
   return { text: out, warnings, adjustments };
 }
 
-function replaceRange(text: string, start: number, end: number, replacement: string) {
+function replaceRange(
+  text: string,
+  start: number,
+  end: number,
+  replacement: string,
+) {
   return `${text.slice(0, start)}${replacement}${text.slice(end)}`;
 }
 
@@ -509,7 +582,11 @@ function findHtmlNameStart(text: string, index: number) {
   return i;
 }
 
-function findMatchingHtmlClosing(text: string, start: number, names: Set<string>) {
+function findMatchingHtmlClosing(
+  text: string,
+  start: number,
+  names: Set<string>,
+) {
   const tagRegex = /<\s*\/?\s*([A-Za-z0-9_.$:-]+)/g;
   tagRegex.lastIndex = start;
   let depth = 0;
@@ -543,9 +620,18 @@ function findMatchingHtmlClosing(text: string, start: number, names: Set<string>
   }
 }
 
-function findMatchingHtmlOpen(text: string, closingIndex: number, names: Set<string>) {
+function findMatchingHtmlOpen(
+  text: string,
+  closingIndex: number,
+  names: Set<string>,
+) {
   const tagRegex = /<\s*\/?\s*([A-Za-z0-9_.$:-]+)/g;
-  const tokens: Array<{ index: number; name: string; isClose: boolean; selfClosing: boolean }> = [];
+  const tokens: Array<{
+    index: number;
+    name: string;
+    isClose: boolean;
+    selfClosing: boolean;
+  }> = [];
   let match: RegExpExecArray | null;
 
   while ((match = tagRegex.exec(text)) && match.index < closingIndex) {
@@ -584,7 +670,11 @@ function findMustacheEnd(text: string, start: number) {
   return marker === -1 ? -1 : marker + 2;
 }
 
-function findMatchingMustacheClosing(text: string, start: number, names: Set<string>) {
+function findMatchingMustacheClosing(
+  text: string,
+  start: number,
+  names: Set<string>,
+) {
   const tokenRegex = /{{\s*([#/^])\s*([^\s{}]+)[^}]*}}/g;
   tokenRegex.lastIndex = start;
   let depth = 0;
@@ -622,7 +712,11 @@ function findMatchingMustacheClosing(text: string, start: number, names: Set<str
   }
 }
 
-function findMatchingMustacheOpen(text: string, closingIndex: number, names: Set<string>) {
+function findMatchingMustacheOpen(
+  text: string,
+  closingIndex: number,
+  names: Set<string>,
+) {
   const tokenRegex = /{{\s*([#/^])\s*([^\s{}]+)[^}]*}}/g;
   const tokens: Array<{
     index: number;

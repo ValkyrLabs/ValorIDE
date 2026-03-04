@@ -7,19 +7,16 @@ This directory contains architectural documentation for the ValorIDE VSCode exte
 The [extension-architecture.mmd](./extension-architecture.mmd) file contains a Mermaid diagram showing the high-level architecture of the ValorIDE extension. The diagram illustrates:
 
 1. **Core Extension**
-
    - Extension entry point and main classes
    - State management through VSCode's global state and secrets storage
    - Core business logic in the ValorIDE class
 
 2. **Webview UI**
-
    - React-based user interface
    - State management through ExtensionStateContext
    - Component hierarchy
 
 3. **Storage**
-
    - Task-specific storage for history and state
    - Git-based checkpoint system for file changes
 

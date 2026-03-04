@@ -152,12 +152,14 @@ valor checkpoint restore --task my-task --step 1
 ## 🏗️ Architecture Highlights
 
 ### Session Persistence
+
 - UUID-based session IDs
 - Stored in `~/.valoride/sessions/`
 - Last activity tracking
 - IDE-CLI parity ready
 
 ### Multi-Agent Orchestration
+
 ```
 Task → Planner → Coder → Tester → Docs → Integrator → Complete
          (4k)    (8k)    (6k)     (6k)    (4k)
@@ -166,12 +168,14 @@ Task → Planner → Coder → Tester → Docs → Integrator → Complete
 ```
 
 ### Audit Trail
+
 - JSONL format (append-only)
 - Per-agent timestamps
 - Token + cost tracking
 - CSV export for reporting
 
 ### Checkpoints
+
 - Git tags: `valor/ckpt/<task>/<step>`
 - Bundle snapshots: `.valor/checkpoints/`
 - Cross-repo restore
@@ -186,13 +190,14 @@ Task → Planner → Coder → Tester → Docs → Integrator → Complete
 ✅ **Documented** — Inline comments + JSDoc  
 ✅ **Clean** — Composition over inheritance  
 ✅ **Efficient** — No external databases (git-native)  
-✅ **Production-Ready** — Error handling, validation  
+✅ **Production-Ready** — Error handling, validation
 
 ---
 
 ## 📋 Integration Checklist
 
 ### For Merge
+
 - [x] All tests passing (11/11)
 - [x] Build succeeds (clean dist/)
 - [x] Documentation complete
@@ -200,6 +205,7 @@ Task → Planner → Coder → Tester → Docs → Integrator → Complete
 - [x] No breaking changes
 
 ### For Next Phase
+
 - [ ] Implement real git commands in CheckpointDriver
 - [ ] Add integration tests (2+ repo scenarios)
 - [ ] Wire into IDE webview
@@ -254,7 +260,7 @@ valor --help             # Should work!
 ✅ **Production Architecture** — Scalable, maintainable, extensible  
 ✅ **Complete Documentation** — Next team can ship Day 1  
 ✅ **No Technical Debt** — Clean code, clear contracts  
-✅ **Dogfood Ready** — Uses ValorIDE's own patterns  
+✅ **Dogfood Ready** — Uses ValorIDE's own patterns
 
 ---
 

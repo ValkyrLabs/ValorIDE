@@ -29,8 +29,8 @@ export class EnvironmentService {
     private valorideIgnoreController: ValorIDEIgnoreController,
     private terminalManager: TerminalManager,
     private fileContextTracker: FileContextTracker,
-    private urlContentFetcher: UrlContentFetcher
-  ) {}
+    private urlContentFetcher: UrlContentFetcher,
+  ) { }
 
   async loadContext(
     userContent: UserContent,
@@ -38,7 +38,7 @@ export class EnvironmentService {
   ): Promise<[UserContent, string]> {
     return await Promise.all([
       // This is a temporary solution to dynamically load context mentions from tool results. It checks for the presence of tags that indicate that the tool was rejected and feedback was provided (see formatToolDeniedFeedback, attemptCompletion, executeCommand, and consecutiveMistakeCount >= 3) or "<answer>" (see askFollowupQuestion), we place all user generated content in these tags so they can effectively be used as markers for when we should parse mentions). However if we allow multiple tools responses in the future, we will need to parse mentions specifically within the user content tags.
-      // (Note: this caused the @/ import alias bug where file contents were being parsed as well, since v2 converted tool results to text blocks)
+      // (Note: this caused the @thorapi/ import alias bug where file contents were being parsed as well, since v2 converted tool results to text blocks)
       Promise.all(
         userContent.map(async (block) => {
           if (block.type === "text") {
@@ -78,7 +78,7 @@ export class EnvironmentService {
     didEditFile: boolean = false,
     valorideMessages: ValorIDEMessage[] = [],
     api?: ApiHandler,
-    chatSettings?: ChatSettings
+    chatSettings?: ChatSettings,
   ): Promise<string> {
     let details = "";
 
@@ -136,7 +136,7 @@ export class EnvironmentService {
           interval: 100,
           timeout: 15_000,
         },
-      ).catch(() => {});
+      ).catch(() => { });
     }
 
     // waiting for updated diagnostics lets terminal output be the most up-to-date possible
@@ -212,7 +212,10 @@ export class EnvironmentService {
 
     if (includeFileDetails) {
       details += `\n\n# Current Working Directory (${this.cwd.toPosix()}) Files\n`;
-      const isDesktop = arePathsEqual(this.cwd, path.join(os.homedir(), "Desktop"));
+      const isDesktop = arePathsEqual(
+        this.cwd,
+        path.join(os.homedir(), "Desktop"),
+      );
       if (isDesktop) {
         // don't want to immediately access desktop since it would show permission popup
         details +=

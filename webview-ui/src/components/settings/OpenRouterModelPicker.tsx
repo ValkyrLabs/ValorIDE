@@ -12,12 +12,12 @@ import React, {
 import { useRemark } from "react-remark";
 import { useMount } from "react-use";
 import styled from "styled-components";
-import { openRouterDefaultModelId } from "@shared/api";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { vscode } from "@/utils/vscode";
+import { kimiOpenRouterModelIds, openRouterDefaultModelId } from "@shared/api";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
 import { highlight } from "../history/HistoryView";
 import { ModelInfoView, normalizeApiConfiguration } from "./ApiOptions";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
 import ThinkingBudgetSlider from "./ThinkingBudgetSlider";
 import FeaturedModelCard from "./FeaturedModelCard";
 
@@ -56,21 +56,27 @@ export interface OpenRouterModelPickerProps {
 }
 
 // Featured models for ValorIDE provider
+const kimiFeaturedId = kimiOpenRouterModelIds[0] || "moonshotai/kimi-k2";
 const featuredModels = [
   {
-    id: "anthropic/claude-3.7-sonnet",
+    id: "anthropic/claude-sonnet-4.5",
     description: "Leading model for agentic coding",
     label: "Best",
   },
   {
-    id: "google/gemini-2.5-pro-preview-03-25",
-    description: "Large 1M context window, great value",
+    id: "openai/gpt-5.2",
+    description: "Latest ChatGPT 5.2 with strong coding and reasoning",
+    label: "Flagship",
+  },
+  {
+    id: "google/gemini-3-pro-preview",
+    description: "Gemini 3 Pro preview with 1M context",
     label: "Trending",
   },
   {
-    id: "openai/gpt-4.1",
-    description: "1M context window, blazing fast",
-    label: "New",
+    id: kimiFeaturedId,
+    description: "Kimi K2 reasoning model (Moonshot)",
+    label: "Kimi 2",
   },
 ];
 
@@ -167,8 +173,8 @@ const OpenRouterModelPicker: React.FC<OpenRouterModelPickerProps> = ({
     // Then get search results for non-favorited models
     const searchResults = searchTerm
       ? highlight(fuse.search(searchTerm), "model-item-highlight").filter(
-          (item) => !favoritedModelIds.includes(item.id),
-        )
+        (item) => !favoritedModelIds.includes(item.id),
+      )
       : searchableItems.filter((item) => !favoritedModelIds.includes(item.id));
 
     // Combine favorited models with search results
@@ -302,10 +308,10 @@ const OpenRouterModelPicker: React.FC<OpenRouterModelPickerProps> = ({
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  height: "100%"
+                  height: "100%",
                 }}
               >
-                <FaTimes style={{ fontSize: "14px" }}/>
+                <FaTimes style={{ fontSize: "14px" }} />
               </div>
             )}
           </VSCodeTextField>

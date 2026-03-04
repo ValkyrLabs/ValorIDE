@@ -5,8 +5,8 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { useState, useCallback } from "react";
 import { TabButton } from "../mcp/configuration/McpConfigurationView";
-import { UsageTransaction, PaymentTransaction } from "@/thor/model";
-import { formatDollars, formatTimestamp } from "@/utils/format";
+import { UsageTransaction, PaymentTransaction } from "@thorapi/model";
+import { formatDollars, formatTimestamp } from "@thorapi/utils/format";
 
 interface CreditsHistoryTableProps {
   isLoading: boolean;
@@ -21,22 +21,30 @@ const CreditsHistoryTable = ({
 }: CreditsHistoryTableProps) => {
   const [activeTab, setActiveTab] = useState<"usage" | "payments">("usage");
   const [selectedUsageRow, setSelectedUsageRow] = useState<number | null>(null);
-  const [selectedPaymentRow, setSelectedPaymentRow] = useState<number | null>(null);
+  const [selectedPaymentRow, setSelectedPaymentRow] = useState<number | null>(
+    null,
+  );
 
-  const handleUsageRowClick = useCallback((index: number, event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setSelectedUsageRow(selectedUsageRow === index ? null : index);
-  }, [selectedUsageRow]);
+  const handleUsageRowClick = useCallback(
+    (index: number, event: React.MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setSelectedUsageRow(selectedUsageRow === index ? null : index);
+    },
+    [selectedUsageRow],
+  );
 
-  const handlePaymentRowClick = useCallback((index: number, event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setSelectedPaymentRow(selectedPaymentRow === index ? null : index);
-  }, [selectedPaymentRow]);
+  const handlePaymentRowClick = useCallback(
+    (index: number, event: React.MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setSelectedPaymentRow(selectedPaymentRow === index ? null : index);
+    },
+    [selectedPaymentRow],
+  );
 
   return (
-    <div className="flex flex-col flex-grow h-full">
+    <div className="flex flex-col grow h-full">
       {/* Tabs container */}
       <div className="flex border-b border-[var(--vscode-panel-border)]">
         <TabButton
@@ -54,7 +62,7 @@ const CreditsHistoryTable = ({
       </div>
 
       {/* Content container */}
-      <div className="mt-[15px] mb-[0px] rounded-md overflow-auto flex-grow">
+      <div className="mt-[15px] mb-[0px] rounded-md overflow-auto grow">
         {isLoading ? (
           <div className="flex justify-center items-center p-4">
             <div className="text-[var(--vscode-descriptionForeground)]">
@@ -92,16 +100,21 @@ const CreditsHistoryTable = ({
                     </VSCodeDataGridRow>
 
                     {usageData.map((row, index) => (
-                      <VSCodeDataGridRow 
+                      <VSCodeDataGridRow
                         key={index}
                         onClick={(event) => handleUsageRowClick(index, event)}
-                        style={{ 
-                          cursor: 'pointer',
-                          backgroundColor: selectedUsageRow === index ? 'var(--vscode-list-activeSelectionBackground)' : 'transparent'
+                        style={{
+                          cursor: "pointer",
+                          backgroundColor:
+                            selectedUsageRow === index
+                              ? "var(--vscode-list-activeSelectionBackground)"
+                              : "transparent",
                         }}
                       >
                         <VSCodeDataGridCell grid-column="1">
-                          {row.spentAt ? formatTimestamp(String(row.spentAt)) : ""}
+                          {row.spentAt
+                            ? formatTimestamp(String(row.spentAt))
+                            : ""}
                         </VSCodeDataGridCell>
                         <VSCodeDataGridCell grid-column="2">{`${row.modelProvider}/${row.model}`}</VSCodeDataGridCell>
                         {/* <VSCodeDataGridCell grid-column="3">{`${row.promptTokens} → ${row.completionTokens}`}</VSCodeDataGridCell> */}
@@ -145,16 +158,21 @@ const CreditsHistoryTable = ({
                     </VSCodeDataGridRow>
 
                     {paymentsData.map((row, index) => (
-                      <VSCodeDataGridRow 
+                      <VSCodeDataGridRow
                         key={index}
                         onClick={(event) => handlePaymentRowClick(index, event)}
-                        style={{ 
-                          cursor: 'pointer',
-                          backgroundColor: selectedPaymentRow === index ? 'var(--vscode-list-activeSelectionBackground)' : 'transparent'
+                        style={{
+                          cursor: "pointer",
+                          backgroundColor:
+                            selectedPaymentRow === index
+                              ? "var(--vscode-list-activeSelectionBackground)"
+                              : "transparent",
                         }}
                       >
                         <VSCodeDataGridCell grid-column="1">
-                          {row.paidAt ? formatTimestamp(String(row.paidAt)) : ""}
+                          {row.paidAt
+                            ? formatTimestamp(String(row.paidAt))
+                            : ""}
                         </VSCodeDataGridCell>
                         <VSCodeDataGridCell grid-column="2">{`$${formatDollars(row.amountCents)}`}</VSCodeDataGridCell>
                         <VSCodeDataGridCell grid-column="3">{`${row.credits}`}</VSCodeDataGridCell>

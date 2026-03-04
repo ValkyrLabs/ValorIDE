@@ -3,8 +3,8 @@ import {
   VSCodeButton,
   VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import SystemAlerts from "@/components/SystemAlerts";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
 import "./ApplicationProgress.css";
 
 interface ProgressStep {
@@ -232,7 +232,8 @@ const ApplicationProgress: React.FC<ApplicationProgressProps> = ({
                     </li>
                     {resultDetails.readmePath && (
                       <li>
-                        <strong>Documentation:</strong> {resultDetails.readmePath}
+                        <strong>Documentation:</strong>{" "}
+                        {resultDetails.readmePath}
                       </li>
                     )}
                   </ul>

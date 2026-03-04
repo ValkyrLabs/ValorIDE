@@ -1,7 +1,7 @@
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 
-import { vscode } from "@/utils/vscode";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { vscode } from "@thorapi/utils/vscode";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 
 export const ValorIDEAccountInfoCard = () => {
   const { authenticatedUser } = useExtensionState();

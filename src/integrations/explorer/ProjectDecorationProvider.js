@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as path from "path";
-import { resolveThorapiFolderPath, thorapiSettingChanged } from "@utils/thorapi";
+import { resolveThorapiFolderPath, thorapiSettingChanged, } from "@utils/thorapi";
 import { arePathsEqual } from "@utils/path";
 function isThorProjectRoot(uri) {
     const fsPath = uri.fsPath;

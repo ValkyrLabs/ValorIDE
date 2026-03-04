@@ -1,0 +1,1 @@
+{"version":3,"file":"MockCommunicationService.js","sourceRoot":"","sources":["MockCommunicationService.ts"],"names":[],"mappings":"AAAA,+CAA+C;AAC/C,gEAAgE;AAEhE,MAAM,OAAO,wBAAwB;IACnC,MAAM,CAAU;IAEhB;QACE,gEAAgE;QAChE,IAAI,CAAC,MAAM,GAAG,KAAK,CAAC;IACtB,CAAC;CAOF;AAED,iEAAiE;AACjE,oGAAoG;AACpG,eAAe,wBAAwB,CAAC"}

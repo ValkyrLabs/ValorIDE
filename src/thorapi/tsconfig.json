@@ -1,0 +1,49 @@
+{
+  "exclude": [
+    "node_modules"
+  ],
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "baseUrl": ".",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2022"
+    ],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "types": ["vite/client", "node"],
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": false,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "paths": {
+      "@thorapi/model": ["./model/index.ts"],
+      "@thorapi/model/*": ["./model/*"],
+      "@thorapi/redux": ["./redux/index.ts"],
+      "@thorapi/redux/*": ["./redux/*"],
+      "@thorapi/redux/services/*": ["./redux/services/*"],
+      "@thorapi/api": ["./api/index.ts"],
+      "@thorapi/api/*": ["./api/*"],
+      "@thorapi/src": ["./src/index.ts"],
+      "@thorapi/utils/*": ["../../webview-ui/src/utils/*", "../../src/utils/*"],
+      "@thorapi/*": ["./*", "../../webview-ui/src/*", "../../src/*"],
+      "@valkyr/component-library/*": ["../../webview-ui/src/components/*"]
+    }
+  },
+  "include": [
+    "api/**/*",
+    "model/**/*",
+    "redux/**/*",
+    "src/**/*",
+    "types/**/*",
+    "vite.config.ts"
+  ]
+}

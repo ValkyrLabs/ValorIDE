@@ -260,7 +260,7 @@ class PostHogClient {
      * @param autoApproved Whether the tool was auto-approved based on settings
      * @param success Whether the tool execution was successful
      */
-    captureToolUsage(taskId, tool, autoApproved, success) {
+    captureToolUsage(taskId, tool, autoApproved, success, extra) {
         this.capture({
             event: PostHogClient.EVENTS.TASK.TOOL_USED,
             properties: {
@@ -268,7 +268,17 @@ class PostHogClient {
                 tool,
                 autoApproved,
                 success,
+                ...extra,
             },
+        });
+    }
+    /**
+     * Records when a tool name is not recognized/handled by the ToolManager
+     */
+    captureUnknownTool(taskId, tool, details) {
+        this.captureToolUsage(taskId, tool, false, false, {
+            unknown_tool: true,
+            ...details,
         });
     }
     /**

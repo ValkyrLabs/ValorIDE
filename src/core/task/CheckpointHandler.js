@@ -91,8 +91,7 @@ export class CheckpointHandler {
     }
     async restoreCheckpoint(messageTs, restoreType, offset) {
         const valorideMessages = this.messageHandler.getValorIDEMessages();
-        const messageIndex = valorideMessages.findIndex((m) => m.ts === messageTs) -
-            (offset || 0);
+        const messageIndex = valorideMessages.findIndex((m) => m.ts === messageTs) - (offset || 0);
         // Find the last message before messageIndex that has a lastCheckpointHash
         const lastHashIndex = findLastIndex(valorideMessages.slice(0, messageIndex), (m) => m.lastCheckpointHash !== undefined);
         const message = valorideMessages[messageIndex];

@@ -10,25 +10,25 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { FaSync, FaSearch, FaTimes } from "react-icons/fa";
 import { McpMarketplaceItem } from "@shared/mcp";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import McpMarketplaceCard from "./McpMarketplaceCard";
 import McpSubmitCard from "./McpSubmitCard";
-import { useGetMcpServersQuery } from "@/thor/redux/services/McpServerService";
-import { useGetMcpMarketplaceCatalogsQuery } from "@/thor/redux/services/McpMarketplaceCatalogService";
-import { useGetMcpMarketplaceItemsQuery } from "@/thor/redux/services/McpMarketplaceItemService";
+import { useGetMcpServersQuery } from "@thorapi/redux/services/McpServerService";
+import { useGetMcpMarketplaceCatalogsQuery } from "@thorapi/redux/services/McpMarketplaceCatalogService";
+import { useGetMcpMarketplaceItemsQuery } from "@thorapi/redux/services/McpMarketplaceItemService";
 import {
   convertThorMcpServersToShared,
   convertThorMcpMarketplaceCatalogsToShared,
   convertThorMcpMarketplaceItemsToShared,
-} from "@/utils/mcpTypeConversions";
+} from "@thorapi/utils/mcpTypeConversions";
 import {
   formatError,
   getErrorTitle,
   isRetryableError,
   safeConvert,
-} from "@/utils/errorHandling";
-import Tooltip from "@/components/common/Tooltip";
-import SystemAlerts from "@/components/SystemAlerts";
+} from "@thorapi/utils/errorHandling";
+import Tooltip from "@thorapi/components/common/Tooltip";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
 
 const McpMarketplaceView = () => {
   const {
@@ -55,7 +55,7 @@ const McpMarketplaceView = () => {
     "newest" | "stars" | "name" | "downloadCount"
   >("downloadCount");
 
-  // Convert Thor data to shared format with error handling
+  // Convert ThorAPI data to shared format with error handling
   const sharedMcpServers = React.useMemo(() => {
     return safeConvert(
       mcpServers,
@@ -85,7 +85,10 @@ const McpMarketplaceView = () => {
   }, [marketplaceItems]);
 
   // Use direct marketplace items if available, otherwise fall back to catalog items
-  const items = sharedMarketplaceItems.length > 0 ? sharedMarketplaceItems : sharedMarketplaceCatalog.items;
+  const items =
+    sharedMarketplaceItems.length > 0
+      ? sharedMarketplaceItems
+      : sharedMarketplaceCatalog.items;
 
   // Combined loading and error states
   const isLoading = serversLoading || catalogLoading || itemsLoading;
@@ -193,7 +196,9 @@ const McpMarketplaceView = () => {
             >
               {getErrorTitle(error)}: Failed to load marketplace
             </div>
-            <div style={{ fontSize: "12px", opacity: 0.9, marginBottom: "12px" }}>
+            <div
+              style={{ fontSize: "12px", opacity: 0.9, marginBottom: "12px" }}
+            >
               {formatError(error)}
             </div>
             {isRetryableError(error) && (
@@ -203,9 +208,7 @@ const McpMarketplaceView = () => {
                 disabled={isLoading}
                 style={{ fontSize: "11px", padding: "4px 12px" }}
               >
-                <FaSync
-                  style={{ marginRight: "4px" }}
-                />
+                <FaSync style={{ marginRight: "4px" }} />
                 {isLoading ? "Retrying..." : "Retry"}
               </VSCodeButton>
             )}
@@ -243,7 +246,9 @@ const McpMarketplaceView = () => {
                 style={{ display: "flex", alignItems: "center", gap: "6px" }}
               >
                 {isLoading ? (
-                  <VSCodeProgressRing style={{ width: "14px", height: "14px" }} />
+                  <VSCodeProgressRing
+                    style={{ width: "14px", height: "14px" }}
+                  />
                 ) : (
                   <FaSync />
                 )}
@@ -257,7 +262,9 @@ const McpMarketplaceView = () => {
             style={{ width: "100%" }}
             placeholder="Search MCPs..."
             value={searchQuery}
-            onInput={(e) => setSearchQuery((e.target as HTMLInputElement).value)}
+            onInput={(e) =>
+              setSearchQuery((e.target as HTMLInputElement).value)
+            }
           >
             <div slot="start">
               <FaSearch

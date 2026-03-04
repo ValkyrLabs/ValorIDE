@@ -1,0 +1,191 @@
+/**
+ * HelpTooltip Styles
+ *
+ * Tufte-inspired: Clean, readable, minimal decoration.
+ * LCARS-compatible: Matches the sci-fi aesthetic.
+ */
+
+/* Base icon styling */
+.help-tooltip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+  color: var(--lcars-cyan, #00d4ff);
+  opacity: 0.7;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+  vertical-align: middle;
+  margin-left: 0.35rem;
+}
+
+.help-tooltip-icon:hover,
+.help-tooltip-icon:focus {
+  opacity: 1;
+  transform: scale(1.1);
+  outline: none;
+}
+
+/* Size variants */
+.help-tooltip-sm {
+  font-size: 0.85rem;
+}
+
+.help-tooltip-md {
+  font-size: 1rem;
+}
+
+.help-tooltip-lg {
+  font-size: 1.25rem;
+}
+
+/* Block mode */
+.help-tooltip-block {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: help;
+  color: var(--lcars-cyan, #00d4ff);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(0, 212, 255, 0.08);
+  transition: background 0.15s ease;
+}
+
+.help-tooltip-block:hover,
+.help-tooltip-block:focus {
+  background: rgba(0, 212, 255, 0.15);
+  outline: none;
+}
+
+.help-tooltip-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* Wrapper for children */
+.help-tooltip-wrapper {
+  display: inline;
+  cursor: help;
+}
+
+/* Popover styling - Tufte clean design */
+.help-tooltip-popover {
+  max-width: 320px;
+  font-family: var(--font-mono, "SF Mono", "Monaco", monospace);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  background: var(--lcars-bg-dark, #1a1a2e);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.help-tooltip-popover .popover-arrow::before {
+  border-color: rgba(0, 212, 255, 0.3);
+}
+
+.help-tooltip-popover .popover-arrow::after {
+  border-color: var(--lcars-bg-dark, #1a1a2e);
+}
+
+.help-tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 212, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+  color: var(--lcars-cyan, #00d4ff);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.6rem 0.8rem;
+}
+
+.help-tooltip-category {
+  margin-left: auto;
+  font-size: 0.7rem;
+  font-weight: 400;
+  padding: 0.15rem 0.4rem;
+  background: rgba(255, 153, 0, 0.2);
+  color: var(--lcars-orange, #ff9900);
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.help-tooltip-body {
+  padding: 0.8rem;
+  background: var(--lcars-bg-dark, #1a1a2e);
+}
+
+.help-tooltip-summary {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+}
+
+.help-tooltip-link {
+  color: var(--lcars-cyan, #00d4ff) !important;
+  font-size: 0.78rem;
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+}
+
+.help-tooltip-link:hover {
+  text-decoration: underline !important;
+}
+
+/* Section help header */
+.section-help-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+}
+
+.section-help-title {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  color: var(--lcars-cyan, #00d4ff);
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Quick help badge */
+.quick-help-badge .badge {
+  font-size: 0.7rem;
+  font-weight: 400;
+  cursor: help;
+  transition: background 0.15s ease;
+}
+
+.quick-help-badge .badge:hover {
+  background: rgba(0, 212, 255, 0.2) !important;
+}
+
+/* Light theme overrides */
+[data-theme="light"] .help-tooltip-popover {
+  background: #ffffff;
+  border-color: rgba(0, 150, 200, 0.3);
+}
+
+[data-theme="light"] .help-tooltip-header {
+  background: rgba(0, 150, 200, 0.1);
+  color: #0077aa;
+}
+
+[data-theme="light"] .help-tooltip-body {
+  background: #ffffff;
+}
+
+[data-theme="light"] .help-tooltip-summary {
+  color: #333333;
+}
+
+[data-theme="light"] .help-tooltip-icon {
+  color: #0077aa;
+}

@@ -1,5 +1,15 @@
-import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { CommunicationService, CommunicationRole } from "../../../src/services/communication/CommunicationService";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  CommunicationService,
+  CommunicationRole,
+} from "../../../src/services/communication/CommunicationService";
 
 // Create a resilient, no-op fallback that satisfies the shape of CommunicationService
 function createNoopCommunicationService(reason?: string): CommunicationService {
@@ -8,7 +18,10 @@ function createNoopCommunicationService(reason?: string): CommunicationService {
     error: null as Error | null,
     connect: () => {
       if (typeof console !== "undefined") {
-        console.warn("CommunicationService noop: connect() skipped.", reason || "No reason provided");
+        console.warn(
+          "CommunicationService noop: connect() skipped.",
+          reason || "No reason provided",
+        );
       }
     },
     disconnect: () => {
@@ -52,45 +65,65 @@ function createNoopCommunicationService(reason?: string): CommunicationService {
   return noop;
 }
 
-const CommunicationServiceContext = createContext<CommunicationService | null>(null);
+const CommunicationServiceContext = createContext<CommunicationService | null>(
+  null,
+);
 
-export const CommunicationServiceProvider: React.FC<{ role: CommunicationRole; children: React.ReactNode }> = ({ role, children }) => {
+export const CommunicationServiceProvider: React.FC<{
+  role: CommunicationRole;
+  children: React.ReactNode;
+}> = ({ role, children }) => {
   const createdRef = useRef(false);
-  const [communicationService, setCommunicationService] = useState<CommunicationService>(() => {
-    try {
-      // If environment doesn’t support it, return noop early
-      const supported = typeof (CommunicationService as any).isSupported === "function"
-        ? (CommunicationService as any).isSupported()
-        : typeof window !== "undefined" && typeof (window as any).addEventListener === "function";
-      if (!supported) {
-        return createNoopCommunicationService("Not running in a browser context");
-      }
-      const svc = new CommunicationService({ role });
+  const [communicationService, setCommunicationService] =
+    useState<CommunicationService>(() => {
       try {
-        const cfg = (window as any)?.__valorideTelecomConfig;
-        if (cfg?.turnServers) {
-          const toServers = (arr: any[]): RTCIceServer[] => arr.map((e) => {
-            if (!e) return undefined as any;
-            if (typeof e === 'string') return { urls: e } as RTCIceServer;
-            if (e.urls) return { urls: e.urls, username: e.username, credential: e.credential } as RTCIceServer;
-            return undefined as any;
-          }).filter(Boolean) as RTCIceServer[];
-          svc.configureIceServers(toServers(cfg.turnServers));
+        // If environment doesn’t support it, return noop early
+        const supported =
+          typeof (CommunicationService as any).isSupported === "function"
+            ? (CommunicationService as any).isSupported()
+            : typeof window !== "undefined" &&
+              typeof (window as any).addEventListener === "function";
+        if (!supported) {
+          return createNoopCommunicationService(
+            "Not running in a browser context",
+          );
         }
-        if (typeof cfg?.p2pEnabled === 'boolean') {
-          try { (svc as any).setP2PEnabled?.(!!cfg.p2pEnabled); } catch {}
+        const svc = new CommunicationService({ role });
+        try {
+          const cfg = (window as any)?.__valorideTelecomConfig;
+          if (cfg?.turnServers) {
+            const toServers = (arr: any[]): RTCIceServer[] =>
+              arr
+                .map((e) => {
+                  if (!e) return undefined as any;
+                  if (typeof e === "string") return { urls: e } as RTCIceServer;
+                  if (e.urls)
+                    return {
+                      urls: e.urls,
+                      username: e.username,
+                      credential: e.credential,
+                    } as RTCIceServer;
+                  return undefined as any;
+                })
+                .filter(Boolean) as RTCIceServer[];
+            svc.configureIceServers(toServers(cfg.turnServers));
+          }
+          if (typeof cfg?.p2pEnabled === "boolean") {
+            try {
+              (svc as any).setP2PEnabled?.(!!cfg.p2pEnabled);
+            } catch {}
+          }
+          // Future: if (cfg?.bonjour) { /* enable local discovery */ }
+        } catch {}
+        return svc;
+      } catch (err: any) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (typeof console !== "undefined") {
+          console.error("Failed to initialize CommunicationService:", message);
         }
-        // Future: if (cfg?.bonjour) { /* enable local discovery */ }
-      } catch {}
-      return svc;
-    } catch (err: any) {
-      const message = err instanceof Error ? err.message : String(err);
-      if (typeof console !== "undefined") {
-        console.error("Failed to initialize CommunicationService:", message);
+        return createNoopCommunicationService(message);
       }
-      return createNoopCommunicationService(message);
-    }
-  });
+    });
 
   useEffect(() => {
     // Connect once, defensively
@@ -105,16 +138,21 @@ export const CommunicationServiceProvider: React.FC<{ role: CommunicationRole; c
         console.error("CommunicationService connect() failed:", err);
       }
       // Swap in a noop to avoid cascading failures
-      setCommunicationService(createNoopCommunicationService(
-        err instanceof Error ? err.message : String(err),
-      ));
+      setCommunicationService(
+        createNoopCommunicationService(
+          err instanceof Error ? err.message : String(err),
+        ),
+      );
     }
     return () => {
       try {
         communicationService.disconnect();
       } catch (err: any) {
         if (typeof console !== "undefined") {
-          console.warn("CommunicationService disconnect() error (ignored):", err);
+          console.warn(
+            "CommunicationService disconnect() error (ignored):",
+            err,
+          );
         }
       }
     };

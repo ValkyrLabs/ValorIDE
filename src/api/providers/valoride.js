@@ -2,17 +2,19 @@ import OpenAI from "openai";
 import { openRouterDefaultModelId, openRouterDefaultModelInfo, } from "@shared/api";
 import { createOpenRouterStream } from "../transform/openrouter-stream";
 import axios from "axios";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 export class ValorIDEHandler {
     options;
     client;
     lastGenerationId;
     constructor(options) {
         this.options = options;
+        const basePath = getValkyraiBasePath();
         this.client = new OpenAI({
-            baseURL: `${process.env.VITE_basePath || "http://localhost:8080/v1"}/llm-details/heimdallm/chat`,
+            baseURL: `${basePath}/llm-details/heimdallm/chat`,
             apiKey: this.options.valorideApiKey || "",
             defaultHeaders: {
-                "HTTP-Referer": process.env.VITE_basePath || "http://localhost:8080/v1", // Optional, for including your app on valkyrlabs.com/v1 rankings.
+                "HTTP-Referer": basePath, // Optional, for including your app on valkyrlabs.com/v1 rankings.
                 "X-Title": "ValorIDE", // Optional. Shows in rankings on valkyrlabs.com/v1.
                 "X-Task-ID": this.options.taskId || "", // Include the task ID in the request headers
             },

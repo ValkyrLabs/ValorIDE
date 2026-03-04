@@ -1,16 +1,27 @@
 // CUSTOM REDUX INTEGRATION
 
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore, Middleware } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { AuthService } from "./services/AuthService";
 import { LogoutService } from "./services/LogoutService";
 import { ApplicationService } from "./services/ApplicationService";
 import { PrincipalService } from "./services/PrincipalService";
 import { ThorHostingService } from "./services/ThorHostingService";
-import { BalanceResponseService } from "../thor/redux/services/BalanceResponseService";
-import { UsageTransactionService } from "../thor/redux/services/UsageTransactionService";
-import { PaymentTransactionService } from "../thor/redux/services/PaymentTransactionService";
+import { BalanceResponseService } from "@thorapi/redux/services/BalanceResponseService";
+import { UsageTransactionService } from "@thorapi/redux/services/UsageTransactionService";
+import { PaymentTransactionService } from "@thorapi/redux/services/PaymentTransactionService";
 import { DigitalProductService } from "./services/DigitalProductService";
+import { RatingService } from "@thorapi/redux/services/RatingService";
+import { UserPreferenceService } from "@thorapi/redux/services/UserPreferenceService";
+import { SalesOrderService } from "@thorapi/redux/services/SalesOrderService";
+import { CustomerService } from "@thorapi/redux/services/CustomerService";
+import { InvoiceService } from "@thorapi/redux/services/InvoiceService";
+import { LlmDetailsService } from "@thorapi/redux/services/LlmDetailsService";
+import { ContentDataService } from "@thorapi/redux/services/ContentDataService";
+import { McpServerService } from "@thorapi/redux/services/McpServerService";
+import { McpMarketplaceCatalogService } from "@thorapi/redux/services/McpMarketplaceCatalogService";
+import { McpMarketplaceItemService } from "@thorapi/redux/services/McpMarketplaceItemService";
+import { creditsApi } from "../services/creditsApi";
 
 // cool!
 import { websocketMiddleware } from "./middleware/websocketMiddleware";
@@ -18,12 +29,9 @@ import websocketReducer from "../components/ServerConsole/websocketSlice";
 
 // import the thorapi generated reducers and middleware
 import middlewares from "../redux/middlewares";
-import thorMiddlewares from "../thor/redux/middlewares";
-import { reducer as thorReducer } from "../thor/redux/store";
 
 // combine reducers
 const rootReducer = combineReducers({
-  ...thorReducer,
   websocket: websocketReducer,
   [AuthService.reducerPath]: AuthService.reducer,
   [LogoutService.reducerPath]: LogoutService.reducer,
@@ -34,6 +42,17 @@ const rootReducer = combineReducers({
   [UsageTransactionService.reducerPath]: UsageTransactionService.reducer,
   [PaymentTransactionService.reducerPath]: PaymentTransactionService.reducer,
   [DigitalProductService.reducerPath]: DigitalProductService.reducer,
+  [RatingService.reducerPath]: RatingService.reducer,
+  [UserPreferenceService.reducerPath]: UserPreferenceService.reducer,
+  [SalesOrderService.reducerPath]: SalesOrderService.reducer,
+  [CustomerService.reducerPath]: CustomerService.reducer,
+  [InvoiceService.reducerPath]: InvoiceService.reducer,
+  [LlmDetailsService.reducerPath]: LlmDetailsService.reducer,
+  [ContentDataService.reducerPath]: ContentDataService.reducer,
+  [McpServerService.reducerPath]: McpServerService.reducer,
+  [McpMarketplaceCatalogService.reducerPath]: McpMarketplaceCatalogService.reducer,
+  [McpMarketplaceItemService.reducerPath]: McpMarketplaceItemService.reducer,
+  [creditsApi.reducerPath]: creditsApi.reducer,
 });
 
 const reducer = rootReducer;
@@ -42,16 +61,23 @@ const store = configureStore({
   reducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
-      .concat(middlewares as any) // add the custom middlewares
-      .concat(thorMiddlewares as any) // add the thor generated middlewares
+      .concat(middlewares as Middleware[]) // add the custom middlewares
+      .concat(ThorHostingService.middleware)
       .concat(BalanceResponseService.middleware)
       .concat(UsageTransactionService.middleware)
       .concat(PaymentTransactionService.middleware)
-      .concat(AuthService.middleware)
-      .concat(ApplicationService.middleware)
-      .concat(PrincipalService.middleware)
-      .concat(ThorHostingService.middleware)
       .concat(DigitalProductService.middleware)
+      .concat(RatingService.middleware)
+      .concat(UserPreferenceService.middleware)
+      .concat(SalesOrderService.middleware)
+      .concat(CustomerService.middleware)
+      .concat(InvoiceService.middleware)
+      .concat(LlmDetailsService.middleware)
+      .concat(ContentDataService.middleware)
+      .concat(McpServerService.middleware)
+      .concat(McpMarketplaceCatalogService.middleware)
+      .concat(McpMarketplaceItemService.middleware)
+      .concat(creditsApi.middleware)
       .concat(websocketMiddleware),
 });
 

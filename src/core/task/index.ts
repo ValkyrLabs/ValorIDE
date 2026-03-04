@@ -96,6 +96,7 @@ import { addUserInstructions, SYSTEM_PROMPT } from "@core/prompts/system";
 import { getContextWindowInfo } from "@core/context/context-management/context-window-utils";
 import { FileContextTracker } from "@core/context/context-tracking/FileContextTracker";
 import { ModelContextTracker } from "@core/context/context-tracking/ModelContextTracker";
+import { validateMcpToolCall } from "@core/task/mcpToolValidation";
 import {
   checkIsAnthropicContextWindowError,
   checkIsOpenRouterContextWindowError,
@@ -121,10 +122,13 @@ import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
 import { McpHub } from "@services/mcp/McpHub";
 import { isInTestMode } from "../../services/test/TestMode";
 import { OutputFilterService } from "@services/output-filter/OutputFilterService";
-import { ValorIDEAdvancedSettings, DEFAULT_ADVANCED_SETTINGS } from "@shared/AdvancedSettings";
+import {
+  ValorIDEAdvancedSettings,
+  DEFAULT_ADVANCED_SETTINGS,
+} from "@shared/AdvancedSettings";
 import { ToolRelayService } from "@services/communication/ToolRelayService";
 import { CommunicationService } from "@services/communication/CommunicationService";
-import { WebsocketMessageTypeEnum } from "@thor/model";
+import { WebsocketMessageTypeEnum } from "@thorapi/model";
 import { ToolManager, ToolContext } from "./tools";
 import { MessageHandler } from "./MessageHandler";
 import { StreamingHandler } from "./StreamingHandler";
@@ -135,13 +139,15 @@ import {
   EnvironmentService,
   ToolResultProcessor,
   NotificationService,
-  type ToolResultContext
+  type ToolResultContext,
 } from "./services";
 import { ToolDescriptionHelper } from "./ToolDescriptionHelper";
 import { TagProcessingUtils } from "./TagProcessingUtils";
 import { ErrorHandlingUtils } from "./ErrorHandlingUtils";
 import { ToolApprovalManager } from "./ToolApprovalManager";
 import { ToolExecutionEngine } from "./ToolExecutionEngine";
+import { getStatusBarService } from "@services/StatusBarService";
+import { buildTaskSummary } from "./summary/TaskSummaryBuilder";
 
 export const cwd =
   vscode.workspace.workspaceFolders?.map((folder) => folder.uri.fsPath).at(0) ??
@@ -213,6 +219,8 @@ export class Task {
     | Anthropic.ImageBlockParam
   )[] = [];
   private userMessageContentReady = false;
+  private pendingUserMessages: { text?: string; images?: string[] }[] = [];
+  private awaitingAskResponse = false;
   private didRejectTool = false;
   private didAlreadyUseTool = false;
   private didCompleteReadingStream = false;
@@ -229,10 +237,13 @@ export class Task {
    */
   private async relayToolCommandToMothership(
     toolName: string,
-    params: Record<string, any>
+    params: Record<string, any>,
   ): Promise<void> {
     try {
-      if (!this.toolRelayService || typeof this.toolRelayService.sendToolCommand !== "function") {
+      if (
+        !this.toolRelayService ||
+        typeof this.toolRelayService.sendToolCommand !== "function"
+      ) {
         // Tool relay service not available or not connected
         return;
       }
@@ -316,12 +327,10 @@ export class Task {
     this.messageHandler = new MessageHandler(
       this.saveValorIDEMessagesAndUpdateHistory.bind(this),
       this.postStateToWebview,
-      this.postMessageToWebview
+      this.postMessageToWebview,
     );
 
-    this.streamingHandler = new StreamingHandler(
-      this.messageHandler
-    );
+    this.streamingHandler = new StreamingHandler(this.messageHandler);
 
     this.checkpointHandler = new CheckpointHandler(
       this.taskId,
@@ -332,7 +341,7 @@ export class Task {
       this.postMessageToWebview,
       this.reinitExistingTaskFromId,
       this.cancelTask,
-      this.saveValorIDEMessagesAndUpdateHistory.bind(this)
+      this.saveValorIDEMessagesAndUpdateHistory.bind(this),
     );
 
     // Continue with task initialization
@@ -932,6 +941,113 @@ export class Task {
     relinquishButton();
   }
 
+  async getFilePreview(
+    messageTs: number,
+    relativePath: string,
+    seeNewChangesSinceLastTaskCompletion: boolean,
+  ): Promise<{
+    before?: string;
+    after?: string;
+    isBinary?: boolean;
+    relativePath?: string;
+  } | undefined> {
+    const messageIndex = this.valorideMessages.findIndex((m) => m.ts === messageTs);
+    const message = this.valorideMessages[messageIndex];
+    if (!message) {
+      console.error("Message not found");
+      return undefined;
+    }
+    const hash = message.lastCheckpointHash;
+    if (!hash) {
+      console.error("No checkpoint hash found");
+      return undefined;
+    }
+
+    if (!this.checkpointTracker && !this.checkpointTrackerErrorMessage) {
+      try {
+        this.checkpointTracker = await CheckpointTracker.create(
+          this.taskId,
+          this.context.globalStorageUri.fsPath,
+        );
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        console.error("Failed to initialize checkpoint tracker:", errorMessage);
+        this.checkpointTrackerErrorMessage = errorMessage;
+        return undefined;
+      }
+    }
+
+    if (!this.checkpointTracker) {
+      return undefined;
+    }
+
+    let changedFiles:
+      | {
+        relativePath: string;
+        absolutePath: string;
+        before: string;
+        after: string;
+        insertions: number;
+        deletions: number;
+        status: ValorIDEFileChangeStatus;
+        previousRelativePath?: string;
+        isBinary?: boolean;
+      }[]
+      | undefined;
+
+    try {
+      if (seeNewChangesSinceLastTaskCompletion) {
+        const lastTaskCompletedMessageCheckpointHash = findLast(
+          this.valorideMessages.slice(0, messageIndex),
+          (m) => m.say === "completion_result",
+        )?.lastCheckpointHash;
+
+        const firstCheckpointMessageCheckpointHash = this.valorideMessages.find((m) => m.say === "checkpoint_created")?.lastCheckpointHash;
+
+        const previousCheckpointHash = lastTaskCompletedMessageCheckpointHash || firstCheckpointMessageCheckpointHash;
+
+        if (!previousCheckpointHash) {
+          console.error("Unexpected error: No checkpoint hash found");
+          return undefined;
+        }
+
+        changedFiles = await this.checkpointTracker.getDiffSet(previousCheckpointHash, hash);
+      } else {
+        changedFiles = await this.checkpointTracker.getDiffSet(hash);
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      console.error("Failed to retrieve diff set: " + errorMessage);
+      return undefined;
+    }
+
+    if (!changedFiles?.length) {
+      console.error("No changes found");
+      return undefined;
+    }
+
+    const normalize = (value: string) => value.replace(/\\/g, "/");
+    const targetFile = changedFiles.find((file) => {
+      const target = normalize(relativePath);
+      return (
+        normalize(file.relativePath) === target ||
+        (file.previousRelativePath && normalize(file.previousRelativePath) === target)
+      );
+    });
+
+    if (!targetFile) {
+      console.error(`No diff available for ${relativePath}`);
+      return undefined;
+    }
+
+    return {
+      before: targetFile.before,
+      after: targetFile.after,
+      isBinary: !!targetFile.isBinary,
+      relativePath: targetFile.relativePath,
+    };
+  }
+
   private async getLatestTaskCompletionChangesSummary(): Promise<
     ValorIDEChangesSummary | undefined
   > {
@@ -1019,7 +1135,12 @@ export class Task {
     type: ValorIDEAsk,
     text?: string,
     partial?: boolean,
-    options?: { changesSummary?: ValorIDEChangesSummary },
+    options?: {
+      changesSummary?: ValorIDEChangesSummary;
+      summaryMarkdown?: string;
+      summaryTitle?: string;
+      summaryCompletedAt?: string;
+    },
   ): Promise<{
     response: ValorIDEAskResponse;
     text?: string;
@@ -1030,8 +1151,16 @@ export class Task {
       throw new Error("ValorIDE instance aborted");
     }
     const changesSummary = options?.changesSummary;
+    const summaryMarkdown = options?.summaryMarkdown;
+    const summaryTitle = options?.summaryTitle;
+    const summaryCompletedAt = options?.summaryCompletedAt;
     const shouldUpdateChangesSummary = options
       ? Object.prototype.hasOwnProperty.call(options, "changesSummary")
+      : false;
+    const shouldUpdateSummary = options
+      ? ["summaryMarkdown", "summaryTitle", "summaryCompletedAt"].some((key) =>
+        Object.prototype.hasOwnProperty.call(options, key),
+      )
       : false;
     let askTs: number;
     if (partial !== undefined) {
@@ -1048,6 +1177,11 @@ export class Task {
           lastMessage.partial = partial;
           if (shouldUpdateChangesSummary) {
             lastMessage.changesSummary = changesSummary;
+          }
+          if (shouldUpdateSummary) {
+            lastMessage.summaryMarkdown = summaryMarkdown;
+            lastMessage.summaryTitle = summaryTitle;
+            lastMessage.summaryCompletedAt = summaryCompletedAt;
           }
           // todo be more efficient about saving and posting only new data or one whole message at a time so ignore partial for saves, and only post parts of partial message instead of whole array in new listener
           // await this.saveValorIDEMessagesAndUpdateHistory()
@@ -1073,6 +1207,11 @@ export class Task {
           };
           if (shouldUpdateChangesSummary) {
             messageToAdd.changesSummary = changesSummary;
+          }
+          if (shouldUpdateSummary) {
+            messageToAdd.summaryMarkdown = summaryMarkdown;
+            messageToAdd.summaryTitle = summaryTitle;
+            messageToAdd.summaryCompletedAt = summaryCompletedAt;
           }
           await this.addToValorIDEMessages(messageToAdd);
           await this.postStateToWebview();
@@ -1100,6 +1239,11 @@ export class Task {
           if (shouldUpdateChangesSummary) {
             lastMessage.changesSummary = changesSummary;
           }
+          if (shouldUpdateSummary) {
+            lastMessage.summaryMarkdown = summaryMarkdown;
+            lastMessage.summaryTitle = summaryTitle;
+            lastMessage.summaryCompletedAt = summaryCompletedAt;
+          }
           await this.saveValorIDEMessagesAndUpdateHistory();
           // await this.postStateToWebview()
           await this.postMessageToWebview({
@@ -1122,6 +1266,11 @@ export class Task {
           if (shouldUpdateChangesSummary) {
             messageToAdd.changesSummary = changesSummary;
           }
+          if (shouldUpdateSummary) {
+            messageToAdd.summaryMarkdown = summaryMarkdown;
+            messageToAdd.summaryTitle = summaryTitle;
+            messageToAdd.summaryCompletedAt = summaryCompletedAt;
+          }
           await this.addToValorIDEMessages(messageToAdd);
           await this.postStateToWebview();
         }
@@ -1143,26 +1292,36 @@ export class Task {
       if (shouldUpdateChangesSummary) {
         messageToAdd.changesSummary = changesSummary;
       }
+      if (shouldUpdateSummary) {
+        messageToAdd.summaryMarkdown = summaryMarkdown;
+        messageToAdd.summaryTitle = summaryTitle;
+        messageToAdd.summaryCompletedAt = summaryCompletedAt;
+      }
       await this.addToValorIDEMessages(messageToAdd);
       await this.postStateToWebview();
     }
 
-    await pWaitFor(
-      () => this.askResponse !== undefined || this.lastMessageTs !== askTs,
-      { interval: 100 },
-    );
-    if (this.lastMessageTs !== askTs) {
-      throw new Error("Current ask promise was ignored"); // could happen if we send multiple asks in a row i.e. with command_output. It's important that when we know an ask could fail, it is handled gracefully
+    this.awaitingAskResponse = true;
+    try {
+      await pWaitFor(
+        () => this.askResponse !== undefined || this.lastMessageTs !== askTs,
+        { interval: 100 },
+      );
+      if (this.lastMessageTs !== askTs) {
+        throw new Error("Current ask promise was ignored"); // could happen if we send multiple asks in a row i.e. with command_output. It's important that when we know an ask could fail, it is handled gracefully
+      }
+      const result = {
+        response: this.askResponse!,
+        text: this.askResponseText,
+        images: this.askResponseImages,
+      };
+      this.askResponse = undefined;
+      this.askResponseText = undefined;
+      this.askResponseImages = undefined;
+      return result;
+    } finally {
+      this.awaitingAskResponse = false;
     }
-    const result = {
-      response: this.askResponse!,
-      text: this.askResponseText,
-      images: this.askResponseImages,
-    };
-    this.askResponse = undefined;
-    this.askResponseText = undefined;
-    this.askResponseImages = undefined;
-    return result;
   }
 
   async handleWebviewAskResponse(
@@ -1170,6 +1329,24 @@ export class Task {
     text?: string,
     images?: string[],
   ) {
+    const hasPendingAsk = this.awaitingAskResponse;
+    const normalizedText = text?.trim();
+    const hasContent =
+      (normalizedText && normalizedText.length > 0) ||
+      (images && images.length > 0);
+
+    if (!hasPendingAsk) {
+      // Treat unsolicited user input as inline feedback to be applied on the next loop
+      if (askResponse === "messageResponse" && hasContent) {
+        await this.say("user_feedback", normalizedText, images);
+        this.pendingUserMessages.push({
+          text: normalizedText,
+          images,
+        });
+      }
+      return;
+    }
+
     this.askResponse = askResponse;
     this.askResponseText = text;
     this.askResponseImages = images;
@@ -1517,7 +1694,7 @@ export class Task {
         nextUserContent = [
           {
             type: "text",
-            text: formatResponse.noToolsUsed(),
+            text: formatResponse.noToolsUsed(this.chatSettings?.mode ?? "act"),
           },
         ];
         this.consecutiveMistakeCount++;
@@ -1685,9 +1862,14 @@ export class Task {
       }
 
       // Filter the output to reduce verbosity
-      const filteredOutput = OutputFilterService.filterCommandOutput(output, command);
+      const filteredOutput = OutputFilterService.filterCommandOutput(
+        output,
+        command,
+      );
 
-      Logger.info(`Command executed in Node: ${command}\nOutput:\n${filteredOutput}`);
+      Logger.info(
+        `Command executed in Node: ${command}\nOutput:\n${filteredOutput}`,
+      );
 
       // Format the result similar to terminal output
       return [
@@ -1710,7 +1892,9 @@ export class Task {
     if (!trimmedCommand) {
       return [
         false,
-        formatResponse.toolError("Command was empty. Provide a command to run."),
+        formatResponse.toolError(
+          "Command was empty. Provide a command to run.",
+        ),
       ];
     }
 
@@ -1748,13 +1932,12 @@ export class Task {
     };
 
     const streamLine = (line: string) => {
-      this.say("command_output", line)
-        .catch((error) => {
-          Logger.warn(
-            `Failed to stream command output line: ${error instanceof Error ? error.message : String(error)
-            }`,
-          );
-        });
+      this.say("command_output", line).catch((error) => {
+        Logger.warn(
+          `Failed to stream command output line: ${error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      });
     };
 
     const flushBufferedOutput = async (force = false) => {
@@ -1778,14 +1961,21 @@ export class Task {
         try {
           // Use a timeout to prevent indefinite blocking on long-running commands
           const askPromise = this.ask("command_output", chunk);
-          const timeoutPromise = new Promise<{response: string; text?: string; images?: string[]}>((resolve) => {
+          const timeoutPromise = new Promise<{
+            response: string;
+            text?: string;
+            images?: string[];
+          }>((resolve) => {
             setTimeout(() => {
               // Auto-approve if user doesn't respond within 2s
               resolve({ response: "yesButtonClicked", text: "", images: [] });
             }, 2000);
           });
 
-          const { response, text, images } = await Promise.race([askPromise, timeoutPromise]);
+          const { response, text, images } = await Promise.race([
+            askPromise,
+            timeoutPromise,
+          ]);
 
           if (response !== "yesButtonClicked") {
             userFeedback = { text, images };
@@ -1857,8 +2047,10 @@ export class Task {
       if (now - lastProgressReport > PROGRESS_REPORT_INTERVAL) {
         lastProgressReport = now;
         const elapsed = Math.round((now - (process as any).startedAt) / 1000);
-        void this.say("command_output", `[Still running for ${elapsed}s...]`)
-          .catch(() => { });
+        void this.say(
+          "command_output",
+          `[Still running for ${elapsed}s...]`,
+        ).catch(() => { });
       }
     });
 
@@ -1882,7 +2074,8 @@ export class Task {
       await process;
     } catch (error) {
       processError =
-        processError ?? (error instanceof Error ? error : new Error(String(error)));
+        processError ??
+        (error instanceof Error ? error : new Error(String(error)));
     }
 
     await flushBufferedOutput(true);
@@ -2041,8 +2234,7 @@ export class Task {
           .get<boolean>("disableBrowserTool") ?? false;
       const modelSupportsBrowserUse =
         this.api.getModel().info.supportsImages ?? false;
-      const supportsBrowserUse =
-        modelSupportsBrowserUse && !disableBrowserTool;
+      const supportsBrowserUse = modelSupportsBrowserUse && !disableBrowserTool;
 
       let systemPrompt = await SYSTEM_PROMPT(
         cwd,
@@ -2050,6 +2242,7 @@ export class Task {
         this.mcpHub,
         this.thorapi_project,
         this.browserSettings,
+        this.chatSettings ?? DEFAULT_CHAT_SETTINGS,
       );
 
       const settingsCustomInstructions = this.customInstructions?.trim();
@@ -2063,34 +2256,29 @@ export class Task {
           ? `# Preferred Language\n\nSpeak in ${preferredLanguage}.`
           : "";
 
-      const { globalToggles, localToggles } =
-        await refreshValorIDERulesToggles(
-          this.getContext(),
-          cwd,
-        );
+      const { globalToggles, localToggles } = await refreshValorIDERulesToggles(
+        this.getContext(),
+        cwd,
+      );
 
-      const globalValorIDERulesFilePath =
-        await ensureRulesDirectoryExists();
-      const globalValorIDERulesFileInstructions =
-        await getGlobalValorIDERules(
-          globalValorIDERulesFilePath,
-          globalToggles,
-        );
+      const globalValorIDERulesFilePath = await ensureRulesDirectoryExists();
+      const globalValorIDERulesFileInstructions = await getGlobalValorIDERules(
+        globalValorIDERulesFilePath,
+        globalToggles,
+      );
 
-      const localValorIDERulesFileInstructions =
-        await getLocalValorIDERules(
-          cwd,
-          localToggles,
-        );
+      const localValorIDERulesFileInstructions = await getLocalValorIDERules(
+        cwd,
+        localToggles,
+      );
 
       const valorideIgnoreContent =
         this.valorideIgnoreController.valorideIgnoreContent;
       let valorideIgnoreInstructions: string | undefined;
       if (valorideIgnoreContent) {
-        valorideIgnoreInstructions =
-          formatResponse.valorideIgnoreInstructions(
-            valorideIgnoreContent,
-          );
+        valorideIgnoreInstructions = formatResponse.valorideIgnoreInstructions(
+          valorideIgnoreContent,
+        );
       }
 
       if (
@@ -2200,12 +2388,8 @@ export class Task {
             this.didAutomaticallyRetryFailedApiRequest = false;
           }
 
-          const errorMessage =
-            this.formatErrorWithStatusCode(normalizedError);
-          const { response } = await this.ask(
-            "api_req_failed",
-            errorMessage,
-          );
+          const errorMessage = this.formatErrorWithStatusCode(normalizedError);
+          const { response } = await this.ask("api_req_failed", errorMessage);
 
           if (response !== "yesButtonClicked") {
             return false;
@@ -2216,10 +2400,7 @@ export class Task {
         }
 
         const errorMessage = this.formatErrorWithStatusCode(error);
-        const { response } = await this.ask(
-          "api_req_failed",
-          errorMessage,
-        );
+        const { response } = await this.ask("api_req_failed", errorMessage);
 
         if (response !== "yesButtonClicked") {
           return false;
@@ -2351,7 +2532,8 @@ export class Task {
         break;
       }
       case "tool_use":
-        const toolDescription = () => ToolDescriptionHelper.getToolDescription(block.name, block.params);
+        const toolDescription = () =>
+          ToolDescriptionHelper.getToolDescription(block.name, block.params);
 
         if (this.didRejectTool) {
           // ignore any tool content after user has rejected tool once
@@ -2418,7 +2600,10 @@ export class Task {
           }
         };
 
-        const handleToolFeedback = async (feedback?: { text?: string; images?: string[] }) => {
+        const handleToolFeedback = async (feedback?: {
+          text?: string;
+          images?: string[];
+        }) => {
           if (!feedback) {
             return;
           }
@@ -2501,7 +2686,9 @@ export class Task {
         }
 
         // Use the ToolExecutionEngine for consistent tool handling (delegates to legacy implementations)
-        const toolEngine = new (await import('./ToolExecutionEngine')).ToolExecutionEngine(this, cwd);
+        const toolEngine = new (
+          await import("./ToolExecutionEngine")
+        ).ToolExecutionEngine(this, cwd);
         const engineResult = await toolEngine.executeToolBlock(
           block,
           toolDescription,
@@ -2509,7 +2696,7 @@ export class Task {
           this.didRejectTool,
           this.didAlreadyUseTool,
           removeClosingTag,
-          handleToolFeedback
+          handleToolFeedback,
         );
 
         this.didRejectTool = engineResult.didRejectTool;
@@ -2902,7 +3089,14 @@ export class Task {
                     block.params.path,
                   )
                 ) {
-                  this.removeLastPartialMessageIfExistsWithType("ask", "tool");
+                  await this.removeLastPartialMessageIfExistsWithType(
+                    "say",
+                    "tool",
+                  );
+                  await this.removeLastPartialMessageIfExistsWithType(
+                    "ask",
+                    "tool",
+                  );
                   await this.say(
                     "tool",
                     partialMessage,
@@ -3028,7 +3222,14 @@ export class Task {
                     block.params.path,
                   )
                 ) {
-                  this.removeLastPartialMessageIfExistsWithType("ask", "tool");
+                  await this.removeLastPartialMessageIfExistsWithType(
+                    "say",
+                    "tool",
+                  );
+                  await this.removeLastPartialMessageIfExistsWithType(
+                    "ask",
+                    "tool",
+                  );
                   await this.say(
                     "tool",
                     partialMessage,
@@ -3083,7 +3284,14 @@ export class Task {
                     block.params.path,
                   )
                 ) {
-                  this.removeLastPartialMessageIfExistsWithType("ask", "tool");
+                  await this.removeLastPartialMessageIfExistsWithType(
+                    "say",
+                    "tool",
+                  );
+                  await this.removeLastPartialMessageIfExistsWithType(
+                    "ask",
+                    "tool",
+                  );
                   await this.say("tool", completeMessage, undefined, false);
                   this.consecutiveAutoApprovedRequestsCount++;
                   telemetryService.captureToolUsage(
@@ -3832,6 +4040,28 @@ export class Task {
                     break;
                   }
                 }
+                const connectedServers = this.mcpHub
+                  .getServers()
+                  .filter(
+                    (server) =>
+                      server.status === "connected" && !server.disabled,
+                  );
+                const validation = validateMcpToolCall(
+                  connectedServers,
+                  server_name,
+                  tool_name,
+                  parsedArguments,
+                );
+                if ("error" in validation) {
+                  this.consecutiveMistakeCount++;
+                  await this.say(
+                    "error",
+                    `Invalid MCP tool call. ${validation.error} Retrying...`,
+                  );
+                  pushToolResult(formatResponse.toolError(validation.error));
+                  break;
+                }
+
                 this.consecutiveMistakeCount = 0;
                 const completeMessage = JSON.stringify({
                   type: "use_mcp_tool",
@@ -3840,11 +4070,7 @@ export class Task {
                   arguments: mcp_arguments,
                 } satisfies ValorIDEAskUseMcpServer);
 
-                const isToolAutoApproved = this.mcpHub.connections
-                  ?.find((conn) => conn.server.name === server_name)
-                  ?.server.tools?.find(
-                    (tool) => tool.name === tool_name,
-                  )?.autoApprove;
+                const isToolAutoApproved = validation.tool.autoApprove;
 
                 if (
                   this.shouldAutoApproveTool(block.name) &&
@@ -4465,7 +4691,43 @@ export class Task {
             const result: string | undefined = block.params.result;
             const command: string | undefined = block.params.command;
 
-            let lastCompletionChangesSummary: ValorIDEChangesSummary | undefined;
+            let lastCompletionChangesSummary:
+              | ValorIDEChangesSummary
+              | undefined;
+            const rawSummaryTitle =
+              this.valorideMessages.find((m) => m.say === "task")?.text ||
+              this.valorideMessages[0]?.text ||
+              "Task";
+            const initialTitleLine =
+              (rawSummaryTitle || "").split(/\r?\n/)[0]?.trim() || "Task";
+            const resultTitleLine =
+              (result || "")
+                .split(/\r?\n/)
+                .map((line) => line.trim())
+                .find((line) => line.length > 0) || undefined;
+            const summaryTitle = (() => {
+              const candidate =
+                resultTitleLine &&
+                  resultTitleLine.toLowerCase() !==
+                  initialTitleLine.toLowerCase()
+                  ? resultTitleLine
+                  : initialTitleLine;
+              return candidate.length > 120
+                ? `${candidate.slice(0, 120)}...`
+                : candidate;
+            })();
+            const summaryCompletedAt = new Date().toISOString();
+            const buildSummaryMarkdown = (
+              changesSummary?: ValorIDEChangesSummary,
+            ) =>
+              buildTaskSummary({
+                taskId: this.taskId,
+                title: summaryTitle,
+                status: "completed",
+                resultText: result,
+                changesSummary,
+                completedAt: summaryCompletedAt,
+              });
 
             const addNewChangesFlagToLastCompletionResultMessage =
               async (): Promise<ValorIDEChangesSummary | undefined> => {
@@ -4632,16 +4894,45 @@ export class Task {
                 }
 
                 // we already sent completion_result says, an empty string asks relinquishes control over button and field
+                const summaryMarkdown = buildSummaryMarkdown(
+                  lastCompletionChangesSummary,
+                );
+                const lastCompletionResultMessage = findLast(
+                  this.valorideMessages,
+                  (m) => m.say === "completion_result",
+                );
+                if (lastCompletionResultMessage) {
+                  lastCompletionResultMessage.summaryMarkdown = summaryMarkdown;
+                  lastCompletionResultMessage.summaryTitle = summaryTitle;
+                  lastCompletionResultMessage.summaryCompletedAt =
+                    summaryCompletedAt;
+                  await this.saveValorIDEMessagesAndUpdateHistory();
+                  await this.postMessageToWebview({
+                    type: "partialMessage",
+                    partialMessage: lastCompletionResultMessage,
+                  });
+                }
                 const { response, text, images } = await this.ask(
                   "completion_result",
                   "",
                   false,
-                  { changesSummary: lastCompletionChangesSummary },
+                  {
+                    changesSummary: lastCompletionChangesSummary,
+                    summaryMarkdown,
+                    summaryTitle,
+                    summaryCompletedAt,
+                  },
                 );
+                // Halt the API Request spinner after task completion
+                getStatusBarService().update({
+                  status: "idle",
+                });
                 if (response === "yesButtonClicked") {
                   // Submit completed task to ContentData
                   try {
-                    const { TaskCompletionSubmitter } = await import('@services/content-data/TaskCompletionSubmitter');
+                    const { TaskCompletionSubmitter } = await import(
+                      "@services/content-data/TaskCompletionSubmitter"
+                    );
                     const submitter = TaskCompletionSubmitter.getInstance();
                     const taskMessage = this.valorideMessages[0];
                     await submitter.submitCompletedTask({
@@ -4651,10 +4942,13 @@ export class Task {
                       timestamp: new Date(),
                     });
                   } catch (error) {
-                    console.error('Failed to submit task completion to ContentData:', error);
+                    console.error(
+                      "Failed to submit task completion to ContentData:",
+                      error,
+                    );
                     // Don't fail the task if ContentData submission fails
                   }
-                  
+
                   pushToolResult(""); // signals to recursive loop to stop (for now this never happens since yesButtonClicked will trigger a new task)
                   break;
                 }
@@ -4664,6 +4958,15 @@ export class Task {
                   | Anthropic.TextBlockParam
                   | Anthropic.ImageBlockParam
                 )[] = [];
+
+                // Preserve the original completion result markdown
+                if (result) {
+                  toolResults.push({
+                    type: "text",
+                    text: result,
+                  });
+                }
+
                 if (commandResult) {
                   if (typeof commandResult === "string") {
                     toolResults.push({
@@ -4750,6 +5053,18 @@ export class Task {
           this.chatSettings.mode,
         );
       } catch { }
+    }
+
+    if (this.pendingUserMessages.length > 0) {
+      const queuedMessages = this.pendingUserMessages.splice(0);
+      queuedMessages.forEach(({ text, images }) => {
+        if (text && text.trim().length > 0) {
+          userContent.push({ type: "text", text: text.trim() });
+        }
+        if (images && images.length > 0) {
+          userContent.push(...formatResponse.imageBlocks(images));
+        }
+      });
     }
 
     if (this.consecutiveMistakeCount >= 3) {
@@ -5013,6 +5328,12 @@ export class Task {
       let assistantMessage = "";
       let reasoningMessage = "";
       this.isStreaming = true;
+
+      // Update status bar: streaming started
+      getStatusBarService().update({
+        model: this.api.getModel().id,
+        status: "streaming",
+      });
       let didReceiveUsageChunk = false;
       try {
         for await (const chunk of stream) {
@@ -5027,6 +5348,15 @@ export class Task {
               cacheWriteTokens += chunk.cacheWriteTokens ?? 0;
               cacheReadTokens += chunk.cacheReadTokens ?? 0;
               totalCost = chunk.totalCost;
+
+              // Update status bar with token usage
+              getStatusBarService().update({
+                model: this.api.getModel().id,
+                inputTokens,
+                outputTokens,
+                cacheTokens: cacheWriteTokens + cacheReadTokens,
+                status: "streaming",
+              });
               break;
             case "reasoning":
               // reasoning will always come before assistant message
@@ -5089,6 +5419,11 @@ export class Task {
         }
       } finally {
         this.isStreaming = false;
+
+        // Update status bar: streaming finished
+        getStatusBarService().update({
+          status: "idle",
+        });
       }
 
       // OpenRouter/ValorIDE may not return token usage as part of the stream (since it may abort early), so we fetch after the stream is finished
@@ -5108,7 +5443,9 @@ export class Task {
 
           // Track usage and update balance on server via webview
           try {
-            const { trackApiUsageWithPricing } = await import("../../api/usage-tracking");
+            const { trackApiUsageWithPricing } = await import(
+              "../../api/usage-tracking"
+            );
             await trackApiUsageWithPricing(
               currentProviderId,
               this.api.getModel().id,
@@ -5116,11 +5453,16 @@ export class Task {
               outputTokens,
             );
           } catch (err) {
-            console.error("Failed to track usage after stream (fetch path):", err);
+            console.error(
+              "Failed to track usage after stream (fetch path):",
+              err,
+            );
           }
           try {
             const { WebviewProvider } = await import("../webview/index");
-            WebviewProvider.getVisibleInstance()?.getUsageTrackingService().requestBalance();
+            WebviewProvider.getVisibleInstance()
+              ?.getUsageTrackingService()
+              .requestBalance();
           } catch { }
         });
       }
@@ -5151,7 +5493,9 @@ export class Task {
 
       // Track usage and update balance on server via webview
       try {
-        const { trackApiUsageWithPricing } = await import("../../api/usage-tracking");
+        const { trackApiUsageWithPricing } = await import(
+          "../../api/usage-tracking"
+        );
         await trackApiUsageWithPricing(
           currentProviderId,
           this.api.getModel().id,
@@ -5163,7 +5507,9 @@ export class Task {
       }
       try {
         const { WebviewProvider } = await import("../webview/index");
-        WebviewProvider.getVisibleInstance()?.getUsageTrackingService().requestBalance();
+        WebviewProvider.getVisibleInstance()
+          ?.getUsageTrackingService()
+          .requestBalance();
       } catch { }
 
       // now add to apiconversationhistory
@@ -5185,17 +5531,17 @@ export class Task {
         // Send websocket message after every API response if communicationService is available
         if (this.communicationService) {
           try {
-            this.communicationService.sendMessage(
-              "api_action",
-              {
-                taskId: this.taskId,
-                message: assistantMessage,
-                timestamp: Date.now(),
-              }
-            );
+            this.communicationService.sendMessage("api_action", {
+              taskId: this.taskId,
+              message: assistantMessage,
+              timestamp: Date.now(),
+            });
           } catch (err) {
             // Log but do not throw
-            console.warn("Failed to send websocket message for API action:", err);
+            console.warn(
+              "Failed to send websocket message for API action:",
+              err,
+            );
           }
         }
 
@@ -5218,7 +5564,7 @@ export class Task {
           // normal request where tool use is required
           this.userMessageContent.push({
             type: "text",
-            text: formatResponse.noToolsUsed(),
+            text: formatResponse.noToolsUsed(this.chatSettings?.mode ?? "act"),
           });
           this.consecutiveMistakeCount++;
         }
@@ -5257,7 +5603,7 @@ export class Task {
   ) {
     return await Promise.all([
       // This is a temporary solution to dynamically load context mentions from tool results. It checks for the presence of tags that indicate that the tool was rejected and feedback was provided (see formatToolDeniedFeedback, attemptCompletion, executeCommand, and consecutiveMistakeCount >= 3) or "<answer>" (see askFollowupQuestion), we place all user generated content in these tags so they can effectively be used as markers for when we should parse mentions). However if we allow multiple tools responses in the future, we will need to parse mentions specifically within the user content tags.
-      // (Note: this caused the @/ import alias bug where file contents were being parsed as well, since v2 converted tool results to text blocks)
+      // (Note: this caused the @thorapi/ import alias bug where file contents were being parsed as well, since v2 converted tool results to text blocks)
       Promise.all(
         userContent.map(async (block) => {
           if (block.type === "text") {

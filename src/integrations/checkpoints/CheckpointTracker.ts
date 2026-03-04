@@ -496,14 +496,16 @@ class CheckpointTracker {
       totalFiles: diffSummary.files.length,
       totalInsertions: diffSummary.files.reduce(
         (sum, file) =>
-          sum + ("insertions" in file && typeof file.insertions === "number"
+          sum +
+          ("insertions" in file && typeof file.insertions === "number"
             ? file.insertions
             : 0),
         0,
       ),
       totalDeletions: diffSummary.files.reduce(
         (sum, file) =>
-          sum + ("deletions" in file && typeof file.deletions === "number"
+          sum +
+          ("deletions" in file && typeof file.deletions === "number"
             ? file.deletions
             : 0),
         0,

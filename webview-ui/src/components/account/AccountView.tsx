@@ -1,14 +1,17 @@
 import { memo, useState, useCallback, useEffect, useMemo } from "react";
 
-import { UsageTransaction, PaymentTransaction } from "@/thor/model";
-import { useGetBalanceResponsesQuery } from "@/thor/redux/services/BalanceResponseService";
-import { useAddUsageTransactionMutation, useGetUsageTransactionsQuery } from "@/thor/redux/services/UsageTransactionService";
-import { useGetPaymentTransactionsQuery } from "@/thor/redux/services/PaymentTransactionService";
+import { UsageTransaction, PaymentTransaction } from "@thorapi/model";
+import { useGetAccountBalanceQuery } from "@thorapi/services/creditsApi";
+import {
+  useAddUsageTransactionMutation,
+  useGetUsageTransactionsQuery,
+} from "@thorapi/redux/services/UsageTransactionService";
+import { useGetPaymentTransactionsQuery } from "@thorapi/redux/services/PaymentTransactionService";
 import VSCodeButtonLink from "../common/VSCodeButtonLink";
 import ValorIDELogoWhite from "../../assets/ValorIDELogoWhite";
 import CountUp from "react-countup";
 import CreditsHistoryTable from "./CreditsHistoryTable";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { getApiMetrics } from "@shared/getApiMetrics";
 import ApplicationsList from "./ApplicationsList";
 import OpenAPIFilePicker from "./OpenAPIFilePicker";
@@ -20,33 +23,59 @@ import {
   VSCodeDivider,
   VSCodeLink,
 } from "@vscode/webview-ui-toolkit/react";
-import { vscode } from "@/utils/vscode";
-import { FaAppStore, FaBackward, FaFileArchive, FaRecycle, FaUserEdit } from "react-icons/fa";
+import { vscode } from "@thorapi/utils/vscode";
+import {
+  FaAppStore,
+  FaBackward,
+  FaFileArchive,
+  FaRecycle,
+  FaUserEdit,
+  FaServer,
+} from "react-icons/fa";
+import ServerConsole from "../ServerConsole";
 import CoolButton from "../CoolButton";
 import { Card } from "react-bootstrap";
-import { Login } from "@thor/model";
+import { Login } from "@thorapi/model";
 import { FormikHelpers } from "formik";
 import { useLoginUserMutation } from "../../redux/services/AuthService";
-import StatusBadge from "@/components/common/StatusBadge";
-import OfflineBanner from "@/components/common/OfflineBanner";
-import SystemAlerts from "@/components/SystemAlerts";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import { useCommunicationService } from "@/context/CommunicationServiceContext";
+import StatusBadge from "@thorapi/components/common/StatusBadge";
+import OfflineBanner from "@thorapi/components/common/OfflineBanner";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
+import LoadingSpinner from "@thorapi/components/LoadingSpinner";
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 import UserPreferences from "./UserPreferences";
-import BuyCredits from "../BuyCredits";
-import { storeJwtToken, writeStoredPrincipal } from "@/utils/accessControl";
+import BuyCredits from "@thorapi/components/BuyCredits";
+import {
+  storeJwtToken,
+  useAccessControl,
+  writeStoredPrincipal,
+  readStoredPrincipal,
+} from "@thorapi/utils/accessControl";
 
 type AccountViewProps = {
   onDone: () => void;
+  serverConsoleNeedsAttention: boolean;
+  initialActiveTab?:
+  | "login"
+  | "account"
+  | "applications"
+  | "generatedFiles"
+  | "userPreferences"
+  | "serverConsole";
+  onConsumeInitialActiveTab?: () => void;
+  onClearServerConsoleNeedsAttention: () => void;
 };
 
-const AccountView = ({ onDone }: AccountViewProps) => {
+const AccountView = ({ onDone, serverConsoleNeedsAttention, onClearServerConsoleNeedsAttention, initialActiveTab, onConsumeInitialActiveTab }: AccountViewProps) => {
   const { userInfo, authenticatedUser, isLoggedIn, jwtToken } =
     useExtensionState();
   // Read live messages once at top-level to respect Hooks rules
   const { valorideMessages } = useExtensionState();
   // Compute API metrics from messages once using useMemo
-  const apiMetrics = useMemo(() => getApiMetrics(valorideMessages || []), [valorideMessages]);
+  const apiMetrics = useMemo(
+    () => getApiMetrics(valorideMessages || []),
+    [valorideMessages],
+  );
 
   // Determine authenticated status
   const isAuthenticated = Boolean(
@@ -56,11 +85,13 @@ const AccountView = ({ onDone }: AccountViewProps) => {
   // Also consider presence of a stored JWT to avoid timing gaps
   const hasStoredJwt = useMemo(() => {
     try {
-      return Boolean(
+      const storedPrincipal = readStoredPrincipal();
+      const storedToken =
         sessionStorage.getItem("jwtToken") ||
         localStorage.getItem("jwtToken") ||
-        localStorage.getItem("authToken")
-      );
+        localStorage.getItem("authToken");
+      // Both principal AND token must exist for auth to be valid
+      return Boolean(storedPrincipal && storedToken);
     } catch {
       return false;
     }
@@ -72,7 +103,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
 
   // Default to login tab when unauthenticated, otherwise account
   const [activeTab, setActiveTab] = useState<
-    "login" | "account" | "applications" | "generatedFiles" | "userPreferences"
+    "login" | "account" | "applications" | "generatedFiles" | "userPreferences" | "serverConsole"
   >(authed ? "account" : "login");
 
   // Keep active tab in sync with authentication state
@@ -84,20 +115,34 @@ const AccountView = ({ onDone }: AccountViewProps) => {
     }
   }, [authed]);
 
+  const { principal: resolvedPrincipal } = useAccessControl(
+    authenticatedUser || userInfo,
+  );
+  const principalId = resolvedPrincipal?.id;
+  const accountId =
+    typeof principalId === "string"
+      ? principalId
+      : principalId !== undefined && principalId !== null
+        ? String(principalId)
+        : "";
+
   const {
     data: balanceData,
     isLoading: isBalanceLoading,
+    isFetching: isBalanceFetching,
     refetch: refetchBalance,
-  } = useGetBalanceResponsesQuery(undefined, {
-    skip: false, // Always attempt to fetch applications
-    // skip: !isAuthenticated,
+  } = useGetAccountBalanceQuery(accountId, {
+    skip: !accountId,
   });
 
-  const { data: usageData, isLoading: isUsageLoading, refetch: refetchUsage } =
-    useGetUsageTransactionsQuery(undefined, {
-      // Use broader auth signal so queries mount as soon as a token exists
-      skip: !authed,
-    });
+  const {
+    data: usageData,
+    isLoading: isUsageLoading,
+    refetch: refetchUsage,
+  } = useGetUsageTransactionsQuery(undefined, {
+    // Use broader auth signal so queries mount as soon as a token exists
+    skip: !authed,
+  });
   const {
     data: paymentsData,
     isLoading: isPaymentsLoading,
@@ -108,7 +153,11 @@ const AccountView = ({ onDone }: AccountViewProps) => {
   });
 
   // Combined loading state
-  const loading = isBalanceLoading || isUsageLoading || isPaymentsLoading;
+  const loading =
+    isBalanceLoading ||
+    isBalanceFetching ||
+    isUsageLoading ||
+    isPaymentsLoading;
 
   const [loginUser] = useLoginUserMutation();
   const [addUsageTransaction] = useAddUsageTransactionMutation();
@@ -140,9 +189,7 @@ const AccountView = ({ onDone }: AccountViewProps) => {
               })()
             );
           } catch {
-            return `valoride-${Math.random()
-              .toString(36)
-              .substring(2, 12)}`;
+            return `valoride-${Math.random().toString(36).substring(2, 12)}`;
           }
         })();
 
@@ -248,7 +295,9 @@ const AccountView = ({ onDone }: AccountViewProps) => {
         : "Online (Server)"
     : hasError
       ? "Error"
-      : phase === "connecting" ? "Connecting..." : "Offline";
+      : phase === "connecting"
+        ? "Connecting..."
+        : "Offline";
   const kind = ready ? "ok" : hasError ? "error" : "warn";
 
   return (
@@ -265,22 +314,27 @@ const AccountView = ({ onDone }: AccountViewProps) => {
       <SystemAlerts />
 
       {peers.length > 0 && (
-        <div className="border border-solid border-[var(--vscode-panel-border)] rounded-md p-[10px] mb-3 bg-[var(--vscode-panel-background)] text-[var(--vscode-foreground)]">
+        <div className="border border-solid border-(--vscode-panel-border) rounded-md p-[10px] mb-3 bg-[var(--vscode-panel-background)] text-[var(--vscode-foreground)]">
           <div className="mb-2 font-semibold">Active instances</div>
           <div className="flex flex-wrap gap-2">
             {peers.map((id) => (
-              <span key={id} style={{
-                border: "1px solid var(--vscode-panel-border)",
-                borderRadius: 6,
-                padding: "2px 6px",
-                fontSize: 12,
-                background: "var(--vscode-editor-background)",
-              }}>{id}</span>
+              <span
+                key={id}
+                style={{
+                  border: "1px solid var(--vscode-panel-border)",
+                  borderRadius: 6,
+                  padding: "2px 6px",
+                  fontSize: 12,
+                  background: "var(--vscode-editor-background)",
+                }}
+              >
+                {id}
+              </span>
             ))}
           </div>
         </div>
       )}
-      <OfflineBanner />
+
       {/* Tab navigation */}
       <div className="scroll-tabs-container">
         <div className="nav-tabs scroll-tabs">
@@ -309,6 +363,14 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                 <FaFileArchive />
               </div>
               <div
+                className={`nav-link ${activeTab === "serverConsole" ? "active" : ""}`}
+                onClick={() => setActiveTab("serverConsole")}
+                style={{ cursor: "pointer" }}
+                title="Server Console"
+              >
+                <FaServer />
+              </div>
+              <div
                 className={`nav-link ${activeTab === "userPreferences" ? "active" : ""}`}
                 onClick={() => setActiveTab("userPreferences")}
                 style={{ cursor: "pointer" }}
@@ -331,7 +393,10 @@ const AccountView = ({ onDone }: AccountViewProps) => {
               </Card.Body>
               <Card.Footer>
                 <div
-                  style={{ fontSize: "0.85em", color: "var(--vscode-descriptionForeground)" }}
+                  style={{
+                    fontSize: "0.85em",
+                    color: "var(--vscode-descriptionForeground)",
+                  }}
                 >
                   Don't have an account?{" "}
                   <VSCodeLink
@@ -344,11 +409,11 @@ const AccountView = ({ onDone }: AccountViewProps) => {
                   <br />
                   Forgot your username?{" "}
                   <VSCodeLink
-                    href="https://valkyrlabs.com/restore-access"
+                    href="https://valkyrlabs.com/forgot-password"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Restore Access
+                    Forgot Password
                   </VSCodeLink>
                 </div>
               </Card.Footer>
@@ -359,12 +424,14 @@ const AccountView = ({ onDone }: AccountViewProps) => {
       ) : activeTab === "applications" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
           {loading && (
-            <div style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              minHeight: "200px"
-            }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                minHeight: "200px",
+              }}
+            >
               <LoadingSpinner label="Loading applications..." size={32} />
             </div>
           )}
@@ -372,12 +439,11 @@ const AccountView = ({ onDone }: AccountViewProps) => {
           <div style={{ marginBottom: "1em" }}>
             <OpenAPIFilePicker onFileSelected={handleOpenAPIFileSelected} />
             <ApplicationsList showTitle={true} title="Available Applications" />
-
           </div>
         </div>
       ) : activeTab === "generatedFiles" ? (
         <div className="h-full flex flex-col pr-3 overflow-y-auto">
-          <div className="flex-grow flex flex-col min-h-0">
+          <div className="grow flex flex-col min-h-0">
             <h3 style={{ marginBottom: "16px" }}>Generated Files</h3>
             <FileExplorer
               onFileSelect={handleFileSelect}
@@ -393,6 +459,10 @@ const AccountView = ({ onDone }: AccountViewProps) => {
             <h3 style={{ marginBottom: "16px" }}>User Preferences</h3>
             <UserPreferences />
           </div>
+        </div>
+      ) : activeTab === "serverConsole" ? (
+        <div className="h-full flex flex-col pr-3 overflow-y-auto">
+          <ServerConsole />
         </div>
       ) : activeTab === "account" ? (
         <>
@@ -417,30 +487,38 @@ const AccountView = ({ onDone }: AccountViewProps) => {
             </div>
 
             <div className="w-full flex flex-col items-center">
-              <div className="text-sm text-[var(--vscode-descriptionForeground)] mb-3">
+              <div className="text-sm text-(--vscode-descriptionForeground) mb-3">
                 CURRENT BALANCE
               </div>
 
-              <div className="text-4xl font-bold text-[var(--vscode-foreground)] mb-6 flex items-center gap-2">
+              <div className="text-4xl font-bold text-(--vscode-foreground) mb-6 flex items-center gap-2">
                 {loading ? (
                   <LoadingSpinner label="Loading balance..." size={28} />
                 ) : (
                   <>
                     {(() => {
-                      const rawBalance = balanceData?.[0]?.currentBalance || 0;
-                      const effectiveBalance = Math.max(0, rawBalance - (apiMetrics.totalCost || 0));
+                      const rawBalance = balanceData?.currentBalance ?? 0;
+                      const effectiveBalance = Math.max(
+                        0,
+                        rawBalance - (apiMetrics.totalCost || 0),
+                      );
                       return (
                         <>
                           <span>$</span>
-                          <CountUp end={effectiveBalance} duration={0.66} decimals={2} />
+                          <CountUp
+                            end={effectiveBalance}
+                            duration={0.66}
+                            decimals={2}
+                          />
                         </>
                       );
                     })()}
                     <VSCodeButton
                       appearance="icon"
                       className="mt-1"
-                      onClick={() => {
-                        refetchBalance();
+                      disabled={!accountId}
+                      onClick={async () => {
+                        await refetchBalance();
                         if (authed) {
                           refetchUsage();
                           refetchPayments();
@@ -454,30 +532,32 @@ const AccountView = ({ onDone }: AccountViewProps) => {
               </div>
 
               <div className="w-full">
-                <VSCodeButtonLink
-                  href="https://app.valkyrlabs.com/v1/credits/#buy"
+                <BuyCredits
+                  authenticatedPrincipal={
+                    resolvedPrincipal || authenticatedUser || userInfo
+                  }
+                  onPurchaseSuccess={async () => {
+                    await refetchBalance();
+                    refetchUsage();
+                    refetchPayments();
+                  }}
                   className="w-full"
-                >
-                  Buy Credits
-                </VSCodeButtonLink>
-                <BuyCredits />
+                />
               </div>
             </div>
 
             <VSCodeDivider className="mt-6 mb-3 w-full" />
 
-            <div className="flex-grow flex flex-col min-h-0 pb-[0px]">
+            <div className="grow flex flex-col min-h-0 pb-0">
               <CreditsHistoryTable
                 isLoading={loading}
                 usageData={usageData || []}
                 paymentsData={paymentsData || []}
               />
             </div>
-
           </div>
         </>
       ) : (
-
         <>nothing selected</>
       )}
     </div>

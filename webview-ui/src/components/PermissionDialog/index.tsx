@@ -269,7 +269,7 @@ export const PermissionDialog: React.FC<PermissionDialogProps> = ({
         if (objectId && objectType) {
           invalidateEntityById(objectType, objectId);
         }
-      } catch { }
+      } catch {}
     } catch (error) {
       console.error("Error updating permissions:", error);
       setShowAlert({

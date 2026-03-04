@@ -1,6 +1,10 @@
 import * as vscode from "vscode";
 import { getAllExtensionState, updateGlobalState } from "@core/storage/state";
-import { MothershipService, MothershipConnectionOptions, RemoteCommand } from "./MothershipService";
+import {
+  MothershipService,
+  MothershipConnectionOptions,
+  RemoteCommand,
+} from "./MothershipService";
 import { Logger } from "../logging/Logger";
 import { WebviewProvider } from "../../core/webview";
 
@@ -10,8 +14,12 @@ type GitExtension = {
 
 type GitAPI = {
   repositories: Repository[];
-  onDidOpenRepository(listener: (repository: Repository) => void): vscode.Disposable;
-  onDidCloseRepository(listener: (repository: Repository) => void): vscode.Disposable;
+  onDidOpenRepository(
+    listener: (repository: Repository) => void,
+  ): vscode.Disposable;
+  onDidCloseRepository(
+    listener: (repository: Repository) => void,
+  ): vscode.Disposable;
 };
 
 type Repository = {
@@ -74,15 +82,22 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     this.context = context;
   }
 
-  public async initialize(jwtToken: string, principal?: { id?: string }): Promise<void> {
+  public async initialize(
+    jwtToken: string,
+    principal?: { id?: string },
+  ): Promise<void> {
     if (!jwtToken || jwtToken.trim().length === 0) {
-      Logger.log("AgentRuntimeCoordinator.initialize skipped: missing JWT token");
+      Logger.log(
+        "AgentRuntimeCoordinator.initialize skipped: missing JWT token",
+      );
       return;
     }
 
     const { apiConfiguration } = await getAllExtensionState(this.context);
     if (!apiConfiguration?.valkyraiHost) {
-      Logger.log("AgentRuntimeCoordinator.initialize skipped: no ValkyrAI host configured");
+      Logger.log(
+        "AgentRuntimeCoordinator.initialize skipped: no ValkyrAI host configured",
+      );
       return;
     }
 
@@ -119,7 +134,9 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     this.mothership = null;
   }
 
-  private async ensureMothership(options: MothershipConnectionOptions): Promise<void> {
+  private async ensureMothership(
+    options: MothershipConnectionOptions,
+  ): Promise<void> {
     if (this.mothership) {
       this.mothership.updateJwtToken(options.jwtToken);
       return;
@@ -159,7 +176,8 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
   }
 
   private async ensureInstanceId(): Promise<string> {
-    const existing = await this.context.globalState.get<string>(INSTANCE_ID_KEY);
+    const existing =
+      await this.context.globalState.get<string>(INSTANCE_ID_KEY);
     if (existing) {
       return existing;
     }
@@ -195,7 +213,9 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       commands: commands.slice(0, 80),
       languages: languages.slice(0, 40),
       features: {
-        mcpMarketplace: !!(await this.context.globalState.get<boolean>("valoride.mcpMarketplace.enabled")),
+        mcpMarketplace: !!(await this.context.globalState.get<boolean>(
+          "valoride.mcpMarketplace.enabled",
+        )),
         browserAutomation: true,
         terminal: true,
         restClient: true,
@@ -207,11 +227,14 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
   }
 
   private getTrackedRepositories(): string[] {
-    return Array.from(this.repositoryCommits.keys()).map((key) => key.replace(/^file:\/\//, ""));
+    return Array.from(this.repositoryCommits.keys()).map((key) =>
+      key.replace(/^file:\/\//, ""),
+    );
   }
 
   private async setupGitTelemetry(): Promise<void> {
-    const gitExtension = vscode.extensions.getExtension<GitExtension>("vscode.git");
+    const gitExtension =
+      vscode.extensions.getExtension<GitExtension>("vscode.git");
     if (!gitExtension) {
       Logger.log("Git extension not found; git telemetry disabled");
       return;
@@ -293,7 +316,10 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
       return;
     }
 
-    const payload = typeof command.payload === "string" ? this.safeParse(command.payload) : command.payload;
+    const payload =
+      typeof command.payload === "string"
+        ? this.safeParse(command.payload)
+        : command.payload;
 
     switch (command.type) {
       case "task-assignment":
@@ -308,7 +334,10 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
     }
   }
 
-  private async handleTaskAssignment(command: RemoteCommand, payload: any): Promise<void> {
+  private async handleTaskAssignment(
+    command: RemoteCommand,
+    payload: any,
+  ): Promise<void> {
     if (!payload) {
       return;
     }
@@ -392,6 +421,16 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
         type: "swarm:broadcast",
         payload,
       });
+      // Trigger a lightweight server-console notification so UI can highlight the Server Console tab
+      instance.controller.postMessageToWebview({
+        type: "serverConsoleNewMessage",
+        payload: {
+          preview:
+            typeof payload === "string"
+              ? payload
+              : payload?.message || payload?.text || payload,
+        },
+      });
     });
   }
 
@@ -401,10 +440,23 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
         type: "swarm:private-message",
         payload,
       });
+      // Also notify webview to flash the server console tab for attention
+      instance.controller.postMessageToWebview({
+        type: "serverConsoleNewMessage",
+        payload: {
+          preview:
+            typeof payload === "string"
+              ? payload
+              : payload?.message || payload?.text || payload,
+        },
+      });
     });
   }
 
-  public async reportTaskCompletion(taskId: string, results?: Record<string, unknown>): Promise<void> {
+  public async reportTaskCompletion(
+    taskId: string,
+    results?: Record<string, unknown>,
+  ): Promise<void> {
     const assignment = this.activeAssignments.get(taskId);
     if (!assignment || !this.mothership || !this.instanceId) {
       return;
@@ -442,51 +494,66 @@ export class AgentRuntimeCoordinator implements vscode.Disposable {
   }
 
   private registerCommands(): void {
-    const completeTaskCmd = vscode.commands.registerCommand("valoride.swarm.completeTask", async () => {
-      if (!this.isInitialized) {
-        vscode.window.showWarningMessage("ValorIDE agent has not announced presence yet.");
-        return;
-      }
-      if (this.activeAssignments.size === 0) {
-        vscode.window.showInformationMessage("No active swarm assignments for this agent.");
-        return;
-      }
+    const completeTaskCmd = vscode.commands.registerCommand(
+      "valoride.swarm.completeTask",
+      async () => {
+        if (!this.isInitialized) {
+          vscode.window.showWarningMessage(
+            "ValorIDE agent has not announced presence yet.",
+          );
+          return;
+        }
+        if (this.activeAssignments.size === 0) {
+          vscode.window.showInformationMessage(
+            "No active swarm assignments for this agent.",
+          );
+          return;
+        }
 
-      const picks = Array.from(this.activeAssignments.values()).map((assignment) => ({
-        label: assignment.taskId,
-        description: assignment.description ?? "",
-        assignment,
-      }));
+        const picks = Array.from(this.activeAssignments.values()).map(
+          (assignment) => ({
+            label: assignment.taskId,
+            description: assignment.description ?? "",
+            assignment,
+          }),
+        );
 
-      const selection = await vscode.window.showQuickPick(picks, {
-        title: "Select task to mark complete",
-      });
-      if (!selection) {
-        return;
-      }
+        const selection = await vscode.window.showQuickPick(picks, {
+          title: "Select task to mark complete",
+        });
+        if (!selection) {
+          return;
+        }
 
-      const resultSummary = await vscode.window.showInputBox({
-        prompt: "Provide a brief summary of the work completed (optional)",
-        placeHolder: "Implemented checkout form and added tests...",
-      });
+        const resultSummary = await vscode.window.showInputBox({
+          prompt: "Provide a brief summary of the work completed (optional)",
+          placeHolder: "Implemented checkout form and added tests...",
+        });
 
-      await this.reportTaskCompletion(selection.assignment.taskId, {
-        summary: resultSummary ?? "",
-      });
+        await this.reportTaskCompletion(selection.assignment.taskId, {
+          summary: resultSummary ?? "",
+        });
 
-      vscode.window.showInformationMessage(`Task ${selection.assignment.taskId} marked complete.`);
-    });
+        vscode.window.showInformationMessage(
+          `Task ${selection.assignment.taskId} marked complete.`,
+        );
+      },
+    );
 
     const refreshCapabilitiesCmd = vscode.commands.registerCommand(
       "valoride.swarm.refreshCapabilities",
       async () => {
         if (!this.mothership) {
-          vscode.window.showWarningMessage("ValorIDE mothership connection not active.");
+          vscode.window.showWarningMessage(
+            "ValorIDE mothership connection not active.",
+          );
           return;
         }
         this.capabilityCache = null;
         await this.publishCapabilities(true);
-        vscode.window.showInformationMessage("ValorIDE capabilities re-announced to swarm.");
+        vscode.window.showInformationMessage(
+          "ValorIDE capabilities re-announced to swarm.",
+        );
       },
     );
 

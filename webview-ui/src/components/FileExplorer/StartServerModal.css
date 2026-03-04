@@ -158,17 +158,17 @@
     width: 95%;
     margin: 20px;
   }
-  
+
   .start-server-modal-header,
   .start-server-modal-body,
   .start-server-modal-footer {
     padding: 16px;
   }
-  
+
   .start-server-modal-footer {
     flex-direction: column-reverse;
   }
-  
+
   .start-server-modal-footer vscode-button {
     width: 100%;
   }

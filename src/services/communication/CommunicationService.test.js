@@ -34,7 +34,10 @@ describe("CommunicationService", () => {
     it("should call teardownPeer when disabling P2P", () => {
         const teardownSpy = jest.spyOn(svc, "teardownPeer");
         // Simulate a peer
-        svc.rtcChannels.set("peer1", { close: jest.fn(), readyState: "open" });
+        svc.rtcChannels.set("peer1", {
+            close: jest.fn(),
+            readyState: "open",
+        });
         svc.rtcPeers.set("peer1", { close: jest.fn() });
         svc.setP2PEnabled(false);
         expect(teardownSpy).toHaveBeenCalledWith("peer1");

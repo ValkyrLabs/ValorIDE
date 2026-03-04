@@ -4,19 +4,19 @@ import {
   ContextMenuQueryItem,
   getContextMenuOptions,
   SearchResult,
-} from "@/utils/context-mentions";
-import { cleanPathPrefix } from "@/components/common/CodeAccordian";
-import { 
-  FaSpinner, 
-  FaFile, 
-  FaFolder, 
-  FaExclamationTriangle, 
-  FaTerminal, 
-  FaLink, 
-  FaGitAlt, 
-  FaInfoCircle, 
-  FaChevronRight, 
-  FaPlus 
+} from "@thorapi/utils/context-mentions";
+import { cleanPathPrefix } from "@thorapi/components/common/CodeAccordian";
+import {
+  FaSpinner,
+  FaFile,
+  FaFolder,
+  FaExclamationTriangle,
+  FaTerminal,
+  FaLink,
+  FaGitAlt,
+  FaInfoCircle,
+  FaChevronRight,
+  FaPlus,
 } from "react-icons/fa";
 
 interface ContextMenuProps {
@@ -166,7 +166,9 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     }
   };
 
-  const getIconForOption = (option: ContextMenuQueryItem): React.ReactElement => {
+  const getIconForOption = (
+    option: ContextMenuQueryItem,
+  ): React.ReactElement => {
     const iconStyle = {
       marginRight: "8px",
       flexShrink: 0,

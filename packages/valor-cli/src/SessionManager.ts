@@ -3,17 +3,17 @@
  * Enables CLI tasks to attach to or create new sessions
  */
 
-import { promises as fs } from 'fs';
-import { join } from 'path';
-import { homedir } from 'os';
-import { v4 as uuidv4 } from 'uuid';
-import { SessionConfig, InstanceInfo } from './types';
+import { promises as fs } from "fs";
+import { join } from "path";
+import { homedir } from "os";
+import { v4 as uuidv4 } from "uuid";
+import { SessionConfig, InstanceInfo } from "./types";
 
 export class SessionManager {
   private sessionsDir: string;
 
   constructor() {
-    this.sessionsDir = join(homedir(), '.valoride', 'sessions');
+    this.sessionsDir = join(homedir(), ".valoride", "sessions");
   }
 
   async initialize(): Promise<void> {
@@ -47,7 +47,7 @@ export class SessionManager {
   async loadSession(sessionId: string): Promise<SessionConfig | null> {
     try {
       const path = join(this.sessionsDir, `${sessionId}.json`);
-      const content = await fs.readFile(path, 'utf-8');
+      const content = await fs.readFile(path, "utf-8");
       return JSON.parse(content) as SessionConfig;
     } catch {
       return null;
@@ -60,15 +60,15 @@ export class SessionManager {
       const sessions: InstanceInfo[] = [];
 
       for (const file of files) {
-        if (file.endsWith('.json')) {
-          const sessionId = file.replace('.json', '');
+        if (file.endsWith(".json")) {
+          const sessionId = file.replace(".json", "");
           const config = await this.loadSession(sessionId);
           if (config) {
             sessions.push({
               sessionId: config.sessionId,
               workspaceRoot: config.workspaceRoot,
               taskId: config.taskId,
-              status: config.taskId ? 'active' : 'idle',
+              status: config.taskId ? "active" : "idle",
               createdAt: config.createdAt,
               lastActivity: config.lastActivity,
             });

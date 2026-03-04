@@ -4,6 +4,48 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ValorIDE Webview</title>
+    <script>
+      // Early error catcher to ensure we capture crashes that happen before
+      // the main bundle attaches global handlers. Posts to local dev server.
+      (function () {
+        function send(payload) {
+          try {
+            if (typeof fetch === "function") {
+              fetch("http://localhost:3001/webview-error", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+              }).catch(() => {});
+            }
+            // also log to console
+            console.log("__EARLY_WEBVIEW_ERROR__", payload);
+          } catch (e) {}
+        }
+        window.addEventListener("error", function (event) {
+          try {
+            const err = event.error;
+            send({
+              type: "webviewError",
+              text: event.message,
+              filename: event.filename,
+              lineno: event.lineno,
+              colno: event.colno,
+              stack: err && err.stack,
+            });
+          } catch (e) {}
+        });
+        window.addEventListener("unhandledrejection", function (event) {
+          try {
+            const reason = event.reason;
+            send({
+              type: "webviewError",
+              text: reason && reason.message ? reason.message : String(reason),
+              stack: reason && reason.stack,
+            });
+          } catch (e) {}
+        });
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

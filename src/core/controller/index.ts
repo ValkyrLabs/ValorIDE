@@ -5,6 +5,7 @@ import crypto from "crypto";
 import fs from "fs/promises";
 import { setTimeout as setTimeoutPromise } from "node:timers/promises";
 import pWaitFor from "p-wait-for";
+import { originalPositionFor, TraceMap } from "@jridgewell/trace-mapping";
 import * as path from "path";
 import * as vscode from "vscode";
 import { handleGrpcRequest } from "./grpc-handler";
@@ -18,15 +19,21 @@ import {
 } from "@integrations/misc/link-preview";
 import { openImage } from "@integrations/misc/open-file";
 import { handleFileServiceRequest } from "./file";
+import { buildOpenApiImportConfig } from "./openApiImport";
 import { selectImages } from "@integrations/misc/process-images";
 import { getTheme } from "@integrations/theme/getTheme";
 import WorkspaceTracker from "@integrations/workspace/WorkspaceTracker";
+import { Logger } from "@services/logging/Logger";
 import { ValorIDEAccountService } from "@services/account/ValorIDEAccountService";
 import { BrowserSession } from "@services/browser/BrowserSession";
 import { McpHub } from "@services/mcp/McpHub";
 import { searchWorkspaceFiles } from "@services/search/file-search";
-import { telemetryService } from "@services/telemetry/TelemetryService";
+
+import { getLLMPromptService } from "@services/llmPromptService";
+import { getSwarmPromptBroadcaster } from "@services/swarmPromptBroadcaster";
+import { StartupAuthService } from "@services/auth/StartupAuthService";
 import { ApiProvider, ModelInfo } from "@shared/api";
+import { LlmDetailsSummary, SelectedLlmDetails } from "@shared/llm";
 import { ChatContent } from "@shared/ChatContent";
 import { ChatSettings } from "@shared/ChatSettings";
 import {
@@ -42,7 +49,10 @@ import {
   McpServer,
 } from "@shared/mcp";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
-import { validateAdvancedSettings, DEFAULT_ADVANCED_SETTINGS } from "@shared/AdvancedSettings";
+import {
+  validateAdvancedSettings,
+  DEFAULT_ADVANCED_SETTINGS,
+} from "@shared/AdvancedSettings";
 import {
   ValorIDECheckpointRestore,
   WebviewMessage,
@@ -50,7 +60,9 @@ import {
 import { fileExistsAtPath } from "@utils/fs";
 import { searchCommits } from "@utils/git";
 import { getReadablePath, getWorkspacePath } from "@utils/path";
+import { openUrlWithSimpleBrowser } from "@utils/openUrl";
 import { resolveThorapiFolderPath } from "@utils/thorapi";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 import { getTotalTasksSize } from "@utils/storage";
 import { openMention } from "../mentions";
 import {
@@ -93,6 +105,7 @@ export class Controller {
   mcpHub: McpHub;
   accountService: ValorIDEAccountService;
   private latestAnnouncementId = "april-18-2025_21:15::00"; // update to some unique identifier when we add a new announcement
+  private webviewIndexSourceMapPromise: Promise<any | null> | null = null;
 
   constructor(
     readonly context: vscode.ExtensionContext,
@@ -117,6 +130,14 @@ export class Controller {
         const { apiConfiguration } = await this.getStateToPostToWebview();
         return apiConfiguration?.valorideApiKey;
       },
+    );
+
+    this.disposables.push(
+      vscode.workspace.onDidChangeConfiguration((event) => {
+        if (event.affectsConfiguration("valoride.valkyrai.host")) {
+          void this.handleValkyraiHostConfigChange();
+        }
+      }),
     );
 
     // Clean up legacy checkpoints
@@ -161,7 +182,9 @@ export class Controller {
       this.workspaceTracker.dispose();
       this.outputChannel.appendLine("Workspace tracker disposed successfully");
     } catch (error) {
-      this.outputChannel.appendLine(`Error disposing workspace tracker: ${error}`);
+      this.outputChannel.appendLine(
+        `Error disposing workspace tracker: ${error}`,
+      );
       console.error("Error disposing workspace tracker:", error);
     }
 
@@ -266,6 +289,134 @@ export class Controller {
     await this.postMessage(message);
   }
 
+  private normalizeWebviewSourcePath(source: string): string {
+    if (source.startsWith("../../src/")) {
+      return `webview-ui/src/${source.slice("../../src/".length)}`;
+    }
+    if (source.startsWith("../../node_modules/")) {
+      return source.slice("../../".length);
+    }
+    return source;
+  }
+
+  private async getWebviewIndexSourceMap(): Promise<any | null> {
+    if (this.webviewIndexSourceMapPromise) {
+      return this.webviewIndexSourceMapPromise;
+    }
+
+    const mapPath = path.join(
+      this.context.extensionUri.fsPath,
+      "dist",
+      "webview",
+      "assets",
+      "index.js.map",
+    );
+
+    this.webviewIndexSourceMapPromise = fs
+      .readFile(mapPath, "utf8")
+      .then((raw) => {
+        // Use the statically imported TraceMap instead of require()
+        return new TraceMap(JSON.parse(raw));
+      })
+      .catch((err) => {
+        this.outputChannel.appendLine(
+          `Webview source map not available: ${mapPath} (${String(err)})`,
+        );
+        return null;
+      });
+
+    return this.webviewIndexSourceMapPromise;
+  }
+
+  private async symbolicateWebviewPosition(
+    generatedLine: number,
+    generatedColumn: number,
+  ): Promise<string | null> {
+    const traceMap = await this.getWebviewIndexSourceMap();
+    if (!traceMap) return null;
+
+
+    for (const column of [
+      generatedColumn,
+      Math.max(0, generatedColumn - 1),
+    ]) {
+      const original = originalPositionFor(traceMap, {
+        line: generatedLine,
+        column,
+      });
+      if (!original?.source || !original?.line) continue;
+
+      const source = this.normalizeWebviewSourcePath(String(original.source));
+      const line = Number(original.line);
+      const col =
+        typeof original.column === "number" ? Number(original.column) : 0;
+      return `${source}:${line}:${col}`;
+    }
+
+    return null;
+  }
+
+  private async symbolicateWebviewStack(stack: string): Promise<string | null> {
+    if (!stack) return null;
+
+    const traceMap = await this.getWebviewIndexSourceMap();
+    if (!traceMap) return null;
+
+
+
+    const mappedLines = stack.split("\n").map((rawLine) => {
+      const line = rawLine ?? "";
+      const trimmed = line.trim();
+      if (!trimmed) return line;
+
+      const inParensMatch = trimmed.match(/\(([^)]+)\)$/);
+      const token = inParensMatch
+        ? inParensMatch[1]
+        : trimmed.split(/\s+/).pop();
+      if (!token) return line;
+
+      const locMatch = token.match(/:(\d+):(\d+)$/);
+      if (!locMatch) return line;
+
+      const generatedLine = Number(locMatch[1]);
+      const generatedColumn = Number(locMatch[2]);
+
+      // Heuristic: only rewrite frames from our webview bundle.
+      const filePart = token.slice(0, token.length - locMatch[0].length);
+      if (
+        !filePart.endsWith("/dist/webview/assets/index.js") &&
+        !filePart.endsWith("dist/webview/assets/index.js") &&
+        !filePart.endsWith("/assets/index.js") &&
+        !filePart.endsWith("assets/index.js") &&
+        !filePart.endsWith("/index.js") &&
+        !filePart.endsWith("index.js")
+      ) {
+        return line;
+      }
+
+      for (const column of [
+        generatedColumn,
+        Math.max(0, generatedColumn - 1),
+      ]) {
+        const original = originalPositionFor(traceMap, {
+          line: generatedLine,
+          column,
+        });
+        if (!original?.source || !original?.line) continue;
+
+        const source = this.normalizeWebviewSourcePath(String(original.source));
+        const origLine = Number(original.line);
+        const origCol =
+          typeof original.column === "number" ? Number(original.column) : 0;
+        return `${line} -> ${source}:${origLine}:${origCol}`;
+      }
+
+      return line;
+    });
+
+    return mappedLines.join("\n");
+  }
+
   /**
    * Sets up an event listener to listen for messages passed from the webview context and
    * executes code based on the message that is received.
@@ -274,11 +425,79 @@ export class Controller {
    */
   async handleWebviewMessage(message: WebviewMessage) {
     switch (message.type) {
+      case "requestTheme": {
+        // Send current theme to webview
+        const theme = await getTheme();
+        await this.postMessageToWebview({
+          type: "theme",
+          text: JSON.stringify(theme),
+        });
+        break;
+      }
       case "openFile": {
         const relPath = (message as any).text;
         if (relPath) {
           const absPath = path.join(cwd, relPath);
           await handleFileServiceRequest(this, "openFile", { value: absPath });
+        }
+        break;
+      }
+      case "webviewError": {
+        const textRaw = (message as any).text;
+        const text =
+          typeof textRaw === "string" ? textRaw : String(textRaw ?? "");
+
+        const info = (message as any).info ?? (message as any).payload ?? null;
+        const stack =
+          typeof (message as any).stack === "string" ? (message as any).stack : null;
+        const filename = (message as any).filename ?? null;
+        const lineno =
+          typeof (message as any).lineno === "number" ? (message as any).lineno : null;
+        const colno =
+          typeof (message as any).colno === "number" ? (message as any).colno : null;
+
+        this.outputChannel.appendLine(`Webview encountered an error: ${text}`);
+        if (filename || lineno != null || colno != null) {
+          this.outputChannel.appendLine(
+            `Location: ${String(filename ?? "unknown")}:${String(lineno ?? "?")}:${String(colno ?? "?")}`,
+          );
+        }
+
+        if (lineno != null && colno != null) {
+          const mapped = await this.symbolicateWebviewPosition(lineno, colno);
+          if (mapped) {
+            this.outputChannel.appendLine(`Mapped location: ${mapped}`);
+          }
+        }
+
+        if (info) {
+          const infoText =
+            typeof info === "string" ? info : JSON.stringify(info, null, 2);
+          this.outputChannel.appendLine(`Info: ${infoText}`);
+        }
+
+        if (stack) {
+          this.outputChannel.appendLine(`Stack:\n${stack}`);
+
+          const mappedStack = await this.symbolicateWebviewStack(stack);
+          if (mappedStack && mappedStack !== stack) {
+            this.outputChannel.appendLine(`Mapped stack:\n${mappedStack}`);
+          }
+        }
+
+        console.error("Webview error:", {
+          text,
+          filename,
+          lineno,
+          colno,
+          info,
+          stack,
+        });
+
+        try {
+          vscode.window.showErrorMessage(`Webview error: ${text}`);
+        } catch {
+          // ignore
         }
         break;
       }
@@ -320,8 +539,12 @@ export class Controller {
         await this.postStateToWebview();
         break;
       case "webviewDidLaunch":
-        this.postStateToWebview();
-        this.workspaceTracker?.populateFilePaths(); // don't await
+        try {
+          await this.postStateToWebview();
+          this.workspaceTracker?.populateFilePaths(); // don't await
+        } catch (err) {
+          console.error("Error during webviewDidLaunch initialization:", err);
+        }
         getTheme().then((theme) =>
           this.postMessageToWebview({
             type: "theme",
@@ -371,12 +594,7 @@ export class Controller {
           }
         });
 
-        // If user already opted in to telemetry, enable telemetry service
-        this.getStateToPostToWebview().then((state) => {
-          const { telemetrySetting } = state;
-          const isOptedIn = telemetrySetting === "enabled";
-          telemetryService.updateTelemetryState(isOptedIn);
-        });
+
         break;
       case "showChatView": {
         this.postMessageToWebview({
@@ -495,6 +713,13 @@ export class Controller {
           message.images,
         );
         break;
+      case "userMessage":
+        this.task?.handleWebviewAskResponse(
+          "messageResponse",
+          message.text,
+          message.images,
+        );
+        break;
       case "didShowAnnouncement":
         await updateGlobalState(
           this.context,
@@ -555,6 +780,44 @@ export class Controller {
       case "refreshLLMDetails":
         await this.refreshLLMDetails();
         break;
+      case "testValkyraiHost": {
+        const targetHost = message.valkyraiHost?.trim();
+        if (!targetHost) {
+          await this.postMessageToWebview({
+            type: "valkyraiHostTestResult",
+            host: "",
+            success: false,
+            error: "Host URL is required.",
+          });
+          break;
+        }
+        await this.testValkyraiHostConnection(targetHost);
+        break;
+      }
+      case "updateValkyraiHost": {
+        const nextHost = message.valkyraiHost?.trim();
+        if (!nextHost) {
+          break;
+        }
+        await vscode.workspace
+          .getConfiguration("valoride.valkyrai")
+          .update("host", nextHost, vscode.ConfigurationTarget.Global);
+        await updateGlobalState(this.context, "valkyraiHost", nextHost);
+        await this.postStateToWebview();
+        await this.refreshLLMDetails();
+        try {
+          const startupAuthService = StartupAuthService.getInstance(
+            this.context,
+          );
+          await startupAuthService.restoreAuthentication();
+        } catch (error) {
+          console.warn(
+            "Failed to restore authentication after host change:",
+            error,
+          );
+        }
+        break;
+      }
       case "refreshOpenAiModels":
         const { apiConfiguration } = await getAllExtensionState(this.context);
         const openAiModels = await this.getOpenAiModels(
@@ -572,7 +835,7 @@ export class Controller {
         break;
       case "openInBrowser":
         if (message.url) {
-          vscode.env.openExternal(vscode.Uri.parse(message.url));
+          await openUrlWithSimpleBrowser(message.url);
         }
         break;
       case "fetchOpenGraphData":
@@ -645,6 +908,37 @@ export class Controller {
         }
         break;
       }
+      case "taskCompletionPreviewFile": {
+        if (message.number && message.relativePath) {
+          try {
+            const preview = await this.task?.getFilePreview(
+              message.number,
+              message.relativePath,
+              message.seeNewChangesSinceLastTaskCompletion ?? true,
+            );
+            await this.postMessageToWebview({
+              type: "taskCompletionFilePreview",
+              number: message.number,
+              relativePath: message.relativePath,
+              before: preview?.before,
+              after: preview?.after,
+              isBinary: preview?.isBinary,
+            });
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            await this.postMessageToWebview({
+              type: "taskCompletionFilePreview",
+              number: message.number,
+              relativePath: message.relativePath,
+              before: undefined,
+              after: undefined,
+              isBinary: false,
+            });
+            console.error("Failed to get file preview:", errorMessage);
+          }
+        }
+        break;
+      }
       case "getLatestState":
         await this.postStateToWebview();
         break;
@@ -660,7 +954,7 @@ export class Controller {
         const uriScheme = vscode.env.uriScheme;
 
         const authUrl = vscode.Uri.parse(`https://valkyrlabs.com/sign-up`);
-        vscode.env.openExternal(authUrl);
+        await openUrlWithSimpleBrowser(authUrl.toString());
         break;
       }
       case "accountLogoutClicked": {
@@ -717,12 +1011,7 @@ export class Controller {
         break;
       }
       case "taskFeedback":
-        if (message.feedbackType && this.task?.taskId) {
-          telemetryService.captureTaskFeedback(
-            this.task.taskId,
-            message.feedbackType,
-          );
-        }
+
         break;
       // case "openMcpMarketplaceServerDetails": {
       // 	if (message.text) {
@@ -900,6 +1189,15 @@ export class Controller {
         );
         break;
       }
+      case "fixLayout": {
+        // Execute the extension command that has the user confirmation
+        try {
+          await vscode.commands.executeCommand("valoride.fixLayout");
+        } catch (err) {
+          Logger.log(`Error executing valoride.fixLayout from webview: ${err}`);
+        }
+        break;
+      }
       case "invoke": {
         if (message.text) {
           await this.postMessageToWebview({
@@ -961,11 +1259,92 @@ export class Controller {
         await this.postMessageToWebview({ type: "didUpdateSettings" });
         break;
       }
+      case "updateLLMDetails": {
+        try {
+          const selected = message.llmDetails;
+          if (!selected?.id || !selected.initialPrompt) {
+            void vscode.window.showErrorMessage(
+              "Unable to load prompt — missing initial prompt text.",
+            );
+            break;
+          }
+
+          const normalizedSelection: SelectedLlmDetails = {
+            id: selected.id,
+            name: selected.name || selected.id,
+            description: selected.description,
+            tags: selected.tags || [],
+            ratingScore: selected.ratingScore,
+            promptType: selected.promptType ?? "SYSTEM",
+            initialPrompt: selected.initialPrompt,
+            prompt: selected.initialPrompt,
+            mode: (selected.promptType ?? "SYSTEM") as "SYSTEM" | "APPEND",
+            source: "thorapi",
+            updatedAt: Date.now(),
+          };
+
+          await updateGlobalState(
+            this.context,
+            "selectedLlmDetails",
+            normalizedSelection,
+          );
+
+          try {
+            const promptService = getLLMPromptService();
+            promptService.applyManualSelection({
+              llmDetailsId: normalizedSelection.id,
+              name: normalizedSelection.name,
+              prompt: normalizedSelection.prompt,
+              mode: normalizedSelection.mode,
+              tags: normalizedSelection.tags,
+              source: "thorapi",
+            });
+          } catch (error) {
+            console.error("Failed to apply prompt override:", error);
+          }
+
+          try {
+            const broadcaster = getSwarmPromptBroadcaster();
+            const supervisorId = vscode.env.machineId || "valoride-supervisor";
+            const intent = message.taskIntent || "manual-selection";
+            const broadcastMessage = broadcaster.selectPromptForTask(
+              supervisorId,
+              intent,
+              normalizedSelection.id,
+              normalizedSelection.tags || [],
+            );
+            const targets =
+              broadcaster.broadcastPromptSelection(broadcastMessage);
+            targets.forEach((workerId) =>
+              broadcaster.acknowledgePromptReload(
+                workerId,
+                normalizedSelection.id || "",
+              ),
+            );
+            await this.postMessageToWebview({
+              type: "swarm:broadcast",
+              payload: broadcastMessage,
+            });
+          } catch (error) {
+            console.error("Swarm prompt broadcaster unavailable:", error);
+          }
+
+          await this.postStateToWebview();
+          void vscode.window.showInformationMessage(
+            `LLM prompt switched to ${normalizedSelection.name} (${normalizedSelection.mode})`,
+          );
+        } catch (error) {
+          console.error("Failed to update LLMDetails selection:", error);
+          void vscode.window.showErrorMessage(
+            "Failed to update LLM prompt selection.",
+          );
+        }
+        break;
+      }
       case "requestSetBudgetLimit": {
         // Prompt user for USD budget limit and persist without toggling mode
-        const { chatSettings: currentChatSettings } = await getAllExtensionState(
-          this.context,
-        );
+        const { chatSettings: currentChatSettings } =
+          await getAllExtensionState(this.context);
         const valueStr = await vscode.window.showInputBox({
           title: "Set budget limit",
           prompt: "Set budget limit (USD) for this task",
@@ -980,7 +1359,8 @@ export class Controller {
           },
         });
         if (valueStr === undefined) break; // cancelled
-        const nextBudget = valueStr.trim() === "" ? undefined : Number(valueStr);
+        const nextBudget =
+          valueStr.trim() === "" ? undefined : Number(valueStr);
         const nextSettings = {
           ...(currentChatSettings ?? { mode: "act" as const }),
           budgetLimit: nextBudget,
@@ -999,9 +1379,8 @@ export class Controller {
       }
       case "requestSetApiThrottle": {
         // Prompt user for delay between API calls (ms) and persist
-        const { chatSettings: currentChatSettings } = await getAllExtensionState(
-          this.context,
-        );
+        const { chatSettings: currentChatSettings } =
+          await getAllExtensionState(this.context);
         const valueStr = await vscode.window.showInputBox({
           title: "Set API throttle",
           prompt: "Set delay between API calls (ms)",
@@ -1170,10 +1549,7 @@ export class Controller {
 
           // Capture telemetry for model favorite toggle
           const isFavorited = !favoritedModelIds.includes(message.modelId);
-          telemetryService.captureModelFavoritesUsage(
-            message.modelId,
-            isFavorited,
-          );
+
 
           // Post state to webview without changing any other configuration
           await this.postStateToWebview();
@@ -1346,7 +1722,10 @@ export class Controller {
                 )
                 .then((choice) => {
                   if (choice === "Open Browser") {
-                    vscode.env.openExternal(vscode.Uri.parse(`http://localhost:${port}`));
+                    void openUrlWithSimpleBrowser(
+                      `http://localhost:${port}`,
+                      undefined,
+                    );
                   }
                 });
             }, 5000); // Wait 5 seconds for server to start
@@ -1359,14 +1738,193 @@ export class Controller {
         }
         break;
       }
+      case "uploadOpenAPISpec": {
+        try {
+          const {
+            filename,
+            fileContent,
+            fileSize,
+            jwtToken: providedJwt,
+          } = message;
+
+          if (!filename || !fileContent) {
+            throw new Error("Missing filename or file content");
+          }
+
+          // Validate file size on backend as well
+          const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+          if (fileSize && fileSize > MAX_FILE_SIZE) {
+            throw new Error(
+              `File size exceeds maximum limit of 10MB. Current size: ${(fileSize / 1024 / 1024).toFixed(2)}MB`,
+            );
+          }
+
+          // Validate content type and structure
+          const isJson = filename.toLowerCase().endsWith(".json");
+          const isYaml =
+            filename.toLowerCase().endsWith(".yaml") ||
+            filename.toLowerCase().endsWith(".yml");
+
+          if (!isJson && !isYaml) {
+            throw new Error(
+              "Invalid file type. Only JSON and YAML OpenAPI spec files are supported.",
+            );
+          }
+
+          // Parse and validate the OpenAPI spec
+          let spec: any;
+          try {
+            if (isJson) {
+              spec = JSON.parse(fileContent);
+            } else {
+              // For YAML, do basic validation
+              if (!fileContent || fileContent.trim().length === 0) {
+                throw new Error("File is empty.");
+              }
+              // Check for required OpenAPI fields
+              if (
+                !fileContent.includes("openapi:") &&
+                !fileContent.includes("swagger:") &&
+                !fileContent.includes('"openapi"') &&
+                !fileContent.includes('"swagger"')
+              ) {
+                throw new Error(
+                  "File does not contain OpenAPI specification (missing 'openapi' or 'swagger' key).",
+                );
+              }
+              spec = fileContent;
+            }
+          } catch (parseError) {
+            const errorMsg =
+              parseError instanceof Error ? parseError.message : "Parse error";
+            throw new Error(`Failed to parse OpenAPI spec: ${errorMsg}`);
+          }
+
+          // Validate required OpenAPI structure
+          if (isJson) {
+            if (!spec.openapi && !spec.swagger) {
+              throw new Error(
+                "Invalid OpenAPI spec: missing required 'openapi' or 'swagger' version field.",
+              );
+            }
+            if (!spec.info || !spec.info.title) {
+              throw new Error(
+                "Invalid OpenAPI spec: missing required 'info.title' field.",
+              );
+            }
+            if (!spec.paths && !spec.components?.schemas) {
+              throw new Error(
+                "Invalid OpenAPI spec: missing required 'paths' or 'components.schemas' definitions.",
+              );
+            }
+          }
+
+          // Store the spec in a temporary location for processing
+          const specsDir = path.join(
+            this.context.globalStorageUri.fsPath,
+            "openapi-specs",
+          );
+          await fs.mkdir(specsDir, { recursive: true });
+
+          const timestamp = Date.now();
+          const sanitizedFilename = filename.replace(/[^\\w.-]/g, "_");
+          const specPath = path.join(
+            specsDir,
+            `${timestamp}_${sanitizedFilename}`,
+          );
+          await fs.writeFile(specPath, fileContent);
+
+          // Send success response back to webview
+          await this.postMessageToWebview({
+            type: "uploadOpenAPISpecResult",
+            success: true,
+            filename: filename,
+            specPath: specPath,
+            message: `Successfully processed ${filename}. OpenAPI spec is ready for import.`,
+          });
+
+          // Get JWT token for ThorAPI call
+          const jwtToken =
+            providedJwt || (await getSecret(this.context, "jwtToken"));
+          const axiosConfig = buildOpenApiImportConfig(filename, jwtToken);
+
+          // Call ThorAPI /v1/thorapi/specs/import endpoint
+          const apiBaseUrl = getValkyraiBasePath();
+          const importUrl = `${apiBaseUrl}/thorapi/specs/import`;
+
+          try {
+            const response = await axios.post(
+              importUrl,
+              {
+                filename: filename,
+                content: fileContent,
+                fileType: isJson ? "json" : "yaml",
+              },
+              axiosConfig,
+            );
+
+            if (response.data?.success === true || response.status === 200) {
+              await this.postMessageToWebview({
+                type: "uploadOpenAPISpecResult",
+                success: true,
+                filename: filename,
+                message: `Successfully imported ${filename}. Ready to generate code.`,
+              });
+              console.log(
+                `[uploadOpenAPISpec] Imported to ThorAPI: ${filename}`,
+              );
+            } else {
+              throw new Error(
+                response.data?.error || "ThorAPI returned unexpected response",
+              );
+            }
+          } catch (apiError) {
+            let errorMsg = "Failed to import to ThorAPI";
+            if (axios.isAxiosError(apiError)) {
+              if (apiError.response?.status === 401) {
+                errorMsg = "Authentication failed. Please log in.";
+              } else if (apiError.response?.status === 400) {
+                errorMsg = `Invalid OpenAPI: ${apiError.response.data?.error || "validation failed"}`;
+              } else if (apiError.code === "ECONNREFUSED") {
+                errorMsg = `Cannot reach ThorAPI at ${importUrl}`;
+              } else if (apiError.message) {
+                errorMsg = apiError.message;
+              }
+            } else if (apiError instanceof Error) {
+              errorMsg = apiError.message;
+            }
+
+            await this.postMessageToWebview({
+              type: "uploadOpenAPISpecResult",
+              success: false,
+              filename: filename,
+              error: errorMsg,
+            });
+            console.error(`[uploadOpenAPISpec] ThorAPI error: ${errorMsg}`);
+            throw new Error(errorMsg);
+          }
+          console.log(
+            `[uploadOpenAPISpec] Successfully processed: ${filename} (${(fileSize / 1024).toFixed(2)}KB)`,
+          );
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : "Failed to process OpenAPI spec";
+          console.error(`[uploadOpenAPISpec] Error: ${errorMessage}`, error);
+
+          await this.postMessageToWebview({
+            type: "uploadOpenAPISpecResult",
+            success: false,
+            filename: message.filename,
+            error: errorMessage,
+          });
+        }
+        break;
+      }
       case "streamToThorapi": {
-        const {
-          blobData,
-          applicationId,
-          applicationName,
-          filename,
-          mimeType,
-        } = message;
+        const { blobData, applicationId, applicationName, filename, mimeType } =
+          message;
 
         const sendProgress = async (step: string, progressMessage: string) => {
           if (!applicationId) {
@@ -1395,12 +1953,12 @@ export class Controller {
           await fs.mkdir(thorapiFolderPath, { recursive: true });
 
           const incomingName =
-            filename?.trim() ||
-            `application-${applicationId}-${Date.now()}`;
-          const sanitizedBaseName = path
-            .basename(incomingName)
-            .replace(/[\\/:*?"<>|]/g, "_")
-            .trim() || `application-${applicationId}-${Date.now()}`;
+            filename?.trim() || `application-${applicationId}-${Date.now()}`;
+          const sanitizedBaseName =
+            path
+              .basename(incomingName)
+              .replace(/[\\/:*?"<>|]/g, "_")
+              .trim() || `application-${applicationId}-${Date.now()}`;
 
           const mime = mimeType?.toLowerCase() ?? "";
           const looksLikeZip = isZipBuffer(binaryData) || mime.includes("zip");
@@ -1430,10 +1988,9 @@ export class Controller {
               );
             } catch (extractionError) {
               throw new Error(
-                `Failed to extract archive: ${
-                  extractionError instanceof Error
-                    ? extractionError.message
-                    : String(extractionError)
+                `Failed to extract archive: ${extractionError instanceof Error
+                  ? extractionError.message
+                  : String(extractionError)
                 }`,
               );
             }
@@ -1448,10 +2005,9 @@ export class Controller {
 
             await fs.unlink(filePath).catch((unlinkError) => {
               console.warn(
-                `Failed to delete archive ${filePath}: ${
-                  unlinkError instanceof Error
-                    ? unlinkError.message
-                    : String(unlinkError)
+                `Failed to delete archive ${filePath}: ${unlinkError instanceof Error
+                  ? unlinkError.message
+                  : String(unlinkError)
                 }`,
               );
             });
@@ -1502,7 +2058,7 @@ export class Controller {
   async updateTelemetrySetting(telemetrySetting: TelemetrySetting) {
     await updateGlobalState(this.context, "telemetrySetting", telemetrySetting);
     const isOptedIn = telemetrySetting === "enabled";
-    telemetryService.updateTelemetryState(isOptedIn);
+
   }
 
   async togglePlanActModeWithChatSettings(
@@ -1511,11 +2067,6 @@ export class Controller {
   ) {
     const didSwitchToActMode = chatSettings.mode === "act";
 
-    // Capture mode switch telemetry | Capture regardless of if we know the taskId
-    telemetryService.captureModeSwitch(
-      this.task?.taskId ?? "0",
-      chatSettings.mode,
-    );
 
     // Get previous model info that we will revert to after saving current mode api info
     const {
@@ -1557,6 +2108,7 @@ export class Controller {
         case "openai-native":
         case "qwen":
         case "deepseek":
+        case "moonshot":
         case "xai":
           await updateGlobalState(
             this.context,
@@ -1657,12 +2209,13 @@ export class Controller {
           case "vertex":
           case "gemini":
           case "asksage":
-          case "openai-native":
-          case "qwen":
-          case "deepseek":
-          case "xai":
-            await updateGlobalState(this.context, "apiModelId", newModelId);
-            break;
+        case "openai-native":
+        case "qwen":
+        case "deepseek":
+        case "moonshot":
+        case "xai":
+          await updateGlobalState(this.context, "apiModelId", newModelId);
+          break;
           case "openrouter":
           case "valoride":
             await updateGlobalState(
@@ -2051,7 +2604,7 @@ export class Controller {
 
       // Fetch server details from marketplace using same URL pattern as ApplicationService
       const response = await axios.post<McpDownloadResponse>(
-        `${process.env.VITE_basePath || "http://localhost:8080/v1"}/McpServer`,
+        `${getValkyraiBasePath()}/McpServer`,
         { mcpId },
         {
           headers,
@@ -2377,6 +2930,8 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
 
   async refreshLLMDetails() {
     let models: Record<string, any> = {};
+    const llmDetailsList: LlmDetailsSummary[] = [];
+    let lastError: string | undefined;
     try {
       const { apiConfiguration } = await getAllExtensionState(this.context);
 
@@ -2386,13 +2941,14 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
         await this.postMessageToWebview({
           type: "llmDetailsUpdated",
           models: {},
+          llmDetails: [],
         });
         return {};
       }
 
       // Fetch LLM details from ValkyrAI
       const valkyraiUrl = apiConfiguration.valkyraiHost.replace(/\/$/, ""); // Remove trailing slash
-      const endpoint = `${valkyraiUrl}/v1/llm-details`;
+      const endpoint = `${valkyraiUrl}/LlmDetails`;
 
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
@@ -2416,9 +2972,28 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
               supportsPromptCache: llmDetail.supportsPromptCache,
               inputPrice: llmDetail.inputPrice,
               outputPrice: llmDetail.outputPrice,
-              description: llmDetail.description || `${llmDetail.provider} ${llmDetail.name}${llmDetail.version ? ` (${llmDetail.version})` : ""}`,
+              description:
+                llmDetail.description ||
+                `${llmDetail.provider} ${llmDetail.name}${llmDetail.version ? ` (${llmDetail.version})` : ""}`,
             };
             models[llmDetail.id] = modelInfo;
+            llmDetailsList.push({
+              id: llmDetail.id,
+              name: llmDetail.name || llmDetail.provider || llmDetail.id,
+              description: llmDetail.description,
+              promptType: (llmDetail.promptType || "SYSTEM") as
+                | "SYSTEM"
+                | "APPEND",
+              initialPrompt: llmDetail.initialPrompt,
+              tags: Array.isArray(llmDetail.tags) ? llmDetail.tags : [],
+              ratingScore:
+                typeof llmDetail.ratingScore === "number"
+                  ? llmDetail.ratingScore
+                  : undefined,
+              provider: llmDetail.provider,
+              version: llmDetail.version,
+              lastModifiedDate: llmDetail.lastModifiedDate,
+            });
           }
         }
         console.log("LLMDetails fetched from ValkyrAI", models);
@@ -2427,13 +3002,63 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       }
     } catch (error) {
       console.error("Error fetching LLMDetails from ValkyrAI:", error);
+      lastError =
+        error instanceof Error ? error.message : "Unknown LLMDetails error";
     }
 
     await this.postMessageToWebview({
       type: "llmDetailsUpdated",
       models,
+      llmDetails: llmDetailsList,
+      error: lastError,
     });
     return models;
+  }
+
+  private async testValkyraiHostConnection(host: string) {
+    let success = false;
+    let errorMessage: string | undefined;
+    const normalizedHost = host.replace(/\/$/, "");
+    const endpoints = [
+      `${normalizedHost}/health`,
+      `${normalizedHost}/status`,
+      normalizedHost,
+    ];
+    for (const endpoint of endpoints) {
+      try {
+        await axios.get(endpoint, { timeout: 5000 });
+        success = true;
+        errorMessage = undefined;
+        break;
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          success = true;
+          errorMessage = undefined;
+          break;
+        }
+        errorMessage =
+          error instanceof Error ? error.message : "Unable to reach host.";
+      }
+    }
+    await this.postMessageToWebview({
+      type: "valkyraiHostTestResult",
+      host: normalizedHost,
+      success,
+      error: errorMessage,
+    });
+  }
+
+  private async handleValkyraiHostConfigChange() {
+    try {
+      const configuredHost = vscode.workspace
+        .getConfiguration("valoride.valkyrai")
+        .get<string>("host");
+      await updateGlobalState(this.context, "valkyraiHost", configuredHost);
+      await this.postStateToWebview();
+      await this.refreshLLMDetails();
+    } catch (error) {
+      console.error("Failed to react to ValkyrAI host change:", error);
+    }
   }
 
   // Context menus and code actions
@@ -2443,10 +3068,10 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
       ?.map((folder) => folder.uri.fsPath)
       .at(0);
     if (!cwd) {
-      return "@/" + filePath;
+      return "@thorapi/" + filePath;
     }
     const relativePath = path.relative(cwd, filePath);
-    return "@/" + relativePath;
+    return "@thorapi/" + relativePath;
   }
 
   // 'Add to ValorIDE' context menu in editor and code action
@@ -2737,8 +3362,16 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
   }
 
   async postStateToWebview() {
-    const state = await this.getStateToPostToWebview();
-    this.postMessageToWebview({ type: "state", state });
+    try {
+      const state = await this.getStateToPostToWebview();
+      await this.postMessageToWebview({ type: "state", state });
+    } catch (error) {
+      // Log and notify webview of failure to initialize state. Avoid throwing to keep extension running.
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error("postStateToWebview failed:", error);
+      await this.postMessageToWebview({ type: "state", state: { /* minimal fallback state */ } as any });
+      await this.postMessageToWebview({ type: "webviewError", text: `Failed to initialize UI: ${msg}` });
+    }
   }
 
   async getStateToPostToWebview(): Promise<ExtensionState> {
@@ -2764,53 +3397,78 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
     const advancedSettings = validateAdvancedSettings({
       fileProcessing: {
         maxFileSize:
-          (cfg.get<number>("advanced.fileProcessing.maxFileSize") as number | undefined) ??
+          (cfg.get<number>("advanced.fileProcessing.maxFileSize") as
+            | number
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.fileProcessing.maxFileSize,
         warnLargeFiles:
-          (cfg.get<boolean>("advanced.fileProcessing.warnLargeFiles") as boolean | undefined) ??
+          (cfg.get<boolean>("advanced.fileProcessing.warnLargeFiles") as
+            | boolean
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.fileProcessing.warnLargeFiles,
         largeFileThreshold:
-          (cfg.get<number>("advanced.fileProcessing.largeFileThreshold") as number | undefined) ??
+          (cfg.get<number>("advanced.fileProcessing.largeFileThreshold") as
+            | number
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.fileProcessing.largeFileThreshold,
         chunkSize: DEFAULT_ADVANCED_SETTINGS.fileProcessing.chunkSize,
         streamingDelay: DEFAULT_ADVANCED_SETTINGS.fileProcessing.streamingDelay,
-        enableProgressiveLoading: DEFAULT_ADVANCED_SETTINGS.fileProcessing.enableProgressiveLoading,
+        enableProgressiveLoading:
+          DEFAULT_ADVANCED_SETTINGS.fileProcessing.enableProgressiveLoading,
       },
       budgetAlerts: {
         depletedThreshold:
-          (cfg.get<number>("advanced.budgetAlerts.depletedThreshold") as number | undefined) ??
+          (cfg.get<number>("advanced.budgetAlerts.depletedThreshold") as
+            | number
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.budgetAlerts.depletedThreshold,
         criticalThreshold:
-          (cfg.get<number>("advanced.budgetAlerts.criticalThreshold") as number | undefined) ??
+          (cfg.get<number>("advanced.budgetAlerts.criticalThreshold") as
+            | number
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.budgetAlerts.criticalThreshold,
         lowThreshold:
-          (cfg.get<number>("advanced.budgetAlerts.lowThreshold") as number | undefined) ??
-          DEFAULT_ADVANCED_SETTINGS.budgetAlerts.lowThreshold,
+          (cfg.get<number>("advanced.budgetAlerts.lowThreshold") as
+            | number
+            | undefined) ?? DEFAULT_ADVANCED_SETTINGS.budgetAlerts.lowThreshold,
         alertThreshold:
-          (cfg.get<number>("advanced.budgetAlerts.alertThreshold") as number | undefined) ??
+          (cfg.get<number>("advanced.budgetAlerts.alertThreshold") as
+            | number
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.budgetAlerts.alertThreshold,
       },
       debugging: {
         enableVerboseLogging:
-          (cfg.get<boolean>("advanced.debugging.enableVerboseLogging") as boolean | undefined) ??
+          (cfg.get<boolean>("advanced.debugging.enableVerboseLogging") as
+            | boolean
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.debugging.enableVerboseLogging,
         saveFailedMatches:
-          (cfg.get<boolean>("advanced.debugging.saveFailedMatches") as boolean | undefined) ??
+          (cfg.get<boolean>("advanced.debugging.saveFailedMatches") as
+            | boolean
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.debugging.saveFailedMatches,
         enablePerformanceMetrics:
-          (cfg.get<boolean>("advanced.debugging.enablePerformanceMetrics") as boolean | undefined) ??
+          (cfg.get<boolean>("advanced.debugging.enablePerformanceMetrics") as
+            | boolean
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.debugging.enablePerformanceMetrics,
         logOutputFiltering:
-          (cfg.get<boolean>("advanced.debugging.logOutputFiltering") as boolean | undefined) ??
+          (cfg.get<boolean>("advanced.debugging.logOutputFiltering") as
+            | boolean
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.debugging.logOutputFiltering,
         showPsrResultsReport:
-          (cfg.get<boolean>("advanced.debugging.showPsrResultsReport") as boolean | undefined) ??
+          (cfg.get<boolean>("advanced.debugging.showPsrResultsReport") as
+            | boolean
+            | undefined) ??
           DEFAULT_ADVANCED_SETTINGS.debugging.showPsrResultsReport,
       },
       thorapi: {
         outputFolder:
-          (cfg.get<string>("advanced.thorapi.outputFolder") as string | undefined) ??
-          DEFAULT_ADVANCED_SETTINGS.thorapi.outputFolder,
+          (cfg.get<string>("advanced.thorapi.outputFolder") as
+            | string
+            | undefined) ?? DEFAULT_ADVANCED_SETTINGS.thorapi.outputFolder,
       },
     });
     const thorapiFolderPath = resolveThorapiFolderPath(cwd);
@@ -3012,18 +3670,16 @@ Here is the project's README to help you get started:\n\n${mcpDetails.readmeCont
           }
         } catch (subdirError) {
           console.warn(
-            `findReadmeFile: unable to scan ${subdir}: ${
-              subdirError instanceof Error
-                ? subdirError.message
-                : String(subdirError)
+            `findReadmeFile: unable to scan ${subdir}: ${subdirError instanceof Error
+              ? subdirError.message
+              : String(subdirError)
             }`,
           );
         }
       }
     } catch (error) {
       console.warn(
-        `findReadmeFile: unable to scan ${directory}: ${
-          error instanceof Error ? error.message : String(error)
+        `findReadmeFile: unable to scan ${directory}: ${error instanceof Error ? error.message : String(error)
         }`,
       );
     }

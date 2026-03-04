@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { vscode } from "@/utils/vscode";
+import { vscode } from "@thorapi/utils/vscode";
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import { FaPlus } from "react-icons/fa";
 import { useClickAway } from "react-use";
@@ -84,9 +84,8 @@ const NewRuleRow: React.FC<NewRuleRowProps> = ({ isGlobal }) => {
       onClick={() => !isExpanded && setIsExpanded(true)}
     >
       <div
-        className={`flex items-center p-2 rounded bg-[var(--vscode-input-background)] transition-all duration-300 ease-in-out h-[18px] ${
-          isExpanded ? "shadow-sm" : ""
-        }`}
+        className={`flex items-center p-2 rounded bg-[var(--vscode-input-background)] transition-all duration-300 ease-in-out h-[18px] ${isExpanded ? "shadow-sm" : ""
+          }`}
       >
         {isExpanded ? (
           <form onSubmit={handleSubmit} className="flex flex-1 items-center">

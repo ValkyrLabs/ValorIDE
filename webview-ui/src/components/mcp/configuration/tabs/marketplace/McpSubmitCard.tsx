@@ -45,9 +45,10 @@ const McpSubmitCard = () => {
             color: "var(--vscode-descriptionForeground)",
           }}
         >
-          Help others discover great MCP servers by submitting an issue to{" "}
-          <a href="https://github.com/valoride/mcp-marketplace">
-            github.com/valoride/mcp-marketplace
+          Monetize your work and help others discover your great MCP servers!
+          Submit an MCP server to{" "}
+          <a href="https://valkyrlabs.com/mcp/marketplace">
+            https://valkyrlabs.com/mcp/marketplace
           </a>
         </p>
       </div>

@@ -133,10 +133,10 @@
 }
 
 .messages-container {
-  background: rgba(0, 0, 0, 0.2);
-  height: 300px;
-  max-height: 300px;
-  overflow-y: auto;
+  min-height: 300px;
+  max-height: 100%;
+  overflow: hidden;
+  overflow-y: scroll;
   padding: 16px;
 }
 

@@ -274,7 +274,9 @@
 }
 
 [data-bs-theme="dark"] .sheet-cell:focus {
-  box-shadow: 0 0 0 2px var(--bs-primary), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 0 0 2px var(--bs-primary),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 /* ====== ACCESSIBILITY IMPROVEMENTS ====== */
@@ -292,11 +294,11 @@
   .sheet-table td {
     border-width: 2px;
   }
-  
+
   .sheet-cell:focus {
     outline-width: 3px;
   }
-  
+
   .btn:focus {
     outline: 3px solid var(--bs-primary);
     outline-offset: 2px;
@@ -308,11 +310,11 @@
   .dropdown-menu {
     max-width: 90vw;
   }
-  
+
   .sheet-table {
     font-size: 0.875rem;
   }
-  
+
   .sheet-cell {
     padding: 0.125rem 0.25rem;
     min-height: 1.25rem;

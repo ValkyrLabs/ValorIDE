@@ -22,13 +22,13 @@ export class ContentDataTool {
             if (contentData) {
                 return {
                     success: true,
-                    data: contentData
+                    data: contentData,
                 };
             }
             else {
                 return {
                     success: false,
-                    error: "No data received from ContentData endpoint"
+                    error: "No data received from ContentData endpoint",
                 };
             }
         }
@@ -36,7 +36,7 @@ export class ContentDataTool {
             const errorMessage = error instanceof Error ? error.message : "Unknown error";
             return {
                 success: false,
-                error: `Failed to fetch ContentData: ${errorMessage}`
+                error: `Failed to fetch ContentData: ${errorMessage}`,
             };
         }
     }
@@ -50,8 +50,8 @@ export class ContentDataTool {
             inputSchema: {
                 type: "object",
                 properties: {},
-                required: []
-            }
+                required: [],
+            },
         };
     }
 }

@@ -1,7 +1,13 @@
 import { memo, useMemo } from "react";
-import { getLanguageFromPath } from "@/utils/getLanguageFromPath";
-import CodeBlock, { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import { VscFeedback, VscOutput, VscDiff, VscChevronUp, VscChevronDown } from "react-icons/vsc";
+import { getLanguageFromPath } from "@thorapi/utils/getLanguageFromPath";
+import CodeBlock, { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import {
+  VscFeedback,
+  VscOutput,
+  VscDiff,
+  VscChevronUp,
+  VscChevronDown,
+} from "react-icons/vsc";
 
 interface CodeAccordianProps {
   code?: string;
@@ -123,11 +129,7 @@ const CodeAccordian = ({
               <span>{numberOfEdits}</span>
             </div>
           )}
-          {isExpanded ? (
-            <VscChevronUp />
-          ) : (
-            <VscChevronDown />
-          )}
+          {isExpanded ? <VscChevronUp /> : <VscChevronDown />}
         </div>
       )}
       {(!(path || isFeedback || isConsoleLogs) || isExpanded) && (

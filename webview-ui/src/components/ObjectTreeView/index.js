@@ -3,7 +3,7 @@ import {
   jsxs as _jsxs,
   Fragment as _Fragment,
 } from "react/jsx-runtime";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Badge,
   Col,
@@ -30,6 +30,7 @@ import {
   FaRegSave,
 } from "react-icons/fa";
 import CoolButton from "../CoolButton";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 const ObjectTreeView = ({
   data,
   editable = true,
@@ -48,7 +49,9 @@ const ObjectTreeView = ({
   useEffect(() => {
     const fetchOpenApiSpec = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_basePath || "http://localhost:8080/v1"}/api-docs`);
+        const response = await fetch(
+          `${getValkyraiHost().replace(/\/+$/, "")}/api-docs`
+        );
         const spec = await response.json();
         setOpenApiSpec(spec);
       } catch (error) {
@@ -146,7 +149,7 @@ const ObjectTreeView = ({
         children: [
           _jsx("option", { value: "", children: "Select..." }),
           modalDetails.enum.map((option) =>
-            _jsx("option", { value: option, children: option }, option),
+            _jsx("option", { value: option, children: option }, option)
           ),
         ],
       });
@@ -245,7 +248,7 @@ const ObjectTreeView = ({
     isCollapsed,
     inferredType,
     details,
-    tooltip,
+    tooltip
   ) => {
     const isDate =
       (inferredType === "string" && isDateField(details)) ||
@@ -317,7 +320,7 @@ const ObjectTreeView = ({
             md: 1,
             children: _jsx(OverlayTrigger, {
               placement: "top",
-              overlay: tooltip,
+              overlay: (props) => React.cloneElement(tooltip, props),
               children: _jsx("span", {
                 style: { cursor: "help", marginRight: "5px" },
                 children: _jsx(FaInfoCircle, { color: "#777", size: 20 }),
@@ -326,7 +329,7 @@ const ObjectTreeView = ({
           }),
         ],
       },
-      fullKey,
+      fullKey
     );
   };
   const renderChildren = (node, parentKey) => {
@@ -352,7 +355,7 @@ const ObjectTreeView = ({
         isCollapsed,
         inferredType,
         details,
-        tooltip,
+        tooltip
       );
     });
   };
@@ -376,7 +379,7 @@ const ObjectTreeView = ({
           false,
           inferredType,
           details,
-          tooltip,
+          tooltip
         ),
       });
     }
@@ -404,7 +407,7 @@ const ObjectTreeView = ({
           isCollapsed,
           inferredType,
           details,
-          tooltip,
+          tooltip
         );
       }),
     });
@@ -546,3 +549,4 @@ const ObjectTreeView = ({
   });
 };
 export default ObjectTreeView;
+//# sourceMappingURL=index.js.map

@@ -2,7 +2,8 @@ import { execa } from "execa";
 import { platform } from "os";
 async function showMacOSNotification(options) {
     const { title, subtitle = "", message } = options;
-    const script = `display notification "${message}" with title "${title}" subtitle "${subtitle}" sound name "Tink"`;
+    const script = `tell application "Visual Studio Code" to activate
+display notification "${message}" with title "${title}" subtitle "${subtitle}" sound name "Tink"`;
     try {
         await execa("osascript", ["-e", script]);
     }

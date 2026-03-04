@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface FloatingControlPanelProps {
   description?: string;
@@ -14,7 +14,12 @@ const FloatingControlPanel: React.FC<FloatingControlPanelProps> = ({
   children,
 }) => {
   return (
-    <div className={className} style={style} role="region" aria-label={description}>
+    <div
+      className={className}
+      style={style}
+      role="region"
+      aria-label={description}
+    >
       {children}
     </div>
   );

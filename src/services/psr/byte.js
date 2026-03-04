@@ -1,6 +1,11 @@
 export async function applyBytePatches(buffer, edits) {
     if (!edits.length) {
-        return { buffer: Buffer.from(buffer), warnings: [], skipped: [], applied: [] };
+        return {
+            buffer: Buffer.from(buffer),
+            warnings: [],
+            skipped: [],
+            applied: [],
+        };
     }
     const warnings = [];
     const skipped = [];
@@ -64,7 +69,12 @@ export async function applyBytePatches(buffer, edits) {
             skipped.push({ index, reason: "byte_no_change" });
         }
     });
-    return { buffer: b, warnings, skipped, applied: Array.from(applied).sort((a, b) => a - b) };
+    return {
+        buffer: b,
+        warnings,
+        skipped,
+        applied: Array.from(applied).sort((a, b) => a - b),
+    };
 }
 function hexToBuf(hex) {
     const cleaned = hex.replace(/\s+/g, "");

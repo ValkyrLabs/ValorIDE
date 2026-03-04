@@ -1,6 +1,9 @@
 import * as vscode from "vscode";
 import * as path from "path";
-import { resolveThorapiFolderPath, thorapiSettingChanged } from "@utils/thorapi";
+import {
+  resolveThorapiFolderPath,
+  thorapiSettingChanged,
+} from "@utils/thorapi";
 import { arePathsEqual } from "@utils/path";
 
 function isThorProjectRoot(uri: vscode.Uri): boolean {
@@ -21,7 +24,9 @@ function isThorProjectRoot(uri: vscode.Uri): boolean {
 }
 
 class ProjectRootDecorationProvider implements vscode.FileDecorationProvider {
-  private _onDidChange = new vscode.EventEmitter<vscode.Uri | vscode.Uri[] | undefined>();
+  private _onDidChange = new vscode.EventEmitter<
+    vscode.Uri | vscode.Uri[] | undefined
+  >();
   readonly onDidChangeFileDecorations = this._onDidChange.event;
 
   refresh(): void {
@@ -82,11 +87,7 @@ export function registerProjectExplorerIntegrations(
         {
           label: "Open in New Window",
           action: () =>
-            vscode.commands.executeCommand(
-              "vscode.openFolder",
-              uri,
-              true,
-            ),
+            vscode.commands.executeCommand("vscode.openFolder", uri, true),
         },
         {
           label: "Open Integrated Terminal Here",

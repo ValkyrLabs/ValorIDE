@@ -2,8 +2,8 @@
  * InstanceCommand - Manage CLI sessions/instances
  */
 
-import chalk from 'chalk';
-import { SessionManager } from '../SessionManager';
+import chalk from "chalk";
+import { SessionManager } from "../SessionManager";
 
 export class InstanceCommand {
   private sessionManager: SessionManager;
@@ -17,13 +17,13 @@ export class InstanceCommand {
       await this.sessionManager.initialize();
 
       switch (action) {
-        case 'ls':
+        case "ls":
           await this.listInstances();
           break;
-        case 'start':
+        case "start":
           await this.startInstance();
           break;
-        case 'stop':
+        case "stop":
           await this.stopInstance(options.session);
           break;
         default:
@@ -38,17 +38,17 @@ export class InstanceCommand {
 
   private async listInstances(): Promise<void> {
     const sessions = await this.sessionManager.listSessions();
-    
+
     if (sessions.length === 0) {
-      console.log(chalk.gray('No active instances'));
+      console.log(chalk.gray("No active instances"));
       return;
     }
 
-    console.log(chalk.cyan('\n📋 Active Instances:\n'));
+    console.log(chalk.cyan("\n📋 Active Instances:\n"));
     for (const session of sessions) {
       const elapsed = Math.round((Date.now() - session.createdAt) / 1000);
       console.log(
-        `${chalk.green('✓')} ${chalk.cyan(session.sessionId)} ${chalk.gray(`(${session.workspaceRoot}) — ${elapsed}s`)}`
+        `${chalk.green("✓")} ${chalk.cyan(session.sessionId)} ${chalk.gray(`(${session.workspaceRoot}) — ${elapsed}s`)}`,
       );
     }
     console.log();
@@ -61,7 +61,7 @@ export class InstanceCommand {
 
   private async stopInstance(sessionId: string): Promise<void> {
     if (!sessionId) {
-      console.error(chalk.red('Session ID required: --session <id>'));
+      console.error(chalk.red("Session ID required: --session <id>"));
       process.exit(1);
     }
 

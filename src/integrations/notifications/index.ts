@@ -12,7 +12,8 @@ async function showMacOSNotification(
 ): Promise<void> {
   const { title, subtitle = "", message } = options;
 
-  const script = `display notification "${message}" with title "${title}" subtitle "${subtitle}" sound name "Tink"`;
+  const script = `tell application "Visual Studio Code" to activate
+display notification "${message}" with title "${title}" subtitle "${subtitle}" sound name "Tink"`;
 
   try {
     await execa("osascript", ["-e", script]);
@@ -84,6 +85,7 @@ export async function showSystemNotification(
       title: title.replace(/"/g, '\\"'),
       message: message.replace(/"/g, '\\"'),
       subtitle: options.subtitle?.replace(/"/g, '\\"') || "",
+      appName: "ValorIDE",
     };
 
     switch (platform()) {

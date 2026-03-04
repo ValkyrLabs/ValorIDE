@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import customBaseQuery from "../../thor/redux/customBaseQuery";
+import customBaseQuery from "../..//redux/customBaseQuery";
 
 export type WorkflowEvent = { type: string; payload?: Record<string, any> };
 

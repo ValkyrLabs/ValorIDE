@@ -6,6 +6,7 @@ import { ValorIDEAdvancedSettings } from "./AdvancedSettings";
 
 import { ChatContent } from "./ChatContent";
 import { TelemetrySetting } from "./TelemetrySetting";
+import { LlmDetailsSummary } from "./llm";
 import { McpViewTab } from "./mcp";
 
 export interface WebviewMessage {
@@ -13,9 +14,11 @@ export interface WebviewMessage {
   | "addRemoteServer"
   | "apiConfiguration"
   | "webviewDidLaunch"
+  | "requestTheme"
   | "newTask"
   | "condense"
   | "askResponse"
+  | "userMessage"
   | "didShowAnnouncement"
   | "selectImages"
   | "exportCurrentTask"
@@ -29,12 +32,15 @@ export interface WebviewMessage {
   | "openInBrowser"
   | "createRuleFile"
   | "openMention"
+  | "fixLayout"
   | "showChatView"
   | "refreshOpenRouterModels"
   | "refreshRequestyModels"
   | "refreshLLMDetails"
   | "refreshOpenAiModels"
   | "refreshValorIDERules"
+  | "testValkyraiHost"
+  | "updateValkyraiHost"
   | "openMcpSettings"
   | "restartMcpServer"
   | "deleteMcpServer"
@@ -45,6 +51,8 @@ export interface WebviewMessage {
   | "togglePlanActMode"
   | "taskCompletionViewChanges"
   | "taskCompletionOpenFileDiff"
+  | "taskCompletionPreviewFile"
+  | "webviewError"
   | "openExtensionSettings"
   | "requestVsCodeLmModels"
   | "toggleToolAutoApprove"
@@ -66,6 +74,7 @@ export interface WebviewMessage {
   | "checkIsImageUrl"
   | "invoke"
   | "updateSettings"
+  | "updateLLMDetails"
   | "clearAllTaskHistory"
   | "fetchUserCreditsData"
   | "optionsResponse"
@@ -94,6 +103,7 @@ export interface WebviewMessage {
   | "addGeneratedToProject"
   | "startServer"
   | "uploadOpenAPISpec"
+  | "uploadOpenAPISpecResult"
   | "openFile";
 
   // | "relaunchChromeDebugMode"
@@ -130,6 +140,10 @@ export interface WebviewMessage {
   customInstructionsSetting?: string;
   // For task feedback
   feedbackType?: TaskFeedbackType;
+  // For task completion file preview
+  before?: string;
+  after?: string;
+  isBinary?: boolean;
   mentionsRequestId?: string;
   query?: string;
   // For toggleFavoriteModel
@@ -160,6 +174,15 @@ export interface WebviewMessage {
   // For uploadOpenAPISpec
   fileContent?: string;
   fileSize?: number;
+  jwtToken?: string;
+  // For uploadOpenAPISpecResult
+  success?: boolean;
+  specPath?: string;
+  error?: string;
+  llmDetailsId?: string;
+  llmDetails?: LlmDetailsSummary;
+  taskIntent?: string;
+  valkyraiHost?: string;
 }
 
 export type ValorIDEAskResponse =

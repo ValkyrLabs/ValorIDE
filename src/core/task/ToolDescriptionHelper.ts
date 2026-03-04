@@ -4,7 +4,10 @@ import { ToolUseName } from "@core/assistant-message";
  * Helper class to generate tool descriptions for UI display
  */
 export class ToolDescriptionHelper {
-  static getToolDescription(toolName: ToolUseName, params: Record<string, any>): string {
+  static getToolDescription(
+    toolName: ToolUseName,
+    params: Record<string, any>,
+  ): string {
     switch (toolName) {
       case "execute_command":
         return `[${toolName} for '${params.command}']`;

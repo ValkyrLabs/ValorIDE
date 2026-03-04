@@ -1,14 +1,16 @@
 import React from "react";
 import { render, screen, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { vi } from "vitest";
 import MockedCommunicationService, {
   MockCommunicationService,
-} from "@/mocks/MockCommunicationService"; // Assuming a mock service exists
+} from "@thorapi/mocks/MockCommunicationService"; // Assuming a mock service exists
+import { useCommunicationService } from "@thorapi/context/CommunicationServiceContext";
 import OfflineBanner from "./OfflineBanner";
 
 // Mock the custom hook
-jest.mock("@/context/CommunicationServiceContext", () => ({
-  useCommunicationService: jest.fn(),
+vi.mock("@thorapi/context/CommunicationServiceContext", () => ({
+  useCommunicationService: vi.fn(),
 }));
 
 describe("OfflineBanner", () => {
@@ -16,23 +18,21 @@ describe("OfflineBanner", () => {
 
   beforeEach(() => {
     // Reset mocks before each test
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Create a new mock service instance for each test
     mockSvc = new MockCommunicationService();
 
     // Mock the useCommunicationService hook to return our mock instance
-    (
-      require("@/context/CommunicationServiceContext").useCommunicationService as jest.Mock
-    ).mockReturnValue(mockSvc);
+    (useCommunicationService as any).mockReturnValue(mockSvc);
 
     // Use fake timers for setTimeout
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
     // Restore real timers after each test
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it("should not render if communication service is not noop", () => {
@@ -45,7 +45,9 @@ describe("OfflineBanner", () => {
     mockSvc.isNoop = true; // Simulate service being unavailable
     render(<OfflineBanner />);
     expect(screen.getByRole("status")).toBeInTheDocument();
-    expect(screen.getByText("Communication service unreachable. Features limited.")).toBeVisible();
+    expect(
+      screen.getByText("Communication service unreachable. Features limited."),
+    ).toBeVisible();
   });
 
   it("should hide after 5 seconds if communication service is noop", () => {
@@ -57,7 +59,7 @@ describe("OfflineBanner", () => {
 
     // Advance timers by 5 seconds
     act(() => {
-      jest.advanceTimersByTime(5000);
+      vi.advanceTimersByTime(5000);
     });
 
     // Banner should be hidden (not in the document)
@@ -88,7 +90,7 @@ describe("OfflineBanner", () => {
 
     // Advance timers by less than 5 seconds
     act(() => {
-      jest.advanceTimersByTime(4000);
+      vi.advanceTimersByTime(4000);
     });
 
     // Banner should still be visible

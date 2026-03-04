@@ -5,7 +5,7 @@ import {
   pollAppStatus,
   getAppDownloadUrl,
 } from "../services/appService";
-import { Application } from "../../webview-ui/src/thor/model/Application";
+import { Application } from "@thorapi/model/Application";
 
 const JWT_SECRET_KEY = "valor_jwt_token";
 
@@ -97,9 +97,17 @@ async function handleGenerateApp(
 
   // Poll status
   let status: string = "pending";
-  while (status === "pending") {
+  let attempts = 0;
+  const maxAttempts = 50;
+  while (status === "pending" && attempts < maxAttempts) {
+    attempts++;
     await new Promise((res) => setTimeout(res, 5000));
     status = await pollAppStatus(jwt, appId);
+  }
+
+  if (status === "pending") {
+    vscode.window.showErrorMessage(`Generation timed out for "${app.name}".`);
+    return;
   }
 
   if (status === "completed") {
@@ -152,9 +160,7 @@ async function handleOpenAppFolder(app: Application) {
   const baseDir = require("path").join(homeDir, "valor-projects");
   const fs = require("fs");
   if (!fs.existsSync(baseDir)) {
-    vscode.window.showErrorMessage(
-      `Base folder does not exist: ${baseDir}`,
-    );
+    vscode.window.showErrorMessage(`Base folder does not exist: ${baseDir}`);
     return;
   }
   // Find the most recent versioned folder for this app (pattern: v*.App Name)
@@ -189,9 +195,7 @@ async function handleDeployApp(app: Application) {
   const baseDir = require("path").join(homeDir, "valor-projects");
   const fs = require("fs");
   if (!fs.existsSync(baseDir)) {
-    vscode.window.showErrorMessage(
-      `Base folder does not exist: ${baseDir}`,
-    );
+    vscode.window.showErrorMessage(`Base folder does not exist: ${baseDir}`);
     return;
   }
   const suffix = `.${app.name}`;

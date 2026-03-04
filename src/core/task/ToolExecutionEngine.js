@@ -1,6 +1,7 @@
 import { formatResponse } from "@core/prompts/responses";
 import { ToolApprovalManager } from "./ToolApprovalManager";
 import { ToolManager } from "./tools";
+import { Logger } from "@services/logging/Logger";
 /**
  * Core tool execution engine that handles all tool implementations
  * Extracted from the massive switch statement in Task.presentAssistantMessage
@@ -52,7 +53,8 @@ export class ToolExecutionEngine {
     /**
      * Execute a tool based on the block content
      */
-    async executeToolBlock(block, toolDescription, userMessageContent, didRejectTool, didAlreadyUseTool, removeClosingTag) {
+    async executeToolBlock(block, toolDescription, userMessageContent, didRejectTool, didAlreadyUseTool, removeClosingTag, handleFeedback) {
+        Logger.info(`[ToolExecutionEngine] executeToolBlock start name=${block.name} partial=${block.partial} didReject=${didRejectTool} didAlreadyUse=${didAlreadyUseTool}`);
         if (didRejectTool) {
             // ignore any tool content after user has rejected tool once
             if (!block.partial) {
@@ -68,7 +70,12 @@ export class ToolExecutionEngine {
                     text: `Tool ${toolDescription()} was interrupted and not executed due to user rejecting a previous tool.`,
                 });
             }
-            return { shouldContinue: false, didRejectTool, didAlreadyUseTool };
+            return {
+                shouldContinue: false,
+                didRejectTool,
+                didAlreadyUseTool,
+                handled: true,
+            };
         }
         if (didAlreadyUseTool) {
             // ignore any content after a tool has already been used
@@ -76,7 +83,12 @@ export class ToolExecutionEngine {
                 type: "text",
                 text: formatResponse.toolAlreadyUsed(block.name),
             });
-            return { shouldContinue: false, didRejectTool, didAlreadyUseTool };
+            return {
+                shouldContinue: false,
+                didRejectTool,
+                didAlreadyUseTool,
+                handled: true,
+            };
         }
         const pushToolResult = (content) => {
             this.toolApprovalManager.pushToolResult(userMessageContent, content, toolDescription());
@@ -96,105 +108,67 @@ export class ToolExecutionEngine {
             await this.task.browserSession.closeBrowser();
         }
         // Execute the specific tool
-        const result = await this.executeSpecificTool(block, pushToolResult, handleError, removeClosingTag, toolDescription);
+        const result = await this.executeSpecificTool(block, pushToolResult, handleError, removeClosingTag, toolDescription, handleFeedback);
         return {
             shouldContinue: result.shouldContinue,
             didRejectTool: result.didRejectTool || didRejectTool,
             didAlreadyUseTool: result.didAlreadyUseTool || didAlreadyUseTool,
+            handled: result.handled ?? false,
         };
     }
     /**
      * Execute the specific tool using the ToolManager for refactored tools,
      * falling back to legacy implementations for unhandled tools
      */
-    async executeSpecificTool(block, pushToolResult, handleError, removeClosingTag, toolDescription) {
+    async executeSpecificTool(block, pushToolResult, handleError, removeClosingTag, toolDescription, handleFeedback) {
         try {
             // Try to execute with the refactored ToolManager first
             const result = await this.toolManager.executeTool(block, block.partial || false, false, // didRejectTool - handled at higher level
-            false // didAlreadyUseTool - handled at higher level
-            );
+            false);
             // If the ToolManager handled the tool
             if (result.shouldContinue) {
                 // Push the tool result if there is one
                 if (result.toolResponse) {
                     pushToolResult(result.toolResponse);
                 }
+                if (result.feedback) {
+                    await handleFeedback(result.feedback);
+                }
+                Logger.info(`[ToolExecutionEngine] Tool manager handled ${block.name} shouldContinue=${result.shouldContinue} userRejected=${result.userRejected} didAlreadyUse=${result.didAlreadyUseTool}`);
                 return {
                     shouldContinue: true,
-                    didRejectTool: result.didRejectTool || false,
+                    didRejectTool: result.didRejectTool || result.userRejected || false,
                     didAlreadyUseTool: result.didAlreadyUseTool || false,
+                    handled: true,
                 };
             }
             // If ToolManager couldn't handle it, fall back to legacy implementation
-            return { shouldContinue: true, didRejectTool: false, didAlreadyUseTool: false };
+            Logger.info(`[ToolExecutionEngine] Tool manager did not handle ${block.name}; falling back to legacy implementation`);
+            return {
+                shouldContinue: true,
+                didRejectTool: false,
+                didAlreadyUseTool: false,
+                handled: false,
+            };
         }
         catch (error) {
             await handleError(`executing ${block.name}`, error);
-            return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+            Logger.error(`[ToolExecutionEngine] Error executing ${block.name}: ${error.message}`);
+            return {
+                shouldContinue: false,
+                didRejectTool: false,
+                didAlreadyUseTool: true,
+                handled: true,
+            };
         }
-    }
-    async executeFileOperation(block, pushToolResult, removeClosingTag) {
-        // File operation implementation would go here
-        // This is a placeholder - the actual implementation would be quite long
-        // and would need access to diffViewProvider, consecutiveMistakeCount, etc.
-        pushToolResult("File operations not yet implemented in refactored engine");
-        return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
-    }
-    async executeReadFile(block, pushToolResult, removeClosingTag) {
-        pushToolResult("Read file not yet implemented in refactored engine");
-        return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
-    }
-    async executeListFiles(block, pushToolResult, removeClosingTag) {
-        pushToolResult("List files not yet implemented in refactored engine");
-        return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
-    }
-    async executeListCodeDefinitions(block, pushToolResult, removeClosingTag) {
-        pushToolResult("List code definitions not yet implemented in refactored engine");
-        return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
-    }
-    async executeSearchFiles(block, pushToolResult, removeClosingTag) {
-        pushToolResult("Search files not yet implemented in refactored engine");
-        return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
-    }
-    async executeBrowserAction(block, pushToolResult, removeClosingTag) {
-        pushToolResult("Browser action not yet implemented in refactored engine");
-        return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
-    }
-    async executeCommand(block, pushToolResult, removeClosingTag) {
-        pushToolResult("Execute command not yet implemented in refactored engine");
-        return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
-    }
-    async executeMcpTool(block, pushToolResult, removeClosingTag) {
-        pushToolResult("MCP tool not yet implemented in refactored engine");
-        return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
-    }
-    async executeAccessMcpResource(block, pushToolResult, removeClosingTag) {
-        pushToolResult("Access MCP resource not yet implemented in refactored engine");
-        return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
-    }
-    async executeAskFollowupQuestion(block, pushToolResult, removeClosingTag) {
-        pushToolResult("Ask followup question not yet implemented in refactored engine");
-        return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
-    }
-    async executeNewTask(block, pushToolResult, removeClosingTag) {
-        pushToolResult("New task not yet implemented in refactored engine");
-        return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
-    }
-    async executeCondense(block, pushToolResult, removeClosingTag) {
-        pushToolResult("Condense not yet implemented in refactored engine");
-        return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
-    }
-    async executePlanModeRespond(block, pushToolResult, removeClosingTag) {
-        pushToolResult("Plan mode respond not yet implemented in refactored engine");
-        return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
-    }
-    async executeLoadMcpDocumentation(block, pushToolResult) {
-        pushToolResult("Load MCP documentation not yet implemented in refactored engine");
-        return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
     }
     async executeAttemptCompletion(block, pushToolResult, removeClosingTag, toolDescription) {
         pushToolResult("Attempt completion not yet implemented in refactored engine");
-        return { shouldContinue: false, didRejectTool: false, didAlreadyUseTool: true };
+        return {
+            shouldContinue: false,
+            didRejectTool: false,
+            didAlreadyUseTool: true,
+        };
     }
 }
 //# sourceMappingURL=ToolExecutionEngine.js.map

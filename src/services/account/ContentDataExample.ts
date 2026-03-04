@@ -5,6 +5,7 @@
 
 import { ValorIDEAccountService } from "./ValorIDEAccountService";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
+import { getValkyraiBasePath } from "@utils/serverValkyraiHost";
 
 /**
  * Example function showing how to use the fetchContentData method
@@ -12,10 +13,11 @@ import { ExtensionMessage } from "@shared/ExtensionMessage";
  * @returns Promise<any | undefined> - The content data from the endpoint
  */
 export async function exampleFetchContentData(
-  accountService: ValorIDEAccountService
+  accountService: ValorIDEAccountService,
 ): Promise<any | undefined> {
   try {
-    console.log(`Fetching content data from ${process.env.VITE_basePath?.replace('/v1', '') || "http://localhost:8080"}/ContentData...`);
+    const host = getValkyraiBasePath().replace(/\/v1$/, "");
+    console.log(`Fetching content data from ${host}/ContentData...`);
 
     // Call the fetchContentData method
     const contentData = await accountService.fetchContentData();
@@ -39,7 +41,9 @@ export async function exampleFetchContentData(
  */
 export function createAccountServiceExample(): ValorIDEAccountService {
   // Example postMessageToWebview function
-  const postMessageToWebview = async (message: ExtensionMessage): Promise<void> => {
+  const postMessageToWebview = async (
+    message: ExtensionMessage,
+  ): Promise<void> => {
     console.log("Posting message to webview:", message);
     // In real usage, this would send the message to the webview
   };
@@ -71,7 +75,9 @@ export async function completeContentDataExample(): Promise<void> {
     console.log("Content data fetched successfully!");
     console.log("Data structure:", JSON.stringify(result, null, 2));
   } else {
-    console.log("Failed to fetch content data. Check your JWT token and endpoint availability.");
+    console.log(
+      "Failed to fetch content data. Check your JWT token and endpoint availability.",
+    );
   }
 
   console.log("=== Example Complete ===");

@@ -6,7 +6,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import OpenAI from "openai";
 import { withRetry } from "../retry";
-import { openAiNativeDefaultModelId, openAiNativeModels } from "@shared/api";
+import { openAiNativeDefaultModelId, openAiNativeModels, } from "@shared/api";
 import { convertToOpenAiMessages } from "../transform/openai-format";
 import { calculateApiCostOpenAI } from "../../utils/cost";
 export class OpenAiNativeHandler {
@@ -57,7 +57,10 @@ export class OpenAiNativeHandler {
                 // o1 doesn't support streaming, non-1 temp, or system prompt
                 const response = await client.chat.completions.create({
                     model: model.id,
-                    messages: [{ role: "user", content: systemPrompt }, ...convertToOpenAiMessages(messages)],
+                    messages: [
+                        { role: "user", content: systemPrompt },
+                        ...convertToOpenAiMessages(messages),
+                    ],
                 });
                 yield {
                     type: "text",
@@ -71,10 +74,14 @@ export class OpenAiNativeHandler {
             case "o3-mini": {
                 const stream = await client.chat.completions.create({
                     model: model.id,
-                    messages: [{ role: "developer", content: systemPrompt }, ...convertToOpenAiMessages(messages)],
+                    messages: [
+                        { role: "developer", content: systemPrompt },
+                        ...convertToOpenAiMessages(messages),
+                    ],
                     stream: true,
                     stream_options: { include_usage: true },
-                    reasoning_effort: this.options.reasoningEffort || "medium",
+                    reasoning_effort: this.options.reasoningEffort ||
+                        "medium",
                 });
                 for await (const chunk of stream) {
                     const delta = chunk.choices[0]?.delta;
@@ -98,10 +105,14 @@ export class OpenAiNativeHandler {
                 const stream = await client.chat.completions.create({
                     model: model.id,
                     temperature: 1,
-                    messages: [{ role: "developer", content: systemPrompt }, ...convertToOpenAiMessages(messages)],
+                    messages: [
+                        { role: "developer", content: systemPrompt },
+                        ...convertToOpenAiMessages(messages),
+                    ],
                     stream: true,
                     stream_options: { include_usage: true },
-                    reasoning_effort: this.options.reasoningEffort || "medium",
+                    reasoning_effort: this.options.reasoningEffort ||
+                        "medium",
                 });
                 for await (const chunk of stream) {
                     const delta = chunk.choices[0]?.delta;
@@ -122,7 +133,10 @@ export class OpenAiNativeHandler {
                     model: model.id,
                     // max_completion_tokens: this.getModel().info.maxTokens,
                     temperature: 0,
-                    messages: [{ role: "system", content: systemPrompt }, ...convertToOpenAiMessages(messages)],
+                    messages: [
+                        { role: "system", content: systemPrompt },
+                        ...convertToOpenAiMessages(messages),
+                    ],
                     stream: true,
                     stream_options: { include_usage: true },
                 });

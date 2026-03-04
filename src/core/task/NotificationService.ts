@@ -116,14 +116,17 @@ export class NotificationService {
    */
   showCommandExecutionNotification(command: string): void {
     this.showNotificationForApprovalIfAutoApprovalEnabled(
-      `Executing: ${command}`
+      `Executing: ${command}`,
     );
   }
 
   /**
    * Shows notification for file operations
    */
-  showFileOperationNotification(operation: "edit" | "create" | "read", filename: string): void {
+  showFileOperationNotification(
+    operation: "edit" | "create" | "read",
+    filename: string,
+  ): void {
     let message: string;
     switch (operation) {
       case "edit":
@@ -143,9 +146,7 @@ export class NotificationService {
    * Shows notification for browser operations
    */
   showBrowserOperationNotification(url: string): void {
-    this.showNotificationForApprovalIfAutoApprovalEnabled(
-      `Browser: ${url}`
-    );
+    this.showNotificationForApprovalIfAutoApprovalEnabled(`Browser: ${url}`);
   }
 
   /**
@@ -153,7 +154,7 @@ export class NotificationService {
    */
   showMcpOperationNotification(toolName: string, serverName: string): void {
     this.showNotificationForApprovalIfAutoApprovalEnabled(
-      `MCP: ${toolName} → ${serverName}`
+      `MCP: ${toolName} → ${serverName}`,
     );
   }
 
@@ -162,16 +163,19 @@ export class NotificationService {
    */
   showMcpResourceNotification(uri: string, serverName: string): void {
     this.showNotificationForApprovalIfAutoApprovalEnabled(
-      `Accessing: ${uri} (${serverName})`
+      `Accessing: ${uri} (${serverName})`,
     );
   }
 
   /**
    * Shows notification for directory operations
    */
-  showDirectoryOperationNotification(operation: string, directoryName: string): void {
+  showDirectoryOperationNotification(
+    operation: string,
+    directoryName: string,
+  ): void {
     this.showNotificationForApprovalIfAutoApprovalEnabled(
-      `${operation.toUpperCase()}: ${directoryName}/`
+      `${operation.toUpperCase()}: ${directoryName}/`,
     );
   }
 }

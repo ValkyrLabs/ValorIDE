@@ -16,15 +16,13 @@ import * as Yup from "yup";
 // custom redux implementations go here...
 
 import { useLoginUserMutation } from "../../redux/services/LoginService";
-import { Login } from "@thor/model";
-import CoolButton from "@valkyr/component-library/CoolButton";
+import { Login } from "@thorapi/model";
+// Use Aurora design system styles for login fields and buttons
+import { AuroraInput } from "../../utils/auroraDesignSystem";
 import ErrorModal from "../ErrorModal";
 import LoadingSpinner from "@valkyr/component-library/LoadingSpinner";
-import {
-  storeJwtToken,
-  writeStoredPrincipal,
-} from "../../utils/accessControl";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { storeJwtToken, writeStoredPrincipal } from "../../utils/accessControl";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 
 const validationSchema = Yup.object().shape({
   username: Yup.string()
@@ -34,7 +32,10 @@ const validationSchema = Yup.object().shape({
 });
 
 interface FormProps {
-  onSubmit?: (values: Login, formikHelpers: FormikHelpers<Login>) => Promise<void>;
+  onSubmit?: (
+    values: Login,
+    formikHelpers: FormikHelpers<Login>,
+  ) => Promise<void>;
   isLoggedIn?: boolean;
 }
 
@@ -106,7 +107,7 @@ const Form: React.FC<FormProps> = ({
         }, 0);
       }
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error("Form submission error:", error);
       setSubmitting(false);
     }
   };
@@ -199,8 +200,8 @@ const Form: React.FC<FormProps> = ({
                         type="text"
                         className={
                           errors.username
-                            ? "form-control field-error"
-                            : " form-control"
+                            ? "form-control field-error aurora-input"
+                            : "form-control aurora-input"
                         }
                       />
                       <ErrorMessage
@@ -228,8 +229,8 @@ const Form: React.FC<FormProps> = ({
                         type="password"
                         className={
                           errors.password
-                            ? "form-control field-error"
-                            : " form-control"
+                            ? "form-control field-error aurora-input"
+                            : "form-control aurora-input"
                         }
                       />
                       <ErrorMessage
@@ -237,9 +238,6 @@ const Form: React.FC<FormProps> = ({
                         name="password"
                         component="div"
                       />
-                      <div style={{ marginTop: 6 }}>
-                        <Link to="/forgot-password">Forgot your password?</Link>
-                      </div>
                     </label>
                   </Col>
                 </Row>
@@ -248,36 +246,30 @@ const Form: React.FC<FormProps> = ({
                 <br />
                 <Row>
                   <Col>
-                    <CoolButton
-                      customStyle={{ width: "100%" }}
-                      variant={
-                        touched && isValid
-                          ? isSubmitting
-                            ? "disabled"
-                            : "success"
-                          : "info"
-                      }
-                      // disabled={!(touched && isValid && (loginUserResult.status == 'uninitialized'))}
+                    <button
                       type="submit"
-                      onClick={() => { }}
+                      className="aurora-button"
+                      disabled={isSubmitting || !(touched && isValid)}
+                      style={{ width: "100%" }}
                     >
                       {isSubmitting && (
                         <Spinner
-                          style={{ float: "left" }}
+                          style={{ float: "left", maxWidth: "16px" }}
                           as="span"
                           animation="grow"
-                          variant="light"
+                          variant="dark"
                           aria-hidden="true"
                         />
                       )}
-                      <FiUserCheck size={30} /> Login Now
-                    </CoolButton>
+                      <FiUserCheck size={20} style={{ verticalAlign: "middle", marginRight: 8 }} />
+                      Sign in
+                    </button>
                   </Col>
                 </Row>
 
                 {/* Loader overlay during submission */}
                 {isSubmitting && (
-                  <LoadingSpinner size={128} label="Signing you in..." />
+                  <LoadingSpinner size={64} label="Signing you in..." />
                 )}
               </form>
             );

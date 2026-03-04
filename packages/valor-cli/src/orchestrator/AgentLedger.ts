@@ -3,17 +3,17 @@
  * Enables resumability, auditability, and handoff verification
  */
 
-import { promises as fs } from 'fs';
-import { join } from 'path';
-import { homedir } from 'os';
-import { AgentLedgerEntry } from '../types';
+import { promises as fs } from "fs";
+import { join } from "path";
+import { homedir } from "os";
+import { AgentLedgerEntry } from "../types";
 
 export class AgentLedger {
   private ledgerPath: string;
 
   constructor(taskId: string) {
-    const ledgerDir = join(homedir(), '.valoride', 'tasks', taskId);
-    this.ledgerPath = join(ledgerDir, 'agent.ledger');
+    const ledgerDir = join(homedir(), ".valoride", "tasks", taskId);
+    this.ledgerPath = join(ledgerDir, "agent.ledger");
   }
 
   /**
@@ -21,7 +21,7 @@ export class AgentLedger {
    */
   async initialize(): Promise<void> {
     try {
-      const dir = join(this.ledgerPath, '..');
+      const dir = join(this.ledgerPath, "..");
       await fs.mkdir(dir, { recursive: true });
       // Ledger file will be created on first write
     } catch (error) {
@@ -34,8 +34,8 @@ export class AgentLedger {
    */
   async append(entry: AgentLedgerEntry): Promise<void> {
     try {
-      const line = JSON.stringify(entry) + '\n';
-      await fs.appendFile(this.ledgerPath, line, 'utf-8');
+      const line = JSON.stringify(entry) + "\n";
+      await fs.appendFile(this.ledgerPath, line, "utf-8");
     } catch (error) {
       throw new Error(`Failed to append ledger entry: ${error}`);
     }
@@ -46,14 +46,14 @@ export class AgentLedger {
    */
   async readAll(): Promise<AgentLedgerEntry[]> {
     try {
-      const content = await fs.readFile(this.ledgerPath, 'utf-8');
+      const content = await fs.readFile(this.ledgerPath, "utf-8");
       return content
         .trim()
-        .split('\n')
+        .split("\n")
         .filter(Boolean)
         .map((line) => JSON.parse(line) as AgentLedgerEntry);
     } catch (error) {
-      if ((error as any).code === 'ENOENT') {
+      if ((error as any).code === "ENOENT") {
         return [];
       }
       throw new Error(`Failed to read ledger: ${error}`);
@@ -105,13 +105,13 @@ export class AgentLedger {
    */
   async exportCsv(): Promise<string> {
     const entries = await this.readAll();
-    const header = 'timestamp,agent,turn,action,tokens,cost\n';
+    const header = "timestamp,agent,turn,action,tokens,cost\n";
     const rows = entries
       .map(
         (e) =>
-          `${e.timestamp},${e.agent},${e.turn},${e.action.replace(/,/g, ';')},${e.tokensUsed},${e.cost}`
+          `${e.timestamp},${e.agent},${e.turn},${e.action.replace(/,/g, ";")},${e.tokensUsed},${e.cost}`,
       )
-      .join('\n');
+      .join("\n");
     return header + rows;
   }
 }

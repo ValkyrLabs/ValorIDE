@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/browser";
 import * as vscode from "vscode";
-import { telemetryService } from "@services/telemetry/TelemetryService";
+
 import * as pkg from "../../../package.json";
 
 let telemetryLevel = vscode.workspace
@@ -25,26 +25,7 @@ export class ErrorService {
 
   static initialize() {
     // Initialize sentry
-    Sentry.init({
-      dsn: "https://7936780e3f0f0290fcf8d4a395c249b7@o4509028819664896.ingest.us.sentry.io/4509052955983872",
-      environment: process.env.NODE_ENV,
-      release: `valoride@${pkg.version}`,
-      integrations: [
-        Sentry.browserTracingIntegration(),
-        Sentry.replayIntegration(),
-      ],
-      beforeSend(event) {
-        // TelemetryService keeps track of whether the user has opted in to telemetry/error reporting
-        const isUserManuallyOptedIn = telemetryService.isTelemetryEnabled();
-        if (isUserManuallyOptedIn && ErrorService.isEnabled()) {
-          return event;
-        }
-        return null;
-      },
-    });
 
-    ErrorService.toggleEnabled(true);
-    ErrorService.setLevel("error");
   }
 
   static toggleEnabled(state: boolean) {
@@ -74,10 +55,7 @@ export class ErrorService {
 
   static logException(error: Error): void {
     // Don't log if telemetry is off
-    const isUserManuallyOptedIn = telemetryService.isTelemetryEnabled();
-    if (!isUserManuallyOptedIn || !ErrorService.isEnabled()) {
-      return;
-    }
+
     // Log the error to Sentry
     Sentry.captureException(error);
   }
@@ -87,10 +65,7 @@ export class ErrorService {
     level: "error" | "warning" | "log" | "debug" | "info" = "log",
   ): void {
     // Don't log if telemetry is off
-    const isUserManuallyOptedIn = telemetryService.isTelemetryEnabled();
-    if (!isUserManuallyOptedIn || !ErrorService.isEnabled()) {
-      return;
-    }
+
     if (ErrorService.serviceLevel === "error" && level === "error") {
       // Log the message if allowed
       Sentry.captureMessage(message, { level });

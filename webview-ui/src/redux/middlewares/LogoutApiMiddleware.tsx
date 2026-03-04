@@ -4,7 +4,7 @@ import {
   getLogoutList,
   deleteLogout,
   updateLogout,
-} from "@thor/api";
+} from "@thorapi/api";
 
 import {
   ADD_LOGOUT_REQUEST,

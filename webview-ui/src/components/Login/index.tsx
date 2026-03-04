@@ -12,8 +12,8 @@ import {
   FiUserPlus,
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import { Principal } from "@thor/model";
-import CoolButton from "@valkyr/component-library/CoolButton";
+import { Principal } from "@thorapi/model";
+// Use aurora button styles for consistency with design system
 import Form from "./form";
 
 const initialUser: Principal = {
@@ -41,24 +41,25 @@ const Login = (props) => {
               <Row>
                 <Col md={9}>
                   <h4>
-                    <FiUserCheck size={30} /> Login Now
+                    <FiUserCheck size={30} /> Sign in
                   </h4>
                   <h5>Sign into your Valkyr Labs account.</h5>
                 </Col>
                 <Col md={3}>
                   <Nav.Link>
                     <Link to="/sign-up">
-                      <CoolButton variant="dark">
-                        <FiUserPlus size={30} /> Free Signup Now
-                      </CoolButton>
+                      <button className="aurora-button" style={{ width: "100%" }}>
+                        <FiUserPlus size={18} style={{ marginRight: 8 }} /> Free Signup
+                      </button>
                     </Link>
                   </Nav.Link>
                   <br />
                   <Nav.Link>
                     <Link to="/forgot-password">
-                      <CoolButton variant="dark">
-                        <FiUserCheck size={30} /> Reset Password
-                      </CoolButton>
+                      <button className="aurora-button" style={{ width: "100%" }}>
+                        <FiUserCheck size={18} style={{ marginRight: 8 }} /> Reset
+                        Password
+                      </button>
                     </Link>
                   </Nav.Link>
                 </Col>

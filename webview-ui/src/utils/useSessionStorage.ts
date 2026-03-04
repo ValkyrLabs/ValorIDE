@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 /**
  * Custom hook for persisting state to sessionStorage with automatic save/restore
@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
  */
 export function useSessionStorage<T>(
   key: string,
-  initialValue: T
+  initialValue: T,
 ): [T, (value: T | ((prev: T) => T)) => void, () => void] {
   // Get initial value from sessionStorage or use provided initial value
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -22,17 +22,20 @@ export function useSessionStorage<T>(
   });
 
   // Save to sessionStorage whenever value changes
-  const setValue = useCallback((value: T | ((prev: T) => T)) => {
-    setStoredValue((prev) => {
-      const newValue = value instanceof Function ? value(prev) : value;
-      try {
-        sessionStorage.setItem(key, JSON.stringify(newValue));
-      } catch (error) {
-        console.warn(`Error setting sessionStorage key "${key}":`, error);
-      }
-      return newValue;
-    });
-  }, [key]);
+  const setValue = useCallback(
+    (value: T | ((prev: T) => T)) => {
+      setStoredValue((prev) => {
+        const newValue = value instanceof Function ? value(prev) : value;
+        try {
+          sessionStorage.setItem(key, JSON.stringify(newValue));
+        } catch (error) {
+          console.warn(`Error setting sessionStorage key "${key}":`, error);
+        }
+        return newValue;
+      });
+    },
+    [key],
+  );
 
   // Clear the stored value
   const clearValue = useCallback(() => {
@@ -52,12 +55,18 @@ export function useSessionStorage<T>(
  * Includes both text content and selected images
  */
 export function useChatInputPersistence() {
-  const [inputValue, setInputValue] = useSessionStorage('valoride-chat-input', '');
-  const [selectedImages, setSelectedImages] = useSessionStorage<string[]>('valoride-chat-images', []);
+  const [inputValue, setInputValue] = useSessionStorage(
+    "valoride-chat-input",
+    "",
+  );
+  const [selectedImages, setSelectedImages] = useSessionStorage<string[]>(
+    "valoride-chat-images",
+    [],
+  );
 
   // Clear both input and images
   const clearChatInput = useCallback(() => {
-    setInputValue('');
+    setInputValue("");
     setSelectedImages([]);
   }, [setInputValue, setSelectedImages]);
 

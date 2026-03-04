@@ -6,10 +6,7 @@ type ToolResponse =
   | Array<Anthropic.TextBlockParam | Anthropic.ImageBlockParam>;
 
 export interface ToolResultContext {
-  userMessageContent: (
-    | Anthropic.TextBlockParam
-    | Anthropic.ImageBlockParam
-  )[];
+  userMessageContent: (Anthropic.TextBlockParam | Anthropic.ImageBlockParam)[];
   didAlreadyUseTool: boolean;
 }
 
@@ -20,13 +17,13 @@ export class ToolResultProcessor {
   static pushToolResult(
     context: ToolResultContext,
     toolDescription: string,
-    content: ToolResponse
+    content: ToolResponse,
   ): void {
     context.userMessageContent.push({
       type: "text",
       text: `${toolDescription} Result:`,
     });
-    
+
     if (typeof content === "string") {
       context.userMessageContent.push({
         type: "text",
@@ -35,7 +32,7 @@ export class ToolResultProcessor {
     } else {
       context.userMessageContent.push(...content);
     }
-    
+
     // once a tool result has been collected, ignore all other tool uses since we should only ever present one tool result per message
     context.didAlreadyUseTool = true;
   }
@@ -46,17 +43,17 @@ export class ToolResultProcessor {
   static pushAdditionalToolFeedback(
     context: ToolResultContext,
     feedback?: string,
-    images?: string[]
+    images?: string[],
   ): void {
     if (!feedback && !images) {
       return;
     }
-    
+
     const content = formatResponse.toolResult(
       `The user provided the following feedback:\n<feedback>\n${feedback}\n</feedback>`,
       images,
     );
-    
+
     if (typeof content === "string") {
       context.userMessageContent.push({
         type: "text",

@@ -13,7 +13,8 @@ export interface FileContentConfig {
 export class FileContentOptimizer {
   private static readonly DEFAULT_MAX_FILE_SIZE = 1024 * 1024; // 1MB
   private static readonly DEFAULT_MAX_CONTENT_LENGTH = 10000; // 10k chars
-  private static readonly LARGE_FILE_WARNING = "[File is large - showing relevant portions only]";
+  private static readonly LARGE_FILE_WARNING =
+    "[File is large - showing relevant portions only]";
 
   /**
    * Optimizes file content before sending to API
@@ -21,9 +22,9 @@ export class FileContentOptimizer {
   static async optimizeFileContent(
     filePath: string,
     content: string,
-    config: FileContentConfig = {}
+    config: FileContentConfig = {},
   ): Promise<string> {
-    const fileSize = Buffer.byteLength(content, 'utf8');
+    const fileSize = Buffer.byteLength(content, "utf8");
     const maxSize = config.maxFileSize || this.DEFAULT_MAX_FILE_SIZE;
 
     // For very large files, extract only relevant parts
@@ -32,7 +33,10 @@ export class FileContentOptimizer {
     }
 
     // For moderately large files, truncate intelligently
-    if (content.length > (config.maxContentLength || this.DEFAULT_MAX_CONTENT_LENGTH)) {
+    if (
+      content.length >
+      (config.maxContentLength || this.DEFAULT_MAX_CONTENT_LENGTH)
+    ) {
       return this.truncateIntelligently(content, config);
     }
 
@@ -45,22 +49,25 @@ export class FileContentOptimizer {
   private static async extractRelevantContent(
     filePath: string,
     content: string,
-    config: FileContentConfig
+    config: FileContentConfig,
   ): Promise<string> {
     const ext = path.extname(filePath).toLowerCase();
-    
+
     // For source code files, use tree-sitter to extract structure
     if (this.isSourceCodeFile(ext)) {
       try {
         // Get code structure using tree-sitter
         const definitions = await parseSourceCodeForDefinitionsTopLevel(
           path.dirname(filePath),
-          null // valorideIgnoreController not needed here
+          null, // valorideIgnoreController not needed here
         );
-        
+
         // Extract specific functions/classes if mentioned in context
-        const relevantParts = this.extractRelevantCodeParts(content, definitions);
-        
+        const relevantParts = this.extractRelevantCodeParts(
+          content,
+          definitions,
+        );
+
         if (relevantParts.length > 0) {
           return `${this.LARGE_FILE_WARNING}\n\n${relevantParts}`;
         }
@@ -78,8 +85,23 @@ export class FileContentOptimizer {
    */
   private static isSourceCodeFile(ext: string): boolean {
     const sourceExtensions = [
-      '.js', '.jsx', '.ts', '.tsx', '.py', '.java', '.cpp', '.c', '.h',
-      '.cs', '.rb', '.go', '.rs', '.php', '.swift', '.kt', '.scala'
+      ".js",
+      ".jsx",
+      ".ts",
+      ".tsx",
+      ".py",
+      ".java",
+      ".cpp",
+      ".c",
+      ".h",
+      ".cs",
+      ".rb",
+      ".go",
+      ".rs",
+      ".php",
+      ".swift",
+      ".kt",
+      ".scala",
     ];
     return sourceExtensions.includes(ext);
   }
@@ -87,34 +109,44 @@ export class FileContentOptimizer {
   /**
    * Extracts relevant code parts based on definitions
    */
-  private static extractRelevantCodeParts(content: string, definitions: string): string {
-    const lines = content.split('\n');
+  private static extractRelevantCodeParts(
+    content: string,
+    definitions: string,
+  ): string {
+    const lines = content.split("\n");
     const relevantLines: string[] = [];
-    const definitionLines = definitions.split('\n');
-    
+    const definitionLines = definitions.split("\n");
+
     // Extract function/class definitions with some context
     for (const def of definitionLines) {
-      if (def.includes('function') || def.includes('class') || def.includes('interface')) {
+      if (
+        def.includes("function") ||
+        def.includes("class") ||
+        def.includes("interface")
+      ) {
         // Find the line in the original content
-        const lineIndex = lines.findIndex(line => line.includes(def));
+        const lineIndex = lines.findIndex((line) => line.includes(def));
         if (lineIndex !== -1) {
           // Include some context around the definition
           const start = Math.max(0, lineIndex - 2);
           const end = Math.min(lines.length, lineIndex + 10);
           relevantLines.push(...lines.slice(start, end));
-          relevantLines.push('...\n');
+          relevantLines.push("...\n");
         }
       }
     }
 
-    return relevantLines.join('\n');
+    return relevantLines.join("\n");
   }
 
   /**
    * Extracts content based on patterns (errors, TODOs, etc.)
    */
-  private static extractByPatterns(content: string, config: FileContentConfig): string {
-    const lines = content.split('\n');
+  private static extractByPatterns(
+    content: string,
+    config: FileContentConfig,
+  ): string {
+    const lines = content.split("\n");
     const relevantLines: string[] = [];
     const patterns = [
       /error|exception|failed/i,
@@ -125,12 +157,12 @@ export class FileContentOptimizer {
     ];
 
     lines.forEach((line, index) => {
-      if (patterns.some(pattern => pattern.test(line))) {
+      if (patterns.some((pattern) => pattern.test(line))) {
         // Include some context
         const start = Math.max(0, index - 1);
         const end = Math.min(lines.length, index + 2);
         const contextLines = lines.slice(start, end);
-        
+
         if (config.includeLineNumbers) {
           contextLines.forEach((l, i) => {
             relevantLines.push(`${start + i + 1}: ${l}`);
@@ -138,33 +170,40 @@ export class FileContentOptimizer {
         } else {
           relevantLines.push(...contextLines);
         }
-        relevantLines.push('---');
+        relevantLines.push("---");
       }
     });
 
-    return `${this.LARGE_FILE_WARNING}\n\n${relevantLines.join('\n')}`;
+    return `${this.LARGE_FILE_WARNING}\n\n${relevantLines.join("\n")}`;
   }
 
   /**
    * Truncates content intelligently at logical boundaries
    */
-  private static truncateIntelligently(content: string, config: FileContentConfig): string {
-    const maxLength = config.maxContentLength || this.DEFAULT_MAX_CONTENT_LENGTH;
-    
+  private static truncateIntelligently(
+    content: string,
+    config: FileContentConfig,
+  ): string {
+    const maxLength =
+      config.maxContentLength || this.DEFAULT_MAX_CONTENT_LENGTH;
+
     if (content.length <= maxLength) {
       return content;
     }
 
     // Try to truncate at a logical boundary
     const truncatePoint = this.findLogicalTruncatePoint(content, maxLength);
-    
-    return content.substring(0, truncatePoint) + '\n\n[Content truncated...]';
+
+    return content.substring(0, truncatePoint) + "\n\n[Content truncated...]";
   }
 
   /**
    * Finds a logical point to truncate (end of function, class, or paragraph)
    */
-  private static findLogicalTruncatePoint(content: string, maxLength: number): number {
+  private static findLogicalTruncatePoint(
+    content: string,
+    maxLength: number,
+  ): number {
     // Look for logical boundaries near the max length
     const searchStart = Math.max(0, maxLength - 500);
     const searchEnd = Math.min(content.length, maxLength + 500);
@@ -172,11 +211,11 @@ export class FileContentOptimizer {
 
     // Patterns that indicate logical boundaries
     const boundaries = [
-      /\n\s*}\s*\n/g,        // End of code block
-      /\n\s*\)\s*\n/g,       // End of function call
-      /\n\s*\n/g,            // Paragraph break
-      /\n---+\n/g,           // Markdown separator
-      /\n\s*\/\/ ---+/g,     // Comment separator
+      /\n\s*}\s*\n/g, // End of code block
+      /\n\s*\)\s*\n/g, // End of function call
+      /\n\s*\n/g, // Paragraph break
+      /\n---+\n/g, // Markdown separator
+      /\n\s*\/\/ ---+/g, // Comment separator
     ];
 
     let bestBoundary = maxLength;
@@ -187,7 +226,7 @@ export class FileContentOptimizer {
       while ((match = pattern.exec(searchContent)) !== null) {
         const absolutePos = searchStart + match.index;
         const distance = Math.abs(absolutePos - maxLength);
-        
+
         if (distance < bestDistance && absolutePos <= maxLength) {
           bestDistance = distance;
           bestBoundary = absolutePos + match[0].length;
@@ -218,15 +257,16 @@ export class FileContentOptimizer {
       const stats = await fs.stat(filePath);
       const ext = path.extname(filePath);
       const sizeInKB = Math.round(stats.size / 1024);
-      
+
       let summary = `File: ${path.basename(filePath)}\n`;
       summary += `Size: ${sizeInKB}KB\n`;
-      summary += `Type: ${ext || 'unknown'}\n`;
+      summary += `Type: ${ext || "unknown"}\n`;
       summary += `Modified: ${stats.mtime.toISOString()}\n`;
 
       // For very large files, just return the summary
       if (stats.size > this.DEFAULT_MAX_FILE_SIZE * 5) {
-        summary += '\n[File too large to read - consider using search_files to find specific content]';
+        summary +=
+          "\n[File too large to read - consider using search_files to find specific content]";
         return summary;
       }
 
@@ -235,10 +275,10 @@ export class FileContentOptimizer {
         try {
           const definitions = await parseSourceCodeForDefinitionsTopLevel(
             path.dirname(filePath),
-            null
+            null,
           );
           if (definitions) {
-            summary += '\nStructure:\n' + definitions;
+            summary += "\nStructure:\n" + definitions;
           }
         } catch {
           // Ignore errors
@@ -247,7 +287,7 @@ export class FileContentOptimizer {
 
       return summary;
     } catch (error) {
-      return `Error reading file: ${error instanceof Error ? error.message : 'Unknown error'}`;
+      return `Error reading file: ${error instanceof Error ? error.message : "Unknown error"}`;
     }
   }
 }

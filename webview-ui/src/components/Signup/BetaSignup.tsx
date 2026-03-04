@@ -11,11 +11,11 @@ import { FaCheckCircle } from "react-icons/fa";
 import { FiUserCheck } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { useAddPrincipalMutation } from "@thor/redux/services/PrincipalService";
-import { Login, Principal } from "@thor/model";
+import { useAddPrincipalMutation } from "@thorapi/redux/services/PrincipalService";
+import { Login, Principal } from "@thorapi/model";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import "./index.css";
-import { storeJwtToken, writeStoredPrincipal } from "@/utils/accessControl";
+import { storeJwtToken, writeStoredPrincipal } from "@thorapi/utils/accessControl";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string()
@@ -372,7 +372,7 @@ const BetaSignup: React.FC = () => {
                           : "warning"
                       }
                       type="submit"
-                      onClick={() => {}}
+                      onClick={() => { }}
                     >
                       {isSubmitting && (
                         <Spinner

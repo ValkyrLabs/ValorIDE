@@ -2,13 +2,16 @@
  * TaskCommand - Run agentic tasks with plan/act modes
  */
 
-import chalk from 'chalk';
-import ora from 'ora';
-import { SessionManager } from '../SessionManager';
-import { Orchestrator, OrchestrationContext } from '../orchestrator/Orchestrator';
-import { promises as fs } from 'fs';
-import { join } from 'path';
-import { homedir } from 'os';
+import chalk from "chalk";
+import ora from "ora";
+import { SessionManager } from "../SessionManager";
+import {
+  Orchestrator,
+  OrchestrationContext,
+} from "../orchestrator/Orchestrator";
+import { promises as fs } from "fs";
+import { join } from "path";
+import { homedir } from "os";
 
 export class TaskCommand {
   private sessionManager: SessionManager;
@@ -51,7 +54,7 @@ export class TaskCommand {
 
       // Save session
       await this.sessionManager.saveSession(session);
-      console.log(chalk.green('\n✅ Task complete\n'));
+      console.log(chalk.green("\n✅ Task complete\n"));
     } catch (error) {
       console.error(chalk.red(`\n❌ Error: ${error}\n`));
       process.exit(1);
@@ -59,9 +62,9 @@ export class TaskCommand {
   }
 
   private async runPlanMode(description: string, session: any): Promise<void> {
-    console.log(chalk.blue('📝 PLAN MODE (dry-run)\n'));
+    console.log(chalk.blue("📝 PLAN MODE (dry-run)\n"));
 
-    const spinner = ora('Generating plan...').start();
+    const spinner = ora("Generating plan...").start();
 
     try {
       const context: OrchestrationContext = {
@@ -81,11 +84,9 @@ export class TaskCommand {
       const ledger = orchestrator.getLedger();
       const entries = await ledger.readAll();
 
-      spinner.succeed(chalk.green('Plan generated'));
-      console.log(
-        chalk.gray(`Ledger entries: ${entries.length}`)
-      );
-      console.log(chalk.gray('Mode: DRY-RUN (no changes applied)\n'));
+      spinner.succeed(chalk.green("Plan generated"));
+      console.log(chalk.gray(`Ledger entries: ${entries.length}`));
+      console.log(chalk.gray("Mode: DRY-RUN (no changes applied)\n"));
     } catch (error) {
       spinner.fail(chalk.red(`Plan failed: ${error}`));
       throw error;
@@ -93,9 +94,9 @@ export class TaskCommand {
   }
 
   private async runActMode(description: string, session: any): Promise<void> {
-    console.log(chalk.blue('⚡ ACT MODE (executing)\n'));
+    console.log(chalk.blue("⚡ ACT MODE (executing)\n"));
 
-    const spinner = ora('Executing task...').start();
+    const spinner = ora("Executing task...").start();
 
     try {
       const context: OrchestrationContext = {
@@ -113,11 +114,13 @@ export class TaskCommand {
 
       const result = await orchestrator.execute();
 
-      spinner.succeed(chalk.green('Task executed'));
+      spinner.succeed(chalk.green("Task executed"));
       console.log(chalk.gray(`Status: ${result.status}`));
       console.log(chalk.gray(`Turns: ${result.turn}`));
       console.log(
-        chalk.gray(`Tokens: ${result.totalTokens} | Cost: $${result.totalCost.toFixed(4)}`)
+        chalk.gray(
+          `Tokens: ${result.totalTokens} | Cost: $${result.totalCost.toFixed(4)}`,
+        ),
       );
       console.log(chalk.gray(`Ledger entries: ${result.ledgerEntries}\n`));
     } catch (error) {

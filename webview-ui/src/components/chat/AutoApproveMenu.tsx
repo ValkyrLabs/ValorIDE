@@ -4,16 +4,16 @@ import {
 } from "@vscode/webview-ui-toolkit/react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
-import { useExtensionState } from "@/context/ExtensionStateContext";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
 import { AutoApprovalSettings } from "@shared/AutoApprovalSettings";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import { vscode } from "@/utils/vscode";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import { vscode } from "@thorapi/utils/vscode";
 import {
   getAsVar,
   VSC_FOREGROUND,
   VSC_TITLEBAR_INACTIVE_FOREGROUND,
   VSC_DESCRIPTION_FOREGROUND,
-} from "@/utils/vscStyles";
+} from "@thorapi/utils/vscStyles";
 import { useClickAway } from "react-use";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
@@ -358,13 +358,8 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
             {!hasEnabledActions ? "None" : enabledActionsList}
           </span>
 
-          {isExpanded && (
-            <FaArrowUp />
-          )}
-          {isExpanded && (
-            <FaArrowDown />
-          )}
-
+          {isExpanded && <FaArrowUp />}
+          {isExpanded && <FaArrowDown />}
         </CollapsibleSection>
       </div>
       {isExpanded && (

@@ -19,14 +19,14 @@ export interface TaskRunOptions {
   sessionId?: string;
   modelProvider?: string;
   modelId?: string;
-  output?: 'json' | 'text';
+  output?: "json" | "text";
 }
 
 export interface InstanceInfo {
   sessionId: string;
   workspaceRoot: string;
   taskId?: string;
-  status: 'active' | 'idle' | 'completed';
+  status: "active" | "idle" | "completed";
   createdAt: number;
   lastActivity: number;
 }
@@ -41,7 +41,7 @@ export interface CheckpointInfo {
 }
 
 export interface AgentRole {
-  name: 'planner' | 'coder' | 'tester' | 'docs' | 'integrator';
+  name: "planner" | "coder" | "tester" | "docs" | "integrator";
   systemPrompt: string;
   maxTokens: number;
   autoApprove: boolean;

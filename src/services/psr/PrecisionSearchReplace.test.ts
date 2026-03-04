@@ -29,9 +29,15 @@ describe("precisionSearchAndReplace", () => {
       { kind: "contextual", find: "const a", replace: "const b" },
     ];
 
-    const result = await precisionSearchAndReplace(tmpDir, relPath, edits, access, {
-      makeBackup: false,
-    });
+    const result = await precisionSearchAndReplace(
+      tmpDir,
+      relPath,
+      edits,
+      access,
+      {
+        makeBackup: false,
+      },
+    );
 
     const updated = await fsp.readFile(abs, "utf8");
     expect(updated).toContain("const b = 1;");
@@ -124,9 +130,7 @@ describe("precisionSearchAndReplace", () => {
 
     expect(result.editsApplied).toBe(0);
     expect(result.appliedIndices).toEqual([]);
-    expect(result.skipped).toEqual([
-      { index: 0, reason: "already_applied" },
-    ]);
+    expect(result.skipped).toEqual([{ index: 0, reason: "already_applied" }]);
     const updated = await fsp.readFile(abs, "utf8");
     expect(updated).toBe("const value = 1;\n");
   });

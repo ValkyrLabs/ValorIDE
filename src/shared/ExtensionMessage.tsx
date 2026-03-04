@@ -2,6 +2,7 @@
 
 import { GitCommit } from "../utils/git";
 import { ApiConfiguration, ModelInfo } from "./api";
+import { LlmDetailsSummary, SelectedLlmDetails } from "./llm";
 import { AutoApprovalSettings } from "./AutoApprovalSettings";
 import { BrowserSettings } from "./BrowserSettings";
 import { ValorIDEAdvancedSettings } from "./AdvancedSettings";
@@ -76,15 +77,22 @@ export interface ExtensionMessage {
   | "contentData"
   | "LIST_APPLICATION_SUCCESS"
   | "remoteCommand"
+  | "uploadOpenAPISpecResult"
   | "swarm:task-assignment"
   | "swarm:task-cancelled"
   | "swarm:remote-command"
   | "swarm:broadcast"
-  | "swarm:private-message";
-  text?: string;
-  path?: string; // Used for openFileExplorerResult
-  paths?: (string | null)[]; // Used for relativePathsResponse
-  action?:
+  | "valkyraiHostTestResult"
+  | "swarm:private-message"
+  | "taskCompletionFilePreview"
+  | "webviewError"
+  | "serverConsoleNewMessage";
+  text ?: string;
+  path ?: string; // Used for openFileExplorerResult
+  paths ?: (string | null)[]; // Used for relativePathsResponse
+  number ?: number; // task completion file index
+  seeNewChangesSinceLastTaskCompletion ?: boolean;
+  action ?:
   | "chatButtonClicked"
   | "mcpButtonClicked"
   | "settingsButtonClicked"
@@ -97,92 +105,108 @@ export interface ExtensionMessage {
   | "generatedFilesButtonClicked"
   | "serverConsoleButtonClicked";
 
-  invoke?: Invoke;
-  state?: ExtensionState;
-  images?: string[];
-  ollamaModels?: string[];
-  lmStudioModels?: string[];
-  vsCodeLmModels?: {
-    vendor?: string;
-    family?: string;
-    version?: string;
-    id?: string;
-  }[];
-  filePaths?: string[];
-  partialMessage?: ValorIDEMessage;
-  openRouterModels?: Record<string, ModelInfo>;
-  openAiModels?: string[];
-  requestyModels?: Record<string, ModelInfo>;
-  models?: Record<string, any>; // For llmDetailsUpdated
-  payload?: any;
-  mcpServers?: McpServer[];
-  customToken?: string;
-  token?: string; // JWT token for authentication
-  authenticatedPrincipal?: string; // JSON string of authenticated principal
-  mcpMarketplaceCatalog?: McpMarketplaceCatalog;
-  error?: string;
-  mcpDownloadDetails?: McpDownloadResponse;
-  commits?: GitCommit[];
-  openGraphData?: {
-    title?: string;
-    description?: string;
-    image?: string;
-    url?: string;
-    siteName?: string;
-    type?: string;
-  };
+invoke ?: Invoke;
+state ?: ExtensionState;
+images ?: string[];
+ollamaModels ?: string[];
+lmStudioModels ?: string[];
+vsCodeLmModels ?: {
+  vendor?: string;
+  family?: string;
+  version?: string;
+  id?: string;
+}[];
+filePaths ?: string[];
+partialMessage ?: ValorIDEMessage;
+openRouterModels ?: Record<string, ModelInfo>;
+openAiModels ?: string[];
+requestyModels ?: Record<string, ModelInfo>;
+models ?: Record<string, any>; // For legacy llmDetailsUpdated payloads
+llmDetails ?: LlmDetailsSummary[]; // Preferred llmDetails payload
+payload ?: any;
+mcpServers ?: McpServer[];
+customToken ?: string;
+token ?: string; // JWT token for authentication
+authenticatedPrincipal ?: string; // JSON string of authenticated principal
+mcpMarketplaceCatalog ?: McpMarketplaceCatalog;
+error ?: string;
+mcpDownloadDetails ?: McpDownloadResponse;
+commits ?: GitCommit[];
+openGraphData ?: {
+  title?: string;
+  description?: string;
+  image?: string;
   url?: string;
-  isImage?: boolean;
-  userCreditsBalance?: BalanceResponse;
-  userCreditsUsage?: UsageTransaction[];
-  userCreditsPayments?: PaymentTransaction[];
-  totalTasksSize?: number | null;
-  success?: boolean;
-  endpoint?: string;
-  isBundled?: boolean;
-  isConnected?: boolean;
-  isRemote?: boolean;
-  host?: string;
-  mentionsRequestId?: string;
-  results?: Array<{
-    path: string;
-    type: "file" | "folder";
-    label?: string;
-  }>;
-  addRemoteServerResult?: {
-    success: boolean;
-    serverName: string;
-    error?: string;
-  };
-  tab?: McpViewTab;
-  grpc_response?: {
-    message?: any; // JSON serialized protobuf message
-    request_id: string; // Same ID as the request
-    error?: string; // Optional error message
-  };
-  streamToThorapiResult?: {
-    success: boolean;
-    applicationId?: string;
-    error?: string;
-    filePath?: string;
-    filename?: string;
-    extractedPath?: string;
-    readmePath?: string;
-    step?: string;
-    message?: string;
-  };
-  files?: Array<{
+  siteName?: string;
+  type?: string;
+};
+// For task completion file preview
+before ?: string;
+after ?: string;
+isBinary ?: boolean;
+relativePath ?: string;
+url ?: string;
+isImage ?: boolean;
+userCreditsBalance ?: BalanceResponse;
+userCreditsUsage ?: UsageTransaction[];
+userCreditsPayments ?: PaymentTransaction[];
+totalTasksSize ?: number | null;
+success ?: boolean;
+endpoint ?: string;
+isBundled ?: boolean;
+isConnected ?: boolean;
+isRemote ?: boolean;
+host ?: string;
+mentionsRequestId ?: string;
+results ?: Array<{
+  path: string;
+  type: "file" | "folder";
+  label?: string;
+}>;
+addRemoteServerResult ?: {
+  success: boolean;
+  serverName: string;
+  error?: string;
+};
+tab ?: McpViewTab;
+grpc_response ?: {
+  message?: any; // JSON serialized protobuf message
+  request_id: string; // Same ID as the request
+  error?: string; // Optional error message
+};
+streamToThorapiResult ?: {
+  success: boolean;
+  applicationId?: string;
+  error?: string;
+  filePath?: string;
+  filename?: string;
+  extractedPath?: string;
+  readmePath?: string;
+  step?: string;
+  message?: string;
+};
+files ?: Array<{
+  name: string;
+  path: string;
+  type: "file" | "directory";
+  children?: Array<{
     name: string;
     path: string;
     type: "file" | "directory";
-    children?: Array<{
-      name: string;
-      path: string;
-      type: "file" | "directory";
-    }>;
   }>;
-  contentData?: any; // Data from the ContentData endpoint
-  command?: RemoteCommand; // Remote command from mothership
+}>;
+contentData ?: any; // Data from the ContentData endpoint
+command ?: RemoteCommand; // Remote command from mothership
+uploadOpenAPISpecResult ?: {
+  success: boolean;
+  filename?: string;
+  specPath?: string;
+  message?: string;
+  error?: string;
+};
+filename ?: string;
+specPath ?: string;
+message ?: string;
 }
 
 export type Invoke =
@@ -236,6 +260,7 @@ export interface ExtensionState {
   jwtToken?: string;
   authenticatedPrincipal?: any;
   isLoggedIn?: boolean;
+  selectedLlmDetails?: SelectedLlmDetails;
 }
 
 export type ValorIDEFileChangeStatus =
@@ -278,6 +303,9 @@ export interface ValorIDEMessage {
   conversationHistoryIndex?: number;
   conversationHistoryDeletedRange?: [number, number]; // for when conversation history is truncated for API requests
   changesSummary?: ValorIDEChangesSummary;
+  summaryMarkdown?: string;
+  summaryTitle?: string;
+  summaryCompletedAt?: string;
 }
 
 export type ValorIDEAsk =
@@ -292,6 +320,7 @@ export type ValorIDEAsk =
   | "resume_completed_task"
   | "mistake_limit_reached"
   | "auto_approval_max_req_reached"
+  | "browser_action"
   | "browser_action_launch"
   | "use_mcp_server"
   | "new_task"
@@ -321,6 +350,7 @@ export type ValorIDESay =
   | "diff_error"
   | "deleted_api_reqs"
   | "valorideignore_error"
+  | "workspace_access_error"
   | "checkpoint_created"
   | "load_mcp_documentation"
   | "p2p_chat_message";

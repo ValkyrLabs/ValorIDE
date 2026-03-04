@@ -4,16 +4,17 @@ import { convertToR1Format } from "@api/transform/r1-format";
 function sendApiDataToWebsocket(type, data) {
     try {
         // Check if we're in browser environment and have websocket dispatch available
-        if (typeof window !== 'undefined' && window.valorideDispatchChatAction) {
-            window.valorideDispatchChatAction('api-data', {
+        if (typeof window !== "undefined" &&
+            window.valorideDispatchChatAction) {
+            window.valorideDispatchChatAction("api-data", {
                 type,
                 data,
-                timestamp: Date.now()
+                timestamp: Date.now(),
             });
         }
     }
     catch (error) {
-        console.debug('Failed to send API data to websocket:', error);
+        console.debug("Failed to send API data to websocket:", error);
     }
 }
 export async function createOpenRouterStream(client, systemPrompt, messages, model, o3MiniReasoningEffort, thinkingBudgetTokens, openRouterProviderSorting) {
@@ -154,10 +155,10 @@ export async function createOpenRouterStream(client, systemPrompt, messages, mod
             : {}),
     };
     // Send API request data to websocket
-    sendApiDataToWebsocket('request', {
+    sendApiDataToWebsocket("request", {
         url: client.baseURL,
-        method: 'POST',
-        body: apiRequest
+        method: "POST",
+        body: apiRequest,
     });
     // @ts-ignore-next-line
     const stream = await client.chat.completions.create(apiRequest);
@@ -166,15 +167,15 @@ export async function createOpenRouterStream(client, systemPrompt, messages, mod
         try {
             for await (const chunk of stream) {
                 // Send each stream chunk to websocket
-                sendApiDataToWebsocket('stream_chunk', chunk);
+                sendApiDataToWebsocket("stream_chunk", chunk);
                 yield chunk;
             }
         }
         catch (error) {
             // Send error to websocket
-            sendApiDataToWebsocket('response', {
+            sendApiDataToWebsocket("response", {
                 error: error,
-                timestamp: Date.now()
+                timestamp: Date.now(),
             });
             throw error;
         }

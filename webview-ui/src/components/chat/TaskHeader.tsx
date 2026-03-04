@@ -3,18 +3,36 @@ import React, { JSX, memo, useEffect, useMemo, useRef, useState } from "react";
 import { useWindowSize } from "react-use";
 import { mentionRegexGlobal } from "@shared/context-mentions";
 import { ValorIDEMessage } from "@shared/ExtensionMessage";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { formatLargeNumber } from "@/utils/format";
-import { formatSize } from "@/utils/format";
-import { vscode } from "@/utils/vscode";
-import Thumbnails from "@/components/common/Thumbnails";
-import { normalizeApiConfiguration } from "@/components/settings/ApiOptions";
-import { validateSlashCommand } from "@/utils/slash-commands";
-import { FaArrowUp, FaArrowDown, FaDatabase, FaArrowRight, FaTrash, FaChevronDown, FaChevronRight, FaTimes, FaExclamationTriangle, FaCopy, FaCheck, FaDollarSign, FaClock } from "react-icons/fa";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { formatLargeNumber } from "@thorapi/utils/format";
+import { formatSize } from "@thorapi/utils/format";
+import { vscode } from "@thorapi/utils/vscode";
+import Thumbnails from "@thorapi/components/common/Thumbnails";
+import { normalizeApiConfiguration } from "@thorapi/components/settings/ApiOptions";
+import { validateSlashCommand } from "@thorapi/utils/slash-commands";
+import {
+  FaArrowUp,
+  FaArrowDown,
+  FaDatabase,
+  FaArrowRight,
+  FaTrash,
+  FaChevronDown,
+  FaChevronRight,
+  FaTimes,
+  FaExclamationTriangle,
+  FaCopy,
+  FaCheck,
+  FaDollarSign,
+  FaClock,
+} from "react-icons/fa";
 import StatusBadge from "../common/StatusBadge";
+import TaskThermometer from "@thorapi/components/TaskThermometer";
+import { TaskConfidence, TaskPhase } from "@thorapi/utils/taskPhase";
 
 interface TaskHeaderProps {
   task: ValorIDEMessage;
+  phase: TaskPhase;
+  phaseRatio?: number;
   tokensIn: number;
   tokensOut: number;
   doesModelSupportPromptCache: boolean;
@@ -23,10 +41,18 @@ interface TaskHeaderProps {
   totalCost: number;
   lastApiReqTotalTokens?: number;
   onClose: () => void;
+  phaseAnchors?: Partial<Record<TaskPhase, number>>;
+  phaseConfidence?: TaskConfidence;
+  onPhaseSelect?: (phase: TaskPhase) => void;
 }
 
 const TaskHeader: React.FC<TaskHeaderProps> = ({
   task,
+  phase,
+  phaseRatio = 0,
+  phaseAnchors,
+  phaseConfidence = "normal",
+  onPhaseSelect,
   tokensIn,
   tokensOut,
   doesModelSupportPromptCache,
@@ -203,7 +229,6 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
         style={{
           backgroundColor: "var(--vscode-sideBar-border)",
 
-
           borderRadius: "10px",
           padding: "9px 10px 9px 14px",
           display: "flex",
@@ -359,6 +384,13 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
             <FaTimes />
           </VSCodeButton>
         </div>
+        <TaskThermometer
+          phase={phase}
+          ratio={phaseRatio}
+          tone={phaseConfidence}
+          phaseAnchors={phaseAnchors}
+          onPhaseSelect={onPhaseSelect}
+        />
         {isTaskExpanded && (
           <>
             <div
@@ -582,7 +614,6 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-
                   {isCostAvailable && (
                     <div
                       style={{
@@ -669,13 +700,13 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
                         <>
                           {" "}
                           <a
-                            href="https://github.com/valkyrlabs/valoride/wiki/Installing-Git-for-Checkpoints"
+                            href="https://git-scm.com/install/"
                             style={{
                               color: "inherit",
                               textDecoration: "underline",
                             }}
                           >
-                            See here for instructions.
+                            Git Installation Instructions
                           </a>
                         </>
                       )}

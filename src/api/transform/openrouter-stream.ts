@@ -5,18 +5,24 @@ import { Anthropic } from "@anthropic-ai/sdk";
 import OpenAI from "openai";
 
 // Function to send API data to websocket if available
-function sendApiDataToWebsocket(type: 'request' | 'response' | 'stream_chunk', data: any) {
+function sendApiDataToWebsocket(
+  type: "request" | "response" | "stream_chunk",
+  data: any,
+) {
   try {
     // Check if we're in browser environment and have websocket dispatch available
-    if (typeof window !== 'undefined' && (window as any).valorideDispatchChatAction) {
-      (window as any).valorideDispatchChatAction('api-data', {
+    if (
+      typeof window !== "undefined" &&
+      (window as any).valorideDispatchChatAction
+    ) {
+      (window as any).valorideDispatchChatAction("api-data", {
         type,
         data,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
   } catch (error) {
-    console.debug('Failed to send API data to websocket:', error);
+    console.debug("Failed to send API data to websocket:", error);
   }
 }
 
@@ -38,6 +44,11 @@ export async function createOpenRouterStream(
   // prompt caching: https://openrouter.ai/docs/prompt-caching
   // this is specifically for valoride models (some models may 'support prompt caching' automatically without this)
   switch (model.id) {
+    case "anthropic/claude-sonnet-4.5":
+    case "anthropic/claude-opus-4":
+    case "anthropic/claude-opus-4.1":
+    case "anthropic/claude-opus-4.5":
+    case "anthropic/claude-haiku-4.5":
     case "anthropic/claude-3.7-sonnet":
     case "anthropic/claude-3.7-sonnet:beta":
     case "anthropic/claude-3.7-sonnet:thinking":
@@ -98,6 +109,11 @@ export async function createOpenRouterStream(
   // (models usually default to max tokens allowed)
   let maxTokens: number | undefined;
   switch (model.id) {
+    case "anthropic/claude-sonnet-4.5":
+    case "anthropic/claude-opus-4":
+    case "anthropic/claude-opus-4.1":
+    case "anthropic/claude-opus-4.5":
+    case "anthropic/claude-haiku-4.5":
     case "anthropic/claude-3.7-sonnet":
     case "anthropic/claude-3.7-sonnet:beta":
     case "anthropic/claude-3.7-sonnet:thinking":
@@ -176,10 +192,10 @@ export async function createOpenRouterStream(
   };
 
   // Send API request data to websocket
-  sendApiDataToWebsocket('request', {
+  sendApiDataToWebsocket("request", {
     url: client.baseURL,
-    method: 'POST',
-    body: apiRequest
+    method: "POST",
+    body: apiRequest,
   });
 
   // @ts-ignore-next-line
@@ -190,14 +206,14 @@ export async function createOpenRouterStream(
     try {
       for await (const chunk of stream) {
         // Send each stream chunk to websocket
-        sendApiDataToWebsocket('stream_chunk', chunk);
+        sendApiDataToWebsocket("stream_chunk", chunk);
         yield chunk;
       }
     } catch (error) {
       // Send error to websocket
-      sendApiDataToWebsocket('response', {
+      sendApiDataToWebsocket("response", {
         error: error,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
       throw error;
     }

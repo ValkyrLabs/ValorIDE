@@ -1,12 +1,16 @@
 import { VSCodeButton, VSCodeLink } from "@vscode/webview-ui-toolkit/react";
 import { useEffect, useState, memo } from "react";
-import { useExtensionState } from "@/context/ExtensionStateContext";
-import { validateApiConfiguration } from "@/utils/validate";
-import { vscode } from "@/utils/vscode";
-import ApiOptions from "@/components/settings/ApiOptions";
-import SystemAlerts from "@/components/SystemAlerts";
+import { useExtensionState } from "@thorapi/context/ExtensionStateContext";
+import { validateApiConfiguration } from "@thorapi/utils/validate";
+import { vscode } from "@thorapi/utils/vscode";
+import ApiOptions from "@thorapi/components/settings/ApiOptions";
+import SystemAlerts from "@thorapi/components/SystemAlerts";
 import Image from "react-bootstrap/Image";
 import valorIdeHorizontal from "../../assets/valorIde-horizontal.png";
+import {
+  readStoredPrincipal,
+  hydrateStoredCredentials,
+} from "@thorapi/utils/accessControl";
 
 const WelcomeView = memo(() => {
   const { apiConfiguration } = useExtensionState();
@@ -14,6 +18,22 @@ const WelcomeView = memo(() => {
     undefined,
   );
   const [showApiOptions, setShowApiOptions] = useState(false);
+  const [hasStoredAuth, setHasStoredAuth] = useState(false);
+
+  // Check for stored credentials on mount
+  useEffect(() => {
+    // Restore JWT & Principal from localStorage if they exist (for sticky auth)
+    hydrateStoredCredentials("welcome-view-init");
+
+    const storedPrincipal = readStoredPrincipal();
+    const storedToken =
+      sessionStorage.getItem("jwtToken") || localStorage.getItem("jwtToken");
+    if (storedPrincipal && storedToken) {
+      setHasStoredAuth(true);
+      // Skip welcome if authenticated
+      return;
+    }
+  }, []);
 
   const disableLetsGoButton = apiErrorMessage != null;
 
@@ -29,6 +49,13 @@ const WelcomeView = memo(() => {
     setApiErrorMessage(validateApiConfiguration(apiConfiguration));
   }, [apiConfiguration]);
 
+  // If stored auth exists, user should already be logged in - don't show welcome
+  // This prevents accidental welcome screen flicker
+  if (hasStoredAuth) {
+    // Return empty, as the parent App.tsx will route to the main chat interface instead
+    return null;
+  }
+
   return (
     <>
       <SystemAlerts />
@@ -42,32 +69,44 @@ const WelcomeView = memo(() => {
                   src="https://valkyrlabs.com/assets/valorIde-horizontal-DyPXHpke.png"
                 />
               </a>
-
             </div>
             <p>
-              <h2>Agentic Coder, Powered by ThorAPI</h2>
-              <VSCodeLink href="https://valkyrlabs.com/v1/docs/Products/ValorIDE" style={{ display: "inline" }}>
+              <h2>Agentic Coder, Powered by ValkyrAI</h2>
+              <VSCodeLink
+                href="https://valkyrlabs.com/v1/docs/Products/ValorIDE"
+                style={{ display: "inline" }}
+              >
                 English Documentation
               </VSCodeLink>
-              <VSCodeLink href="https://valkyrlabs.com/thorapi" style={{ display: "inline" }}>
-                ThorAPI Full-Stack CodeGen
+              <VSCodeLink
+                href="https://valkyrlabs.com/valkyrai"
+                style={{ display: "inline" }}
+              >
+                ValkyrAI Full-Stack CodeGen & AI Agents
               </VSCodeLink>
             </p>
-
           </div>
           <p>
-            I can do all kinds of tasks thanks to breakthroughs in{" "}
-            <VSCodeLink
-              href="https://valkyrlabs.com/v1/Products/ValorIDE/getting-started"
-              className="inline"
-            >
-             Help Getting Started
-            </VSCodeLink>
-            agentic coding capabilities and access to tools that let me create &
-            edit files, explore complex projects, use a browser, and execute
-            terminal commands <i>(with your permission, of course)</i>. I can even
-            use MCP to create new tools and extend my own capabilities.
+
+            ValorIDE is an agentic coding environment which uses any AI model that you choose to:
+            <br />create & edit files
+            <br />explore complex projects
+            <br />write documentation
+            <br />create tests and fix bugs
+            <br />add new features to projects
+            <br />use a browser to test apps
+            <br />execute terminal commands with permissions
+            <br />use MCP to create new tools and extend my own capabilities
+            <br />and much more...
           </p>
+
+          <VSCodeLink
+            href="https://valkyrlabs.com/v1/Products/ValorIDE/getting-started"
+            className="inline"
+          >
+            Getting Started
+          </VSCodeLink>
+
 
           <p className="text-[var(--vscode-descriptionForeground)]">
             Sign up for an account to get started for free
@@ -106,7 +145,7 @@ const WelcomeView = memo(() => {
             )}
           </div>
         </div>
-      </div>
+      </div >
     </>
   );
 });

@@ -7,6 +7,7 @@ Valor IDE implements **5 strategic mechanisms** to prevent long-running commands
 ## Problem Statement
 
 Previously, long-running shell commands would:
+
 - Block indefinitely waiting for user feedback on command output
 - Provide no progress indication to users
 - Timeout after only 30 seconds (insufficient for builds)
@@ -26,15 +27,20 @@ const timeoutPromise = new Promise((resolve) => {
   }, 2000); // Auto-approve after 2s
 });
 
-const { response, text, images } = await Promise.race([askPromise, timeoutPromise]);
+const { response, text, images } = await Promise.race([
+  askPromise,
+  timeoutPromise,
+]);
 ```
 
 **Behavior:**
+
 - If user doesn't respond within 2 seconds, automatically approve continuation
 - Prevents indefinite blocking on user interaction timeouts
 - Allows command execution to proceed without user intervention
 
 **Test Coverage:**
+
 - ✅ `command-stall-prevention.test.ts` line ~20
 
 ---
@@ -52,17 +58,20 @@ const now = Date.now();
 if (now - lastProgressReport > PROGRESS_REPORT_INTERVAL) {
   lastProgressReport = now;
   const elapsed = Math.round((now - (process as any).startedAt) / 1000);
-  void this.say("command_output", `[Still running for ${elapsed}s...]`)
-    .catch(() => { });
+  void this.say("command_output", `[Still running for ${elapsed}s...]`).catch(
+    () => {},
+  );
 }
 ```
 
 **Behavior:**
+
 - Every 5 seconds, emit progress message to user showing elapsed time
 - User sees `[Still running for 15s...]`, `[Still running for 20s...]`, etc.
 - Non-blocking (fire-and-forget)
 
 **Test Coverage:**
+
 - ✅ `command-stall-prevention.test.ts` line ~68
 
 ---
@@ -85,11 +94,13 @@ const result = await Promise.race([childProcess, timeoutPromise]);
 ```
 
 **Behavior:**
+
 - Commands in Node.js execution mode timeout after 60 seconds (was 30s)
 - Process forcefully terminated with SIGKILL
 - User receives clear timeout error message
 
 **Test Coverage:**
+
 - ✅ `command-stall-prevention.test.ts` line ~100
 
 ---
@@ -104,11 +115,13 @@ const process = this.terminalManager.runCommand(terminalInfo, command);
 ```
 
 **Behavior:**
+
 - Attach start timestamp to process object
 - Used to calculate accurate elapsed time for progress messages
 - Enables progress reporting without wall-clock drift
 
 **Test Coverage:**
+
 - ✅ `command-stall-prevention.test.ts` line ~130
 
 ---
@@ -120,19 +133,20 @@ const process = this.terminalManager.runCommand(terminalInfo, command);
 ```typescript
 const streamLine = (line: string) => {
   // Fire-and-forget: don't await, just call
-  this.say("command_output", line)
-    .catch((error) => {
-      Logger.warn(`Failed to stream: ${error}`);
-    });
+  this.say("command_output", line).catch((error) => {
+    Logger.warn(`Failed to stream: ${error}`);
+  });
 };
 ```
 
 **Behavior:**
+
 - Output streaming never blocks command execution
 - Errors are logged but don't propagate
 - Prevents nested awaits that could cause deadlocks
 
 **Test Coverage:**
+
 - ✅ `command-stall-prevention.test.ts` line ~149
 
 ---
@@ -160,6 +174,7 @@ Result: `npm run build`, `cargo build`, `mvn clean install` won't stall Valor ID
 **File:** `/src/core/task/__tests__/command-stall-prevention.test.ts`
 
 **Test Coverage:**
+
 - ✅ 2-second auto-approval mechanism
 - ✅ Progress reporting intervals
 - ✅ 60-second timeout enforcement
@@ -169,6 +184,7 @@ Result: `npm run build`, `cargo build`, `mvn clean install` won't stall Valor ID
 - ✅ Stress test: 100 auto-approvals without stalling
 
 **Running Tests:**
+
 ```bash
 npm test -- src/core/task/__tests__/command-stall-prevention.test.ts --run
 ```
@@ -178,6 +194,7 @@ npm test -- src/core/task/__tests__/command-stall-prevention.test.ts --run
 ## User Experience Flow
 
 ### Before (Broken)
+
 ```
 User starts: npm run build (120s)
      ↓
@@ -191,6 +208,7 @@ User force-quits IDE
 ```
 
 ### After (Fixed)
+
 ```
 User starts: npm run build (120s)
      ↓
@@ -216,12 +234,14 @@ User starts: npm run build (120s)
 ## Debugging & Monitoring
 
 Enable debug logging:
+
 ```typescript
 Logger.info(`Command executed. Elapsed: ${elapsed}s`);
 Logger.warn(`Failed to stream output: ${error.message}`);
 ```
 
 Monitor in production:
+
 - Track timeout rates (should be <1% of commands)
 - Log commands that exceed 60s
 - Alert on hang patterns

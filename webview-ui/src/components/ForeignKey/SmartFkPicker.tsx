@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Form as BSForm, ListGroup, Spinner } from "react-bootstrap";
 import { debounce } from "lodash";
 import { v4 as uuidv4 } from "uuid";
-import { BASE_PATH } from "@thor/src";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 
 export type SmartFkPickerProps = {
   entity: string; // Simple entity name, e.g. "Organization"
@@ -69,7 +69,7 @@ export const SmartFkPicker: React.FC<SmartFkPickerProps> = ({
         return;
       }
       try {
-        const res = await authFetch(`${BASE_PATH}/${entity}/${value}`);
+        const res = await authFetch(withValkyraiBase(`${entity}/${value}`));
         if (res.ok) {
           const data = await res.json();
           if (!cancelled)
@@ -103,7 +103,7 @@ export const SmartFkPicker: React.FC<SmartFkPickerProps> = ({
           if (!q) {
             // Load first page of results for small lookup tables
             const res = await authFetch(
-              `${BASE_PATH}/${entity}?page=1&limit=50`,
+              withValkyraiBase(`${entity}?page=1&limit=50`),
             );
             if (res.ok) {
               const arr = await res.json();
@@ -114,14 +114,14 @@ export const SmartFkPicker: React.FC<SmartFkPickerProps> = ({
               }));
             }
           } else if (isUuidLike(q)) {
-            const res = await authFetch(`${BASE_PATH}/${entity}/${q}`);
+            const res = await authFetch(withValkyraiBase(`${entity}/${q}`));
             if (res.ok) {
               const o = await res.json();
               out = [{ id: o.id || q, label: labelFor(o) || q, raw: o }];
             } else {
               // Try global UUID lookup: may return a different type
               try {
-                const gl = await authFetch(`${BASE_PATH}/lookup/${q}`);
+                const gl = await authFetch(withValkyraiBase(`lookup/${q}`));
                 if (gl.ok) {
                   const obj = await gl.json();
                   const it = obj?.item;
@@ -142,7 +142,9 @@ export const SmartFkPicker: React.FC<SmartFkPickerProps> = ({
             // Prefer server-side lookup if available (fuzzy and numeric support)
             try {
               const lu = await authFetch(
-                `${BASE_PATH}/lookup/entity/${encodeURIComponent(entity)}?q=${encodeURIComponent(q)}&limit=20`,
+                withValkyraiBase(
+                  `lookup/entity/${encodeURIComponent(entity)}?q=${encodeURIComponent(q)}&limit=20`,
+                ),
               );
               if (lu.ok) {
                 const arr = await lu.json();
@@ -171,7 +173,7 @@ export const SmartFkPicker: React.FC<SmartFkPickerProps> = ({
               for (const exObj of queries) {
                 const ex = encodeURIComponent(JSON.stringify(exObj));
                 const res = await authFetch(
-                  `${BASE_PATH}/${entity}?page=1&limit=20&example=${ex}`,
+                  withValkyraiBase(`${entity}?page=1&limit=20&example=${ex}`),
                 );
                 if (res.ok) {
                   const arr = await res.json();
@@ -289,3 +291,8 @@ export const SmartFkPicker: React.FC<SmartFkPickerProps> = ({
 };
 
 export default SmartFkPicker;
+const withValkyraiBase = (suffix: string) => {
+  const base = getValkyraiHost().replace(/\/+$/, "");
+  const normalized = suffix.startsWith("/") ? suffix.slice(1) : suffix;
+  return `${base}/${normalized}`;
+};

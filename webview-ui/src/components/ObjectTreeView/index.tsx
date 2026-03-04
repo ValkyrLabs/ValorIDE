@@ -25,6 +25,7 @@ import {
   FaRegSave,
 } from "react-icons/fa";
 import CoolButton from "../CoolButton";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 
 interface ObjectTreeViewProps {
   data: any;
@@ -54,7 +55,9 @@ const ObjectTreeView: React.FC<ObjectTreeViewProps> = ({
   useEffect(() => {
     const fetchOpenApiSpec = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_basePath || "http://localhost:8080/v1"}/api-docs`);
+        const response = await fetch(
+          `${getValkyraiHost().replace(/\/+$/, "")}/api-docs`,
+        );
         const spec = await response.json();
         setOpenApiSpec(spec);
       } catch (error) {
@@ -334,7 +337,10 @@ const ObjectTreeView: React.FC<ObjectTreeViewProps> = ({
           </Badge>
         </Col>
         <Col md={1}>
-          <OverlayTrigger placement="top" overlay={(props) => React.cloneElement(tooltip, props)}>
+          <OverlayTrigger
+            placement="top"
+            overlay={(props) => React.cloneElement(tooltip, props)}
+          >
             <span style={{ cursor: "help", marginRight: "5px" }}>
               <FaInfoCircle color="#777" size={20} />
             </span>
@@ -344,7 +350,10 @@ const ObjectTreeView: React.FC<ObjectTreeViewProps> = ({
     );
   };
 
-  const renderChildren = (node: any, parentKey: string): React.ReactElement[] => {
+  const renderChildren = (
+    node: any,
+    parentKey: string,
+  ): React.ReactElement[] => {
     const entries = Object.entries(node).filter(([k]) => {
       return !(hideExtraFields && fieldsToHide.includes(k));
     });
@@ -469,44 +478,44 @@ const ObjectTreeView: React.FC<ObjectTreeViewProps> = ({
             modalDetails?.secure ||
             modalDetails?.enum ||
             modalDetails?.type) && (
-            <Form.Group className="mb-3">
-              {modalDetails?.description && (
-                <>
-                  <Form.Label className="text-light">
-                    <h5>Description</h5>
-                  </Form.Label>
-                  <Form.Text className="d-block text-light">
-                    {modalDetails.description}
-                  </Form.Text>
-                  <br />
-                </>
-              )}
-              {modalDetails?.type && (
-                <>
-                  <h5>Type:</h5> {modalDetails.type}
-                  <br />
-                </>
-              )}
-              {modalDetails?.pattern && (
-                <>
-                  <h5>Pattern:</h5> {modalDetails.pattern}
-                  <br />
-                </>
-              )}
-              {modalDetails?.secure && (
-                <>
-                  <h5>Secure Field</h5>
-                  <br />
-                </>
-              )}
-              {modalDetails?.enum && (
-                <>
-                  <h5>Enum:</h5> {modalDetails.enum.join(", ")}
-                  <br />
-                </>
-              )}
-            </Form.Group>
-          )}
+              <Form.Group className="mb-3">
+                {modalDetails?.description && (
+                  <>
+                    <Form.Label className="text-light">
+                      <h5>Description</h5>
+                    </Form.Label>
+                    <Form.Text className="d-block text-light">
+                      {modalDetails.description}
+                    </Form.Text>
+                    <br />
+                  </>
+                )}
+                {modalDetails?.type && (
+                  <>
+                    <h5>Type:</h5> {modalDetails.type}
+                    <br />
+                  </>
+                )}
+                {modalDetails?.pattern && (
+                  <>
+                    <h5>Pattern:</h5> {modalDetails.pattern}
+                    <br />
+                  </>
+                )}
+                {modalDetails?.secure && (
+                  <>
+                    <h5>Secure Field</h5>
+                    <br />
+                  </>
+                )}
+                {modalDetails?.enum && (
+                  <>
+                    <h5>Enum:</h5> {modalDetails.enum.join(", ")}
+                    <br />
+                  </>
+                )}
+              </Form.Group>
+            )}
           <Form.Group>
             <Form.Label className="text-light">Value</Form.Label>
             {renderEditableModalField(modalDetails?.type || "string")}

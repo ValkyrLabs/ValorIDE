@@ -1,12 +1,13 @@
 import store from "../store";
-import * as ThorServices from "../../thor/redux/services";
+import * as ThorServices from "@thorapi/redux/services";
+import { getValkyraiHost } from "@thorapi/utils/valkyraiHost";
 
 type AnyApiSlice = {
   reducerPath: string;
   util: { invalidateTags: (tags: Array<{ type: string; id?: string }>) => any };
 };
 
-// Build a registry of API slices from generated thor services
+// Build a registry of API slices from generated  services
 function getApiSlices(): AnyApiSlice[] {
   const slices: AnyApiSlice[] = [];
   for (const v of Object.values(ThorServices)) {
@@ -66,16 +67,16 @@ export async function globalUuidLookup(
     const results = await Promise.all(
       group.map(async (api) => {
         try {
-          const base = (await import("../customBaseQuery")).default as any;
+          await import("../customBaseQuery");
           // We can’t call baseQuery directly here; fallback to fetch
-          const { BASE_PATH } = await import("../../thor/src");
           const token = sessionStorage.getItem("jwtToken") || "";
-          const res = await fetch(`${BASE_PATH}/${api.reducerPath}/${uuid}`, {
+          const basePath = getValkyraiHost().replace(/\/+$/, "");
+          const res = await fetch(`${basePath}/${api.reducerPath}/${uuid}`, {
             headers: token ? { authorization: `Bearer ${token}` } : undefined,
           });
           if (res.ok)
             return { entity: api.reducerPath, data: await res.json() };
-        } catch {}
+        } catch { }
         return null;
       }),
     );

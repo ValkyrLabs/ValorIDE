@@ -2,7 +2,7 @@
  * Base Agent class for role-scoped agentic work
  */
 
-import { AgentRole, AgentLedgerEntry } from '../types';
+import { AgentRole, AgentLedgerEntry } from "../types";
 
 export abstract class Agent {
   protected role: AgentRole;
@@ -50,7 +50,12 @@ export abstract class Agent {
   /**
    * Create audit log entry for this agent's work
    */
-  createLedgerEntry(action: string, result: string, tokensUsed: number, cost: number): AgentLedgerEntry {
+  createLedgerEntry(
+    action: string,
+    result: string,
+    tokensUsed: number,
+    cost: number,
+  ): AgentLedgerEntry {
     return {
       timestamp: Date.now(),
       agent: this.role.name,

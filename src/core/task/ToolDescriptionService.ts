@@ -1,7 +1,10 @@
 import { ToolUseName } from "@core/assistant-message";
 
 export class ToolDescriptionService {
-  static getToolDescription(toolName: ToolUseName, params: Record<string, any>): string {
+  static getToolDescription(
+    toolName: ToolUseName,
+    params: Record<string, any>,
+  ): string {
     switch (toolName) {
       case "execute_command":
         return `[${toolName} for '${params.command}']`;

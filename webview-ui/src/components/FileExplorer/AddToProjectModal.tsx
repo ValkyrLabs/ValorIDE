@@ -1,7 +1,5 @@
 import React from "react";
-import {
-  VSCodeButton,
-} from "@vscode/webview-ui-toolkit/react";
+import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import "./AddToProjectModal.css";
 
 interface AddToProjectModalProps {
@@ -45,7 +43,8 @@ const AddToProjectModal: React.FC<AddToProjectModalProps> = ({
         </div>
         <div className="modal-body">
           <p>
-            Do you want to add the folder <strong>{folderName}</strong> to your project?
+            Do you want to add the folder <strong>{folderName}</strong> to your
+            project?
           </p>
           <p className="modal-path">
             <code>{folderPath}</code>
@@ -54,8 +53,13 @@ const AddToProjectModal: React.FC<AddToProjectModalProps> = ({
             <p>This will:</p>
             <ul>
               <li>Locate existing tsconfig.json files in your project</li>
-              <li>Add <code>@thor/*</code> alias pointing to the generated TypeScript code</li>
-              <li>Add <code>@valkyr/component-library</code> alias for components</li>
+              <li>
+                Add <code>@thorapi/*</code> alias pointing to the generated
+                TypeScript code
+              </li>
+              <li>
+                Add <code>@valkyr/component-library</code> alias for components
+              </li>
               <li>Include the source folders in your TypeScript compilation</li>
             </ul>
           </div>

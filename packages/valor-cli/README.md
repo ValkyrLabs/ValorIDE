@@ -27,6 +27,7 @@ valor checkpoint restore --task my-task --step 1
 ## Commands
 
 ### task
+
 Manage agentic coding tasks
 
 ```bash
@@ -38,6 +39,7 @@ valor task list                          # List all tasks
 ```
 
 ### instance
+
 Manage CLI instances/sessions
 
 ```bash
@@ -47,6 +49,7 @@ valor instance stop --session <id>       # Stop an instance
 ```
 
 ### config
+
 Manage configuration
 
 ```bash
@@ -55,6 +58,7 @@ valor config edit                        # Edit config
 ```
 
 ### checkpoint
+
 Manage workspace checkpoints
 
 ```bash
@@ -74,7 +78,7 @@ Define a workspace manifest to work across multiple repos:
 
 ```yaml
 # .valoride/workspace.yml
-version: '1.0'
+version: "1.0"
 repos:
   - name: backend
     path: ./services/api

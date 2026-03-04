@@ -11,12 +11,10 @@ STOP! Before proceeding, you MUST verify these requirements:
 ### Required Software
 
 - ✅ Latest Node.js (v18 or newer)
-
   - Check by running: `node --version`
   - Install from: <https://nodejs.org/>
 
 - ✅ Latest Python (v3.8 or newer)
-
   - Check by running: `python --version`
   - Install from: <https://python.org/>
 

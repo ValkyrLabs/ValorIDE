@@ -11,7 +11,8 @@ export interface LegacyOutputFilterConfig {
 
 export class OutputFilterService {
   private static readonly DEFAULT_MAX_OUTPUT_LENGTH = 5000;
-  private static readonly TRUNCATION_MESSAGE = "\n[Output truncated - showing relevant portions and end of output]";
+  private static readonly TRUNCATION_MESSAGE =
+    "\n[Output truncated - showing relevant portions and end of output]";
 
   /**
    * Filters Maven output to extract only relevant information.
@@ -20,12 +21,16 @@ export class OutputFilterService {
    * - If verbosityLevel is 'verbose', shows all lines.
    * - Adds a summary if lines were collapsed.
    */
-  static filterMavenOutput(output: string, config: Partial<OutputFilterConfig> | LegacyOutputFilterConfig = {}): string {
+  static filterMavenOutput(
+    output: string,
+    config: Partial<OutputFilterConfig> | LegacyOutputFilterConfig = {},
+  ): string {
     if (!output) return output;
 
     // Handle legacy config or check verbosity level
-    const isVerbose = ('enableVerboseFiltering' in config && config.enableVerboseFiltering) || 
-                     ('verbosityLevel' in config && config.verbosityLevel === 'verbose');
+    const isVerbose =
+      ("enableVerboseFiltering" in config && config.enableVerboseFiltering) ||
+      ("verbosityLevel" in config && config.verbosityLevel === "verbose");
 
     // If verbose, show all output (except progress/download lines)
     if (isVerbose) {
@@ -36,7 +41,7 @@ export class OutputFilterService {
       return this.truncateOutput(filtered, config.maxOutputLength);
     }
 
-    const lines = output.split('\n');
+    const lines = output.split("\n");
     const importantLines: string[] = [];
     const infoLines: string[] = [];
     let buildStatusLine: string | null = null;
@@ -46,8 +51,8 @@ export class OutputFilterService {
 
       // Always show errors and warnings
       if (
-        line.includes('[ERROR]') ||
-        line.includes('[WARNING]') ||
+        line.includes("[ERROR]") ||
+        line.includes("[WARNING]") ||
         /BUILD (FAILURE|SUCCESS)/.test(line)
       ) {
         importantLines.push(line);
@@ -58,24 +63,27 @@ export class OutputFilterService {
       }
 
       // Remove download/progress lines
-      if (/^(Download(ing|ed)|Progress)/.test(line) || /^\d+\/\d+ [kKmM]?B/.test(line)) {
+      if (
+        /^(Download(ing|ed)|Progress)/.test(line) ||
+        /^\d+\/\d+ [kKmM]?B/.test(line)
+      ) {
         continue;
       }
 
       // Collect [INFO] lines for possible summarization
-      if (line.includes('[INFO]')) {
+      if (line.includes("[INFO]")) {
         infoLines.push(line);
         continue;
       }
 
       // Show any other non-empty lines
-      if (line.trim() !== '') {
+      if (line.trim() !== "") {
         importantLines.push(line);
       }
     }
 
     // Show last 5 [INFO] lines (for context), and any with "BUILD"
-    const infoToShow = infoLines.filter(l => /BUILD/.test(l));
+    const infoToShow = infoLines.filter((l) => /BUILD/.test(l));
     const lastInfo = infoLines.slice(-5);
     for (const l of lastInfo) {
       if (!infoToShow.includes(l)) infoToShow.push(l);
@@ -83,18 +91,18 @@ export class OutputFilterService {
 
     // Remove duplicates, preserve order
     const seen = new Set<string>();
-    const infoFinal = infoToShow.filter(l => {
+    const infoFinal = infoToShow.filter((l) => {
       if (seen.has(l)) return false;
       seen.add(l);
       return true;
     });
 
-    let filtered = '';
+    let filtered = "";
     if (importantLines.length === 0 && infoFinal.length === 0) {
       // fallback: show last 10 lines
-      filtered = lines.slice(-10).join('\n');
+      filtered = lines.slice(-10).join("\n");
     } else {
-      filtered = [...importantLines, ...infoFinal].join('\n');
+      filtered = [...importantLines, ...infoFinal].join("\n");
       if (infoLines.length > infoFinal.length) {
         filtered += `\n[${infoLines.length - infoFinal.length} Maven [INFO] lines hidden for brevity]`;
       }
@@ -115,7 +123,10 @@ export class OutputFilterService {
   /**
    * Filters npm/yarn output to reduce verbosity
    */
-  static filterNpmOutput(output: string, config: Partial<OutputFilterConfig> | LegacyOutputFilterConfig = {}): string {
+  static filterNpmOutput(
+    output: string,
+    config: Partial<OutputFilterConfig> | LegacyOutputFilterConfig = {},
+  ): string {
     if (!output) return output;
 
     let filtered = output;
@@ -140,7 +151,10 @@ export class OutputFilterService {
   /**
    * Filters Python/pip output
    */
-  static filterPythonOutput(output: string, config: Partial<OutputFilterConfig> | LegacyOutputFilterConfig = {}): string {
+  static filterPythonOutput(
+    output: string,
+    config: Partial<OutputFilterConfig> | LegacyOutputFilterConfig = {},
+  ): string {
     if (!output) return output;
 
     let filtered = output;
@@ -149,17 +163,19 @@ export class OutputFilterService {
     filtered = filtered.replace(/^\s*\|[█▌▏\s]+\|.*$/gm, "");
 
     // Remove "Collecting" lines unless they fail
-    const lines = filtered.split('\n');
+    const lines = filtered.split("\n");
     const filteredLines = lines.filter((line, index) => {
-      if (line.startsWith('Collecting') || line.startsWith('Downloading')) {
+      if (line.startsWith("Collecting") || line.startsWith("Downloading")) {
         // Check if next few lines contain an error
-        const nextFewLines = lines.slice(index + 1, index + 5).join(' ');
-        return nextFewLines.toLowerCase().includes('error') ||
-          nextFewLines.toLowerCase().includes('failed');
+        const nextFewLines = lines.slice(index + 1, index + 5).join(" ");
+        return (
+          nextFewLines.toLowerCase().includes("error") ||
+          nextFewLines.toLowerCase().includes("failed")
+        );
       }
       return true;
     });
-    filtered = filteredLines.join('\n');
+    filtered = filteredLines.join("\n");
 
     return this.truncateOutput(filtered, config.maxOutputLength);
   }
@@ -167,15 +183,23 @@ export class OutputFilterService {
   /**
    * Generic output filter for any command
    */
-  static filterCommandOutput(output: string, command: string, config: Partial<OutputFilterConfig> | LegacyOutputFilterConfig = {}): string {
+  static filterCommandOutput(
+    output: string,
+    command: string,
+    config: Partial<OutputFilterConfig> | LegacyOutputFilterConfig = {},
+  ): string {
     if (!output) return output;
 
     // Detect the type of command and apply specific filters
-    if (command.includes('mvn') || command.includes('maven')) {
+    if (command.includes("mvn") || command.includes("maven")) {
       return this.filterMavenOutput(output, config);
-    } else if (command.includes('npm') || command.includes('yarn') || command.includes('pnpm')) {
+    } else if (
+      command.includes("npm") ||
+      command.includes("yarn") ||
+      command.includes("pnpm")
+    ) {
       return this.filterNpmOutput(output, config);
-    } else if (command.includes('pip') || command.includes('python')) {
+    } else if (command.includes("pip") || command.includes("python")) {
       return this.filterPythonOutput(output, config);
     }
 
@@ -186,12 +210,15 @@ export class OutputFilterService {
   /**
    * Generic output filtering
    */
-  private static filterGenericOutput(output: string, config: Partial<OutputFilterConfig> | LegacyOutputFilterConfig = {}): string {
+  private static filterGenericOutput(
+    output: string,
+    config: Partial<OutputFilterConfig> | LegacyOutputFilterConfig = {},
+  ): string {
     let filtered = output;
 
     // Remove ANSI escape codes
     // eslint-disable-next-line no-control-regex
-    filtered = filtered.replace(/\x1b\[[0-9;]*m/g, '');
+    filtered = filtered.replace(/\x1b\[[0-9;]*m/g, "");
 
     // Remove excessive whitespace
     filtered = filtered.replace(/^\s*[\r\n]+/gm, "\n");
@@ -206,7 +233,7 @@ export class OutputFilterService {
    * Extracts only "Caused by" exceptions from Java stack traces
    */
   private static extractCausedByExceptions(output: string): string {
-    const lines = output.split('\n');
+    const lines = output.split("\n");
     const relevantLines: string[] = [];
     let inStackTrace = false;
     let captureNext = 0;
@@ -215,13 +242,13 @@ export class OutputFilterService {
       const line = lines[i];
 
       // Detect start of exception
-      if (line.includes('Exception') || line.includes('Error')) {
+      if (line.includes("Exception") || line.includes("Error")) {
         inStackTrace = true;
         relevantLines.push(line);
         captureNext = 2; // Capture next 2 lines for context
       }
       // Capture "Caused by" lines
-      else if (line.trim().startsWith('Caused by:')) {
+      else if (line.trim().startsWith("Caused by:")) {
         relevantLines.push(line);
         captureNext = 3; // Capture more context for root cause
       }
@@ -231,11 +258,11 @@ export class OutputFilterService {
         captureNext--;
       }
       // Skip stack trace details
-      else if (inStackTrace && line.trim().startsWith('at ')) {
+      else if (inStackTrace && line.trim().startsWith("at ")) {
         continue;
       }
       // End of stack trace
-      else if (inStackTrace && line.trim() === '') {
+      else if (inStackTrace && line.trim() === "") {
         inStackTrace = false;
       }
       // Normal output
@@ -244,17 +271,17 @@ export class OutputFilterService {
       }
     }
 
-    return relevantLines.join('\n');
+    return relevantLines.join("\n");
   }
 
   /**
    * Summarizes repetitive output patterns
    */
   private static summarizeRepetitiveOutput(output: string): string {
-    const lines = output.split('\n');
+    const lines = output.split("\n");
     const lineCount = new Map<string, number>();
     const result: string[] = [];
-    let lastLine = '';
+    let lastLine = "";
     let repeatCount = 0;
 
     for (const line of lines) {
@@ -267,7 +294,7 @@ export class OutputFilterService {
           repeatCount = 0;
         }
         result.push(line);
-        lastLine = '';
+        lastLine = "";
         continue;
       }
 
@@ -287,7 +314,7 @@ export class OutputFilterService {
       result.push(`[Previous line repeated ${repeatCount} times]`);
     }
 
-    return result.join('\n');
+    return result.join("\n");
   }
 
   /**
@@ -301,8 +328,9 @@ export class OutputFilterService {
     }
 
     // Try to truncate at a sensible point (end of line)
-    const truncatePoint = output.lastIndexOf('\n', limit);
-    const actualTruncatePoint = truncatePoint > limit * 0.8 ? truncatePoint : limit;
+    const truncatePoint = output.lastIndexOf("\n", limit);
+    const actualTruncatePoint =
+      truncatePoint > limit * 0.8 ? truncatePoint : limit;
 
     return output.substring(actualTruncatePoint) + this.TRUNCATION_MESSAGE;
   }

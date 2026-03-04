@@ -89,7 +89,8 @@ export class CheckpointManager {
         }
     }
     async restoreCheckpoint(messageTs, restoreType, offset) {
-        const messageIndex = this.valorideMessages.findIndex((m) => m.ts === messageTs) - (offset || 0);
+        const messageIndex = this.valorideMessages.findIndex((m) => m.ts === messageTs) -
+            (offset || 0);
         // Find the last message before messageIndex that has a lastCheckpointHash
         const lastHashIndex = findLastIndex(this.valorideMessages.slice(0, messageIndex), (m) => m.lastCheckpointHash !== undefined);
         const message = this.valorideMessages[messageIndex];
@@ -230,7 +231,8 @@ export class CheckpointManager {
             if (seeNewChangesSinceLastTaskCompletion) {
                 const lastTaskCompletedMessageCheckpointHash = findLast(this.valorideMessages.slice(0, messageIndex), (m) => m.say === "completion_result")?.lastCheckpointHash;
                 const firstCheckpointMessageCheckpointHash = this.valorideMessages.find((m) => m.say === "checkpoint_created")?.lastCheckpointHash;
-                const previousCheckpointHash = lastTaskCompletedMessageCheckpointHash || firstCheckpointMessageCheckpointHash;
+                const previousCheckpointHash = lastTaskCompletedMessageCheckpointHash ||
+                    firstCheckpointMessageCheckpointHash;
                 if (!previousCheckpointHash) {
                     vscode.window.showErrorMessage("Unexpected error: No checkpoint hash found");
                     relinquishButton();
@@ -259,7 +261,9 @@ export class CheckpointManager {
             return;
         }
         // Open multi-diff editor
-        await vscode.commands.executeCommand("vscode.changes", seeNewChangesSinceLastTaskCompletion ? "New changes" : "Changes since snapshot", changedFiles.map((file) => [
+        await vscode.commands.executeCommand("vscode.changes", seeNewChangesSinceLastTaskCompletion
+            ? "New changes"
+            : "Changes since snapshot", changedFiles.map((file) => [
             vscode.Uri.file(file.absolutePath),
             vscode.Uri.parse(`${DIFF_VIEW_URI_SCHEME}:${file.relativePath}`).with({
                 query: Buffer.from(file.before ?? "").toString("base64"),
@@ -296,7 +300,8 @@ export class CheckpointManager {
         try {
             const lastTaskCompletedMessageCheckpointHash = lastTaskCompletedMessage?.lastCheckpointHash;
             const firstCheckpointMessageCheckpointHash = this.valorideMessages.find((m) => m.say === "checkpoint_created")?.lastCheckpointHash;
-            const previousCheckpointHash = lastTaskCompletedMessageCheckpointHash || firstCheckpointMessageCheckpointHash;
+            const previousCheckpointHash = lastTaskCompletedMessageCheckpointHash ||
+                firstCheckpointMessageCheckpointHash;
             if (!previousCheckpointHash) {
                 return false;
             }

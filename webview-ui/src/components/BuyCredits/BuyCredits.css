@@ -1,0 +1,75 @@
+/* BuyCredits component styles */
+.buy-credits-container {
+  padding: 20px;
+  background-color: var(--vscode-panel-background);
+  color: var(--vscode-foreground);
+}
+
+.buy-credits-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.buy-credits-title h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.buy-credits-description {
+  margin: 8px 0 0 0;
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+}
+
+.buy-credits-preset-button {
+  padding: 6px 12px;
+  background-color: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-foreground);
+  border: 1px solid var(--vscode-button-secondaryBorder);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.buy-credits-preset-button:hover:not(.active) {
+  opacity: 0.8;
+}
+
+.buy-credits-preset-button.active {
+  background-color: #06ffa5;
+  color: #000;
+}
+
+.buy-credits-summary {
+  padding: 12px;
+  background-color: var(--vscode-editor-background);
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 12px;
+}
+
+.buy-credits-summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.buy-credits-summary-row:last-child {
+  margin-bottom: 0;
+}
+
+.buy-credits-summary-value {
+  font-weight: 600;
+}
+
+.buy-credits-footer {
+  margin: 12px 0 0 0;
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  text-align: center;
+}

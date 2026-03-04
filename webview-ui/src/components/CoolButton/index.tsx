@@ -1,3 +1,4 @@
+import { VSCodeButton } from "@vscode/webview-ui-toolkit/react";
 import React from "react";
 
 // import "./index.css";
@@ -23,6 +24,7 @@ interface CoolButtonProps {
   type?: any;
   size?: any;
   customStyle?: any;
+  [key: string]: any;
 }
 
 const CoolButton: React.FC<CoolButtonProps> = ({
@@ -34,6 +36,7 @@ const CoolButton: React.FC<CoolButtonProps> = ({
   type,
   size,
   customStyle,
+  ...rest
 }) => {
   let classx = "btnx btn btn-" + variant;
   if (size === "tiny") {
@@ -43,15 +46,16 @@ const CoolButton: React.FC<CoolButtonProps> = ({
     classx += " " + className;
   }
   return (
-    <button
+    <VSCodeButton
       style={customStyle}
       type={type}
       disabled={disabled}
-      onClick={(event) => onClick(event)}
+      onClick={(event) => onClick && onClick(event)}
       className={classx}
+      {...rest}
     >
       {children}
-    </button>
+    </VSCodeButton>
   );
 };
 

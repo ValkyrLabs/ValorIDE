@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   VSCodeButton,
   VSCodeProgressRing,
@@ -29,12 +29,15 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
     if (file) {
       // Validate file type
       const validExtensions = [".yaml", ".yml", ".json"];
-      const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf("."));
+      const fileExtension = file.name
+        .toLowerCase()
+        .substring(file.name.lastIndexOf("."));
 
       if (!validExtensions.includes(fileExtension)) {
         setUploadStatus({
           type: "error",
-          message: "Please select a valid OpenAPI spec file (.yaml, .yml, or .json)",
+          message:
+            "Please select a valid OpenAPI spec file (.yaml, .yml, or .json)",
         });
         return;
       }
@@ -52,20 +55,83 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
     setUploadStatus({ type: null, message: "" });
 
     try {
+      // Validate file size (max 10MB)
+      const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+      if (selectedFile.size > MAX_FILE_SIZE) {
+        throw new Error(
+          `File size exceeds maximum limit of 10MB. Current size: ${(selectedFile.size / 1024 / 1024).toFixed(2)}MB`,
+        );
+      }
+
       // Read file content
       const fileContent = await selectedFile.text();
 
-      // Validate that it's a valid OpenAPI spec (basic validation)
-      let parsedContent;
+      // Validate that it's a valid OpenAPI spec
+      const fileName = selectedFile.name.toLowerCase();
+      const isJson = fileName.endsWith(".json");
+      const isYaml = fileName.endsWith(".yaml") || fileName.endsWith(".yml");
+
+      if (!isJson && !isYaml) {
+        throw new Error(
+          "Invalid file extension. Please select a .json, .yaml, or .yml file.",
+        );
+      }
+
+      // Parse and validate the content
+      let parsedContent: any;
       try {
-        if (selectedFile.name.toLowerCase().endsWith('.json')) {
+        if (isJson) {
           parsedContent = JSON.parse(fileContent);
         } else {
-          // For YAML files, we'll send the raw content and let the backend parse it
+          // For YAML files, do basic validation (non-empty, not obviously broken)
+          if (!fileContent || fileContent.trim().length === 0) {
+            throw new Error("File is empty.");
+          }
+          // Basic YAML structure validation - should start with openapi or swagger key
+          if (
+            !fileContent.includes("openapi:") &&
+            !fileContent.includes("swagger:") &&
+            !fileContent.includes('"openapi"') &&
+            !fileContent.includes('"swagger"')
+          ) {
+            throw new Error(
+              "File does not appear to be an OpenAPI specification (missing 'openapi' or 'swagger' key).",
+            );
+          }
           parsedContent = fileContent;
         }
+
+        // Verify it has OpenAPI structure
+        if (isJson && !parsedContent.openapi && !parsedContent.swagger) {
+          throw new Error(
+            "Invalid OpenAPI spec: missing 'openapi' or 'swagger' version field.",
+          );
+        }
       } catch (parseError) {
-        throw new Error("Invalid file format. Please ensure the file contains valid JSON or YAML.");
+        const message =
+          parseError instanceof Error
+            ? parseError.message
+            : "File format validation failed";
+        throw new Error(`Invalid file format: ${message}`);
+      }
+
+      // Show uploading status
+      setUploadStatus({
+        type: null,
+        message: `Uploading ${selectedFile.name}...`,
+      });
+
+      let jwtToken: string | undefined;
+      try {
+        jwtToken =
+          (((globalThis as any).__TEST_JWT__ as string | undefined) ??
+            (typeof window !== "undefined"
+              ? window.sessionStorage?.getItem("jwtToken") ||
+                window.localStorage?.getItem("jwtToken")
+              : undefined)) ||
+          undefined;
+      } catch {
+        jwtToken = undefined;
       }
 
       // Send to extension for processing
@@ -74,19 +140,20 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
         filename: selectedFile.name,
         fileContent: fileContent,
         fileSize: selectedFile.size,
+        jwtToken,
       });
 
-      setUploadStatus({
-        type: "success",
-        message: `Successfully uploaded ${selectedFile.name}`,
-      });
+      // Wait for response from extension (listener below)
+      // The success message will be shown via uploadOpenAPISpecResult message
     } catch (error) {
-      console.error("Upload failed:", error);
+      console.error("Upload validation failed:", error);
       setUploadStatus({
         type: "error",
-        message: error instanceof Error ? error.message : "Upload failed",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Upload failed. Please check the file and try again.",
       });
-    } finally {
       setIsUploading(false);
     }
   };
@@ -99,16 +166,49 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
     }
   };
 
+  // Listen for upload result from extension
+  useEffect(() => {
+    const handleMessage = (event: any) => {
+      const message = event.data;
+      if (message.type === "uploadOpenAPISpecResult") {
+        if (message.success) {
+          setUploadStatus({
+            type: "success",
+            message: `✅ Successfully uploaded and processed ${message.filename || selectedFile?.name || "file"}. Ready to import into application generator.`,
+          });
+          // Clear the selected file and input after successful upload
+          setTimeout(() => {
+            handleClear();
+          }, 2000);
+        } else {
+          setUploadStatus({
+            type: "error",
+            message:
+              message.error ||
+              "Upload failed. The server could not process the file.",
+          });
+        }
+        setIsUploading(false);
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [selectedFile]);
+
   return (
     <div className="openapi-file-picker">
       <div className="file-picker-header" style={{ marginBottom: "16px" }}>
         <h3>Import Application from OpenAPI</h3>
-        <p style={{
-          fontSize: "14px",
-          color: "var(--vscode-descriptionForeground)",
-          marginTop: "8px"
-        }}>
-          Select a local OpenAPI spec file (.yaml, .yml, or .json) to upload to the generator.
+        <p
+          style={{
+            fontSize: "14px",
+            color: "var(--vscode-descriptionForeground)",
+            marginTop: "8px",
+          }}
+        >
+          Select a local OpenAPI spec file (.yaml, .yml, or .json) to upload to
+          the generator.
         </p>
       </div>
 
@@ -139,7 +239,13 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
               >
                 {isUploading ? (
                   <>
-                    <VSCodeProgressRing style={{ width: "16px", height: "16px", marginRight: "8px" }} />
+                    <VSCodeProgressRing
+                      style={{
+                        width: "16px",
+                        height: "16px",
+                        marginRight: "8px",
+                      }}
+                    />
                     Uploading...
                   </>
                 ) : (
@@ -160,13 +266,16 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
       </div>
 
       {selectedFile && (
-        <div className="selected-file-info" style={{
-          padding: "12px",
-          border: "1px solid var(--vscode-panel-border)",
-          borderRadius: "4px",
-          marginBottom: "16px",
-          backgroundColor: "var(--vscode-editor-background)"
-        }}>
+        <div
+          className="selected-file-info"
+          style={{
+            padding: "12px",
+            border: "1px solid var(--vscode-panel-border)",
+            borderRadius: "4px",
+            marginBottom: "16px",
+            backgroundColor: "var(--vscode-editor-background)",
+          }}
+        >
           <div style={{ fontWeight: "bold", marginBottom: "4px" }}>
             Selected File:
           </div>
@@ -179,19 +288,24 @@ const OpenAPIFilePicker: React.FC<OpenAPIFilePickerProps> = ({
       )}
 
       {uploadStatus.type && (
-        <div className={`upload-status status-${uploadStatus.type}`} style={{
-          padding: "1em",
-          margin: "1em",
-          border: `1px solid ${uploadStatus.type === "success" ? "var(--vscode-charts-green)" : "var(--vscode-errorForeground)"}`,
-          borderRadius: 10,
-          backgroundColor: uploadStatus.type === "success"
-            ? "var(--vscode-badge-background)"
-            : "var(--vscode-inputValidation-errorBackground)",
-          color: uploadStatus.type === "success"
-            ? "var(--vscode-badge-foreground)"
-            : "var(--vscode-errorForeground)",
-          fontSize: "14px"
-        }}>
+        <div
+          className={`upload-status status-${uploadStatus.type}`}
+          style={{
+            padding: "1em",
+            margin: "1em",
+            border: `1px solid ${uploadStatus.type === "success" ? "var(--vscode-charts-green)" : "var(--vscode-errorForeground)"}`,
+            borderRadius: 10,
+            backgroundColor:
+              uploadStatus.type === "success"
+                ? "var(--vscode-badge-background)"
+                : "var(--vscode-inputValidation-errorBackground)",
+            color:
+              uploadStatus.type === "success"
+                ? "var(--vscode-badge-foreground)"
+                : "var(--vscode-errorForeground)",
+            fontSize: "14px",
+          }}
+        >
           {uploadStatus.type === "success" ? "✅" : "❌"} {uploadStatus.message}
         </div>
       )}

@@ -24,19 +24,21 @@ import {
 import { findLastIndex } from "@shared/array";
 import { McpMarketplaceCatalog, McpServer } from "../../../src/shared/mcp";
 import { convertTextMateToHljs } from "../utils/textMateToHljs";
+import { setTheme as setValkyrTheme } from "../themes";
 import { vscode } from "../utils/vscode";
 import { DEFAULT_BROWSER_SETTINGS } from "@shared/BrowserSettings";
 import { DEFAULT_CHAT_SETTINGS } from "@shared/ChatSettings";
 import { TelemetrySetting } from "@shared/TelemetrySetting";
-import { Principal } from "@/thor/model";
-import { Application } from "@/thor/model/Application";
+import { Principal } from "@thorapi/model";
+import { Application } from "@thorapi/model/Application";
 import {
   clearStoredJwtToken,
   clearStoredPrincipal,
   hydrateStoredCredentials,
   storeJwtToken,
   writeStoredPrincipal,
-} from "@/utils/accessControl";
+} from "@thorapi/utils/accessControl";
+import { DEFAULT_VALKYRAI_HOST, setValkyraiHost } from "@thorapi/utils/valkyraiHost";
 
 interface ExtensionStateContextType extends ExtensionState {
   didHydrateState: boolean;
@@ -86,10 +88,8 @@ const normalizePrincipal = (value: unknown): Principal | undefined => {
   const candidate = value as Record<string, any>;
   return {
     ...candidate,
-    username:
-      typeof candidate.username === "string" ? candidate.username : "",
-    password:
-      typeof candidate.password === "string" ? candidate.password : "",
+    username: typeof candidate.username === "string" ? candidate.username : "",
+    password: typeof candidate.password === "string" ? candidate.password : "",
     email: typeof candidate.email === "string" ? candidate.email : "",
     roleList: Array.isArray(candidate.roleList) ? candidate.roleList : [],
   } as Principal;
@@ -123,7 +123,7 @@ export const ExtensionStateContextProvider: React.FC<{
     return typeof maybeVsCodeWindow.acquireVsCodeApi !== "function";
   });
   const [showWelcome, setShowWelcome] = useState(false);
-  const [theme, setTheme] = useState<Record<string, string>>();
+  const [theme, setThemeState] = useState<Record<string, string>>();
   const [filePaths, setFilePaths] = useState<string[]>([]);
   const [openRouterModels, setOpenRouterModels] = useState<
     Record<string, ModelInfo>
@@ -211,6 +211,15 @@ export const ExtensionStateContextProvider: React.FC<{
           // Ignore storage errors in webview sandbox
         }
 
+        // Update global ValkyrAI host before React consumers run effects
+        try {
+          const nextHost =
+            incoming.apiConfiguration?.valkyraiHost || DEFAULT_VALKYRAI_HOST;
+          setValkyraiHost(nextHost);
+        } catch (error) {
+          console.warn("Failed to update ValkyrAI host", error);
+        }
+
         // 2) Update the main extension state via a PURE updater (no side-effects here)
         setState((prevState) => {
           // Prevent unnecessary updates if state is the same
@@ -244,6 +253,7 @@ export const ExtensionStateContextProvider: React.FC<{
             config.geminiApiKey,
             config.openAiNativeApiKey,
             config.deepSeekApiKey,
+            config.moonshotApiKey,
             config.requestyApiKey,
             config.togetherApiKey,
             config.qwenApiKey,
@@ -256,13 +266,28 @@ export const ExtensionStateContextProvider: React.FC<{
             config.sambanovaApiKey,
           ].some((key) => key !== undefined)
           : false;
-        setShowWelcome(!hasKey);
+        // Show welcome only if NO API keys AND NOT authenticated (both backend + local storage)
+        const isAuthed = incoming.isLoggedIn || incoming.authenticatedPrincipal;
+        const hasStoredAuth = !!(
+          sessionStorage.getItem("jwtToken") || localStorage.getItem("jwtToken")
+        );
+        setShowWelcome(!hasKey && !isAuthed && !hasStoredAuth);
         setDidHydrateState(true);
         break;
       }
       case "theme": {
         if (message.text) {
-          setTheme(convertTextMateToHljs(JSON.parse(message.text)));
+          setThemeState(convertTextMateToHljs(JSON.parse(message.text)));
+          // Also set Valkyr theme for UI
+          try {
+            const themeObj = JSON.parse(message.text);
+            let themeName = "valkyr";
+            if (themeObj && (themeObj.name || themeObj.type)) {
+              const n = String(themeObj.name || themeObj.type || "").toLowerCase();
+              if (n.includes("dark")) themeName = "dark";
+            }
+            setValkyrTheme(themeName, { persist: false });
+          } catch { }
         }
         break;
       }
@@ -424,10 +449,7 @@ export const ExtensionStateContextProvider: React.FC<{
   }, []);
 
   useEffect(() => {
-    if (didHydrateState) {
-      return null;
-    }
-    if (typeof window === "undefined") {
+    if (didHydrateState || typeof window === "undefined") {
       return null;
     }
     const timeoutId = window.setTimeout(() => {
@@ -446,8 +468,7 @@ export const ExtensionStateContextProvider: React.FC<{
   }, []);
 
   // Determine authentication status - prioritize backend state, fallback to local state
-  const isAuthenticated =
-    state.isLoggedIn ?? !!(jwtToken || authenticatedUser);
+  const isAuthenticated = state.isLoggedIn ?? !!(jwtToken || authenticatedUser);
   const normalizedAuthenticatedUser = normalizePrincipal(authenticatedUser);
   const normalizedStateUser = normalizePrincipal(state.userInfo);
   const currentUser = normalizedAuthenticatedUser ?? normalizedStateUser;

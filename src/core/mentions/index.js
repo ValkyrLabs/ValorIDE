@@ -9,6 +9,7 @@ import { diagnosticsToProblemsString } from "@integrations/diagnostics";
 import { getLatestTerminalOutput } from "@integrations/terminal/get-latest-output";
 import { getCommitInfo } from "@utils/git";
 import { getWorkingState } from "@utils/git";
+import { openUrlWithSimpleBrowser } from "@utils/openUrl";
 export function openMention(mention) {
     if (!mention) {
         return;
@@ -36,7 +37,7 @@ export function openMention(mention) {
         vscode.commands.executeCommand("workbench.action.terminal.focus");
     }
     else if (mention.startsWith("http")) {
-        vscode.env.openExternal(vscode.Uri.parse(mention));
+        void openUrlWithSimpleBrowser(mention);
     }
 }
 export async function parseMentions(text, cwd, urlContentFetcher, fileContextTracker) {

@@ -59,7 +59,10 @@ describe("CommunicationService", () => {
         const mockWin = new MockWindow();
         g.window = mockWin;
         g.CustomEvent = MockCustomEvent;
-        const svc = new CommunicationService({ role: "worker", senderId: "self-id" });
+        const svc = new CommunicationService({
+            role: "worker",
+            senderId: "self-id",
+        });
         svc.connect();
         const received = [];
         svc.on("message", (m) => received.push(m));

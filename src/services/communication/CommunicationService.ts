@@ -4,7 +4,7 @@ import {
   WebsocketMessageFromJSON,
   WebsocketMessageToJSON,
   WebsocketMessageTypeEnum,
-} from "@thor/model";
+} from "@thorapi/model";
 
 export type CommunicationRole = "manager" | "worker";
 
@@ -42,7 +42,9 @@ export class CommunicationService extends EventEmitter {
   private rtcPeers = new Map<string, RTCPeerConnection>();
   private rtcChannels = new Map<string, RTCDataChannel>();
   private rtcEnabled = true;
-  private iceServers: RTCIceServer[] = [{ urls: ["stun:stun.l.google.com:19302"] }];
+  private iceServers: RTCIceServer[] = [
+    { urls: ["stun:stun.l.google.com:19302"] },
+  ];
   private p2pOpenCount = 0;
 
   constructor(options: CommunicationServiceOptions) {
@@ -60,25 +62,30 @@ export class CommunicationService extends EventEmitter {
   }
 
   public static isSupported(): boolean {
-    return typeof window !== "undefined" && typeof window.addEventListener === "function";
+    return (
+      typeof window !== "undefined" &&
+      typeof window.addEventListener === "function"
+    );
   }
 
   public connect() {
     if (this.connected) return;
     if (!CommunicationService.isSupported()) {
-      this.error = new Error("CommunicationService: Not running in a browser context.");
+      this.error = new Error(
+        "CommunicationService: Not running in a browser context.",
+      );
       console.warn(this.error.message);
       return;
     }
 
     try {
-      // Listen for Thor/STOMP bridge messages from webview (AppMessage shape)
+      // Listen for ThorAPI/STOMP bridge messages from webview (AppMessage shape)
       window.addEventListener("websocket-message", (evt: Event) => {
         const custom = evt as CustomEvent;
         const appMsg = custom.detail;
         if (!appMsg || typeof appMsg.type !== "string") return;
 
-        // Handle potential WebRTC signaling tunneled via Thor broker
+        // Handle potential WebRTC signaling tunneled via ThorAPI broker
         if (appMsg.type.startsWith("webrtc:")) {
           this.handleWebRTCSignal(appMsg as any);
           return;
@@ -97,7 +104,10 @@ export class CommunicationService extends EventEmitter {
                 this.peers.delete(appMsg.payload.id);
                 this.teardownPeer(appMsg.payload.id);
               }
-            } else if (appMsg.type === "presence:state" && Array.isArray(appMsg.payload?.ids)) {
+            } else if (
+              appMsg.type === "presence:state" &&
+              Array.isArray(appMsg.payload?.ids)
+            ) {
               this.peers = new Set(appMsg.payload.ids);
               this.peers.forEach((id: string) => this.tryInitiateWebRTC(id));
             }
@@ -147,15 +157,26 @@ export class CommunicationService extends EventEmitter {
               this.peers.add(appMsg.payload.id);
               this.tryInitiateWebRTC(appMsg.payload.id);
               // Mirror presence over broker for cross-window discovery
-              try { this.sendMessage("presence:join", { id: appMsg.payload.id }); } catch (e) { void e; }
+              try {
+                this.sendMessage("presence:join", { id: appMsg.payload.id });
+              } catch (e) {
+                void e;
+              }
             }
             if (appMsg.type === "presence:leave") {
               this.peers.delete(appMsg.payload.id);
               this.teardownPeer(appMsg.payload.id);
               // Mirror presence over broker for cross-window discovery
-              try { this.sendMessage("presence:leave", { id: appMsg.payload.id }); } catch (e) { void e; }
+              try {
+                this.sendMessage("presence:leave", { id: appMsg.payload.id });
+              } catch (e) {
+                void e;
+              }
             }
-            if (appMsg.type === "presence:state" && Array.isArray(appMsg.payload.ids)) {
+            if (
+              appMsg.type === "presence:state" &&
+              Array.isArray(appMsg.payload.ids)
+            ) {
               this.peers = new Set(appMsg.payload.ids);
               // Opportunistically initiate P2P with stable ordering to avoid glare
               this.peers.forEach((id) => this.tryInitiateWebRTC(id));
@@ -175,7 +196,10 @@ export class CommunicationService extends EventEmitter {
 
       // Listen for STOMP connection status events
       window.addEventListener("P2P-status", (evt: Event) => {
-        const ce = evt as CustomEvent<{ thorConnected: boolean; phase: string }>;
+        const ce = evt as CustomEvent<{
+          thorConnected: boolean;
+          phase: string;
+        }>;
         this.thorConnected = !!ce.detail?.thorConnected;
         this.ready = this.hubConnected || this.thorConnected;
         this.emit("status", {
@@ -195,7 +219,9 @@ export class CommunicationService extends EventEmitter {
         try {
           this.connectToVsCodePeers();
           this.reconnectPeers();
-        } catch {/* ignore */ }
+        } catch {
+          /* ignore */
+        }
       };
       // Immediate kick to engage hub promptly
       kick();
@@ -293,12 +319,18 @@ export class CommunicationService extends EventEmitter {
     if (!this.rtcEnabled) {
       try {
         this.rtcChannels.forEach((_, id) => this.teardownPeer(id));
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
     }
     this.emit("p2p-status", this.getP2PStatus());
     try {
-      window.dispatchEvent(new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }));
-    } catch { /* ignore */ }
+      window.dispatchEvent(
+        new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }),
+      );
+    } catch {
+      /* ignore */
+    }
   }
 
   private async tryInitiateWebRTC(peerId: string) {
@@ -313,7 +345,11 @@ export class CommunicationService extends EventEmitter {
       this.attachChannel(peerId, channel);
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
-      this.sendMessage("webrtc:offer", { to: peerId, from: this.senderId, sdp: offer });
+      this.sendMessage("webrtc:offer", {
+        to: peerId,
+        from: this.senderId,
+        sdp: offer,
+      });
     } catch (e) {
       // Swallow P2P init failures to keep resilience best-effort
       void e;
@@ -324,7 +360,11 @@ export class CommunicationService extends EventEmitter {
     const pc = new RTCPeerConnection({ iceServers: this.iceServers });
     pc.onicecandidate = (ev) => {
       if (!ev.candidate) return;
-      this.sendMessage("webrtc:ice", { to: peerId, from: this.senderId, candidate: ev.candidate });
+      this.sendMessage("webrtc:ice", {
+        to: peerId,
+        from: this.senderId,
+        candidate: ev.candidate,
+      });
     };
     pc.ondatachannel = (ev) => {
       this.attachChannel(peerId, ev.channel);
@@ -344,24 +384,36 @@ export class CommunicationService extends EventEmitter {
       this.p2pOpenCount = this.countOpenChannels();
       this.emit("p2p-status", this.getP2PStatus());
       try {
-        window.dispatchEvent(new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }));
-      } catch (e) { void e; }
+        window.dispatchEvent(
+          new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }),
+        );
+      } catch (e) {
+        void e;
+      }
     };
     ch.onclose = () => {
       this.emit("p2p", { peerId, state: "closed" });
       this.p2pOpenCount = this.countOpenChannels();
       this.emit("p2p-status", this.getP2PStatus());
       try {
-        window.dispatchEvent(new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }));
-      } catch (e) { void e; }
+        window.dispatchEvent(
+          new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }),
+        );
+      } catch (e) {
+        void e;
+      }
     };
     ch.onerror = () => {
       this.emit("p2p", { peerId, state: "error" });
       this.p2pOpenCount = this.countOpenChannels();
       this.emit("p2p-status", this.getP2PStatus());
       try {
-        window.dispatchEvent(new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }));
-      } catch (e) { void e; }
+        window.dispatchEvent(
+          new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }),
+        );
+      } catch (e) {
+        void e;
+      }
     };
     ch.onmessage = (ev) => {
       try {
@@ -387,17 +439,25 @@ export class CommunicationService extends EventEmitter {
   private teardownPeer(peerId: string) {
     try {
       this.rtcChannels.get(peerId)?.close();
-    } catch (e) { void e; }
+    } catch (e) {
+      void e;
+    }
     this.rtcChannels.delete(peerId);
     try {
       this.rtcPeers.get(peerId)?.close();
-    } catch (e) { void e; }
+    } catch (e) {
+      void e;
+    }
     this.rtcPeers.delete(peerId);
     this.p2pOpenCount = this.countOpenChannels();
     this.emit("p2p-status", this.getP2PStatus());
     try {
-      window.dispatchEvent(new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }));
-    } catch (e) { void e; }
+      window.dispatchEvent(
+        new CustomEvent("P2P-p2p", { detail: this.getP2PStatus() }),
+      );
+    } catch (e) {
+      void e;
+    }
   }
 
   private async handleWebRTCSignal(msg: HubAppMessage) {
@@ -413,7 +473,11 @@ export class CommunicationService extends EventEmitter {
         await pc.setRemoteDescription(new RTCSessionDescription(payload.sdp));
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
-        this.sendMessage("webrtc:answer", { to: from, from: this.senderId, sdp: answer });
+        this.sendMessage("webrtc:answer", {
+          to: from,
+          from: this.senderId,
+          sdp: answer,
+        });
       } catch (e) {
         void e;
       }
@@ -446,7 +510,9 @@ export class CommunicationService extends EventEmitter {
     try {
       this.rtcChannels.forEach((_, id) => this.teardownPeer(id));
       this.peers.forEach((id) => this.tryInitiateWebRTC(id));
-    } catch (e) { void e; }
+    } catch (e) {
+      void e;
+    }
   }
 
   public configureIceServers(servers: RTCIceServer[]) {
@@ -459,7 +525,9 @@ export class CommunicationService extends EventEmitter {
 
   private countOpenChannels(): number {
     let n = 0;
-    this.rtcChannels.forEach((ch) => { if (ch.readyState === "open") n++; });
+    this.rtcChannels.forEach((ch) => {
+      if (ch.readyState === "open") n++;
+    });
     return n;
   }
 }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useLayoutEffect } from "react";
 import { useEvent } from "react-use";
 import { ExtensionMessage } from "@shared/ExtensionMessage";
 import ChatView from "./components/chat/ChatView";
@@ -23,10 +23,15 @@ import { ChatMothershipProvider } from "./components/chat/ChatMothershipProvider
 import { UsageTrackingHandler } from "./components/usage-tracking/UsageTrackingHandler";
 import { ContentDataHandler } from "./components/content-data/ContentDataHandler";
 import StartupDebit from "./components/usage-tracking/StartupDebit";
+import { registerExternalLinkInterceptor } from "./utils/linkInterceptor";
 import useValorIDEMothership from "./hooks/useValorIDEMothership";
 import LoadingSpinner from "./components/LoadingSpinner";
 
 import { vscode } from "./utils/vscode";
+import {
+  readStoredPrincipal,
+  hydrateStoredCredentials,
+} from "./utils/accessControl";
 import McpView from "./components/mcp/configuration/McpConfigurationView";
 import { McpViewTab } from "@shared/mcp";
 
@@ -38,6 +43,24 @@ const AppContent = () => {
     telemetrySetting,
     vscMachineId,
   } = useExtensionState();
+  const [hasStoredAuth, setHasStoredAuth] = useState(false);
+
+  // Check for stored credentials BEFORE rendering to prevent welcome flicker
+  useLayoutEffect(() => {
+    // Restore JWT & Principal from localStorage if they exist (for sticky auth)
+    const { token, principal } = hydrateStoredCredentials("app-init");
+
+    // Also check sessionStorage directly as backup
+    const sessionToken = sessionStorage.getItem("jwtToken");
+    const sessionPrincipal = readStoredPrincipal();
+
+    // Auth is valid if we have BOTH token AND principal (credentials are complete)
+    const hasAuth = (token || sessionToken) && (principal || sessionPrincipal);
+
+    if (hasAuth) {
+      setHasStoredAuth(true);
+    }
+  }, []);
   const [showSettings, setShowSettings] = useState(false);
   const hideSettings = useCallback(() => setShowSettings(false), []);
   const [showHistory, setShowHistory] = useState(false);
@@ -45,8 +68,13 @@ const AppContent = () => {
   const [showAccount, setShowAccount] = useState(false);
   const [showGeneratedFiles, setShowGeneratedFiles] = useState(false);
   const [showServerConsole, setShowServerConsole] = useState(false);
+  // Server Console is now rendered as a tab in the Account view
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [mcpTab, setMcpTab] = useState<McpViewTab | undefined>(undefined);
+  const [serverConsoleNeedsAttention, setServerConsoleNeedsAttention] = useState(false);
+  const [accountInitialActiveTab, setAccountInitialActiveTab] = useState<
+    "login" | "account" | "applications" | "generatedFiles" | "userPreferences" | "serverConsole" | undefined
+  >(undefined);
   // Always show file explorer by default
   const [showFileExplorer, setShowFileExplorer] = useState(true);
   const [showApplicationProgress, setShowApplicationProgress] = useState(false);
@@ -67,152 +95,174 @@ const AppContent = () => {
     sendChatAction,
   } = useValorIDEMothership();
 
-  console.log(`🚀 ValorIDE Mothership Status: Connected=${mothershipConnected}, InstanceId=${instanceId}`);
+  console.log(
+    `🚀 ValorIDE Mothership Status: Connected=${mothershipConnected}, InstanceId=${instanceId}`,
+  );
 
-  const handleMessage = useCallback((e: MessageEvent) => {
-    const message: ExtensionMessage = e.data;
+  useEffect(() => {
+    const cleanup = registerExternalLinkInterceptor();
+    return cleanup;
+  }, []);
 
-    // Track different message types to mothership
-    switch (message.type) {
-      case "loginSuccess":
-        // After successful login, show the Account view and keep File Explorer visible
-        setShowSettings(false);
-        setShowHistory(false);
-        setShowMcp(false);
-        setShowAccount(true);
-        setShowGeneratedFiles(false);
-        setShowApplicationProgress(false);
-        setShowFileExplorer(true);
-        
-        // Track login success as a task start
-        trackTaskStart("user-session", "User logged in successfully");
-        break;
+  const handleMessage = useCallback(
+    (e: MessageEvent) => {
+      const message: ExtensionMessage = e.data;
 
-      case "action":
-        switch (message.action!) {
-          case "settingsButtonClicked":
-            setShowSettings(true);
-            setShowHistory(false);
-            setShowMcp(false);
-            setShowAccount(false);
-            setShowGeneratedFiles(false);
-            setShowServerConsole(false);
-            setShowApplicationProgress(false);
-            break;
-          case "historyButtonClicked":
-            setShowSettings(false);
-            setShowHistory(true);
-            setShowMcp(false);
-            setShowAccount(false);
-            setShowGeneratedFiles(false);
-            setShowServerConsole(false);
-            setShowApplicationProgress(false);
-            break;
-          case "mcpButtonClicked":
-            setShowSettings(false);
-            setShowHistory(false);
-            if (message.tab) {
-              setMcpTab(message.tab);
-            }
-            setShowMcp(true);
-            setShowAccount(false);
-            setShowGeneratedFiles(false);
-            setShowServerConsole(false);
-            setShowApplicationProgress(false);
-            break;
-          case "accountButtonClicked":
-            setShowSettings(false);
-            setShowHistory(false);
-            setShowMcp(false);
-            setShowAccount(true);
-            setShowGeneratedFiles(false);
-            setShowServerConsole(false);
-            setShowApplicationProgress(false);
-            break;
-          case "chatButtonClicked":
-            setShowSettings(false);
-            setShowHistory(false);
-            setShowMcp(false);
-            setShowAccount(false);
-            setShowGeneratedFiles(false);
-            setShowServerConsole(false);
-            setShowApplicationProgress(false);
-            break;
-          case "generatedFilesButtonClicked":
-            setShowSettings(false);
-            setShowHistory(false);
-            setShowMcp(false);
-            setShowAccount(false);
-            setShowGeneratedFiles(true);
-            setShowServerConsole(false);
-            setShowApplicationProgress(false);
-            break;
-          case "serverConsoleButtonClicked":
-            setShowSettings(false);
-            setShowHistory(false);
-            setShowMcp(false);
-            setShowAccount(false);
-            setShowGeneratedFiles(false);
-            setShowServerConsole(true);
-            setShowApplicationProgress(false);
-            break;
-        }
-        break;
+      // Track different message types to mothership
+      switch (message.type) {
+        case "loginSuccess":
+          // After successful login, show the Account view and keep File Explorer visible
+          setShowSettings(false);
+          setShowHistory(false);
+          setShowMcp(false);
+          setShowAccount(true);
+          setShowGeneratedFiles(false);
+          setShowApplicationProgress(false);
+          setShowFileExplorer(true);
 
-      case "streamToThorapiResult":
-        // Handle application generation progress
-        if (message.streamToThorapiResult) {
-          const result = message.streamToThorapiResult;
-          if (result.applicationId) {
-            setCurrentApplicationId(result.applicationId);
-            setShowApplicationProgress(false);
-            // File explorer is already visible, just ensure it stays visible
-            setShowFileExplorer(true);
-            // Hide other views but keep file explorer
-            setShowSettings(false);
-            setShowHistory(false);
-            setShowMcp(false);
-            setShowAccount(true);
-            setShowGeneratedFiles(false);
+          // Track login success as a task start
+          trackTaskStart("user-session", "User logged in successfully");
+          break;
+
+        case "action":
+          switch (message.action!) {
+            case "settingsButtonClicked":
+              setShowSettings(true);
+              setShowHistory(false);
+              setShowMcp(false);
+              setShowAccount(false);
+              setShowGeneratedFiles(false);
+              setShowServerConsole(false);
+              setShowApplicationProgress(false);
+              break;
+            case "historyButtonClicked":
+              setShowSettings(false);
+              setShowHistory(true);
+              setShowMcp(false);
+              setShowAccount(false);
+              setShowGeneratedFiles(false);
+              setShowServerConsole(false);
+              setShowApplicationProgress(false);
+              break;
+            case "mcpButtonClicked":
+              setShowSettings(false);
+              setShowHistory(false);
+              if (message.tab) {
+                setMcpTab(message.tab);
+              }
+              setShowMcp(true);
+              setShowAccount(false);
+              setShowGeneratedFiles(false);
+              setShowServerConsole(false);
+              setShowApplicationProgress(false);
+              break;
+            case "accountButtonClicked":
+              setShowSettings(false);
+              setShowHistory(false);
+              setShowMcp(false);
+              setShowAccount(true);
+              setShowGeneratedFiles(false);
+              setShowServerConsole(false);
+              setShowApplicationProgress(false);
+              // Opening Account should clear server console attention since tab is visible now
+              setServerConsoleNeedsAttention(false);
+              break;
+            case "serverConsoleButtonClicked":
+              // Legacy support: open Account view and select Server Console tab
+              setShowSettings(false);
+              setShowHistory(false);
+              setShowMcp(false);
+              setShowAccount(true);
+              setShowGeneratedFiles(false);
+              setShowServerConsole(false);
+              setShowApplicationProgress(false);
+              setServerConsoleNeedsAttention(false);
+              setAccountInitialActiveTab("serverConsole");
+              break;
+            case "chatButtonClicked":
+              setShowSettings(false);
+              setShowHistory(false);
+              setShowMcp(false);
+              setShowAccount(false);
+              setShowGeneratedFiles(false);
+              setShowServerConsole(false);
+              setShowApplicationProgress(false);
+              break;
+            case "generatedFilesButtonClicked":
+              setShowSettings(false);
+              setShowHistory(false);
+              setShowMcp(false);
+              setShowAccount(false);
+              setShowGeneratedFiles(true);
+              setShowServerConsole(false);
+              setShowApplicationProgress(false);
+              break;
+            // serverConsoleButtonClicked moved to account tabs; keep legacy handling minimal
           }
-        }
-        break;
+          break;
 
-      // Track other extension messages as generic actions
-      case "invoke":
-        // Track tool invocations
-        sendChatAction({
-          type: 'tool_use',
-          metadata: {
-            action: 'invoke',
-            timestamp: Date.now(),
-          },
-        });
-        break;
+        case "streamToThorapiResult":
+          // Handle application generation progress
+          if (message.streamToThorapiResult) {
+            const result = message.streamToThorapiResult;
+            if (result.applicationId) {
+              setCurrentApplicationId(result.applicationId);
+              setShowApplicationProgress(false);
+              // File explorer is already visible, just ensure it stays visible
+              setShowFileExplorer(true);
+              // Hide other views but keep file explorer
+              setShowSettings(false);
+              setShowHistory(false);
+              setShowMcp(false);
+              setShowAccount(true);
+              setShowGeneratedFiles(false);
+            }
+          }
+          break;
 
-      case "partialMessage":
-        // Track partial messages (streaming)
-        sendChatAction({
-          type: 'api_data',
-          metadata: {
-            action: 'partial_message',
-            timestamp: Date.now(),
-          },
-        });
-        break;
+        // Track other extension messages as generic actions
+        case "invoke":
+          // Track tool invocations
+          sendChatAction({
+            type: "tool_use",
+            metadata: {
+              action: "invoke",
+              timestamp: Date.now(),
+            },
+          });
+          break;
 
-      default:
-        // Track any other message types as generic activity
-        sendChatAction({
-          type: 'api_data',
-          metadata: {
-            messageType: message.type,
-            timestamp: Date.now(),
-          },
-        });
-        break;
-    }
-  }, [trackTaskStart, sendChatAction]);
+        case "partialMessage":
+          // Track partial messages (streaming)
+          sendChatAction({
+            type: "api_data",
+            metadata: {
+              action: "partial_message",
+              timestamp: Date.now(),
+            },
+          });
+          break;
+
+        case "serverConsoleNewMessage":
+          // New server console-related message arrived; mark server console tab for attention.
+          setServerConsoleNeedsAttention(true);
+
+          break;
+
+        default:
+          // Track any other message types as generic activity
+          sendChatAction({
+            type: "api_data",
+            metadata: {
+              messageType: message.type,
+              timestamp: Date.now(),
+            },
+          });
+          break;
+      }
+    },
+    [trackTaskStart, sendChatAction],
+  );
 
   useEvent("message", handleMessage);
 
@@ -236,7 +286,9 @@ const AppContent = () => {
     setCurrentApplicationId(undefined);
   }, []);
 
-  if (!didHydrateState) {
+  // While state is hydrating, show loading only if we DON'T have stored auth
+  // If we have stored auth, go straight to the app (don't show welcome)
+  if (!didHydrateState && !hasStoredAuth) {
     return (
       <div
         style={{
@@ -253,11 +305,16 @@ const AppContent = () => {
   }
 
   const isMainViewHidden =
-    showSettings || showHistory || showMcp || showAccount || showGeneratedFiles || showServerConsole;
+    showSettings ||
+    showHistory ||
+    showMcp ||
+    showAccount ||
+    showGeneratedFiles ||
+    false;
 
   return (
     <>
-      {showWelcome ? (
+      {showWelcome && !hasStoredAuth ? (
         <WelcomeView />
       ) : (
         <>
@@ -266,9 +323,17 @@ const AppContent = () => {
           {showMcp && (
             <McpView initialTab={mcpTab} onDone={() => setShowMcp(false)} />
           )}
-          {showAccount && <AccountView onDone={() => setShowAccount(false)} />}
+          {showAccount && (
+            <AccountView
+              onDone={() => setShowAccount(false)}
+              serverConsoleNeedsAttention={serverConsoleNeedsAttention}
+              onClearServerConsoleNeedsAttention={() => setServerConsoleNeedsAttention(false)}
+              initialActiveTab={accountInitialActiveTab}
+              onConsumeInitialActiveTab={() => setAccountInitialActiveTab(undefined)}
+            />
+          )}
           {showGeneratedFiles && <GeneratedFilesView />}
-          {showServerConsole && <ServerConsole />}
+          {/* Server Console is now available in the Account view tabs */}
 
           {/* Application Progress Overlay - shows over the split pane */}
           {showApplicationProgress && (
@@ -294,7 +359,25 @@ const AppContent = () => {
 
           {/* Show chat view when not in other views */}
           {!isMainViewHidden && (
-            <ChatErrorBoundary errorTitle="Chat failed to render" errorBody="Please reload the view or check connection settings." height="100%">
+            <ChatErrorBoundary
+              errorTitle="Chat failed to render"
+              errorBody="Please reload the view or check connection settings."
+              height="100%"
+              context={{
+                view: "ChatView",
+                hasStoredAuth,
+                showAnnouncement,
+                showSettings,
+                showHistory,
+                showMcp,
+                showAccount,
+                showGeneratedFiles,
+                showServerConsole,
+                showApplicationProgress,
+                currentApplicationId,
+                vscMachineId,
+              }}
+            >
               <ChatView
                 showHistoryView={() => {
                   setShowSettings(false);

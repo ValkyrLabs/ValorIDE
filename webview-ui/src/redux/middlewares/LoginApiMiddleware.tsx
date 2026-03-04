@@ -4,7 +4,7 @@ import {
   getLoginList,
   deleteLogin,
   updateLogin,
-} from "@thor/api";
+} from "@thorapi/api";
 
 import {
   ADD_LOGIN_REQUEST,

@@ -21,12 +21,25 @@ export class TaskLifecycleManager {
     private taskId: string,
     private chatSettings: any,
     private contextManager: any,
-    private say: (type: string, text?: string, images?: string[], partial?: boolean) => Promise<void>,
-    private ask: (type: ValorIDEAsk, text?: string, partial?: boolean) => Promise<any>,
+    private say: (
+      type: string,
+      text?: string,
+      images?: string[],
+      partial?: boolean,
+    ) => Promise<void>,
+    private ask: (
+      type: ValorIDEAsk,
+      text?: string,
+      partial?: boolean,
+    ) => Promise<any>,
     private postStateToWebview: () => Promise<void>,
     private addToValorIDEMessages: (message: ValorIDEMessage) => Promise<void>,
-    private overwriteValorIDEMessages: (messages: ValorIDEMessage[]) => Promise<void>,
-    private overwriteApiConversationHistory: (history: Anthropic.MessageParam[]) => Promise<void>,
+    private overwriteValorIDEMessages: (
+      messages: ValorIDEMessage[],
+    ) => Promise<void>,
+    private overwriteApiConversationHistory: (
+      history: Anthropic.MessageParam[],
+    ) => Promise<void>,
     private initiateTaskLoop: (userContent: UserContent) => Promise<void>,
   ) {}
 
@@ -37,7 +50,8 @@ export class TaskLifecycleManager {
 
     await this.say("text", task, images);
 
-    let imageBlocks: Anthropic.ImageBlockParam[] = formatResponse.imageBlocks(images);
+    let imageBlocks: Anthropic.ImageBlockParam[] =
+      formatResponse.imageBlocks(images);
     await this.initiateTaskLoop([
       {
         type: "text",
@@ -69,7 +83,8 @@ export class TaskLifecycleManager {
       (m) => m.type === "say" && m.say === "api_req_started",
     );
     if (lastApiReqStartedIndex !== -1) {
-      const lastApiReqStarted = modifiedValorIDEMessages[lastApiReqStartedIndex];
+      const lastApiReqStarted =
+        modifiedValorIDEMessages[lastApiReqStartedIndex];
       const { cost, cancelReason }: ValorIDEApiReqInfo = JSON.parse(
         lastApiReqStarted.text || "{}",
       );
@@ -117,20 +132,25 @@ export class TaskLifecycleManager {
     // Prepare user content for continuation
     let modifiedOldUserContent: UserContent;
     let modifiedApiConversationHistory: Anthropic.Messages.MessageParam[];
-    
+
     if (apiConversationHistory.length > 0) {
-      const lastMessage = apiConversationHistory[apiConversationHistory.length - 1];
+      const lastMessage =
+        apiConversationHistory[apiConversationHistory.length - 1];
       if (lastMessage.role === "assistant") {
         modifiedApiConversationHistory = [...apiConversationHistory];
         modifiedOldUserContent = [];
       } else if (lastMessage.role === "user") {
-        const existingUserContent: UserContent = Array.isArray(lastMessage.content)
+        const existingUserContent: UserContent = Array.isArray(
+          lastMessage.content,
+        )
           ? lastMessage.content
           : [{ type: "text", text: lastMessage.content }];
         modifiedApiConversationHistory = apiConversationHistory.slice(0, -1);
         modifiedOldUserContent = [...existingUserContent];
       } else {
-        throw new Error("Unexpected: Last message is not a user or assistant message");
+        throw new Error(
+          "Unexpected: Last message is not a user or assistant message",
+        );
       }
     } else {
       throw new Error("Unexpected: No existing API conversation history");
@@ -139,15 +159,17 @@ export class TaskLifecycleManager {
     let newUserContent: UserContent = [...modifiedOldUserContent];
 
     const agoText = this.getAgoText(lastValorIDEMessage?.ts);
-    const wasRecent = lastValorIDEMessage?.ts && Date.now() - lastValorIDEMessage.ts < 30_000;
+    const wasRecent =
+      lastValorIDEMessage?.ts && Date.now() - lastValorIDEMessage.ts < 30_000;
 
-    const [taskResumptionMessage, userResponseMessage] = formatResponse.taskResumption(
-      this.chatSettings?.mode === "plan" ? "plan" : "act",
-      agoText,
-      process.cwd(), // Using process.cwd() as placeholder for cwd
-      wasRecent,
-      responseText,
-    );
+    const [taskResumptionMessage, userResponseMessage] =
+      formatResponse.taskResumption(
+        this.chatSettings?.mode === "plan" ? "plan" : "act",
+        agoText,
+        process.cwd(), // Using process.cwd() as placeholder for cwd
+        wasRecent,
+        responseText,
+      );
 
     if (taskResumptionMessage !== "") {
       newUserContent.push({

@@ -2,8 +2,8 @@ import React, { useEffect, useState, useCallback, JSX } from "react";
 import LinkPreview from "./LinkPreview";
 import ImagePreview from "./ImagePreview";
 import styled from "styled-components";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import ChatErrorBoundary from "@/components/chat/ChatErrorBoundary";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import ChatErrorBoundary from "@thorapi/components/chat/ChatErrorBoundary";
 import {
   isUrl,
   isLocalhostUrl,

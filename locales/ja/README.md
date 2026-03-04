@@ -138,16 +138,16 @@ ValorIDEがタスクを進める中で、拡張機能は各ステップでワー
 
 1. リポジトリをクローンします _(Requires [git-lfs](https://git-lfs.com/))_：
    `bash
-    git clone https://github.com/valkyrlabs/valoride.git
-    `
+git clone https://github.com/valkyrlabs/valoride.git
+`
 2. プロジェクトをVSCodeで開きます：
    `bash
-    code valoride
-    `
+code valoride
+`
 3. 拡張機能とwebview-guiの必要な依存関係をインストールします：
    `bash
-    npm run install:all
-    `
+npm run install:all
+`
 4. `F5`を押して（または`Run`->`Start Debugging`）、拡張機能が読み込まれた新しいVSCodeウィンドウを開きます。（プロジェクトのビルドに問題がある場合は、[esbuild problem matchers extension](https://marketplace.visualstudio.com/items?itemName=connor4312.esbuild-problem-matchers)をインストールする必要があるかもしれません。）
 
 </details>

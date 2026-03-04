@@ -5,12 +5,26 @@ interface ChatErrorBoundaryProps {
   errorTitle?: string;
   errorBody?: string;
   height?: string;
+  context?: Record<string, unknown> | string | null;
 }
 
 interface ChatErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
+  errorInfo?: React.ErrorInfo | null;
 }
+
+const stringifyContext = (
+  context: Record<string, unknown> | string | null | undefined,
+) => {
+  if (!context) return undefined;
+  if (typeof context === "string") return context;
+  try {
+    return JSON.stringify(context, null, 2);
+  } catch (err) {
+    return `Failed to stringify context: ${String(err)}`;
+  }
+};
 
 /**
  * A reusable error boundary component specifically designed for chat widgets.
@@ -22,7 +36,7 @@ export class ChatErrorBoundary extends React.Component<
 > {
   constructor(props: ChatErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, errorInfo: null };
   }
 
   static getDerivedStateFromError(error: Error) {
@@ -32,10 +46,31 @@ export class ChatErrorBoundary extends React.Component<
   override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("Error in ChatErrorBoundary:", error.message);
     console.error("Component stack:", errorInfo.componentStack);
+    this.setState({ errorInfo });
+    try {
+      const payload = {
+        type: "webviewError",
+        text: error?.message,
+        stack: error?.stack ?? null,
+        componentStack: errorInfo?.componentStack ?? null,
+        context: stringifyContext(this.props.context),
+      };
+      (window as any)?.vscode?.postMessage?.(payload);
+      if (typeof fetch === "function") {
+        fetch("http://localhost:3001/webview-error", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }).catch(() => { });
+      }
+    } catch (e) {
+      console.error("Failed to capture chat error details", e);
+    }
   }
 
   override render() {
     const { errorTitle, errorBody, height } = this.props;
+    const contextString = stringifyContext(this.props.context);
 
     if (this.state.hasError) {
       return (
@@ -59,6 +94,27 @@ export class ChatErrorBoundary extends React.Component<
             {errorBody ||
               `Error: ${this.state.error?.message || "Unknown error"}`}
           </p>
+          {contextString && (
+            <details style={{ marginTop: 8, whiteSpace: "pre-wrap" }}>
+              <summary>Context</summary>
+              <div>{contextString}</div>
+            </details>
+          )}
+          {this.state.error?.stack && (
+            <details style={{ marginTop: 8, whiteSpace: "pre-wrap" }}>
+              <summary>Stack trace</summary>
+              <div>{this.state.error.stack}</div>
+            </details>
+          )}
+          {this.state.errorInfo?.componentStack && (
+            <details style={{ marginTop: 8, whiteSpace: "pre-wrap" }}>
+              <summary>Component stack</summary>
+              <div>{this.state.errorInfo.componentStack}</div>
+            </details>
+          )}
+          <div style={{ marginTop: 10 }}>
+            <button onClick={() => location.reload()}>Reload view</button>
+          </div>
         </div>
       );
     }

@@ -1,0 +1,73 @@
+.contentflip-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.contentflip-canvas {
+  width: 100%;
+  max-width: 420px;
+  height: 320px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(0, 255, 136, 0.06);
+  background: linear-gradient(
+    180deg,
+    rgba(8, 16, 36, 0.8),
+    rgba(4, 6, 11, 0.6)
+  );
+}
+.contentflip-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+}
+.contentflip-footer {
+  width: 100%;
+  padding: 8px 12px;
+  background: linear-gradient(180deg, rgba(3, 6, 17, 0.6), rgba(3, 6, 17, 0.4));
+  border-radius: 8px;
+  text-align: left;
+  color: var(--vscode-descriptionForeground);
+}
+.contentflip-title {
+  color: var(--vscode-foreground);
+  font-weight: 600;
+  font-size: 14px;
+}
+.contentflip-desc {
+  color: var(--vscode-descriptionForeground);
+  font-size: 12px;
+}
+.contentflip-wrapper h4 {
+  margin: 0;
+  color: var(--vscode-foreground);
+}
+.contentflip-empty {
+  color: var(--vscode-descriptionForeground);
+  padding: 16px;
+}
+
+/* Aurora glow */
+.contentflip-canvas::before {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  border-radius: 12px;
+  box-shadow: 0 0 40px rgba(0, 255, 136, 0.06) inset;
+}
+
+/* small responsive tweaks */
+@media (max-width: 700px) {
+  .contentflip-canvas {
+    max-width: 320px;
+    height: 260px;
+  }
+}

@@ -11,7 +11,7 @@ import { FaCheckCircle } from "react-icons/fa";
 import * as Yup from "yup";
 import CoolButton from "../../../components/CoolButton";
 
-import { Logout } from "../../../thor/model";
+import { Logout } from "@thorapi/model";
 import { useAddLogoutMutation } from "../../services/LogoutService";
 
 /**

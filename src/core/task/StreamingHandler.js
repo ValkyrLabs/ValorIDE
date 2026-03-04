@@ -1,6 +1,6 @@
 import cloneDeep from "clone-deep";
 import pWaitFor from "p-wait-for";
-import { parseAssistantMessage } from "@core/assistant-message";
+import { parseAssistantMessage, } from "@core/assistant-message";
 /**
  * Handles streaming API responses and assistant message presentation
  */
@@ -197,7 +197,8 @@ export class StreamingHandler {
         }
         this.presentAssistantMessageLocked = false;
         if (!block.partial || this.didRejectTool || this.didAlreadyUseTool) {
-            if (this.currentStreamingContentIndex === this.assistantMessageContent.length - 1) {
+            if (this.currentStreamingContentIndex ===
+                this.assistantMessageContent.length - 1) {
                 this.userMessageContentReady = true;
             }
             this.currentStreamingContentIndex++;

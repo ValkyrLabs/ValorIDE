@@ -15,11 +15,11 @@ import * as Yup from "yup";
 
 import { useAddPrincipalMutation } from "../../redux/services/PrincipalService";
 
-import { Login, Principal } from "@thor/model";
+import { Login, Principal } from "@thorapi/model";
 import CoolButton from "@valkyr/component-library/CoolButton";
 import "./index.css";
 import ErrorModal from "../ErrorModal";
-import { storeJwtToken, writeStoredPrincipal } from "@/utils/accessControl";
+import { storeJwtToken, writeStoredPrincipal } from "@thorapi/utils/accessControl";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string()
@@ -379,7 +379,7 @@ const Form: React.FC = () => {
                           : "warning"
                       }
                       type="submit"
-                      onClick={() => {}}
+                      onClick={() => { }}
                     >
                       {isSubmitting && (
                         <LoadingSpinner size={18} style={{ marginRight: 8 }} />

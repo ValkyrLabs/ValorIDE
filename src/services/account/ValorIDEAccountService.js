@@ -1,5 +1,4 @@
 export class ValorIDEAccountService {
-    baseUrl = process.env.VITE_basePath || "http://localhost:8080/v1";
     postMessageToWebview;
     getValorIDEApiKey;
     constructor(postMessageToWebview, getValorIDEApiKey) {
@@ -29,8 +28,11 @@ export class ValorIDEAccountService {
      */
     async fetchContentData() {
         try {
-            const { ContentDataBridge } = await import('../../services/content-data/ContentDataBridge');
-            const items = await ContentDataBridge.getInstance().listContentData({ page: 0, size: 50 });
+            const { ContentDataBridge } = await import("../../services/content-data/ContentDataBridge");
+            const items = await ContentDataBridge.getInstance().listContentData({
+                page: 0,
+                size: 50,
+            });
             // Also forward to webview in case any components reflect it directly
             await this.postMessageToWebview({
                 type: "contentData",

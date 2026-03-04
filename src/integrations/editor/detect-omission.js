@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { openUrlWithSimpleBrowser } from "@utils/openUrl";
 /**
  * Detects potential AI-generated code omissions in the given file content.
  * @param originalFileContent The original content of the file.
@@ -47,7 +48,7 @@ export function showOmissionWarning(originalFileContent, newFileContent) {
             .showWarningMessage("Potential code truncation detected. This happens when the AI reaches its max output limit.", "Follow this guide to fix the issue")
             .then((selection) => {
             if (selection === "Follow this guide to fix the issue") {
-                vscode.env.openExternal(vscode.Uri.parse("https://github.com/valkyrlabs/valoride/wiki/Troubleshooting-%E2%80%90-ValorIDE-Deleting-Code-with-%22Rest-of-Code-Here%22-Comments"));
+                void openUrlWithSimpleBrowser("https://github.com/valkyrlabs/valoride/wiki/Troubleshooting-%E2%80%90-ValorIDE-Deleting-Code-with-%22Rest-of-Code-Here%22-Comments");
             }
         });
     }

@@ -1,21 +1,21 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useClickAway, useWindowSize } from "react-use";
-import { CODE_BLOCK_BG_COLOR } from "@/components/common/CodeBlock";
-import ServersToggleList from "@/components/mcp/configuration/tabs/installed/ServersToggleList";
-import { vscode } from "@/utils/vscode";
+import { CODE_BLOCK_BG_COLOR } from "@thorapi/components/common/CodeBlock";
+import ServersToggleList from "@thorapi/components/mcp/configuration/tabs/installed/ServersToggleList";
+import { vscode } from "@thorapi/utils/vscode";
 import {
   VSCodeButton,
   VSCodeProgressRing,
 } from "@vscode/webview-ui-toolkit/react";
-import Tooltip from "@/components/common/Tooltip";
-import { useGetMcpServersQuery } from "@/thor/redux/services/McpServerService";
-import { convertThorMcpServersToShared } from "@/utils/mcpTypeConversions";
+import Tooltip from "@thorapi/components/common/Tooltip";
+import { useGetMcpServersQuery } from "@thorapi/redux/services/McpServerService";
+import { convertThorMcpServersToShared } from "@thorapi/utils/mcpTypeConversions";
 import {
   formatError,
   getErrorTitle,
   isRetryableError,
   safeConvert,
-} from "@/utils/errorHandling";
+} from "@thorapi/utils/errorHandling";
 import { FaServer, FaSync, FaCog } from "react-icons/fa";
 
 const ServersToggleModal: React.FC = () => {
@@ -61,7 +61,7 @@ const ServersToggleModal: React.FC = () => {
     }
   }, [isVisible]);
 
-  // Convert Thor MCP servers to shared format with error handling
+  // Convert ThorAPI MCP servers to shared format with error handling
   const sharedMcpServers = React.useMemo(() => {
     return safeConvert(
       mcpServers,
@@ -82,9 +82,7 @@ const ServersToggleModal: React.FC = () => {
             style={{ padding: "0px 0px", height: "20px" }}
           >
             <div className="flex items-center gap-1 text-xs whitespace-nowrap min-w-0 w-full">
-              <FaServer
-                style={{ fontSize: "12.5px", marginBottom: 1 }}
-              />
+              <FaServer style={{ fontSize: "12.5px", marginBottom: 1 }} />
             </div>
           </VSCodeButton>
         </Tooltip>
@@ -164,9 +162,7 @@ const ServersToggleModal: React.FC = () => {
                   onClick={handleRefresh}
                   style={{ fontSize: "11px", padding: "2px 8px" }}
                 >
-                  <FaSync
-                    style={{ marginRight: "4px" }}
-                  />
+                  <FaSync style={{ marginRight: "4px" }} />
                   Retry
                 </VSCodeButton>
               </div>

@@ -5,7 +5,7 @@ import * as path from "path";
 export class AutoApprovalService {
   constructor(
     private autoApprovalSettings: AutoApprovalSettings,
-    private cwd: string
+    private cwd: string,
   ) {}
 
   /**
