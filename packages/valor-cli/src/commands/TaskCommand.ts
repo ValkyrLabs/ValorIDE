@@ -6,9 +6,6 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { SessionManager } from '../SessionManager';
 import { Orchestrator, OrchestrationContext } from '../orchestrator/Orchestrator';
-import { promises as fs } from 'fs';
-import { join } from 'path';
-import { homedir } from 'os';
 
 export class TaskCommand {
   private sessionManager: SessionManager;
@@ -19,12 +16,12 @@ export class TaskCommand {
 
   async execute(description: string, options: any): Promise<void> {
     const { plan = false, act = false, session: sessionId } = options;
+    let session: any;
 
     try {
       await this.sessionManager.initialize();
 
       // Create or attach to session
-      let session: any;
       if (sessionId) {
         session = await this.sessionManager.loadSession(sessionId);
         if (!session) {
@@ -38,6 +35,9 @@ export class TaskCommand {
       console.log(chalk.cyan(`\n📋 Task: ${description}`));
       console.log(chalk.gray(`Session: ${session.sessionId}\n`));
 
+      const mode: 'plan' | 'act' | 'plan+act' = plan ? 'plan' : act ? 'act' : 'plan+act';
+      await this.sessionManager.markRunStarted(session, description, mode);
+
       if (plan) {
         await this.runPlanMode(description, session);
       } else if (act) {
@@ -49,10 +49,14 @@ export class TaskCommand {
         await this.runActMode(description, session);
       }
 
-      // Save session
-      await this.sessionManager.saveSession(session);
+      await this.sessionManager.markRunFinished(session, 'completed');
       console.log(chalk.green('\n✅ Task complete\n'));
     } catch (error) {
+      if (session) {
+        await this.sessionManager.markRunFinished(session, 'failed', {
+          error: String(error),
+        });
+      }
       console.error(chalk.red(`\n❌ Error: ${error}\n`));
       process.exit(1);
     }
@@ -80,6 +84,11 @@ export class TaskCommand {
       // Log to ledger
       const ledger = orchestrator.getLedger();
       const entries = await ledger.readAll();
+
+      await this.sessionManager.markRunHeartbeat(session, {
+        stage: 'plan',
+        ledgerEntries: entries.length,
+      });
 
       spinner.succeed(chalk.green('Plan generated'));
       console.log(
@@ -112,6 +121,14 @@ export class TaskCommand {
       await orchestrator.initialize();
 
       const result = await orchestrator.execute();
+      await this.sessionManager.markRunHeartbeat(session, {
+        stage: 'act',
+        status: result.status,
+        turns: result.turn,
+        tokens: result.totalTokens,
+        cost: Number(result.totalCost.toFixed(4)),
+        ledgerEntries: result.ledgerEntries,
+      });
 
       spinner.succeed(chalk.green('Task executed'));
       console.log(chalk.gray(`Status: ${result.status}`));

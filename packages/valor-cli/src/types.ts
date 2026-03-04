@@ -3,6 +3,20 @@
  * Defines interfaces for CLI operations, session persistence, and checkpoints
  */
 
+export type SessionRunStatus = 'idle' | 'running' | 'completed' | 'failed' | 'cancelled' | 'timed_out';
+
+export interface SessionRunSummary {
+  runId: string;
+  description: string;
+  mode: 'plan' | 'act' | 'plan+act';
+  startedAt: number;
+  updatedAt: number;
+  heartbeatAt: number;
+  status: Exclude<SessionRunStatus, 'idle'>;
+  eventsPath: string;
+  artifactsDir: string;
+}
+
 export interface SessionConfig {
   sessionId: string;
   workspaceRoot: string;
@@ -11,6 +25,9 @@ export interface SessionConfig {
   modelId?: string;
   createdAt: number;
   lastActivity: number;
+  runStatus?: SessionRunStatus;
+  currentRun?: SessionRunSummary;
+  runHistory?: SessionRunSummary[];
 }
 
 export interface TaskRunOptions {
