@@ -37,6 +37,13 @@ export class MothershipService extends EventEmitter {
   private instanceId: string;
   // Simple guard to avoid ack loops
   private suppressAckTopics = new Set<string>(['ack', 'nack']);
+  private replayWindowSize = 200;
+  private lastProcessedSequence = 0;
+  private outboundSequence = 0;
+  private pendingBySequence = new Map<number, WebsocketMessage>();
+  private replayBuffer: WebsocketMessage[] = [];
+  private acknowledgedMessageIds = new Set<string>();
+  private peerLiveness = new Map<string, number>();
 
   constructor(options: MothershipConnectionOptions) {
     super();
@@ -86,9 +93,15 @@ export class MothershipService extends EventEmitter {
 
         // Announce presence and request roll call using BROADCAST payload envelope
         try {
-          this.sendAppTopic('presence:join', { id: this.instanceId });
+          this.sendAppTopic('presence:join', { id: this.instanceId, online: true });
           this.sendAppTopic('auth:ack', { id: this.instanceId });
           this.sendAppTopic('presence:rollcall', { id: this.instanceId });
+          this.sendAppTopic('session:resume', {
+            id: this.instanceId,
+            lastProcessedSequence: this.lastProcessedSequence,
+            replayWindowSize: this.replayWindowSize,
+          });
+          this.emit('liveness', { id: this.instanceId, online: true, timestamp: Date.now() });
         } catch (e) {
           console.warn('Failed to send presence/rollcall on connect:', e);
         }
@@ -199,11 +212,41 @@ export class MothershipService extends EventEmitter {
   private handleIncomingMessage(message: WebsocketMessage): void {
     try {
       const payload = message.payload ? JSON.parse(message.payload) : {};
+      const sequence = Number(payload?.sequence);
+
+      if (Number.isFinite(sequence) && sequence > 0) {
+        if (sequence <= this.lastProcessedSequence) {
+          return;
+        }
+
+        if (sequence > this.lastProcessedSequence + 1) {
+          this.pendingBySequence.set(sequence, message);
+          return;
+        }
+      }
+
+      this.processIncomingMessage(message, payload);
+
+      if (Number.isFinite(sequence) && sequence > 0) {
+        this.lastProcessedSequence = sequence;
+        this.drainPendingSequenceBuffer();
+      }
+    } catch (error) {
+      console.error('Error handling mothership message:', error);
+    }
+  }
+
+  private processIncomingMessage(message: WebsocketMessage, payload: any): void {
+    try {
+      this.appendReplay(message);
 
       switch (message.type) {
         case WebsocketMessageTypeEnum.SERVICE:
           if (payload.action === 'pong') {
             // Handle ping response
+            if (payload.instanceId) {
+              this.recordPeerLiveness(payload.instanceId);
+            }
             return;
           }
           break;
@@ -243,11 +286,16 @@ export class MothershipService extends EventEmitter {
         if (topic && typeof topic === 'string') {
           // Respond to roll call requests from other instances
           if (topic === 'presence:rollcall' && senderId && senderId !== this.instanceId) {
-            this.sendAppTopic('presence:here', { id: this.instanceId });
+            this.sendAppTopic('presence:here', { id: this.instanceId, online: true });
           }
 
-          // Avoid acknowledging acks to prevent loops
-          if (!this.suppressAckTopics.has(topic) && messageId && (senderId || '') !== this.instanceId) {
+          if ((topic === 'presence:join' || topic === 'presence:here') && senderId) {
+            this.recordPeerLiveness(senderId);
+          }
+
+          // Avoid acknowledging acks to prevent loops and duplicate acks
+          if (!this.suppressAckTopics.has(topic) && messageId && (senderId || '') !== this.instanceId && !this.acknowledgedMessageIds.has(messageId)) {
+            this.acknowledgedMessageIds.add(messageId);
             this.sendAppTopic('ack', { messageId, to: senderId, from: this.instanceId });
           }
         }
@@ -257,6 +305,50 @@ export class MothershipService extends EventEmitter {
     } catch (error) {
       console.error('Error handling mothership message:', error);
     }
+  }
+
+  private appendReplay(message: WebsocketMessage): void {
+    this.replayBuffer.push(message);
+    if (this.replayBuffer.length > this.replayWindowSize) {
+      this.replayBuffer.shift();
+    }
+  }
+
+  private drainPendingSequenceBuffer(): void {
+    let next = this.lastProcessedSequence + 1;
+    while (this.pendingBySequence.has(next)) {
+      const buffered = this.pendingBySequence.get(next)!;
+      this.pendingBySequence.delete(next);
+      const payload = buffered.payload ? JSON.parse(buffered.payload) : {};
+      this.processIncomingMessage(buffered, payload);
+      this.lastProcessedSequence = next;
+      next += 1;
+    }
+  }
+
+  private recordPeerLiveness(peerId: string): void {
+    const now = Date.now();
+    this.peerLiveness.set(peerId, now);
+    this.emit('presenceUpdated', {
+      peerId,
+      lastSeenAt: now,
+      online: true,
+    });
+  }
+
+  public getPresenceSnapshot(now: number = Date.now(), offlineAfterMs: number = 90_000): Record<string, { lastSeenAt: number; online: boolean }> {
+    const snapshot: Record<string, { lastSeenAt: number; online: boolean }> = {};
+    for (const [peerId, lastSeenAt] of this.peerLiveness.entries()) {
+      snapshot[peerId] = {
+        lastSeenAt,
+        online: now - lastSeenAt <= offlineAfterMs,
+      };
+    }
+    return snapshot;
+  }
+
+  public getReplayBuffer(): WebsocketMessage[] {
+    return [...this.replayBuffer];
   }
 
   private handleRemoteCommand(payload: any): void {
@@ -339,6 +431,7 @@ export class MothershipService extends EventEmitter {
       payload: data,
       senderId: this.instanceId,
       messageId: Math.random().toString(36).slice(2, 12),
+      sequence: ++this.outboundSequence,
       timestamp: Date.now(),
     };
     this.sendMessage({
