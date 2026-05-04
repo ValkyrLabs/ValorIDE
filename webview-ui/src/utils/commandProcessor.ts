@@ -21,6 +21,16 @@ export interface CommandContext {
   sessionId?: string;
   addMessage?: (message: ChatMessage) => void;
   wsUtils?: WebSocketUtils | null;
+  telemetryHook?: (event: WidgetCommandTelemetryEvent) => void;
+}
+
+export interface WidgetCommandTelemetryEvent {
+  kind: "widget_command";
+  phase: "open" | "configure" | "submit";
+  widgetType: string;
+  version: string;
+  timestamp: string;
+  payload: Record<string, any>;
 }
 
 /**
@@ -56,6 +66,9 @@ export class FrontendCommandProcessor {
 
     // Process UI interaction commands
     processedContent = await this.processUICommands(processedContent);
+
+    // Process versioned widget actions
+    processedContent = await this.processWidgetCommands(processedContent);
 
     return processedContent;
   }
@@ -208,6 +221,54 @@ export class FrontendCommandProcessor {
         processedContent = processedContent.replace(
           match[0],
           `[UI action failed: ${error}]`,
+        );
+      }
+    }
+
+    return processedContent;
+  }
+
+  /**
+   * Handle versioned widget actions.
+   * Format:
+   * <widget_action>
+   *   <version>1</version>
+   *   <phase>open|configure|submit</phase>
+   *   <widget>integration-account|execmodule-config|form</widget>
+   *   <payload>{...json}</payload>
+   * </widget_action>
+   */
+  private async processWidgetCommands(content: string): Promise<string> {
+    const widgetRegex =
+      /<widget_action>\s*<version>([\s\S]*?)<\/version>\s*<phase>([\s\S]*?)<\/phase>\s*<widget>([\s\S]*?)<\/widget>(?:\s*<payload>([\s\S]*?)<\/payload>)?\s*<\/widget_action>/g;
+    let processedContent = content;
+    let match;
+
+    while ((match = widgetRegex.exec(content)) !== null) {
+      try {
+        const version = match[1].trim();
+        const phase = match[2].trim().toLowerCase();
+        const widgetType = match[3].trim();
+        const payloadRaw = match[4]?.trim();
+        const payload = payloadRaw ? JSON.parse(payloadRaw) : {};
+
+        const result = await this.executeWidgetAction({
+          version,
+          phase,
+          widgetType,
+          payload,
+        });
+
+        processedContent = processedContent.replace(
+          match[0],
+          result.success
+            ? `[widget:${phase}:${widgetType}]`
+            : `[Widget action failed: ${result.error}]`,
+        );
+      } catch (error) {
+        processedContent = processedContent.replace(
+          match[0],
+          `[Widget action failed: ${error}]`,
         );
       }
     }
@@ -369,6 +430,50 @@ export class FrontendCommandProcessor {
     } catch (error) {
       return { success: false, error: `UI action failed: ${error}` };
     }
+  }
+
+  private async executeWidgetAction({
+    version,
+    phase,
+    widgetType,
+    payload,
+  }: {
+    version: string;
+    phase: string;
+    widgetType: string;
+    payload: Record<string, any>;
+  }): Promise<CommandResult> {
+    if (version !== "1") {
+      return {
+        success: false,
+        error: `Unsupported widget action version: ${version}`,
+      };
+    }
+
+    if (phase !== "open" && phase !== "configure" && phase !== "submit") {
+      return {
+        success: false,
+        error: `Unsupported widget phase: ${phase}`,
+      };
+    }
+
+    const detail: WidgetCommandTelemetryEvent = {
+      kind: "widget_command",
+      phase,
+      widgetType,
+      version,
+      timestamp: new Date().toISOString(),
+      payload,
+    };
+
+    window.dispatchEvent(new CustomEvent("valoride:widget-action", { detail }));
+    this.context.telemetryHook?.(detail);
+
+    return {
+      success: true,
+      data: detail,
+      message: `Widget ${phase} dispatched for ${widgetType}`,
+    };
   }
 }
 
