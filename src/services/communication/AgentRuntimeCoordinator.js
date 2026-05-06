@@ -4,6 +4,7 @@ import { MothershipService, } from "./MothershipService";
 import { Logger } from "../logging/Logger";
 import { WebviewProvider } from "../../core/webview";
 const INSTANCE_ID_KEY = "valorideSwarmInstanceId";
+const WIDGET_PROTOCOL_VERSION = "1.0";
 /**
  * Coordinates ValorIDE's swarm runtime presence when running inside VS Code.
  *
@@ -218,10 +219,51 @@ export class AgentRuntimeCoordinator {
             case "task-cancel":
                 this.handleTaskCancellation(command, payload);
                 break;
+            case "widget-open":
+            case "ui-widget-open":
+                this.handleWidgetCommand("open", command, payload);
+                break;
+            case "widget-configure":
+            case "ui-widget-configure":
+                this.handleWidgetCommand("configure", command, payload);
+                break;
+            case "widget-submit":
+            case "ui-widget-submit":
+                this.handleWidgetCommand("submit", command, payload);
+                break;
             default:
                 Logger.log(`Unhandled remote command type: ${command.type}`);
                 this.forwardRemoteCommandToWebview(command);
         }
+    }
+    handleWidgetCommand(action, command, payload) {
+        const widgetEnvelope = {
+            protocolVersion: WIDGET_PROTOCOL_VERSION,
+            action,
+            widgetType: payload?.widgetType ?? payload?.widget ?? payload?.type ?? "unknown",
+            requestId: payload?.requestId ?? command.id,
+            sourceCommandId: command.id,
+            sourceInstanceId: command.sourceInstanceId,
+            targetInstanceId: command.targetInstanceId,
+            payload,
+        };
+        this.forwardWidgetCommandToWebview(widgetEnvelope);
+        this.forwardRemoteCommandToWebview(command);
+        this.captureWidgetTelemetry(widgetEnvelope);
+    }
+    captureWidgetTelemetry(widgetCommand) {
+        if (!this.mothership || !this.instanceId) {
+            return;
+        }
+        this.mothership.sendAppTopic("telemetry", {
+            topic: "widget-command",
+            workerId: this.instanceId,
+            protocolVersion: widgetCommand.protocolVersion,
+            action: widgetCommand.action,
+            widgetType: widgetCommand.widgetType,
+            requestId: widgetCommand.requestId,
+            timestamp: Date.now(),
+        });
     }
     async handleTaskAssignment(command, payload) {
         if (!payload) {
@@ -284,6 +326,14 @@ export class AgentRuntimeCoordinator {
             instance.controller.postMessageToWebview({
                 type: "swarm:remote-command",
                 command,
+            });
+        });
+    }
+    forwardWidgetCommandToWebview(widgetCommand) {
+        WebviewProvider.getAllInstances().forEach((instance) => {
+            instance.controller.postMessageToWebview({
+                type: "swarm:widget-command",
+                widgetCommand,
             });
         });
     }
