@@ -30,6 +30,17 @@ export interface RemoteCommand {
   targetInstanceId?: string;
 }
 
+export interface WidgetCommandEnvelope {
+  protocolVersion: "1.0";
+  action: "open" | "configure" | "submit";
+  widgetType: string;
+  requestId: string;
+  sourceCommandId?: string;
+  sourceInstanceId?: string;
+  targetInstanceId?: string;
+  payload?: Record<string, unknown>;
+}
+
 // webview will hold state
 export interface ExtensionMessage {
   type:
@@ -81,6 +92,7 @@ export interface ExtensionMessage {
   | "swarm:task-assignment"
   | "swarm:task-cancelled"
   | "swarm:remote-command"
+  | "swarm:widget-command"
   | "swarm:broadcast"
   | "valkyraiHostTestResult"
   | "swarm:private-message"
@@ -207,6 +219,7 @@ uploadOpenAPISpecResult ?: {
 filename ?: string;
 specPath ?: string;
 message ?: string;
+widgetCommand ?: WidgetCommandEnvelope;
 }
 
 export type Invoke =
